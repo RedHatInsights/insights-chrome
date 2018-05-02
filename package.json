@@ -1,0 +1,27 @@
+{
+  "name": "insights-chrome",
+  "version": "0.0.0",
+  "description": "Chroming for Insights",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RedHatInsights/insights-chrome.git"
+  },
+  "keywords": [
+    "Chrome"
+  ],
+  "author": "ihands@redhat.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RedHatInsights/insights-chrome/issues"
+  },
+  "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-pug": "^4.0.1",
+    "gulp-sass": "^4.0.1"
+  }
+}

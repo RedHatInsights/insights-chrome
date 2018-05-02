@@ -1,0 +1,16 @@
+build/
+node_modules/
+
+#emacs
+*[#]*[#]
+*[#]*
+*~
+*#
+
+#vim
+tags
+*.swp
+*.swo
+Session.vim
+.agignore
+.lvimrc
