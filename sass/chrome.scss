@@ -1,3 +1,47 @@
-.footer {
-  .test { outline: 2px solid purple; }
+@import 'helpers.scss';
+
+.topbar {
+  background: #1d1d1d;
+  display: flex;
+  align-items: center;
+
+  i, span {
+    color: #fff;
+    @include rem('font-size', 12px);
+  }
+
+  i + span, span + i { @include rem('margin-left', 5px); }
+
+  i.fa-bars { color: #d1d1d1; }
+
+  svg#logo {
+    height: 15px;
+    display: inline;
+    .st0 { fill: #fff; }
+  }
+
+  button {
+    background: none;
+    border: none;
+  }
+
+  .button__toggle {
+    @include rem('margin', 15px);
+    i { @include rem('font-size', 18px); }
+  }
+
+  .utilities {
+    display: flex;
+    margin-left: auto;
+    @include rem('margin-right', $global-margin);
+  }
+
+  .notifications i { @include rem('margin', 0 10px); }
+
+  .sep:before {
+    content:'|';
+    color: #fff;
+    @include rem('font-size', 12px);
+    @include rem('margin', 0 5px);
+  }
 }
