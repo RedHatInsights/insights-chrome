@@ -1,5 +1,7 @@
 @import 'helpers.scss';
 
+$blue: #00b9e4;
+
 .topbar {
   background: #1d1d1d;
   display: flex;
@@ -25,6 +27,7 @@
     background: none;
     border: none;
     cursor: pointer;
+    &:hover * { color: $blue; }
   }
 
   .button__toggle {
@@ -38,7 +41,7 @@
     @include rem('margin-right', $global-margin);
   }
 
-  .notifications i { @include rem('margin', 0 10px); }
+  .button__fab { @include rem('margin', 0 5px); }
 
   .sep:before {
     content:'|';
