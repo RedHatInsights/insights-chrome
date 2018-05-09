@@ -1,0 +1,23 @@
+.sidenav {
+  color: #d1d1d1;
+  background: $bg-sidenav;
+
+  .navigation {
+    list-style-type: none;
+    height: min-content;
+    margin: 0;
+    padding: 0;
+    font-family:'overpass-light';
+    li {
+      i { margin-right: 10px; }
+      padding: 20px;
+      cursor: pointer;
+      @include transition(all);
+      &:hover, &:active {
+        box-shadow: inset 5px 0px 0px 0px $blue;
+        background: #393f44;
+        color: #fff;
+      }
+    }
+  }
+}

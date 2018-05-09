@@ -2,6 +2,26 @@ $global-padding: 15px;
 $global-margin: 15px;
 $global-font-size: 14px;
 
+$blue: #00b9e4;
+$bg-topbar: #1d1d1d;
+$bg-sidenav: #292e34;
+
+$c-gray: #d1d1d1;
+
+
+// Generation Transitions
+// =================================================================/
+@mixin transition($property) {
+  transition: $property 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+// Generation Box-Shadow
+// =================================================================/
+@mixin box-shadow() {
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
+}
+
 
 // Convert px to rem
 // =================================================================/
