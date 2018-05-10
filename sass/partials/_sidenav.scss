@@ -5,18 +5,25 @@
   .navigation {
     list-style-type: none;
     height: min-content;
+    width: max-content;
     margin: 0;
     padding: 0;
     font-family:'overpass-light';
     li {
-      i { margin-right: 10px; }
-      padding: 20px;
+      padding: 25px;
       cursor: pointer;
+      i { margin-right: 10px; }
       @include transition(all);
       &:hover, &:active {
+        background: #393f44;
+        color: #fff;
+        i { color: $blue; }
+      }
+      .active {
         box-shadow: inset 5px 0px 0px 0px $blue;
         background: #393f44;
         color: #fff;
+        i { color: $blue; }
       }
     }
   }
