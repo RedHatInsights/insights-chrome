@@ -19,7 +19,7 @@
         color: #fff;
         i { color: $blue; }
       }
-      .active {
+      &.active {
         box-shadow: inset 5px 0px 0px 0px $blue;
         background: #393f44;
         color: #fff;
