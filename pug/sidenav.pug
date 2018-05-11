@@ -1,32 +1,30 @@
+script(src='/insights/chrome/js/chrome.js')
 nav.sidenav
   ul.navigation
-    li
+    li.active(id='dashboard', onclick='selectOption("dashboard")')
       i.fas.fa-tachometer-alt
       span Dashboard
-    li
+    li(id='advisor', onclick='selectOption("advisor")')
       i.fas.fa-clipboard-list
       span Advisor
-    li
+    li(id='security', onclick='selectOption("security")')
       i.fas.fa-lock
       span Security
-    li
+    li(id='compliance', onclick='selectOption("compliance")')
       i.fas.fa-gavel
       span Compliance
-    li
+    li(id='cmaas', onclick='selectOption("cmaas")')
       i.fas.fa-piggy-bank
       span Cost Management
-    li
+    li(id='vmaas', onclick='selectOption("vmaas")')
       i.fas.fa-user-md
       span Vulnerabilities
-    li
+    li(id='inventory', onclick='selectOption("inventory")')
       i.fas.fa-database
       span Inventory
-    li
+    li(id='reports', onclick='selectOption("reports")')
       i.fas.fa-chart-bar
       span Executive Report
-    li
+    li(id='settings', onclick='selectOption("settings")')
       i.fas.fa-cog
       span Settings
-    li.active
-      i.fas.fa-vial
-      span Test Active
