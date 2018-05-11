@@ -1,0 +1,23 @@
+footer.footer {
+  background: #1d1d1d;
+  color: #6c6c6c;
+  @include rem('font-size', 12px);
+  @include rem('padding', 15px 20px);
+  display: flex;
+  align-items: center;
+
+  * + * { @include rem('margin-left', 50px); }
+
+  img { height: 30px; }
+
+  p, nav { @include rem('margin-top', 5px); }
+
+  nav {
+    a { color: #6c6c6c; }
+    .nav-link + .nav-link { @include rem('margin-left', $global-margin/2); }
+    .nav-link:not(:first-of-type):before {
+      content: "|";
+      @include rem('margin-right', $global-margin/2);
+    }
+  }
+}
