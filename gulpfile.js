@@ -1,9 +1,16 @@
 /*global require*/
 
+const babel = require('gulp-babel');
+const browserify = require('browserify');
+const buffer = require('vinyl-buffer');
 const concat = require('gulp-concat');
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 const pug  = require('gulp-pug');
 const sass = require('gulp-sass');
+const source = require('vinyl-source-stream');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
 
 gulp.task('default', ['sass:watch', 'pug:watch', 'scripts:watch']);
 
@@ -15,8 +22,8 @@ gulp.task('pug:watch', ['pug'], () => {
     gulp.watch('src/pug/**/*.pug', ['pug']);
 });
 
-gulp.task('scripts:watch', ['scripts'], () => {
-    gulp.watch('src/js/**/*.js', ['scripts']);
+gulp.task('scripts:watch', ['browserify'], () => {
+    gulp.watch('src/js/**/*.js', ['browserify']);
 });
 
 gulp.task('sass', () => {
@@ -32,8 +39,28 @@ gulp.task('pug', () => {
     ;
 });
 
-gulp.task('scripts', function () {
+gulp.task('browserify', ['bundle'], function () {
+    const b = browserify({     
+        entries: 'build/js/chrome.js',
+        debug: true
+    });
+
+    return b
+    .bundle()
+    .pipe(source('chrome.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(uglify())
+    .on('error', gutil.log)
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('build/js/'));
+});
+
+gulp.task('bundle', function () {
     return gulp.src('src/js/**/*.js')
+        .pipe(babel({
+            presets: ['es2015']
+        }))
         .pipe(concat('js/chrome.js'))
-        .pipe(gulp.dest('build'))
+        .pipe(gulp.dest('build'));
 });
