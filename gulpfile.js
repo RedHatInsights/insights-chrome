@@ -13,6 +13,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
 
 gulp.task('default', ['sass:watch', 'pug:watch', 'scripts:watch']);
+gulp.task('build', ['sass', 'pug', 'browserify']);
 
 gulp.task('sass:watch', ['sass'], () => {
     gulp.watch('src/sass/**/*.scss', ['sass']);
