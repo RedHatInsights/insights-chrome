@@ -1,0 +1,1 @@
+export const CLICK_ACTION = '@@chrome/click-action';
