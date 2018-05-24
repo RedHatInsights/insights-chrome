@@ -4,13 +4,13 @@
   "description": "Chroming for Insights",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV='development' npm-run-all --parallel \"build:pug -- -w\" \"build:js:watch\" \"build:sass\" \"build:sass -- -w\"",
     "build": "npm run build:js && npm run build:pug && npm run build:sass",
     "build:js:watch": "parcel watch src/js/chrome.js -d build/js",
     "build:js": "parcel build src/js/chrome.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
-    "build:sass": "node-sass src/sass/chrome.scss -o build/"
+    "build:sass": "node-sass src/sass/chrome.scss -o build/",
+    "test": "npm run build"
   },
   "repository": {
     "type": "git",
