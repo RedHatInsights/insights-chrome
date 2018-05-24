@@ -1,30 +1,30 @@
 script(src='/insights/chrome/js/chrome.js')
 nav.sidenav
   ul.navigation
-    li(id='dashboard', onclick='selectOption("dashboard")')
+    li(id='dashboard', onclick='insights.redux.actions.clickAction("dashboard")')
       i.fas.fa-tachometer-alt
       span Dashboard
-    li(id='advisor', onclick='selectOption("advisor")')
+    li(id='advisor', onclick='insights.redux.actions.clickAction("advisor")')
       i.fas.fa-clipboard-list
       span Advisor
-    li(id='security', onclick='selectOption("security")')
+    li(id='security', onclick='insights.redux.actions.clickAction("security")')
       i.fas.fa-lock
       span Security
-    li(id='compliance', onclick='selectOption("compliance")')
+    li(id='compliance', onclick='insights.redux.actions.clickAction("compliance")')
       i.fas.fa-gavel
       span Compliance
-    li(id='cmaas', onclick='selectOption("cmaas")')
+    li(id='cmaas', onclick='insights.redux.actions.clickAction("cmaas")')
       i.fas.fa-piggy-bank
       span Cost Management
-    li(id='vmaas', onclick='selectOption("vmaas")')
+    li(id='vmaas', onclick='insights.redux.actions.clickAction("vmaas")')
       i.fas.fa-user-md
       span Vulnerabilities
-    li(id='inventory', onclick='selectOption("inventory")')
+    li(id='inventory', onclick='insights.redux.actions.clickAction("inventory")')
       i.fas.fa-database
       span Inventory
-    li(id='reports', onclick='selectOption("reports")')
+    li(id='reports', onclick='insights.redux.actions.clickAction("reports")')
       i.fas.fa-chart-bar
       span Executive Report
-    li(id='settings', onclick='selectOption("settings")')
+    li(id='settings', onclick='insights.redux.actions.clickAction("settings")')
       i.fas.fa-cog
       span Settings
