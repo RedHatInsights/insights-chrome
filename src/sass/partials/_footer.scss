@@ -8,7 +8,12 @@ footer.footer {
 
   * + * { @include rem('margin-left', 50px); }
 
-  img { height: 30px; }
+  svg#redhat-logo {
+    height: 30px;
+    display: inline;
+    .st0 { fill: #fff; }
+    .st1{fill:#cc0000;}
+  }
 
   p, nav { @include rem('margin-top', 5px); }
 
