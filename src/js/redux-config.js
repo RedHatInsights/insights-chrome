@@ -1,11 +1,15 @@
 import { combineReducers, compose, createStore, applyMiddleware } from 'redux';
-import * as actions from './redux/actions';
+import * as actionTemplates from './redux/actions';
 import chromeReducer from './redux';
 import {
     ReducerRegistry,
     dispatchActionsToStore,
     MiddlewareListener
 } from '@red-hat-insights/insights-frontend-components';
+
+import * as appNav from './nav/appNav.js';
+import * as globalNav from './nav/globalNav.js';
+import { createReduxListener } from './utils';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
@@ -24,10 +28,13 @@ export function spinUpStore(initState = {}, middlewares = [], composeEnhancers =
             ...middlewares
         ]
     );
-    const store = reduxRegistry.getStore();
+
     reduxRegistry.register(chromeReducer());
-    insights.redux.actions = dispatchActionsToStore(actions, store);
-    insights.redux.chrome = insights.redux.chrome || {};
-    insights.redux.chrome.on = (type, callback) => middlewareListener.addNew({ on: type, callback });
-    return store;
+    const store = reduxRegistry.getStore();
+
+    store.subscribe(createReduxListener(store, 'chrome.globalNav', globalNav.render));
+    store.subscribe(createReduxListener(store, 'chrome.appNav', appNav.render));
+
+    const actions = dispatchActionsToStore(actionTemplates, store);
+    return { store, middlewareListener, actions};
 }

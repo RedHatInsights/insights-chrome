@@ -26,13 +26,48 @@ You can include/use chrome in your development project by running the insights-p
 </html>
 ```
 
+## Javascript API
+Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
+
+```js
+    // initialize chrome
+    insights.chrome.init();
+
+    // identify yourself (the application). This tells Chrome which global navigation element should be active
+    insights.chrome.globalNavIdent('advisor');
+
+    // define application navigation (navigation submenu)
+    // at most one of the elements should be declared active
+    // the operation is idempotent
+    insights.chrome.appNav([{
+        id: 'stability',
+        title: 'Stability'
+    }, {
+        id: 'performance',
+        title: 'Performance',
+        active: true
+    }]);
+
+    // register a listener for application navigation events
+    const unregister = insights.chrome.on('APP_NAV_CLICK', event => {
+        // change application route in response to navigation event from Chrome
+        history.push(`/${event.data.id}`);
+    });
+
+    // the listener can be unregistered if needed
+    unregister();
+```
+
+The following events can be observed:
+* `APP_NAV_CLICK` - fired when the application navigation element is triggered. `data.id` can be used to access the element id
+
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
 entire app or to watch files.
 
 #### Individual tasks
 To run each task you have to first install dependencies `npm install` and then you are free to use any task as you wish.
-If you want to watch file changes for each build just pass `-- -w` to specific task (this is not applicable to 
+If you want to watch file changes for each build just pass `-- -w` to specific task (this is not applicable to
 `npm run build:js:watch` because it's somewhat specific).
 1) Building of styles
 ```bash
