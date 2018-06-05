@@ -2,6 +2,7 @@
   "presets": ["es2015"],
   "plugins": [
     "transform-inline-environment-variables",
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
+    "syntax-dynamic-import"
   ]
 }

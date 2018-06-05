@@ -17,5 +17,5 @@ export function createReduxListener (store, path, fn) {
             previous = current;
             fn(current, store);
         }
-    }
-};
+    };
+}

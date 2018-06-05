@@ -9,11 +9,11 @@ export function globalNavIdent (data) {
     }
 
     return {type: actionTypes.GLOBAL_NAV_IDENT, data};
-};
+}
 
 export function appNav (data) {
     if (!Array.isArray(data)) {
-        throw new Error(`invalid parameter type: ${typeof data}`)
+        throw new Error(`invalid parameter type: ${typeof data}`);
     }
 
     data.forEach(item => {
@@ -24,11 +24,11 @@ export function appNav (data) {
         if (typeof item.title !== 'string') {
             throw new Error(`missing title field`);
         }
-    })
+    });
 
     return {type: actionTypes.APP_NAV, data};
-};
+}
 
 export function appNavClick(item, event) {
-    return {type: actionTypes.APP_NAV_CLICK, payload: {id: item.id, event}}
+    return {type: actionTypes.APP_NAV_CLICK, payload: {id: item.id, event}};
 }

@@ -14,5 +14,5 @@ export default function() {
 
     return {
         chrome: (state = {}, action) => applyReducerHash(reducers)(state, action)
-    }
+    };
 }

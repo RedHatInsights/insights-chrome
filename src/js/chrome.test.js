@@ -1,5 +1,5 @@
 import './chrome';
-import * as actions from './redux/actions.js'
+import * as actions from './redux/actions.js';
 
 describe('Chrome API', () => {
 

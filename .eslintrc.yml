@@ -1,0 +1,82 @@
+parser: babel-eslint
+env:
+  browser: true
+extends: 'eslint:recommended'
+parserOptions:
+  ecmaVersion: 7
+  sourceType: module
+globals:
+  describe: true
+  it: true
+  expect: true
+  insights: true
+  process: true
+rules:
+  array-bracket-spacing: 2
+  comma-dangle: 2
+  comma-style: 2
+  camelcase: 2
+  curly:
+    - error
+    - all
+  dot-notation: 2
+  eol-last: 2
+  eqeqeq: 2
+  func-names:
+    - error
+    - never
+  indent:
+    - error
+    - 4
+    - SwitchCase: 1
+      MemberExpression: 0
+  key-spacing: 2
+  keyword-spacing: 2
+  linebreak-style:
+    - error
+    - unix
+  new-cap: 2
+  no-bitwise: 2
+  no-caller: 2
+  no-mixed-spaces-and-tabs: 2
+  no-multiple-empty-lines:
+    - error
+    - max: 1
+  no-trailing-spaces: 2
+  no-use-before-define:
+    - error
+    - functions: false
+  no-undef: 2
+  no-unused-vars: 2
+  no-var: 2
+  no-with: 2
+  one-var:
+    - error
+    - never
+  padding-line-between-statements:
+    - error
+    - blankLine: always
+      prev: block-like
+      next: "*"
+  quote-props:
+    - error
+    - as-needed
+  quotes:
+    - error
+    - single
+    - allowTemplateLiterals: true
+  semi:
+    - error
+    - always
+  space-before-blocks: 2
+  space-in-parens: 2
+  space-infix-ops: 2
+  space-unary-ops:
+    - error
+    - words: false
+      nonwords: false
+  vars-on-top: 2
+  wrap-iife: 2
+  yoda:
+    - error
+    - never

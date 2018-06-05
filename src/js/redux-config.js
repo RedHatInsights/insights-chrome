@@ -1,4 +1,3 @@
-import { combineReducers, compose, createStore, applyMiddleware } from 'redux';
 import * as actionTemplates from './redux/actions';
 import chromeReducer from './redux';
 import {
@@ -13,12 +12,12 @@ import { createReduxListener } from './utils';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
-    basicMiddlewares.push(require('redux-logger').default);
+    import('redux-logger').then(logger => basicMiddlewares.push(logger.default));
 }
 
 // const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export function spinUpStore(initState = {}, middlewares = [], composeEnhancers = compose) {
+export function spinUpStore(initState = {}, middlewares = []) {
     const middlewareListener = new MiddlewareListener();
     const reduxRegistry = new ReducerRegistry(
         initState,
