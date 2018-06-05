@@ -6,7 +6,6 @@ export function clickReducer(state, action) {
         previousPage: state.currentPage,
         currentPage: action.payload
     };
-    selectOption(action.payload);
     return state;
 }
 
@@ -18,7 +17,7 @@ export function globalNavReducer(state, action) {
             ...item,
             active: item.id === action.data
         }))
-    }
+    };
 }
 
 export function appNavReducer(state, action) {
