@@ -1,4 +1,4 @@
-import { applyReducerHash } from '@red-hat-insights/insights-frontend-components';
+import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 
 import {
     clickReducer, appNavReducer, globalNavReducer
