@@ -9,7 +9,7 @@ describe('Chrome API', () => {
 
     it('allows for an event lister to be registered', () => {
         insights.chrome.init();
-        insights.chrome.on('APP_NAV_CLICK', () => true);
+        insights.chrome.on('APP_NAVIGATION', () => true);
     });
 
     it('throws an error if an unknown event listener registration is attempted', () => {
@@ -20,21 +20,23 @@ describe('Chrome API', () => {
     it('allows for an event lister to be registered', () => {
         let result;
         insights.chrome.init();
-        insights.chrome.on('APP_NAV_CLICK', event => result = event.data.id);
+        insights.chrome.on('APP_NAVIGATION', event => result = event);
 
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'map'}, {}));
-        expect(result).toBe('map');
+        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'map'}, {target: 'button'}));
+        expect(result.navId).toBe('map');
+        expect(result.domEvent.target).toBe('button');
     });
 
     it('allows for an event lister to be unregistered', () => {
         let result;
         insights.chrome.init();
-        const unregister = insights.chrome.on('APP_NAV_CLICK', event => result = event.data.id);
+        const unregister = insights.chrome.on('APP_NAVIGATION', event => result = event);
 
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'map'}, {}));
+        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'map'}, {target: 'button'}));
         unregister();
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'widgets'}, {}));
+        insights.chrome.$internal.store.dispatch(actions.appNavClick({id: 'widgets'}, {target: 'i'}));
 
-        expect(result).toBe('map');
+        expect(result.navId).toBe('map');
+        expect(result.domEvent.target).toBe('button');
     });
 });

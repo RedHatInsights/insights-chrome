@@ -34,12 +34,12 @@ Insights Chrome comes with a Javacript API that allows applications to control n
     insights.chrome.init();
 
     // identify yourself (the application). This tells Chrome which global navigation element should be active
-    insights.chrome.globalNavIdent('advisor');
+    insights.chrome.identifyApp('advisor');
 
     // define application navigation (navigation submenu)
     // at most one of the elements should be declared active
     // the operation is idempotent
-    insights.chrome.appNav([{
+    insights.chrome.navigation([{
         id: 'stability',
         title: 'Stability'
     }, {
@@ -49,9 +49,9 @@ Insights Chrome comes with a Javacript API that allows applications to control n
     }]);
 
     // register a listener for application navigation events
-    const unregister = insights.chrome.on('APP_NAV_CLICK', event => {
+    const unregister = insights.chrome.on('APP_NAVIGATION', event => {
         // change application route in response to navigation event from Chrome
-        history.push(`/${event.data.id}`);
+        history.push(`/${event.navId}`);
     });
 
     // the listener can be unregistered if needed
@@ -59,7 +59,7 @@ Insights Chrome comes with a Javacript API that allows applications to control n
 ```
 
 The following events can be observed:
-* `APP_NAV_CLICK` - fired when the application navigation element is triggered. `data.id` can be used to access the element id
+* `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
 
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
