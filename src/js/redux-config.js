@@ -17,10 +17,10 @@ if (process.env.NODE_ENV === 'development') {
 
 // const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export function spinUpStore(initState = {}, middlewares = []) {
+export function spinUpStore(middlewares = []) {
     const middlewareListener = new MiddlewareListener();
     const reduxRegistry = new ReducerRegistry(
-        initState,
+        initialState(),
         [
             middlewareListener.getMiddleware(),
             ...basicMiddlewares,
@@ -36,4 +36,12 @@ export function spinUpStore(initState = {}, middlewares = []) {
 
     const actions = dispatchActionsToStore(actionTemplates, store);
     return { store, middlewareListener, actions};
+}
+
+function initialState () {
+    return {
+        chrome: {
+            globalNav: globalNav.options
+        }
+    };
 }
