@@ -8,7 +8,7 @@ export function identifyApp (data) {
         throw new Error(`unknown app identifier: ${data}`);
     }
 
-    return {type: actionTypes.GLOBAL_NAV_IDENT, data};
+    return { type: actionTypes.GLOBAL_NAV_IDENT, data };
 }
 
 export function appNav (data) {
@@ -26,9 +26,9 @@ export function appNav (data) {
         }
     });
 
-    return {type: actionTypes.APP_NAV, data};
+    return { type: actionTypes.APP_NAV, data };
 }
 
 export function appNavClick(item, event) {
-    return {type: actionTypes.APP_NAV_CLICK, payload: {id: item.id, event}};
+    return { type: actionTypes.APP_NAV_CLICK, payload: { id: item.id, event } };
 }

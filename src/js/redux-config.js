@@ -35,7 +35,7 @@ export function spinUpStore(middlewares = []) {
     store.subscribe(createReduxListener(store, 'chrome.appNav', appNav.render));
 
     const actions = dispatchActionsToStore(actionTemplates, store);
-    return { store, middlewareListener, actions};
+    return { store, middlewareListener, actions };
 }
 
 function initialState () {
