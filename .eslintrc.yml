@@ -11,6 +11,7 @@ globals:
   expect: true
   insights: true
   process: true
+  beforeAll: true
 rules:
   array-bracket-spacing: 2
   comma-dangle: 2

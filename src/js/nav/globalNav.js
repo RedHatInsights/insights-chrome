@@ -52,8 +52,11 @@ function toNavElement(item) {
     return li;
 }
 
-export function render (state) {
+export function render (state = options) {
     const ul = document.getElementById('navigation');
     ul.innerHTML = '';
     state.map(toNavElement).forEach(item => ul.appendChild(item));
 }
+
+// temporary fallback for apps that do not use the chrome API yet
+document.addEventListener('DOMContentLoaded', () => !window.insights.chrome.on && render());

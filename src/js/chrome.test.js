@@ -1,3 +1,4 @@
+import './test';
 import './chrome';
 import * as actions from './redux/actions.js';
 
