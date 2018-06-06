@@ -3,7 +3,7 @@ import * as globalNav from '../nav/globalNav';
 
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
-export function globalNavIdent (data) {
+export function identifyApp (data) {
     if (!globalNav.options.some(item => item.id === data)) {
         throw new Error(`unknown app identifier: ${data}`);
     }

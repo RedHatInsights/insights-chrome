@@ -3,8 +3,8 @@ import * as reducers from './reducers';
 
 describe('Reducers', () => {
     describe('Navigation', () => {
-        it('activates global navigation element on globalNavIdent()', () => {
-            const state = reducers.globalNavReducer({}, actions.globalNavIdent('inventory'));
+        it('activates global navigation element on identifyApp()', () => {
+            const state = reducers.globalNavReducer({}, actions.identifyApp('inventory'));
             expect(state.appId).toEqual('inventory');
             const activeItems = state.globalNav.filter(i => i.active);
             expect(activeItems.length).toBe(1);
@@ -12,7 +12,7 @@ describe('Reducers', () => {
         });
 
         it('throws error on unknown app', () => {
-            expect(() => actions.globalNavIdent('foo')).toThrowError('unknown app identifier: foo');
+            expect(() => actions.identifyApp('foo')).toThrowError('unknown app identifier: foo');
         });
 
         it('defines app navigation with appNav()', () => {
