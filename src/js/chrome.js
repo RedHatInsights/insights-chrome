@@ -5,7 +5,7 @@ import * as actionTypes from './redux/action-types';
 const PUBLIC_EVENTS = {
     APP_NAVIGATION: fn => ({
         on: actionTypes.APP_NAV_CLICK,
-        callback: event => fn({navId: event.data.id, domEvent: event.data.event})
+        callback: event => fn({ navId: event.data.id, domEvent: event.data.event })
     })
 };
 
@@ -15,7 +15,7 @@ window.insights.chrome = {
         const { store, middlewareListener, actions } = spinUpStore();
 
         // public API actions
-        const {identifyApp, appNav} = actions;
+        const { identifyApp, appNav } = actions;
         window.insights.chrome.identifyApp = identifyApp;
         window.insights.chrome.navigation = appNav;
 
