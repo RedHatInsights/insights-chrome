@@ -16,7 +16,7 @@ describe('Chrome API', () => {
     it('throws an error if an unknown event listener registration is attempted', () => {
         insights.chrome.init();
         expect(() => insights.chrome.on('NON_EXISTENT_EVENT', () => true))
-            .toThrowError('Unknown event type: NON_EXISTENT_EVENT');
+        .toThrowError('Unknown event type: NON_EXISTENT_EVENT');
     });
 
     it('allows for an event lister to be registered', () => {

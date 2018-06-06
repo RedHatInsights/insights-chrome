@@ -4,7 +4,7 @@ import get from 'lodash/get';
 export function render (state, store) {
     // remove all app navigation uls
     Array.from(document.getElementsByClassName('navigation-secondary'))
-        .forEach(element => element.parentNode.removeChild(element));
+    .forEach(element => element.parentNode.removeChild(element));
 
     const parent = getParent(store);
 
