@@ -1,7 +1,7 @@
 parser: babel-eslint
 env:
   browser: true
-extends: 
+extends:
   - 'eslint:recommended'
   - 'prettier'
 parserOptions:
@@ -35,7 +35,7 @@ rules:
     - error
     - 4
     - SwitchCase: 1
-      MemberExpression: 1
+      MemberExpression: 0
       ImportDeclaration: 1
       ObjectExpression: 1
   key-spacing: 2

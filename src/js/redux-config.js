@@ -1,6 +1,7 @@
 import * as actionTemplates from './redux/actions';
 import chromeReducer from './redux';
-import ReducerRegistry, { dispatchActionsToStore } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
+import ReducerRegistry, { dispatchActionsToStore }
+    from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
 
 import * as appNav from './nav/appNav.js';
