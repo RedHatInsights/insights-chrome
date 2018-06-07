@@ -81,7 +81,7 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
 
 3) Building of javascripts and watching files when they change
 ```bash
-> npm run build:js:watch
+> npm run watch:js
 ```
 
 4) Building of HTML partials
