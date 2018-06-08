@@ -8,7 +8,7 @@ describe('Chrome API', () => {
         insights.chrome.init();
     });
 
-    it('allows for an event lister to be registered', () => {
+    it('allows for an event listener to be registered', () => {
         insights.chrome.init();
         insights.chrome.on('APP_NAVIGATION', () => true);
     });
@@ -19,7 +19,7 @@ describe('Chrome API', () => {
         .toThrowError('Unknown event type: NON_EXISTENT_EVENT');
     });
 
-    it('allows for an event lister to be registered', () => {
+    it('allows for an event listener to be registered', () => {
         let result;
         insights.chrome.init();
         insights.chrome.on('APP_NAVIGATION', event => result = event);
@@ -29,7 +29,7 @@ describe('Chrome API', () => {
         expect(result.domEvent.target).toBe('button');
     });
 
-    it('allows for an event lister to be unregistered', () => {
+    it('allows for an event listener to be unregistered', () => {
         let result;
         insights.chrome.init();
         const unregister = insights.chrome.on('APP_NAVIGATION', event => result = event);
