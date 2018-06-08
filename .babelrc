@@ -3,6 +3,6 @@
   "plugins": [
     "transform-inline-environment-variables",
     "transform-object-rest-spread",
-    "syntax-dynamic-import"
+    "babel-plugin-dynamic-import-node"
   ]
 }
