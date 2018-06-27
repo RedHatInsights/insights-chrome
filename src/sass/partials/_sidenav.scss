@@ -26,5 +26,22 @@
         i { color: $blue; }
       }
     }
+    ul.navigation-secondary {
+      margin-left: 25px;
+      margin-top: 5px;
+      li {
+        font-size: 15px;
+        box-shadow: none;
+        padding: 5px 0;
+        color: #d1d1d1;
+        &:hover, &:active, &.active{
+          background: #393f44;
+          color: #fff;
+        }
+        &.active {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
