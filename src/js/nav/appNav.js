@@ -27,15 +27,19 @@ function getParent (store) {
 
 function optionMapper (item) {
     const li = document.createElement('li');
+    const span = document.createElement('span');
+
     li.onclick = event => {
         event.stopPropagation();
         this.dispatch(actions.appNavClick(item, event));
     };
 
-    li.textContent = item.title;
+    span.textContent = item.title;
     if (item.active) {
         li.classList.add('active');
     }
+
+    li.appendChild(span);
 
     return li;
 }

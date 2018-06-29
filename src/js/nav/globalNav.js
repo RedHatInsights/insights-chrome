@@ -34,20 +34,29 @@ export const options = Object.freeze([{
 
 function toNavElement(item) {
     const li = document.createElement('li');
+    const a = document.createElement('a');
+    const i = document.createElement('i');
+    const span = document.createElement('span');
+
+    li.classList.add('pf-c-vertical-nav__item');
     li.setAttribute('id', item.id);
     if (item.active) {
         li.classList.add('active');
+        a.classList.add('pf-m-active');
     }
+    
+    a.classList.add('pf-c-vertical-nav__link');
 
-    const i = document.createElement('i');
     i.classList.add('fas');
     i.classList.add(item.icon);
 
-    const span = document.createElement('span');
+    span.classList.add('pf-c-vertical-nav__link-text');
     span.textContent = item.title;
 
-    li.appendChild(i);
-    li.appendChild(span);
+    a.appendChild(i);
+    a.appendChild(span);
+
+    li.appendChild(a);
 
     return li;
 }

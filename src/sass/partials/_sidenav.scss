@@ -1,47 +1,26 @@
-.sidenav {
-  color: #d1d1d1;
-  background: $bg-sidenav;
 
-  .navigation {
-    list-style-type: none;
-    height: min-content;
-    width: max-content;
-    margin: 0;
-    padding: 0;
-    font-family: 'Overpass', 'OpenSans', sans-serif;
-    li {
-      padding: 25px;
-      cursor: pointer;
-      i { margin-right: 10px; }
-      @include transition(all);
-      &:hover, &:active {
-        background: #393f44;
-        color: #fff;
-        i { color: $blue; }
-      }
-      &.active {
-        box-shadow: inset 5px 0px 0px 0px $blue;
-        background: #393f44;
-        color: #fff;
-        i { color: $blue; }
-      }
+nav.pf-c-vertical-nav{
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+  z-index: 2;
+  i + span {
+    margin-left: 10px;
+  }
+}
+
+ul.navigation-secondary {
+  margin-top: 20px;
+  li {
+    cursor: pointer;
+    font-size: 15px;
+    width: 100%;
+    box-shadow: none;
+    padding: 5px 0;
+    color: $f-gray;
+    span { margin-left: 50px; }
+    &:active, &.active{
+      background: #f5f5f5;
+      color: $blue;
     }
-    ul.navigation-secondary {
-      margin-left: 25px;
-      margin-top: 5px;
-      li {
-        font-size: 15px;
-        box-shadow: none;
-        padding: 5px 0;
-        color: #d1d1d1;
-        &:hover, &:active, &.active{
-          background: #393f44;
-          color: #fff;
-        }
-        &.active {
-          text-decoration: underline;
-        }
-      }
-    }
+    &:hover { color: $blue; }
   }
 }
