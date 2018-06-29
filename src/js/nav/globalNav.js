@@ -1,41 +1,32 @@
 export const options = Object.freeze([{
     id: 'dashboard',
-    title: 'Dashboard',
-    icon: 'fa-tachometer-alt'
+    title: 'Dashboard'
 }, {
     id: 'advisor',
-    title: 'Advisor',
-    icon: 'fa-clipboard-list'
+    title: 'Advisor'
 }, {
     id: 'security',
-    title: 'Security',
-    icon: 'fa-lock'
+    title: 'Security'
 }, {
     id: 'compliance',
-    title: 'Compliance',
-    icon: 'fa-gavel'
+    title: 'Compliance'
 }, {
     id: 'cmaas',
-    title: 'Cost Management',
-    icon: 'fa-piggy-bank'
+    title: 'Cost Management'
 }, {
     id: 'inventory',
-    title: 'Inventory',
-    icon: 'fa-database'
+    title: 'Inventory'
 }, {
     id: 'reports',
-    title: 'Reports',
-    icon: 'fa-chart-bar'
+    title: 'Reports'
 }, {
     id: 'settings',
-    title: 'Settings',
-    icon: 'fa-cog'
+    title: 'Settings'
 }]);
 
 function toNavElement(item) {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    const i = document.createElement('i');
     const span = document.createElement('span');
 
     li.classList.add('pf-c-vertical-nav__item');
@@ -48,13 +39,9 @@ function toNavElement(item) {
 
     a.classList.add('pf-c-vertical-nav__link');
 
-    i.classList.add('fas');
-    i.classList.add(item.icon);
-
     span.classList.add('pf-c-vertical-nav__link-text');
     span.textContent = item.title;
 
-    a.appendChild(i);
     a.appendChild(span);
 
     li.appendChild(a);
