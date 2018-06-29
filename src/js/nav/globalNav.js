@@ -43,6 +43,7 @@ function toNavElement(item) {
     if (item.active) {
         li.classList.add('active');
         a.classList.add('pf-m-active');
+        a.setAttribute('aria-current', 'page');
     }
 
     a.classList.add('pf-c-vertical-nav__link');
