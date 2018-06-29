@@ -44,7 +44,7 @@ function toNavElement(item) {
         li.classList.add('active');
         a.classList.add('pf-m-active');
     }
-    
+
     a.classList.add('pf-c-vertical-nav__link');
 
     i.classList.add('fas');
