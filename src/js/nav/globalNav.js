@@ -1,53 +1,50 @@
 export const options = Object.freeze([{
     id: 'dashboard',
-    title: 'Dashboard',
-    icon: 'fa-tachometer-alt'
+    title: 'Dashboard'
 }, {
     id: 'advisor',
-    title: 'Advisor',
-    icon: 'fa-clipboard-list'
+    title: 'Advisor'
 }, {
     id: 'security',
-    title: 'Security',
-    icon: 'fa-lock'
+    title: 'Security'
 }, {
     id: 'compliance',
-    title: 'Compliance',
-    icon: 'fa-gavel'
+    title: 'Compliance'
 }, {
     id: 'cmaas',
-    title: 'Cost Management',
-    icon: 'fa-piggy-bank'
+    title: 'Cost Management'
 }, {
     id: 'inventory',
-    title: 'Inventory',
-    icon: 'fa-database'
+    title: 'Inventory'
 }, {
     id: 'reports',
-    title: 'Reports',
-    icon: 'fa-chart-bar'
+    title: 'Reports'
 }, {
     id: 'settings',
-    title: 'Settings',
-    icon: 'fa-cog'
+    title: 'Settings'
 }]);
 
 function toNavElement(item) {
     const li = document.createElement('li');
+    const a = document.createElement('a');
+    const span = document.createElement('span');
+
+    li.classList.add('pf-c-vertical-nav__item');
     li.setAttribute('id', item.id);
     if (item.active) {
         li.classList.add('active');
+        a.classList.add('pf-m-active');
+        a.setAttribute('aria-current', 'page');
     }
 
-    const i = document.createElement('i');
-    i.classList.add('fas');
-    i.classList.add(item.icon);
+    a.classList.add('pf-c-vertical-nav__link');
 
-    const span = document.createElement('span');
+    span.classList.add('pf-c-vertical-nav__link-text');
     span.textContent = item.title;
 
-    li.appendChild(i);
-    li.appendChild(span);
+    a.appendChild(span);
+
+    li.appendChild(a);
 
     return li;
 }
