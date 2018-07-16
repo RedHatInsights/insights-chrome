@@ -1,12 +1,13 @@
 $pf-global--enable-reset: 'true';
-@import 'node_modules/@patternfly/patternfly-next/_base.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/VerticalNav/styles.scss';
+
+@import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
 
 @import 'helpers.scss';
 
 @import 'partials/_footer.scss';
 @import 'partials/_topbar.scss';
 @import 'partials/_sidenav.scss';
+
 
 #root {
     height: 100%;
