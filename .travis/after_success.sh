@@ -2,9 +2,8 @@
 
 # Check if it is a pull request
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-    .travis/release_stable.sh
-    # echo -e "Pull Request, not pushing a build"
-    # exit 0;
+    echo -e "Pull Request, not pushing a build"
+    exit 0;
 fi
 
 # If current dev branch is master, push to build repo master
