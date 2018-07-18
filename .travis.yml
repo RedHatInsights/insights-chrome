@@ -1,10 +1,8 @@
 language: node_js
-
+sudo: required
 node_js:
   - stable
-
 install:
-  - npm install
-
+  - npm ci
 script:
   - npm run verify
