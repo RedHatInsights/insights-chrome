@@ -10,6 +10,8 @@
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:patternfly": "cpx node_modules/@patternfly/patternfly-next/components/VerticalNav/styles.css build",
+    "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
+    "build:Fafonts": "cpx 'node_modules/font-awesome/fonts/*.*' build/assets/fonts",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
     "lint:sass": "stylelint 'src/sass/**/*.scss' --config .stylelint.json",
@@ -41,6 +43,7 @@
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "concurrently": "^3.5.1",
+    "cpx": "^1.5.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "jest": "^23.1.0",
@@ -51,12 +54,12 @@
     "pug-cli": "^1.0.0-alpha6",
     "stylelint": "^9.2.1",
     "stylelint-config-recommended-scss": "^3.2.0",
-    "stylelint-scss": "^3.1.0",
-    "cpx": "^1.5.0"
+    "stylelint-scss": "^3.1.0"
   },
   "dependencies": {
     "@patternfly/patternfly-next": "^1.0.9",
     "@red-hat-insights/insights-frontend-components": "^0.1.14",
+    "font-awesome": "^4.7.0",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "lodash": "^4.17.10",
