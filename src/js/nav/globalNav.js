@@ -1,3 +1,5 @@
+const basepath = '/insights/platform/';
+
 export const options = Object.freeze([{
     id: 'dashboard',
     title: 'Dashboard'
@@ -38,6 +40,7 @@ function toNavElement(item) {
     }
 
     a.classList.add('pf-c-vertical-nav__link');
+    a.setAttribute('href', basepath + item.id);
 
     span.classList.add('pf-c-vertical-nav__link-text');
     span.textContent = item.title;
