@@ -22,8 +22,8 @@ node {
             sh '''
                 eval `ssh-agent`
                 ssh-add "$insightsbot"
-                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insights/platform/dashboard/
-                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insightsbeta/platform/dashboard/
+                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insights/static/chrome/
+                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insightsbeta/static/chrome/
             '''
         }
     }
