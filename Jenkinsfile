@@ -8,11 +8,23 @@ def wrapStep(String stepName, Closure step) {
   }
 }
 
-node('insights-frontend-slave') {
-  if ('master' == env.BRANCH_NAME) {
-    wrapStep('clone', { name -> stage(name) { checkout scm } })
-    wrapStep('deploy_chrome', { name -> stage(name) { sh 'rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insights/static/chrome/' } })
-    wrapStep('deploy_chrome', { name -> stage(name) { sh 'rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insightsbeta/static/chrome/' } })
-  }
-}
+node {
+    env.NODEJS_HOME = "${tool 'node-8'}"
+    env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
 
+    checkout scm
+
+    stage('deploy') {
+        withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'insightsbot',
+                                                     keyFileVariable: 'insightsbot',
+                                                     passphraseVariable: '',
+                                                     usernameVariable: '')]) {
+            sh '''
+                eval `ssh-agent`
+                ssh-add "$insightsbot"
+                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insights/static/chrome/
+                rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insightsbeta/static/chrome/
+            '''
+        }
+    }
+}
