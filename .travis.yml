@@ -1,13 +1,14 @@
 language: node_js
 sudo: required
 node_js:
-  - stable
+- stable
 install:
-  - npm ci
+- npm ci
 script:
-  - npm run verify
+- npm run verify
 after_success:
 - .travis/after_success.sh
 env:
-  global:
-  - REPO="git@github.com:RedHatInsights/insights-chrome-build"
+    global:
+    - REPO="git@github.com:RedHatInsights/insights-chrome-build"
+    - REPO_DIR="insights-chrome-build"
