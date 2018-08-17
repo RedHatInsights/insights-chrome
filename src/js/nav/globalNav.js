@@ -7,8 +7,8 @@ export const options = Object.freeze([{
     id: 'advisor',
     title: 'Advisor'
 }, {
-    id: 'security',
-    title: 'Security'
+    id: 'vulnerability',
+    title: 'Vulnerability'
 }, {
     id: 'compliance',
     title: 'Compliance'
