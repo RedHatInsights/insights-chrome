@@ -1,8 +1,10 @@
 footer.footer {
+  grid-area: 2 / 2;
+  align-self: end;
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl);
   background: #1d1d1d;
   color: #6c6c6c;
-  @include rem('font-size', 12px);
-  @include rem('padding', 15px 20px);
+  font-size: var(--pf-global--FontSize--sm);
   display: flex;
   align-items: center;
 
