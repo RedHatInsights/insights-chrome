@@ -1,4 +1,8 @@
 footer.footer {
+  @media screen and (max-width: $pf-global--breakpoint--lg) {
+    grid-area: 2 / 1 / 2 / 3;    
+  }
+
   grid-area: 2 / 2;
   align-self: end;
   padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl);

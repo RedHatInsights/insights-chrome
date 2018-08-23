@@ -29,7 +29,7 @@ export const options = Object.freeze([{
 function toNavElement(item) {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    const span = document.createElement('span');
+    // const span = document.createElement('span');
 
     li.classList.add('pf-c-nav__item');
     li.setAttribute('id', item.id);
