@@ -15,9 +15,10 @@ window.insights.chrome = {
         const { store, middlewareListener, actions } = spinUpStore();
 
         // public API actions
-        const { identifyApp, appNav } = actions;
+        // const { identifyApp, appNav } = actions;
+        const { identifyApp } = actions;
         window.insights.chrome.identifyApp = identifyApp;
-        window.insights.chrome.navigation = appNav;
+        // window.insights.chrome.navigation = appNav;
 
         window.insights.chrome.on = (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
@@ -28,5 +29,19 @@ window.insights.chrome = {
         };
 
         window.insights.chrome.$internal = { store };
+    }
+};
+
+window.navToggle = () => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    let page = document.getElementById('primary-nav');
+    page = page.parentElement;
+
+    if (mq.matches) {
+        page.classList.remove('pf-m-expanded');
+        page.classList.toggle('pf-m-collapsed');
+    } else {
+        page.classList.remove('pf-m-collapsed');
+        page.classList.toggle('pf-m-expanded');
     }
 };

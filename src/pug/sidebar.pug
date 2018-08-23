@@ -1,0 +1,41 @@
+//- script(src='/insights/static/chrome/js/chrome.js')
+//- aside.pf-l-page__sidebar
+//-   nav#primary-nav.pf-c-nav(role='navigation' aria-label='Insights Primary Navigation')
+//-     ul#navigation.pf-c-nav__list
+
+
+script(src='/insights/static/chrome/js/chrome.js')
+aside.pf-l-page__sidebar
+  nav#primary-nav.pf-c-nav(aria-label='Primary Nav Expandable Example')
+    ul.pf-c-nav__list
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/dashboard/') Overall health
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/advisor/') Advisor
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/vulnerability/') Vulnerability
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/compliance/') Compliance
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/cmaas/') Cost Management
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/inventory/') Inventory
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/reports/') Reports
+      li.pf-c-nav__item
+        a.pf-c-nav__link(href='/insights/platform/settings/') Settings
+
+
+//-       //- li.pf-c-nav__item.pf-m-expandable.pf-m-expanded.pf-m-current
+//-       //-   a#link1.pf-c-nav__link(href='#', aria-expanded='true')
+//-       //-     | System Panel
+//-       //-     span.pf-c-nav__toggle(tabindex='-1', aria-disabled='true')
+//-       //-       i.fas.fa-angle-right
+//-       //-   section.pf-c-nav__subnav(aria-labelledby='link1')
+//-       //-     ul.pf-c-nav__simple-list
+//-       //-       li.pf-c-nav__item
+//-       //-         a.pf-c-nav__link(href='#')
+//-       //-           | Overview
+//-       //-       li.pf-c-nav__item
+//-       //-         a.pf-c-nav__link.pf-m-current(href='#', aria-current='page')
+//-       //-           | Resource Usage

@@ -29,9 +29,9 @@ export const options = Object.freeze([{
 function toNavElement(item) {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    const span = document.createElement('span');
+    // const span = document.createElement('span');
 
-    li.classList.add('pf-c-vertical-nav__item');
+    li.classList.add('pf-c-nav__item');
     li.setAttribute('id', item.id);
     if (item.active) {
         li.classList.add('active');
@@ -39,13 +39,13 @@ function toNavElement(item) {
         a.setAttribute('aria-current', 'page');
     }
 
-    a.classList.add('pf-c-vertical-nav__link');
+    a.classList.add('pf-c-nav__link');
     a.setAttribute('href', basepath + item.id);
 
-    span.classList.add('pf-c-vertical-nav__link-text');
-    span.textContent = item.title;
+    // span.classList.add('pf-c-nav__link-text');
+    // span.textContent = item.title;
 
-    a.appendChild(span);
+    a.append(item.title);
 
     li.appendChild(a);
 
