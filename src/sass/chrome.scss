@@ -1,6 +1,7 @@
 $pf-global--enable-reset: 'true';
 
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
+@import 'node_modules/@patternfly/patternfly-next/layouts/page/styles.scss';
 
 @import 'helpers.scss';
 
@@ -20,26 +21,26 @@ html, body {
     margin: 0;
     font-family: 'Overpass', 'OpenSans', sans-serif;
     text-rendering: optimizeLegibility;
-    display: grid;
-    grid-template-areas: 'topbar topbar'
-                        'sidenav content'
-                        'sidenav footer';
-    grid-template-rows: min-content 1fr min-content;
-    grid-template-columns: 1fr 9fr;
+    // display: grid;
+    // grid-template-areas: 'topbar topbar'
+    //                     'sidenav content'
+    //                     'sidenav footer';
+    // grid-template-rows: min-content 1fr min-content;
+    // grid-template-columns: 1fr 9fr;
 
-    .topbar {
-    grid-area: topbar;
-    }
+    // .topbar {
+    // grid-area: topbar;
+    // }
 
-    .footer {
-    grid-area: footer;
-    }
+    // .footer {
+    // grid-area: footer;
+    // }
 
-    .sidenav {
-    grid-area: sidenav;
-    }
+    // .sidenav {
+    // grid-area: sidenav;
+    // }
 
-    #root {
-    grid-area: content;
-    }
+    // #root {
+    // grid-area: content;
+    // }
 }

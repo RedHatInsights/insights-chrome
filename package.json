@@ -57,7 +57,7 @@
     "stylelint-scss": "^3.1.0"
   },
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.9",
+    "@patternfly/patternfly-next": "^1.0.31",
     "@red-hat-insights/insights-frontend-components": "^0.1.14",
     "font-awesome": "^4.7.0",
     "babel-core": "^6.26.3",
