@@ -1,34 +1,35 @@
 .topbar {
-  background: $bg-topbar;
-  display: flex;
-  align-items: center;
+  // background: $bg-topbar;
+  // display: flex;
+  // align-items: center;
 
-  i, span {
-    color: #fff;
-    @include rem('font-size', 12px);
-  }
+  // i, span {
+  //   color: #fff;
+  //   @include rem('font-size', 12px);
+  // }
 
-  i + span, span + i { @include rem('margin-left', 5px); }
+  // i + span, span + i { @include rem('margin-left', 5px); }
 
-  i.fa-bars { color: #d1d1d1; }
+  // i.fa-bars { color: #d1d1d1; }
 
-  svg#insights-logo {
-    height: 15px;
-    display: inline;
-    .st0 { fill: #fff; }
-  }
+  // svg#insights-logo {
+  //   height: 15px;
+  //   display: inline;
 
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    &:hover * { color: $blue; }
-  }
+  //   .st0 { fill: #fff; }
+  // }
 
-  .button__toggle {
-    @include rem('margin', 15px);
-    i { @include rem('font-size', 18px); }
-  }
+  // button {
+  //   background: none;
+  //   border: none;
+  //   cursor: pointer;
+  //   &:hover * { color: $blue; }
+  // }
+
+  // .button__toggle {
+  //   @include rem('margin', 15px);
+  //   i { @include rem('font-size', 18px); }
+  // }
 
   .utilities {
     display: flex;

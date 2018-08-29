@@ -1,19 +1,54 @@
 .pf-l-page__header.topbar(role="banner")
-  button.button__toggle
-    i.fas.fa-bars
-  include insights-logo.pug
-  .utilities
-    button.button__feedback
-      i.fas.fa-comments
-      span Provide feedback
-    .sep
-    .notifications
-      button.button__fab
-        i.fas.fa-bullhorn
-      button.button__fab
-        i.fas.fa-bell
-    .sep
-    button.button__help
-      span Help
-      i.fas.fa-caret-down
-include ./globalNav.pug
+  .pf-l-page__header-brand
+    button.pf-l-page__header-sidebar-toggle(onclick="navToggle()")
+      i.fas.fa-bars.fa-w-14
+    a.pf-l-page__header-brand-link(href="/insights/platform/dashboard/")
+      include insights-logo.pug
+  .pf-l-page__header-tools
+    .pf-l-toolbar
+      .pf-l-toolbar__group.pf-u-sr-only.pf-u-visible-on-lg
+        .pf-l-toolbar__item
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search')
+            i.fas.fa-search
+        .pf-l-toolbar__item
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow notifications')
+            i.fas.fa-bell
+        .pf-l-toolbar__item
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow settings')
+            i.fas.fa-cog
+        .pf-l-toolbar__item
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq')
+            i.fas.fa-question-circle
+      .pf-l-toolbar__group
+        .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow actions')
+            i.fas.fa-ellipsis-v
+        .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
+          .pf-c-dropdown.pf-m-plain
+            button#dropdown-example-collapsed.pf-c-dropdown__toggle(aria-haspopup='true', aria-expanded='false')
+              | Kyle Baker
+              i.fas.fa-caret-down.pf-c-dropdown__toggle-icon
+            .pf-c-dropdown__menu(role='menu', aria-labelledby='dropdown-example-collapsed', hidden='hidden')
+              a.pf-c-dropdown__menu-item(role='menuitem', href='#') Link
+              button.pf-c-dropdown__menu-item(role='menuitem') Action
+              a.pf-c-dropdown__menu-item.pf-m-disabled(role='menuitem', aria-disabled='true', tabindex='-1', href='#') Disabled Link
+              button.pf-c-dropdown__menu-item(role='menuitem', disabled='') Disabled Action
+              .pf-c-dropdown__separator(role='separator')
+              a.pf-c-dropdown__menu-item(role='menuitem', href='#') Separated Link
+
+    //- img.pf-c-avatar(src='/assets/images/img_avatar.png', alt='Avatar image')
+
+  //- .utilities
+  //-   button.button__feedback
+  //-     i.fas.fa-comments
+  //-     span Provide feedback
+  //-   .sep
+  //-   .notifications
+  //-     button.button__fab
+  //-       i.fas.fa-bullhorn
+  //-     button.button__fab
+  //-       i.fas.fa-bell
+  //-   .sep
+  //-   button.button__help
+  //-     span Help
+  //-     i.fas.fa-caret-down

@@ -30,3 +30,16 @@ window.insights.chrome = {
         window.insights.chrome.$internal = { store };
     }
 };
+
+window.navToggle = () => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    let page = document.getElementById('ins-c-sidebar');
+
+    if (mq.matches) {
+        page.classList.remove('pf-m-expanded');
+        page.classList.toggle('pf-m-collapsed');
+    } else {
+        page.classList.remove('pf-m-collapsed');
+        page.classList.toggle('pf-m-expanded');
+    }
+};
