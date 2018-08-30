@@ -2,7 +2,7 @@ $pf-global--enable-reset: 'true';
 $pf-global--image-path: '/insights/static/chrome/assets/images/';
 
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/page/styles.scss';
+@import 'node_modules/@patternfly/patternfly-next/layouts/Page/styles.scss';
 @import 'node_modules/@patternfly/patternfly-next/layouts/Toolbar/styles.scss';
 
 // Components
