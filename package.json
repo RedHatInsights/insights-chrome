@@ -6,6 +6,7 @@
   "scripts": {
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:*",
+    "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
     "build:js": "parcel build src/js/chrome.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
@@ -57,7 +58,7 @@
     "stylelint-scss": "^3.1.0"
   },
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.9",
+    "@patternfly/patternfly-next": "^1.0.31",
     "@red-hat-insights/insights-frontend-components": "^0.1.14",
     "font-awesome": "^4.7.0",
     "babel-core": "^6.26.3",
