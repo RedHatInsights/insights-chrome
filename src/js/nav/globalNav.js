@@ -1,4 +1,4 @@
-const basepath = '/insights/platform/';
+const basepath = '/insightsbeta/platform/';
 
 export const options = Object.freeze([{
     id: 'dashboard',
