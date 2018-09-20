@@ -7,7 +7,7 @@
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:*",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
-    "build:js": "parcel build src/js/chrome.js -d build/js",
+    "build:js": "parcel build src/js/chrome.js -d build/js && parcel build src/js/analytics.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:patternfly": "cpx node_modules/@patternfly/patternfly-next/components/VerticalNav/styles.css build",
