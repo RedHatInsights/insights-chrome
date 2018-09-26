@@ -1,27 +1,27 @@
 .pf-l-page__header.topbar(role="banner")
   .pf-l-page__header-brand
-    button.pf-l-page__header-sidebar-toggle(aria-label='Toggle dashboard sidebar', onclick='navToggle()')
+    button.pf-l-page__header-sidebar-toggle(aria-label='Toggle dashboard sidebar', onclick='navToggle()' widget-type='InsightsNavToggle')
       i.fas.fa-bars.fa-w-14
-    a.pf-l-page__header-brand-link(href="/insights/platform/dashboard/")
+    a.pf-l-page__header-brand-link(href="/insights/platform/dashboard/" widget-type='InsightsBrand')
       include insights-logo.pug
-  .pf-l-page__header-tools
+  .pf-l-page__header-tools(widget-type='InsightsToolbar')
     .pf-l-toolbar
       .pf-l-toolbar__group.pf-u-sr-only.pf-u-visible-on-lg
         .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search')
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search' widget-type='InsightsSearch')
             i.fas.fa-search
         .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow notifications')
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow notifications' widget-type='InsightsNotifications')
             i.fas.fa-bell
         .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow settings')
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow settings' widget-type='InsightsSettings')
             i.fas.fa-cog
         .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq')
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq' widget-type='InsightsFAQ')
             i.fas.fa-question-circle
       .pf-l-toolbar__group
         .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow actions')
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
             i.fas.fa-ellipsis-v
         .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
           .pf-c-dropdown.pf-m-plain
