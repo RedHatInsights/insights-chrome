@@ -52,23 +52,6 @@ body {
   }
 }
 
-// Page main
-.page__dashboard.pf-l-page__main {
-    // background: var(--pf-global--BackgroundColor--dark-transparent-100);
-
-    .pf-l-page__main-section:not(:first-child) {
-        background: var(--pf-global--BackgroundColor--dark-transparent-100);
-    }
-}
-
-// Page header title
-.page__dashboard .pf-c-title {
-    @extend %pf-t-dark;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #fff;
-}
-
 // Page sidebar
 .pf-l-page__sidebar {
     grid-row-end: 4;
