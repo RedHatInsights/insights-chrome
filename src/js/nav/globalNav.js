@@ -13,7 +13,7 @@ export const options = Object.freeze([{
     id: 'compliance',
     title: 'Compliance'
 }, {
-    id: 'cmaas',
+    id: 'cost-management',
     title: 'Cost Management'
 }, {
     id: 'inventory',
