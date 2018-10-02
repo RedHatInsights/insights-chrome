@@ -10,7 +10,6 @@
     "build:js": "parcel build src/js/chrome.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
-    "build:patternfly": "cpx node_modules/@patternfly/patternfly-next/components/VerticalNav/styles.css build",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
     "build:Fafonts": "cpx 'node_modules/font-awesome/fonts/*.*' build/assets/fonts",
     "lint": "npm-run-all lint:*",
