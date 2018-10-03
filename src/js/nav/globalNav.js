@@ -35,7 +35,7 @@ function toNavElement(item) {
     li.setAttribute('id', item.id);
     if (item.active) {
         li.classList.add('active');
-        a.classList.add('pf-m-active');
+        a.classList.add('pf-m-current');
         a.setAttribute('aria-current', 'page');
     }
 
