@@ -1,6 +1,6 @@
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
-
+import loadInventory from './inventory';
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
     APP_NAVIGATION: fn => ({
@@ -30,6 +30,7 @@ window.insights.chrome = {
         window.insights.chrome.$internal = { store };
     }
 };
+window.insights.loadInventory = loadInventory;
 
 window.navToggle = () => {
     const mq = window.matchMedia('(min-width: 768px)');
