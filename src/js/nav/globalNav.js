@@ -34,8 +34,8 @@ function toNavElement(item) {
     li.classList.add('pf-c-nav__item');
     li.setAttribute('id', item.id);
     if (item.active) {
-        li.classList.add('active');
-        a.classList.add('pf-m-active');
+        li.classList.add('current');
+        a.classList.add('pf-m-current');
         a.setAttribute('aria-current', 'page');
     }
 
