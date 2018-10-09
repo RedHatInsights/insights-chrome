@@ -1,0 +1,52 @@
+{
+    "globalNavigation": [
+        {
+            "id": "dashboard",
+            "title": "Dashboard"
+        },
+        {
+            "id": "advisor",
+            "title": "Advisor",
+            "appNavigation": {
+                "overview": "overview",
+                "rules": "rules"
+            }
+        },
+        {
+            "id": "vulnerability",
+            "title": "Vulnerability",
+            "appNavigation": {
+                "overview": "overview",
+                "cves": "cves"
+            }
+        },
+        {
+            "id": "compliance",
+            "title": "compliance"
+        },
+        {
+            "id": "cost-management",
+            "title": "Cost Management"
+        },
+        {
+            "id": "inventory",
+            "title": "Inventory"
+        },
+        {
+            "id": "reports",
+            "title": "Reports"
+        },
+        {
+            "id": "sources",
+            "title": "Sources"
+        },
+        {
+            "id": "service-portal",
+            "title": "Service Portal"
+        },
+        {
+            "id": "settings",
+            "title": "Settings"
+        }
+    ]
+}
