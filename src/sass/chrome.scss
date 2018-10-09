@@ -7,7 +7,7 @@ $pf-global--image-path: '/insights/static/chrome/assets/images/';
 
 // Components
 @import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/NavSystem/styles.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Nav/styles.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Button/styles.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Dropdown/styles.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Avatar/styles.scss';
@@ -50,23 +50,6 @@ body {
     width: 100%;
     min-width: auto;
   }
-}
-
-// Page main
-.page__dashboard.pf-l-page__main {
-    // background: var(--pf-global--BackgroundColor--dark-transparent-100);
-
-    .pf-l-page__main-section:not(:first-child) {
-        background: var(--pf-global--BackgroundColor--dark-transparent-100);
-    }
-}
-
-// Page header title
-.page__dashboard .pf-c-title {
-    @extend %pf-t-dark;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #fff;
 }
 
 // Page sidebar
