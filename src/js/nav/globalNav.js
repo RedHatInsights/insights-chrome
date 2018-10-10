@@ -13,7 +13,10 @@ export const options = Object.freeze([{
     id: 'compliance',
     title: 'Compliance'
 }, {
-    id: 'cmaas',
+    id: 'remediations',
+    title: 'Remediations'
+}, {
+    id: 'cost-management',
     title: 'Cost Management'
 }, {
     id: 'inventory',
@@ -21,6 +24,12 @@ export const options = Object.freeze([{
 }, {
     id: 'reports',
     title: 'Reports'
+}, {
+    id: 'sources',
+    title: 'Sources'
+}, {
+    id: 'service-portal',
+    title: 'Service Portal'
 }, {
     id: 'settings',
     title: 'Settings'
@@ -34,13 +43,15 @@ function toNavElement(item) {
     li.classList.add('pf-c-nav__item');
     li.setAttribute('id', item.id);
     if (item.active) {
-        li.classList.add('active');
-        a.classList.add('pf-m-active');
+        li.classList.add('current');
+        a.classList.add('pf-m-current');
         a.setAttribute('aria-current', 'page');
     }
 
     a.classList.add('pf-c-nav__link');
     a.setAttribute('href', basepath + item.id);
+    a.setAttribute('widget-type', 'InsightsNavItem');
+    a.setAttribute('widget-id', item.id);
 
     span.classList.add('pf-c-nav__link-text');
     span.textContent = item.title;

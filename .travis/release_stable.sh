@@ -2,7 +2,9 @@
 
 MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 git clone ${REPO}.git
-cd dist
+cd ${REPO_DIR}
+git checkout stable
+cd ../build
 cp ../${REPO_DIR}/Jenkinsfile ./Jenkinsfile
 git init
 git config --global user.name $COMMIT_AUTHOR_USERNAME

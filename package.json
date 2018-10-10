@@ -10,7 +10,6 @@
     "build:js": "parcel build src/js/chrome.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
-    "build:patternfly": "cpx node_modules/@patternfly/patternfly-next/components/VerticalNav/styles.css build",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
     "build:Fafonts": "cpx 'node_modules/font-awesome/fonts/*.*' build/assets/fonts",
     "lint": "npm-run-all lint:*",
@@ -43,6 +42,8 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-runtime": "^6.26.0",
     "concurrently": "^3.5.1",
     "cpx": "^1.5.0",
     "eslint": "^4.19.1",
@@ -53,18 +54,24 @@
     "parcel": "^1.8.1",
     "pug": "^2.0.3",
     "pug-cli": "^1.0.0-alpha6",
+    "redux-logger": "^3.0.6",
     "stylelint": "^9.2.1",
     "stylelint-config-recommended-scss": "^3.2.0",
     "stylelint-scss": "^3.1.0"
   },
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.31",
-    "@red-hat-insights/insights-frontend-components": "^0.1.14",
-    "font-awesome": "^4.7.0",
+    "@patternfly/patternfly-next": "^1.0.52",
+    "@red-hat-insights/insights-frontend-components": "^3.19.2",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
+    "font-awesome": "^4.7.0",
     "lodash": "^4.17.10",
-    "redux": "^4.0.0",
-    "redux-logger": "^3.0.6"
+    "redux": "^4.0.0"
+  },
+  "alias": {
+    "react": "./config/react-external.js",
+    "@patternfly/react-core": "./config/pf-react-core-externals.js",
+    "@patternfly/react-icons": "./config/pf-react-icons-externals.js",
+    "react-router-dom": "./config/react-router-dom-externals.js"
   }
 }
