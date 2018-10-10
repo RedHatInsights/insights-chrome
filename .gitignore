@@ -18,3 +18,5 @@ Session.vim
 #other
 .DS_Store
 .cache
+.idea/
+.vscode/
