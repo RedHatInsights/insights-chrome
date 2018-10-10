@@ -13,6 +13,9 @@ export const options = Object.freeze([{
     id: 'compliance',
     title: 'Compliance'
 }, {
+    id: 'remediations',
+    title: 'Remediations'
+}, {
     id: 'cost-management',
     title: 'Cost Management'
 }, {
