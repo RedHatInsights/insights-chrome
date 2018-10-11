@@ -2,19 +2,19 @@ $pf-global--enable-reset: 'true';
 $pf-global--image-path: '/insights/static/chrome/assets/images/';
 
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Page/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Toolbar/styles.scss';
+@import 'node_modules/@patternfly/patternfly-next/layouts/Page/page.scss';
+@import 'node_modules/@patternfly/patternfly-next/layouts/Toolbar/toolbar.scss';
 
 // Components
-@import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Nav/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Button/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Dropdown/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Avatar/styles.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/background-image.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Nav/nav.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Button/button.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Dropdown/dropdown.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Avatar/avatar.scss';
 
 // Accessibility
-@import 'node_modules/@patternfly/patternfly-next/utilities/Accessibility/styles.scss';
-@import 'node_modules/@patternfly/patternfly-next/utilities/Spacing/styles.scss';
+@import 'node_modules/@patternfly/patternfly-next/utilities/Accessibility/accessibility.scss';
+@import 'node_modules/@patternfly/patternfly-next/utilities/Spacing/spacing.scss';
 
 @import 'helpers.scss';
 
