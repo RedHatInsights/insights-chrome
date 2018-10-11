@@ -3,10 +3,13 @@ import chromeReducer from './redux';
 import ReducerRegistry, { dispatchActionsToStore }
     from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
+import promiseMiddleware from 'redux-promise-middleware';
 
 import * as appNav from './nav/appNav.js';
 import * as globalNav from './nav/globalNav.js';
+
 import { createReduxListener } from './utils';
+import thunk from 'redux-thunk';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
@@ -21,6 +24,7 @@ export function spinUpStore(middlewares = []) {
         initialState(),
         [
             middlewareListener.getMiddleware(),
+            promiseMiddleware(),
             ...basicMiddlewares,
             ...middlewares
         ]

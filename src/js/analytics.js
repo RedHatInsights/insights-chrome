@@ -11,7 +11,6 @@ export default () => {
 
     const pendoConf = {
         apiKey: 'f210c485-387f-43ad-4eee-f55bab22507f'
-        // TODO add account data
     };
 
     initPendo(pendoConf);

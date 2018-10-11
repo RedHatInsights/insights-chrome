@@ -26,3 +26,10 @@ export function appNavReducer(state, action) {
         appNav: action.data
     };
 }
+
+export function userReducer(state, action) {
+    return {
+        ...state,
+        user: action.payload
+    };
+}

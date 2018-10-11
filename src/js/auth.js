@@ -1,7 +1,7 @@
 /*global require*/
-const jwt = require('jwt-redhat').default;
+const jwt = require('jwt-redhat').default
 
-function initCallback() {
+function initCallback(store) {
     if (!jwt.isAuthenticated()) {
         const keys = [
             'jwt-redhat-lf/refresh_fail_count',
@@ -19,7 +19,7 @@ function initCallback() {
 
 export default () => {
     jwt.onInit(initCallback);
-    jwt.init({
+    return jwt.init({
         keycloakOptions: { clientId: 'customer-portal' },
         keycloakInitOptions: { responseMode: 'query' }
     });
