@@ -2,8 +2,10 @@ import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import auth from './auth';
+import analytics from './analytics';
 
 auth();
+analytics();
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
