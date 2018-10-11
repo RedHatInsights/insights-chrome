@@ -1,5 +1,6 @@
 import * as actionTypes from './action-types';
 import * as globalNav from '../nav/globalNav';
+import jwt from 'jwt-redhat';
 
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
@@ -31,4 +32,8 @@ export function appNav (data) {
 
 export function appNavClick(item, event) {
     return { type: actionTypes.APP_NAV_CLICK, payload: { id: item.id, event } };
+}
+
+export function user() {
+    return { type: actionTypes.USER, payload: jwt.getUserInfo() };
 }

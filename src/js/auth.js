@@ -19,7 +19,7 @@ function initCallback() {
 
 export default () => {
     jwt.onInit(initCallback);
-    jwt.init({
+    return jwt.init({
         keycloakOptions: { clientId: 'customer-portal' },
         keycloakInitOptions: { responseMode: 'query' }
     });

@@ -2,8 +2,10 @@ import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import auth from './auth';
+import analytics from './analytics';
 
-auth();
+const onAuth = auth();
+analytics();
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -16,12 +18,15 @@ const PUBLIC_EVENTS = {
 window.insights = window.insights || {};
 window.insights.chrome = {
     init () {
+
         const { store, middlewareListener, actions } = spinUpStore();
+        onAuth.then(() => actions.user());
 
         // public API actions
-        const { identifyApp, appNav } = actions;
+        const { identifyApp, appNav, user } = actions;
         window.insights.chrome.identifyApp = identifyApp;
         window.insights.chrome.navigation = appNav;
+        window.insights.chrome.user = user;
 
         window.insights.chrome.on = (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
@@ -34,6 +39,7 @@ window.insights.chrome = {
         window.insights.chrome.$internal = { store };
     }
 };
+
 window.insights.loadInventory = loadInventory;
 
 window.navToggle = () => {
@@ -48,3 +54,4 @@ window.navToggle = () => {
         page.classList.toggle('pf-m-expanded');
     }
 };
+
