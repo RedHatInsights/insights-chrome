@@ -9,7 +9,6 @@ import * as appNav from './nav/appNav.js';
 import * as globalNav from './nav/globalNav.js';
 
 import { createReduxListener } from './utils';
-import thunk from 'redux-thunk';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {

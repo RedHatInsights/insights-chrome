@@ -22,9 +22,9 @@ window.insights.chrome = {
 
         const { store, middlewareListener, actions } = spinUpStore();
         onAuth.then(() => store.dispatch(user));
-    
+
         // public API actions
-        const { identifyApp, appNav, user} = actions;
+        const { identifyApp, appNav } = actions;
         window.insights.chrome.identifyApp = identifyApp;
         window.insights.chrome.navigation = appNav;
 
@@ -53,5 +53,3 @@ window.navToggle = () => {
         page.classList.toggle('pf-m-expanded');
     }
 };
-
-console.log(window.insights.chrome.user);

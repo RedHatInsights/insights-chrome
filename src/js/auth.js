@@ -1,7 +1,7 @@
 /*global require*/
-const jwt = require('jwt-redhat').default
+const jwt = require('jwt-redhat').default;
 
-function initCallback(store) {
+function initCallback() {
     if (!jwt.isAuthenticated()) {
         const keys = [
             'jwt-redhat-lf/refresh_fail_count',
