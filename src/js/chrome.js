@@ -2,6 +2,7 @@ import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import auth from './auth';
+import jwt from 'jwt-redhat';
 
 auth();
 
@@ -31,6 +32,7 @@ window.insights.chrome = {
             return middlewareListener.addNew(PUBLIC_EVENTS[type](callback));
         };
 
+        window.insights.chrome.getuser = jwt.getUserInfo;
         window.insights.chrome.$internal = { store };
     }
 };
