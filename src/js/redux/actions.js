@@ -34,6 +34,6 @@ export function appNavClick(item, event) {
     return { type: actionTypes.APP_NAV_CLICK, payload: { id: item.id, event } };
 }
 
-export async function user() {
-    return await({ type: actionTypes.USER, payload: jwt.getUserInfo() });
+export function user() {
+    return { type: actionTypes.USER, payload: jwt.getUserInfo() };
 }

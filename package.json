@@ -7,7 +7,7 @@
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:*",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
-    "build:js": "parcel build src/js/chrome.js -d build/js && parcel build src/js/analytics.js -d build/js",
+    "build:js": "parcel build src/js/chrome.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
@@ -63,6 +63,7 @@
   "dependencies": {
     "@patternfly/patternfly-next": "^1.0.52",
     "@red-hat-insights/insights-frontend-components": "^3.19.2",
+    "analytics": "0.0.7",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "font-awesome": "^4.7.0",
