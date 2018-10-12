@@ -1,16 +1,16 @@
 import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 
 import {
-    clickReducer, appNavReducer, globalNavReducer
+    clickReducer, globalNavReducer, appNavClick
 } from './reducers';
 import {
-    CLICK_ACTION, APP_NAV, GLOBAL_NAV_IDENT
+    CLICK_ACTION, GLOBAL_NAV_IDENT, APP_NAV_CLICK
 } from './action-types';
 
 const reducers = {
     [CLICK_ACTION]: clickReducer,
-    [APP_NAV]: appNavReducer,
-    [GLOBAL_NAV_IDENT]: globalNavReducer
+    [GLOBAL_NAV_IDENT]: globalNavReducer,
+    [APP_NAV_CLICK]: appNavClick
 };
 
 export default function() {
