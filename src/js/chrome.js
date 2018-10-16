@@ -2,9 +2,14 @@ import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import auth from './auth';
+import analytics from './analytics';
 import jwt from 'jwt-redhat';
 
 const onAuth = auth();
+
+onAuth.then(() => {
+    analytics(jwt.getUserInfo());
+});
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -49,4 +54,11 @@ window.navToggle = () => {
         page.classList.remove('pf-m-collapsed');
         page.classList.toggle('pf-m-expanded');
     }
+};
+
+window.getName = function () {
+    onAuth.then(() => {
+        const userInfo = jwt.getUserInfo();
+        document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
+    });
 };

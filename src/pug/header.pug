@@ -1,3 +1,7 @@
+script(src='/insights/static/chrome/js/chrome.js')
+script.
+  window.getName();
+
 .pf-l-page__header.topbar(role="banner")
   .pf-l-page__header-brand
     button.pf-l-page__header-sidebar-toggle(aria-label='Toggle dashboard sidebar', onclick='navToggle()' widget-type='InsightsNavToggle')
@@ -25,8 +29,7 @@
             i.fas.fa-ellipsis-v
         .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
           .pf-c-dropdown.pf-m-plain
-            button#dropdown-example-collapsed.pf-c-dropdown__toggle(aria-haspopup='true', aria-expanded='false')
-              | Kyle Baker
+            button#dropdown-example-collapsed.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false')
               i.fas.fa-caret-down.pf-c-dropdown__toggle-icon
             .pf-c-dropdown__menu(role='menu', aria-labelledby='dropdown-example-collapsed', hidden='hidden')
               a.pf-c-dropdown__menu-item(role='menuitem', href='#') Link
