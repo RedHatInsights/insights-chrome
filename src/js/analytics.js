@@ -1,5 +1,4 @@
 'use strict';
-import jwt from 'jwt-redhat';
 
 function initPendo(pendoConf) {
     window.pendo.initialize(pendoConf);
@@ -19,7 +18,7 @@ export default (user) => {
         },
         account: {
             id: user.account_id,
-            account_number: user.account_number
+            accountNumber: user.account_number
         }
     };
 
