@@ -9,6 +9,7 @@ const onAuth = auth();
 
 onAuth.then(() => {
     analytics(jwt.getUserInfo());
+    window.getName();
 });
 
 // used for translating event names exposed publicly to internal event names
