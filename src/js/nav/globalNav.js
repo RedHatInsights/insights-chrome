@@ -31,6 +31,9 @@ export const options = Object.freeze([{
     id: 'service-portal',
     title: 'Service Portal'
 }, {
+    id: 'subscriptions',
+    title: 'Subscriptions'
+}, {
     id: 'settings',
     title: 'Settings'
 }]);
