@@ -8,8 +8,9 @@ import jwt from 'jwt-redhat';
 const onAuth = auth();
 
 onAuth.then(() => {
-    analytics(jwt.getUserInfo());
-    window.getName();
+    const userInfo = jwt.getUserInfo();
+    analytics(userInfo);
+    window.getName(userInfo);
 });
 
 // used for translating event names exposed publicly to internal event names
@@ -57,9 +58,6 @@ window.navToggle = () => {
     }
 };
 
-window.getName = function () {
-    onAuth.then(() => {
-        const userInfo = jwt.getUserInfo();
-        document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
-    });
+window.getName = function (userInfo) {
+    document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
 };
