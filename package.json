@@ -61,7 +61,7 @@
     "stylelint-scss": "^3.1.0"
   },
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.52",
+    "@patternfly/patternfly-next": "^1.0.61",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "font-awesome": "^4.7.0",
