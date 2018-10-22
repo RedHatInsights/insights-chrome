@@ -62,18 +62,17 @@ window.getName = function (userInfo) {
     document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
 };
 
-window.logout = () => { jwt.logout(); }
+window.logout = () => { jwt.logout(); };
 
 window.dropdownToggle = () => {
-
     let dropdown = document.querySelector('.pf-c-dropdown');
 
     dropdown.classList.toggle('pf-m-expanded');
     dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
 
-    if(dropdown.classList.contains('pf-m-expanded')) {
+    if (dropdown.classList.contains('pf-m-expanded')) {
         dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', true);
     } else {
         dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', false);
-    };   
-}
+    }
+};
