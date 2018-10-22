@@ -4,6 +4,7 @@ import loadInventory from './inventory';
 import auth from './auth';
 import analytics from './analytics';
 import jwt from 'jwt-redhat';
+import { WindowCloseIcon } from '@patternfly/react-icons';
 
 const onAuth = auth();
 
@@ -61,3 +62,19 @@ window.navToggle = () => {
 window.getName = function (userInfo) {
     document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
 };
+
+window.logout = () => { jwt.logout(); }
+
+window.dropdownToggle = () => {
+
+    let dropdown = document.querySelector('.pf-c-dropdown');
+
+    dropdown.classList.toggle('pf-m-expanded');
+    dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
+
+    if(dropdown.classList.contains('pf-m-expanded')) {
+        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', true);
+    } else {
+        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', false);
+    };   
+}

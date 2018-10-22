@@ -36,6 +36,10 @@ body {
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
 }
 
+.pf-l-page__header[role="banner"] {
+    overflow: visible;
+}
+
 // Nav
 .pf-c-nav {
   --pf-c-nav--Width:                                290px;
