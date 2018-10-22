@@ -24,9 +24,13 @@ describe('Chrome API', () => {
         insights.chrome.init();
         insights.chrome.on('APP_NAVIGATION', event => result = event);
 
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({ id: 'map' }, { target: 'button' }));
+        insights.chrome.$internal.store.dispatch(
+            actions.appNavClick(
+                { id: 'map' },
+                { target: document.createElement('button') }
+            )
+        );
         expect(result.navId).toBe('map');
-        expect(result.domEvent.target).toBe('button');
     });
 
     it('allows for an event listener to be unregistered', () => {
@@ -34,11 +38,15 @@ describe('Chrome API', () => {
         insights.chrome.init();
         const unregister = insights.chrome.on('APP_NAVIGATION', event => result = event);
 
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({ id: 'map' }, { target: 'button' }));
+        insights.chrome.$internal.store.dispatch(
+            actions.appNavClick(
+                { id: 'map' },
+                { target: document.createElement('button') }
+            )
+        );
         unregister();
-        insights.chrome.$internal.store.dispatch(actions.appNavClick({ id: 'widgets' }, { target: 'i' }));
+        insights.chrome.$internal.store.dispatch(actions.appNavClick({ id: 'widgets' }, { target: document.createElement('i') }));
 
         expect(result.navId).toBe('map');
-        expect(result.domEvent.target).toBe('button');
     });
 });
