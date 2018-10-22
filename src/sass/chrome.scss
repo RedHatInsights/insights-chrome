@@ -41,6 +41,8 @@ body {
   --pf-c-nav--Width:                                290px;
 }
 
+.pf-l-page__header { overflow: visible; }
+
 // Brand
 .pf-c-brand {
   fill: #fff;
