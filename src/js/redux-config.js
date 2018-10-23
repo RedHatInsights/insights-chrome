@@ -4,7 +4,6 @@ import ReducerRegistry, { dispatchActionsToStore }
     from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
 
-import * as appNav from './nav/appNav.js';
 import * as globalNav from './nav/globalNav.js';
 import { createReduxListener } from './utils';
 
@@ -30,7 +29,6 @@ export function spinUpStore(middlewares = []) {
     const store = reduxRegistry.getStore();
 
     store.subscribe(createReduxListener(store, 'chrome.globalNav', globalNav.render));
-    store.subscribe(createReduxListener(store, 'chrome.appNav', appNav.render));
 
     const actions = dispatchActionsToStore(actionTemplates, store);
     return { store, middlewareListener, actions };

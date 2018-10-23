@@ -1,14 +1,39 @@
-const basepath = '/insights/platform/';
+import { appNavClick } from '../redux/actions';
 
+const basepath = '/insights/platform/';
 export const options = Object.freeze([{
     id: 'dashboard',
     title: 'Dashboard'
 }, {
     id: 'advisor',
-    title: 'Advisor'
+    title: 'Advisor',
+    subItems: [
+        {
+            id: 'actions',
+            title: 'actions'
+        },
+        {
+            id: 'rules',
+            title: 'rules'
+        }
+    ]
 }, {
     id: 'vulnerability',
-    title: 'Vulnerability'
+    title: 'Vulnerability',
+    subItems: [
+        {
+            id: '',
+            title: 'Overview'
+        },
+        {
+            id: 'cves',
+            title: 'CVEs'
+        },
+        {
+            id: 'systems',
+            title: 'Systems'
+        }
+    ]
 }, {
     id: 'compliance',
     title: 'Compliance'
@@ -17,7 +42,21 @@ export const options = Object.freeze([{
     title: 'Remediations'
 }, {
     id: 'cost-management',
-    title: 'Cost Management'
+    title: 'Cost Management',
+    subItems: [
+        {
+            id: '',
+            title: 'Overview'
+        },
+        {
+            id: 'cost',
+            title: 'Cloud Cost'
+        },
+        {
+            id: 'openshift-charge',
+            title: 'OpenShift Charge'
+        }
+    ]
 }, {
     id: 'inventory',
     title: 'Inventory'
@@ -38,7 +77,58 @@ export const options = Object.freeze([{
     title: 'Settings'
 }]);
 
-function toNavElement(item) {
+const expandIcon = `<span class="pf-c-nav__toggle" tabindex="-1" aria-disabled="true">
+    <i class="fas fa-angle-right"></i>
+</span>`;
+
+function htmlToElement(html) {
+    const template = document.createElement('template');
+    html = html.trim();
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+function navItem(item, parentId = '') {
+    const navigateTo = `${basepath}${parentId}/${item.id}`;
+    item.active = item.active || (item.id !== '' && location.pathname.indexOf(navigateTo) !== -1);
+    return `<li class="pf-c-nav__item">
+        <a navigate="${navigateTo}"
+            app-id="${item.id}"
+            class="pf-c-nav__link ${item.active ? 'pf-m-current' : ''}"
+            aria-current="page"
+        >
+            ${item.title}
+        </a>
+    </li>`;
+}
+
+function secondaryNav(parent, { active, id: parentId, subItems }, { dispatch }) {
+    parent.setAttribute('aria-expanded', !!active);
+    parent.appendChild(htmlToElement(expandIcon));
+    const secondaryNav = htmlToElement(`<section
+        class="pf-c-nav__subnav"
+        aria-labelledby="${parentId}" ${active ? '' : 'hidden' }
+    >
+        <ul class="pf-c-nav__simple-list">${subItems.map(oneItem => navItem(oneItem, parentId)).join('')}</ul>
+    </section>`
+    );
+    secondaryNav.onclick = event => {
+        event.stopPropagation();
+        if (active) {
+            dispatch(appNavClick({ id: event.target.getAttribute('app-id') }, event));
+        } else {
+            window.location.href = event.target.getAttribute('navigate');
+        }
+    };
+
+    if (active && !subItems.find(oneChild => oneChild.active)) {
+        dispatch(appNavClick(subItems[0], { target: secondaryNav.querySelector('a.pf-c-nav__link') }));
+    }
+
+    return secondaryNav;
+}
+
+function toNavElement(item, store) {
     const li = document.createElement('li');
     const a = document.createElement('a');
     const span = document.createElement('span');
@@ -52,7 +142,7 @@ function toNavElement(item) {
     }
 
     a.classList.add('pf-c-nav__link');
-    a.setAttribute('href', basepath + item.id);
+    a.setAttribute('navigate', basepath + item.id);
     a.setAttribute('widget-type', 'InsightsNavItem');
     a.setAttribute('widget-id', item.id);
 
@@ -60,16 +150,40 @@ function toNavElement(item) {
     span.textContent = item.title;
 
     a.appendChild(span);
+    let subMenu;
+    if (item.subItems && item.subItems.length > 0) {
+        subMenu = secondaryNav(a, item, store);
+        li.classList.add('pf-m-expandable');
+        !!item.active && li.classList.add('pf-m-expanded');
+    }
 
+    a.onclick = (event) => primaryClickHandler(event, a);
     li.appendChild(a);
+    subMenu && li.appendChild(subMenu);
 
     return li;
 }
 
-export function render (state = options) {
+function primaryClickHandler(event, navElement) {
+    event.stopPropagation();
+    const parentElement = navElement.parentElement;
+    if (!parentElement.classList.contains('pf-m-expandable')) {
+        window.location.href = parentElement.getAttribute('navigate');
+    } else {
+        if (parentElement.classList.contains('pf-m-expanded')) {
+            parentElement.querySelector('section').setAttribute('hidden', true);
+            parentElement.classList.remove('pf-m-expanded');
+        } else {
+            parentElement.querySelector('section').removeAttribute('hidden');
+            parentElement.classList.add('pf-m-expanded');
+        }
+    }
+}
+
+export function render (state = options, store) {
     const ul = document.getElementById('navigation');
     ul.innerHTML = '';
-    state.map(toNavElement).forEach(item => ul.appendChild(item));
+    state.map(item => toNavElement(item, store)).forEach(item => ul.appendChild(item));
 }
 
 // temporary fallback for apps that do not use the chrome API yet
