@@ -10,7 +10,7 @@ const onAuth = auth();
 onAuth.then(() => {
     const userInfo = jwt.getUserInfo();
     analytics(userInfo);
-    window.getName(userInfo);
+    window.getUser(userInfo);
 });
 
 // used for translating event names exposed publicly to internal event names
@@ -58,8 +58,9 @@ window.navToggle = () => {
     }
 };
 
-window.getName = function (userInfo) {
+window.getUser = function (userInfo) {
     document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
+    document.querySelector('.account-number__value').append(userInfo.id);
 };
 
 window.logout = () => { jwt.logout(); };
