@@ -10,7 +10,7 @@ const onAuth = auth();
 onAuth.then(() => {
     const userInfo = jwt.getUserInfo();
     analytics(userInfo);
-    window.getName(userInfo);
+    window.getUser(userInfo);
 });
 
 // used for translating event names exposed publicly to internal event names
@@ -58,6 +58,22 @@ window.navToggle = () => {
     }
 };
 
-window.getName = function (userInfo) {
+window.getUser = function (userInfo) {
     document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
+    document.querySelector('.account-number__value').append(userInfo.id);
+};
+
+window.logout = () => { jwt.logout(); };
+
+window.dropdownToggle = () => {
+    let dropdown = document.querySelector('.pf-c-dropdown');
+
+    dropdown.classList.toggle('pf-m-expanded');
+    dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
+
+    if (dropdown.classList.contains('pf-m-expanded')) {
+        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', true);
+    } else {
+        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', false);
+    }
 };

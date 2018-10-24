@@ -41,6 +41,15 @@ body {
   --pf-c-nav--Width:                                290px;
 }
 
+// Header
+.pf-l-page__header {
+    overflow: visible;
+    .pf-c-dropdown__menu {
+        .account-number__header { @include rem('font-size', 12px); }
+    }
+}
+
+
 // Brand
 .pf-c-brand {
   fill: #fff;
