@@ -8,7 +8,6 @@
     "build": "npm-run-all build:*",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
     "build:js": "parcel --public-url /insights/static/chrome build src/js/chrome.js src/js/header.js -d build/js",
-    "build:betajs": "parcel --public-url /insightsbeta/static/chrome build src/js/chrome.js src/js/header.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
