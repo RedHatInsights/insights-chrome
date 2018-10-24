@@ -7,7 +7,8 @@
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:*",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
-    "build:js": "parcel build src/js/chrome.js src/js/header.js -d build/js",
+    "build:js": "parcel --public-url /insights/static/chrome build src/js/chrome.js src/js/header.js -d build/js",
+    "build:betajs": "parcel --public-url /insightsbeta/static/chrome build src/js/chrome.js src/js/header.js -d build/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
@@ -68,7 +69,8 @@
     "js-cookie": "^2.2.0",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#build.0.1.0.insightsplatform",
     "lodash": "^4.17.10",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "url-parse": "^1.4.3"
   },
   "alias": {
     "react": "./config/react-external.js",
