@@ -1,16 +1,17 @@
-import { spinUpStore } from './redux-config';
+import { spinUpStore }  from './redux-config';
 import * as actionTypes from './redux/action-types';
-import loadInventory from './inventory';
-import auth from './auth';
-import analytics from './analytics';
-import jwt from 'jwt-redhat';
+import loadInventory    from './inventory';
+import auth             from './auth';
+import analytics        from './analytics';
 
-const onAuth = auth();
+// start auth asap
+const libjwt = auth();
 
-onAuth.then(() => {
-    const userInfo = jwt.getUserInfo();
+libjwt.initPromise.then(() => {
+    const userInfo = libjwt.jwt.getUserInfo();
+    document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
+    document.querySelector('.account-number__value').append(userInfo.id);
     analytics(userInfo);
-    window.getUser(userInfo);
 });
 
 // used for translating event names exposed publicly to internal event names
@@ -23,6 +24,10 @@ const PUBLIC_EVENTS = {
 
 window.insights = window.insights || {};
 window.insights.chrome = {
+    auth: {
+        getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
+        logout: () => { libjwt.logout(); }
+    },
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 
@@ -39,10 +44,10 @@ window.insights.chrome = {
             return middlewareListener.addNew(PUBLIC_EVENTS[type](callback));
         };
 
-        window.insights.chrome.getUser = () => onAuth.then(jwt.getUserInfo);
         window.insights.chrome.$internal = { store };
     }
 };
+
 window.insights.loadInventory = loadInventory;
 
 window.navToggle = () => {
@@ -57,13 +62,6 @@ window.navToggle = () => {
         page.classList.toggle('pf-m-expanded');
     }
 };
-
-window.getUser = function (userInfo) {
-    document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
-    document.querySelector('.account-number__value').append(userInfo.id);
-};
-
-window.logout = () => { jwt.logout(); };
 
 window.dropdownToggle = () => {
     let dropdown = document.querySelector('.pf-c-dropdown');

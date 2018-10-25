@@ -7,7 +7,7 @@
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:*",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
-    "build:js": "parcel build src/js/chrome.js src/js/header.js -d build/js --public-url /insights/static/chrome/js",
+    "build:js": "parcel build src/js/chrome.js -d build/js --public-url /insights/static/chrome/js",
     "build:pug": "pug src/pug -o build/snippets",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
     "build:fonts": "cpx 'node_modules/@patternfly/patternfly-next/assets/fonts/**/*.*' build/assets/fonts",
@@ -18,7 +18,7 @@
     "test": "jest",
     "verify": "npm-run-all lint build test",
     "watch": "npm-run-all --parallel watch:*",
-    "watch:js": "parcel watch src/js/chrome.js src/js/header.js -d build/js --public-url /insights/static/chrome/js",
+    "watch:js": "parcel watch src/js/chrome.js -d build/js --public-url /insights/static/chrome/js",
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w"
   },

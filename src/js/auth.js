@@ -1,7 +1,11 @@
 /*global require*/
-const jwt = require('jwt-redhat').default;
+const jwt     = require('jwt-redhat').default;
+const options = {
+    keycloakOptions: { clientId: 'customer-portal' },
+    keycloakInitOptions: { responseMode: 'query' }
+};
 
-function initCallback() {
+function bouncer() {
     if (!jwt.isAuthenticated()) {
         const keys = [
             'jwt-redhat-lf/refresh_fail_count',
@@ -18,9 +22,9 @@ function initCallback() {
 }
 
 export default () => {
-    jwt.onInit(initCallback);
-    return jwt.init({
-        keycloakOptions: { clientId: 'customer-portal' },
-        keycloakInitOptions: { responseMode: 'query' }
-    });
+    const promise = jwt.init(options).then(bouncer);
+    return {
+        jwt: jwt,
+        initPromise: promise
+    };
 };
