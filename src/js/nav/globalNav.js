@@ -10,11 +10,11 @@ export const options = Object.freeze([{
     subItems: [
         {
             id: 'actions',
-            title: 'actions'
+            title: 'Actions'
         },
         {
             id: 'rules',
-            title: 'rules'
+            title: 'Rules'
         }
     ]
 }, {
