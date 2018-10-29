@@ -22,10 +22,6 @@ export const options = Object.freeze([{
     title: 'Vulnerability',
     subItems: [
         {
-            id: '',
-            title: 'Overview'
-        },
-        {
             id: 'cves',
             title: 'CVEs'
         },
