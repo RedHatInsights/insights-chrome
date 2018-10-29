@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Jwt Redhat Re-login Iframe</title>
+</head>
+
+<body>
+    <script>
+        var callParentReinit = false;
+        var initCalled = false;
+        receiveMessage = function (event) {
+            if (!event || !event.data || event.data === 'changed' || event.data === 'unchanged' || event.data === 'error' || !jwt) {
+                return;
+            }
+
+            var data = { message: '' };
+            try {
+                data = JSON.parse(event.data);
+            } catch (error) {
+                return;
+            }
+
+            jwt.default.onInit(function () {
+                if (this.callParentReinit && jwt.default.isAuthenticated() && window.parent.sessionjs) {
+                    console.log('[re-login-iframe] Reinitializing parent');
+                    window.parent.sessionjs.reinit();
+                    this.callParentReinit = false;
+                }
+            }.bind(this));
+
+            switch (data.message) {
+                case 'reinit':
+                    try {
+                        if (!jwt.default.isAuthenticated()) {
+                            console.log('[re-login-iframe] Reinitializing');
+                            this.callParentReinit = true;
+                            jwt.default.reinit();
+                        }
+                    } catch (e) {
+                        console.log('[re-login-iframe] ' + 'reinit error: ' + e);
+                    }
+                    break;
+                case 'init':
+                    if (!this.initCalled) {
+                        console.log('[re-login-iframe] Initializing');
+                        this.callParentReinit = false;
+                        try {
+                            jwt.default.init(data.value);
+                        } catch (e) {
+                            console.log('[re-login-iframe] ' + 'init error: ' + e);
+                        }
+                        this.initCalled = true;
+                    }
+                    break;
+            }
+        }.bind(this);
+        window.addEventListener("message", receiveMessage, false);
+    </script>
+</body>
+
+</html>
