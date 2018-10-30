@@ -37,8 +37,6 @@ const Jwt = {
     onTokenMismatch: onTokenMismatch,
     onJwtTokenUpdateFailed: onJwtTokenUpdateFailed,
     onAuthError: onAuthError,
-    enableDebugLogging: enableDebugLogging,
-    disableDebugLogging: disableDebugLogging,
     init: init,
     reinit: reinit,
     getCountForKey: getCountForKey,
@@ -833,31 +831,6 @@ function onJwtTokenUpdateFailed(func) {
     } else {
         events.jwtTokenUpdateFailed.push(func);
     }
-}
-
-/**
- * Enable debug logging
- * @memberof module:jwt
- */
-async function enableDebugLogging() {
-    const booleanCache = await CacheUtils.get('debug-logging');
-    if (booleanCache && booleanCache.value === true) {
-        log(`[jwt.js] Debug logging already enabled`);
-    } else {
-        const newBooleanCache = { value: true };
-        await CacheUtils.set('debug-logging', newBooleanCache);
-        log(`[jwt.js] Enabled debug logging`);
-    }
-}
-
-/**
- * Disable debug logging
- * @memberof module:jwt
- */
-function disableDebugLogging() {
-    log(`[jwt.js] Disabling debug logging`);
-    const newBooleanCache = { value: false };
-    CacheUtils.set('debug-logging', newBooleanCache);
 }
 
 /**
