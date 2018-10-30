@@ -6,6 +6,8 @@ import {
     CacheUtils
 } from './cacheUtils';
 
+const lodash = require('lodash');
+
 const Jwt = {
     login: initialized(login),
     logout: initialized(logout),
@@ -953,14 +955,6 @@ function ssoUrl(isInternal) {
             log('[jwt.js] ENV: prod');
             return `https://${subDomain}.redhat.com/auth`;
 
-        // Valid STAGE URLs
-        case 'access.stage.redhat.com':
-        case 'access.stage.itop.redhat.com':
-        case 'accessstage.usersys.redhat.com':
-        case 'stage.foo.redhat.com':
-            log('[jwt.js] ENV: stage');
-            return `https://${subDomain}.stage.redhat.com/auth`;
-
         // Valid QA URLs
         case 'access.qa.redhat.com':
         case 'access.qa.itop.redhat.com':
@@ -969,14 +963,6 @@ function ssoUrl(isInternal) {
         case 'unified-qa.gsslab.pnq2.redhat.com':
             log('[jwt.js] ENV: qa');
             return `https://${subDomain}.qa.redhat.com/auth`;
-
-        case 'ui.foo.redhat.com':
-            log('[jwt.js] ENV: qa / dev');
-            return `https://${subDomain}.dev1.redhat.com/auth`;
-
-        case 'fte.foo.redhat.com':
-            log('[jwt.js] ENV: fte');
-            return `https://${subDomain}.dev.redhat.com/auth`;
 
         // Valid CI URLs
         case 'access.devgssci.devlab.phx1.redhat.com':
@@ -1340,18 +1326,20 @@ function getUserInfo() {
     // the properties to return
     const token = getToken();
     return token ? {
-        user_id: token.user_id,
-        id: token.user_id,
-        username: token.username,
-        account_id: token.account_id,
-        account_number: token.account_number,
-        email: token.email,
-        firstName: token.firstName,
-        lastName: token.lastName,
-        lang: token.lang,
-        region: token.region,
-        login: token.username,
-        internal: isInternal()
+        identity: {
+            id: token.user_id,
+            org_id: token.account_id,
+            account_number: token.account_number,
+            username: token.username,
+            email: token.email,
+            first_name: token.firstName,
+            last_name: token.lastName,
+            address_string: `"${token.firstName} ${token.lastName}" ${token.email}`,
+            is_active: true,
+            locale: token.lang,
+            is_org_admin: lodash.includes(token.realm_access.roles, 'admin:org:all'),
+            is_internal: lodash.includes(token.realm_access.roles,  'redhat:employees')
+        }
     } : null;
 }
 /* eslint-enable camelcase */

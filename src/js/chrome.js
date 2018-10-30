@@ -10,10 +10,9 @@ const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
-    console.log(userInfo);
-    document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
-    document.querySelector('.account-number__value').append(userInfo.id);
-    analytics(userInfo);
+    document.querySelector('.user-info').prepend(`${userInfo.identity.first_name} ${userInfo.identity.last_name}`);
+    document.querySelector('.account-number__value').append(userInfo.identity.id);
+    analytics(userInfo.identity);
 });
 
 // used for translating event names exposed publicly to internal event names
