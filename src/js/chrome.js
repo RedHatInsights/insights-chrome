@@ -3,7 +3,6 @@ import * as actionTypes from './redux/action-types';
 import loadInventory    from './inventory';
 import auth             from './auth';
 import analytics        from './analytics';
-// import { UserIcon } from '@patternfly/react-icons';
 
 // start auth asap
 const libjwt = auth();
