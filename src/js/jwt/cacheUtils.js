@@ -12,7 +12,6 @@ localforage.config({
     name: 'jwt-redhat-lf'
 });
 
-/* eslint-disable no-console */
 export class CacheUtils {
 
     static set(key, obj) {
@@ -84,4 +83,3 @@ export class CacheUtils {
         }
     }
 }
-/* eslint-enable no-console */

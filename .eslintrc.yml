@@ -44,10 +44,12 @@ rules:
   max-len:
     - 2
     - 150
-  new-cap: 2
-  no-bitwise: 2
+  new-cap: 0
+  no-bitwise:
+    - 2
+    - allow: ["~"]
   no-caller: 2
-  no-console: 1
+  no-console: 0
   no-mixed-spaces-and-tabs: 2
   no-multiple-empty-lines:
     - error

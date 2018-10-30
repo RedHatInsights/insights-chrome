@@ -6,6 +6,46 @@ import {
     CacheUtils
 } from './cacheUtils';
 
+const Jwt = {
+    login: initialized(login),
+    logout: initialized(logout),
+    register: initialized(register),
+    hasRole: initialized(hasRole),
+    isInternal: initialized(isInternal),
+    isAuthenticated: initialized(isAuthenticated),
+    getRegisterUrl: initialized(getRegisterUrl),
+    getLoginUrl: initialized(getLoginUrl),
+    getLogoutUrl: initialized(getLogoutUrl),
+    getAccountUrl: initialized(getAccountUrl),
+    getToken: initialized(getToken),
+    getStoredTokenValue: initialized(getStoredTokenValue),
+    getEncodedToken: initialized(getEncodedToken),
+    getUserInfo: initialized(getUserInfo),
+    updateToken: initialized(updateToken),
+    cancelRefreshLoop: initialized(cancelRefreshLoop),
+    startRefreshLoop: initialized(startRefreshLoop),
+    isTokenExpired: initialized(isTokenExpired),
+    onInit: onInit,
+    onInitError: onInitError,
+    onAuthRefreshError: onAuthRefreshError,
+    onAuthRefreshSuccess: onAuthRefreshSuccess,
+    onAuthLogout: onAuthLogout,
+    onTokenExpired: onTokenExpired,
+    onInitialUpdateToken: onInitialUpdateToken,
+    onTokenMismatch: onTokenMismatch,
+    onJwtTokenUpdateFailed: onJwtTokenUpdateFailed,
+    onAuthError: onAuthError,
+    enableDebugLogging: enableDebugLogging,
+    disableDebugLogging: disableDebugLogging,
+    init: init,
+    reinit: reinit,
+    getCountForKey: getCountForKey,
+    failCountPassed: failCountPassed,
+    expiresIn: expiresIn
+};
+
+export default Jwt;
+
 // Use Polyfill for BroadcastChannel if not supported natively by browser
 if (!('BroadcastChannel' in window)) {
     log(`[jwt.js] Using polyfill for BroadcastChannel`);
@@ -260,7 +300,7 @@ if (!('BroadcastChannel' in window)) {
 /*global JSON, console, document, window */
 /*jslint browser: true*/
 
-const private_functions = {
+const privateFunctions = {
     /**
      * Store things in local- or sessionStorage.  Because *Storage only
      * accepts string values, the store will automatically serialize
@@ -272,7 +312,7 @@ const private_functions = {
      * @return {object} An object-friendly interface to localStorage or
      * sessionStorage.
      */
-    make_store: function (type) {
+    makeStore: function (type) {
         let store;
         try {
             // if DOM Storage is disabled in Chrome, merely referencing
@@ -288,13 +328,13 @@ const private_functions = {
             // we'll create an in-memory object that simulates the DOM
             // Storage API.
             store = {
-                getItem: function mem_store_get_item(key) {
+                getItem: function(key) {
                     return store[key];
                 },
-                setItem: function mem_store_set_item(key, value) {
+                setItem: function(key, value) {
                     return (store[key] = value);
                 },
-                removeItem: function mem_store_remove_item(key) {
+                removeItem: function(key) {
                     return delete store[key];
                 }
             };
@@ -302,16 +342,16 @@ const private_functions = {
 
         // The get and set here are used exclusively for getting and setting the token and refreshToken which are strings.
         return {
-            get: function get(key) {
+            get: function(key) {
                 const value = store.getItem(key);
                 return value && JSON.parse(value);
             },
-            set: function set(key, val) {
+            set: function(key, val) {
                 if (typeof val !== 'undefined') {
                     return store.setItem(key, JSON.stringify(val));
                 }
             },
-            remove: function remove(key) {
+            remove: function(key) {
                 return store.removeItem(key);
             }
         };
@@ -325,7 +365,7 @@ const lib = {
      * @param {string} cookieName The cookie name/key
      * @returns {string} The string value of the cookie, "" if there was no cookie
      */
-    getCookieValue: function (cookieName) {
+    getCookieValue: function(cookieName) {
         let start; let end;
         if (document.cookie.length > 0) {
             start = document.cookie.indexOf(cookieName + '=');
@@ -355,27 +395,27 @@ const lib = {
             expires = expires * 1000 * 60 * 60;
         }
 
-        const expires_date = new Date(today.getTime() + (expires));
+        const expiresDate = new Date(today.getTime() + (expires));
 
         document.cookie = name + '=' + encodeURI(value) +
-            ((expires) ? ';expires=' + expires_date.toUTCString() : '') +
+            ((expires) ? ';expires=' + expiresDate.toUTCString() : '') +
             ((path) ? ';path=' + path : '') +
             ((domain) ? ';domain=' + domain : '') +
             ((secure) ? ';secure' : '');
     },
-    removeCookie: function removeCookie(cookie_name) {
-        const cookie_date = new Date();  // current date & time
-        cookie_date.setTime(cookie_date.getTime() - 1);
-        document.cookie = cookie_name += '=; expires=' + cookie_date.toUTCString();
+    removeCookie: function(cookieName) {
+        const cookieDate = new Date();  // current date & time
+        cookieDate.setTime(cookieDate.getTime() - 1);
+        document.cookie = cookieName += '=; expires=' + cookieDate.toUTCString();
     },
-    log: function (message) {
+    log: function(message) {
         if (typeof console !== 'undefined') {
             console.log(message);
         }
     },
     store: {
-        local: private_functions.make_store('local'),
-        session: private_functions.make_store('session')
+        local: privateFunctions.makeStore('local'),
+        session: privateFunctions.makeStore('session')
     }
 };
 
@@ -400,7 +440,6 @@ const TOKEN_EXP_TTE = 58; // Seconds to check forward if the token will expire
 const REFRESH_INTERVAL = 1 * TOKEN_EXP_TTE * 1000; // ms. check token for upcoming expiration every this many milliseconds
 const REFRESH_TTE = 90; // seconds. refresh only token if it would expire this many seconds from now
 const FAIL_COUNT_THRESHOLD = 5; // how many times in a row token refresh can fail before we give up trying
-// let userInfo: IJwtUser;  // To be used to set the user context in Raven
 let disablePolling = false;
 let initialUserToken = null;
 let broadcastChannel = null;
@@ -441,7 +480,7 @@ const events = {
 /**
  * Log session-related messages to the console, in pre-prod environments.
  */
-function log(message) {
+function log() {
     const args = arguments;
     try {
         CacheUtils.get('debug-logging').then((debugLoggingCache) => {
@@ -449,7 +488,9 @@ function log(message) {
                 console.log.apply(console, args);
             }
         });
-    } catch (e) { }
+    } catch (e) {
+        // empty
+    }
 }
 
 // Keep track of the setInterval for the refresh token so we can cancel it and restart it if need be
@@ -538,7 +579,10 @@ function init(jwtOptions) {
     state.keycloak.onTokenExpired = onTokenExpiredCallback;
 
     return state.keycloak
-    .init(jwtOptions.keycloakInitOptions ? Object.assign({}, DEFAULT_KEYCLOAK_INIT_OPTIONS, jwtOptions.keycloakInitOptions) : DEFAULT_KEYCLOAK_INIT_OPTIONS)
+    .init(jwtOptions.keycloakInitOptions ? Object.assign(
+        {},
+        DEFAULT_KEYCLOAK_INIT_OPTIONS,
+        jwtOptions.keycloakInitOptions) : DEFAULT_KEYCLOAK_INIT_OPTIONS)
     .success(keycloakInitSuccess)
     .error(keycloakInitError);
 }
@@ -939,10 +983,11 @@ function ssoUrl(isInternal) {
         case 'accessci.usersys.redhat.com':
         case 'access.ci.itop.redhat.com':
         case 'ci.foo.redhat.com':
-        default:
+        default: {
             log('[jwt.js] ENV: ci');
             const subSubDomain = isInternal === true ? 'dev' : 'dev2';
             return `https://${subDomain}.${subSubDomain}.redhat.com/auth`;
+        }
     }
 }
 
@@ -1111,7 +1156,7 @@ function startRefreshLoop() {
  * @memberof module:jwt
  * @private
  */
-function cancelRefreshLoop(shouldStopTokenUpdates) {
+function cancelRefreshLoop() {
     if (refreshIntervalId) {
         clearInterval(refreshIntervalId);
         log('[jwt.js] token refresh interval cancelled');
@@ -1146,6 +1191,7 @@ function refreshLoop() {
  * @private
  */
 function updateTokenSuccess(refreshed) {
+
     log('[jwt.js] updateTokenSuccess, token was ' + ['not ', ''][~~refreshed] + 'refreshed');
     if (refreshed) {
         resetKeyCount(FAIL_COUNT_NAME); // token update worked, so reset number of consecutive failures
@@ -1154,17 +1200,9 @@ function updateTokenSuccess(refreshed) {
     setToken(state.keycloak.token);
     setRefreshToken(state.keycloak.refreshToken);
 
-    if (timeSkew === null && state.keycloak.timeSkew != null) {
+    if (timeSkew === null && state.keycloak.timeSkew !== null) {
         timeSkew = state.keycloak.timeSkew;
         handleTokenEvents();
-    }
-
-    try {
-        if ((refreshed && !userInfo) || (refreshed && userInfo && (userInfo.username !== getUserInfo().username))) {
-            setRavenUserContext();
-        }
-    } catch (e) {
-        log(`[jwt.js] Could not set Raven user context due to: ${e.message}`);
     }
 }
 
@@ -1174,7 +1212,7 @@ function updateTokenSuccess(refreshed) {
  * @memberof module:jwt
  * @private
  */
-function updateTokenFailure(e) {
+function updateTokenFailure() {
     log('[jwt.js] updateTokenFailure');
     let userLoginTime = undefined;
     if (initialUserToken) {
@@ -1183,7 +1221,9 @@ function updateTokenFailure(e) {
 
     failCountEqualsThreshold(FAIL_COUNT_NAME, FAIL_COUNT_THRESHOLD).then((isfailCountEqualsThreshold) => {
         if (isfailCountEqualsThreshold) {
-            sendToSentry(new Error(`[jwt.js] Update token failure: after ${FAIL_COUNT_THRESHOLD} attempts within ${userLoginTime} hours of logging in`), e);
+            console.error(
+                `[jwt.js] Update token failure: after ${FAIL_COUNT_THRESHOLD} attempts within ${userLoginTime} hours of logging in`
+            );
         }
 
         incKeyCount(FAIL_COUNT_NAME);
@@ -1197,9 +1237,9 @@ function updateTokenFailure(e) {
  * @memberof module:jwt
  * @private
  */
-function setRefreshToken(refresh_token) {
+function setRefreshToken(refreshToken) {
     log('[jwt.js] setting refresh token');
-    lib.store.local.set(REFRESH_TOKEN_NAME, refresh_token);
+    lib.store.local.set(REFRESH_TOKEN_NAME, refreshToken);
 }
 
 /**
@@ -1295,6 +1335,7 @@ function getEncodedToken() {
  * @memberof module:jwt
  * @return {Object} the user information
  */
+/* eslint-disable camelcase */
 function getUserInfo() {
     // the properties to return
     const token = getToken();
@@ -1313,6 +1354,7 @@ function getUserInfo() {
         internal: isInternal()
     } : null;
 }
+/* eslint-enable camelcase */
 
 /**
  * Is the user authenticated?
@@ -1424,7 +1466,7 @@ function initialized(func) {
  * page right away.
  *
  * @memberof module:jwt
- * @param {Object} options See [options](https://keycloak.gitbooks.io/securing-client-applications-guide/content/v/2.2/topics/oidc/javascript-adapter.html#_login_options) for valid options.
+ * @param {Object} options
  */
 function login(options = {}) {
     const redirectUri = options.redirectUri || location.href;
@@ -1455,21 +1497,6 @@ function register(options) {
 }
 
 /**
- * Send current user context to Raven (JS error logging library).
- * @memberof module:jwt
- * @private
- */
-function setRavenUserContext() {
-    // once the user info service has returned, use its data to add user
-    // context to RavenJS, for inclusion in Sentry error reports.
-    userInfo = getUserInfo();
-    if (typeof window.Raven !== 'undefined' && typeof window.Raven.setUserContext === 'function') {
-        log('[jwt.js] sent user context to Raven');
-        Raven.setUserContext(userInfo);
-    }
-}
-
-/**
  * When the token expires
  * @memberof module:jwt
  * @private
@@ -1483,27 +1510,6 @@ function expiresIn() {
 }
 
 /**
- * Send current user context to Raven (JS error logging library).
- * @memberof module:jwt
- * @private
- */
-function sendToSentry(error, extra) {
-    // once the user info service has returned, use its data to add user
-    // context to RavenJS, for inclusion in Sentry error reports.
-    userInfo = getUserInfo();
-    if (typeof window.Raven !== 'undefined' && typeof window.Raven.captureException === 'function') {
-        Raven.setTagsContext({
-            is_authenticated: isAuthenticated(),
-            is_token_expired: state.keycloak.authenticated ? state.keycloak.isTokenExpired(0) : null,
-            token_expires_in: expiresIn(),
-            // TODO -- if ever upgrading keycloak to upstream see https://github.com/keycloak/keycloak/pull/5008 to ensure this error message stays inline
-            state_changed: extra && (extra).message && (extra).message.toLowerCase().indexOf('Cookie sessionId and keycloak sessionId do not match') !== -1
-        });
-        Raven.captureException(error, { extra: extra });
-    }
-}
-
-/**
   * Get the count of the $key.
   * @return {Number} Get the count of the $key.
   * @memberof module:jwt
@@ -1512,7 +1518,7 @@ function getCountForKey(key) {
     try {
         return CacheUtils.get(key).then((countCache) => {
             return countCache.value;
-        }).catch((e) => {
+        }).catch(() => {
             return 0;
         });
     } catch (e) {
@@ -1566,44 +1572,3 @@ function resetKeyCount(key) {
     };
     return CacheUtils.set(key, newSentryLogCountCache);
 }
-
-const Jwt = {
-    login: initialized(login),
-    logout: initialized(logout),
-    register: initialized(register),
-    hasRole: initialized(hasRole),
-    isInternal: initialized(isInternal),
-    isAuthenticated: initialized(isAuthenticated),
-    getRegisterUrl: initialized(getRegisterUrl),
-    getLoginUrl: initialized(getLoginUrl),
-    getLogoutUrl: initialized(getLogoutUrl),
-    getAccountUrl: initialized(getAccountUrl),
-    getToken: initialized(getToken),
-    getStoredTokenValue: initialized(getStoredTokenValue),
-    getEncodedToken: initialized(getEncodedToken),
-    getUserInfo: initialized(getUserInfo),
-    updateToken: initialized(updateToken),
-    cancelRefreshLoop: initialized(cancelRefreshLoop),
-    startRefreshLoop: initialized(startRefreshLoop),
-    isTokenExpired: initialized(isTokenExpired),
-    onInit: onInit,
-    onInitError: onInitError,
-    onAuthRefreshError: onAuthRefreshError,
-    onAuthRefreshSuccess: onAuthRefreshSuccess,
-    onAuthLogout: onAuthLogout,
-    onTokenExpired: onTokenExpired,
-    onInitialUpdateToken: onInitialUpdateToken,
-    onTokenMismatch: onTokenMismatch,
-    onJwtTokenUpdateFailed: onJwtTokenUpdateFailed,
-    onAuthError: onAuthError,
-    enableDebugLogging: enableDebugLogging,
-    disableDebugLogging: disableDebugLogging,
-    init: init,
-    reinit: reinit,
-    _state: state,
-    getCountForKey: getCountForKey,
-    failCountPassed: failCountPassed,
-    expiresIn: expiresIn
-};
-
-export default Jwt;
