@@ -1,12 +1,9 @@
 const Keycloak = require('keycloak-js');
+const lodash = require('lodash');
 
 import '@babel/polyfill';
 
-import {
-    CacheUtils
-} from './cacheUtils';
-
-const lodash = require('lodash');
+import { CacheUtils } from './cacheUtils';
 
 const Jwt = {
     login: initialized(login),
