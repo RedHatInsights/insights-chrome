@@ -3,12 +3,14 @@ import * as actionTypes from './redux/action-types';
 import loadInventory    from './inventory';
 import auth             from './auth';
 import analytics        from './analytics';
+import { UserIcon } from '@patternfly/react-icons';
 
 // start auth asap
 const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
+    console.log(userInfo);
     document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
     document.querySelector('.account-number__value').append(userInfo.id);
     analytics(userInfo);
@@ -26,7 +28,7 @@ window.insights = window.insights || {};
 window.insights.chrome = {
     auth: {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
-        logout: () => { libjwt.logout(); }
+        logout: () => { libjwt.jwt.logout(); }
     },
     init () {
         const { store, middlewareListener, actions } = spinUpStore();

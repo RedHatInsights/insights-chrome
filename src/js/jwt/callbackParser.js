@@ -1,22 +1,6 @@
-export interface IOauth {
-    newUrl: string;
-    state ?: any;
-    code?: string;
-    error?: any;
-    access_token?: string;
-    id_token?: string;
-    fragment?: string;
-    prompt?: string;
-    redirectUri?: string;
-    storedNonce ?: string;
-}
-
 export default class CallbackParser {
 
-    uriToParse: string;
-    responseMode: string;
-
-    constructor(uriToParse: string, responseMode: string) {
+    constructor(uriToParse, responseMode) {
         this.uriToParse = uriToParse;
         this.responseMode = responseMode;
     }
@@ -55,11 +39,12 @@ export default class CallbackParser {
             const paramValue = decodeURIComponent(p[1]);
             result[paramName] = paramValue;
         }
+
         return result;
     }
 
     handleQueryParam (paramName, paramValue, oauth) {
-        const supportedOAuthParams = [ 'code', 'state', 'error', 'error_description' ];
+        const supportedOAuthParams = ['code', 'state', 'error', 'error_description'];
 
         for (let i = 0; i < supportedOAuthParams.length ; i++) {
             if (paramName === supportedOAuthParams[i]) {
@@ -67,11 +52,11 @@ export default class CallbackParser {
                 return true;
             }
         }
+
         return false;
     }
 
-
-    parseUri (): IOauth {
+    parseUri () {
         const parsedUri = this.initialParse();
 
         let queryParams = {};
@@ -79,8 +64,8 @@ export default class CallbackParser {
             queryParams = this.parseParams(parsedUri.queryString);
         }
 
-        const oauth: IOauth = {
-            newUrl: parsedUri.baseUri,
+        const oauth = {
+            newUrl: parsedUri.baseUri
         };
 
         for (let param in queryParams) {
@@ -95,6 +80,7 @@ export default class CallbackParser {
                     if (this.responseMode !== 'query' || !this.handleQueryParam(param, queryParams[param], oauth)) {
                         oauth.newUrl += (oauth.newUrl.indexOf('?') === -1 ? '?' : '&') + param + '=' + queryParams[param];
                     }
+
                     break;
             }
         }
@@ -104,6 +90,7 @@ export default class CallbackParser {
             if (parsedUri.fragmentString) {
                 fragmentParams = this.parseParams(parsedUri.fragmentString);
             }
+
             for (let param in fragmentParams) {
                 oauth[param] = fragmentParams[param];
             }

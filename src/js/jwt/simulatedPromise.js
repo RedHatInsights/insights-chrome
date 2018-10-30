@@ -1,21 +1,5 @@
-export interface ISimplePromise {
-    success: Function;
-    error: Function;
-}
-
-export interface ISimulatedPromise {
-    setSuccess: Function;
-    setError: Function;
-    promise: ISimplePromise;
-    success?: boolean;
-    result?: any;
-    error?: any;
-    errorCallback?: Function;
-    successCallback?: Function;
- }
-
-export function createPromise(): ISimulatedPromise {
-    const p: ISimulatedPromise = {
+export function createPromise() {
+    const p = {
         setSuccess: function(result) {
             p.success = true;
             p.result = result;
@@ -37,6 +21,7 @@ export function createPromise(): ISimulatedPromise {
                 } else if (!p.error) {
                     p.successCallback = callback;
                 }
+
                 return p.promise;
             },
             error: function(callback) {
@@ -45,6 +30,7 @@ export function createPromise(): ISimulatedPromise {
                 } else if (!p.success) {
                     p.errorCallback = callback;
                 }
+
                 return p.promise;
             }
         }

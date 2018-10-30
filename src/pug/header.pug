@@ -29,7 +29,7 @@ header.pf-l-page__header(role="banner")
             button#dropdown-user.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false' , onclick='dropdownToggle()')
             ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
               li
-                a.pf-c-dropdown__menu-item(onClick='logout()') Logout
+                a.pf-c-dropdown__menu-item(onClick='window.insights.chrome.auth.logout()') Logout
                 li.pf-c-dropdown__separator(role="separator")
                 button.pf-c-dropdown__menu-item.pf-c-dropdown__menu-item-account(aria-pressed='false', disabled)
                   dl

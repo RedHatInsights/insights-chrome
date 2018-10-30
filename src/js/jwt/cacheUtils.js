@@ -1,4 +1,4 @@
-import * as localforage from 'localforage';
+import localforage from 'localforage/dist/localforage';
 
 // const MINUTES_1 = 60 * 1000;
 // const HOURS_1 = 60 * MINUTES_1;
@@ -12,26 +12,14 @@ localforage.config({
     name: 'jwt-redhat-lf'
 });
 
-export interface ICacheOptions {
-    expireAt?: number;
-}
-
-export interface IBaseCache<T> {
-    lastModifiedDate?: string; // in iso format
-    value: T;
-    expiresAt?: number; // value of +(new Date());
-}
-
-export interface IStringCache extends IBaseCache<string> {}
-export interface IBooleanCache extends IBaseCache<boolean> {}
-export interface INumberCache extends IBaseCache<number> {}
-
+/* eslint-disable no-console */
 export class CacheUtils {
 
-    static set<S extends IBaseCache<T>, T>(key: string, obj: S, options?: ICacheOptions): Promise<S> {
+    static set(key, obj) {
         if (!obj.lastModifiedDate) {
             obj.lastModifiedDate = (new Date()).toISOString();
         }
+
         try {
             return localforage.setItem(key, obj);
         } catch (e) {
@@ -39,15 +27,15 @@ export class CacheUtils {
         }
     }
 
-    static get<S>(key: string): Promise<S> {
+    static get(key) {
         try {
-            return localforage.getItem<S>(key);
+            return localforage.getItem(key);
         } catch (e) {
             console.warn(`Unable to get ${key} due to: ${e.message}`);
         }
     }
 
-    static delete(key: string): Promise<void> {
+    static delete(key) {
         try {
             return localforage.removeItem(key);
         } catch (e) {
@@ -63,10 +51,10 @@ export class CacheUtils {
         }
     }
 
-    static keys(text?: string): Promise<string[]> {
+    static keys(text) {
         try {
             if (text) {
-                return localforage.keys().then((keys: string[]) => {
+                return localforage.keys().then((keys) => {
                     if (keys) {
                         return keys.filter((key) => key.indexOf(text) !== -1);
                     } else {
@@ -81,35 +69,19 @@ export class CacheUtils {
         }
     }
 
-    static setInSessionStorage(key: string, value: string) {
+    static setInSessionStorage(key, value) {
         try {
             sessionStorage.setItem(key, value);
         } catch (e) {
             console.warn(`Could not set key: ${key}, value: ${value} in sessionStorage`);
         }
     }
-    static getInSessionStorage(key: string) {
+    static getInSessionStorage(key) {
         try {
             return sessionStorage.getItem(key);
         } catch (e) {
             console.warn(`Could not get key: ${key} in sessionStorage`);
         }
     }
-
-    // static async expireCache(): Promise<void> {
-    //     try {
-    //         const keys = await CacheUtils.keys();
-    //         if (keys) {
-    //             keys.forEach((k) => {
-    //                 localforage.getItem(k).then((c: IBaseCache<any>) => {
-    //                     if (c.expiresAt && +(new Date()) > c.expiresAt) {
-    //                         localforage.removeItem(k);
-    //                     }
-    //                 });
-    //             });
-    //         }
-    //     } catch (e) {
-    //         console.warn(`Could not expire indexdb cache: ${e.message}`);
-    //     }
-    // }
 }
+/* eslint-enable no-console */
