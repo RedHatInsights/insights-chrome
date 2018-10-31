@@ -1304,6 +1304,7 @@ function getUserInfo() {
             email: token.email,
             first_name: token.firstName,
             last_name: token.lastName,
+            full_name: `${token.firstName} ${token.lastName}`,
             address_string: `"${token.firstName} ${token.lastName}" ${token.email}`,
             is_active: true,
             locale: token.lang,

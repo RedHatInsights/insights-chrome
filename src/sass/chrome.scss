@@ -47,8 +47,14 @@ body {
     .pf-c-dropdown__menu {
         .account-number__header { @include rem('font-size', 12px); }
     }
-}
 
+    .user-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparentize(black, 0.2);
+    }    
+}
 
 // Brand
 .pf-c-brand {

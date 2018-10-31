@@ -21,8 +21,6 @@ header.pf-l-page__header(role="banner")
           button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq' widget-type='InsightsFAQ')
             i.fas.fa-question-circle
       .pf-l-toolbar__group
-        .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search' widget-type='InsightsSearch')
         .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
           .pf-c-dropdown.pf-m-align-right.dropdown-kebab
             button#dropdown-user.pf-c-dropdown__toggle(aria-label='Overflow actions' widget-type='InsightsOverflowActions', aria-expanded='false', onclick='dropdownToggle()')
@@ -37,3 +35,5 @@ header.pf-l-page__header(role="banner")
             button#dropdown-user.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false' , onclick='dropdownToggle()')
             ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
               include dropdownItems.pug
+        .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
+          .user-icon.pf-c-avatar
