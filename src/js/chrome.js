@@ -9,10 +9,15 @@ const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
-    document.querySelector('.user-info').prepend(`${userInfo.identity.first_name} ${userInfo.identity.last_name}`);
-    document.querySelector('.account-number__value').append(userInfo.identity.id);
+    injectUserInfo(userInfo.identity);
     analytics(userInfo.identity);
 });
+
+function injectUserInfo(userInfo) {
+    document.querySelector('.user-info').prepend(`${userInfo.first_name} ${userInfo.last_name}`);
+    let accountSelector = document.querySelectorAll('.account-number__value');
+    Array.from(accountSelector).forEach(accountSelector => accountSelector.append(userInfo.id));
+}
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -64,7 +69,14 @@ window.navToggle = () => {
 };
 
 window.dropdownToggle = () => {
-    let dropdown = document.querySelector('.pf-c-dropdown');
+    const mq = window.matchMedia('(min-width: 992px)');
+    let dropdown;
+
+    if (mq.matches) {
+        dropdown = document.querySelector('.dropdown-button');
+    } else {
+        dropdown = document.querySelector('.dropdown-kebab');
+    }
 
     dropdown.classList.toggle('pf-m-expanded');
     dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');

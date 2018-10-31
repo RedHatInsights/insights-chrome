@@ -21,17 +21,19 @@ header.pf-l-page__header(role="banner")
           button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq' widget-type='InsightsFAQ')
             i.fas.fa-question-circle
       .pf-l-toolbar__group
+        .pf-l-toolbar__item
+          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search' widget-type='InsightsSearch')
         .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
-            i.fas.fa-ellipsis-v
+          .pf-c-dropdown.pf-m-align-right.dropdown-kebab
+            button#dropdown-user.pf-c-dropdown__toggle(aria-label='Overflow actions' widget-type='InsightsOverflowActions', aria-expanded='false', onclick='dropdownToggle()')
+              i.fas.fa-ellipsis-v
+            ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
+              a.pf-c-dropdown__menu-item 0 Notifications
+              a.pf-c-dropdown__menu-item Settings
+              a.pf-c-dropdown__menu-item Help
+              include dropdownItems.pug
         .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
-          .pf-c-dropdown.pf-m-align-right
+          .pf-c-dropdown.pf-m-align-right.dropdown-button
             button#dropdown-user.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false' , onclick='dropdownToggle()')
             ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
-              li
-                a.pf-c-dropdown__menu-item(onClick='window.insights.chrome.auth.logout()') Logout
-                li.pf-c-dropdown__separator(role="separator")
-                button.pf-c-dropdown__menu-item.pf-c-dropdown__menu-item-account(aria-pressed='false', disabled)
-                  dl
-                    dt.account-number__header Account Number:
-                    dd.account-number__value
+              include dropdownItems.pug
