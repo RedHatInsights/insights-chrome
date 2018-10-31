@@ -69,14 +69,8 @@ window.navToggle = () => {
 };
 
 window.dropdownToggle = () => {
-    const mq = window.matchMedia('(min-width: 992px)');
-    let dropdown;
-
-    if (mq.matches) {
-        dropdown = document.querySelector('.dropdown-button');
-    } else {
-        dropdown = document.querySelector('.dropdown-kebab');
-    }
+    // Find out which dropdown (name, or kebab) we need to target
+    let dropdown = document.querySelector(window.matchMedia('(min-width: 992px)').matches ? '.dropdown-user' : '.dropdown-kebab');
 
     dropdown.classList.toggle('pf-m-expanded');
     dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
