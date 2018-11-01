@@ -1,4 +1,4 @@
-import localforage from 'localforage/dist/localforage';
+import localforage from 'localforage';
 
 // const MINUTES_1 = 60 * 1000;
 // const HOURS_1 = 60 * MINUTES_1;
@@ -9,12 +9,12 @@ export const CACHE_STORAGE_NAME = 'jwt-redhat-lf';
 
 localforage.config({
     driver: localforage.LOCALSTORAGE,
-    name: 'jwt-redhat-lf'
+    name: CACHE_STORAGE_NAME
 });
 
-export class CacheUtils {
+export default {
 
-    static set(key, obj) {
+    set: (key, obj) => {
         if (!obj.lastModifiedDate) {
             obj.lastModifiedDate = (new Date()).toISOString();
         }
@@ -24,33 +24,33 @@ export class CacheUtils {
         } catch (e) {
             console.warn(`Unable to set ${key} due to: ${e.message}`);
         }
-    }
+    },
 
-    static get(key) {
+    get: (key) => {
         try {
             return localforage.getItem(key);
         } catch (e) {
             console.warn(`Unable to get ${key} due to: ${e.message}`);
         }
-    }
+    },
 
-    static delete(key) {
+    delete: (key) => {
         try {
             return localforage.removeItem(key);
         } catch (e) {
             console.warn(`Unable to delete ${key} due to: ${e.message}`);
         }
-    }
+    },
 
-    static clear() {
+    clear: () => {
         try {
             return localforage.clear();
         } catch (e) {
             console.warn(`Unable to clear all cache: ${e.message}`);
         }
-    }
+    },
 
-    static keys(text) {
+    keys: (text) => {
         try {
             if (text) {
                 return localforage.keys().then((keys) => {
@@ -66,16 +66,17 @@ export class CacheUtils {
         } catch (e) {
             console.warn(`Unable to get keys containing ${text} due to: ${e.message}`);
         }
-    }
+    },
 
-    static setInSessionStorage(key, value) {
+    setInSessionStorage: (key, value) => {
         try {
             sessionStorage.setItem(key, value);
         } catch (e) {
             console.warn(`Could not set key: ${key}, value: ${value} in sessionStorage`);
         }
-    }
-    static getInSessionStorage(key) {
+    },
+
+    getInSessionStorage: (key) => {
         try {
             return sessionStorage.getItem(key);
         } catch (e) {

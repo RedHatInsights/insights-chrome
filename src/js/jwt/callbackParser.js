@@ -1,11 +1,11 @@
-export default class CallbackParser {
+export default {
 
-    constructor(uriToParse, responseMode) {
+    constructor: (uriToParse, responseMode) => {
         this.uriToParse = uriToParse;
         this.responseMode = responseMode;
-    }
+    },
 
-    initialParse () {
+    initialParse: () => {
         let baseUri = null;
         let queryString = null;
         let fragmentString = null;
@@ -28,9 +28,9 @@ export default class CallbackParser {
         }
 
         return { baseUri: baseUri, queryString: queryString, fragmentString: fragmentString };
-    }
+    },
 
-    parseParams (paramString) {
+    parseParams: (paramString) => {
         const result = {};
         const params = paramString.split('&');
         for (let i = 0; i < params.length; i++) {
@@ -41,9 +41,9 @@ export default class CallbackParser {
         }
 
         return result;
-    }
+    },
 
-    handleQueryParam (paramName, paramValue, oauth) {
+    handleQueryParam: (paramName, paramValue, oauth) => {
         const supportedOAuthParams = ['code', 'state', 'error', 'error_description'];
 
         for (let i = 0; i < supportedOAuthParams.length ; i++) {
@@ -54,9 +54,9 @@ export default class CallbackParser {
         }
 
         return false;
-    }
+    },
 
-    parseUri () {
+    parseUri: () => {
         const parsedUri = this.initialParse();
 
         let queryParams = {};

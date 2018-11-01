@@ -3,7 +3,7 @@ const lodash = require('lodash');
 
 import '@babel/polyfill';
 
-import { CacheUtils } from './cacheUtils';
+import CacheUtils from './cacheUtils';
 
 const Jwt = {
     login: initialized(login),
