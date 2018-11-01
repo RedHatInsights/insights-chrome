@@ -83,4 +83,4 @@ export default {
             console.warn(`Could not get key: ${key} in sessionStorage`);
         }
     }
-}
+};
