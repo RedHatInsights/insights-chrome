@@ -49,11 +49,11 @@ export const options = Object.freeze([{
             title: 'Overview'
         },
         {
-            id: 'cost',
+            id: 'aws',
             title: 'Cloud Cost'
         },
         {
-            id: 'openshift-charge',
+            id: 'ocp',
             title: 'OpenShift Charge'
         }
     ]
