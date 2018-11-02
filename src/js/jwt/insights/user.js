@@ -1,7 +1,8 @@
 const lodash = require('lodash');
 
-const log = require('../logger')('insights/user.js');
+// const log = require('../logger')('insights/user.js');
 
+/* eslint-disable camelcase */
 module.exports = (token) => {
     return token ? {
         identity: {
@@ -21,3 +22,4 @@ module.exports = (token) => {
         }
     } : null;
 };
+/* eslint-enable camelcase */

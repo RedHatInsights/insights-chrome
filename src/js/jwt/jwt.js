@@ -1,6 +1,5 @@
 // Imports
 const Keycloak = require('keycloak-js');
-const lodash = require('lodash');
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -30,7 +29,7 @@ pub.init = (options) => {
     return priv.keycloak.init(options);
 };
 
-pub.logout = (options) => {
+pub.logout = () => {
     log('in logout');
 
     // Redirect to logout
@@ -39,12 +38,11 @@ pub.logout = (options) => {
 
 pub.getUser = () => {
     log('in getUser');
-    
     return insightsUser(priv.keycloak.tokenParsed);
 };
 
 pub.userReady = () => {
-    log('in userReady')
+    log('in userReady');
     return priv.keycloak.authenticated;
 };
 
