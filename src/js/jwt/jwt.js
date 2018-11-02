@@ -13,14 +13,14 @@ const pub = {};
 const priv = {};
 
 pub.login = () => {
-    log('in login');
+    log('Logging in');
 
     // Redirect to login
     priv.keycloak.login({ redirectUri: location.href });
 };
 
 pub.init = (options) => {
-    log('in init');
+    log('Initializing');
 
     // TODO let users override options
     options.url = insightsUrl();
@@ -30,19 +30,19 @@ pub.init = (options) => {
 };
 
 pub.logout = () => {
-    log('in logout');
+    log('Logging out');
 
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);
 };
 
 pub.getUser = () => {
-    log('in getUser');
+    log('Getting user');
     return insightsUser(priv.keycloak.tokenParsed);
 };
 
 pub.userReady = () => {
-    log('in userReady');
+    log(`User ready: ${priv.keycloak.authenticated}`);
     return priv.keycloak.authenticated;
 };
 

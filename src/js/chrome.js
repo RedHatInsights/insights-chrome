@@ -8,7 +8,6 @@ import analytics        from './analytics';
 const libjwt = auth();
 
 libjwt.initPromise.then(() => {
-    console.log('FDSFASFA');
     const userInfo = libjwt.jwt.getUser();
     injectUserInfo(userInfo.identity);
     analytics(userInfo.identity);

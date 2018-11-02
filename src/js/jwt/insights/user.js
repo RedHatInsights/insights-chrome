@@ -1,10 +1,10 @@
 const lodash = require('lodash');
 
-// const log = require('../logger')('insights/user.js');
+const log = require('../logger')('insights/user.js');
 
 /* eslint-disable camelcase */
 module.exports = (token) => {
-    return token ? {
+    let user = token ? {
         identity: {
             id: token.user_id,
             org_id: token.account_id,
@@ -21,5 +21,8 @@ module.exports = (token) => {
             is_internal: lodash.includes(token.realm_access.roles,  'redhat:employees')
         }
     } : null;
+
+    log(`User ID: ${user.identity.id}`);
+    return user;
 };
 /* eslint-enable camelcase */
