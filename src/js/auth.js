@@ -1,12 +1,12 @@
 /*global require*/
-const jwt     = require('./jwt/jwt').default;
+const jwt = require('./jwt/jwt');
 const options = {
-    keycloakOptions: { clientId: 'customer-portal' },
-    keycloakInitOptions: { responseMode: 'query' }
+    realm: 'redhat-external',
+    clientId: 'customer-portal'
 };
 
 function bouncer() {
-    if (!jwt.isAuthenticated()) {
+    if (!jwt.userReady()) {
         const keys = [
             'jwt-redhat-lf/refresh_fail_count',
             'rh_jwt',
@@ -23,6 +23,7 @@ function bouncer() {
 
 export default () => {
     const promise = jwt.init(options).then(bouncer);
+    console.log(promise);
     return {
         jwt: jwt,
         initPromise: promise
