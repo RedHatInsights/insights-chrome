@@ -8,274 +8,14 @@ import CacheUtils from './cacheUtils';
 const Jwt = {
     login: initialized(login),
     logout: initialized(logout),
-    register: initialized(register),
-    hasRole: initialized(hasRole),
-    isInternal: initialized(isInternal),
     isAuthenticated: initialized(isAuthenticated),
-    getRegisterUrl: initialized(getRegisterUrl),
-    getLoginUrl: initialized(getLoginUrl),
-    getLogoutUrl: initialized(getLogoutUrl),
-    getAccountUrl: initialized(getAccountUrl),
-    getToken: initialized(getToken),
-    getStoredTokenValue: initialized(getStoredTokenValue),
-    getEncodedToken: initialized(getEncodedToken),
     getUserInfo: initialized(getUserInfo),
-    updateToken: initialized(updateToken),
-    cancelRefreshLoop: initialized(cancelRefreshLoop),
-    startRefreshLoop: initialized(startRefreshLoop),
-    isTokenExpired: initialized(isTokenExpired),
     onInit: onInit,
-    onInitError: onInitError,
-    onAuthRefreshError: onAuthRefreshError,
-    onAuthRefreshSuccess: onAuthRefreshSuccess,
-    onAuthLogout: onAuthLogout,
-    onTokenExpired: onTokenExpired,
-    onInitialUpdateToken: onInitialUpdateToken,
-    onTokenMismatch: onTokenMismatch,
-    onJwtTokenUpdateFailed: onJwtTokenUpdateFailed,
-    onAuthError: onAuthError,
-    init: init,
     reinit: reinit,
-    getCountForKey: getCountForKey,
-    failCountPassed: failCountPassed,
-    expiresIn: expiresIn
+    init: init
 };
 
 export default Jwt;
-
-// Use Polyfill for BroadcastChannel if not supported natively by browser
-if (!('BroadcastChannel' in window)) {
-    log(`[jwt.js] Using polyfill for BroadcastChannel`);
-    (function (context) {
-        // Internal variables
-        let _channels = null;
-        // List of channels
-
-        let _tabId = null;
-        // Current window browser tab identifier (see IE problem, later)
-
-        let _prefix = 'polyBC_'; // prefix to identify localStorage keys.
-
-        /**
-         * Internal function, generates pseudo-random strings.
-         * @see http://stackoverflow.com/a/1349426/2187738
-         * @private
-         */
-        function getRandomString(length) {
-            let text = '';
-
-            let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            for (let i = 0; i < (length || 5); i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-
-            return text;
-        }
-
-        /**
-         * Check if an object is empty.
-         * @see http://stackoverflow.com/a/679937/2187738
-         * @private
-         */
-        function isEmpty(obj) {
-            for (let prop in obj) {
-                if (obj.hasOwnProperty(prop))
-                {return false;}
-            }
-
-            return true;
-            // Also this is good.
-            // returns 0 if empty or an integer > 0 if non-empty
-            // return Object.keys(obj).length;
-        }
-
-        /**
-         * Gets the current timestamp
-         * @private
-         */
-        function getTimestamp() {
-            return (new Date().getTime());
-        }
-
-        /**
-         * Build a "similar" response as done in the real BroadcastChannel API
-         */
-        function buildResponse(data) {
-            return {
-                timestamp: getTimestamp(),
-                isTrusted: true,
-                target: null, // Since we are using JSON stringify, we cannot pass references.
-                currentTarget: null,
-                data: data,
-                bubbles: false,
-                cancelable: false,
-                defaultPrevented: false,
-                lastEventId: '',
-                origin: context.location.origin
-            };
-        }
-
-        /**
-         * Creates a new BroadcastChannel
-         * @param {String} channelName - the channel name.
-         * return {BroadcastChannel}
-         */
-        function BroadcastChannel(channelName) {
-
-            // Check if localStorage is available.
-            if (!context.localStorage) {
-                throw 'localStorage not available';
-            }
-
-            // Add custom prefix to Channel Name.
-            let _channelId = _prefix + channelName;
-
-            let isFirstChannel = (_channels === null);
-
-            this.channelId = _channelId;
-
-            _tabId = _tabId || getRandomString(); // Creates a new tab identifier, if necessary.
-            _channels = _channels || {}; // Initializes channels, if necessary.
-            _channels[_channelId] = _channels[_channelId] || [];
-
-            // Adds the current Broadcast Channel.
-            _channels[_channelId].push(this);
-
-            // Creates a sufficiently random name for the current instance of BC.
-            this.name = _channelId + '::::' + getRandomString() + getTimestamp();
-
-            // If it is the first instance of Channel created, also creates the storage listener.
-            if (isFirstChannel) {
-                // addEventListener.
-                context.addEventListener('storage', _onmsg.bind(this), false);
-            }
-
-            return this;
-        }
-
-        /**
-         * Empty function to prevent errors when calling onmessage.
-         */
-        BroadcastChannel.prototype.onmessage = function () { };
-
-        /**
-         * Sends the message to different channels.
-         * @param {Object} data - the data to be sent ( actually, it can be any JS type ).
-         */
-        BroadcastChannel.prototype.postMessage = function (data) {
-            // Gets all the 'Same tab' channels available.
-            if (!_channels) {return;}
-
-            if (this.closed) {
-                throw 'This BroadcastChannel is closed.';
-            }
-
-            // Build the event-like response.
-            let msgObj = buildResponse(data);
-
-            // SAME-TAB communication.
-            let subscribers = _channels[this.channelId] || [];
-            for (let j in subscribers) {
-                // We don't send the message to ourselves.
-                if (subscribers[j].closed || subscribers[j].name === this.name) {continue;}
-
-                if (subscribers[j].onmessage) {
-                    subscribers[j].onmessage(msgObj);
-                }
-            }
-
-            // CROSS-TAB communication.
-            // Adds some properties to communicate among the tabs.
-            let editedObj = {
-                channelId: this.channelId,
-                bcId: this.name,
-                tabId: _tabId,
-                message: msgObj
-            };
-            let lsKey = 'eomBCmessage_' + getRandomString() + '_' + this.channelId;
-            try {
-                let editedJSON = JSON.stringify(editedObj);
-                // Set localStorage item (and, after that, removes it).
-                context.localStorage.setItem(lsKey, editedJSON);
-            } catch (ex) {
-                throw 'Message conversion has resulted in an error.';
-            }
-
-            setTimeout(function () { context.localStorage.removeItem(lsKey); }, 1000);
-
-        };
-
-        /**
-         * Handler of the 'storage' function.
-         * Called when another window has sent a message.
-         * @param {Object} ev - the message.
-         * @private
-         */
-        function _onmsg(ev) {
-            let key = ev.key;
-
-            let newValue = ev.newValue;
-
-            let isRemoved = !newValue;
-
-            let obj = null;
-
-            // Actually checks if the messages if from us.
-            if (key.indexOf('eomBCmessage_') > -1 && !isRemoved) {
-
-                try {
-                    obj = JSON.parse(newValue);
-                } catch (ex) {
-                    throw 'Message conversion has resulted in an error.';
-                }
-
-                // NOTE: Check on tab is done to prevent IE error
-                // (localStorage event is called even in the same tab :( )
-
-                if ((obj.tabId !== _tabId) &&
-                    obj.channelId &&
-                    _channels &&
-                    _channels[obj.channelId]) {
-
-                    let subscribers = _channels[obj.channelId];
-                    for (let j in subscribers) {
-                        if (!subscribers[j].closed && subscribers[j].onmessage) {
-                            subscribers[j].onmessage(obj.message);
-                        }
-                    }
-
-                    // Remove the item for safety.
-                    context.localStorage.removeItem(key);
-                }
-            }
-        }
-
-        /**
-         * Closes a Broadcast channel.
-         */
-        BroadcastChannel.prototype.close = function () {
-
-            this.closed = true;
-
-            let index = _channels[this.channelId].indexOf(this);
-            if (index > -1)
-            {_channels[this.channelId].splice(index, 1);}
-
-            // If we have no channels, remove the listener.
-            if (!_channels[this.channelId].length) {
-                delete _channels[this.channelId];
-            }
-
-            if (isEmpty(_channels)) {
-                context.removeEventListener('storage', _onmsg.bind(this));
-            }
-        };
-
-        // Sets BroadcastChannel, if not available.
-        context.BroadcastChannel = context.BroadcastChannel || BroadcastChannel;
-
-    }(window.top));
-}
 
 /*
  * Copyright 2016 Red Hat, Inc. and/or its affiliates
@@ -317,24 +57,10 @@ const privateFunctions = {
             // DOMException.
             store = window[type + 'Storage'];
 
+        } catch (e) {
             // if DOM Storage is disabled in other browsers, it may not
             // throw an error, but we should still throw one for them.
-            if (!store) {throw new Error('DOM Storage is disabled');}
-        } catch (e) {
-            // this means DOM storage is disabled in the users' browser, so
-            // we'll create an in-memory object that simulates the DOM
-            // Storage API.
-            store = {
-                getItem: function(key) {
-                    return store[key];
-                },
-                setItem: function(key, value) {
-                    return (store[key] = value);
-                },
-                removeItem: function(key) {
-                    return delete store[key];
-                }
-            };
+            throw new Error('DOM Storage is disabled');
         }
 
         // The get and set here are used exclusively for getting and setting the token and refreshToken which are strings.
@@ -405,11 +131,6 @@ const lib = {
         cookieDate.setTime(cookieDate.getTime() - 1);
         document.cookie = cookieName += '=; expires=' + cookieDate.toUTCString();
     },
-    log: function(message) {
-        if (typeof console !== 'undefined') {
-            console.log(message);
-        }
-    },
     store: {
         local: privateFunctions.makeStore('local'),
         session: privateFunctions.makeStore('session')
@@ -426,7 +147,6 @@ const TOKEN_SURFIX = `_${JWT_REDHAT_IDENTIFIER}_token`;
 const REFRESH_TOKEN_NAME_SURFIX = `_${JWT_REDHAT_IDENTIFIER}_refresh_token`;
 const FAIL_COUNT_NAME_SURFIX = `_${JWT_REDHAT_IDENTIFIER}_refresh_fail_count`;
 
-const INTERNAL_ROLE = 'redhat:employees';
 let TOKEN_NAME = `${DEFAULT_KEYCLOAK_OPTIONS.clientId}${TOKEN_SURFIX}`;
 let INITIAL_JWT_OPTIONS = undefined;
 let COOKIE_TOKEN_NAME = TOKEN_NAME;
@@ -439,7 +159,6 @@ const REFRESH_TTE = 90; // seconds. refresh only token if it would expire this m
 const FAIL_COUNT_THRESHOLD = 5; // how many times in a row token refresh can fail before we give up trying
 let disablePolling = false;
 let initialUserToken = null;
-let broadcastChannel = null;
 
 // This is explicitly to track when the first successfull updateToken happens.
 let timeSkew = null;
@@ -544,35 +263,11 @@ function init(jwtOptions) {
 
     if (refreshToken) { DEFAULT_KEYCLOAK_INIT_OPTIONS.refreshToken = refreshToken; }
 
-    // for multi tab communication
-    if (!jwtOptions.disableBroadcastMessage) {
-        if (!broadcastChannel) {
-            broadcastChannel = new BroadcastChannel(`jwt_${options.realm}`);
-        }
-
-        broadcastChannel.onmessage = (e) => {
-            log(`[jwt.js] BroadcastChannel, Received event : ${e.data.type}`);
-            if (e && e.data && e.data.type === 'Initialized' && !state.keycloak.authenticated && e.data.authenticated) {
-                if (options.clientId === e.data.clientId) {
-                    reinit();
-                } else {
-                    if (jwtOptions.reLoginIframeEnabled && jwtOptions.reLoginIframe) {
-                        const iframeMessage = { value: null, message: 'reinit' };
-                        jwtOptions.reLoginIframe.contentWindow.postMessage(JSON.stringify(iframeMessage), '*');
-                    }
-                }
-            }
-        };
-    }
-
     state.keycloak = Keycloak(options);
 
     // wire up our handlers to keycloak's events
     state.keycloak.onAuthSuccess = onAuthSuccessCallback;
     state.keycloak.onAuthError = onAuthError;
-    state.keycloak.onAuthRefreshSuccess = onAuthRefreshSuccessCallback;
-    state.keycloak.onAuthRefreshError = onAuthRefreshErrorCallback;
-    state.keycloak.onAuthLogout = onAuthLogoutCallback;
     state.keycloak.onTokenExpired = onTokenExpiredCallback;
 
     return state.keycloak
@@ -595,20 +290,13 @@ function keycloakInitSuccess(authenticated) {
     if (authenticated) {
         setToken(state.keycloak.token);
         setRefreshToken(state.keycloak.refreshToken);
-        initialUserToken = getToken();
+        initialUserToken = state.keycloak.tokenParsed;
         resetKeyCount(FAIL_COUNT_NAME).then(() => {
             startRefreshLoop();
         }).catch(() => {
             log('[jwt.js] unable to reset the fail count');
             startRefreshLoop();
         });
-        if (!INITIAL_JWT_OPTIONS.disableBroadcastMessage && broadcastChannel) {
-            broadcastChannel.postMessage({
-                type: 'Initialized',
-                clientId: INITIAL_JWT_OPTIONS.keycloakOptions.clientId,
-                authenticated
-            });
-        }
 
         // initialize re-login iframe only after the application has initialized
         if (INITIAL_JWT_OPTIONS.reLoginIframeEnabled && INITIAL_JWT_OPTIONS.reLoginIframe) {
@@ -622,7 +310,8 @@ function keycloakInitSuccess(authenticated) {
         }
     }
 
-    keycloakInitHandler();
+    state.initialized = true;
+    handleInitEvents();
 }
 
 /**
@@ -634,54 +323,6 @@ function keycloakInitSuccess(authenticated) {
 function handleInitEvents() {
     if (events.init.length > 0) {
         events.init.forEach((event) => {
-            if (typeof event === 'function') {
-                event(Jwt);
-            }
-        });
-    }
-}
-
-/**
- * Call refresh error events
- *
- * @memberof module:jwt
- * @private
- */
-function handleRefreshErrorEvents() {
-    if (events.refreshError.length > 0) {
-        events.refreshError.forEach((event) => {
-            if (typeof event === 'function') {
-                event(Jwt);
-            }
-        });
-    }
-}
-
-/**
- * Call refresh success events
- *
- * @memberof module:jwt
- * @private
- */
-function handleRefreshSuccessEvents() {
-    if (events.refreshSuccess.length > 0) {
-        events.refreshSuccess.forEach((event) => {
-            if (typeof event === 'function') {
-                event(Jwt);
-            }
-        });
-    }
-}
-
-/**
- * Call logout events
- *
- * @memberof module:jwt
- * @private
- */
-function handleLogoutEvents() {
-    if (events.logout.length > 0) {
-        events.logout.forEach((event) => {
             if (typeof event === 'function') {
                 event(Jwt);
             }
@@ -785,125 +426,17 @@ function onInit(func) {
 }
 
 /**
- * Register a function to be called when jwt.js has initialized and
- * the first token update has successful run
- * @memberof module:jwt
- */
-function onInitialUpdateToken(func) {
-    log(`[jwt.js] registering the onInitialUpdateToken handler`);
-    // We know the setToken has happened at least once when the timeLocal is properly set
-    if (state.initialized && state.keycloak.timeSkew !== null) {
-        log(`[jwt.js] running event handler: onInitialUpdateToken`);
-        func(Jwt);
-    } else {
-        events.token.push(func);
-    }
-}
-
-/**
- * Register a function to be called when the tokens mismatch.  This is a hard
- * error caused when mixing sso envs/tokens and requires a logout/log back in
- * @memberof module:jwt
- */
-function onTokenMismatch(func) {
-    log(`[jwt.js] registering the onTokenMismatch handler`);
-    if (state.initialized) {
-        log(`[jwt.js] running event handler: onTokenMismatch`);
-        func(Jwt);
-    } else {
-        events.tokenMismatch.push(func);
-    }
-}
-
-/**
- * Register a function to be called when the tokens mismatch.  This is a hard
- * error caused when mixing sso envs/tokens and requires a logout/log back in
- * @memberof module:jwt
- */
-function onJwtTokenUpdateFailed(func) {
-    log(`[jwt.js] registering the onJwtTokenUpdateFailed handler`);
-    if (state.initialized) {
-        log(`[jwt.js] running event handler: onJwtTokenUpdateFailed`);
-        func(Jwt);
-    } else {
-        events.jwtTokenUpdateFailed.push(func);
-    }
-}
-
-/**
  * Keycloak init error handler.
  * @memberof module:jwt
  * @private
  */
 function keycloakInitError() {
     log('[jwt.js] init error');
-    keycloakInitErrorHandler();
+    state.initialized = false;
+    handleInitErrorEvents();
     removeToken();
     removeRefreshToken();
     cancelRefreshLoop(); // Cancel update token refresh loop
-}
-
-/**
- * Does some things after keycloak initializes, whether or not
- * initialization was successful.
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakInitHandler() {
-    state.initialized = true;
-    handleInitEvents();
-}
-
-/**
- * Call events after keycloak auth refresh error.
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakRefreshErrorHandler() {
-    handleRefreshErrorEvents();
-}
-
-/**
- * Call events after keycloak auth refresh success.
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakRefreshSuccessHandler() {
-    handleRefreshSuccessEvents();
-}
-
-/**
- * Call events after keycloak auth logout.
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakLogoutHandler() {
-    handleLogoutEvents();
-}
-
-/**
- * Call events after keycloak init error.
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakInitErrorHandler() {
-    state.initialized = false;
-    handleInitErrorEvents();
-}
-
-/**
- * Call events after keycloak token expired
- *
- * @memberof module:jwt
- * @private
- */
-function keycloakTokenExpiredHandler() {
-    handleTokenExpiredEvents();
 }
 
 /**
@@ -964,91 +497,11 @@ function onAuthError() {
     log('[jwt.js] onAuthError');
 }
 
-function onAuthRefreshSuccessCallback() {
-    log('[jwt.js] onAuthRefreshSuccess');
-    keycloakRefreshSuccessHandler();
-}
-
-function onAuthRefreshErrorCallback() {
-    log('[jwt.js] onAuthRefreshError');
-    keycloakRefreshErrorHandler();
-}
-
-function onAuthLogoutCallback() {
-    log('[jwt.js] onAuthLogout');
-    // skip redirect if user is logs out from other tabs.
-    logout({ skipRedirect: true });
-    keycloakLogoutHandler();
-}
-
-/**
- * Register a function to be called when keycloak has failed to refresh the session.  Runs
- * immediately if already initialized.  When called, the function will be
- * passed a reference to the jwt.js API.
- *
- * @memberof module:jwt
- */
-function onAuthRefreshError(func) {
-    log('[jwt.js] registering auth refresh error handler');
-    events.refreshError.push(func);
-}
-
-/**
- * Register a function to be called when keycloak has successfully to refresh the session.
- *
- * @memberof module:jwt
- */
-function onAuthRefreshSuccess(func) {
-    log('[jwt.js] registering auth refresh success handler');
-    events.refreshSuccess.push(func);
-}
-
-/**
- * Register a function to be called when keycloak has logged out.
- *
- * @memberof module:jwt
- */
-function onAuthLogout(func) {
-    log('[jwt.js] registering auth logout handler');
-    events.logout.push(func);
-}
-
-/**
- * Register a function to be called when keycloak init fails.
- *
- * @memberof module:jwt
- */
-function onInitError(func) {
-    log('[jwt.js] registering init error handler');
-    events.initError.push(func);
-}
-
 function onTokenExpiredCallback() {
     log('[jwt.js] onTokenExpired');
-    keycloakTokenExpiredHandler();
+    handleTokenExpiredEvents();
 }
 
-/**
- * Register a function to be called when keycloak as expired the token.  Runs
- * immediately if already initialized.  When called, the function will be
- * passed a reference to the jwt.js API.
- *
- * @memberof module:jwt
- */
-function onTokenExpired(func) {
-    log('[jwt.js] registering token expired handler');
-    events.tokenExpired.push(func);
-}
-
-/**
- * Checks if the token is expired
- *
- * @memberof module:jwt
- * @private
- */
-function isTokenExpired(tte = REFRESH_TTE) {
-    return state.keycloak.isTokenExpired(tte) === true;
-}
 /**
  * Refreshes the access token.  Recursively can be called with an iteration count
  * where the function will retry x number of times.
@@ -1246,17 +699,6 @@ function removeToken() {
 }
 
 /**
- * Get an object containing the parsed JSON Web Token.  Contains user and session metadata.
- *
- * @memberof module:jwt
- * @return {Object} the parsed JSON Web Token
- */
-function getToken() {
-    // any here as actual RH tokens have more information than this, which we will customize with IToken above
-    return state.keycloak.tokenParsed;
-}
-
-/**
  * Get the token value stored in the lib.  This method should always be used to get the token value
  * when constructing ajax calls in apps depending on jwt.js.  This ensures that the token is being
  * fetched from localStorage which is cross tab vs. on the keycloak instance which is per tab.
@@ -1275,15 +717,6 @@ function getStoredTokenValue() {
     return token ? token : INITIAL_JWT_OPTIONS.generateJwtTokenCookie ? lib.getCookieValue(COOKIE_TOKEN_NAME) : undefined;
 }
 
-/* Get a string containing the unparsed, base64-encoded JSON Web Token.
-*
-* @memberof module:jwt
-* @return {Object} the parsed JSON Web Token
-*/
-function getEncodedToken() {
-    return state.keycloak.token;
-}
-
 /**
  * Get the user info from the JSON Web Token.  Contains user information
  * similar to what the old userStatus REST service returned.
@@ -1294,7 +727,7 @@ function getEncodedToken() {
 /* eslint-disable camelcase */
 function getUserInfo() {
     // the properties to return
-    const token = getToken();
+    const token = state.keycloak.tokenParsed;
     return token ? {
         identity: {
             id: token.user_id,
@@ -1323,77 +756,6 @@ function getUserInfo() {
  */
 function isAuthenticated() {
     return state.keycloak.authenticated;
-}
-
-/**
- * Is the user is a Red Hat employee?
- *
- * @memberof module:jwt
- * @returns {Boolean} true if the user is a Red Hat employee, otherwise false
- */
-function isInternal() {
-    return state.keycloak.hasRealmRole(INTERNAL_ROLE);
-}
-
-/**
- * Returns true if the user has all the given role(s).  You may provide any
- * number of roles.
- *
- * @param {...String} roles All the roles you wish to test for.  See
- * examples.
- * @returns {Boolean} whether the user is a member of ALL given roles
- * @example session.hasRole('portal_manage_cases');
- * session.hasRole('role1', 'role2', 'role3');
- * @memberof module:jwt
- */
-function hasRole(...roles) {
-    if (!roles) {return false;}
-
-    for (let i = 0; i < roles.length; ++i) {
-        if (!state.keycloak.hasRealmRole(roles[i])) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * Get the URL to the registration page.
- * @return {String} the URL to the registration page
- * @memberof module:jwt
- */
-function getRegisterUrl() {
-    return state.keycloak.createRegisterUrl();
-}
-
-/**
- * Get the URL to the login page.
- * @return {String} the URL to the login page
- * @memberof module:jwt
- */
-function getLoginUrl(options = {}) {
-    const redirectUri = options.redirectUri || location.href;
-    options.redirectUri = redirectUri;
-    return state.keycloak.createLoginUrl(options);
-}
-
-/**
- * Get the URL to the logout page.
- * @return {String} the URL to the logout page
- * @memberof module:jwt
- */
-function getLogoutUrl() {
-    return state.keycloak.createLogoutUrl();
-}
-
-/**
- * Get the URL to the account management page.
- * @return {String} the URL to the account management page
- * @memberof module:jwt
- */
-function getAccountUrl() {
-    return state.keycloak.createAccountUrl();
 }
 
 /**
@@ -1444,27 +806,6 @@ function logout(options = {}) {
     cancelRefreshLoop(); // Cancel update token refresh loop
     if (!options.skipRedirect) {
         state.keycloak.logout(options);
-    }
-}
-
-/**
- * Navigate to the account registration page.
- * @memberof module:jwt
- */
-function register(options) {
-    state.keycloak.register(options);
-}
-
-/**
- * When the token expires
- * @memberof module:jwt
- * @private
- */
-function expiresIn() {
-    try {
-        return state.keycloak.tokenParsed.exp - Math.ceil(new Date().getTime() / 1000) + state.keycloak.timeSkew;
-    } catch (e) {
-        return null;
     }
 }
 
