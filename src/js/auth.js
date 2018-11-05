@@ -2,7 +2,21 @@
 const jwt = require('./jwt/jwt');
 const options = {
     realm: 'redhat-external',
-    clientId: 'customer-portal'
+    clientId: 'customer-portal',
+    routes: {
+        prod: {
+            url: ['access.redhat.com', 'prod.foo.redhat.com'],
+            sso: 'https://sso.redhat.com/auth'
+        },
+        qa: {
+            url: ['access.qa.redhat.com', 'access.qa.itop.redhat.com', 'qa.foo.redhat.com'],
+            sso: 'https://sso.qa.redhat.com/auth'
+        },
+        ci: {
+            url: ['access.ci.itop.redhat.com'],
+            sso: 'https://sso.qa.redhat.com/auth'
+        }
+    }
 };
 
 function bouncer() {

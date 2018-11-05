@@ -7,6 +7,21 @@ const utils = require('./utils');
 
 // Insights Specific
 const insightsUrl = require('./insights/url');
+const DEFAULT_URL = {
+    prod: {
+        url: ['access.redhat.com', 'prod.foo.redhat.com'],
+        sso: 'https://sso.redhat.com/auth'
+    },
+    qa: {
+        url: ['access.qa.redhat.com', 'access.qa.itop.redhat.com', 'qa.foo.redhat.com'],
+        sso: 'https://sso.qa.redhat.com/auth'
+    },
+    ci: {
+        url: ['access.ci.itop.redhat.com'],
+        sso: 'https://sso.qa.redhat.com/auth'
+    }
+}
+
 const insightsUser = require('./insights/user');
 
 const pub = {};
@@ -21,8 +36,7 @@ pub.login = () => {
 pub.init = (options) => {
     log('Initializing');
 
-    // TODO let users override options
-    options.url = insightsUrl();
+    options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_URL));
 
     priv.keycloak = Keycloak(options);
 
