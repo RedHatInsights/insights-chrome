@@ -7,7 +7,7 @@ install:
 script:
 - npm run verify
 after_success:
-- .travis/after_success.sh
+- curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
     global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"

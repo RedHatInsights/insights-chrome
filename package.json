@@ -76,5 +76,8 @@
     "@patternfly/react-core": "./config/pf-react-core-externals.js",
     "@patternfly/react-icons": "./config/pf-react-icons-externals.js",
     "react-router-dom": "./config/react-router-dom-externals.js"
+  },
+  "insights": {
+    "appname": "chrome"
   }
 }
