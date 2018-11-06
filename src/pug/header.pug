@@ -31,8 +31,9 @@ header.pf-l-page__header(role="banner")
               a.pf-c-dropdown__menu-item Help
               include dropdownItems.pug
         .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
-          .pf-c-dropdown.pf-m-align-right.dropdown-user
+          .pf-c-dropdown.pf-m-align-right.dropdown-user.pf-m-plain
             button#dropdown-user.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false' , onclick='dropdownToggle()')
+              i.fas.fa-caret-down.pf-c-dropdown__toggle-icon
             ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
               include dropdownItems.pug
         .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
