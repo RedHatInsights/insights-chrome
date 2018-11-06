@@ -7,6 +7,9 @@ const utils = require('./utils');
 
 // Insights Specific
 const insightsUrl = require('./insights/url');
+const insightsUser = require('./insights/user');
+
+// Global Defaults
 const DEFAULT_ROUTES = {
     prod: {
         url: ['access.redhat.com', 'prod.foo.redhat.com'],
@@ -21,8 +24,6 @@ const DEFAULT_ROUTES = {
         sso: 'https://sso.qa.redhat.com/auth'
     }
 };
-
-const insightsUser = require('./insights/user');
 
 const pub = {};
 const priv = {};
@@ -74,6 +75,7 @@ pub.updateToken = () => {
         }
     }).error(function() {
         log('Failed to refresh the token, or the session has expired');
+        pub.logout;
     });
 };
 
