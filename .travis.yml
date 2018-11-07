@@ -12,3 +12,7 @@ env:
     global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
     - REPO_DIR="insights-chrome-build"
+cache:
+  directories:
+    - "$HOME/.npm"
+    - ".cache"
