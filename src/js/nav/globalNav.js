@@ -1,6 +1,6 @@
 import { appNavClick } from '../redux/actions';
 
-const basepath = '/insights/platform/';
+const basepath = `${document.baseURI}/`;
 export const options = Object.freeze([{
     id: 'dashboard',
     title: 'Dashboard'
@@ -94,6 +94,7 @@ function navItem(item, parentId = '') {
     return `<li class="pf-c-nav__item">
         <a navigate="${navigateTo}"
             app-id="${item.id}"
+            href="${navigateTo}"
             class="pf-c-nav__link ${item.active ? 'pf-m-current' : ''}"
             aria-current="page"
         >
@@ -113,6 +114,7 @@ function secondaryNav(parent, { active, id: parentId, subItems }, { dispatch }) 
     </section>`
     );
     secondaryNav.onclick = event => {
+        event.preventDefault();
         event.stopPropagation();
         if (active) {
             dispatch(appNavClick({ id: event.target.getAttribute('app-id') }, event));
@@ -143,6 +145,7 @@ function toNavElement(item, store) {
 
     a.classList.add('pf-c-nav__link');
     a.setAttribute('navigate', basepath + item.id);
+    a.setAttribute('href', basepath + item.id);
     a.setAttribute('widget-type', 'InsightsNavItem');
     a.setAttribute('widget-id', item.id);
 
@@ -170,6 +173,7 @@ function primaryClickHandler(event, navElement) {
     if (!parentElement.classList.contains('pf-m-expandable')) {
         window.location.href = parentElement.getAttribute('navigate');
     } else {
+        event.preventDefault();
         if (parentElement.classList.contains('pf-m-expanded')) {
             parentElement.querySelector('section').setAttribute('hidden', true);
             parentElement.classList.remove('pf-m-expanded');
