@@ -1,6 +1,6 @@
 import { appNavClick } from '../redux/actions';
 
-const basepath = `${document.baseURI}/`;
+const basepath = `${document.baseURI}platform/`;
 export const options = Object.freeze([{
     id: 'dashboard',
     title: 'Dashboard'
