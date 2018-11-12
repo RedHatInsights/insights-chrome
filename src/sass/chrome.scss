@@ -1,5 +1,5 @@
 $pf-global--enable-reset: 'true';
-$pf-global--image-path: '/insights/static/chrome/assets/images/';
+$pf-global--image-path: './assets/images/';
 
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
 @import 'node_modules/@patternfly/patternfly-next/layouts/Page/page.scss';

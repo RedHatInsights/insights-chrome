@@ -4,8 +4,16 @@ node_js:
 - stable
 install:
 - npm ci
-script:
-- npm run verify
+jobs:
+    include:
+    - stage: deploy:stable
+      if: branch IN (prod-stable, qa-stable, ci-stable)
+      name: deploy:stable
+      script: npm run verify
+    - stage: deploy:beta
+      if: branch IN (master, prod-beta, qa-beta)
+      name: deploy:beta
+      script: npm run verify:beta
 after_success:
 - curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
