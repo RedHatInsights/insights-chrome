@@ -34,23 +34,20 @@ authChannel.onmessage = function(e) {
 
     log(`BroadcastChannel, Received event : ${e.data.type}`);
 
-    switch(e.data.type && !priv.keycloak.authenticated) {
+    switch (e.data.type) {
         case 'logout':
             pub.logout();
-            console.log('----------logout');
             break;
         case 'login':
             pub.login();
-            console.log('----------login');
             break;
         case 'refresh':
             pub.updateToken();
-            console.log('----------updateToken')
             break;
     }
-}
+};
 
-// Init
+/*** Initialization ***/
 pub.init = (options) => {
     log('Initializing');
 
@@ -58,23 +55,25 @@ pub.init = (options) => {
 
     priv.keycloak = Keycloak(options);
 
-    priv.keycloak.onTokenExpired = pub.expiredToken;
+    priv.keycloak.onTokenExpired = pub.updateToken;
+    priv.keycloak.onAuthRefreshSuccess = pub.refreshTokens;
 
     return priv.keycloak
-        .init(options)
-        .success(pub.initSuccess)
-        .error(pub.initError);
+    .init(options)
+    .success(pub.initSuccess)
+    .error(pub.initError);
 };
 
-pub.initSuccess = (authenticated) => {
-    log('JWT Initialized: ' + authenticated);
+// keycloak init successful
+pub.initSuccess = () => { log('JWT Initialized'); };
+
+// keycloak init failed
+pub.initError = () => {
+    log('init error');
+    pub.logout();
 };
 
-pub.initError = (authenticated) => {
-    log('JWT Initialized: ' + authenticated);
-};
-
-// Login/Logout
+/*** Login/Logout ***/
 pub.login = () => {
     log('Logging in');
     // Redirect to login
@@ -88,18 +87,32 @@ pub.logout = () => {
     priv.keycloak.logout(priv.keycloak);
 };
 
-// User Functions
+pub.logoutAllTabs = () => {
+    authChannel.postMessage({ type: 'logout' });
+    pub.logout;
+};
+
+/*** User Functions ***/
+// Get user information
 pub.getUser = () => {
     log('Getting User Information');
     return insightsUser(priv.keycloak.tokenParsed);
 };
 
+// Check to see if the user is loaded, this is what API calls should wait on
 pub.userReady = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);
     return priv.keycloak.authenticated;
 };
 
-// Check Tokens
+/*** Check Token Status ***/
+// If a token is expired, logout of all tabs
+pub.expiredToken = () => { pub.logout; };
+
+// Broadcast message to refresh tokens across tabs
+pub.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
+
+// Actually update the token
 pub.updateToken = () => {
     log('Trying to update token');
     priv.keycloak.updateToken(5).success(function(refreshed) {
@@ -110,14 +123,10 @@ pub.updateToken = () => {
         }
     }).error(function() {
         log('Failed to refresh the token, or the session has expired');
-        pub.logout;
+        pub.logoutAllTabs;
     });
 };
 
-pub.expiredToken = () => {
-    pub.logout;
-    authChannel.postMessage({type: 'logout'});
-}
-
+/*** Exports ***/
 module.exports = pub;
 utils.exposeTest(priv);
