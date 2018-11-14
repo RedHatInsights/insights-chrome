@@ -28,12 +28,29 @@ const DEFAULT_ROUTES = {
 const pub = {};
 const priv = {};
 
-pub.login = () => {
-    log('Logging in');
-    // Redirect to login
-    priv.keycloak.login({ redirectUri: location.href });
-};
+// Broadcast Channel
+const authChannel = new BroadcastChannel('auth');
+authChannel.onmessage = function(e) {
 
+    log(`BroadcastChannel, Received event : ${e.data.type}`);
+
+    switch(e.data.type && !priv.keycloak.authenticated) {
+        case 'logout':
+            pub.logout();
+            console.log('----------logout');
+            break;
+        case 'login':
+            pub.login();
+            console.log('----------login');
+            break;
+        case 'refresh':
+            pub.updateToken();
+            console.log('----------updateToken')
+            break;
+    }
+}
+
+// Init
 pub.init = (options) => {
     log('Initializing');
 
@@ -41,33 +58,51 @@ pub.init = (options) => {
 
     priv.keycloak = Keycloak(options);
 
-    priv.keycloak.onTokenExpired = pub.updateToken;
+    priv.keycloak.onTokenExpired = pub.expiredToken;
 
-    return priv.keycloak.init(options);
+    return priv.keycloak
+        .init(options)
+        .success(pub.initSuccess)
+        .error(pub.initError);
+};
+
+pub.initSuccess = (authenticated) => {
+    log('JWT Initialized: ' + authenticated);
+};
+
+pub.initError = (authenticated) => {
+    log('JWT Initialized: ' + authenticated);
+};
+
+// Login/Logout
+pub.login = () => {
+    log('Logging in');
+    // Redirect to login
+    priv.keycloak.login({ redirectUri: location.href });
 };
 
 pub.logout = () => {
     log('Logging out');
-
     priv.keycloak.clearToken();
-
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);
 };
 
+// User Functions
 pub.getUser = () => {
-    log('Getting user');
+    log('Getting User Information');
     return insightsUser(priv.keycloak.tokenParsed);
 };
 
 pub.userReady = () => {
-    log(`User ready: ${priv.keycloak.authenticated}`);
+    log(`User Ready: ${priv.keycloak.authenticated}`);
     return priv.keycloak.authenticated;
 };
 
+// Check Tokens
 pub.updateToken = () => {
     log('Trying to update token');
-    priv.keycloak.updateToken().success(function(refreshed) {
+    priv.keycloak.updateToken(5).success(function(refreshed) {
         if (refreshed) {
             log('Token was successfully refreshed');
         } else {
@@ -78,6 +113,11 @@ pub.updateToken = () => {
         pub.logout;
     });
 };
+
+pub.expiredToken = () => {
+    pub.logout;
+    authChannel.postMessage({type: 'logout'});
+}
 
 module.exports = pub;
 utils.exposeTest(priv);
