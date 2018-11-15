@@ -1,5 +1,6 @@
 // Imports
 const Keycloak = require('keycloak-js');
+const BroadcastChannel = require('broadcast-channel');
 
 // Utils
 const log = require('./logger')('jwt.js');
