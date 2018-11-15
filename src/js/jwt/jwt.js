@@ -1,6 +1,5 @@
 // Imports
 const Keycloak = require('keycloak-js');
-const BroadcastChannel = require('broadcast-channel');
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -31,7 +30,7 @@ const priv = {};
 
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
-authChannel.onmessage = function(e) {
+authChannel.onmessage = (e) => {
 
     log(`BroadcastChannel, Received event : ${e.data.type}`);
 
@@ -57,6 +56,7 @@ pub.init = (options) => {
     priv.keycloak = Keycloak(options);
 
     priv.keycloak.onTokenExpired = pub.updateToken;
+    priv.keycloak.onAuthSuccess = pub.loginAllTabs;
     priv.keycloak.onAuthRefreshSuccess = pub.refreshTokens;
 
     return priv.keycloak

@@ -44,7 +44,7 @@ window.insights = window.insights || {};
 window.insights.chrome = {
     auth: {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
-        logout: () => { libjwt.jwt.logout(); }
+        logout: () => { libjwt.jwt.logoutAllTabs(); }
     },
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
