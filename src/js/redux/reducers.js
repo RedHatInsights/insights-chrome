@@ -56,3 +56,17 @@ export function loginReducer(state, { payload }) {
         user: payload
     };
 }
+
+export function navToggleReducer(state) {
+    return {
+        ...state,
+        navCollapse: !state.navCollapse
+    };
+}
+
+export function loginReducer(state, { payload }) {
+    return {
+        ...state,
+        user: payload
+    };
+}
