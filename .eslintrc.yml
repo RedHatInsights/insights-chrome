@@ -3,16 +3,22 @@ env:
   browser: true
   jest: true
   es6: true
+plugins:
+  - react
 extends:
   - 'eslint:recommended'
   - 'prettier'
 parserOptions:
   ecmaVersion: 7
   sourceType: module
+  ecmaFeatures:
+    jsx: true
 globals:
   insights: true
   process: true
 rules:
+  react/jsx-uses-vars: 2
+  react/jsx-uses-react: 2
   array-bracket-spacing: 2
   comma-dangle: 2
   comma-spacing:
