@@ -37,3 +37,17 @@ export function appNavClick(state, action) {
         activeApp: action.payload.id
     };
 }
+
+export function navToggleReducer(state) {
+    return {
+        ...state,
+        navCollapse: !state.navCollapse
+    };
+}
+
+export function loginReducer(state, { payload }) {
+    return {
+        ...state,
+        user: payload
+    };
+}
