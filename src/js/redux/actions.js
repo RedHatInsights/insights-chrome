@@ -1,5 +1,5 @@
 import * as actionTypes from './action-types';
-import * as globalNav from '../nav/globalNav';
+import options from '../nav/globalNav';
 
 export const onToggle = () => ({
     type: actionTypes.TOGGLE_ACTION
@@ -13,7 +13,7 @@ export const userLogIn = (user) => ({
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
 export function identifyApp (data) {
-    if (!globalNav.options.some(item => item.id === data)) {
+    if (!options.some(item => item.id === data)) {
         throw new Error(`unknown app identifier: ${data}`);
     }
 

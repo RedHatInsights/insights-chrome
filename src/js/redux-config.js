@@ -4,8 +4,7 @@ import ReducerRegistry, { dispatchActionsToStore }
     from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
 
-import * as globalNav from './nav/globalNav.js';
-import { createReduxListener } from './utils';
+import options from './nav/globalNav.js';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
@@ -28,8 +27,6 @@ export function spinUpStore(middlewares = []) {
     reduxRegistry.register(chromeReducer());
     const store = reduxRegistry.getStore();
 
-    store.subscribe(createReduxListener(store, 'chrome.globalNav', globalNav.render));
-
     const actions = dispatchActionsToStore(actionTemplates, store);
     return { store, middlewareListener, actions };
 }
@@ -37,7 +34,7 @@ export function spinUpStore(middlewares = []) {
 function initialState () {
     return {
         chrome: {
-            globalNav: globalNav.options
+            globalNav: options
         }
     };
 }

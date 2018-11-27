@@ -22,10 +22,8 @@ const Brand = ({ toggleNav }) => (<div className="pf-l-page__header-brand">
 </div>);
 
 function mapDispatchToProps(dispatch) {
-    return { toggleNav: () => {
-        dispatch(onToggle());
-        navToggle(); // eslint-disable-line no-undef
-    }
+    return {
+        toggleNav: () => dispatch(onToggle())
     };
 }
 
