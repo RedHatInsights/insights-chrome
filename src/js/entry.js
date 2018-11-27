@@ -5,7 +5,7 @@ import { appNavClick } from './redux/actions';
 
 export default () => {
     import('./App/index').then(
-        ({ Header, Sidenav }) => {
+        ({ Header, Sidenav, Footer }) => {
             const store = insights.chrome.$internal.store;
             const chromeState = store.getState().chrome;
             const header = document.querySelector('header');

@@ -10,15 +10,6 @@ export const userLogIn = (user) => ({
     payload: user
 });
 
-export const onToggle = () => ({
-    type: actionTypes.TOGGLE_ACTION
-});
-
-export const userLogIn = (user) => ({
-    type: actionTypes.USER_LOGIN,
-    payload: user
-});
-
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
 export function identifyApp (data) {
