@@ -58,6 +58,17 @@ export function loginReducer(state, { payload }) {
 }
 
 export function navToggleReducer(state) {
+    const mq = window.matchMedia('(min-width: 768px)');
+    let page = document.getElementById('ins-c-sidebar');
+
+    if (mq.matches) {
+        page.classList.remove('pf-m-expanded');
+        page.classList.toggle('pf-m-collapsed');
+    } else {
+        page.classList.remove('pf-m-collapsed');
+        page.classList.toggle('pf-m-expanded');
+    }
+
     return {
         ...state,
         navCollapse: !state.navCollapse

@@ -8,6 +8,9 @@ export default () => {
         ({ Header, Sidenav }) => {
             const store = insights.chrome.$internal.store;
             const chromeState = store.getState().chrome;
+            const header = document.querySelector('header');
+            const footer = document.querySelector('footer');
+            const aside = document.querySelector('aside');
             let defaultActive = {};
             if (chromeState && !chromeState.appNav && chromeState.globalNav) {
                 const activeApp = chromeState.globalNav.find(item => item.active);
@@ -19,24 +22,30 @@ export default () => {
             }
 
             store.dispatch(appNavClick(defaultActive));
-            render(
-                <Provider store={store}>
-                    <Header />
-                </Provider>,
-                document.querySelector('header')
-            );
-            // render(
-            //     <Provider store={store}>
-            //         <Footer />
-            //     </Provider>,
-            //     document.querySelector('TODO')
-            // );
-            render(
-                <Provider store={store}>
-                    <Sidenav />
-                </Provider>,
-                document.querySelector('aside')
-            );
+            if (header) {
+                render(
+                    <Provider store={store}>
+                        <Header />
+                    </Provider>,
+                    header
+                );
+            }
+            if (footer) {
+                render(
+                    <Provider store={store}>
+                        <Footer />
+                    </Provider>,
+                    footer
+                );
+            }
+            if (aside) {
+                render(
+                    <Provider store={store}>
+                        <Sidenav />
+                    </Provider>,
+                    aside
+                );
+            };
         }
     );
 };
