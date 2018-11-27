@@ -1,5 +1,3 @@
-import * as globalNav from '../nav/globalNav';
-
 export function clickReducer(state, action) {
     state = {
         ...state,
@@ -13,7 +11,7 @@ export function globalNavReducer(state, action) {
     return {
         ...state,
         appId: action.data,
-        globalNav: globalNav.options.map(item => ({
+        globalNav: state.globalNav.map(item => ({
             ...item,
             active: item.id === action.data
         }))
@@ -27,18 +25,25 @@ export function appNavReducer(state, action) {
     };
 }
 
-export function appNavClick(state, action) {
-    document.querySelectorAll('li:not(.pf-m-expanded) .pf-m-current').forEach(previousPage => {
-        previousPage.classList.remove('pf-m-current');
-    });
-    action.payload.event.target.classList && action.payload.event.target.classList.add('pf-m-current');
+export function appNavClick(state, { payload }) {
     return {
         ...state,
-        activeApp: action.payload.id
+        activeApp: payload.id
     };
 }
 
 export function navToggleReducer(state) {
+    const mq = window.matchMedia('(min-width: 768px)');
+    let page = document.getElementById('ins-c-sidebar');
+
+    if (mq.matches) {
+        page.classList.remove('pf-m-expanded');
+        page.classList.toggle('pf-m-collapsed');
+    } else {
+        page.classList.remove('pf-m-collapsed');
+        page.classList.toggle('pf-m-expanded');
+    }
+
     return {
         ...state,
         navCollapse: !state.navCollapse

@@ -51,7 +51,7 @@ class UserToggle extends Component {
         const { account, isSmall, extraItems } = this.props;
         const toggle = isSmall ?
             <KebabToggle onToggle={this.onToggle} /> :
-            <DropdownToggle onToggle={this.onToggle} iconComponent={null}>{account.name}</DropdownToggle>;
+            <DropdownToggle onToggle={this.onToggle}>{account.name}</DropdownToggle>;
         return (
             <Dropdown
                 position={DropdownPosition.right}
@@ -59,7 +59,7 @@ class UserToggle extends Component {
                 widget-type="InsightsOverflowActions"
                 onSelect={this.onSelect}
                 toggle={toggle}
-                isPlain={isSmall}
+                isPlain
                 isOpen={isOpen}
                 dropdownItems={buildItems(account.number, extraItems)}
             />
