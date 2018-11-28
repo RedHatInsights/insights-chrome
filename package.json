@@ -70,7 +70,7 @@
     "babel-preset-es2015": "^6.24.1",
     "font-awesome": "^4.7.0",
     "js-cookie": "^2.2.0",
-    "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#c3a563f2ebe74693851341c0819a52929e5be9b5",
+    "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#9953fa3965590aa7184f89d38e69b40285899e29",
     "lodash": "^4.17.10",
     "redux": "^4.0.1",
     "url-parse": "^1.4.3"
