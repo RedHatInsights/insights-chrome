@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 
 export default () => {
     import('./App/index').then(
-        ({ Footer, Header, Sidenav }) => {
+        ({ Header }) => {
             const store = insights.chrome.$internal.store;
             render(
                 <Provider store={store}>
@@ -12,18 +12,18 @@ export default () => {
                 </Provider>,
                 document.querySelector('header')
             );
-            render(
-                <Provider store={store}>
-                    <Footer />
-                </Provider>,
-                document.querySelector('TODO')
-            );
-            render(
-                <Provider store={store}>
-                    <Sidenav />
-                </Provider>,
-                document.querySelector('TODO')
-            );
+            // render(
+            //     <Provider store={store}>
+            //         <Footer />
+            //     </Provider>,
+            //     document.querySelector('TODO')
+            // );
+            // render(
+            //     <Provider store={store}>
+            //         <Sidenav />
+            //     </Provider>,
+            //     document.querySelector('TODO')
+            // );
         }
     );
 };

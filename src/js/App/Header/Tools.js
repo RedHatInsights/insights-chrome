@@ -1,13 +1,34 @@
 import React from 'react';
-import { Toolbar, ToolbarGroup, ToolbarItem, Button } from '@patternfly/react-core';
-import { SearchIcon, BellIcon, CogIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button';
+import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
+import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
+import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
+import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
 
 const actions = [
-    <Button variant="plain" aria-label="Overflow search" widget-type="InsightsSearch"><SearchIcon /></Button>,
-    <Button variant="plain" aria-label="Overflow notifications" widget-type="InsightsNotifications"><BellIcon /></Button>,
-    <Button variant="plain" aria-label="Overflow settings" widget-type="InsightsSettings"><CogIcon /></Button>,
-    <Button variant="plain" aria-label="Overflow faq" widget-type="InsightsFAQ"><QuestionCircleIcon /></Button>
+    {
+        title: 'Search',
+        icon: SearchIcon,
+        widget: 'InsightsSearch'
+    },
+    {
+        title: 'Notification',
+        icon: BellIcon,
+        widget: 'InsightsNotifications'
+    },
+    {
+        title: 'Settings',
+        icon: CogIcon,
+        widget: 'InsightsSettings'
+    },
+    {
+        title: 'FAQ',
+        icon: QuestionCircleIcon,
+        widget: 'InsightsFAQ'
+    }
 ];
 
 export default () => (
@@ -15,12 +36,22 @@ export default () => (
         <Toolbar>
             <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-lg">
                 {actions.map((oneItem, key) => (
-                    <ToolbarItem key={key} data-key={key}>{oneItem}</ToolbarItem>
+                    <ToolbarItem key={key} data-key={key}>
+                        <Button
+                            variant="plain"
+                            aria-label={`Overflow ${oneItem.title}`}
+                            widget-type={oneItem.widget}
+                        >
+                            <oneItem.icon />
+                        </Button>
+                    </ToolbarItem>
                 ))}
             </ToolbarGroup>
             <ToolbarGroup>
                 <ToolbarItem className="pf-u-hidden-on-lg pf-u-mr-0">
-                    <UserToggle isSmall extraItems={actions} />
+                    <UserToggle isSmall extraItems={actions.map((action, key) => (
+                        <DropdownItem key={key} component="button" isDisabled>{action.title}</DropdownItem>
+                    ))} />
                 </ToolbarItem>
                 <ToolbarItem className="pf-u-sr-only pf-u-visible-on-lg">
                     <UserToggle />
