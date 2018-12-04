@@ -10,9 +10,9 @@ if [ "${TRAVIS_BRANCH}" = "master" ]; then
         do
             echo
             echo
-            echo "PUSHING ${env-release}"
+            echo "PUSHING ${env}-${release}"
             rm -rf ./build/.git
-            .travis/release.sh "${env-release}"
+            .travis/release.sh "${env}-${release}"
         done
     done
 fi
