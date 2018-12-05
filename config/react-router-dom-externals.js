@@ -1,3 +1,3 @@
-const { ReactRouterDOM } = require('../src/js/inventory');
+const { ReactRouterDOM } = require('../src/js/externalDependencies');
 
 module.exports = ReactRouterDOM;

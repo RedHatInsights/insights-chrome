@@ -1,13 +1,7 @@
-export let PFReactCore;
-export let React;
-export let PFReactIcons;
-export let ReactRouterDOM;
+import setDependencies from './externalDependencies';
 
-export default ({ react, reactRouterDom, reactCore, reactIcons }) => {
-    PFReactCore = reactCore;
-    React = react;
-    PFReactIcons = reactIcons;
-    ReactRouterDOM = reactRouterDom;
+export default (dependencies) => {
+    setDependencies(dependencies);
     return import('./inventoryStyles').then(
         () => import('@red-hat-insights/insights-frontend-components/components/Inventory')
     );
