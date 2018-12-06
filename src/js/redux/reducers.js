@@ -11,7 +11,7 @@ export function globalNavReducer(state, action) {
     return {
         ...state,
         appId: action.data,
-        globalNav: state.globalNav.map(item => ({
+        globalNav: state.globalNav && state.globalNav.map(item => ({
             ...item,
             active: item.id === action.data
         }))
