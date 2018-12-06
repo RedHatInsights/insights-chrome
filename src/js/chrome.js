@@ -1,6 +1,7 @@
 import { spinUpStore }  from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory    from './inventory';
+import loadRemediations from './remediations';
 import auth             from './auth';
 import analytics        from './analytics';
 
@@ -49,6 +50,9 @@ window.insights.chrome = {
 };
 
 window.insights.loadInventory = loadInventory;
+window.insights.experimental = {
+    loadRemediations
+};
 
 window.navToggle = () => {
     const mq = window.matchMedia('(min-width: 768px)');
