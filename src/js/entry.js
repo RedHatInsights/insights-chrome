@@ -5,7 +5,7 @@ import { appNavClick } from './redux/actions';
 
 export default () => {
     import('./App/index').then(
-        ({ Header }) => {
+        ({ Header, Sidenav }) => {
             const store = insights.chrome.$internal.store;
             const chromeState = store.getState().chrome;
             let defaultActive = {};
@@ -31,12 +31,12 @@ export default () => {
             //     </Provider>,
             //     document.querySelector('TODO')
             // );
-            // render(
-            //     <Provider store={store}>
-            //         <Sidenav />
-            //     </Provider>,
-            //     document.querySelector('TODO')
-            // );
+            render(
+                <Provider store={store}>
+                    <Sidenav />
+                </Provider>,
+                document.querySelector('aside')
+            );
         }
     );
 };

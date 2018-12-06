@@ -13,11 +13,13 @@ export const userLogIn = (user) => ({
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
 export function identifyApp (data) {
-    if (!options.some(item => item.id === data)) {
+    if (!options.some(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)))) {
         throw new Error(`unknown app identifier: ${data}`);
     }
 
-    return { type: actionTypes.GLOBAL_NAV_IDENT, data };
+    const firstLevel = options.find(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)));
+
+    return { type: actionTypes.GLOBAL_NAV_IDENT, data: firstLevel.id };
 }
 
 export function appNav (data) {

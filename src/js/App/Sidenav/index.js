@@ -1,8 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Navigation from './Navigation';
 
-export default () => (
-    <Fragment>
-        <Navigation />
-    </Fragment>
-);
+export default () => <Navigation />;

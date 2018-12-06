@@ -15,25 +15,20 @@ export default Object.freeze([{
         }
     ]
 }, {
-    id: 'vulnerability',
-    title: 'Vulnerability',
+    id: 'security',
+    title: 'Security',
     subItems: [
         {
-            id: '',
-            title: 'Overview'
+            id: 'vulnerability',
+            title: 'Vulnerability',
+            reload: 'vulnerability'
         },
         {
-            id: 'cves',
-            title: 'CVEs'
-        },
-        {
-            id: 'systems',
-            title: 'Systems'
+            id: 'compliance',
+            title: 'Compliance',
+            reload: 'compliance'
         }
     ]
-}, {
-    id: 'compliance',
-    title: 'Compliance'
 }, {
     id: 'remediations',
     title: 'Remediations'

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavExpandable, NavList } from '@patternfly/react-core';
+import { Nav, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick } from '../../redux/actions';
@@ -24,13 +24,14 @@ class Navigation extends Component {
     onClick(event, item, parent) {
         const { onNavigate } = this.props;
         if (parent && parent.active) {
-            if (!parent.reload) {
+            if (!item.reload) {
                 onNavigate && onNavigate(item);
             } else {
-                window.location.href = `${basepath}${parent.reload}`;
+                window.location.href = `${basepath}${item.reload}`;
             }
         } else {
-            window.location.href = `${basepath}${parent ? parent.id + '/' : ''}${item.id}`;
+            const reload = item.reload || `${parent ? parent.id + '/' : ''}${item.id}`;
+            window.location.href = `${basepath}${reload}`;
         }
     }
 
