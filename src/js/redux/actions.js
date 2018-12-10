@@ -2,7 +2,7 @@ import * as actionTypes from './action-types';
 import * as globalNav from '../nav/globalNav';
 
 export const onToggle = () => ({
-    type: actionTypes.TOGGLE_ACTION
+    type: actionTypes.NAVIGATION_TOGGLE
 });
 
 export const userLogIn = (user) => ({

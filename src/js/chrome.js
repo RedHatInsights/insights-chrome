@@ -11,7 +11,6 @@ const libjwt = auth();
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
     analytics(userInfo);
-    loadChrome();
 });
 
 // used for translating event names exposed publicly to internal event names
@@ -46,6 +45,9 @@ window.insights.chrome = {
         };
 
         window.insights.chrome.$internal = { store };
+        libjwt.initPromise.then(() => {
+            loadChrome();
+        });
     }
 };
 

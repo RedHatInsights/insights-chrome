@@ -4,14 +4,14 @@ import {
     clickReducer, globalNavReducer, appNavClick, navToggleReducer, loginReducer
 } from './reducers';
 import {
-    CLICK_ACTION, GLOBAL_NAV_IDENT, APP_NAV_CLICK, TOGGLE_ACTION, USER_LOGIN
+    CLICK_ACTION, GLOBAL_NAV_IDENT, APP_NAV_CLICK, NAVIGATION_TOGGLE, USER_LOGIN
 } from './action-types';
 
 const reducers = {
     [CLICK_ACTION]: clickReducer,
     [GLOBAL_NAV_IDENT]: globalNavReducer,
     [APP_NAV_CLICK]: appNavClick,
-    [TOGGLE_ACTION]: navToggleReducer,
+    [NAVIGATION_TOGGLE]: navToggleReducer,
     [USER_LOGIN]: loginReducer
 };
 
