@@ -4,14 +4,12 @@ import loadInventory    from './inventory';
 import loadRemediations from './remediations';
 import auth             from './auth';
 import analytics        from './analytics';
-
+import loadChrome       from './entry';
 // start auth asap
 const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
-    document.querySelector('.user-info').prepend(`${userInfo.firstName} ${userInfo.lastName}`);
-    document.querySelector('.account-number__value').append(userInfo.id);
     analytics(userInfo);
 });
 
@@ -27,11 +25,12 @@ window.insights = window.insights || {};
 window.insights.chrome = {
     auth: {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
-        logout: () => { libjwt.logout(); }
+        logout: () => { libjwt.jwt.logout(); }
     },
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 
+        libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
         // public API actions
         const { identifyApp, appNav } = actions;
         window.insights.chrome.identifyApp = identifyApp;
@@ -46,6 +45,9 @@ window.insights.chrome = {
         };
 
         window.insights.chrome.$internal = { store };
+        libjwt.initPromise.then(() => {
+            loadChrome();
+        });
     }
 };
 
@@ -64,18 +66,5 @@ window.navToggle = () => {
     } else {
         page.classList.remove('pf-m-collapsed');
         page.classList.toggle('pf-m-expanded');
-    }
-};
-
-window.dropdownToggle = () => {
-    let dropdown = document.querySelector('.pf-c-dropdown');
-
-    dropdown.classList.toggle('pf-m-expanded');
-    dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
-
-    if (dropdown.classList.contains('pf-m-expanded')) {
-        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', true);
-    } else {
-        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', false);
     }
 };
