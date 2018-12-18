@@ -1,11 +1,12 @@
 import '../test';
 import * as actions from './actions';
 import * as reducers from './reducers';
+import globalNav from '../nav/globalNav';
 
 describe('Reducers', () => {
     describe('Navigation', () => {
         it('activates global navigation element on identifyApp()', () => {
-            const state = reducers.globalNavReducer({}, actions.identifyApp('inventory'));
+            const state = reducers.globalNavReducer({ globalNav }, actions.identifyApp('inventory'));
             expect(state.appId).toEqual('inventory');
             const activeItems = state.globalNav.filter(i => i.active);
             expect(activeItems.length).toBe(1);
