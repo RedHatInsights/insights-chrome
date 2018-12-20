@@ -14,7 +14,7 @@ export default () => {
                 if (activeApp && activeApp.hasOwnProperty('subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
-                    );
+                    ) || activeApp.subItems.find(subItem => subItem.default);
                 }
             }
 

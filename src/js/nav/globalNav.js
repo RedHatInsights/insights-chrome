@@ -7,7 +7,8 @@ export default Object.freeze([{
     subItems: [
         {
             id: 'actions',
-            title: 'Actions'
+            title: 'Actions',
+            default: true
         },
         {
             id: 'rules',
@@ -38,7 +39,8 @@ export default Object.freeze([{
     subItems: [
         {
             id: '',
-            title: 'Overview'
+            title: 'Overview',
+            default: true
         },
         {
             id: 'aws',
