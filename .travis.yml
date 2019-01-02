@@ -6,12 +6,11 @@ install:
 - npm ci
 jobs:
     include:
-    - stage: build
+    - stage: build:stable
       if: branch IN (prod-stable, qa-stable, ci-stable)
       script: npm run verify
-    - stage: build
+    - stage: build:beta
       if: branch IN (master, prod-beta, qa-beta, ci-beta)
-      name: deploy:beta
       script: npm run verify:beta
     - stage: deploy
       script: curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
