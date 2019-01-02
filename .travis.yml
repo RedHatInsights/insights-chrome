@@ -6,16 +6,15 @@ install:
 - npm ci
 jobs:
     include:
-    - stage: deploy:stable
+    - stage: build
       if: branch IN (prod-stable, qa-stable, ci-stable)
-      name: deploy:stable
       script: npm run verify
-    - stage: deploy:beta
-      if: branch IN (master, prod-beta, qa-beta)
+    - stage: build
+      if: branch IN (master, prod-beta, qa-beta, ci-beta)
       name: deploy:beta
       script: npm run verify:beta
-after_success:
-- curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+    - stage: deploy
+      script: curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
     global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
