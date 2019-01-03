@@ -21,7 +21,7 @@ class Navigation extends Component {
         });
     };
 
-    onClick(event, item, parent) {
+    onClick(_event, item, parent) {
         const { onNavigate } = this.props;
         if (parent && parent.active) {
             if (!item.reload) {
@@ -38,7 +38,7 @@ class Navigation extends Component {
     render() {
         const { settings, activeApp } = this.props;
         return (
-            <Nav onSelect={this.onSelect} aria-label="Primary Nav Mixed Example">
+            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation">
                 <NavList>
                     {settings.map((item, key) => (
                         item.subItems ?
