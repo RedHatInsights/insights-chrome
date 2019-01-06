@@ -24,6 +24,10 @@ body {
     position: relative;
 }
 
+aside {
+    overflow: auto !important;
+}
+
 // Page temp styles
 .pf-l-page {
   --pf-l-page__header-brand--FlexBasis--lg:         290px;
