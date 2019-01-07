@@ -17,8 +17,7 @@ export default (user) => {
             lang: user.lang
         },
         account: {
-            id: user.account_id,
-            accountNumber: user.account_number
+            id: user.account_number
         }
     };
 
