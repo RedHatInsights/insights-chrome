@@ -7,6 +7,7 @@ import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
+import ToolbarToggle from './ToolbarToggle';
 
 const actions = [
     {
@@ -22,7 +23,13 @@ const actions = [
     {
         title: 'Settings',
         icon: CogIcon,
-        widget: 'InsightsSettings'
+        widget: 'InsightsSettings',
+        items: [
+            {
+                title: 'Sources',
+                url: 'sources'
+            }
+        ]
     },
     {
         title: 'FAQ',
@@ -36,15 +43,17 @@ export default () => (
         <Toolbar>
             <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-lg">
                 {actions.map((oneItem, key) => (
-                    <ToolbarItem key={key} data-key={key}>
-                        <Button
-                            variant="plain"
-                            aria-label={`Overflow ${oneItem.title}`}
-                            widget-type={oneItem.widget}
-                        >
-                            <oneItem.icon />
-                        </Button>
-                    </ToolbarItem>
+                    oneItem.items ?
+                        <ToolbarToggle icon={oneItem.icon} dropdownItems={oneItem.items} /> :
+                        <ToolbarItem key={key} data-key={key}>
+                            <Button
+                                variant="plain"
+                                aria-label={`Overflow ${oneItem.title}`}
+                                widget-type={oneItem.widget}
+                            >
+                                <oneItem.icon />
+                            </Button>
+                        </ToolbarItem>
                 ))}
             </ToolbarGroup>
             <ToolbarGroup>
