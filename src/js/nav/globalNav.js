@@ -58,9 +58,6 @@ export default Object.freeze([{
     id: 'reports',
     title: 'Reports'
 }, {
-    id: 'sources',
-    title: 'Sources'
-}, {
     id: 'service-portal',
     title: 'Service Portal'
 }, {
