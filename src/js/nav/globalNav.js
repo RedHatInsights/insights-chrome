@@ -54,7 +54,7 @@ export default Object.freeze([{
 }, {
     id: 'inventory',
     title: 'Inventory'
-},
+}
 // {
 //     id: 'reports',
 //     title: 'Reports'
