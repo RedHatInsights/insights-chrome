@@ -54,16 +54,25 @@ export default Object.freeze([{
 }, {
     id: 'inventory',
     title: 'Inventory'
-}, {
-    id: 'reports',
-    title: 'Reports'
-}, {
-    id: 'service-portal',
-    title: 'Service Portal'
-}, {
-    id: 'subscriptions',
-    title: 'Subscriptions'
-}, {
-    id: 'settings',
-    title: 'Settings'
-}]);
+}
+// {
+//     id: 'reports',
+//     title: 'Reports'
+// },
+// {
+//     id: 'sources',
+//     title: 'Sources'
+// },
+// {
+//     id: 'service-portal',
+//     title: 'Service Portal'
+// },
+// {
+//     id: 'subscriptions',
+//     title: 'Subscriptions'
+// },
+// {
+//     id: 'settings',
+//     title: 'Settings'
+// }
+]);
