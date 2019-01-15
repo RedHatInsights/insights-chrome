@@ -48,7 +48,7 @@ class Tools extends Component {
         aboutButton.onClick = this.onModalToggle.bind(this);
         this.state = {
             isModalOpen: false
-        }
+        };
     }
 
     onModalToggle() {
@@ -91,7 +91,7 @@ class Tools extends Component {
                     <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} />
                 </Toolbar>
             </div>
-        )
+        );
     }
 }
 
