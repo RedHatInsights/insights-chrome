@@ -27,6 +27,7 @@ window.insights.chrome = {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
         logout: () => { libjwt.jwt.logout(); }
     },
+    isProd: window.location.host === 'access.redhat.com',
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 

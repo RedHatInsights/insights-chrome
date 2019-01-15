@@ -40,34 +40,41 @@ class Navigation extends Component {
         return (
             <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation">
                 <NavList>
-                    {settings.map((item, key) => (
-                        item.subItems ?
-                            <NavExpandable
-                                title={item.title}
-                                itemId={item.id}
-                                key={key}
-                                isActive={item.active}
-                                isExpanded={item.active}
-                            >
-                                {item.subItems.map((subItem, subKey) => (
-                                    <NavigationItem
-                                        itemId={subItem.id}
-                                        key={subKey}
-                                        title={subItem.title}
-                                        parent={`${item.id}/`}
-                                        isActive={item.active && subItem.id === activeApp}
-                                        onClick={event => this.onClick(event, subItem, item)}
-                                    />
-                                ))}
-                            </NavExpandable> :
-                            <NavigationItem
-                                itemId={item.id}
-                                key={key}
-                                title={item.title}
-                                isActive={item.active}
-                                onClick={event => this.onClick(event, item)}
-                            />
-                    ))}
+                    {
+                        settings.map((item, key) => {
+                            if (!item.disabled) {
+                                if (item.subItems) {
+                                    return <NavExpandable
+                                        title={item.title}
+                                        itemId={item.id}
+                                        key={key}
+                                        isActive={item.active}
+                                        isExpanded={item.active}>
+                                        {
+                                            item.subItems.map((subItem, subKey) => (
+                                                <NavigationItem
+                                                    itemId={subItem.id}
+                                                    key={subKey}
+                                                    title={subItem.title}
+                                                    parent={`${item.id}/`}
+                                                    isActive={item.active && subItem.id === activeApp}
+                                                    onClick={event => this.onClick(event, subItem, item)}
+                                                />
+                                            ))
+                                        }
+                                    </NavExpandable>;
+                                } else {
+                                    return <NavigationItem
+                                        itemId={item.id}
+                                        key={key}
+                                        title={item.title}
+                                        isActive={item.active}
+                                        onClick={event => this.onClick(event, item)}
+                                    />;
+                                }
+                            }
+                        })
+                    }
                 </NavList>
             </Nav>
         );
