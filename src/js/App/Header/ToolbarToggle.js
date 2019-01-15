@@ -46,6 +46,7 @@ class ToolbarToggle extends Component {
                 isOpen={this.state.isOpen}
                 dropdownItems={dropdownItems}
                 onSelect={this.onSelect}
+                isPlain
             />
         );
     }
