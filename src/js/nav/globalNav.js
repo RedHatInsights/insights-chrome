@@ -54,7 +54,7 @@ export default Object.freeze([{
 }, {
     id: 'inventory',
     title: 'Inventory'
-}
+},
 // {
 //     id: 'reports',
 //     title: 'Reports'
@@ -63,10 +63,13 @@ export default Object.freeze([{
 //     id: 'sources',
 //     title: 'Sources'
 // },
-// {
-//     id: 'service-portal',
-//     title: 'Service Portal'
-// },
+{
+    id: 'service-portal',
+    title: 'Service Portal',
+    // nav is built before window.insights.chrome
+    // detect isProd manually here
+    disabled: window.location.hostname === 'access.redhat.com'
+}
 // {
 //     id: 'subscriptions',
 //     title: 'Subscriptions'
