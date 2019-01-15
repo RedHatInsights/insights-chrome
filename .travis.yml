@@ -7,7 +7,7 @@ install:
 jobs:
     include:
     - stage: deploy:stable
-      if: branch IN (prod-stable, qa-stable, ci-stable)
+      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable)
       name: deploy:stable
       script: npm run verify
     - stage: deploy:beta
