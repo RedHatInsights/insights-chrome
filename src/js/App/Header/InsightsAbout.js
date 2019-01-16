@@ -31,15 +31,18 @@ class InsightsAbout extends Component {
             <AboutModal
                 isOpen={isModalOpen}
                 onClose={onClose}
-                productName="Red Hat Insights"
                 brandImageSrc={logo}
                 brandImageAlt="Red Hat Insights Logo"
                 heroImageSrc={`${document.baseURI}/static/chrome/assets/images/pfbg_2000.jpg`}
             >
+              <p>
+                Please include these details when opening a support case against Insights
+              </p>
                 <TextContent>
                     <TextList component="dl">
-                        { getItem('Current Application', app && app.title) }
-                        { getItem('User Name', user && user.username) }
+                      { getItem('User Name', user && user.username) }
+                      { getItem('Current Application', app && app.title) }
+                      { getItem('Application Path', window.location.pathname) }
                     </TextList>
                 </TextContent>
             </AboutModal>
