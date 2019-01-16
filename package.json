@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
-    "@red-hat-insights/insights-frontend-components": "^3.32.4",
+    "@red-hat-insights/insights-frontend-components": "^3.32.8",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-plugin-dynamic-import-node": "^1.2.0",
