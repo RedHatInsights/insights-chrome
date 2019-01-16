@@ -3,8 +3,8 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
 import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
-import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
-import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+// import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
+// import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
@@ -17,16 +17,16 @@ const aboutButton = {
 };
 
 const actions = [
-    {
-        title: 'Search',
-        icon: SearchIcon,
-        widget: 'InsightsSearch'
-    },
-    {
-        title: 'Notification',
-        icon: BellIcon,
-        widget: 'InsightsNotifications'
-    },
+    // {
+    //     title: 'Search',
+    //     icon: SearchIcon,
+    //     widget: 'InsightsSearch'
+    // },
+    // {
+    //     title: 'Notification',
+    //     icon: BellIcon,
+    //     widget: 'InsightsNotifications'
+    // },
     {
         title: 'Settings',
         icon: CogIcon,
