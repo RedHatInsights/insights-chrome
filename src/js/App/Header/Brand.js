@@ -11,7 +11,7 @@ const Brand = ({ toggleNav }) => (<div className="pf-l-page__header-brand">
             variant="plain"
             aria-label="Toggle primary navigation"
             widget-type="InsightsNavToggle"
-            onClick={() => toggleNav && toggleNav()}
+            onClick={() => toggleNav && window.navToggle()}
         >
             <BarsIcon size="md"/>
         </Button>
@@ -25,7 +25,7 @@ function mapDispatchToProps(dispatch) {
     return {
         toggleNav: () => {
             dispatch(onToggle());
-            navToggle(); // eslint-disable-line no-undef
+            window.navToggle(); // eslint-disable-line no-undef
         }
     };
 }
