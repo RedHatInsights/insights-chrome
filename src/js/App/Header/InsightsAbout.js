@@ -4,17 +4,45 @@ import logo from './logo.svg';
 import { connect } from 'react-redux';
 
 class InsightsAbout extends Component {
-    render() {
-        const { isModalOpen, onClose, user, globalNav, activeApp } = this.props;
+    constructor(props) {
+        super(props);
 
         let app;
-        if (globalNav) {
-            app = globalNav.find(item => item.active);
+        if (this.props.globalNav) {
+            app = this.props.globalNav.find(item => item.active);
             if (app.subItems) {
-                const subApp = app.subItems.find(subItem => subItem.id === activeApp);
+                const subApp = app.subItems.find(subItem => subItem.id === this.props.activeApp);
                 app = subApp && subApp.reload ? subApp : app;
             }
         }
+
+        this.state = {
+            chromeVersion: "N/A",
+            inventoryVersion: "N/A",
+            remediationsVersion: "N/A",
+            currentApp: app && app.title,
+            currentAppVersion: "N/A"
+        }
+    }
+    componentDidMount(){
+        fetch('static/chrome/app.info.json')
+        .then(response => response.json())
+        .then(data => this.setState({ chromeVersion: data.travis.build_number }));
+
+        fetch(`platform/inventory/app.info.json`)
+        .then(response => response.json())
+        .then(data => this.setState({ inventoryVersion: data.travis.build_number }));
+
+        fetch(`platform/remediations/app.info.json`)
+        .then(response => response.json())
+        .then(data => this.setState({ remediationsVersion: data.travis.build_number }));
+
+        fetch(`platform/${this.state.currentApp.toLowerCase()}/app.info.json`)
+        .then(response => response.json())
+        .then(data => this.setState({ currentAppVersion: data.travis.build_number }));
+    }
+    render() {
+        const { isModalOpen, onClose, user, activeApp } = this.props;
 
         function getItem(term, details) {
             return <React.Fragment>
@@ -41,8 +69,12 @@ class InsightsAbout extends Component {
                 <TextContent>
                     <TextList component="dl">
                       { getItem('User Name', user && user.username) }
-                      { getItem('Current Application', app && app.title) }
+                      { getItem('Current Application', this.state.currentApp) }
+                      { getItem('Current Application Version', this.state.currentAppVersion) }
                       { getItem('Application Path', window.location.pathname) }
+                      { getItem('Chrome Version', this.state.chromeVersion) }
+                      { getItem('Inventory Version', this.state.inventoryVersion) }
+                      { getItem('Remediations Version', this.state.remediationsVersion) }
                     </TextList>
                 </TextContent>
             </AboutModal>
