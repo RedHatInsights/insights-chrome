@@ -25,7 +25,7 @@ function mapDispatchToProps(dispatch) {
     return {
         toggleNav: () => {
             dispatch(onToggle());
-            window.navToggle(); // eslint-disable-line no-undef
+            toggleNav(); // eslint-disable-line no-undef
         }
     };
 }
