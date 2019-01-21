@@ -11,7 +11,7 @@ const Brand = ({ toggleNav }) => (<div className="pf-l-page__header-brand">
             variant="plain"
             aria-label="Toggle primary navigation"
             widget-type="InsightsNavToggle"
-            onClick={() => toggleNav() && toggleNav }
+            onClick={() => toggleNav && toggleNav() }
         >
             <BarsIcon size="md"/>
         </Button>
