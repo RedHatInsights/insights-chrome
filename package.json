@@ -85,7 +85,8 @@
   },
   "alias": {
     "react-router-dom": "./config/react-router-dom-externals.js",
-    "patternfly-react": "./config/patternfly-react-externals.js"
+    "patternfly-react": "./config/patternfly-react-externals.js",
+    "graphql": "./config/graphql-externals.js"
   },
   "insights": {
     "appname": "chrome"
