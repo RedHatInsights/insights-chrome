@@ -5,6 +5,8 @@ import loadRemediations from './remediations';
 import auth             from './auth';
 import analytics        from './analytics';
 import loadChrome       from './entry';
+import asyncObject      from './async-loader';
+
 // start auth asap
 const libjwt = auth();
 
@@ -57,6 +59,8 @@ window.insights.loadInventory = loadInventory;
 window.insights.experimental = {
     loadRemediations
 };
+
+window.insights.async = asyncObject;
 
 window.navToggle = () => {
     const mq = window.matchMedia('(min-width: 768px)');
