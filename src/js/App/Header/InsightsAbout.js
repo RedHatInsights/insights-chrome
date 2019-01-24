@@ -28,6 +28,7 @@ class InsightsAbout extends Component {
             ] },
             currentApp: app && app.title
         };
+        this.updateAppVersion = this.updateAppVersion.bind(this);
     }
 
     getItem(term, details) {
@@ -41,24 +42,22 @@ class InsightsAbout extends Component {
         </React.Fragment>;
     }
 
-    componentDidMount() {
-        function updateAppVersion(oldAppDetails, app, version) {
-            let appDetails = oldAppDetails;
-            for (let i = 0; i < appDetails.apps.length; i++) {
-                if (appDetails.apps[i].name === app.name) {
-                    appDetails.apps[i].version = version;
-                    break;
-                }
-            }
-
-            this.setState(appDetails);
+    updateAppVersion(app, version) {
+        const { appDetails } = this.state;
+        const currentApp = appDetails.apps.find(appDetail => appDetail === app.name);
+        if (currentApp) {
+            currentApp.version = version;
         }
 
-        let appDetails = this.state.appDetails;
-        this.state.appDetails.apps.forEach(function(app) {
+        this.setState(appDetails);
+    }
+
+    componentDidMount() {
+        this.state.appDetails.apps.forEach((app) => {
             fetch(app.path)
             .then(response => response.json())
-            .then(data => updateAppVersion(appDetails, app, data.travis.build_number));
+            .catch(() => ({ travis: {} }))
+            .then(data => this.updateAppVersion(app, data.travis.build_number));
         });
     }
 
