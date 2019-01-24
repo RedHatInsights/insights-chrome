@@ -88,7 +88,7 @@ class Tools extends Component {
                             <UserToggle />
                         </ToolbarItem>
                     </ToolbarGroup>
-                    <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} />
+                    { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} /> }
                 </Toolbar>
             </div>
         );
