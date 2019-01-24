@@ -65,7 +65,7 @@ export default Object.freeze([{
 // },
 {
     id: 'service-portal',
-    title: 'Service Portal',
+    title: 'Catalog',
     // nav is built before window.insights.chrome
     // detect isProd manually here
     disabled: window.location.hostname === 'access.redhat.com'
