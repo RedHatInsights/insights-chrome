@@ -60,8 +60,8 @@ export default Object.freeze([{
 //     title: 'Reports'
 // },
 // {
-//     id: 'sources',
-//     title: 'Sources'
+//     id: 'topological-inventory',
+//     title: 'Topological Inventory'
 // },
 {
     id: 'service-portal',

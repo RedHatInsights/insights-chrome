@@ -33,8 +33,8 @@ const actions = [
         widget: 'InsightsSettings',
         items: [
             {
-                title: 'Sources',
-                url: 'sources'
+                title: 'Topological Intentory',
+                url: 'topological-inventory'
             }
         ]
     },
