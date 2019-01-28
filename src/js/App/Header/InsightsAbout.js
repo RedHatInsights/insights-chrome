@@ -44,7 +44,8 @@ class InsightsAbout extends Component {
 
     updateAppVersion(app, version) {
         const { appDetails } = this.state;
-        const currentApp = appDetails.apps.find(appDetail => appDetail === app.name);
+        let currentApp = appDetails.apps.find(appDetail => appDetail.name === app.name);
+
         if (currentApp) {
             currentApp.version = version;
         }
@@ -57,7 +58,7 @@ class InsightsAbout extends Component {
             fetch(app.path)
             .then(response => response.json())
             .catch(() => ({ travis: {} }))
-            .then(data => this.updateAppVersion(app, data.travis.build_number));
+            .then(data => this.updateAppVersion(app, data.src_hash));
         });
     }
 
@@ -85,6 +86,19 @@ class InsightsAbout extends Component {
                         })}
                     </TextList>
                 </TextContent>
+                <br/>
+                <p>
+                    Copyright © 2018 Red Hat, Inc.
+                </p>
+                <p><a class="nav-link" href="https://www.redhat.com/en/about/privacy-policy" target="_blank">
+                    Privacy Policy
+                </a></p>
+                <p><a class="nav-link" href="https://ci.foo.redhat.com:1337/help/terms/" target="_blank">
+                    Customer Portal Terms of Use
+                </a></p>
+                <p><a class="nav-link" href="https://www.redhat.com/en/about/all-policies-guidelines" target="_blank">
+                    All Policies and Guidelines
+                </a></p>
             </AboutModal>
         );
     }
