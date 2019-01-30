@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
-import logo from './logo.svg';
+import logo from './logo-cs.svg';
 import { connect } from 'react-redux';
 
 class InsightsAbout extends Component {
