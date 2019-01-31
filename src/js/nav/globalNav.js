@@ -71,6 +71,6 @@ export default Object.freeze([
     },
     {
         id: 'remediations',
-        title: 'Planner'
+        title: 'Playbooks'
     }
 ]);
