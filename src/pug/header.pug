@@ -1,1 +1,15 @@
 header.pf-l-page__header(role="banner")
+    div.pf-l-page__header-brand
+        include primary-nav-hamburger-toggle.pug
+        a.pf-l-page__header-brand-link(href='#')
+            include cloud-services-logo.pug
+    div.pf-l-page__header-tools(widget-type='InsightsToolbar')
+        div.pf-l-toolbar
+            div.pf-l-toolbar__group.pf-u-sr-only.pf-u-visible-on-lg
+                include settings-button.pug
+                include faq-button.pug
+            dif.pf-l-toolbar__group
+                div.pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
+                    include overflow-actions-sm.pug
+                div.pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
+                    include overflow-actions-lg.pug
