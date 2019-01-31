@@ -65,6 +65,11 @@ export default Object.freeze([
         title: 'Inventory'
     },
     {
+        id: 'topological-inventory',
+        title: 'Topological Inventory',
+        disabled: window.location.hostname === 'access.redhat.com'
+    },
+    {
         id: 'remediations',
         title: 'Playbooks'
     }

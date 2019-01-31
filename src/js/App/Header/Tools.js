@@ -5,7 +5,7 @@ import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdow
 import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 // import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 // import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
+// import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
@@ -27,17 +27,17 @@ const actions = [
     //     icon: BellIcon,
     //     widget: 'InsightsNotifications'
     // },
-    {
-        title: 'Settings',
-        icon: CogIcon,
-        widget: 'InsightsSettings',
-        items: [
-            {
-                title: 'Topological Inventory',
-                url: 'topological-inventory'
-            }
-        ]
-    },
+    // {
+    //     title: 'Settings',
+    //     icon: CogIcon,
+    //     widget: 'InsightsSettings',
+    //     items: [
+    //         {
+    //             title: 'Topological Inventory',
+    //             url: 'topological-inventory'
+    //         }
+    //     ]
+    // },
     aboutButton
 ];
 
