@@ -26,7 +26,7 @@ class ToolbarToggle extends Component {
     }
 
     onClick(_ev, url) {
-        window.location = document.baseURI + url;
+        window.location = `${document.baseURI}platform/${url}`;
     }
 
     render() {
