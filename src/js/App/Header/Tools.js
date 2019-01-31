@@ -27,17 +27,17 @@ const actions = [
     //     icon: BellIcon,
     //     widget: 'InsightsNotifications'
     // },
-    {
-        title: 'Settings',
-        icon: CogIcon,
-        widget: 'InsightsSettings',
-        items: [
-            {
-                title: 'Topological Inventory',
-                url: 'topological-inventory'
-            }
-        ]
-    },
+    // {
+    //     title: 'Settings',
+    //     icon: CogIcon,
+    //     widget: 'InsightsSettings',
+    //     items: [
+    //         {
+    //             title: 'Topological Inventory',
+    //             url: 'topological-inventory'
+    //         }
+    //     ]
+    // },
     aboutButton
 ];
 
