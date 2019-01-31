@@ -19,7 +19,11 @@ libjwt.initPromise.then(() => {
 const PUBLIC_EVENTS = {
     APP_NAVIGATION: fn => ({
         on: actionTypes.APP_NAV_CLICK,
-        callback: event => fn({ navId: event.data.id, domEvent: event.data.event })
+        callback: ({ data }) => {
+            if (data.id || data.event) {
+                fn({ navId: data.id, domEvent: data.event });
+            }
+        }
     })
 };
 
