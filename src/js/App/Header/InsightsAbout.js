@@ -79,7 +79,7 @@ class InsightsAbout extends Component {
                 isOpen={isModalOpen}
                 onClose={onClose}
                 brandImageSrc={logo}
-                brandImageAlt="Red Hat Insights Logo"
+                brandImageAlt="Red Hat Cloud Services Logo"
                 heroImageSrc={`${document.baseURI}/static/chrome/assets/images/pfbg_2000.jpg`}
                 trademark='Copyright © 2018 Red Hat, Inc.'
             >
