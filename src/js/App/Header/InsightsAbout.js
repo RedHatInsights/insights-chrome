@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import {
     AboutModal,
-    Button,
     TextContent, TextList, TextListItem,
     Level, LevelItem,
     Stack, StackItem
