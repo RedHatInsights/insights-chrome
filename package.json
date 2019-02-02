@@ -67,7 +67,7 @@
     "stylelint-scss": "^3.3.2"
   },
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.80",
+    "@patternfly/patternfly-next": "^1.0.175",
     "@patternfly/react-core": "^1.49.4",
     "@patternfly/react-icons": "^2.8.0",
     "babel-core": "^6.26.3",
