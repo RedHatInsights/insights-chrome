@@ -20,7 +20,7 @@ const PUBLIC_EVENTS = {
     APP_NAVIGATION: fn => ({
         on: actionTypes.APP_NAV_CLICK,
         callback: ({ data }) => {
-            if (data.id || data.event) {
+            if (data.id !== undefined || data.event) {
                 fn({ navId: data.id, domEvent: data.event });
             }
         }
