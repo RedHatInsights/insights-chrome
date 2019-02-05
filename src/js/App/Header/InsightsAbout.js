@@ -7,7 +7,7 @@ import {
     Stack, StackItem
 } from '@patternfly/react-core';
 
-import logo from './logo-cs.svg';
+import logo from '../../../../static/images/logo-cs.svg';
 import { connect } from 'react-redux';
 
 import './InsightsAbout.scss';
