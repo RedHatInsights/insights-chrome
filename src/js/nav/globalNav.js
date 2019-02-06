@@ -45,11 +45,11 @@ export default Object.freeze([
             },
             {
                 id: 'aws',
-                title: 'Cloud Cost'
+                title: 'AWS Details'
             },
             {
                 id: 'ocp',
-                title: 'OpenShift Charge'
+                title: 'OpenShift Details'
             }
         ]
     },
