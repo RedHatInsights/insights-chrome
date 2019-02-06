@@ -4,6 +4,8 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
 
 // Components
+@import 'node_modules/@patternfly/patternfly-next/components/Toolbar/toolbar.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Page/page.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/background-image.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Nav/nav.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Button/button.scss';
