@@ -2,8 +2,6 @@ $pf-global--enable-reset: 'true';
 $pf-global--image-path: './assets/images/';
 
 @import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Page/page.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Toolbar/toolbar.scss';
 
 // Components
 @import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/background-image.scss';
@@ -11,6 +9,8 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly-next/components/Button/button.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Dropdown/dropdown.scss';
 @import 'node_modules/@patternfly/patternfly-next/components/Avatar/avatar.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Page/page.scss';
+@import 'node_modules/@patternfly/patternfly-next/components/Toolbar/toolbar.scss';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly-next/utilities/Accessibility/accessibility.scss';
@@ -33,13 +33,13 @@ aside {
 }
 
 // Page temp styles
-.pf-l-page {
-  --pf-l-page__header-brand--FlexBasis--lg:         290px;
-  --pf-l-page__sidebar--Width--lg:                  290px;
-  --pf-l-page__header--MinHeight:                   110px;
-  --pf-l-page__header-brand-logo--Height:           11px;
-  --pf-l-page__header-brand--BackgroundColor--md:   #{$pf-global--BackgroundColor--dark-transparent-100};
-  --pf-l-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
+.pf-c-page {
+  --pf-c-page__header-brand--FlexBasis--lg:         290px;
+  --pf-c-page__sidebar--Width--lg:                  290px;
+  --pf-c-page__header--MinHeight:                   110px;
+  --pf-c-page__header-brand-logo--Height:           11px;
+  --pf-c-page__header-brand--BackgroundColor--md:   #{$pf-global--BackgroundColor--dark-transparent-100};
+  --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
 
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
 }
@@ -50,7 +50,7 @@ aside {
 }
 
 // Header
-.pf-l-page__header {
+.pf-c-page__header {
     overflow: visible;
     .pf-c-dropdown__menu {
         .account-number__header { @include rem('font-size', 12px); }
@@ -69,7 +69,7 @@ aside {
 }
 
 // Page sidebar
-.pf-l-page__sidebar {
+.pf-c-page__sidebar {
     grid-row-end: 4;
 }
 
