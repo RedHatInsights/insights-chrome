@@ -3,7 +3,7 @@
 The "wrapper" around your application!
 
 Insights Chrome provides:
-- Standard header, footer, navigation
+- Standard header and navigation
 - Base CSS/style
 - A JavaScript library for interacting with Insights Chrome
 
@@ -19,9 +19,8 @@ You can include/use chrome in your development project by running the insights-p
     <esi:include src="/insightsbeta/static/chrome/snippets/head.html" />
   </head>
   <body>
-    <esi:include src="/insightsbeta/static/chrome/snippets/header.html" />
+    <esi:include src="/@@insights/static/chrome/snippets/body.html"/>
     <!-- your own HTML -->
-    <esi:include src="/insightsbeta/static/chrome/snippets/footer.html" />
   </body>
 </html>
 ```
