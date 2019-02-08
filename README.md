@@ -11,7 +11,7 @@ Insights Chrome provides:
 
 You can include/use chrome in your development project by running the insights-proxy (https://github.com/RedHatInsights/insights-proxy) in front of your application and using the following HTML template.
 
-```
+```html
 <!doctype html>
 <html>
   <head>
@@ -20,9 +20,21 @@ You can include/use chrome in your development project by running the insights-p
   </head>
   <body>
     <esi:include src="/@@insights/static/chrome/snippets/body.html"/>
-    <!-- your own HTML -->
   </body>
 </html>
+```
+
+Then, render your application to the "root" element. With React, for instance:
+
+```js
+ReactDOM.render(
+    <Provider store={ init().getStore() }>
+        <Router basename={ `/${RELEASE}/platform/(project_name)` }>
+            <App />
+        </Router>
+    </Provider>,
+    document.getElementById('root')
+);
 ```
 
 ## Javascript API
