@@ -5,7 +5,7 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import BarsIcon from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import Logo from './Logo';
 
-const Brand = ({ toggleNav }) => (<div className="pf-c-page__header-brand">
+const Brand = ({ toggleNav }) => (<div className="pf-l-page__header-brand pf-c-page__header-brand">
     <div>
         <Button
             variant="plain"
@@ -16,7 +16,7 @@ const Brand = ({ toggleNav }) => (<div className="pf-c-page__header-brand">
             <BarsIcon size="md"/>
         </Button>
     </div>
-    <a className="pf-c-page__header-brand-link" href="./platform/dashboard/">
+    <a className="pf-l-page__header-brand-link pf-c-page__header-brand-link" href="./platform/dashboard/">
         <Logo />
     </a>
 </div>);
