@@ -44,12 +44,12 @@ export default Object.freeze([
                 default: true
             },
             {
-                id: 'aws',
-                title: 'AWS Details'
-            },
-            {
                 id: 'ocp',
                 title: 'OpenShift Details'
+            },
+            {
+                id: 'aws',
+                title: 'AWS Details'
             }
         ]
     },
