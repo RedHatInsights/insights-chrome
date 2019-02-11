@@ -60,7 +60,7 @@ class Tools extends Component {
     render() {
         const { isModalOpen } = this.state;
         return (
-            <div className="pf-l-page__header-tools" widget-type="InsightsToolbar">
+            <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
                     <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-lg">
                         {actions.map((oneItem, key) => (
