@@ -4,6 +4,13 @@ export default Object.freeze([
         title: 'Dashboard'
     },
     {
+        id: 'service-portal',
+        title: 'Catalog',
+        // nav is built before window.insights.chrome
+        // detect isProd manually here
+        disabled: window.location.hostname === 'access.redhat.com'
+    },
+    {
         id: 'advisor',
         title: 'Insights',
         subItems: [
@@ -52,13 +59,6 @@ export default Object.freeze([
                 title: 'AWS Details'
             }
         ]
-    },
-    {
-        id: 'service-portal',
-        title: 'Catalog',
-        // nav is built before window.insights.chrome
-        // detect isProd manually here
-        disabled: window.location.hostname === 'access.redhat.com'
     },
     {
         id: 'inventory',
