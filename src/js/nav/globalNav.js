@@ -26,20 +26,12 @@ export default Object.freeze([
         ]
     },
     {
-        id: 'security',
-        title: 'Security',
-        subItems: [
-            {
-                id: 'vulnerability',
-                title: 'Vulnerability',
-                reload: 'vulnerability'
-            },
-            {
-                id: 'compliance',
-                title: 'Compliance',
-                reload: 'compliance'
-            }
-        ]
+        id: 'vulnerability',
+        title: 'Vulnerability'
+    },
+    {
+        id: 'compliance',
+        title: 'Compliance'
     },
     {
         id: 'cost-management',
