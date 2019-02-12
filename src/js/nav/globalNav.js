@@ -66,7 +66,7 @@ export default Object.freeze([
     },
     {
         id: 'topological-inventory',
-        title: 'Topological Inventory',
+        title: 'Sources',
         disabled: window.location.hostname === 'access.redhat.com'
     },
     {
