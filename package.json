@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV='development' npm run watch",
-    "build": "npm-run-all build:images build:js build:pug build:sass build:fonts build:Fafonts",
+    "build": "npm-run-all build:images build:images-chrome build:js build:pug build:sass build:fonts build:Fafonts",
     "build:images": "cpx 'node_modules/@patternfly/patternfly-next/assets/images/*' build/assets/images",
+    "build:images-chrome": "cpx 'static/images/*' build/assets/images",
     "build:js": "parcel build src/js/chrome.js -d build/js --public-url /insights/static/chrome/js --no-source-maps",
     "build:pug": "pug src/pug -o build/snippets -O \"{release: 'insights'}\"",
     "build:sass": "node-sass src/sass/chrome.scss -o build/",
@@ -23,7 +24,7 @@
     "watch:sass": "npm run build:sass -- -w",
     "build:pug:beta": "pug src/pug -o build/snippets -O \"{release: 'insightsbeta'}\"",
     "build:js:beta": "parcel build src/js/chrome.js -d build/js --public-url /insightsbeta/static/chrome/js --no-minify",
-    "build:beta": "npm-run-all build:images build:js:beta build:pug:beta build:sass build:fonts build:Fafonts",
+    "build:beta": "npm-run-all build:images build:images-chrome build:js:beta build:pug:beta build:sass build:fonts build:Fafonts",
     "verify:beta": "npm-run-all lint build:beta test"
   },
   "repository": {
