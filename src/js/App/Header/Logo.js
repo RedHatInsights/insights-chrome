@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './logo-cs.svg';
+import logo from '../../../../static/images/logo-cs.svg';
 /*eslint-disable max-len*/
 
 export default () => (

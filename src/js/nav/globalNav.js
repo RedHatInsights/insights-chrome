@@ -4,6 +4,13 @@ export default Object.freeze([
         title: 'Dashboard'
     },
     {
+        id: 'service-portal',
+        title: 'Catalog',
+        // nav is built before window.insights.chrome
+        // detect isProd manually here
+        disabled: window.location.hostname === 'access.redhat.com'
+    },
+    {
         id: 'advisor',
         title: 'Insights',
         subItems: [
@@ -19,20 +26,12 @@ export default Object.freeze([
         ]
     },
     {
-        id: 'security',
-        title: 'Security',
-        subItems: [
-            {
-                id: 'vulnerability',
-                title: 'Vulnerability',
-                reload: 'vulnerability'
-            },
-            {
-                id: 'compliance',
-                title: 'Compliance',
-                reload: 'compliance'
-            }
-        ]
+        id: 'vulnerability',
+        title: 'Vulnerability'
+    },
+    {
+        id: 'compliance',
+        title: 'Compliance'
     },
     {
         id: 'cost-management',
@@ -54,19 +53,12 @@ export default Object.freeze([
         ]
     },
     {
-        id: 'service-portal',
-        title: 'Catalog',
-        // nav is built before window.insights.chrome
-        // detect isProd manually here
-        disabled: window.location.hostname === 'access.redhat.com'
-    },
-    {
         id: 'inventory',
         title: 'Inventory'
     },
     {
         id: 'topological-inventory',
-        title: 'Topological Inventory',
+        title: 'Sources',
         disabled: window.location.hostname === 'access.redhat.com'
     },
     {

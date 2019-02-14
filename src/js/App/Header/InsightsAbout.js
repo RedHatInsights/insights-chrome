@@ -7,7 +7,7 @@ import {
     Stack, StackItem
 } from '@patternfly/react-core';
 
-import logo from './logo-cs.svg';
+import logo from '../../../../static/images/logo-cs.svg';
 import { connect } from 'react-redux';
 
 import './InsightsAbout.scss';
@@ -33,7 +33,7 @@ class InsightsAbout extends Component {
                 { name: 'Vulnerabilities', path: 'platform/vulnerability/app.info.json', version: 'N/A' },
                 { name: 'Compliance', path: 'platform/compliance/app.info.json', version: 'N/A' },
                 { name: 'Cost Management', path: 'platform/cost-management/app.info.json', version: 'N/A' },
-                { name: 'Advisor', path: 'platform/advisor/app.info.json', version: 'N/A' }
+                { name: 'Insights', path: 'platform/advisor/app.info.json', version: 'N/A' }
             ] },
             currentApp: app && app.title
         };
