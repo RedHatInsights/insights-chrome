@@ -28,6 +28,7 @@ class InsightsAbout extends Component {
         this.state = {
             appDetails: { apps: [
                 { name: 'Chrome', path: 'static/chrome/app.info.json', version: 'N/A' },
+                { name: 'Dashboard', path: `platform/dashboard/app.info.json`, version: 'N/A' },
                 { name: 'Inventory', path: `platform/inventory/app.info.json`, version: 'N/A' },
                 { name: 'Remediations', path: `platform/remediations/app.info.json`, version: 'N/A' },
                 { name: 'Vulnerabilities', path: 'platform/vulnerability/app.info.json', version: 'N/A' },
