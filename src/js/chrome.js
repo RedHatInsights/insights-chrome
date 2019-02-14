@@ -13,6 +13,7 @@ const libjwt = auth();
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
     analytics(userInfo);
+    sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
 });
 
 // used for translating event names exposed publicly to internal event names
