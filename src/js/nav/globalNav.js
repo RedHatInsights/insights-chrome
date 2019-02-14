@@ -64,5 +64,10 @@ export default Object.freeze([
     {
         id: 'remediations',
         title: 'Playbooks'
+    },
+    {
+        id: 'uhc',
+        title: 'UHC',
+        disabled: window.location.hostname === 'access.redhat.com'
     }
 ]);
