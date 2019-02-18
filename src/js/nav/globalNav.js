@@ -72,7 +72,7 @@ export default Object.freeze([
     },
     {
         id: 'drift',
-        title: 'Drift',
+        title: 'System Comparison',
         disabled: window.location.hostname === 'access.redhat.com'
     }
 ]);
