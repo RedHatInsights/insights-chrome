@@ -69,5 +69,10 @@ export default Object.freeze([
         id: 'uhc',
         title: 'UHC',
         disabled: window.location.hostname === 'access.redhat.com'
+    },
+    {
+        id: 'drift',
+        title: 'Drift',
+        disabled: window.location.hostname === 'access.redhat.com'
     }
 ]);
