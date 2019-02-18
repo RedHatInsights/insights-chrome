@@ -38,6 +38,7 @@ ReactDOM.render(
 ```
 
 ## Javascript API
+
 Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
 
 ```js
@@ -45,28 +46,36 @@ Insights Chrome comes with a Javacript API that allows applications to control n
     insights.chrome.init();
 
     // identify yourself (the application). This tells Chrome which global navigation element should be active
-    insights.chrome.identifyApp('advisor');
+    insights.chrome.identifyApp('app-id');
 
-    // define application navigation (navigation submenu)
-    // at most one of the elements should be declared active
-    // the operation is idempotent
-    insights.chrome.navigation([{
-        id: 'stability',
-        title: 'Stability'
-    }, {
-        id: 'performance',
-        title: 'Performance',
-        active: true
-    }]);
-
-    // register a listener for application navigation events
-    const unregister = insights.chrome.on('APP_NAVIGATION', event => {
-        // change application route in response to navigation event from Chrome
-        history.push(`/${event.navId}`);
-    });
+    // When the app mounts, build the navigation
+    componentWillUnmount () {
+        this.appNav();
+        this.buildNav();
+    }
 
     // the listener can be unregistered if needed
-    unregister();
+    unregister(
+    );
+```
+
+globalNav.js
+
+```js
+    export default Object.freeze([
+    {
+        // ID for your application, this will be platform/{id}
+        id: 'app-id',
+
+        // Title of your app which will show in the navigation
+        title: 'Catalog',
+
+        // nav is built before window.insights.chrome
+        // detect isProd manually here
+        disabled: window.location.hostname === 'access.redhat.com'
+    }
+]);
+
 ```
 
 The following events can be observed:
