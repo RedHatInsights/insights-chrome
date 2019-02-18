@@ -68,7 +68,7 @@ globalNav.js
         id: 'app-id',
 
         // Title of your app which will show in the navigation
-        title: 'Catalog',
+        title: 'App Title',
 
         // nav is built before window.insights.chrome
         // detect isProd manually here
