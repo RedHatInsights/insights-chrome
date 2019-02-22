@@ -52,13 +52,13 @@ class InsightsAbout extends Component {
         </React.Fragment>;
     }
 
-    updateAppVersion(app, version, build_id) {
+    updateAppVersion(app, version, buildId) {
         const { appDetails } = this.state;
         let currentApp = appDetails.apps.find(appDetail => appDetail.name === app.name);
 
         if (currentApp) {
-            if (build_id) {
-                version = `${version}.${build_id}`;
+            if (buildId) {
+                version = `${version}.${buildId}`;
             }
 
             currentApp.version = version;
