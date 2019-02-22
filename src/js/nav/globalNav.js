@@ -74,5 +74,10 @@ export default Object.freeze([
         id: 'drift',
         title: 'System Comparison',
         disabled: window.location.hostname === 'access.redhat.com'
+    },
+    {
+        id: 'tower-analytics',
+        title: 'Tower Analytics',
+        disabled: window.location.hostname === 'access.redhat.com'
     }
 ]);
