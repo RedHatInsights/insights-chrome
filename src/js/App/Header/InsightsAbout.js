@@ -52,11 +52,15 @@ class InsightsAbout extends Component {
         </React.Fragment>;
     }
 
-    updateAppVersion(app, version) {
+    updateAppVersion(app, version, buildId) {
         const { appDetails } = this.state;
         let currentApp = appDetails.apps.find(appDetail => appDetail.name === app.name);
 
         if (currentApp) {
+            if (buildId) {
+                version = `${version}.${buildId}`;
+            }
+
             currentApp.version = version;
         }
 
@@ -68,7 +72,7 @@ class InsightsAbout extends Component {
             fetch(app.path)
             .then(response => response.json())
             .catch(() => ({ travis: {} }))
-            .then(data => this.updateAppVersion(app, data.src_hash));
+            .then(data => this.updateAppVersion(app, data.src_hash, data.build_id));
         });
     }
 
