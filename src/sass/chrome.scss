@@ -48,6 +48,12 @@ aside {
   --pf-c-nav--Width:                                290px;
 }
 
+// Nav skeleton links
+.pf-c-nav__list > .pf-c-nav__item > .ins-c-skeleton__link:after {
+    height: 0;
+    width: 0;
+}
+
 // Header
 .pf-c-page__header {
     overflow: visible;
