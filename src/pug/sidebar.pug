@@ -1,23 +1,17 @@
+- var i = 0;
 script
     | console.warn('Deprecation warning: Please update your usage of Chrome.')
 script(src='./static/chrome/js/chrome.js')
 aside.pf-c-page__sidebar.pf-l-page__sidebar#ins-c-sidebar
     nav.pf-c-nav(aria-label='Insights Global Navigation')
         ul.pf-c-nav__list
-            li.pf-c-nav__item
-                a(class='pf-c-nav__link')
-                    div.ins-c-skeleton.ins-c-skeleton__lg &nbsp;
-            li.pf-c-nav__item
-                a(class='pf-c-nav__link')
-                    div.ins-c-skeleton.ins-c-skeleton__lg &nbsp;
-            li.pf-c-nav__item
-                a(class='pf-c-nav__link')
-                    div.ins-c-skeleton.ins-c-skeleton__lg &nbsp;
-            li.pf-c-nav__item
-                a(class='pf-c-nav__link')
-                    div.ins-c-skeleton.ins-c-skeleton__lg &nbsp;
+            while i < 4
+                li.pf-c-nav__item
+                    a.pf-c-nav__link.ins-c-skeleton__link
+                        .ins-c-skeleton.ins-c-skeleton__lg &nbsp;
+                        - i++ss
 main.page__inventory.pf-c-page__main.pf-l-page__main(role='main')
     section.pf-m-light.pf-c-page-header.pf-l-page-header.pf-c-page__main-section.pf-l-page__main-section.pf-m-light(widget-type="InsightsPageHeader")
-        div.pf-c-content
+        .pf-c-content
             h1.pf-c-title.pf-m-2xl(widget-type='InsightsPageHeaderTitle')
     section.pf-c-page__main-section.pf-l-page__main-section(page-type='inventory')
