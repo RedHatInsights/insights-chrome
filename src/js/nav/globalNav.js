@@ -8,7 +8,21 @@ export default Object.freeze([
         title: 'Catalog',
         // nav is built before window.insights.chrome
         // detect isProd manually here
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'access.redhat.com',
+        subItems: [
+            {
+                id: 'portfolios',
+                title: 'Portfolios'
+            },
+            {
+                id: 'platforms',
+                title: 'Platforms'
+            },
+            {
+                id: 'orders',
+                title: 'Orders'
+            }
+        ]
     },
     {
         id: 'advisor',
