@@ -1,29 +1,17 @@
+- var i = 0;
 script
     | console.warn('Chrome Deprecation: We deprecated the sidenav snippet. For instructions, please see: http://platform-docs.cloud.paas.upshift.redhat.com/frontend/chrome.html')
 script(src='./static/chrome/js/chrome.js')
 aside.pf-c-page__sidebar.pf-l-page__sidebar#ins-c-sidebar
     nav.pf-c-nav(aria-label='Insights Global Navigation')
         ul.pf-c-nav__list
-            li.pf-c-nav__item
-                a(href='#' class='pf-c-nav__link') Dashboard
-            li.pf-c-nav__item
-                a(data-component='pf-nav-expandable' href='#' class='pf-c-nav__link' aria-expanded='false') Insights
-                    span.pf-c-nav__toggle
-                        img(src="static/chrome/assets/images/nav-expand-chevron.svg")
-            li.pf-c-nav__item
-                a(data-component='pf-nav-expandable' href='#' class='pf-c-nav__link' aria-expanded='false') Security
-                    span.pf-c-nav__toggle
-                        img(src="static/chrome/assets/images/nav-expand-chevron.svg")
-            li.pf-c-nav__item
-                a(data-component='pf-nav-expandable' href='#' class='pf-c-nav__link' aria-expanded='false') Cost Management
-                    span.pf-c-nav__toggle
-                        img(src="static/chrome/assets/images/nav-expand-chevron.svg")
-            li.pf-c-nav__item
-                a(href='#' class='pf-c-nav__link') Inventory
-            li.pf-c-nav__item
-                a(href='#' class='pf-c-nav__link') Planner
+            while i < 4
+                li.pf-c-nav__item
+                    a.pf-c-nav__link.ins-c-skeleton__link
+                        .ins-c-skeleton.ins-c-skeleton__lg &nbsp;
+                        - i++
 main.page__inventory.pf-c-page__main.pf-l-page__main(role='main')
     section.pf-m-light.pf-c-page-header.pf-l-page-header.pf-c-page__main-section.pf-l-page__main-section.pf-m-light(widget-type="InsightsPageHeader")
-        div.pf-c-content
+        .pf-c-content
             h1.pf-c-title.pf-m-2xl(widget-type='InsightsPageHeaderTitle')
     section.pf-c-page__main-section.pf-l-page__main-section(page-type='inventory')
