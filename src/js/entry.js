@@ -25,18 +25,15 @@ export default () => {
                 </Provider>,
                 document.querySelector('header')
             );
-            // render(
-            //     <Provider store={store}>
-            //         <Footer />
-            //     </Provider>,
-            //     document.querySelector('TODO')
-            // );
-            render(
-                <Provider store={store}>
-                    <Sidenav />
-                </Provider>,
-                document.querySelector('aside')
-            );
+
+            if (document.querySelector('aside')) {
+                render(
+                    <Provider store={store}>
+                        <Sidenav />
+                    </Provider>,
+                    document.querySelector('aside')
+                );
+            }
         }
     );
 };

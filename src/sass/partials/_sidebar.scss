@@ -1,0 +1,20 @@
+aside.pf-c-page__sidebar {
+    padding-top: 0px;
+
+    .ins-c-navigation__header {
+        max-height: 4.4rem;
+        overflow: hidden;
+
+        .pf-l-split__item {
+            padding: 20px;
+            border-bottom: var(--pf-global--BorderWidth--sm) solid #cccccc;
+            &:first-child {
+                cursor: pointer;
+                border-right: var(--pf-global--BorderWidth--sm) solid #cccccc;
+                &:hover {
+                    color: var(--pf-global--active-color--100);
+                }
+            }
+        }
+    }
+}

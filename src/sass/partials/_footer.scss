@@ -1,5 +1,5 @@
 .ins-c-footer {
-  background: #1d1d1d;
+  background: var(--pf-global--BackgroundColor--300);
   color: #6c6c6c;
   @include rem('font-size', 12px);
   @include rem('padding', 15px 20px);
@@ -11,8 +11,9 @@
   svg#redhat-logo {
     height: 30px;
     display: inline;
-    .st0 { fill: #fff; }
-    .st1{fill:#cc0000;}
+    .st0 { fill: var(--pf-global--BackgroundColor--dark-100); }
+    .st1 { fill:#cc0000; }
+    .st2 { fill:var(--pf-global--BackgroundColor--100); }
   }
 
   p, nav { @include rem('margin-top', 5px); }
