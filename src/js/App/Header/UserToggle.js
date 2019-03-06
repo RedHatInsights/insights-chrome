@@ -17,7 +17,7 @@ function buildItems(accountNumber = -1, extraItems) {
         </DropdownItem>,
         <DropdownSeparator key="separator" />,
         <DropdownItem key="Account" isDisabled>
-            <dl>
+            <dl className='account-number'>
                 <dt className="account-number__header">Account Number:</dt>
                 <dd className="account-number__value">{accountNumber}</dd>
             </dl>

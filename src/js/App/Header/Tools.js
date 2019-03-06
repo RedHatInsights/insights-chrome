@@ -85,7 +85,7 @@ class Tools extends Component {
                             ))} />
                         </ToolbarItem>
                         <ToolbarItem className="pf-u-sr-only pf-u-visible-on-lg">
-                            <UserToggle />
+                            <UserToggle className='ins-c-dropdown__user'/>
                         </ToolbarItem>
                     </ToolbarGroup>
                     { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} /> }
