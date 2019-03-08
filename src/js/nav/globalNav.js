@@ -4,7 +4,7 @@ export default Object.freeze([
         title: 'Dashboard'
     },
     {
-        id: 'service-portal',
+        id: 'catalog',
         title: 'Catalog',
         // nav is built before window.insights.chrome
         // detect isProd manually here
