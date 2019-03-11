@@ -12,30 +12,11 @@ const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUser();
-//     injectUserInfo(userInfo.identity);
+    //     injectUserInfo(userInfo.identity);
     analytics(userInfo.identity);
-//     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
+    //     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
 
 });
-
-function injectUserInfo(userInfo) {
-    // Put name in dropdown
-    document.querySelector('.user-info').prepend(userInfo.full_name);
-
-    // Put Account number in dropdown list(s)
-    let accountSelector = document.querySelectorAll('.account-number__value');
-    Array.from(accountSelector).forEach(accountSelector => accountSelector.append(userInfo.id));
-
-    // Add user avatar
-    // TODO change background if role is different
-    document.querySelector('.user-icon').append(getUserInitials(userInfo.full_name));
-}
-
-function getUserInitials(name) {
-    let initials = name.match(/\b\w/g) || [];
-    initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
-    return initials;
-}
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
