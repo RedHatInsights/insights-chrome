@@ -1,40 +1,27 @@
-header.pf-l-page__header(role="banner")
-  .pf-l-page__header-brand
-    .pf-l-page__header-brand-toggle
-      button#nav-toggle.pf-c-button.pf-m-plain(aria-label='Toggle primary navigation', onclick='navToggle()' widget-type='InsightsNavToggle')
-        i.fas.fa-bars.fa-w-14
-    a.pf-l-page__header-brand-link(href="./platform/dashboard/" widget-type='InsightsBrand')
-      include insights-logo.pug
-  .pf-l-page__header-tools(widget-type='InsightsToolbar')
-    .pf-l-toolbar
-      .pf-l-toolbar__group.pf-u-sr-only.pf-u-visible-on-lg
-        .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow search' widget-type='InsightsSearch')
-            i.fas.fa-search
-        .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow notifications' widget-type='InsightsNotifications')
-            i.fas.fa-bell
-        .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow settings' widget-type='InsightsSettings')
-            i.fas.fa-cog
-        .pf-l-toolbar__item
-          button.pf-c-button.pf-m-plain.pf-m-lg(aria-label='Overflow faq' widget-type='InsightsFAQ')
-            i.fas.fa-question-circle
-      .pf-l-toolbar__group
-        .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
-          .pf-c-dropdown.pf-m-align-right.dropdown-kebab
-            button#dropdown-user.pf-c-dropdown__toggle(aria-label='Overflow actions' widget-type='InsightsOverflowActions', aria-expanded='false', onclick='dropdownToggle()')
-              i.fas.fa-ellipsis-v
-            ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
-              a.pf-c-dropdown__menu-item 0 Notifications
-              a.pf-c-dropdown__menu-item Settings
-              a.pf-c-dropdown__menu-item Help
-              include dropdownItems.pug
-        .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
-          .pf-c-dropdown.pf-m-align-right.dropdown-user.pf-m-plain
-            button#dropdown-user.pf-c-dropdown__toggle.user-info(aria-haspopup='true', aria-expanded='false' , onclick='dropdownToggle()')
-              i.fas.fa-caret-down.pf-c-dropdown__toggle-icon
-            ul.pf-c-dropdown__menu(aria-labelledby='dropdown-user', hidden)
-              include dropdownItems.pug
-        .pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
-          .user-icon.pf-c-avatar
+header.pf-c-page__header.pf-l-page__header(role="banner")
+    div.pf-c-page__header-brand.pf-l-page__header-brand
+        div
+            button.pf-c-button.pf-m-plain(aria-label='Toggle primary navigation' widget-type='InsightsNavToggle' type='button')
+                img(src="static/chrome/assets/images/primary-nav-hamburger-toggle.svg")
+        a.pf-c-page__header-brand-link.pf-l-page__header-brand-link(href='#')
+            img(src="static/chrome/assets/images/logo-cs.svg")
+    div.pf-c-page__header-tools.pf-l-page__header-tools(widget-type='InsightsToolbar')
+        div.pf-c-toolbar
+            div.pf-c-toolbar__group.pf-l-toolbar__group.pf-u-sr-only.pf-u-visible-on-lg
+                //- div.pf-c-dropdown(aria-label='Settings')
+                //-     button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-0(type='button' aria-expanded='false' aria-haspopup='true')
+                //-         span.pf-c-dropdown__toggle-text
+                //-             img(src="static/chrome/assets/images/settings-button.svg")
+                div.pf-c-toolbar__item.pf-l-toolbar__item(data-key='0')
+                    button.pf-c-button.pf-m-plain(aria-label='Overflow FAQ' widget-type='InsightsFAQ' type='button')
+                        img(src="static/chrome/assets/images/faq-button.svg")
+            dif.pf-c-toolbar__group.pf-l-toolbar__group
+                div.pf-c-toolbar__item.pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
+                    div.pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
+                        button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-1(aria-label='Actions' type='button' aria-expanded='false' aria-haspopup='true')
+                            img(src="static/chrome/assets/images/overflow-actions-sm.svg")
+                div.pf-c-toolbar__item.pf-l-toolbar__item.pf-u-sr-only.pf-u-visible-on-lg
+                    div.pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
+                        button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-1(type='button' aria-expanded='false' aria-haspopup='true')
+                            span.pf-c-dropdown__toggle-text Logging in...
+                            img(src="static/chrome/assets/images/overflow-actions-lg.svg")

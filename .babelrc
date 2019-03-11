@@ -1,9 +1,10 @@
 {
-  "presets": ["es2015"],
+  "presets": ["@babel/env", "@babel/react"],
   "plugins": [
     "transform-inline-environment-variables",
     "transform-object-rest-spread",
-    "babel-plugin-syntax-dynamic-import"
+    "babel-plugin-syntax-dynamic-import",
+    "transform-react-jsx"
   ],
   "env": {
     "test": {

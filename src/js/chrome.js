@@ -1,16 +1,21 @@
 import { spinUpStore }  from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory    from './inventory';
+import loadRemediations from './remediations';
 import auth             from './auth';
 import analytics        from './analytics';
+import loadChrome       from './entry';
+import asyncObject      from './async-loader';
 
 // start auth asap
 const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUser();
-    injectUserInfo(userInfo.identity);
+//     injectUserInfo(userInfo.identity);
     analytics(userInfo.identity);
+//     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
+
 });
 
 function injectUserInfo(userInfo) {
@@ -36,7 +41,11 @@ function getUserInitials(name) {
 const PUBLIC_EVENTS = {
     APP_NAVIGATION: fn => ({
         on: actionTypes.APP_NAV_CLICK,
-        callback: event => fn({ navId: event.data.id, domEvent: event.data.event })
+        callback: ({ data }) => {
+            if (data.id !== undefined || data.event) {
+                fn({ navId: data.id, domEvent: data.event });
+            }
+        }
     })
 };
 
@@ -46,13 +55,16 @@ window.insights.chrome = {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
         logout: () => { libjwt.jwt.logoutAllTabs(); }
     },
+    isProd: window.location.host === 'access.redhat.com',
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 
+        libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
         // public API actions
-        const { identifyApp, appNav } = actions;
+        const { identifyApp, appNav, appNavClick } = actions;
         window.insights.chrome.identifyApp = identifyApp;
         window.insights.chrome.navigation = appNav;
+        window.insights.chrome.appNavClick = appNavClick;
 
         window.insights.chrome.on = (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
@@ -63,10 +75,18 @@ window.insights.chrome = {
         };
 
         window.insights.chrome.$internal = { store };
+        libjwt.initPromise.then(() => {
+            loadChrome();
+        });
     }
 };
 
 window.insights.loadInventory = loadInventory;
+window.insights.experimental = {
+    loadRemediations
+};
+
+window.insights.async = asyncObject;
 
 window.navToggle = () => {
     const mq = window.matchMedia('(min-width: 768px)');
@@ -78,19 +98,5 @@ window.navToggle = () => {
     } else {
         page.classList.remove('pf-m-collapsed');
         page.classList.toggle('pf-m-expanded');
-    }
-};
-
-window.dropdownToggle = () => {
-    // Find out which dropdown (name, or kebab) we need to target
-    let dropdown = document.querySelector(window.matchMedia('(min-width: 992px)').matches ? '.dropdown-user' : '.dropdown-kebab');
-
-    dropdown.classList.toggle('pf-m-expanded');
-    dropdown.querySelector('.pf-c-dropdown__menu').toggleAttribute('hidden');
-
-    if (dropdown.classList.contains('pf-m-expanded')) {
-        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', true);
-    } else {
-        dropdown.querySelector('.pf-c-dropdown__toggle').setAttribute('aria-expanded', false);
     }
 };

@@ -1,14 +1,25 @@
 import * as actionTypes from './action-types';
-import * as globalNav from '../nav/globalNav';
+import options from '../nav/globalNav';
+
+export const onToggle = () => ({
+    type: actionTypes.NAVIGATION_TOGGLE
+});
+
+export const userLogIn = (user) => ({
+    type: actionTypes.USER_LOGIN,
+    payload: user
+});
 
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
 export function identifyApp (data) {
-    if (!globalNav.options.some(item => item.id === data)) {
+    if (!options.some(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)))) {
         throw new Error(`unknown app identifier: ${data}`);
     }
 
-    return { type: actionTypes.GLOBAL_NAV_IDENT, data };
+    const firstLevel = options.find(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)));
+
+    return { type: actionTypes.GLOBAL_NAV_IDENT, data: firstLevel.id };
 }
 
 export function appNav (data) {
@@ -30,5 +41,5 @@ export function appNav (data) {
 }
 
 export function appNavClick(item, event) {
-    return { type: actionTypes.APP_NAV_CLICK, payload: { id: item.id, event } };
+    return { type: actionTypes.APP_NAV_CLICK, payload: { id: item && item.id, event } };
 }

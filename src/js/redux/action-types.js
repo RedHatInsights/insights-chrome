@@ -1,3 +1,5 @@
+export const NAVIGATION_TOGGLE = '@@chrome/navigation-toggle';
+export const USER_LOGIN = '@@chrome/user-login';
 export const CLICK_ACTION = '@@chrome/click-action';
 
 export const APP_NAV = '@@chrome/app-nav-define';

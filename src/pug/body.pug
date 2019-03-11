@@ -1,0 +1,12 @@
+div.pf-c-background-image
+    include imageFilter.pug
+div.pf-c-page#page
+    include header.pug
+    include sidebar-new.pug
+    main.pf-c-page__main.pf-l-page__main#temp(role='temp')
+        section.pf-m-light.pf-c-page-header.pf-l-page-header.pf-c-page__main-section.pf-l-page__main-section.pf-m-light(widget-type="InsightsPageHeader")
+            div.pf-c-content
+                h1.pf-c-title.pf-m-2xl(widget-type='InsightsPageHeaderTitle')
+        section.pf-c-page__main-section.pf-l-page__main-section(page-type='inventory')
+    main.pf-c-page__main.pf-l-page__main#root(role='main')
+include after.pug

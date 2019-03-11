@@ -1,4 +1,17 @@
+- var i = 0;
+script
+    | console.warn('Chrome Deprecation: We deprecated the sidenav snippet. For instructions, please see: http://platform-docs.cloud.paas.upshift.redhat.com/frontend/chrome.html')
 script(src='./static/chrome/js/chrome.js')
-aside.pf-l-page__sidebar#ins-c-sidebar
-  nav.pf-c-nav(aria-label='Insights Global Navigation' widget-type='InsightsGlobalNavigation')
-    ul#navigation.pf-c-nav__list
+aside.pf-c-page__sidebar.pf-l-page__sidebar#ins-c-sidebar
+    nav.pf-c-nav(aria-label='Insights Global Navigation')
+        ul.pf-c-nav__list
+            while i < 4
+                li.pf-c-nav__item
+                    a.pf-c-nav__link.ins-c-skeleton__link
+                        .ins-c-skeleton.ins-c-skeleton__lg &nbsp;
+                        - i++
+main.page__inventory.pf-c-page__main.pf-l-page__main(role='main')
+    section.pf-m-light.pf-c-page-header.pf-l-page-header.pf-c-page__main-section.pf-l-page__main-section.pf-m-light(widget-type="InsightsPageHeader")
+        .pf-c-content
+            h1.pf-c-title.pf-m-2xl(widget-type='InsightsPageHeaderTitle')
+    section.pf-c-page__main-section.pf-l-page__main-section(page-type='inventory')

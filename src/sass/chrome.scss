@@ -1,20 +1,20 @@
 $pf-global--enable-reset: 'true';
 $pf-global--image-path: './assets/images/';
 
-@import 'node_modules/@patternfly/patternfly-next/patternfly-base.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Page/page.scss';
-@import 'node_modules/@patternfly/patternfly-next/layouts/Toolbar/toolbar.scss';
+@import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
 
 // Components
-@import 'node_modules/@patternfly/patternfly-next/components/BackgroundImage/background-image.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Nav/nav.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Button/button.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Dropdown/dropdown.scss';
-@import 'node_modules/@patternfly/patternfly-next/components/Avatar/avatar.scss';
+@import 'node_modules/@patternfly/patternfly/components/Toolbar/toolbar.scss';
+@import 'node_modules/@patternfly/patternfly/components/Page/page.scss';
+@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
+@import 'node_modules/@patternfly/patternfly/components/Nav/nav.scss';
+@import 'node_modules/@patternfly/patternfly/components/Button/button.scss';
+@import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
+@import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
 
 // Accessibility
-@import 'node_modules/@patternfly/patternfly-next/utilities/Accessibility/accessibility.scss';
-@import 'node_modules/@patternfly/patternfly-next/utilities/Spacing/spacing.scss';
+@import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
+@import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
 
 @import 'helpers.scss';
 
@@ -24,36 +24,31 @@ body {
     position: relative;
 }
 
-// Page temp styles
-.pf-l-page {
-  --pf-l-page__header-brand--FlexBasis--lg:         290px;
-  --pf-l-page__sidebar--Width--lg:                  290px;
-  --pf-l-page__header--MinHeight:                   110px;
-  --pf-l-page__header-brand-logo--Height:           11px;
-  --pf-l-page__header-brand--BackgroundColor--md:   #{$pf-global--BackgroundColor--dark-transparent-100};
-  --pf-l-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
+aside {
+    overflow: auto !important;
+}
 
+.pf-c-about-modal-box__logo {
+    display: none;
+}
+
+// Page temp styles
+.pf-c-page {
+  --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
 }
 
-// Nav
-.pf-c-nav {
-  --pf-c-nav--Width:                                290px;
-}
-
 // Header
-.pf-l-page__header {
+.pf-c-page__header {
     overflow: visible;
-    .pf-c-dropdown__menu {
-        .account-number__header { @include rem('font-size', 12px); }
+    .account-number {
+        white-space: nowrap;
+        padding: var(--pf-c-dropdown__menu-item--PaddingTop)
+                 var(--pf-c-dropdown__menu-item--PaddingRight)
+                 var(--pf-c-dropdown__menu-item--PaddingBottom)
+                 var(--pf-c-dropdown__menu-item--PaddingLeft);
+        * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
-
-    .user-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparentize(black, 0.8);
-    }    
 }
 
 // Brand
@@ -68,7 +63,7 @@ body {
 }
 
 // Page sidebar
-.pf-l-page__sidebar {
+.pf-c-page__sidebar {
     grid-row-end: 4;
 }
 

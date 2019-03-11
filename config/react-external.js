@@ -1,3 +1,3 @@
-const { React } = require('../src/js/inventory');
+const { React } = require('../src/js/externalDependencies');
 
 module.exports = React;
