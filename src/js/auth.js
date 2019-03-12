@@ -1,8 +1,8 @@
 /*global require*/
-const jwt     = require('jwt-redhat').default;
+const jwt = require('./jwt/jwt');
 const options = {
-    keycloakOptions: { clientId: 'customer-portal' },
-    keycloakInitOptions: { responseMode: 'query' }
+    realm: 'redhat-external',
+    clientId: 'customer-portal'
 };
 
 function bouncer() {

@@ -12,7 +12,9 @@ const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
-    analytics(userInfo);
+    analytics(userInfo.identity);
+
+    // This next line will not work at the moment
     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
 });
 
@@ -32,13 +34,14 @@ window.insights = window.insights || {};
 window.insights.chrome = {
     auth: {
         getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
-        logout: () => { libjwt.jwt.logout(); }
+        logout: () => { libjwt.jwt.logoutAllTabs(); }
     },
     isProd: window.location.host === 'access.redhat.com',
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 
         libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
+
         // public API actions
         const { identifyApp, appNav, appNavClick } = actions;
         window.insights.chrome.identifyApp = identifyApp;
