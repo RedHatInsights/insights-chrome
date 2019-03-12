@@ -40,7 +40,8 @@ window.insights.chrome = {
     init () {
         const { store, middlewareListener, actions } = spinUpStore();
 
-        libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
+        libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUser()));
+
         // public API actions
         const { identifyApp, appNav, appNavClick } = actions;
         window.insights.chrome.identifyApp = identifyApp;
