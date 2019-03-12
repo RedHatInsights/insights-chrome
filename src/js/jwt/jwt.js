@@ -1,5 +1,6 @@
 // Imports
 const Keycloak = require('keycloak-js');
+const BroadcastChannel = require('broadcast-channel');
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -126,6 +127,11 @@ pub.updateToken = () => {
         log('Failed to refresh the token, or the session has expired');
         pub.logoutAllTabs;
     });
+};
+
+// Encoded
+pub.getEncodedToken = () => {
+    return priv.keycloak.logout(priv.getEncodedToken());
 };
 
 /*** Exports ***/
