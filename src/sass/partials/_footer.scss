@@ -1,6 +1,6 @@
 .ins-c-footer {
   background: var(--pf-global--BackgroundColor--300);
-  color: #6c6c6c;
+  color: var(--pf-global--BackgroundColor--dark-transparent-200);
   @include rem('font-size', 12px);
   @include rem('padding', 15px 20px);
   display: flex;

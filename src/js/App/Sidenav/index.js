@@ -4,15 +4,18 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/esm/layouts/Split'
 import HomeIcon from '@patternfly/react-icons/dist/esm/icons/home-icon';
 
 class SideNav extends Component {
-    onHomeButtonClick() {
-        window.location.href = `${document.baseURI}platform/landing`;
-    }
 
     render() {
         return (<Fragment>
             <Split className="ins-c-navigation__header">
-                <SplitItem onClick={this.onHomeButtonClick}><HomeIcon size="md" /></SplitItem>
-                <SplitItem isMain>{localStorage.getItem('cs-app-title') || `Legacy`}</SplitItem>
+                <SplitItem className="ins-c-page__home-icon">
+                    <a href={`${ document.baseURI }platform/landing`}>
+                        <HomeIcon size="md" />
+                    </a>
+                </SplitItem>
+                <SplitItem isMain className="pf-u-display-flex pf-u-align-items-center">
+                    {localStorage.getItem('cs-app-title') || `Applications`}
+                </SplitItem>
             </Split>
             <Navigation />
         </Fragment>);
