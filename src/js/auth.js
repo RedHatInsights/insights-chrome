@@ -23,6 +23,7 @@ function bouncer() {
 
 export default () => {
     const promise = jwt.init(options).then(bouncer);
+
     return {
         jwt: jwt,
         initPromise: promise

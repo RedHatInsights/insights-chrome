@@ -53,6 +53,7 @@ pub.init = (options) => {
     log('Initializing');
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
+    options.promiseType = 'native';
 
     priv.keycloak = Keycloak(options);
 
@@ -62,12 +63,18 @@ pub.init = (options) => {
 
     return priv.keycloak
     .init(options)
-    .success(pub.initSuccess)
-    .error(pub.initError);
+    .then(pub.initSuccess)
+    .catch(pub.initError);
 };
 
 // keycloak init successful
-pub.initSuccess = () => { log('JWT Initialized'); };
+pub.initSuccess = () => {
+    log('JWT Initialized');
+    if (priv.keycloak.token && priv.keycloak.token.length > 10) {
+        console.log('Hey Ryan, store token');
+        console.log(priv.keycloak.token);
+    }
+};
 
 // keycloak init failed
 pub.initError = () => {
@@ -91,7 +98,7 @@ pub.logout = () => {
 
 pub.logoutAllTabs = () => {
     authChannel.postMessage({ type: 'logout' });
-    pub.logout;
+    pub.logout();
 };
 
 /*** User Functions ***/
@@ -109,7 +116,7 @@ pub.isAuthenticated = () => {
 
 /*** Check Token Status ***/
 // If a token is expired, logout of all tabs
-pub.expiredToken = () => { pub.logout; };
+pub.expiredToken = () => { pub.logout(); };
 
 // Broadcast message to refresh tokens across tabs
 pub.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
@@ -125,7 +132,7 @@ pub.updateToken = () => {
         }
     }).error(function() {
         log('Failed to refresh the token, or the session has expired');
-        pub.logoutAllTabs;
+        pub.logoutAllTabs();
     });
 };
 
