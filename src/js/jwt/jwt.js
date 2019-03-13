@@ -131,7 +131,7 @@ pub.updateToken = () => {
 
 // Encoded
 pub.getEncodedToken = () => {
-    return priv.keycloak.token;
+    log('Getting encoded token');
 };
 
 /*** Exports ***/
