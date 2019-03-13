@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Nav, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { appNavClick } from '../../redux/actions';
+import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
 
 const basepath = `${document.baseURI}platform/`;
@@ -22,7 +22,7 @@ class Navigation extends Component {
     };
 
     onClick(_event, item, parent) {
-        const { onNavigate } = this.props;
+        const { onNavigate, onClearActive } = this.props;
         if (parent && parent.active) {
             if (!item.reload) {
                 onNavigate && onNavigate(item);
@@ -30,15 +30,24 @@ class Navigation extends Component {
                 window.location.href = `${basepath}${item.reload}`;
             }
         } else {
-            const reload = item.reload || `${parent ? parent.id + '/' : ''}${item.id}`;
-            window.location.href = `${basepath}${reload}`;
+            if (item.group && window.location.href.indexOf(item.group) !== -1) {
+                onClearActive && onClearActive();
+                onNavigate && onNavigate(item);
+            } else {
+                const prefix = parent ? parent.id : item.group || '';
+                window.location.href = `${basepath}${prefix}${prefix ? '/' : ''}${item.id}`;
+            }
         }
     }
 
     render() {
-        const { settings, activeApp } = this.props;
+        const { settings, activeApp, navHidden } = this.props;
+        if (navHidden) {
+            document.querySelector('aside').setAttribute('hidden', true);
+        }
+
         return (
-            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation">
+            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" >
                 <NavList>
                     {
                         settings.map((item, key) => {
@@ -68,7 +77,7 @@ class Navigation extends Component {
                                         itemId={item.id}
                                         key={key}
                                         title={item.title}
-                                        isActive={item.active}
+                                        isActive={item.active || item.id === activeApp}
                                         onClick={event => this.onClick(event, item)}
                                     />;
                                 }
@@ -91,13 +100,14 @@ Navigation.propTypes = {
     )
 };
 
-function stateToProps({ chrome: { globalNav, activeApp } }) {
-    return ({ settings: globalNav, activeApp });
+function stateToProps({ chrome: { globalNav, activeApp, navHidden } }) {
+    return ({ settings: globalNav, activeApp, navHidden });
 }
 
 function dispatchToProps(dispatch) {
     return {
-        onNavigate: (item) => dispatch(appNavClick(item))
+        onNavigate: (item) => dispatch(appNavClick(item)),
+        onClearActive: () => dispatch(clearActive())
     };
 }
 

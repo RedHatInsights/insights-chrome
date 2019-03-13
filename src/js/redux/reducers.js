@@ -8,12 +8,21 @@ export function clickReducer(state, action) {
 }
 
 export function globalNavReducer(state, action) {
+    const activeGroup = state.globalNav.filter(item => item.group === action.data);
+    let active;
+    if (activeGroup.length > 0) {
+        active = activeGroup.find(item => window.location.href.indexOf(item.id) !== -1);
+    } else {
+        active = { id: action.data };
+    }
+
     return {
         ...state,
         appId: action.data,
+        navHidden: action.data === 'landing',
         globalNav: state.globalNav && state.globalNav.map(item => ({
             ...item,
-            active: item.id === action.data
+            active: active && item.id === active.id
         }))
     };
 }
@@ -29,6 +38,16 @@ export function appNavClick(state, { payload }) {
     return {
         ...state,
         activeApp: payload.id
+    };
+}
+
+export function clearActive(state) {
+    return {
+        ...state,
+        globalNav: state.globalNav && state.globalNav.map(item => ({
+            ...item,
+            active: false
+        }))
     };
 }
 
