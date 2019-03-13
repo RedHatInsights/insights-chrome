@@ -13,15 +13,15 @@ const insightsUser = require('./insights/user');
 // Global Defaults
 const DEFAULT_ROUTES = {
     prod: {
-        url: ['access.redhat.com', 'prod.foo.redhat.com'],
+        url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com'],
         sso: 'https://sso.redhat.com/auth'
     },
     qa: {
-        url: ['access.qa.redhat.com', 'access.qa.itop.redhat.com', 'qa.foo.redhat.com'],
+        url: ['access.qa.redhat.com', 'qa.foo.redhat.com'],
         sso: 'https://sso.qa.redhat.com/auth'
     },
     ci: {
-        url: ['access.ci.itop.redhat.com'],
+        url: ['ci.foo.redhat.com'],
         sso: 'https://sso.qa.redhat.com/auth'
     }
 };
@@ -70,10 +70,7 @@ pub.init = (options) => {
 // keycloak init successful
 pub.initSuccess = () => {
     log('JWT Initialized');
-    if (priv.keycloak.token && priv.keycloak.token.length > 10) {
-        console.log('Hey Ryan, store token');
-        console.log(priv.keycloak.token);
-    }
+    pub.getCookie(priv.keycloak.token);
 };
 
 // keycloak init failed
@@ -136,7 +133,15 @@ pub.updateToken = () => {
     });
 };
 
-// Encoded
+// Set the cookie fo 3scale
+pub.getCookie = (token) => {
+    log('Getting cookie');
+    if (token && token.length > 10) {
+        document.cookie = `rh_jwt=${priv.keycloak.token};path=/;secure=true`;
+    }
+};
+
+// Encoded WIP
 pub.getEncodedToken = () => {
     log('Getting encoded token');
 };
