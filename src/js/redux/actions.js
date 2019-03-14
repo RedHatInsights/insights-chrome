@@ -19,6 +19,7 @@ function isCurrApp(item, app) {
     } else if (item.group === app) {
         return true;
     }
+
     return false;
 }
 
