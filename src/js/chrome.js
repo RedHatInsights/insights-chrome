@@ -41,7 +41,7 @@ window.insights.chrome = {
         libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
         // public API actions
         const { identifyApp, appNav, appNavClick } = actions;
-        window.insights.chrome.identifyApp = identifyApp;
+        window.insights.chrome.identifyApp = (data) => identifyApp(data, store.getState().chrome.globalNav);
         window.insights.chrome.navigation = appNav;
         window.insights.chrome.appNavClick = appNavClick;
 
