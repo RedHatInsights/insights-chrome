@@ -16,7 +16,7 @@ const Brand = ({ toggleNav, navHidden }) => (<div className="pf-l-page__header-b
             <BarsIcon size="md"/>
         </Button>
     </div>
-    <a className="pf-l-page__header-brand-link pf-c-page__header-brand-link" href="./platform/landing">
+    <a className="pf-l-page__header-brand-link pf-c-page__header-brand-link" href="./landing">
         <Logo />
     </a>
 </div>);

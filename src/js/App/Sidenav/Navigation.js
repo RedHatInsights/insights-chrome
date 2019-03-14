@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
 
-const basepath = `${document.baseURI}platform/`;
+const basepath = `${document.baseURI}`;
 
 class Navigation extends Component {
     constructor(props) {

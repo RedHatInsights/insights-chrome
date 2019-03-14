@@ -24,12 +24,13 @@ You can include/use chrome in your development project by running the insights-p
 </html>
 ```
 
-Then, render your application to the "root" element. With React, for instance:
+Then, render your application to the "root" element. `project_platform` can be something like `insights`, while `project_name` is the name of your project. 
+As an example, rendering with React would look like this:
 
 ```js
 ReactDOM.render(
     <Provider store={ init().getStore() }>
-        <Router basename={ `/${RELEASE}/platform/(project_name)` }>
+        <Router basename={ `${RELEASE ? `/${RELEASE}` : ''}/{project_platform}/{project_name}` }>
             <App />
         </Router>
     </Provider>,

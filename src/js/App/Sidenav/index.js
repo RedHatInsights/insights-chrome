@@ -9,7 +9,7 @@ class SideNav extends Component {
         return (<Fragment>
             <Split className="ins-c-navigation__header">
                 <SplitItem className="ins-c-page__home-icon">
-                    <a href={`${ document.baseURI }platform/landing`}>
+                    <a href={`${ document.baseURI }landing`}>
                         <HomeIcon size="md" />
                     </a>
                 </SplitItem>
