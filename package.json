@@ -15,6 +15,7 @@
     "build:Fafonts": "cpx 'node_modules/font-awesome/fonts/*.*' build/assets/fonts",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
+    "lint:js-fix": "eslint src --fix",
     "lint:sass": "stylelint 'src/sass/**/*.scss' --config .stylelintrc.json",
     "test": "jest",
     "verify": "npm-run-all lint build test",
