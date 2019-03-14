@@ -13,8 +13,6 @@ const libjwt = auth();
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
     analytics(userInfo.identity);
-
-    // This next line will not work at the moment
     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
 });
 
