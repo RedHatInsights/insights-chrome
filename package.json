@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
-    "@babel/core": "^7.3.3",
+    "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "@red-hat-insights/insights-frontend-components": "^3.39.5",

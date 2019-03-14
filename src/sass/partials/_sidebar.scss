@@ -1,0 +1,21 @@
+aside.pf-c-page__sidebar {
+    padding-top: 0;
+
+    .ins-c-navigation__header {
+        @include rem('height', 67px);
+        overflow: hidden;
+
+        .pf-l-split__item {
+            @include rem('padding', 18px);
+            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-200);
+
+            &:first-child {
+                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-200);
+            }
+
+            &.ins-c-page__home-icon svg {
+                @include rem('margin-top', 4px);
+            }
+        }
+    }
+}

@@ -4,7 +4,7 @@ import ReducerRegistry, { dispatchActionsToStore }
     from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
 
-import options from './nav/globalNav.js';
+import options, { grouppedNav } from './nav/globalNav.js';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
@@ -34,7 +34,7 @@ export function spinUpStore(middlewares = []) {
 function initialState () {
     return {
         chrome: {
-            globalNav: options
+            globalNav: grouppedNav[localStorage.getItem('cs-app')] || options
         }
     };
 }
