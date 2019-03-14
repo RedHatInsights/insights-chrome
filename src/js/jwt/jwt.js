@@ -137,13 +137,14 @@ pub.updateToken = () => {
 pub.getCookie = (token) => {
     log('Getting cookie');
     if (token && token.length > 10) {
-        document.cookie = `rh_jwt=${priv.keycloak.token};path=/;secure=true`;
+        document.cookie = `rh_jwt=${token};path=/;secure=true`;
     }
 };
 
 // Encoded WIP
 pub.getEncodedToken = () => {
     log('Getting encoded token');
+    return (priv.keycloak.token);
 };
 
 /*** Exports ***/
