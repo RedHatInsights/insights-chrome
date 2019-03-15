@@ -6,7 +6,7 @@ import globalNav from '../nav/globalNav';
 describe('Reducers', () => {
     describe('Navigation', () => {
         it('activates global navigation element on identifyApp()', () => {
-            const state = reducers.globalNavReducer({ globalNav }, actions.identifyApp('inventory'));
+            const state = reducers.globalNavReducer({ globalNav }, actions.identifyApp('inventory', globalNav));
             expect(state.appId).toEqual('inventory');
             const activeItems = state.globalNav.filter(i => i.active);
             expect(activeItems.length).toBe(1);
@@ -14,7 +14,7 @@ describe('Reducers', () => {
         });
 
         it('throws error on unknown app', () => {
-            expect(() => actions.identifyApp('foo')).toThrowError('unknown app identifier: foo');
+            expect(() => actions.identifyApp('foo', globalNav)).toThrowError('unknown app identifier: foo');
         });
 
         it('defines app navigation with appNav()', () => {
