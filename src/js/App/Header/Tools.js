@@ -7,6 +7,7 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-
 // import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 // import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
+import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
@@ -50,7 +51,6 @@ class Tools extends Component {
             isModalOpen: false
         };
     }
-
     onModalToggle() {
         this.setState({
             isModalOpen: !this.state.isModalOpen
@@ -90,6 +90,7 @@ class Tools extends Component {
                     </ToolbarGroup>
                     { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} /> }
                 </Toolbar>
+                <UserIcon/>
             </div>
         );
     }
