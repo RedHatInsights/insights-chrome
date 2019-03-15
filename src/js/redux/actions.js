@@ -13,6 +13,10 @@ export const userLogIn = (user) => ({
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
 export function identifyApp (data) {
+    if (data === 'landing') {
+        return { type: actionTypes.GLOBAL_NAV_IDENT, data };
+    }
+
     if (!options.some(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)))) {
         throw new Error(`unknown app identifier: ${data}`);
     }
@@ -42,4 +46,10 @@ export function appNav (data) {
 
 export function appNavClick(item, event) {
     return { type: actionTypes.APP_NAV_CLICK, payload: { id: item && item.id, event } };
+}
+
+export function clearActive() {
+    return {
+        type: actionTypes.CLEAR_ACTIVE
+    };
 }

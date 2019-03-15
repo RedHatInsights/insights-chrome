@@ -27,14 +27,14 @@ class InsightsAbout extends Component {
 
         this.state = {
             appDetails: { apps: [
-                { name: 'Chrome', path: 'static/chrome/app.info.json', version: 'N/A' },
-                { name: 'Dashboard', path: `platform/dashboard/app.info.json`, version: 'N/A' },
-                { name: 'Inventory', path: `platform/inventory/app.info.json`, version: 'N/A' },
-                { name: 'Remediations', path: `platform/remediations/app.info.json`, version: 'N/A' },
-                { name: 'Vulnerabilities', path: 'platform/vulnerability/app.info.json', version: 'N/A' },
-                { name: 'Compliance', path: 'platform/compliance/app.info.json', version: 'N/A' },
-                { name: 'Cost Management', path: 'platform/cost-management/app.info.json', version: 'N/A' },
-                { name: 'Insights', path: 'platform/advisor/app.info.json', version: 'N/A' }
+                { name: 'Chrome', path: 'apps/chrome/app.info.json', version: 'N/A' },
+                { name: 'Dashboard', path: `apps/dashboard/app.info.json`, version: 'N/A' },
+                { name: 'Inventory', path: `apps/inventory/app.info.json`, version: 'N/A' },
+                { name: 'Remediations', path: `apps/remediations/app.info.json`, version: 'N/A' },
+                { name: 'Vulnerabilities', path: 'apps/vulnerability/app.info.json', version: 'N/A' },
+                { name: 'Compliance', path: 'apps/compliance/app.info.json', version: 'N/A' },
+                { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
+                { name: 'Insights', path: 'apps/advisor/app.info.json', version: 'N/A' }
             ] },
             currentApp: app && app.title
         };
