@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
 
-const basepath = `${document.baseURI}platform/`;
+const basepath = document.baseURI;
 
 class Navigation extends Component {
     constructor(props) {
@@ -41,7 +41,8 @@ class Navigation extends Component {
     }
 
     render() {
-        const { settings, activeApp, navHidden } = this.props;
+        const { settings, activeApp, navHidden, activeLocation } = this.props;
+
         if (navHidden) {
             document.querySelector('aside').setAttribute('hidden', true);
         }
@@ -65,7 +66,7 @@ class Navigation extends Component {
                                                     itemId={subItem.id}
                                                     key={subKey}
                                                     title={subItem.title}
-                                                    parent={`${item.id}/`}
+                                                    parent={`${activeLocation}/${item.id}`}
                                                     isActive={item.active && subItem.id === activeApp}
                                                     onClick={event => this.onClick(event, subItem, item)}
                                                 />
@@ -77,6 +78,7 @@ class Navigation extends Component {
                                         itemId={item.id}
                                         key={key}
                                         title={item.title}
+                                        parent={activeLocation}
                                         isActive={item.active || item.id === activeApp}
                                         onClick={event => this.onClick(event, item)}
                                     />;
@@ -97,11 +99,14 @@ Navigation.propTypes = {
             title: PropTypes.string,
             subItems: () => Navigation.propTypes.settings
         })
-    )
+    ),
+    activeApp: PropTypes.string,
+    navHidden: PropTypes.bool,
+    activeLocation: PropTypes.string
 };
 
-function stateToProps({ chrome: { globalNav, activeApp, navHidden } }) {
-    return ({ settings: globalNav, activeApp, navHidden });
+function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation } }) {
+    return ({ settings: globalNav, activeApp, navHidden, activeLocation });
 }
 
 function dispatchToProps(dispatch) {

@@ -32,9 +32,18 @@ export function spinUpStore(middlewares = []) {
 }
 
 function initialState () {
+    const splitted = location.pathname.split('/') ;
+    const active = splitted[1] === 'demo' ? splitted[2] : splitted[1];
     return {
         chrome: {
-            globalNav: grouppedNav[localStorage.getItem('cs-app')] || options
+            ...grouppedNav[active] ? {
+                globalNav: grouppedNav[active].routes,
+                activeTechnology: grouppedNav[active].title,
+                activeLocation: active
+            } : {
+                globalNav: options,
+                activeTechnology: 'Applications'
+            }
         }
     };
 }
