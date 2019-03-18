@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@patternfly/react-core": "^2.3.6",
-    "@patternfly/patternfly": "^1.0.201",
+    "@patternfly/patternfly": "^1.0.240",
     "@patternfly/react-icons": "^3.0.2",
     "babel-preset-es2015": "^6.24.1",
     "font-awesome": "^4.7.0",
