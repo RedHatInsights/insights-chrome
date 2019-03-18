@@ -1,5 +1,4 @@
 import * as actionTypes from './action-types';
-import options from '../nav/globalNav';
 
 export const onToggle = () => ({
     type: actionTypes.NAVIGATION_TOGGLE
@@ -12,16 +11,28 @@ export const userLogIn = (user) => ({
 
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
-export function identifyApp (data) {
+function isCurrApp(item, app) {
+    if (item.id === app) {
+        return true;
+    } else if (item.subItems && item.subItems.some(sub => sub.id === app)) {
+        return true;
+    } else if (item.group === app) {
+        return true;
+    }
+
+    return false;
+}
+
+export function identifyApp (data, options) {
     if (data === 'landing') {
         return { type: actionTypes.GLOBAL_NAV_IDENT, data };
     }
 
-    if (!options.some(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)))) {
+    if (!options.some(item => isCurrApp(item, data))) {
         throw new Error(`unknown app identifier: ${data}`);
     }
 
-    const firstLevel = options.find(item => item.id === data || (item.subItems && item.subItems.some(sub => sub.id === data)));
+    const firstLevel = options.find((item) => isCurrApp(item, data));
 
     return { type: actionTypes.GLOBAL_NAV_IDENT, data: firstLevel.id };
 }
