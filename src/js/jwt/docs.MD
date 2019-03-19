@@ -11,7 +11,7 @@ Example object
 ``` js
 const options = {
     realm: 'redhat-external',
-    clientId: 'customer-portal',
+    clientId: 'cloud-services',
     routes: {
         prod: {
             url: ['access.redhat.com', 'prod.foo.redhat.com'],
@@ -25,6 +25,7 @@ const options = {
             url: ['access.ci.itop.redhat.com'],
             sso: 'https://sso.qa.redhat.com/auth'
         }
+        // any unspecified route will auth through sso.qa.redhat.com/auth
     }
 };
 ```
