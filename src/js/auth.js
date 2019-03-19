@@ -2,7 +2,7 @@
 const jwt = require('./jwt/jwt');
 const options = {
     realm: 'redhat-external',
-    clientId: 'customer-portal'
+    clientId: 'cloud-services'
 };
 
 function bouncer() {

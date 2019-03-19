@@ -11,7 +11,7 @@ class UserIcon extends Component {
         // If a user has an image, it gets returned as 140x140px
         // Check to see if the user has an image by looking at the width
         const img = new Image();
-        img.src = `https://access.redhat.com/api/users/avatar/${account.login}/`;
+        img.src = `https://access.redhat.com/api/users/avatar/${account.username}/`;
 
         const fallback = 'apps/chrome/assets/images/img_avatar.svg';
         return (
@@ -22,12 +22,12 @@ class UserIcon extends Component {
 
 UserIcon.propTypes = {
     account: PropTypes.shape({
-        login: PropTypes.string
+        username: PropTypes.string
     })
 };
 
-export default connect(({ chrome: { user: { login } } }) => ({
+export default connect(({ chrome: { user: { identity: { user: { username } } } } }) => ({
     account: {
-        login: login
+        username: username
     }
 }))(UserIcon);
