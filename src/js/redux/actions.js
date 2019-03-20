@@ -25,7 +25,7 @@ function isCurrApp(item, app) {
 
 export function identifyApp (data, options) {
     if (data === 'landing') {
-        return { type: actionTypes.GLOBAL_NAV_IDENT, data };
+        return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
     }
 
     if (!options.some(item => isCurrApp(item, data))) {
@@ -34,7 +34,7 @@ export function identifyApp (data, options) {
 
     const firstLevel = options.find((item) => isCurrApp(item, data));
 
-    return { type: actionTypes.GLOBAL_NAV_IDENT, data: firstLevel.id };
+    return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id, activeApp: data } };
 }
 
 export function appNav (data) {

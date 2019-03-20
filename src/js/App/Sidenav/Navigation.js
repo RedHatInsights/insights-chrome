@@ -22,7 +22,7 @@ class Navigation extends Component {
     };
 
     onClick(_event, item, parent) {
-        const { onNavigate, onClearActive } = this.props;
+        const { onNavigate, onClearActive, activeGroup } = this.props;
         if (parent && parent.active) {
             if (!item.reload) {
                 onNavigate && onNavigate(item);
@@ -30,11 +30,11 @@ class Navigation extends Component {
                 window.location.href = `${basepath}${item.reload}`;
             }
         } else {
-            if (item.group && window.location.href.indexOf(item.group) !== -1) {
+            if (item.group && activeGroup === item.group) {
                 onClearActive && onClearActive();
                 onNavigate && onNavigate(item);
             } else {
-                const prefix = parent ? parent.id : item.group || '';
+                const prefix = item.group || parent ? parent.id : '';
                 window.location.href = `${basepath}${prefix}${prefix ? '/' : ''}${item.id}`;
             }
         }
@@ -80,7 +80,7 @@ class Navigation extends Component {
                                         title={item.title}
                                         parent={activeLocation}
                                         isActive={item.active || item.id === activeApp}
-                                        onClick={event => this.onClick(event, item)}
+                                        onClick={event => this.onClick(event, item, { id: activeLocation })}
                                     />;
                                 }
                             }
@@ -105,8 +105,8 @@ Navigation.propTypes = {
     activeLocation: PropTypes.string
 };
 
-function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation } }) {
-    return ({ settings: globalNav, activeApp, navHidden, activeLocation });
+function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup } }) {
+    return ({ settings: globalNav, activeApp, navHidden, activeLocation, activeGroup });
 }
 
 function dispatchToProps(dispatch) {
