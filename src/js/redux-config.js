@@ -33,7 +33,7 @@ export function spinUpStore(middlewares = []) {
 
 function initialState () {
     const splitted = location.pathname.split('/') ;
-    const active = splitted[1] === 'demo' ? splitted[2] : splitted[1];
+    const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
     return {
         chrome: {
             ...grouppedNav[active] ? {
