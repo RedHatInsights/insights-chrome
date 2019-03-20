@@ -45,7 +45,7 @@
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
-    "@red-hat-insights/insights-frontend-components": "^3.39.5",
+    "@red-hat-insights/insights-frontend-components": "^3.39.9",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^8.0.5",
