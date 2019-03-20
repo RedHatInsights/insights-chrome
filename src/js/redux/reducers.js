@@ -7,19 +7,20 @@ export function clickReducer(state, action) {
     return state;
 }
 
-export function globalNavReducer(state, action) {
-    const activeGroup = state.globalNav.filter(item => item.group === action.data);
+export function globalNavReducer(state, { data: { id, activeApp } }) {
+    const activeGroup = state.globalNav.filter(item => item.group === id);
     let active;
     if (activeGroup.length > 0) {
         active = activeGroup.find(item => window.location.href.indexOf(item.id) !== -1);
     } else {
-        active = { id: action.data };
+        active = { id };
     }
 
     return {
         ...state,
-        appId: action.data,
-        navHidden: action.data === 'landing',
+        appId: id,
+        activeGroup: activeApp,
+        navHidden: id === 'landing',
         globalNav: state.globalNav && state.globalNav.map(item => ({
             ...item,
             active: active && item.id === active.id
