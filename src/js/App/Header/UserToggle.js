@@ -86,7 +86,7 @@ UserToggle.defaultProps = {
 };
 
 /* eslint-disable camelcase */
-
+// TODO update this to use account_id
 export default connect(({
     chrome: {
         user: {

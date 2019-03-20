@@ -25,6 +25,8 @@ const DEFAULT_ROUTES = {
         sso: 'https://sso.qa.redhat.com/auth'
     }
 };
+const DEFAULT_COOKIE_NAME = 'cs_jwt';
+const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
 
 const pub = {};
 const priv = {};
@@ -56,6 +58,13 @@ pub.init = (options) => {
     options.promiseType = 'native';
 
     priv.keycloak = Keycloak(options);
+
+    const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
+    const cookieDomain = ((options.cookieDomain) ? options.cookieDomain : DEFAULT_COOKIE_DOMAIN);
+    priv.cookie = {
+        cookieName,
+        cookieDomain
+    };
 
     priv.keycloak.onTokenExpired = pub.updateToken;
     priv.keycloak.onAuthSuccess = pub.loginAllTabs;
@@ -121,13 +130,13 @@ pub.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
 // Actually update the token
 pub.updateToken = () => {
     log('Trying to update token');
-    priv.keycloak.updateToken(5).success(function(refreshed) {
+    priv.keycloak.updateToken().then(function(refreshed) {
         if (refreshed) {
             log('Token was successfully refreshed');
         } else {
             log('Token is still valid');
         }
-    }).error(function() {
+    }).catch(function() {
         log('Failed to refresh the token, or the session has expired');
         pub.logoutAllTabs();
     });
@@ -137,7 +146,7 @@ pub.updateToken = () => {
 pub.getCookie = (token) => {
     log('Getting cookie');
     if (token && token.length > 10) {
-        document.cookie = `rh_jwt=${token};path=/;secure=true`;
+        document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;
     }
 };
 
