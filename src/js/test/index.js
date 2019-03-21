@@ -4,6 +4,9 @@
 
 // create navigation placeholder in JSDOM
 beforeAll(() => {
+
+    window.testEnv = true;
+
     if (document.getElementById('navigation')) {
         return;
     }

@@ -4,22 +4,22 @@ import * as actions from './redux/actions.js';
 
 describe('Chrome API', () => {
 
-    it('can be initialized', () => {
+    test('can be initialized', () => {
         insights.chrome.init();
     });
 
-    it('allows for an event listener to be registered', () => {
+    test('allows for an event listener to be registered', () => {
         insights.chrome.init();
         insights.chrome.on('APP_NAVIGATION', () => true);
     });
 
-    it('throws an error if an unknown event listener registration is attempted', () => {
+    test('throws an error if an unknown event listener registration is attempted', () => {
         insights.chrome.init();
         expect(() => insights.chrome.on('NON_EXISTENT_EVENT', () => true))
         .toThrowError('Unknown event type: NON_EXISTENT_EVENT');
     });
 
-    it('allows for an event listener to be registered', () => {
+    test('allows for an event listener to be registered', () => {
         let result;
         insights.chrome.init();
         insights.chrome.on('APP_NAVIGATION', event => result = event);
@@ -33,7 +33,7 @@ describe('Chrome API', () => {
         expect(result.navId).toBe('map');
     });
 
-    it('allows for an event listener to be unregistered', () => {
+    test('allows for an event listener to be unregistered', () => {
         let result;
         insights.chrome.init();
         const unregister = insights.chrome.on('APP_NAVIGATION', event => result = event);
@@ -49,4 +49,5 @@ describe('Chrome API', () => {
 
         expect(result.navId).toBe('map');
     });
+
 });

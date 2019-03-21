@@ -23,6 +23,28 @@ module.exports = (token) => {
         }
     } : null;
 
+    if (window.testEnv === true) {
+        user = {
+            identity: {
+                account_number: 0,
+                type: 'User',
+                user: {
+                    username: 'test',
+                    email: 'test',
+                    first_name: 'test',
+                    last_name: 'test',
+                    is_active: false,
+                    is_org_admin: false,
+                    is_internal: true,
+                    locale: 'test'
+                },
+                internal: {
+                    org_id: 0
+                }
+            }
+        };
+    }
+
     log(`User ID: ${user.identity.account_number}`);
     return user;
 };
