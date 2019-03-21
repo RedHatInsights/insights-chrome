@@ -21,7 +21,7 @@ class UserIcon extends Component {
 
     componentDidMount() {
         const img = new Image();
-        img.src = `https://access.redhat.com/api/users/avatar/${this.state.account.login}/`;
+        img.src = `https://access.redhat.com/api/users/avatar/${this.state.account.username}/`;
         img.onload = (() => this.getImage(img));
     }
 

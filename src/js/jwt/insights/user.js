@@ -3,6 +3,8 @@ const log = require('../logger')('insights/user.js');
 /* eslint-disable camelcase */
 module.exports = (token) => {
 
+    console.log(token);
+
     let user = token ? {
         identity: {
             account_number: token.account_number,
@@ -10,8 +12,8 @@ module.exports = (token) => {
             user: {
                 username: token.username,
                 email: token.email,
-                first_name: token.firstName,
-                last_name: token.lastName,
+                first_name: token.first_name,
+                last_name: token.last_name,
                 is_active: token.is_active,
                 is_org_admin: token.is_org_admin,
                 is_internal: token.is_internal,
