@@ -9,15 +9,13 @@ class UserIcon extends Component {
         super(props);
         this.state = {
             account: this.props.account,
-            avatar: ''
+            avatar: 'apps/chrome/assets/images/img_avatar.svg'
         };
     }
 
     getImage = (img) => {
-        if (img.width === 140) {;
+        if (img.width === 140) {
             this.setState({ avatar: img.src });
-        } else {
-            this.setState({ avatar: 'apps/chrome/assets/images/img_avatar.svg' });
         }
     }
 
