@@ -13,8 +13,8 @@ export default (user) => {
         apiKey: 'f210c485-387f-43ad-4eee-f55bab22507f',
         visitor: {
             id: user.id,
-            internal: user.internal,
-            lang: user.lang
+            internal: user.is_internal,
+            lang: user.locale
         },
         account: {
             id: user.account_number

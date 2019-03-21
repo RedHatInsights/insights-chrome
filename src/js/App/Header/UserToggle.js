@@ -85,9 +85,21 @@ UserToggle.defaultProps = {
     extraItems: []
 };
 
-export default connect(({ chrome: { user: { account_number: accountNumber, firstName, lastName } } }) => ({
+/* eslint-disable camelcase */
+// TODO update this to use account_id
+export default connect(({
+    chrome: {
+        user: {
+            identity: {
+                account_number: accountNumber,
+                user: { first_name, last_name }
+            }
+        }
+    } }) => ({
     account: {
         number: accountNumber,
-        name: `${firstName} ${lastName}`
+        name: `${first_name} ${last_name}`
     }
 }))(UserToggle);
+
+/* eslint-enable camelcase */

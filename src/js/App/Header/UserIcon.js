@@ -21,7 +21,7 @@ class UserIcon extends Component {
 
     componentDidMount() {
         const img = new Image();
-        img.src = `https://access.redhat.com/api/users/avatar/${this.state.account.login}/`;
+        img.src = `https://access.redhat.com/api/users/avatar/${this.state.account.username}/`;
         img.onload = (() => this.getImage(img));
     }
 
@@ -36,12 +36,12 @@ class UserIcon extends Component {
 
 UserIcon.propTypes = {
     account: PropTypes.shape({
-        login: PropTypes.string
+        username: PropTypes.string
     })
 };
 
-export default connect(({ chrome: { user: { login } } }) => ({
+export default connect(({ chrome: { user: { identity: { user: { username } } } } }) => ({
     account: {
-        login: login
+        username: username
     }
 }))(UserIcon);

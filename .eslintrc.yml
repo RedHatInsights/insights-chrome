@@ -3,6 +3,7 @@ env:
   browser: true
   jest: true
   es6: true
+  node: true
 plugins:
   - react
 extends:
@@ -50,8 +51,10 @@ rules:
   max-len:
     - 2
     - 130
-  new-cap: 2
-  no-bitwise: 2
+  new-cap: 0
+  no-bitwise:
+    - 2
+    - allow: ["~"]
   no-caller: 2
   no-mixed-spaces-and-tabs: 2
   no-multiple-empty-lines:
