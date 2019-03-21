@@ -5,17 +5,31 @@ import { connect } from 'react-redux';
 
 class UserIcon extends Component {
 
-    render() {
-        const { account } = this.props;
+    constructor(props) {
+        super(props);
+        this.state = {
+            account: this.props.account,
+            avatar: 'apps/chrome/assets/images/img_avatar.svg'
+        };
+    }
 
-        // If a user has an image, it gets returned as 140x140px
-        // Check to see if the user has an image by looking at the width
+    getImage = (img) => {
+        if (img.width === 140) {
+            this.setState({ avatar: img.src });
+        }
+    }
+
+    componentDidMount() {
         const img = new Image();
-        img.src = `https://access.redhat.com/api/users/avatar/${account.username}/`;
+        img.src = `https://access.redhat.com/api/users/avatar/${this.state.account.login}/`;
+        img.onload = (() => this.getImage(img));
+    }
 
-        const fallback = 'apps/chrome/assets/images/img_avatar.svg';
+    render() {
+        const { avatar } = this.state;
+
         return (
-            <Avatar src={ img.width === 140 ? img.src : fallback }/>
+            <Avatar src={ avatar }/>
         );
     }
 }

@@ -4,6 +4,7 @@
     "transform-inline-environment-variables",
     "transform-object-rest-spread",
     "babel-plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-class-properties",
     "transform-react-jsx"
   ],
   "env": {
