@@ -28,6 +28,23 @@
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w"
   },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*Styles.js"
+    ],
+    "roots": [
+      "<rootDir>/src/"
+    ],
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "identity-obj-proxy"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RedHatInsights/insights-chrome.git"
@@ -55,8 +72,9 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.1.0",
+    "babel-jest": "^24.5.0",
     "babel-loader": "^8.0.5",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-runtime": "^6.26.0",
     "concurrently": "^3.5.1",
