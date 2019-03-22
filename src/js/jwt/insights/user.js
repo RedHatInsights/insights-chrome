@@ -23,7 +23,12 @@ module.exports = (token) => {
         }
     } : null;
 
-    log(`User ID: ${user.identity.account_number}`);
+    if (user) {
+        log(`User ID: ${user.identity.account_number}`);
+    } else {
+        log('User not ready');
+    }
+
     return user;
 };
 /* eslint-enable camelcase */
