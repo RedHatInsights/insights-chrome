@@ -25,9 +25,9 @@ export const grouppedNav = {
                 title: 'Settings',
                 subItems: [
                     {
-                        id: 'notifications',
-                        title: 'Notification',
-                        reload: '/notifications'
+                        id: 'webhooks',
+                        title: 'Webhooks',
+                        reload: 'webhooks'
                     }
                 ]
             }

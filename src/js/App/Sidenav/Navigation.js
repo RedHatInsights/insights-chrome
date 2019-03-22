@@ -27,7 +27,7 @@ class Navigation extends Component {
             if (!item.reload) {
                 onNavigate && onNavigate(item);
             } else {
-                window.location.href = `${basepath}${activeLocation}${item.reload}`;
+                window.location.href = `${basepath}${activeLocation}/${item.reload}`;
             }
         } else {
             if (item.group && activeGroup === item.group) {
@@ -35,7 +35,7 @@ class Navigation extends Component {
                 onNavigate && onNavigate(item);
             } else {
                 const prefix = (parent && parent.id) ? `/${parent.id}/` : '/';
-                window.location.href = `${basepath}${activeLocation}${prefix}${item.id}`;
+                window.location.href = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
             }
         }
     }
