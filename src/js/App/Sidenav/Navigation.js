@@ -22,7 +22,7 @@ class Navigation extends Component {
     };
 
     onClick(_event, item, parent) {
-        const { onNavigate, onClearActive, activeGroup } = this.props;
+        const { onNavigate, onClearActive, activeGroup, activeLocation } = this.props;
         if (parent && parent.active) {
             if (!item.reload) {
                 onNavigate && onNavigate(item);
@@ -34,8 +34,8 @@ class Navigation extends Component {
                 onClearActive && onClearActive();
                 onNavigate && onNavigate(item);
             } else {
-                const prefix = item.group || parent ? parent.id : '';
-                window.location.href = `${basepath}${prefix}${prefix ? '/' : ''}${item.id}`;
+                const prefix = parent ? `/${parent.id}/` : '/';
+                window.location.href = `${basepath}${activeLocation}${prefix}${item.id}`;
             }
         }
     }
@@ -80,7 +80,7 @@ class Navigation extends Component {
                                         title={item.title}
                                         parent={activeLocation}
                                         isActive={item.active || item.id === activeApp}
-                                        onClick={event => this.onClick(event, item, { id: activeLocation })}
+                                        onClick={event => this.onClick(event, item)}
                                     />;
                                 }
                             }
