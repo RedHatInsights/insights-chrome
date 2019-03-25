@@ -1,15 +1,24 @@
 {
-  "presets": ["@babel/env", "@babel/react"],
+  "presets": [
+      [
+        "@babel/env",
+        {
+            "targets": "> 0.25%, not dead"
+        }
+    ],
+    "@babel/react"
+  ],
   "plugins": [
-    "transform-inline-environment-variables",
-    "transform-object-rest-spread",
-    "babel-plugin-syntax-dynamic-import",
     "@babel/plugin-proposal-class-properties",
-    "transform-react-jsx"
+    "transform-inline-environment-variables",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-transform-runtime"
   ],
   "env": {
     "test": {
-      "plugins": ["babel-plugin-dynamic-import-node"]
+        "plugins": [
+            "babel-plugin-dynamic-import-node"
+        ]
     }
   }
 }

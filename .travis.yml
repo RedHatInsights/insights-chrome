@@ -15,6 +15,7 @@ jobs:
       name: deploy:beta
       script: npm run verify:beta
 after_success:
+- npx codecov
 - curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
     global:
