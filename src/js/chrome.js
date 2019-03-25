@@ -7,7 +7,8 @@ const libjwt = auth();
 
 libjwt.initPromise.then(() => {
     const userInfo = libjwt.jwt.getUserInfo();
-    if(userInfo) { analytics(userInfo.identity); }
+    if (userInfo) { analytics(userInfo.identity); }
+
     sessionStorage.setItem('kctoken', libjwt.jwt.getEncodedToken());
 });
 
