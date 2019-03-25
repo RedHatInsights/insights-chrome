@@ -19,7 +19,7 @@ export const grouppedNav = {
             },
             {
                 id: 'remediations',
-                title: 'Playbooks'
+                title: 'Remediations'
             },
             {
                 title: 'Settings',
@@ -60,7 +60,7 @@ export const grouppedNav = {
             },
             {
                 id: 'remediations',
-                title: 'Playbooks'
+                title: 'Remediations'
             }
 
         ]
@@ -203,7 +203,7 @@ export default Object.freeze([
     },
     {
         id: 'remediations',
-        title: 'Playbooks'
+        title: 'Remediations'
     },
     {
         id: 'uhc',
