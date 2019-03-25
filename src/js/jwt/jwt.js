@@ -69,6 +69,7 @@ pub.init = (options) => {
     priv.keycloak.onTokenExpired = pub.updateToken;
     priv.keycloak.onAuthSuccess = pub.loginAllTabs;
     priv.keycloak.onAuthRefreshSuccess = pub.refreshTokens;
+    window.kc = priv.keycloak;
 
     return priv.keycloak
     .init(options)
@@ -79,7 +80,8 @@ pub.init = (options) => {
 // keycloak init successful
 pub.initSuccess = () => {
     log('JWT Initialized');
-    pub.getCookie(priv.keycloak.token);
+    pub.setCookie(priv.keycloak.token);
+    window.localStorage.setItem('cs_jwt', priv.keycloak.refreshToken);
 };
 
 // keycloak init failed
@@ -143,7 +145,7 @@ pub.updateToken = () => {
 };
 
 // Set the cookie fo 3scale
-pub.getCookie = (token) => {
+pub.setCookie = (token) => {
     log('Getting cookie');
     if (token && token.length > 10) {
         document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;

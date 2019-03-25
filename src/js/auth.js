@@ -1,5 +1,9 @@
 /*global require*/
-const jwt = require('./jwt/jwt');
+const jwt       = require('./jwt/jwt');
+const cookie    = require('js-cookie');
+const JWT_KEY   = 'cs_jwt';
+const TIMER_STR = '[JWT][jwt.js] Auth time';
+
 const options = {
     realm: 'redhat-external',
     clientId: 'cloud-services'
@@ -7,21 +11,26 @@ const options = {
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
-        const keys = [
-            'jwt-redhat-lf/refresh_fail_count',
-            'rh_jwt',
-            'rh_refresh_token'
-        ];
-
-        for (const key of keys) {
-            window.localStorage.removeItem(key);
-        }
-
+        cookie.remove(JWT_KEY);
         jwt.login();
     }
+
+    console.timeEnd(TIMER_STR);
 }
 
 export default () => {
+    console.time(TIMER_STR);
+    const token = cookie.get(JWT_KEY);
+
+    // If we find an existing token, use it
+    // so that we dont auth even when a valid token is present
+    // otherwise its quick, but we bounce around and get a new token
+    // on every page load
+    if (token && token.length > 10) {
+        options.token = token;
+        options.refreshToken = window.localStorage.getItem(JWT_KEY);
+    }
+
     const promise = jwt.init(options).then(bouncer);
 
     return {
