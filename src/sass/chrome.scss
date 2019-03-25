@@ -92,6 +92,11 @@ aside {
     }
 }
 
+// Loading
+.ins-l-page__header--loading {
+    .ins-c-skeleton { @include rem('height', 28px); }
+}
+
 
 // abstract this
 .ins-c-icon-inline {
