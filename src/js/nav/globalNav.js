@@ -20,6 +20,16 @@ export const grouppedNav = {
             {
                 id: 'remediations',
                 title: 'Playbooks'
+            },
+            {
+                title: 'Settings',
+                subItems: [
+                    {
+                        id: 'webhooks',
+                        title: 'Webhooks',
+                        reload: 'webhooks'
+                    }
+                ]
             }
         ]
     },
