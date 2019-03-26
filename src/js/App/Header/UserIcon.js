@@ -29,7 +29,7 @@ class UserIcon extends Component {
         const { avatar } = this.state;
 
         return (
-            <Avatar src={ avatar }/>
+            <Avatar src={ avatar } alt='User Avatar'/>
         );
     }
 }
