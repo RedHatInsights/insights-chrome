@@ -22,13 +22,12 @@ const PUBLIC_EVENTS = {
 
 export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
+    libjwt.jwt.getUserInfo().then(actions.userLogIn);
 
-    libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
     // public API actions
     const { identifyApp, appNav, appNavClick } = actions;
-    libjwt.initPromise.then(() => {
-        loadChrome();
-    });
+    libjwt.jwt.getUserInfo().then(loadChrome);
+
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
         navigation: appNav,
@@ -54,9 +53,12 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
-                getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
-                logout: () => { libjwt.jwt.logoutAllTabs(); }
+                getUser: libjwt.jwt.getUserInfo,
+                logout: () => {
+                    libjwt.jwt.logoutAllTabs();
+                }
             },
+            // TODO fixme
             isProd: window.location.host === 'access.redhat.com',
             init: initFunc
         },
