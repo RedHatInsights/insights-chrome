@@ -53,10 +53,15 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
+                getToken: () => {
+                    return new Promise((res) => {
+                        libjwt.jwt.getUserInfo().then(() => {
+                            res(libjwt.jwt.getEncodedToken());
+                        });
+                    });
+                },
                 getUser: libjwt.jwt.getUserInfo,
-                logout: () => {
-                    libjwt.jwt.logoutAllTabs();
-                }
+                logout: libjwt.jwt.logoutAllTabs
             },
             // TODO fixme
             isProd: window.location.host === 'access.redhat.com',
