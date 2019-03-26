@@ -12,6 +12,8 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
 @import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
 
+@import 'node_modules/@red-hat-insights/insights-frontend-components/components/Spinner';
+
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
 @import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
@@ -90,6 +92,11 @@ aside {
     &:hover {
         background: var(--pf-global--BackgroundColor--dark-transparent-200);
     }
+}
+
+// Loading
+.ins-l-page__header--loading {
+    .ins-c-skeleton { @include rem('height', 28px); }
 }
 
 
