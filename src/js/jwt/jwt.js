@@ -189,7 +189,7 @@ pub.logoutAllTabs = () => {
 pub.getUserInfo = () => {
     log('Getting User Information');
 
-    return new Promise((res, rej) => {
+    return new Promise((res) => {
         if (priv.isExistingValid(priv.keycloak.token)) {
             res(insightsUser(priv.keycloak.tokenParsed));
             return;
@@ -197,9 +197,6 @@ pub.getUserInfo = () => {
 
         pub.updateToken().then(() => {
             res(insightsUser(priv.keycloak.tokenParsed));
-        }).catch(() => {
-            console.log('in getUser -> update token catch');
-            //pub.login
         });
     });
 };

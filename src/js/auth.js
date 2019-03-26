@@ -15,11 +15,11 @@ function bouncer() {
         jwt.login();
     }
 
-    console.timeEnd(TIMER_STR);
+    console.timeEnd(TIMER_STR); // eslint-disable-line no-console
 }
 
 export default () => {
-    console.time(TIMER_STR);
+    console.time(TIMER_STR);  // eslint-disable-line no-console
     const token = cookie.get(JWT_KEY);
 
     // If we find an existing token, use it
