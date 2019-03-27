@@ -19,7 +19,7 @@ class InsightsAbout extends Component {
         let app;
         if (this.props.globalNav) {
             app = this.props.globalNav.find(item => item.active);
-            if (app.subItems) {
+            if (app && app.subItems) {
                 const subApp = app.subItems.find(subItem => subItem.id === this.props.activeApp);
                 app = subApp && subApp.reload ? subApp : app;
             }
