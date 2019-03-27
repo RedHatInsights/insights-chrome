@@ -33,7 +33,7 @@ export const grouppedNav = {
             }
         ]
     },
-    rhcs: {
+    rhel: {
         title: 'Red Hat Enterprise Linux management services',
         routes: [
             {
@@ -65,7 +65,7 @@ export const grouppedNav = {
 
         ]
     },
-    uhc: {
+    openshift: {
         title: 'Red Hat OpenShift Cluster Manager',
         routes: [
             {
@@ -76,7 +76,7 @@ export const grouppedNav = {
             }
         ]
     },
-    hcm: {
+    hybrid: {
         title: 'Hybrid Cloud Management services',
         routes: [
             {
