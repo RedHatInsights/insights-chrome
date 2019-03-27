@@ -7,6 +7,7 @@ import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import loadRemediations from './remediations';
 import asyncObject from './async-loader';
+import qe from './iqeEnablement';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -54,14 +55,23 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
-                getUser: () => { return libjwt.initPromise.then(libjwt.jwt.getUserInfo); },
+                getUser: () => {
+                    // here we need to init the qe plugin
+                    // the "contract" is we will do this before anyone
+                    // calls/finishes getUser
+                    // this only does something if the correct localstorage
+                    // vars are set
+
+                    qe.init();
+                    return libjwt.initPromise.then(libjwt.jwt.getUserInfo);
+                },
                 logout: () => { libjwt.jwt.logoutAllTabs(); }
             },
+            qe: qe,
             isProd: window.location.host === 'access.redhat.com',
             init: initFunc
         },
         loadInventory,
-
         experimental: {
             loadRemediations
         },
