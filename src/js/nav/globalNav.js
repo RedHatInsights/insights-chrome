@@ -28,6 +28,11 @@ export const grouppedNav = {
                         id: 'webhooks',
                         title: 'Webhooks',
                         reload: 'webhooks'
+                    },
+                    {
+                        id: 'sources',
+                        title: 'Sources',
+                        reload: 'sources'
                     }
                 ]
             }
@@ -117,6 +122,16 @@ export const grouppedNav = {
                     {
                         id: 'aws',
                         title: 'AWS Details'
+                    }
+                ]
+            },
+            {
+                title: 'Settings',
+                subItems: [
+                    {
+                        id: 'sources',
+                        title: 'Catalog',
+                        reload: 'sources'
                     }
                 ]
             }
