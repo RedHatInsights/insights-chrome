@@ -25,7 +25,7 @@ export default {
         if (!initted) {
             initted = true;
             if (window.localStorage &&
-                window.localStorage.getItem('iqe:chome:init') === 'true') {
+                window.localStorage.getItem('iqe:chrome:init') === 'true') {
                 init();
             }
         }
