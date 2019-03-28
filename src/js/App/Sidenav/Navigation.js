@@ -63,10 +63,10 @@ class Navigation extends Component {
                                         {
                                             item.subItems.map((subItem, subKey) => (
                                                 <NavigationItem
-                                                    itemId={subItem.id}
+                                                    itemId={subItem.reload || subItem.id}
                                                     key={subKey}
                                                     title={subItem.title}
-                                                    parent={`${activeLocation}/${item.id}`}
+                                                    parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
                                                     isActive={item.active && subItem.id === activeApp}
                                                     onClick={event => this.onClick(event, subItem, item)}
                                                 />
