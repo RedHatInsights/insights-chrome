@@ -3,6 +3,11 @@ div.pf-c-background-image
 div.pf-c-page#page
     include landing-header.pug
     main.pf-c-page__main.pf-l-page__main#root(role='main')
+        section.pf-l-page-header.pf-c-page-header.pf-l-page__main-section.pf-c-page__main-section.pf-m-light(widget-type="InsightsPageHeader")
+            div.pf-c-content
+                h1.pf-c-title.pf-m-2xl(widget-type='InsightsPageHeaderTitle') Manage my Red Hat infrastructure
         section.pf-c-page__main-section.pf-l-page__main-section(page-type='landing')
+            .ins-c-spinner.ins-m-center(role='status')
+                span(class="pf-u-screen-reader") Loading...
 
 include after.pug
