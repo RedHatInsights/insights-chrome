@@ -23,13 +23,12 @@ const PUBLIC_EVENTS = {
 
 export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
+    libjwt.jwt.getUserInfo().then(actions.userLogIn);
 
-    libjwt.initPromise.then(() => actions.userLogIn(libjwt.jwt.getUserInfo()));
     // public API actions
     const { identifyApp, appNav, appNavClick } = actions;
-    libjwt.initPromise.then(() => {
-        loadChrome();
-    });
+    libjwt.jwt.getUserInfo().then(loadChrome);
+
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
         navigation: appNav,
@@ -55,6 +54,13 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
+                getToken: () => {
+                    return new Promise((res) => {
+                        libjwt.jwt.getUserInfo().then(() => {
+                            res(libjwt.jwt.getEncodedToken());
+                        });
+                    });
+                },
                 getUser: () => {
                     // here we need to init the qe plugin
                     // the "contract" is we will do this before anyone
@@ -65,9 +71,10 @@ export function bootstrap(libjwt, initFunc) {
                     qe.init();
                     return libjwt.initPromise.then(libjwt.jwt.getUserInfo);
                 },
-                logout: () => { libjwt.jwt.logoutAllTabs(); }
+                qe: qe,
+                logout: libjwt.jwt.logoutAllTabs
             },
-            qe: qe,
+            // TODO fixme
             isProd: window.location.host === 'access.redhat.com',
             init: initFunc
         },
