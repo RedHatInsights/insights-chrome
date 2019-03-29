@@ -140,7 +140,7 @@ export const grouppedNav = {
                     },
                     {
                         id: 'rbac',
-                        title: 'RBAC',
+                        title: 'User management',
                         reload: 'settings/rbac'
                     }
                 ]
