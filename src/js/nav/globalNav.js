@@ -103,6 +103,11 @@ export const grouppedNav = {
                     {
                         id: 'orders',
                         title: 'Orders'
+                    },
+                    {
+                        id: 'approval',
+                        title: 'Approval',
+                        reload: 'approval'
                     }
                 ]
             },
@@ -132,6 +137,11 @@ export const grouppedNav = {
                         id: 'sources',
                         title: 'Catalog',
                         reload: 'sources'
+                    },
+                    {
+                        id: 'rbac',
+                        title: 'RBAC',
+                        reload: 'settings/rbac'
                     }
                 ]
             }
