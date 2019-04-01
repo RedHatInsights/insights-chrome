@@ -10,7 +10,6 @@ function initAdobe() {
     adobe.type = ('text/javascript');
     adobe.src = `https://www.redhat.com/dtm${isStaging}.js`;
     adobe.async = true; //asynchronous
-    console.log(adobe);
     document.head.appendChild(adobe);
 }
 
