@@ -13,7 +13,6 @@ function initAdobe() {
     document.head.appendChild(adobe);
 }
 
-
 function initPendo(pendoConf) {
     window.pendo.initialize(pendoConf);
 }
