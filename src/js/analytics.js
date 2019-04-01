@@ -5,7 +5,7 @@ function initAdobe() {
 
     // production: dtm.js
     // pre-prod: dtm-staging.js
-    const isStaging = (window.location.hostname === 'cloud.redhat.com' ? '' : '-staging.js');
+    const isStaging = (window.location.hostname === 'cloud.redhat.com' ? '' : '-staging');
 
     adobe.type = ('text/javascript');
     adobe.src = `https://www.redhat.com/dtm${isStaging}.js`;
