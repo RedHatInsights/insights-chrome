@@ -48,7 +48,7 @@ export const grouppedNav = {
             },
             {
                 id: 'vulnerability',
-                title: 'Vulnerability'
+                title: 'Vulnerabilities'
             },
             {
                 id: 'compliance',
@@ -192,7 +192,7 @@ export default Object.freeze([
     },
     {
         id: 'vulnerability',
-        title: 'Vulnerability'
+        title: 'Vulnerabilities'
     },
     {
         id: 'compliance',
