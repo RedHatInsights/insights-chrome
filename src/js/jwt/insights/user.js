@@ -1,4 +1,11 @@
 const log = require('../logger')('insights/user.js');
+const servicesApi = require('./entitlements');
+const pathMapper = {
+    rhcs: 'smart_management',
+    hcm: 'hybrid_cloud',
+    insights: 'insights',
+    uhc: 'openshift'
+};
 
 /* eslint-disable camelcase */
 module.exports = (token) => {
@@ -23,12 +30,31 @@ module.exports = (token) => {
         }
     } : null;
 
+    const pathName = location.pathname.split('/');
+    pathName.shift();
+    if (pathName[0] === 'beta') {
+        pathName.shift();
+    }
+
     if (user) {
         log(`User ID: ${user.identity.account_number}`);
+        return servicesApi.servicesGet().then(data => {
+            const service = pathMapper[pathName[0]];
+            if (pathName.length > 0 && pathName[0] !== '') {
+                if (data[service] && data[service].is_entitled) {
+                    log('Entitled.');
+                } else {
+                    log('Not entitled!');
+                    location.replace(`${document.baseURI}?not_entitled=${service}`);
+                }
+            }
+
+            return user;
+        });
     } else {
         log('User not ready');
     }
 
-    return user;
+    return new Promise((res) => res());
 };
 /* eslint-enable camelcase */
