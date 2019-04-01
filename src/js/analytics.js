@@ -1,7 +1,7 @@
 'use strict';
 
 function initAdobe() {
-    let adobe = document.createElement('script');
+    const adobe = document.createElement('script');
 
     // production: dtm.js
     // pre-prod: dtm-staging.js
