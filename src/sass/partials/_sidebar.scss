@@ -13,8 +13,9 @@ aside.pf-c-page__sidebar {
                 border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-200);
             }
 
-            &.ins-c-page__home-icon svg {
-                @include rem('margin-top', 4px);
+            &.ins-c-page__home-icon {
+                display: flex;
+                align-items: center;
             }
         }
     }
