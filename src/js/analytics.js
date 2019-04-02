@@ -1,5 +1,9 @@
 'use strict';
 
+function isDev() {
+    return window.location.hostname.split('.')[1] === 'foo' ? true : false;
+}
+
 function initAdobe() {
     const adobe = document.createElement('script');
 
@@ -20,7 +24,11 @@ function initPendo(pendoConf) {
 export default (user) => {
 
     // Initialize Adobe
-    initAdobe();
+    if(!isDev()) {
+        initAdobe();
+    } else {
+        window.console.log('[Analytics] Skipping Adobe Analytics for dev environments');
+    }
 
     // Initialize Pendo
     // eslint-disable-next-line
