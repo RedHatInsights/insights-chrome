@@ -4,6 +4,7 @@
     { "req_path": "rhel/drift",         "real_path": "drift" },
     { "req_path": "rhel/inventory",     "real_path": "inventory" },
     { "req_path": "rhel/remediations",  "real_path": "remediations" },
+    { "req_path": "rhel/dashboard",     "real_path": "dashboard" },
     { "req_path": "rhel",               "real_path": "dashboard" },
 
     { "req_path": "insights/sources",      "real_path": "sources" },
