@@ -24,7 +24,7 @@ function initPendo(pendoConf) {
 export default (user) => {
 
     // Initialize Adobe
-    if(!isDev()) {
+    if (!isDev()) {
         initAdobe();
     } else {
         window.console.log('[Analytics] Skipping Adobe Analytics for dev environments');
