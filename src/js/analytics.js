@@ -1,7 +1,7 @@
 'use strict';
 
 function isDev() {
-    return window.location.hostname.split('.')[1] === 'foo' ? true : false;
+    return (window.location.hostname.split('.')[1] === 'foo');
 }
 
 function initAdobe() {
@@ -9,10 +9,10 @@ function initAdobe() {
 
     // production: dtm.js
     // pre-prod: dtm-staging.js
-    const isStaging = (window.location.hostname === 'cloud.redhat.com' ? '' : '-staging');
+    const tagName = (window.location.hostname === 'cloud.redhat.com' ? 'dtm.js' : 'dtm-staging.js');
 
-    adobe.type = ('text/javascript');
-    adobe.src = `https://www.redhat.com/dtm${isStaging}.js`;
+    adobe.type = 'text/javascript';
+    adobe.src = `https://www.redhat.com/${tagName}`;
     adobe.async = true; //asynchronous
     document.head.appendChild(adobe);
 }
