@@ -13,6 +13,10 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
 @import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
 
+// Layouts
+@import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
+
 @import 'node_modules/@red-hat-insights/insights-frontend-components/components/Spinner';
 
 // Accessibility
