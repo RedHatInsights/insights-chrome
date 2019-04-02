@@ -1,8 +1,8 @@
 const log = require('../logger')('insights/user.js');
 const servicesApi = require('./entitlements');
 const pathMapper = {
-    rhcs: 'smart_management',
-    hcm: 'hybrid_cloud',
+    rhel: 'smart_management',
+    hybrid: 'hybrid_cloud',
     insights: 'insights',
     uhc: 'openshift'
 };
@@ -45,7 +45,9 @@ module.exports = (token) => {
                     log('Entitled.');
                 } else {
                     log('Not entitled!');
-                    location.replace(`${document.baseURI}?not_entitled=${service}`);
+                    if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
+                        location.replace(`${document.baseURI}?not_entitled=${service}`);
+                    }
                 }
             }
 
