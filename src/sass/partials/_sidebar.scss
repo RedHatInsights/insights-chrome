@@ -17,6 +17,8 @@ aside.pf-c-page__sidebar {
                 display: flex;
                 align-items: center;
             }
+
+            .ins-c-navigation__header-title { @include rem('width', 160px); }
         }
     }
 }
