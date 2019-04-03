@@ -56,8 +56,7 @@ export const grouppedNav = {
             },
             {
                 id: 'drift',
-                title: 'System Comparison',
-                disabled: window.location.hostname === 'access.redhat.com'
+                title: 'System Comparison'
             },
             {
                 id: 'inventory',
@@ -237,8 +236,7 @@ export default Object.freeze([
     },
     {
         id: 'drift',
-        title: 'System Comparison',
-        disabled: window.location.hostname === 'access.redhat.com'
+        title: 'System Comparison'
     },
     {
         id: 'tower-analytics',
