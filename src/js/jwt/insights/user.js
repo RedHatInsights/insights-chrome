@@ -42,8 +42,8 @@ module.exports = (token) => {
         // Disable this feature in prod
         // otherwise we get errors and things spin
         if (window.location.hostname === 'cloud.redhat.com') {
-            return new Promise(res => {
-                return user;
+            return new Promise(resolve => {
+                resolve(user);
             });
         }
 
