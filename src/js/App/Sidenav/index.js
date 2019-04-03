@@ -16,7 +16,9 @@ class SideNav extends Component {
                     </a>
                 </SplitItem>
                 <SplitItem isMain className="pf-u-display-flex pf-u-align-items-center">
-                    {activeTechnology}
+                    <div className="ins-c-navigation__header-title">
+                        {activeTechnology}
+                    </div>
                 </SplitItem>
             </Split>
             <Navigation />
