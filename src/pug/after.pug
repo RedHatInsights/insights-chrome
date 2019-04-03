@@ -1,6 +1,6 @@
 script(src='./apps/chrome/js/chrome.js')
 script(type='text/javascript').
-  if(!window.location.hostname.indexOf('foo') === -1) {
+  if(window.location.hostname.split('.')[1] !== 'foo') {
     if (("undefined" !== typeof _satellite) && ("function" === typeof _satellite.pageBottom)) {
     _satellite.pageBottom();
     }
