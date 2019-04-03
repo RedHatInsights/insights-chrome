@@ -23,7 +23,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
         navHidden: id === 'landing',
         globalNav: state.globalNav && state.globalNav.map(item => ({
             ...item,
-            active: active && item.id === active.id
+            active: active && (item.id === active.id || item.title === active.id)
         }))
     };
 }

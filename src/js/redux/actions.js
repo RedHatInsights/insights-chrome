@@ -34,7 +34,7 @@ export function identifyApp (data, options) {
 
     const firstLevel = options.find((item) => isCurrApp(item, data));
 
-    return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id, activeApp: data } };
+    return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id || firstLevel.title, activeApp: data } };
 }
 
 export function appNav (data) {
