@@ -4,7 +4,7 @@ const pathMapper = {
     rhel: 'smart_management',
     hybrid: 'hybrid_cloud',
     insights: 'insights',
-    uhc: 'openshift'
+    openshift: 'openshift'
 };
 
 /* eslint-disable camelcase */
