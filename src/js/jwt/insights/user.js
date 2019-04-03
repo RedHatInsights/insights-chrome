@@ -37,7 +37,16 @@ module.exports = (token) => {
     }
 
     if (user) {
-        log(`User ID: ${user.identity.account_number}`);
+        log(`Account Number: ${user.identity.account_number}`);
+
+        // Disable this feature in prod
+        // otherwise we get errors and things spin
+        if (window.location.hostname === 'cloud.redhat.com') {
+            return new Promise(res => {
+                return user;
+            });
+        }
+
         return servicesApi.servicesGet().then(data => {
             const service = pathMapper[pathName[0]];
             if (pathName.length > 0 && pathName[0] !== '') {
