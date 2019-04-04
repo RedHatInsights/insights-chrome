@@ -189,16 +189,11 @@ pub.logoutAllTabs = () => {
 pub.getUserInfo = () => {
     log('Getting User Information');
 
-    return new Promise((res) => {
-        if (priv.isExistingValid(priv.keycloak.token)) {
-            res(insightsUser(priv.keycloak.tokenParsed));
-            return;
-        }
+    if (priv.isExistingValid(priv.keycloak.token)) {
+        return insightsUser(priv.keycloak.tokenParsed);
+    }
 
-        pub.updateToken().then(() => {
-            res(insightsUser(priv.keycloak.tokenParsed));
-        });
-    });
+    return pub.updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
