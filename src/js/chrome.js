@@ -6,8 +6,7 @@ import { bootstrap, chromeInit }   from './entry';
 const libjwt = auth();
 
 libjwt.initPromise.then(() => {
-    const userInfo = libjwt.jwt.getUserInfo();
-    analytics(userInfo.identity);
+    libjwt.jwt.getUserInfo().then(analytics);
 });
 
 window.insights = window.insights || {};
