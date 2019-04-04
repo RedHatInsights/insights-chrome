@@ -22,8 +22,16 @@ class Navigation extends Component {
     };
 
     onClick(_event, item, parent) {
-        const { onNavigate, onClearActive, activeGroup, activeLocation } = this.props;
+        const { onNavigate, onClearActive, activeGroup, activeLocation, settings, appId } = this.props;
         if (parent && parent.active) {
+            const activeLevel = settings.find(navItem => navItem.id === appId);
+            if (activeLevel) {
+                const activeItem = activeLevel.subItems.find(navItem => navItem.id === activeGroup);
+                if (activeItem && activeItem.reload && !item.reload) {
+                    window.location.href = `${basepath}${activeLocation}/${appId}/${item.id}`;
+                }
+            }
+
             if (!item.reload) {
                 onNavigate && onNavigate(item);
             } else {
@@ -93,6 +101,7 @@ class Navigation extends Component {
 }
 
 Navigation.propTypes = {
+    appId: PropTypes.string,
     settings: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.string,
@@ -105,8 +114,8 @@ Navigation.propTypes = {
     activeLocation: PropTypes.string
 };
 
-function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup } }) {
-    return ({ settings: globalNav, activeApp, navHidden, activeLocation, activeGroup });
+function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup, appId } }) {
+    return ({ settings: globalNav, activeApp, navHidden, activeLocation, activeGroup, appId });
 }
 
 function dispatchToProps(dispatch) {

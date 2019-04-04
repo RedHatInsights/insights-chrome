@@ -135,7 +135,7 @@ export const grouppedNav = {
                 subItems: [
                     {
                         id: 'sources',
-                        title: 'Catalog',
+                        title: 'Sources',
                         reload: 'sources'
                     },
                     {
