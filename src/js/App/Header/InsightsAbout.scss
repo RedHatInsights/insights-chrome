@@ -4,3 +4,7 @@
     border-top: 1px solid #3b3b3b;
     @include rem('padding-top', 15px);
 }
+
+.pf-c-about-modal-box__hero {
+    --pf-c-about-modal-box__hero--sm--BackgroundImage: url('/../../build/assets/images/hero-image.jpg');
+} 

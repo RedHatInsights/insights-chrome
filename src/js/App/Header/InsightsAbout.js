@@ -85,8 +85,7 @@ class InsightsAbout extends Component {
                 onClose={onClose}
                 brandImageSrc={logo}
                 brandImageAlt="Red Hat Cloud Services Logo"
-                heroImageSrc={`${document.baseURI}/static/chrome/assets/images/pfbg_2000.jpg`}
-                trademark='Copyright © 2018 Red Hat, Inc.'
+                trademark='Copyright © 2019 Red Hat, Inc.'
             >
                 <Stack gutter='sm'>
                     <StackItem>
@@ -135,7 +134,7 @@ class InsightsAbout extends Component {
     }
 }
 
-function mapStateToProps({ chrome: { user, appId, globalNav, activeApp } }) {
+function mapStateToProps({ chrome: { user: { identity: { user } }, appId, globalNav, activeApp } }) {
     return { appId, globalNav, user, activeApp };
 }
 
