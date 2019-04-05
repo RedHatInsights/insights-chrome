@@ -44,7 +44,7 @@ module.exports = (token) => {
 
         // Disable qa becuase the service has not shipped yet
         if (window.location.hostname === 'cloud.redhat.com' ||
-            window.location.hostname === 'qa.cloud.paas.upshift.redhat.com') {
+            window.location.hostname.indexOf('qa') === 0) {
             return new Promise(resolve => {
                 resolve(user);
             });
