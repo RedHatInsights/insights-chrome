@@ -76,7 +76,6 @@ export const grouppedNav = {
             {
                 id: '',
                 title: 'UHC',
-                disabled: window.location.hostname === 'cloud.redhat.com',
                 default: true
             }
         ]
@@ -87,9 +86,6 @@ export const grouppedNav = {
             {
                 id: 'catalog',
                 title: 'Catalog',
-                // nav is built before window.insights.chrome
-                // detect isProd manually here
-                disabled: window.location.hostname === 'cloud.redhat.com',
                 subItems: [
                     {
                         id: 'portfolios',
@@ -134,13 +130,18 @@ export const grouppedNav = {
                 title: 'Settings',
                 subItems: [
                     {
-                        id: 'sources',
-                        title: 'Sources',
-                        reload: 'sources'
+                        id: 'catalog-sources',
+                        title: 'Catalog Sources',
+                        reload: 'settings/catalog-sources'
+                    },
+                    {
+                        id: 'cost-management-sources',
+                        title: 'Cost Management Sources',
+                        reload: 'settings/cost-management-sources'
                     },
                     {
                         id: 'rbac',
-                        title: 'User management',
+                        title: 'User Access Management',
                         reload: 'settings/rbac'
                     }
                 ]
