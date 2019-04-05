@@ -41,7 +41,10 @@ module.exports = (token) => {
 
         // Disable this feature in prod
         // otherwise we get errors and things spin
-        if (window.location.hostname === 'cloud.redhat.com') {
+
+        // Disable qa becuase the service has not shipped yet
+        if (window.location.hostname === 'cloud.redhat.com' ||
+            window.location.hostname === 'qa.cloud.paas.upshift.redhat.com') {
             return new Promise(resolve => {
                 resolve(user);
             });
