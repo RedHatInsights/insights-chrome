@@ -125,8 +125,8 @@ export const grouppedNav = {
                         title: 'Cloud details'
                     },
                     {
-                        'id': 'ocp-on-aws',
-                        'title': 'OpenShift on cloud details',
+                        id: 'ocp-on-aws',
+                        title: 'OpenShift on cloud details'
                     }
                 ]
             },
