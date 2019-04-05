@@ -13,8 +13,13 @@
     { "req_path": "insights/remediations", "real_path": "remediations" },
     { "req_path": "insights",              "real_path": "insights" },
 
+
+
+    { "req_path": "hybrid/settings/cost-management-sources", "real_path": "cost-management" },
+    { "req_path": "hybrid/settings/catalog-sources",         "real_path": "sources" },
+    { "req_path": "hybrid/settings/rbac",                    "real_path": "rbac" },
+
     { "req_path": "hybrid/approval",        "real_path": "approval" },
-    { "req_path": "hybrid/settings/rbac",   "real_path": "rbac" },
     { "req_path": "hybrid/catalog",         "real_path": "catalog" },
     { "req_path": "hybrid/cost-management", "real_path": "cost-management" },
     { "req_path": "hybrid/sources",         "real_path": "sources" }
