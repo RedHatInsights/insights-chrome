@@ -57,7 +57,7 @@ export const grouppedNav = {
             {
                 id: 'drift',
                 title: 'System Comparison',
-                disabled: window.location.hostname === 'access.redhat.com'
+                disabled: window.location.hostname === 'cloud.redhat.com'
             },
             {
                 id: 'inventory',
@@ -76,7 +76,7 @@ export const grouppedNav = {
             {
                 id: '',
                 title: 'UHC',
-                disabled: window.location.hostname === 'access.redhat.com',
+                disabled: window.location.hostname === 'cloud.redhat.com',
                 default: true
             }
         ]
@@ -89,7 +89,7 @@ export const grouppedNav = {
                 title: 'Catalog',
                 // nav is built before window.insights.chrome
                 // detect isProd manually here
-                disabled: window.location.hostname === 'access.redhat.com',
+                disabled: window.location.hostname === 'cloud.redhat.com',
                 subItems: [
                     {
                         id: 'portfolios',
@@ -159,7 +159,7 @@ export default Object.freeze([
         title: 'Catalog',
         // nav is built before window.insights.chrome
         // detect isProd manually here
-        disabled: window.location.hostname === 'access.redhat.com',
+        disabled: window.location.hostname === 'cloud.redhat.com',
         subItems: [
             {
                 id: 'portfolios',
@@ -224,7 +224,7 @@ export default Object.freeze([
     {
         id: 'topological-inventory',
         title: 'Sources',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     },
     {
         id: 'remediations',
@@ -233,16 +233,16 @@ export default Object.freeze([
     {
         id: 'uhc',
         title: 'UHC',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     },
     {
         id: 'drift',
         title: 'System Comparison',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     },
     {
         id: 'tower-analytics',
         title: 'Tower Analytics',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     }
 ]);
