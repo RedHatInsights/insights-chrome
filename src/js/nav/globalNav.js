@@ -112,13 +112,13 @@ export const grouppedNav = {
                 title: 'Cost Management',
                 subItems: [
                     {
-                        id: 'ocp-on-aws',
-                        title: 'OpenShift on cloud details',
+                        id: '',
+                        title: 'Overview',
                         default: true
                     },
                     {
-                        id: '',
-                        title: 'Overview'
+                        id: 'ocp-on-aws',
+                        title: 'OpenShift on cloud details'
                     },
                     {
                         id: 'ocp',
