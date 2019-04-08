@@ -141,7 +141,7 @@ export const grouppedNav = {
                     {
                         id: 'cost-management-sources',
                         title: 'Cost Management Sources',
-                        reload: 'settings/cost-management-sources'
+                        reload: 'cost-management/sources'
                     },
                     {
                         id: 'rbac',
