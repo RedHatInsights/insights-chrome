@@ -60,7 +60,7 @@ export default {
             console.log(`[iqe] fetch incomplete: ${e}`);// eslint-disable-line no-console
         }
 
-        return xhrResults.length > 0 && fetchResults.length > 0;
+        return xhrResults.length > 0 || fetchResults.length > 0;
     },
     xhrResults: () => {
         return xhrResults;
