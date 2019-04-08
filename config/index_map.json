@@ -13,7 +13,7 @@
     { "req_path": "insights/remediations", "real_path": "remediations" },
     { "req_path": "insights",              "real_path": "insights" },
 
-    { "req_path": "openshift",             "real_path": "uhc" },
+    { "req_path": "openshift",             "real_path": "openshift" },
 
     { "req_path": "hybrid/settings/cost-management-sources", "real_path": "cost-management" },
     { "req_path": "hybrid/settings/catalog-sources",         "real_path": "sources" },
