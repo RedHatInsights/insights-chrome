@@ -32,7 +32,7 @@ export const grouppedNav = {
                     {
                         id: 'sources',
                         title: 'Sources',
-                        reload: 'sources'
+                        reload: 'settings/sources'
                     }
                 ]
             }

@@ -7,11 +7,11 @@
     { "req_path": "rhel/dashboard",     "real_path": "dashboard" },
     { "req_path": "rhel",               "real_path": "dashboard" },
 
-    { "req_path": "insights/sources",      "real_path": "sources" },
-    { "req_path": "insights/inventory",    "real_path": "inventory" },
-    { "req_path": "insights/webhooks",     "real_path": "webhooks" },
-    { "req_path": "insights/remediations", "real_path": "remediations" },
-    { "req_path": "insights",              "real_path": "insights" },
+    { "req_path": "insights/settings/sources",  "real_path": "sources" },
+    { "req_path": "insights/inventory",         "real_path": "inventory" },
+    { "req_path": "insights/webhooks",          "real_path": "webhooks" },
+    { "req_path": "insights/remediations",      "real_path": "remediations" },
+    { "req_path": "insights",                   "real_path": "insights" },
 
     { "req_path": "openshift",             "real_path": "openshift" },
 
