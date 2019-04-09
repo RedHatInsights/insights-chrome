@@ -14,10 +14,10 @@ class Navigation extends Component {
         this.onClick = this.onClick.bind(this);
     }
 
-    onSelect({ groupId, itemId }) {
+    onSelect({ groupId, itemID }) {
         this.setState({
             activeGroup: groupId,
-            activeItem: itemId
+            activeItem: itemID
         });
     };
 
@@ -64,14 +64,14 @@ class Navigation extends Component {
                                 if (item.subItems) {
                                     return <NavExpandable
                                         title={item.title}
-                                        itemId={item.id}
+                                        itemID={item.id}
                                         key={key}
                                         isActive={item.active}
                                         isExpanded={item.active}>
                                         {
                                             item.subItems.map((subItem, subKey) => (
                                                 <NavigationItem
-                                                    itemId={subItem.reload || subItem.id}
+                                                    itemID={subItem.reload || subItem.id}
                                                     key={subKey}
                                                     title={subItem.title}
                                                     parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
@@ -83,7 +83,7 @@ class Navigation extends Component {
                                     </NavExpandable>;
                                 } else {
                                     return <NavigationItem
-                                        itemId={item.id}
+                                        itemID={item.id}
                                         key={key}
                                         title={item.title}
                                         parent={activeLocation}
