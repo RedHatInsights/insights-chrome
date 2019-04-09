@@ -23,11 +23,15 @@ const PUBLIC_EVENTS = {
 
 export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
-    libjwt.jwt.getUserInfo().then(actions.userLogIn);
 
     // public API actions
     const { identifyApp, appNav, appNavClick } = actions;
-    libjwt.jwt.getUserInfo().then(loadChrome);
+    libjwt.initPromise.then(() => {
+        libjwt.jwt.getUserInfo().then((user) => {
+            actions.userLogIn(user);
+            loadChrome();
+        });
+    });
 
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
@@ -120,5 +124,3 @@ function loadChrome() {
         }
     );
 }
-
-;

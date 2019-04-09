@@ -32,7 +32,7 @@ export const grouppedNav = {
                     {
                         id: 'sources',
                         title: 'Sources',
-                        reload: 'sources'
+                        reload: 'settings/sources'
                     }
                 ]
             }
@@ -136,12 +136,12 @@ export const grouppedNav = {
                     {
                         id: 'catalog-sources',
                         title: 'Catalog Sources',
-                        reload: 'settings/catalog-sources'
+                        reload: 'settings/sources'
                     },
                     {
                         id: 'cost-management-sources',
                         title: 'Cost Management Sources',
-                        reload: 'settings/cost-management-sources'
+                        reload: 'cost-management/sources'
                     },
                     {
                         id: 'rbac',
