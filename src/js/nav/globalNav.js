@@ -136,7 +136,7 @@ export const grouppedNav = {
                     {
                         id: 'catalog-sources',
                         title: 'Catalog Sources',
-                        reload: 'settings/catalog-sources'
+                        reload: 'settings/sources'
                     },
                     {
                         id: 'cost-management-sources',
