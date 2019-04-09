@@ -117,16 +117,16 @@ export const grouppedNav = {
                         default: true
                     },
                     {
+                        id: 'ocp-on-aws',
+                        title: 'OpenShift on cloud details'
+                    },
+                    {
                         id: 'ocp',
                         title: 'OpenShift details'
                     },
                     {
                         id: 'aws',
                         title: 'Cloud details'
-                    },
-                    {
-                        id: 'ocp-on-aws',
-                        title: 'OpenShift on cloud details'
                     }
                 ]
             },
@@ -141,7 +141,7 @@ export const grouppedNav = {
                     {
                         id: 'cost-management-sources',
                         title: 'Cost Management Sources',
-                        reload: 'settings/cost-management-sources'
+                        reload: 'cost-management/sources'
                     },
                     {
                         id: 'rbac',

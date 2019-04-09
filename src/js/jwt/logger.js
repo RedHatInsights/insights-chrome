@@ -3,7 +3,10 @@
 module.exports = (fileName) => {
     return (msg) => {
         if (window.console) {
-            window.console.log(`[JWT][${fileName}] ${msg}`);
+            if (window.localStorage &&
+                window.localStorage.getItem('chrome:jwt:debug')) {
+                window.console.log(`[JWT][${fileName}] ${msg}`);
+            }
         }
     };
 };
