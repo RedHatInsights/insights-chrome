@@ -32,7 +32,7 @@ export const grouppedNav = {
                     {
                         id: 'sources',
                         title: 'Sources',
-                        reload: 'sources'
+                        reload: 'settings/sources'
                     }
                 ]
             }
@@ -75,7 +75,6 @@ export const grouppedNav = {
             {
                 id: '',
                 title: 'UHC',
-                disabled: window.location.hostname === 'access.redhat.com',
                 default: true
             }
         ]
@@ -86,9 +85,6 @@ export const grouppedNav = {
             {
                 id: 'catalog',
                 title: 'Catalog',
-                // nav is built before window.insights.chrome
-                // detect isProd manually here
-                disabled: window.location.hostname === 'access.redhat.com',
                 subItems: [
                     {
                         id: 'portfolios',
@@ -120,12 +116,16 @@ export const grouppedNav = {
                         default: true
                     },
                     {
+                        id: 'ocp-on-aws',
+                        title: 'OpenShift on cloud details'
+                    },
+                    {
                         id: 'ocp',
-                        title: 'OpenShift Details'
+                        title: 'OpenShift details'
                     },
                     {
                         id: 'aws',
-                        title: 'AWS Details'
+                        title: 'Cloud details'
                     }
                 ]
             },
@@ -133,13 +133,18 @@ export const grouppedNav = {
                 title: 'Settings',
                 subItems: [
                     {
-                        id: 'sources',
-                        title: 'Catalog',
-                        reload: 'sources'
+                        id: 'catalog-sources',
+                        title: 'Catalog Sources',
+                        reload: 'settings/sources'
+                    },
+                    {
+                        id: 'cost-management-sources',
+                        title: 'Cost Management Sources',
+                        reload: 'cost-management/sources'
                     },
                     {
                         id: 'rbac',
-                        title: 'User management',
+                        title: 'User Access Management',
                         reload: 'settings/rbac'
                     }
                 ]
@@ -158,7 +163,7 @@ export default Object.freeze([
         title: 'Catalog',
         // nav is built before window.insights.chrome
         // detect isProd manually here
-        disabled: window.location.hostname === 'access.redhat.com',
+        disabled: window.location.hostname === 'cloud.redhat.com',
         subItems: [
             {
                 id: 'portfolios',
@@ -223,7 +228,7 @@ export default Object.freeze([
     {
         id: 'topological-inventory',
         title: 'Sources',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     },
     {
         id: 'remediations',
@@ -232,7 +237,7 @@ export default Object.freeze([
     {
         id: 'uhc',
         title: 'UHC',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     },
     {
         id: 'drift',
@@ -241,6 +246,6 @@ export default Object.freeze([
     {
         id: 'tower-analytics',
         title: 'Tower Analytics',
-        disabled: window.location.hostname === 'access.redhat.com'
+        disabled: window.location.hostname === 'cloud.redhat.com'
     }
 ]);
