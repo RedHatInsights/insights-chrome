@@ -78,8 +78,10 @@ export function bootstrap(libjwt, initFunc) {
                 qe: qe,
                 logout: libjwt.jwt.logoutAllTabs
             },
-            // TODO fixme
-            isProd: window.location.host === 'access.redhat.com',
+            isProd: window.location.host === 'cloud.redhat.com',
+            isBeta: () => {
+                return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
+            },
             init: initFunc
         },
         loadInventory,
