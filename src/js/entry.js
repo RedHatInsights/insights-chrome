@@ -80,7 +80,7 @@ export function bootstrap(libjwt, initFunc) {
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => {
-                return (window.location.pathname.split('/')[1] === 'beta' ? true : false );
+                return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
             init: initFunc
         },
