@@ -27,7 +27,7 @@ export const grouppedNav = {
                     {
                         id: 'webhooks',
                         title: 'Webhooks',
-                        reload: 'webhooks'
+                        reload: 'settings/webhooks'
                     },
                     {
                         id: 'sources',
