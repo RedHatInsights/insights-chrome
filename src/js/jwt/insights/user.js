@@ -63,7 +63,10 @@ module.exports = (token) => {
                 }
             }
 
-            return user;
+            return {
+                ...user,
+                entitlements: data
+            };
         });
     } else {
         log('User not ready');
