@@ -25,7 +25,7 @@ export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNav, appNavClick } = actions;
+    const { identifyApp, appNav, appNavClick, clearActive } = actions;
     libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
             actions.userLogIn(user);
@@ -36,7 +36,10 @@ export function chromeInit(libjwt) {
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
         navigation: appNav,
-        appNavClick: appNavClick,
+        appNavClick: (payload) => {
+            appNavClick(payload);
+            clearActive();
+        },
         on: (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
                 throw new Error(`Unknown event type: ${type}`);
