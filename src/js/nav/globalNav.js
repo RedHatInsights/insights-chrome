@@ -102,7 +102,7 @@ export const grouppedNav = {
                     {
                         id: 'approval',
                         title: 'Approval',
-                        reload: 'approval'
+                        reload: 'catalog/approval'
                     }
                 ]
             },
