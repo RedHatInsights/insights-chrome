@@ -27,7 +27,7 @@ export const grouppedNav = {
                     {
                         id: 'hooks',
                         title: 'Hooks',
-                        reload: 'hooks'
+                        reload: 'settings/hooks'
                     },
                     {
                         id: 'sources',
