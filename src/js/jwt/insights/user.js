@@ -67,10 +67,8 @@ module.exports = (token) => {
                 }
             }
 
-            user.identity = {
-                ...user.identity,
-                entitlements: data
-            };
+            user.entitlements = data;
+
             return user;
         });
     } else {
