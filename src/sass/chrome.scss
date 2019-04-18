@@ -61,6 +61,12 @@ aside {
     }
 
     .ins-c-dropdown-item__stack--header { @include rem('font-size', 12px); }
+
+    .pf-c-page__header-brand-link img { @include rem('height', 30px); }
+    .pf-c-page__header-brand-toggle svg {
+        @include rem('height', 21px);
+        @include rem('width', 21px);
+    }
 }
 
 // Brand
@@ -104,6 +110,11 @@ aside {
     .ins-c-skeleton { @include rem('height', 28px); }
 }
 
+.ins-c-page__header-brand--loading {
+    .pf-c-button.pf-m-plain { top: 2px; }
+}
+
+.ins-c-navigation__header-name--loading { width: 100%; }
 
 // abstract this
 .ins-c-icon-inline {
