@@ -46,11 +46,15 @@ module.exports = (token) => {
         if (window.location.hostname === 'cloud.redhat.com' ||
             window.location.hostname.indexOf('qa') === 0) {
             return new Promise(resolve => {
+                user.identity = {
+                    ...user.identity,
+                    entitlements: {}
+                };
                 resolve(user);
             });
         }
 
-        return servicesApi.servicesGet().then(data => {
+        return servicesApi(token.jti).servicesGet().then(data => {
             const service = pathMapper[pathName[0]];
             if (pathName.length > 0 && pathName[0] !== '') {
                 if (data[service] && data[service].is_entitled) {
@@ -63,6 +67,10 @@ module.exports = (token) => {
                 }
             }
 
+            user.identity = {
+                ...user.identity,
+                entitlements: data
+            };
             return user;
         });
     } else {
