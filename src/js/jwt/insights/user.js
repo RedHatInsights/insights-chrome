@@ -46,10 +46,11 @@ module.exports = (token) => {
         if (window.location.hostname === 'cloud.redhat.com' ||
             window.location.hostname.indexOf('qa') === 0) {
             return new Promise(resolve => {
-                resolve({
-                    ...user,
+                user.identity = {
+                    ...user.identity,
                     entitlements: {}
-                });
+                };
+                resolve(user);
             });
         }
 
@@ -66,10 +67,11 @@ module.exports = (token) => {
                 }
             }
 
-            return {
-                ...user,
+            user.identity = {
+                ...user.identity,
                 entitlements: data
             };
+            return user;
         });
     } else {
         log('User not ready');
