@@ -4,7 +4,6 @@ import { onToggle } from '../../redux/actions';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import BarsIcon from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import Logo from './Logo';
-import { PageHeader } from '@patternfly/react-core';
 
 const Brand = ({ toggleNav, navHidden }) => (
     <div className="pf-c-page__header-brand">
