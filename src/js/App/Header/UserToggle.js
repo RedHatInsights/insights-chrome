@@ -18,7 +18,6 @@ function buildItems(username, accountNumber = -1, extraItems) {
                 <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
             </dl>
         </DropdownItem>,
-        <DropdownSeparator key="username separator" />,
         <React.Fragment key="account wrapper">
             { accountNumber > -1 &&
                 <React.Fragment>
@@ -28,10 +27,10 @@ function buildItems(username, accountNumber = -1, extraItems) {
                             <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
                         </dl>
                     </DropdownItem>
-                    <DropdownSeparator key="account separator" />
                 </React.Fragment>
             }
         </React.Fragment>,
+        <DropdownSeparator key="separator" />,
         <DropdownItem key="My Profile" href="https://access.redhat.com/user">
             My Profile
         </DropdownItem>,
