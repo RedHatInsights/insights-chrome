@@ -99,6 +99,7 @@ pub.init = (options) => {
     priv.keycloak.onAuthSuccess = pub.loginAllTabs;
     priv.keycloak.onAuthRefreshSuccess = pub.refreshTokens;
 
+    // TODO update
     if (options.token) {
         if (priv.isExistingValid(options.token)) {
             // we still need to init async
