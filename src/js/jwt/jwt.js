@@ -7,24 +7,10 @@ const log = require('./logger')('jwt.js');
 const utils = require('./utils');
 
 // Insights Specific
-const insightsUrl = require('./insights/url');
+const insightsUrl  = require('./insights/url');
 const insightsUser = require('./insights/user');
-
-// Global Defaults
-const DEFAULT_ROUTES = {
-    prod: {
-        url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com'],
-        sso: 'https://sso.redhat.com/auth'
-    },
-    qa: {
-        url: ['access.qa.redhat.com', 'qa.foo.redhat.com'],
-        sso: 'https://sso.qa.redhat.com/auth'
-    },
-    ci: {
-        url: ['ci.foo.redhat.com'],
-        sso: 'https://sso.qa.redhat.com/auth'
-    }
-};
+const urijs        = require('urijs');
+const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
@@ -51,7 +37,7 @@ authChannel.onmessage = (e) => {
     }
 };
 
-priv.decodeToken = (str) => {
+pub.decodeToken = (str) => {
     str = str.split('.')[1];
 
     str = str.replace('/-/g', '+');
@@ -72,11 +58,30 @@ priv.decodeToken = (str) => {
 
     str = (str + '===').slice(0, str.length + (str.length % 4));
     str = str.replace(/-/g, '+').replace(/_/g, '/');
-
     str = decodeURIComponent(escape(atob(str)));
-
     str = JSON.parse(str);
+
     return str;
+};
+
+pub.doOffline = (key, val) => {
+    const url = urijs(window.location.href);
+    url.removeSearch(key);
+    url.addSearch(key, val);
+
+    const options = {
+        ...defaultOptions,
+        promiseType: 'native',
+        redirectUri: url.toString(),
+        url: insightsUrl(DEFAULT_ROUTES)
+    };
+
+    const kc = Keycloak(options);
+    kc.init(options).then(() => {
+        kc.login({
+            scope: 'offline'
+        });
+    });
 };
 
 /*** Initialization ***/
@@ -131,7 +136,7 @@ priv.isExistingValid = (token) => {
     log('Checking validity of existing JWT');
     if (!token) { return false; }
 
-    const parsed = priv.decodeToken(token);
+    const parsed = pub.decodeToken(token);
     if (!parsed.exp) { return false; }
 
     // Date.now() has extra precision...
@@ -224,8 +229,6 @@ pub.updateToken = () => {
 
 // Set the cookie fo 3scale
 pub.setCookie = (token) => {
-    log('Getting cookie');
-
     if (token && token.length > 10) {
         document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;
     }
@@ -235,6 +238,11 @@ pub.setCookie = (token) => {
 pub.getEncodedToken = () => {
     log('Getting encoded token');
     return (priv.keycloak.token);
+};
+
+// Keycloak server URL
+pub.getUrl = () => {
+    return insightsUrl(DEFAULT_ROUTES);
 };
 
 /*** Exports ***/
