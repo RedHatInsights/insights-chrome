@@ -10,6 +10,8 @@ const pathMapper = {
 /* eslint-disable camelcase */
 module.exports = (token) => {
 
+    console.log(token);
+
     let user = token ? {
         identity: {
             account_number: token.account_number,
@@ -25,7 +27,8 @@ module.exports = (token) => {
                 locale: token.locale
             },
             internal: {
-                org_id: token.org_id
+                org_id: token.org_id,
+                account_id: token.account_id
             }
         }
     } : null;
