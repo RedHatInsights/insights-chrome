@@ -49,7 +49,7 @@ class Navigation extends Component {
     }
 
     render() {
-        const { settings, activeApp, navHidden, activeLocation } = this.props;
+        const { settings, activeApp, navHidden, activeLocation, documentation } = this.props;
 
         if (navHidden) {
             document.querySelector('aside').setAttribute('hidden', true);
@@ -94,6 +94,15 @@ class Navigation extends Component {
                             }
                         })
                     }
+                    { documentation && <NavigationItem
+                        className="ins-c-page__documentation"
+                        itemID="documentation"
+                        title="Documentation"
+                        navigate={documentation}
+                        onClick={() => {
+                            window.location.href = documentation;
+                        } }
+                    /> }
                 </NavList>
             </Nav>
         );
@@ -111,7 +120,8 @@ Navigation.propTypes = {
     ),
     activeApp: PropTypes.string,
     navHidden: PropTypes.bool,
-    activeLocation: PropTypes.string
+    activeLocation: PropTypes.string,
+    documentation: PropTypes.string
 };
 
 function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup, appId } }) {
