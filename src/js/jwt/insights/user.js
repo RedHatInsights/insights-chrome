@@ -32,6 +32,7 @@ function buildUser(token) {
 
     return user;
 }
+/* eslint-enable camelcase */
 
 module.exports = (token) => {
     let user = buildUser(token);
@@ -85,4 +86,4 @@ module.exports = (token) => {
 
     return new Promise((res) => res());
 };
-/* eslint-enable camelcase */
+
