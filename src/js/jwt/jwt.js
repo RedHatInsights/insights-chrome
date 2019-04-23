@@ -10,22 +10,7 @@ const utils = require('./utils');
 const insightsUrl  = require('./insights/url');
 const insightsUser = require('./insights/user');
 const urijs        = require('urijs');
-
-// Global Defaults
-const DEFAULT_ROUTES = {
-    prod: {
-        url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com'],
-        sso: 'https://sso.redhat.com/auth'
-    },
-    qa: {
-        url: ['access.qa.redhat.com', 'qa.foo.redhat.com'],
-        sso: 'https://sso.qa.redhat.com/auth'
-    },
-    ci: {
-        url: ['ci.foo.redhat.com'],
-        sso: 'https://sso.qa.redhat.com/auth'
-    }
-};
+const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
@@ -85,8 +70,7 @@ pub.doOffline = (key, val) => {
     url.addSearch(key, val);
 
     const options = {
-        realm: 'redhat-external',
-        clientId: 'cloud-services',
+        ...defaultOptions,
         promiseType: 'native',
         redirectUri: url.toString(),
         url: insightsUrl(DEFAULT_ROUTES)

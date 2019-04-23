@@ -1,5 +1,5 @@
 /*global describe, test, expect, require, beforeEach, jest*/
-import mockAxios from 'jest-mock-axios';
+const mockAxios = require('jest-mock-axios').default;
 const offline = require('./offline');
 
 const defaults = {

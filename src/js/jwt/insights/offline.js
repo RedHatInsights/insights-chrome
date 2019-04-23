@@ -1,6 +1,7 @@
 /*global require*/
 const consts = require('../../consts').default;
-const jwt    = require('../jwt');
+const { DEFAULT_ROUTES } = require('../constants');
+const insightsUrl = require('./url');
 const urijs  = require('urijs');
 const axios  = require('axios');
 const priv   = {};
@@ -44,7 +45,7 @@ export function getOfflineToken(realm, clientId) {
         return Promise.reject('not available');
     }
 
-    const tokenURL = `${jwt.getUrl()}/realms/${realm}/protocol/openid-connect/token`;
+    const tokenURL = `${insightsUrl(DEFAULT_ROUTES)}/realms/${realm}/protocol/openid-connect/token`;
     const params = parseHashString(postbackUrl);
 
     return axios({
