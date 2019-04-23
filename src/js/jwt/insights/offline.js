@@ -69,9 +69,9 @@ function getPostbackUrl() {
 function getPostDataObject(url, clientId, code) {
     return {
         code: code,
-        grant_type: 'authorization_code',
-        client_id: clientId,
-        redirect_uri: encodeURIComponent(url.split('#')[0])
+        grant_type: 'authorization_code', // eslint-disable-line camelcase
+        client_id: clientId, // eslint-disable-line camelcase
+        redirect_uri: encodeURIComponent(url.split('#')[0]) // eslint-disable-line camelcase
     };
 }
 

@@ -1,5 +1,5 @@
 /*global require*/
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from "./jwt/insights/offline";
+import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
 
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
@@ -10,8 +10,6 @@ const options = {
     realm: 'redhat-external',
     clientId: 'cloud-services'
 };
-
-const priv = {};
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {

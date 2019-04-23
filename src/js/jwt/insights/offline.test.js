@@ -35,7 +35,8 @@ describe('Offline', () => {
             offline.__set__('priv', { postbackUrl: 'https://test.com/?noauth=foo#test=bar&code=test123' });
             offline.getOfflineToken('', 'test321');
             expect(mockAxios).toHaveBeenCalledWith(expect.objectContaining({
-                data: 'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo'
+                data: 'code=test123&grant_type=authorization_code&client_id=test321' +
+                    '&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo'
             }));
         });
     });
@@ -64,7 +65,6 @@ describe('Offline', () => {
             });
         });
     });
-
 
     describe('parseHashString', () => {
         const parseHashString = offline.__get__('parseHashString');
