@@ -8,9 +8,8 @@ const pathMapper = {
 };
 
 /* eslint-disable camelcase */
-module.exports = (token) => {
-
-    let user = token ? {
+function buildUser(token) {
+    const user = token ? {
         identity: {
             account_number: token.account_number,
             type: token.type,
@@ -30,6 +29,12 @@ module.exports = (token) => {
             }
         }
     } : null;
+
+    return user;
+}
+
+module.exports = (token) => {
+    let user = buildUser(token);
 
     const pathName = location.pathname.split('/');
     pathName.shift();
