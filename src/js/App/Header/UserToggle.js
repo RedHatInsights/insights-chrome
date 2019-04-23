@@ -20,14 +20,12 @@ function buildItems(username, accountNumber = -1, extraItems) {
         </DropdownItem>,
         <React.Fragment key="account wrapper">
             { accountNumber > -1 &&
-                <React.Fragment>
-                    <DropdownItem key="Account" isDisabled>
-                        <dl className='ins-c-dropdown-item__stack'>
-                            <dt className="ins-c-dropdown-item__stack--header">Account Number:</dt>
-                            <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
-                        </dl>
-                    </DropdownItem>
-                </React.Fragment>
+                <DropdownItem key="Account" isDisabled>
+                    <dl className='ins-c-dropdown-item__stack'>
+                        <dt className="ins-c-dropdown-item__stack--header">Account Number:</dt>
+                        <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
+                    </dl>
+                </DropdownItem>
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
@@ -79,7 +77,7 @@ class UserToggle extends Component {
                 toggle={toggle}
                 isPlain
                 isOpen={isOpen}
-                dropdownItems={buildItems(account.username ,account.number, extraItems)}
+                dropdownItems={buildItems(account.username, account.number, extraItems)}
             />
         );
     }
