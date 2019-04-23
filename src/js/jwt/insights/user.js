@@ -22,7 +22,7 @@ module.exports = (token) => {
                 is_active: token.is_active,
                 is_org_admin: token.is_org_admin,
                 is_internal: token.is_internal,
-                locale: token.lang
+                locale: token.locale
             },
             internal: {
                 org_id: token.org_id
