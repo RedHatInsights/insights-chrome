@@ -51,7 +51,7 @@ aside {
 // Header
 .pf-c-page__header {
     overflow: visible;
-    .account-number {
+    .ins-c-dropdown-item__stack {
         white-space: nowrap;
         padding: var(--pf-c-dropdown__menu-item--PaddingTop)
                  var(--pf-c-dropdown__menu-item--PaddingRight)
@@ -60,7 +60,7 @@ aside {
         * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
 
-    .account-number__header { @include rem('font-size', 12px); }
+    .ins-c-dropdown-item__stack--header { @include rem('font-size', 12px); }
 }
 
 // Brand
