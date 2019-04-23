@@ -1,6 +1,7 @@
 // Imports
 import Keycloak from 'keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
+import cookie from 'js-cookie';
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -25,6 +26,8 @@ const DEFAULT_ROUTES = {
         sso: 'https://sso.qa.redhat.com/auth'
     }
 };
+
+const DEFAULT_REDIRECT_URI = `${window.location}/logout`;
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
@@ -93,6 +96,8 @@ pub.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
+
+    options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
 
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = pub.updateToken;
@@ -175,7 +180,11 @@ pub.login = () => {
 
 pub.logout = () => {
     log('Logging out');
+
+    // Clear cookies and tokens
     priv.keycloak.clearToken();
+    cookie.remove('cs_jwt', { domain: '.redhat.com' });
+
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);
 };
