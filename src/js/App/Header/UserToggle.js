@@ -10,17 +10,33 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-function buildItems(accountNumber = -1, extraItems) {
+function buildItems(username, accountNumber = -1, extraItems) {
     return [
+        <DropdownItem key="Username" isDisabled>
+            <dl className='ins-c-dropdown-item__stack'>
+                <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
+                <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
+            </dl>
+        </DropdownItem>,
+        <React.Fragment key="account wrapper">
+            { accountNumber > -1 &&
+                <DropdownItem key="Account" isDisabled>
+                    <dl className='ins-c-dropdown-item__stack'>
+                        <dt className="ins-c-dropdown-item__stack--header">Account Number:</dt>
+                        <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
+                    </dl>
+                </DropdownItem>
+            }
+        </React.Fragment>,
+        <DropdownSeparator key="separator" />,
+        <DropdownItem key="My Profile" href="https://access.redhat.com/user">
+            My Profile
+        </DropdownItem>,
+        <DropdownItem key="User Management" href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html">
+            User Management
+        </DropdownItem>,
         <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout()}>
             Logout
-        </DropdownItem>,
-        <DropdownSeparator key="separator" />,
-        <DropdownItem key="Account" isDisabled>
-            <dl className='account-number'>
-                <dt className="account-number__header">Account Number:</dt>
-                <dd className="account-number__value">{accountNumber}</dd>
-            </dl>
         </DropdownItem>,
         [...extraItems]
     ];
@@ -61,7 +77,7 @@ class UserToggle extends Component {
                 toggle={toggle}
                 isPlain
                 isOpen={isOpen}
-                dropdownItems={buildItems(account.number, extraItems)}
+                dropdownItems={buildItems(account.username, account.number, extraItems)}
             />
         );
     }
@@ -92,12 +108,17 @@ export default connect(({
         user: {
             identity: {
                 account_number: accountNumber,
-                user: { first_name, last_name }
+                user: {
+                    username,
+                    first_name,
+                    last_name
+                }
             }
         }
     } }) => ({
     account: {
         number: accountNumber,
+        username: username,
         name: `${first_name} ${last_name}`
     }
 }))(UserToggle);

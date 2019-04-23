@@ -8,6 +8,7 @@ import loadInventory from './inventory';
 import loadRemediations from './remediations';
 import asyncObject from './async-loader';
 import qe from './iqeEnablement';
+import consts from './consts';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -61,6 +62,12 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
+                getOfflineToken: () => {
+                    return libjwt.getOfflineToken();
+                },
+                doOffline: () => {
+                    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken);
+                },
                 getToken: () => {
                     return new Promise((res) => {
                         libjwt.jwt.getUserInfo().then(() => {

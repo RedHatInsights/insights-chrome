@@ -17,6 +17,7 @@
   "env": {
     "test": {
         "plugins": [
+            "babel-plugin-rewire",
             "babel-plugin-dynamic-import-node"
         ]
     }
