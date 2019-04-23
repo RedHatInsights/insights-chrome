@@ -10,8 +10,6 @@ const pathMapper = {
 /* eslint-disable camelcase */
 module.exports = (token) => {
 
-    console.log(token);
-
     let user = token ? {
         identity: {
             account_number: token.account_number,

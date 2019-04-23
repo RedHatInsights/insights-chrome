@@ -24,7 +24,5 @@ export default (user) => {
         }
     };
 
-    console.log(pendoConf);
-
     initPendo(pendoConf);
 };
