@@ -1,6 +1,6 @@
 /*global module*/
 
-module.exports = (input) => {
+module.exports = () => {
     return {
         servicesGet: () => {
             return {
