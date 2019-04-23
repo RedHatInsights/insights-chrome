@@ -25,7 +25,7 @@ module.exports = (token) => {
                 locale: token.lang
             },
             internal: {
-                org_id: token.account_id
+                org_id: token.org_id
             }
         }
     } : null;

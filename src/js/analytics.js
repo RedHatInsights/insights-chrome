@@ -13,14 +13,14 @@ export default (user) => {
 
     const pendoConf = {
         visitor: {
-            id: user.id,
-            internal: user.is_internal,
-            lang: user.locale
+            id: user.identity.account_number,
+            internal: user.identity.user.is_internal,
+            lang: user.identity.user.locale
         },
         account: {
             // TODO add in customer name as name:
             // here if/when we get that in the JWT
-            id: user.account_number
+            id: user.identity.internal.org_id
         }
     };
 
