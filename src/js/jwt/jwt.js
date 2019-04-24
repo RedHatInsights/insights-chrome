@@ -97,7 +97,8 @@ pub.init = (options) => {
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
 
-    options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
+    // TODO, add redirect back
+    // options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
 
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = pub.updateToken;
