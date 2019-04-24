@@ -8,9 +8,8 @@ const pathMapper = {
 };
 
 /* eslint-disable camelcase */
-module.exports = (token) => {
-
-    let user = token ? {
+function buildUser(token) {
+    const user = token ? {
         identity: {
             account_number: token.account_number,
             type: token.type,
@@ -22,13 +21,21 @@ module.exports = (token) => {
                 is_active: token.is_active,
                 is_org_admin: token.is_org_admin,
                 is_internal: token.is_internal,
-                locale: token.lang
+                locale: token.locale
             },
             internal: {
-                org_id: token.account_id
+                org_id: token.org_id,
+                account_id: token.account_id
             }
         }
     } : null;
+
+    return user;
+}
+/* eslint-enable camelcase */
+
+module.exports = (token) => {
+    let user = buildUser(token);
 
     const pathName = location.pathname.split('/');
     pathName.shift();
@@ -79,4 +86,4 @@ module.exports = (token) => {
 
     return new Promise((res) => res());
 };
-/* eslint-enable camelcase */
+

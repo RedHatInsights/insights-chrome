@@ -73,8 +73,8 @@ export const grouppedNav = {
         title: 'Red Hat OpenShift Cluster Manager',
         routes: [
             {
-                id: '',
-                title: 'UHC',
+                id: 'clusters',
+                title: 'Clusters',
                 default: true
             }
         ]
