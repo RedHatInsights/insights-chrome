@@ -5,6 +5,8 @@ const encodedTokenFile  = require('../../../testdata/encodedToken.json');
 const decodedToken      = require('../../../testdata/decodedToken.json');
 const jwt               = require('./jwt');
 
+jest.mock('keycloak-js');
+
 describe('JWT', () => {
 
     const encodedToken = encodedTokenFile.data;
@@ -42,7 +44,7 @@ describe('JWT', () => {
             expect(isExistingValid(encodedToken)).toBeFalsy();
         });
 
-        // TODO: Can't do this until we mock Keycloak
+        // TODO: Can't do this until keycloak mock is working
         // test('valid token', () => {
         //     let notExpiring = decodedToken;
         //     notExpiring.exp = Date.now() + 100000;
