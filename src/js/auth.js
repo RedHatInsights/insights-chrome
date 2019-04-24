@@ -1,14 +1,11 @@
 /*global require*/
+import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
+
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
-const options = {
-    realm: 'redhat-external',
-    clientId: 'cloud-services',
-    cookieName: 'cs_jwt',
-    cookieDomain: '.redhat.com'
-};
+const { options: defaultOptions } = require('./jwt/constants');
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
@@ -21,6 +18,10 @@ function bouncer() {
 
 export default () => {
     console.time(TIMER_STR);  // eslint-disable-line no-console
+    let options = {
+        ...defaultOptions
+    };
+    wipePostbackParamsThatAreNotForUs();
     const token = cookie.get(options.cookieName);
 
     // If we find an existing token, use it
@@ -35,6 +36,7 @@ export default () => {
     const promise = jwt.init(options).then(bouncer);
 
     return {
+        getOfflineToken: () => { return getOfflineToken(options.realm, options.clientId); },
         jwt: jwt,
         initPromise: promise
     };
