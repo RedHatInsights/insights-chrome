@@ -69,16 +69,19 @@ class Navigation extends Component {
                                         isActive={item.active}
                                         isExpanded={item.active}>
                                         {
-                                            item.subItems.map((subItem, subKey) => (
-                                                <NavigationItem
-                                                    itemID={subItem.reload || subItem.id}
-                                                    key={subKey}
-                                                    title={subItem.title}
-                                                    parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
-                                                    isActive={item.active && subItem.id === activeApp}
-                                                    onClick={event => this.onClick(event, subItem, item)}
-                                                />
-                                            ))
+                                            item.subItems.map((subItem, subKey) => {
+                                                console.log(subItem.disabled);
+                                                if (!subItem.disabled) {
+                                                   return <NavigationItem
+                                                        itemID={subItem.reload || subItem.id}
+                                                        key={subKey}
+                                                        title={subItem.title}
+                                                        parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
+                                                        isActive={item.active && subItem.id === activeApp}
+                                                        onClick={event => this.onClick(event, subItem, item)}
+                                                   />;
+                                                }
+                                            })
                                         }
                                     </NavExpandable>;
                                 } else {
