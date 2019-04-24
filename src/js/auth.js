@@ -9,7 +9,7 @@ const { options: defaultOptions } = require('./jwt/constants');
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
-        cookie.remove(options.cookieName, { domain: options.cookieDomain });
+        cookie.remove(defaultOptions.cookieName, { domain: defaultOptions.cookieDomain });
         jwt.login();
     }
 
@@ -21,6 +21,7 @@ export default () => {
     let options = {
         ...defaultOptions
     };
+
     wipePostbackParamsThatAreNotForUs();
     const token = cookie.get(options.cookieName);
 
