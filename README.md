@@ -72,6 +72,8 @@ Insights Chrome comes with a Javacript API that allows applications to control n
 The following events can be observed:
 * `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
 
+To activate certain app within your app (your app is using some kind of router and you want to activate certain part of navigation programatically) you can call function `insights.chrome.appNavClick({id: 'some-id'})` for first level nav and for second level navs you have to call `insights.chrome.appNavClick({id: 'ocp-on-aws', secondaryNav: true})`
+
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
 entire app or to watch files.

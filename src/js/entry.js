@@ -37,9 +37,12 @@ export function chromeInit(libjwt) {
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
         navigation: appNav,
-        appNavClick: (payload) => {
+        appNavClick: ({ secondaryNav, ...payload }) => {
+            if (!secondaryNav) {
+                clearActive();
+            }
+
             appNavClick(payload);
-            clearActive();
         },
         on: (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
