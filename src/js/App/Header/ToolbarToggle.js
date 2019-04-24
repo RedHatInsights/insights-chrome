@@ -30,6 +30,7 @@ class ToolbarToggle extends Component {
         if (url) {
             window.location.href = `${url}`;
         }
+
         if (onClick) {
             onClick(ev);
         }
@@ -40,7 +41,7 @@ class ToolbarToggle extends Component {
             <DropdownItem
                 component={ url ? 'a' : 'button' }
                 {
-                    ...url ? { href: url } : {}
+                ...url ? { href: url } : {}
                 }
                 onClick={ev => this.onClick(ev, url, onClick)}
             >

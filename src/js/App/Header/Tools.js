@@ -18,7 +18,7 @@ const aboutButton = {
     items: [
         {
             title: 'Help & Assistance',
-            url: 'https://access.redhat.com/help/',
+            url: 'https://access.redhat.com/help/'
         }, {
             title: 'Customer Support',
             url: 'https://access.redhat.com/support'
