@@ -1,0 +1,20 @@
+{
+  "identity": {
+    "account_number": "540155",
+    "internal": {
+      "account_id": 5299389,
+      "org_id": "1979710"
+    },
+    "type": "User",
+    "user": {
+      "email": "ihands@redhat.com",
+      "first_name": "Ian",
+      "is_active": true,
+      "is_internal": true,
+      "is_org_admin": true,
+      "last_name": "Hands",
+      "locale": "en_US",
+      "username": "rhn-support-ihands"
+    }
+  }
+}
