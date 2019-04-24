@@ -18,7 +18,6 @@ const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
 
-const pub = {};
 const priv = {};
 
 // Broadcast Channel
@@ -29,18 +28,18 @@ authChannel.onmessage = (e) => {
 
     switch (e.data.type) {
         case 'logout':
-            pub.logout();
+            this.logout();
             break;
         case 'login':
-            pub.login();
+            this.login();
             break;
         case 'refresh':
-            pub.updateToken();
+            this.updateToken();
             break;
     }
 };
 
-pub.decodeToken = (str) => {
+function decodeToken (str) {
     str = str.split('.')[1];
     str = str.replace('/-/g', '+');
     str = str.replace('/_/g', '/');
@@ -64,9 +63,9 @@ pub.decodeToken = (str) => {
     str = JSON.parse(str);
 
     return str;
-};
+}
 
-pub.doOffline = (key, val) => {
+exports.doOffline = (key, val) => {
     const url = urijs(window.location.href);
     url.removeSearch(key);
     url.addSearch(key, val);
@@ -87,7 +86,7 @@ pub.doOffline = (key, val) => {
 };
 
 /*** Initialization ***/
-pub.init = (options) => {
+exports.init = (options) => {
     log('Initializing');
 
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
@@ -105,12 +104,12 @@ pub.init = (options) => {
     // options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
 
     priv.keycloak = Keycloak(options);
-    priv.keycloak.onTokenExpired = pub.updateToken;
-    priv.keycloak.onAuthSuccess = pub.loginAllTabs;
-    priv.keycloak.onAuthRefreshSuccess = pub.refreshTokens;
+    priv.keycloak.onTokenExpired = this.updateToken;
+    priv.keycloak.onAuthSuccess = this.loginAllTabs;
+    priv.keycloak.onAuthRefreshSuccess = this.refreshTokens;
 
     if (options.token) {
-        if (priv.isExistingValid(options.token)) {
+        if (isExistingValid(options.token)) {
             // we still need to init async
             // so that the renewal times and such fire
             priv.keycloak.init(options);
@@ -133,15 +132,15 @@ pub.init = (options) => {
 
     return priv.keycloak
     .init(options)
-    .then(pub.initSuccess)
-    .catch(pub.initError);
+    .then(this.initSuccess)
+    .catch(this.initError);
 };
 
-priv.isExistingValid = (token) => {
+function isExistingValid(token) {
     log('Checking validity of existing JWT');
     if (!token) { return false; }
 
-    const parsed = pub.decodeToken(token);
+    const parsed = decodeToken(token);
     if (!parsed.exp) { return false; }
 
     // Date.now() has extra precision...
@@ -160,29 +159,29 @@ priv.isExistingValid = (token) => {
         log('token expired');
         return false;
     }
-};
+}
 
 // keycloak init successful
-pub.initSuccess = () => {
+exports.initSuccess = () => {
     log('JWT Initialized');
-    pub.setCookie(priv.keycloak.token);
+    this.setCookie(priv.keycloak.token);
     window.localStorage.setItem(priv.cookie.cookieName, priv.keycloak.refreshToken);
 };
 
 // keycloak init failed
-pub.initError = () => {
+exports.initError = () => {
     log('JWT init error');
-    pub.logout();
+    this.logout();
 };
 
 /*** Login/Logout ***/
-pub.login = () => {
+exports.login = () => {
     log('Logging in');
     // Redirect to login
     priv.keycloak.login({ redirectUri: location.href });
 };
 
-pub.logout = () => {
+exports.logout = () => {
     log('Logging out');
 
     // Clear cookies and tokens
@@ -193,38 +192,38 @@ pub.logout = () => {
     priv.keycloak.logout(priv.keycloak);
 };
 
-pub.logoutAllTabs = () => {
+exports.logoutAllTabs = () => {
     authChannel.postMessage({ type: 'logout' });
-    pub.logout();
+    this.logout();
 };
 
 /*** User Functions ***/
 // Get user information
-pub.getUserInfo = () => {
+exports.getUserInfo = () => {
     log('Getting User Information');
 
-    if (priv.isExistingValid(priv.keycloak.token)) {
+    if (isExistingValid(priv.keycloak.token)) {
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
-    return pub.updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
+    return this.updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
-pub.isAuthenticated = () => {
+exports.isAuthenticated = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);
     return priv.keycloak.authenticated;
 };
 
 /*** Check Token Status ***/
 // If a token is expired, logout of all tabs
-pub.expiredToken = () => { pub.logout(); };
+exports.expiredToken = () => { exports.logout(); };
 
 // Broadcast message to refresh tokens across tabs
-pub.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
+exports.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
 
 // Actually update the token
-pub.updateToken = () => {
+exports.updateToken = () => {
     log('Trying to update token');
 
     return priv.keycloak.updateToken().then(function(refreshed) {
@@ -237,23 +236,22 @@ pub.updateToken = () => {
 };
 
 // Set the cookie fo 3scale
-pub.setCookie = (token) => {
+exports.setCookie = (token) => {
     if (token && token.length > 10) {
         document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;
     }
 };
 
 // Encoded WIP
-pub.getEncodedToken = () => {
+exports.getEncodedToken = () => {
     log('Getting encoded token');
     return (priv.keycloak.token);
 };
 
 // Keycloak server URL
-pub.getUrl = () => {
+exports.getUrl = () => {
     return insightsUrl(DEFAULT_ROUTES);
 };
 
 /*** Exports ***/
-module.exports = pub;
 utils.exposeTest(priv);
