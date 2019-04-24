@@ -13,7 +13,7 @@ const insightsUser = require('./insights/user');
 const urijs        = require('urijs');
 const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 
-const DEFAULT_REDIRECT_URI = `${window.location}/logout`;
+// const DEFAULT_REDIRECT_URI = `${window.location}/logout`;
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
