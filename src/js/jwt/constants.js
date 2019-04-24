@@ -16,5 +16,7 @@ export const DEFAULT_ROUTES = {
 
 export const options = {
     realm: 'redhat-external',
-    clientId: 'cloud-services'
+    clientId: 'cloud-services',
+    cookieName: 'cs_jwt',
+    cookieDomain: '.redhat.com'
 };
