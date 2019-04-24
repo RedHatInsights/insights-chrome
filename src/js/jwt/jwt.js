@@ -182,7 +182,7 @@ pub.logout = () => {
 
     // Clear cookies and tokens
     priv.keycloak.clearToken();
-    cookie.remove('cs_jwt', { domain: '.redhat.com' });
+    cookie.remove(priv.cookie.cookieName, { domain: priv.cookie.cookieDomain });
 
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);

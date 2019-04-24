@@ -1,17 +1,18 @@
 /*global require*/
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
-const JWT_KEY   = 'cs_jwt';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 const options = {
     realm: 'redhat-external',
-    clientId: 'cloud-services'
+    clientId: 'cloud-services',
+    cookieName: 'cs_jwt',
+    cookieDomain: '.redhat.com'
 };
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
-        cookie.remove(JWT_KEY);
+        cookie.remove(options.cookieName, { domain: options.cookieDomain });
         jwt.login();
     }
 
@@ -20,7 +21,7 @@ function bouncer() {
 
 export default () => {
     console.time(TIMER_STR);  // eslint-disable-line no-console
-    const token = cookie.get(JWT_KEY);
+    const token = cookie.get(options.cookieName);
 
     // If we find an existing token, use it
     // so that we dont auth even when a valid token is present
@@ -28,7 +29,7 @@ export default () => {
     // on every page load
     if (token && token.length > 10) {
         options.token = token;
-        options.refreshToken = window.localStorage.getItem(JWT_KEY);
+        options.refreshToken = window.localStorage.getItem(options.cookieName);
     }
 
     const promise = jwt.init(options).then(bouncer);
