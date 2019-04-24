@@ -1,4 +1,5 @@
 /*global expect, require, test, describe, jest*/
+import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
 
 const encodedTokenFile  = require('../../../testdata/encodedToken.json');
 const decodedToken      = require('../../../testdata/decodedToken.json');
@@ -27,18 +28,29 @@ describe('JWT', () => {
             expect(isExistingValid()).toBeFalsy();
         });
 
-        // TODO: We need to either mock decodeToken() or modify an encoded token for this
-        // test('missing exp field', () => {
-        //     let missingExp = decodedToken
-        //     expect(jwt.isExistingValid(encodedToken)).toBeFalsy();
-        // });
+        test('missing exp field', () => {
+            let missingExp = decodedToken;
+            delete missingExp.exp;
+
+            JWTRewireAPI.__Rewire__('decodeToken', function() {
+                return missingExp;
+            });
+            expect(isExistingValid(encodedToken)).toBeFalsy();
+        });
 
         test('expired token', () => {
             expect(isExistingValid(encodedToken)).toBeFalsy();
         });
 
-        // TODO: We need to either mock decodeToken() or modify an encoded token for this
+        // TODO: Can't do this until we mock Keycloak
         // test('valid token', () => {
+        //     let notExpiring = decodedToken;
+        //     notExpiring.exp = Date.now() + 100000;
+
+        //     JWTRewireAPI.__Rewire__('decodeToken', function() {
+        //         return notExpiring;
+        //     });
+
         //     expect(isExistingValid(encodedToken)).toBeTruthy();
         // });
     });

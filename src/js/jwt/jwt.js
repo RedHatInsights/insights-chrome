@@ -28,13 +28,13 @@ authChannel.onmessage = (e) => {
 
     switch (e.data.type) {
         case 'logout':
-            this.logout();
+            logout();
             break;
         case 'login':
-            this.login();
+            login();
             break;
         case 'refresh':
-            this.updateToken();
+            updateToken();
             break;
     }
 };
@@ -104,9 +104,9 @@ exports.init = (options) => {
     // options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
 
     priv.keycloak = Keycloak(options);
-    priv.keycloak.onTokenExpired = this.updateToken;
-    priv.keycloak.onAuthSuccess = this.loginAllTabs;
-    priv.keycloak.onAuthRefreshSuccess = this.refreshTokens;
+    priv.keycloak.onTokenExpired = updateToken;
+    priv.keycloak.onAuthSuccess = loginAllTabs;
+    priv.keycloak.onAuthRefreshSuccess = refreshTokens;
 
     if (options.token) {
         if (isExistingValid(options.token)) {
@@ -132,8 +132,8 @@ exports.init = (options) => {
 
     return priv.keycloak
     .init(options)
-    .then(this.initSuccess)
-    .catch(this.initError);
+    .then(initSuccess)
+    .catch(initError);
 };
 
 function isExistingValid(token) {
@@ -162,26 +162,26 @@ function isExistingValid(token) {
 }
 
 // keycloak init successful
-exports.initSuccess = () => {
+function initSuccess() {
     log('JWT Initialized');
-    this.setCookie(priv.keycloak.token);
+    setCookie(priv.keycloak.token);
     window.localStorage.setItem(priv.cookie.cookieName, priv.keycloak.refreshToken);
-};
+}
 
 // keycloak init failed
-exports.initError = () => {
+function initError() {
     log('JWT init error');
-    this.logout();
-};
+    logout();
+}
 
 /*** Login/Logout ***/
-exports.login = () => {
+function login() {
     log('Logging in');
     // Redirect to login
     priv.keycloak.login({ redirectUri: location.href });
-};
+}
 
-exports.logout = () => {
+function logout() {
     log('Logging out');
 
     // Clear cookies and tokens
@@ -190,12 +190,16 @@ exports.logout = () => {
 
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);
-};
+}
 
 exports.logoutAllTabs = () => {
     authChannel.postMessage({ type: 'logout' });
-    this.logout();
+    logout();
 };
+
+function loginAllTabs() {
+    authChannel.postMessage({ type: 'login' });
+}
 
 /*** User Functions ***/
 // Get user information
@@ -206,7 +210,7 @@ exports.getUserInfo = () => {
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
-    return this.updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
+    return updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
@@ -217,13 +221,13 @@ exports.isAuthenticated = () => {
 
 /*** Check Token Status ***/
 // If a token is expired, logout of all tabs
-exports.expiredToken = () => { exports.logout(); };
+exports.expiredToken = () => { logout(); };
 
 // Broadcast message to refresh tokens across tabs
-exports.refreshTokens = () => { authChannel.postMessage({ type: 'refresh' }); };
+function refreshTokens() { authChannel.postMessage({ type: 'refresh' }); };
 
 // Actually update the token
-exports.updateToken = () => {
+function updateToken() {
     log('Trying to update token');
 
     return priv.keycloak.updateToken().then(function(refreshed) {
@@ -233,14 +237,14 @@ exports.updateToken = () => {
             log('Token is still valid');
         }
     });
-};
+}
 
 // Set the cookie fo 3scale
-exports.setCookie = (token) => {
+function setCookie(token) {
     if (token && token.length > 10) {
         document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;
     }
-};
+}
 
 // Encoded WIP
 exports.getEncodedToken = () => {
