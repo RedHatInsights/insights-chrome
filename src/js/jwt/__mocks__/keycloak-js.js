@@ -6,6 +6,7 @@ const encodedToken = require('../../../../testdata/encodedToken.json').data;
 const Keycloak = (options) => {
     let scope = 'online';
     let token = encodedToken;
+    let tokenParsed = options.tokenParsed;
     let refreshToken = encodedToken;
     let redirectUri = options.redirectUri;
     return {
@@ -21,6 +22,7 @@ const Keycloak = (options) => {
         endpoints: {},
         redirectUri,
         token,
+        tokenParsed,
         refreshToken,
         scope,
         init: () => {

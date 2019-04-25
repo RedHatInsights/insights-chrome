@@ -17,6 +17,7 @@ describe('JWT', () => {
     });
 
     beforeEach(() => {
+        // eslint-disable-next-line
         __rewire_reset_all__();
     });
 
@@ -148,7 +149,7 @@ describe('JWT', () => {
         test('login', () => {
             const login = jwt.__get__('login');
             login();
-            // TODO: What can we test here?
+            // TODO: What can we even test here?
         });
 
         test('logout', () => {
@@ -168,15 +169,23 @@ describe('JWT', () => {
     describe('helper functions', () => {
 
         test('getUserInfo', () => {
-        });
-
-        test('setCookie', () => {
+            let mockUser = { name: 'John Guy' };
+            let options = {};
+            options.tokenParsed = decodedToken;
+            jwt.init(options);
+            JWTRewireAPI.__Rewire__('isExistingValid', (data) => data ? true : false);
+            JWTRewireAPI.__Rewire__('insightsUser', (data) => data ? mockUser : null);
+            expect(jwt.getUserInfo()).toBe(mockUser);
         });
 
         test('getEncodedToken', () => {
+            expect(jwt.getEncodedToken()).toBe(encodedToken);
         });
 
         test('getUrl', () => {
+            let mockUrl = 'www.redhat.com/test-zone';
+            JWTRewireAPI.__Rewire__('insightsUrl', (data) => data ? mockUrl : null);
+            expect(jwt.getUrl()).toBe(mockUrl);
         });
     });
 });

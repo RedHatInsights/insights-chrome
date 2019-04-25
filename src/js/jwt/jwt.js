@@ -187,8 +187,6 @@ function logout() {
 
     // Clear cookies and tokens
     priv.keycloak.clearToken();
-    console.log(priv.cookie.cookieName);
-    console.log(priv.cookie.cookieDomain);
     cookie.remove(priv.cookie.cookieName, { domain: priv.cookie.cookieDomain });
 
     // Redirect to logout
