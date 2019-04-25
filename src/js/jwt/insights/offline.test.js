@@ -22,6 +22,12 @@ function getMockWindow(location) {
 }
 
 describe('Offline', () => {
+    test('window works', () => {
+        // this is really just to reach 100% for this module
+        // getWindow was just introduced to allow for code to work
+        // and test code too
+        expect(offline.__get__('getWindow')()).toBe(window);
+    });
     describe('getOfflineToken', () => {
         test('fails when there is no offline postbackUrl', async () => {
             try {
