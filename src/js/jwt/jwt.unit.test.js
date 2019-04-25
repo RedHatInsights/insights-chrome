@@ -2,7 +2,7 @@
 import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
 import cookie from 'js-cookie';
 
-const encodedTokenFile  = require('../../../testdata/encodedToken.json');
+const encodedToken      = require('../../../testdata/encodedToken.json').data;
 const decodedToken      = require('../../../testdata/decodedToken.json');
 const jwt               = require('./jwt');
 
@@ -11,11 +11,13 @@ jest.mock('urijs');
 
 describe('JWT', () => {
 
-    const encodedToken = encodedTokenFile.data;
-
     beforeAll(() => {
         // Initialize mock keycloak in JWT
         jwt.init({});
+    });
+
+    beforeEach(() => {
+        __rewire_reset_all__();
     });
 
     describe('decodeToken', () => {
@@ -64,14 +66,14 @@ describe('JWT', () => {
     });
 
     describe('init', () => {
-        let options = {};;
+        let options = {};
 
         test('no token', () => {
             expect(jwt.init(options)).toBeTruthy();
         });
 
         test('invalid token', () => {
-            options.token = 'invalid_token';
+            options.token = encodedToken;
             JWTRewireAPI.__Rewire__('isExistingValid', () => {
                 return false;
             });
@@ -80,7 +82,7 @@ describe('JWT', () => {
         });
 
         test('valid token', () => {
-            options.token = 'valid_token';
+            options.token = encodedToken;
             JWTRewireAPI.__Rewire__('isExistingValid', () => {
                 return true;
             });
@@ -99,21 +101,21 @@ describe('JWT', () => {
         });
     });
 
-    describe('auth', () => {
+    describe('auth channel', () => {
         test('logoutAllTabs', () => {
-            cookie.set('login', true);
             JWTRewireAPI.__Rewire__('logout', () => {
                 cookie.remove('login');
             });
+            cookie.set('login', true);
             jwt.logoutAllTabs();
             expect(cookie.get('login')).not.toBeDefined();
         });
 
         test('loginAllTabs', () => {
-            cookie.remove('login');
             JWTRewireAPI.__Rewire__('logout', () => {
                 cookie.set('login', true);
             });
+            cookie.remove('login');
             jwt.logoutAllTabs();
             expect(cookie.get('login')).toBeTruthy();
         });
@@ -123,6 +125,58 @@ describe('JWT', () => {
             expect(refreshTokens()).not.toBeDefined();
             // TODO: Can we check anything else for this function?
             // All it does is log.
+        });
+    });
+
+    describe('init and auth functions', () => {
+        test('initSuccess()', () => {
+            const initSuccess = jwt.__get__('initSuccess');
+            initSuccess();
+            expect(window.localStorage.getItem('cs_jwt')).toContain(encodedToken);
+        });
+
+        test('initError', () => {
+            const initError = jwt.__get__('initError');
+            JWTRewireAPI.__Rewire__('logout', () => {
+                cookie.remove('login');
+            });
+            cookie.set('login', true);
+            initError();
+            expect(cookie.get('login')).not.toBeDefined();
+        });
+
+        test('login', () => {
+            const login = jwt.__get__('login');
+            login();
+            // TODO: What can we test here?
+        });
+
+        test('logout', () => {
+            const logout = jwt.__get__('logout');
+            cookie.set('cs_jwt', 'testvalue', { domain: '.redhat.com' });
+            logout();
+            expect(cookie.get('cs_jwt')).not.toBeDefined();
+        });
+
+        test('expiredToken', () => {
+            cookie.set('cs_jwt', 'testvalue', { domain: '.redhat.com' });
+            jwt.expiredToken();
+            expect(cookie.get('cs_jwt')).not.toBeDefined();
+        });
+    });
+
+    describe('helper functions', () => {
+
+        test('getUserInfo', () => {
+        });
+
+        test('setCookie', () => {
+        });
+
+        test('getEncodedToken', () => {
+        });
+
+        test('getUrl', () => {
         });
     });
 });

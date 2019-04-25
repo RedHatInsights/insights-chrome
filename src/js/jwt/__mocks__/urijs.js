@@ -1,6 +1,5 @@
 /*global module*/
 const urijs = (inputUrl) => {
-    console.log('Called constructor with param: ' + inputUrl);
     let url = inputUrl;
     let searchMap = {
         foo: 'bar'
