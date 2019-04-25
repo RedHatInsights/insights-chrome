@@ -138,6 +138,8 @@ exports.init = (options) => {
 
 function isExistingValid(token) {
     log('Checking validity of existing JWT');
+    // TODO: Remove next line
+    // let test = Keycloak({});
     if (!token) { return false; }
 
     const parsed = decodeToken(token);
@@ -224,7 +226,7 @@ exports.isAuthenticated = () => {
 exports.expiredToken = () => { logout(); };
 
 // Broadcast message to refresh tokens across tabs
-function refreshTokens() { authChannel.postMessage({ type: 'refresh' }); };
+function refreshTokens() { authChannel.postMessage({ type: 'refresh' }); }
 
 // Actually update the token
 function updateToken() {

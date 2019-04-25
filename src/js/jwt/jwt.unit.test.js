@@ -44,16 +44,17 @@ describe('JWT', () => {
             expect(isExistingValid(encodedToken)).toBeFalsy();
         });
 
-        // TODO: Can't do this until keycloak mock is working
-        // test('valid token', () => {
-        //     let notExpiring = decodedToken;
-        //     notExpiring.exp = Date.now() + 100000;
+        test('valid token', () => {
+            let notExpiring = decodedToken;
+            notExpiring.exp = Date.now() + 100000;
 
-        //     JWTRewireAPI.__Rewire__('decodeToken', function() {
-        //         return notExpiring;
-        //     });
+            JWTRewireAPI.__Rewire__('decodeToken', function() {
+                return notExpiring;
+            });
 
-        //     expect(isExistingValid(encodedToken)).toBeTruthy();
-        // });
+            // Initialize mock keycloak in JWT
+            jwt.init({});
+            expect(isExistingValid(encodedToken)).toBeTruthy();
+        });
     });
 });
