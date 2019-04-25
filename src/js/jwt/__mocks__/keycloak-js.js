@@ -1,6 +1,7 @@
 /*global module*/
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
+    let scope = 'online';
     return {
         callback_id: 0,
         authenticated: false,
@@ -12,8 +13,15 @@ const Keycloak = (options) => {
         authServerUrl: 'https://sso.qa.redhat.com/auth',
         realm: 'redhat-external',
         endpoints: {},
+        scope,
         init: () => {
-            return new Promise(() => console.log('Called mock init'));
+            return new Promise(() => true);
+        },
+        login: (data) => {
+            scope = data.scope;
+        },
+        updateToken: () => {
+            return new Promise(() => true);
         }
     };
 };
