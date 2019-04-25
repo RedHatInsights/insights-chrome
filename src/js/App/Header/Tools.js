@@ -14,7 +14,21 @@ import InsightsAbout from './InsightsAbout';
 const aboutButton = {
     title: 'FAQ',
     icon: QuestionCircleIcon,
-    widget: 'InsightsFAQ'
+    widget: 'InsightsFAQ',
+    items: [
+        {
+            title: 'Help & Assistance',
+            url: 'https://access.redhat.com/help/'
+        }, {
+            title: 'Customer Support',
+            url: 'https://access.redhat.com/support'
+        }, {
+            title: 'Training',
+            url: 'https://www.redhat.com/en/services/training-and-certification'
+        }, {
+            title: 'About'
+        }
+    ]
 };
 
 const actions = [
@@ -46,7 +60,7 @@ class Tools extends Component {
     constructor(props) {
         super(props);
         this.onModalToggle = this.onModalToggle.bind(this);
-        aboutButton.onClick = this.onModalToggle.bind(this);
+        aboutButton.items[3].onClick = this.onModalToggle.bind(this);
         this.state = {
             isModalOpen: false
         };

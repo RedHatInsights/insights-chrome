@@ -25,13 +25,28 @@ class ToolbarToggle extends Component {
         this.setState({ isOpen });
     }
 
-    onClick(_ev, url) {
-        window.location = `${document.baseURI}/${url}`;
+    onClick(ev, url, onClick) {
+        ev.preventDefault();
+        if (url) {
+            window.location.href = `${url}`;
+        }
+
+        if (onClick) {
+            onClick(ev);
+        }
     }
 
     render() {
-        const dropdownItems = this.props.dropdownItems.map(({ url, title }) =>
-            <DropdownItem component='button' onClick={ev => this.onClick(ev, url)}>{ title }</DropdownItem>
+        const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) =>
+            <DropdownItem
+                component={ url ? 'a' : 'button' }
+                {
+                ...url ? { href: url } : {}
+                }
+                onClick={ev => this.onClick(ev, url, onClick)}
+            >
+                { title }
+            </DropdownItem>
         );
 
         const toggle = <DropdownToggle iconComponent={null} onToggle={this.onToggle}>
