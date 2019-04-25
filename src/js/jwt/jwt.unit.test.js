@@ -125,5 +125,4 @@ describe('JWT', () => {
             // All it does is log.
         });
     });
-
 });

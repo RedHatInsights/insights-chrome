@@ -5,7 +5,6 @@ import cookie from 'js-cookie';
 
 // Utils
 const log = require('./logger')('jwt.js');
-const utils = require('./utils');
 
 // Insights Specific
 const insightsUrl  = require('./insights/url');
@@ -258,6 +257,3 @@ exports.getEncodedToken = () => {
 exports.getUrl = () => {
     return insightsUrl(DEFAULT_ROUTES);
 };
-
-/*** Exports ***/
-utils.exposeTest(priv);
