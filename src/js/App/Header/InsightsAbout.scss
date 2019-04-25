@@ -10,5 +10,5 @@
 }
 
 .ins-c-page__about--modal dl {
-    grid-row-gap: calc(var(--pf-c-content--dl--RowGap) / 2) !important;
+    --pf-c-content--dl--RowGap: var(--pf-global--spacer--sm);
 }
