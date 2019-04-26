@@ -23,7 +23,7 @@ const Copyright = () => (
             </LevelItem>
             <LevelItem>
                 <a class="nav-link"
-                    href="/help/terms/"
+                    href="https://access.redhat.com/help/terms"
                     target="_blank"
                 >
                     Customer Portal Terms of Use
