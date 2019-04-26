@@ -16,7 +16,7 @@ describe('JWT', () => {
         jwt.init({});
     });
 
-    beforeEach(() => {
+    afterEach(() => {
         // eslint-disable-next-line
         __rewire_reset_all__();
     });
