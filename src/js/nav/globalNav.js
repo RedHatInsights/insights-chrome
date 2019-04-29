@@ -134,7 +134,7 @@ export const grouppedNav = {
                 title: 'Settings',
                 subItems: [
                     {
-                        id: 'catalog-sources',
+                        id: 'sources',
                         title: 'Catalog Sources',
                         reload: 'settings/sources'
                     },
