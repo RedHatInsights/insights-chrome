@@ -105,7 +105,7 @@ describe('JWT', () => {
             JWTRewireAPI.__Rewire__('logout', () => {
                 cookie.remove('cs_jwt');
             });
-            cookie.set('cs_jwt', 'token1', { domain: '.redhat.com' });
+            cookie.set('cs_jwt', 'token1');
             jwt.logoutAllTabs();
             expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
@@ -163,13 +163,13 @@ describe('JWT', () => {
 
         test('logout', () => {
             const logout = jwt.__get__('logout');
-            cookie.set('cs_jwt', 'testvalue', { domain: '.redhat.com' });
+            cookie.set('cs_jwt', 'testvalue');
             logout();
             expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
 
         test('expiredToken', () => {
-            cookie.set('cs_jwt', 'testvalue', { domain: '.redhat.com' });
+            cookie.set('cs_jwt', 'testvalue');
             jwt.expiredToken();
             expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
