@@ -30,7 +30,7 @@ authChannel.onmessage = (e) => {
             logout();
             break;
         case 'login':
-            login();
+            exports.login();
             break;
         case 'refresh':
             updateToken();
@@ -176,11 +176,11 @@ function initError() {
 }
 
 /*** Login/Logout ***/
-function login() {
+exports.login = () => {
     log('Logging in');
     // Redirect to login
     priv.keycloak.login({ redirectUri: location.href });
-}
+};
 
 function logout() {
     log('Logging out');
@@ -200,6 +200,7 @@ exports.logoutAllTabs = () => {
 
 function loginAllTabs() {
     authChannel.postMessage({ type: 'login' });
+    exports.login();
 }
 
 /*** User Functions ***/
@@ -225,7 +226,10 @@ exports.isAuthenticated = () => {
 exports.expiredToken = () => { logout(); };
 
 // Broadcast message to refresh tokens across tabs
-function refreshTokens() { authChannel.postMessage({ type: 'refresh' }); }
+function refreshTokens() {
+    authChannel.postMessage({ type: 'refresh' });
+    updateToken();
+}
 
 // Actually update the token
 function updateToken() {
