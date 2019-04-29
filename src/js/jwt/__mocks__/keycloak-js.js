@@ -1,10 +1,10 @@
 /*global module*/
-
+import cookie from 'js-cookie';
 const encodedToken = require('../../../../testdata/encodedToken.json').data;
 
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
-    let scope = 'online';
+    let scope = options.scope || 'online';
     let token = encodedToken;
     let tokenParsed = options.tokenParsed;
     let refreshToken = encodedToken;
@@ -26,17 +26,25 @@ const Keycloak = (options) => {
         refreshToken,
         scope,
         init: () => {
-            return new Promise(() => true);
+            return new Promise(() => {});
         },
         login: (data) => {
-            scope = data.scope;
             redirectUri = data.redirectUri;
+            cookie.set('cs_jwt', 'token1');
         },
         updateToken: () => {
-            return new Promise(() => true);
+            return new Promise(() => {
+                cookie.remove('cs_jwt');
+                cookie.set('cs_jwt', 'updatedToken');
+                return true;
+            });
         },
-        clearToken: () => {},
-        logout: () => {}
+        clearToken: () => {
+            cookie.remove('cs_jwt');
+        },
+        logout: () => {
+            cookie.remove('cs_jwt');
+        }
     };
 };
 /* eslint-enable camelcase */

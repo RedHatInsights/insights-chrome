@@ -92,12 +92,10 @@ describe('JWT', () => {
         });
     });
 
+    // TODO: Test doOffline more thoroughly.
+    // At the moment, it isn't clear how to verify its results.
     describe('doOffline', () => {
-        // TODO: How do we test this more thoroughly?
-        // doOffline doesn't return anything, nor does it directly
-        // affect the internal state of the jwt object.
         test('doOffline works', () => {
-            // Function returns nothing, and that's what we should expect.
             expect(jwt.doOffline('foo', 'bar')).not.toBeDefined();
         });
     });
@@ -105,28 +103,39 @@ describe('JWT', () => {
     describe('auth channel', () => {
         test('logoutAllTabs', () => {
             JWTRewireAPI.__Rewire__('logout', () => {
-                cookie.remove('login');
+                cookie.remove('cs_jwt');
             });
-            cookie.set('login', true);
+            cookie.set('cs_jwt', 'token1');
             jwt.logoutAllTabs();
-            expect(cookie.get('login')).not.toBeDefined();
+            expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
 
-        test('loginAllTabs', () => {
-            JWTRewireAPI.__Rewire__('logout', () => {
-                cookie.set('login', true);
-            });
-            cookie.remove('login');
-            jwt.logoutAllTabs();
-            expect(cookie.get('login')).toBeTruthy();
-        });
+        // test('loginAllTabs', () => {
+        //     cookie.remove('cs_jwt');
+        //     const loginAllTabs = jwt.__get__('loginAllTabs');
+        //     JWTRewireAPI.__Rewire__('login', () => {
+        //         cookie.set('cs_jwt', 'token1');
+        //     });
+        //     loginAllTabs();
+        //     expect(cookie.get('cs_jwt')).toBeDefined();
+        // });
 
-        test('refreshTokens', () => {
-            const refreshTokens = jwt.__get__('refreshTokens');
-            expect(refreshTokens()).not.toBeDefined();
-            // TODO: Can we check anything else for this function?
-            // All it does is log.
-        });
+        // test('refreshTokens', () => {
+        //     const refreshTokens = jwt.__get__('refreshTokens');
+        //     JWTRewireAPI.__Rewire__('updateToken', () => {
+        //         cookie.remove('cs_jwt');
+        //         cookie.set('cs_jwt', 'updatedToken');
+        //     });
+
+        //     // Log in and verify that the token is correct
+        //     jwt.login();
+        //     expect(cookie.get('cs_jwt')).toBe('token1');
+
+        //     // Refresh token and make sure it changed
+        //     refreshTokens();
+        //     expect(cookie.get('cs_jwt')).toBe('updatedToken');
+
+        // });
     });
 
     describe('init and auth functions', () => {
@@ -147,17 +156,17 @@ describe('JWT', () => {
         test('initError', () => {
             const initError = jwt.__get__('initError');
             JWTRewireAPI.__Rewire__('logout', () => {
-                cookie.remove('login');
+                cookie.remove('cs_jwt');
             });
-            cookie.set('login', true);
+            cookie.set('cs_jwt', true);
             initError();
-            expect(cookie.get('login')).not.toBeDefined();
+            expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
 
         test('login', () => {
-            const login = jwt.__get__('login');
-            login();
-            // TODO: What can we even test here?
+            cookie.remove('cs_jwt');
+            jwt.login();
+            expect(cookie.get('cs_jwt')).toBeDefined();
         });
 
         test('logout', () => {
@@ -171,6 +180,13 @@ describe('JWT', () => {
             cookie.set('cs_jwt', 'testvalue');
             jwt.expiredToken();
             expect(cookie.get('cs_jwt')).not.toBeDefined();
+        });
+
+        test('updateToken', () => {
+            cookie.set('cs_jwt', 'token1');
+            const updateToken = jwt.__get__('updateToken');
+            updateToken();
+            expect(cookie.get('cs_jwt')).toBe('updatedToken');
         });
     });
 
