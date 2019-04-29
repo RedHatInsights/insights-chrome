@@ -1,4 +1,4 @@
-/*global expect, require, test, describe, jest*/
+/*global expect, require, test, describe, jest, beforeAll, afterEach, __rewire_reset_all__*/
 import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
 import cookie from 'js-cookie';
 
@@ -130,10 +130,18 @@ describe('JWT', () => {
     });
 
     describe('init and auth functions', () => {
-        test('initSuccess()', () => {
+        describe('initSuccess()', () => {
             const initSuccess = jwt.__get__('initSuccess');
-            initSuccess();
-            expect(window.localStorage.getItem('cs_jwt')).toContain(encodedToken);
+            test('should write to localStorage', () => {
+                initSuccess();
+                expect(window.localStorage.getItem('cs_jwt')).toContain(encodedToken);
+            });
+            test('should set a cookie', () => {
+                const mockSetCookie = jest.fn();
+                jwt.__set__('setCookie', mockSetCookie);
+                initSuccess();
+                expect(mockSetCookie).toBeCalledWith(encodedToken);
+            });
         });
 
         test('initError', () => {
