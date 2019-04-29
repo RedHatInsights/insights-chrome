@@ -1,10 +1,14 @@
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins.scss';
 
-.pf-c-about-modal-box .ins-c-about-modal__footer {
-    border-top: 1px solid #3b3b3b;
-    @include rem('padding-top', 15px);
+.pf-c-about-modal-box__content {
+    --pf-c-about-modal-box__content--MarginTop: var(--pf-global--spacer--md);
+    --pf-c-about-modal-box__content--MarginBottom: var(--pf-global--spacer--md);
 }
 
 .pf-c-about-modal-box__hero {
     --pf-c-about-modal-box__hero--sm--BackgroundImage: url('/../../build/assets/images/hero-image.jpg');
-} 
+}
+
+.ins-c-page__about--modal dl {
+    --pf-c-content--dl--RowGap: var(--pf-global--spacer--sm);
+}

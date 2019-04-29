@@ -7,10 +7,10 @@ aside.pf-c-page__sidebar {
 
         .pf-l-split__item {
             @include rem('padding', 18px);
-            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-200);
+            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 
             &:first-child {
-                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-200);
+                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
             }
 
             &.ins-c-page__home-icon {
@@ -20,6 +20,9 @@ aside.pf-c-page__sidebar {
 
             .ins-c-navigation__header-title { @include rem('width', 160px); }
         }
+
+        .ins-c-page__home-icon { @include rem('padding-left', 30px); }
+
     }
 
     .ins-c-page__documentation a:before {

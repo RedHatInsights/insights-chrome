@@ -23,6 +23,7 @@ export const grouppedNav = {
             },
             {
                 title: 'Settings',
+                disabled: window.location.pathname.indexOf('/beta') === -1,
                 subItems: [
                     {
                         id: 'hooks',
@@ -39,7 +40,7 @@ export const grouppedNav = {
         ]
     },
     rhel: {
-        title: 'Red Hat Enterprise Linux management services',
+        title: 'Cloud Management Services',
         routes: [
             {
                 id: 'dashboard',
@@ -133,7 +134,7 @@ export const grouppedNav = {
                 title: 'Settings',
                 subItems: [
                     {
-                        id: 'catalog-sources',
+                        id: 'sources',
                         title: 'Catalog Sources',
                         reload: 'settings/sources'
                     },

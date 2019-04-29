@@ -3,13 +3,13 @@ import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insigh
 
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
-const JWT_KEY   = 'cs_jwt';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
+
 const { options: defaultOptions } = require('./jwt/constants');
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
-        cookie.remove(JWT_KEY);
+        cookie.remove(defaultOptions.cookieName, { domain: defaultOptions.cookieDomain });
         jwt.login();
     }
 
@@ -21,8 +21,9 @@ export default () => {
     let options = {
         ...defaultOptions
     };
+
     wipePostbackParamsThatAreNotForUs();
-    const token = cookie.get(JWT_KEY);
+    const token = cookie.get(options.cookieName);
 
     // If we find an existing token, use it
     // so that we dont auth even when a valid token is present
@@ -30,7 +31,7 @@ export default () => {
     // on every page load
     if (token && token.length > 10) {
         options.token = token;
-        options.refreshToken = window.localStorage.getItem(JWT_KEY);
+        options.refreshToken = window.localStorage.getItem(options.cookieName);
     }
 
     const promise = jwt.init(options).then(bouncer);

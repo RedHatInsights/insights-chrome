@@ -1,16 +1,45 @@
 import React, { Component } from 'react';
-
 import {
     AboutModal,
     TextContent, TextList, TextListItem,
     Level, LevelItem,
     Stack, StackItem
 } from '@patternfly/react-core';
-
-import logo from '../../../../static/images/logo-cs.svg';
+import logo from '../../../../static/images/rh-logo-white.svg';
 import { connect } from 'react-redux';
-
 import './InsightsAbout.scss';
+
+const Copyright = () => (
+    <React.Fragment>
+        <div>Copyright © 2019 Red Hat, Inc.</div>
+        <Level>
+            <LevelItem>
+                <a class="nav-link"
+                    href="https://www.redhat.com/en/about/privacy-policy"
+                    target="_blank"
+                >
+                    Privacy Policy
+                </a>
+            </LevelItem>
+            <LevelItem>
+                <a class="nav-link"
+                    href="https://access.redhat.com/help/terms"
+                    target="_blank"
+                >
+                    Customer Portal Terms of Use
+                </a>
+            </LevelItem>
+            <LevelItem>
+                <a class="nav-link"
+                    href="https://www.redhat.com/en/about/all-policies-guidelines"
+                    target="_blank"
+                >
+                    All Policies and Guidelines
+                </a>
+            </LevelItem>
+        </Level>
+    </React.Fragment>
+);
 
 class InsightsAbout extends Component {
     constructor(props) {
@@ -84,15 +113,16 @@ class InsightsAbout extends Component {
                 isOpen={isModalOpen}
                 onClose={onClose}
                 brandImageSrc={logo}
-                brandImageAlt="Red Hat Cloud Services Logo"
-                trademark='Copyright © 2019 Red Hat, Inc.'
+                productName="Red Hat Cloud Services"
+                brandImageAlt="Red Hat Logo"
+                trademark={<Copyright />}
             >
                 <Stack gutter='sm'>
                     <StackItem>
                         Please include these details when opening a support case against Insights
                     </StackItem>
                     <StackItem>
-                        <TextContent>
+                        <TextContent className="ins-c-page__about--modal">
                             <TextList component="dl" className='ins-debug-info'>
                                 {this.getItem('User Name', user && user.username)}
                                 {this.getItem('Current Application', this.state.currentApp)}
@@ -102,31 +132,6 @@ class InsightsAbout extends Component {
                                 })}
                             </TextList>
                         </TextContent>
-                    </StackItem>
-                    <StackItem className='ins-c-about-modal__footer'>
-                        <Level>
-                            <LevelItem>
-                                <a class="nav-link"
-                                    href="https://www.redhat.com/en/about/privacy-policy"
-                                    target="_blank">
-                                    Privacy Policy
-                                </a>
-                            </LevelItem>
-                            <LevelItem>
-                                <a class="nav-link"
-                                    href="https://ci.foo.redhat.com:1337/help/terms/"
-                                    target="_blank">
-                                    Customer Portal Terms of Use
-                                </a>
-                            </LevelItem>
-                            <LevelItem>
-                                <a class="nav-link"
-                                    href="https://www.redhat.com/en/about/all-policies-guidelines"
-                                    target="_blank">
-                                    All Policies and Guidelines
-                                </a>
-                            </LevelItem>
-                        </Level>
                     </StackItem>
                 </Stack>
             </AboutModal>

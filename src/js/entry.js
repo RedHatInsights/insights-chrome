@@ -37,9 +37,12 @@ export function chromeInit(libjwt) {
     return {
         identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
         navigation: appNav,
-        appNavClick: (payload) => {
+        appNavClick: ({ secondaryNav, ...payload }) => {
+            if (!secondaryNav) {
+                clearActive();
+            }
+
             appNavClick(payload);
-            clearActive();
         },
         on: (type, callback) => {
             if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
@@ -86,7 +89,7 @@ export function bootstrap(libjwt, initFunc) {
                     return libjwt.initPromise.then(libjwt.jwt.getUserInfo);
                 },
                 qe: qe,
-                logout: libjwt.jwt.logoutAllTabs
+                logout: () => libjwt.jwt.logoutAllTabs()
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => {
