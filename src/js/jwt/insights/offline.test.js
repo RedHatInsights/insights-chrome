@@ -54,6 +54,13 @@ describe('Offline', () => {
 
             beforeEach(() => {
                 testWindow = getMockWindow();
+                // dirty hack to make the module loader work in test
+                // without this I can `rm node_modules/urijs/src/*js`
+                // and still the require in test mode loads some urijs from insights-components
+                // and that lib is causing issues
+                //
+                // this hack is only necessry in test mode
+                offline.__set__('urijs', require('../../../../node_modules/urijs/src/URI'));
                 offline.__set__('getWindow', () => { return testWindow; });
                 offline.wipePostbackParamsThatAreNotForUs();
             });
@@ -67,8 +74,14 @@ describe('Offline', () => {
             });
 
             test('removes noauth query param', () => {
-                // TODO: Fix this test
-                // expect(testWindow.location.__foo__).not.toMatch('noauth=2402500adeacc30eb5c5a8a5e2e0ec1');
+                expect(testWindow.location.__foo__).not.toMatch('noauth=2402500adeacc30eb5c5a8a5e2e0ec1');
+            });
+
+            test('removes noauth query param with others', () => {
+                const w = getMockWindow({ href: 'https://example.com?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f&test=bar&bar=baz' });
+                offline.__set__('getWindow', () => { return w; });
+                offline.wipePostbackParamsThatAreNotForUs();
+                expect(w.location.__foo__).toMatch('https://example.com/?test=bar&bar=baz');
             });
         });
     });
