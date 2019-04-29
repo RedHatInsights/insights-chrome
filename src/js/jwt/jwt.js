@@ -15,7 +15,6 @@ const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 // const DEFAULT_REDIRECT_URI = `${window.location}/logout`;
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
-const DEFAULT_COOKIE_DOMAIN = '.redhat.com';
 
 const priv = {};
 
@@ -89,11 +88,9 @@ exports.init = (options) => {
     log('Initializing');
 
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
-    const cookieDomain = ((options.cookieDomain) ? options.cookieDomain : DEFAULT_COOKIE_DOMAIN);
 
     priv.cookie = {
         cookieName,
-        cookieDomain
     };
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
@@ -187,7 +184,7 @@ function logout() {
 
     // Clear cookies and tokens
     priv.keycloak.clearToken();
-    cookie.remove(priv.cookie.cookieName, { domain: priv.cookie.cookieDomain });
+    cookie.remove(priv.cookie.cookieName);
 
     // Redirect to logout
     priv.keycloak.logout(priv.keycloak);
@@ -243,7 +240,7 @@ function updateToken() {
 // Set the cookie fo 3scale
 function setCookie(token) {
     if (token && token.length > 10) {
-        document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;domain=${priv.cookie.cookieDomain}`;
+        document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;`;
     }
 }
 
