@@ -5,9 +5,14 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/esm/layouts/Split'
 import HomeIcon from '@patternfly/react-icons/dist/esm/icons/home-icon';
 import { connect } from 'react-redux';
 
+const documentationLink = {
+    rhel: 'https://access.redhat.com/documentation/cloud_management_services_for_red_hat_enterprise_linux',
+    insights: 'https://access.redhat.com/documentation/red_hat_insights/'
+};
+
 class SideNav extends Component {
     render() {
-        const { activeTechnology } = this.props;
+        const { activeTechnology, activeLocation } = this.props;
         return (<Fragment>
             <Split className="ins-c-navigation__header">
                 <SplitItem className="ins-c-page__home-icon">
@@ -21,17 +26,25 @@ class SideNav extends Component {
                     </div>
                 </SplitItem>
             </Split>
-            <Navigation />
+            <Navigation documentation={documentationLink[activeLocation]} />
         </Fragment>);
     }
 }
 
 SideNav.propTypes = {
-    activeTechnology: PropTypes.string
+    activeTechnology: PropTypes.string,
+    activeLocation: PropTypes.string
 };
 
 SideNav.defaultProps = {
-    activeTechnology: ''
+    activeTechnology: '',
+    activeLocation: ''
 };
 
-export default connect(({ chrome: { activeTechnology } }) => ({ activeTechnology }))(SideNav);
+export default connect(({ chrome: {
+    activeTechnology,
+    activeLocation
+} }) => ({
+    activeTechnology,
+    activeLocation
+}))(SideNav);

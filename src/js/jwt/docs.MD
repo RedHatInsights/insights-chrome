@@ -13,7 +13,6 @@ const options = {
     realm: 'redhat-external',
     clientId: 'cloud-services',
     cookieName: 'cookie',
-    cookieDomain: '.foo.com',
     routes: {
         prod: {
             url: ['access.redhat.com', 'prod.foo.redhat.com'],

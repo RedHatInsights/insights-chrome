@@ -24,4 +24,13 @@ aside.pf-c-page__sidebar {
         .ins-c-page__home-icon { @include rem('padding-left', 30px); }
 
     }
+
+    .ins-c-page__documentation a:before {
+        position: absolute;
+        @include rem('top', 5px);
+        width: 75%;
+        @include rem('height', 1px);
+        content: "";
+        background-color: var(--pf-global--disabled-color--200);
+    }
 }
