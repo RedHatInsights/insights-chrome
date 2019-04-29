@@ -22,7 +22,7 @@ const priv = {};
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
 authChannel.onmessage = (e) => {
-
+    console.log('Broadcasted ' + e.data.type);
     log(`BroadcastChannel, Received event : ${e.data.type}`);
 
     switch (e.data.type) {
@@ -200,7 +200,6 @@ exports.logoutAllTabs = () => {
 
 function loginAllTabs() {
     authChannel.postMessage({ type: 'login' });
-    exports.login();
 }
 
 /*** User Functions ***/
@@ -228,7 +227,6 @@ exports.expiredToken = () => { logout(); };
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
     authChannel.postMessage({ type: 'refresh' });
-    updateToken();
 }
 
 // Actually update the token

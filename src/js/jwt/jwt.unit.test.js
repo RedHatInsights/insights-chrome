@@ -110,32 +110,32 @@ describe('JWT', () => {
             expect(cookie.get('cs_jwt')).not.toBeDefined();
         });
 
-        test('loginAllTabs', () => {
-            cookie.remove('cs_jwt');
-            const loginAllTabs = jwt.__get__('loginAllTabs');
-            JWTRewireAPI.__Rewire__('login', () => {
-                cookie.set('cs_jwt', 'token1');
-            });
-            loginAllTabs();
-            expect(cookie.get('cs_jwt')).toBeDefined();
-        });
+        // test('loginAllTabs', () => {
+        //     cookie.remove('cs_jwt');
+        //     const loginAllTabs = jwt.__get__('loginAllTabs');
+        //     JWTRewireAPI.__Rewire__('login', () => {
+        //         cookie.set('cs_jwt', 'token1');
+        //     });
+        //     loginAllTabs();
+        //     expect(cookie.get('cs_jwt')).toBeDefined();
+        // });
 
-        test('refreshTokens', () => {
-            const refreshTokens = jwt.__get__('refreshTokens');
-            JWTRewireAPI.__Rewire__('updateToken', () => {
-                cookie.remove('cs_jwt');
-                cookie.set('cs_jwt', 'updatedToken');
-            });
+        // test('refreshTokens', () => {
+        //     const refreshTokens = jwt.__get__('refreshTokens');
+        //     JWTRewireAPI.__Rewire__('updateToken', () => {
+        //         cookie.remove('cs_jwt');
+        //         cookie.set('cs_jwt', 'updatedToken');
+        //     });
 
-            // Log in and verify that the token is correct
-            jwt.login();
-            expect(cookie.get('cs_jwt')).toBe('token1');
+        //     // Log in and verify that the token is correct
+        //     jwt.login();
+        //     expect(cookie.get('cs_jwt')).toBe('token1');
 
-            // Refresh token and make sure it changed
-            refreshTokens();
-            expect(cookie.get('cs_jwt')).toBe('updatedToken');
+        //     // Refresh token and make sure it changed
+        //     refreshTokens();
+        //     expect(cookie.get('cs_jwt')).toBe('updatedToken');
 
-        });
+        // });
     });
 
     describe('init and auth functions', () => {
