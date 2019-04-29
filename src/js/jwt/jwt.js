@@ -90,7 +90,7 @@ exports.init = (options) => {
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
 
     priv.cookie = {
-        cookieName,
+        cookieName
     };
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
