@@ -23,6 +23,7 @@ export const grouppedNav = {
             },
             {
                 title: 'Settings',
+                disabled: window.location.pathname.indexOf('/beta') === -1,
                 subItems: [
                     {
                         id: 'hooks',
@@ -33,7 +34,6 @@ export const grouppedNav = {
                         id: 'sources',
                         title: 'Sources',
                         reload: 'settings/sources',
-                        disabled: window.location.pathname.indexOf('/beta') === -1
                     }
                 ]
             }
