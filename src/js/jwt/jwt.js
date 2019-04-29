@@ -21,7 +21,6 @@ const priv = {};
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
 authChannel.onmessage = (e) => {
-    console.log('Broadcasted ' + e.data.type);
     log(`BroadcastChannel, Received event : ${e.data.type}`);
 
     switch (e.data.type) {
