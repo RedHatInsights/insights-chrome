@@ -40,7 +40,7 @@ export const grouppedNav = {
         ]
     },
     rhel: {
-        title: 'Red Hat Enterprise Linux management services',
+        title: 'Cloud Management Services',
         routes: [
             {
                 id: 'dashboard',
