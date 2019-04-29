@@ -2,9 +2,9 @@
 const consts = require('../../consts').default;
 const { DEFAULT_ROUTES } = require('../constants');
 const insightsUrl = require('./url');
-const urijs  = require('urijs');
 const axios  = require('axios');
 const priv   = {};
+const urijs  = require('urijs');
 
 // note this function is not exposed
 // it is a run everytime and produce some side affect thing
@@ -30,7 +30,7 @@ export function wipePostbackParamsThatAreNotForUs() {
 
         // nuke the params so that people dont see the ugly
         const url = urijs(getWindow().location.href);
-        url.removeSearch(consts.noAuthParam);
+        url.removeQuery(consts.noAuthParam);
         getWindow().history.pushState('offlinePostback', '', url.toString());
     }
 }
