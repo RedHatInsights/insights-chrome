@@ -9,7 +9,7 @@ const { options: defaultOptions } = require('./jwt/constants');
 
 function bouncer() {
     if (!jwt.isAuthenticated()) {
-        cookie.remove(defaultOptions.cookieName, { domain: defaultOptions.cookieDomain });
+        cookie.remove(defaultOptions.cookieName);
         jwt.login();
     }
 
