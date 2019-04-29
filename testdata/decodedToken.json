@@ -1,0 +1,31 @@
+{
+    "jti": "c79aff4b-72c8-4cd0-85bd-ddec31601eeb",
+    "exp": 1556126027,
+    "nbf": 0,
+    "iat": 1556125127,
+    "iss": "https://sso.qa.redhat.com/auth/realms/redhat-external",
+    "aud": "cloud-services",
+    "sub": "f:d61f8ab9-1f78-4fae-88f3-12cd2e576da7:rhn-support-ihands",
+    "typ": "Bearer",
+    "azp": "cloud-services",
+    "nonce": "c1927f0e-290d-455f-8129-2448d426d2a3",
+    "auth_time": 1556125123,
+    "session_state": "c0e6ad4e-03cd-46d7-8381-0bacc3f6eb43",
+    "acr": "1",
+    "allowed-origins": [
+        "*"
+    ],
+    "resource_access": {},
+    "account_number": "540155",
+    "is_internal": true,
+    "is_active": true,
+    "account_id": 5299389,
+    "org_id": "1979710",
+    "last_name": "Hands",
+    "locale": "en_US",
+    "type": "User",
+    "first_name": "Ian",
+    "email": "ihands+qa@redhat.com",
+    "is_org_admin": true,
+    "username": "rhn-support-ihands"
+}
