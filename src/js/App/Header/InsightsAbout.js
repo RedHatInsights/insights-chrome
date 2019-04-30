@@ -63,7 +63,7 @@ class InsightsAbout extends Component {
                 { name: 'Vulnerabilities', path: 'apps/vulnerability/app.info.json', version: 'N/A' },
                 { name: 'Compliance', path: 'apps/compliance/app.info.json', version: 'N/A' },
                 { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
-                { name: 'Insights', path: 'apps/advisor/app.info.json', version: 'N/A' }
+                { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' }
             ] },
             currentApp: app && app.title
         };
