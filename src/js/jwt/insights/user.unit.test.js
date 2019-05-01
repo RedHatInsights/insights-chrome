@@ -8,6 +8,15 @@ const user       = require('./user');
 
 describe('User', () => {
     const buildUser = user.__get__('buildUser');
+    user.__set__('getWindow', () => {
+        return {
+            location: {
+                pathname: '/insights/',
+                replace: () => {}
+            }
+        };
+    });
+
     describe('buildUser', () => {
         test('transforms a token into a User object', () => {
             expect(buildUser(token)).toMatchObject(userOutput);
