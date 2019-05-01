@@ -24,6 +24,7 @@
     "verify": "npm-run-all lint build      test",
     "verify:beta": "npm-run-all lint build:beta test",
     "watch": "npm-run-all --parallel watch:*",
+    "watch:images":  "npm run build:images-chrome -- -w",
     "watch:js": "parcel watch src/js/chrome.js -d build/js --public-url /apps/chrome/js",
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w"
