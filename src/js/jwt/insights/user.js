@@ -50,12 +50,10 @@ function tryBounceIfUnentitled(data, section) {
 
     if (section && section !== '') {
         if (data[service] && data[service].is_entitled) {
-            log('Entitled.');
+            log(`Entitled to: ${service}`);
         } else {
-            log('Not entitled!');
-            if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
-                getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
-            }
+            log(`Not entitled to: ${service}`);
+            getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
         }
     }
 }
