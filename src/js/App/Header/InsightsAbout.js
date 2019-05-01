@@ -5,7 +5,7 @@ import {
     Level, LevelItem,
     Stack, StackItem
 } from '@patternfly/react-core';
-import logo from '../../../../static/images/rh-logo-white.svg';
+import logo from '../../../../static/images/logo.svg';
 import { connect } from 'react-redux';
 import './InsightsAbout.scss';
 
