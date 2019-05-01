@@ -46,6 +46,23 @@ module.exports = (token) => {
     if (user) {
         log(`Account Number: ${user.identity.account_number}`);
 
+        // NOTE: Openshift supports Users with Account Number of -1
+        // thus we need to bypass here
+        // dont call entitlements on / /beta /openshift or /beta/openshift
+        if (window.location.pathname === '/' ||
+            window.location.pathname === '/beta' ||
+            window.location.pathname === '/beta/' ||
+            window.location.pathname.indexOf('/openshift') === 0 ||
+            window.location.pathname.indexOf('/beta/openshift') === 0) {
+            return new Promise(resolve => {
+                user.identity = {
+                    ...user.identity,
+                    entitlements: {}
+                };
+                resolve(user);
+            });
+        }
+
         return servicesApi(token.jti).servicesGet().then(data => {
             const service = pathMapper[pathName[0]];
             if (pathName.length > 0 && pathName[0] !== '') {
@@ -70,4 +87,3 @@ module.exports = (token) => {
 
     return new Promise((res) => res());
 };
-
