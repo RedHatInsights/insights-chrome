@@ -46,21 +46,6 @@ module.exports = (token) => {
     if (user) {
         log(`Account Number: ${user.identity.account_number}`);
 
-        // Disable this feature in prod
-        // otherwise we get errors and things spin
-
-        // Disable qa becuase the service has not shipped yet
-        if (window.location.hostname === 'cloud.redhat.com' ||
-            window.location.hostname.indexOf('qa') === 0) {
-            return new Promise(resolve => {
-                user.identity = {
-                    ...user.identity,
-                    entitlements: {}
-                };
-                resolve(user);
-            });
-        }
-
         return servicesApi(token.jti).servicesGet().then(data => {
             const service = pathMapper[pathName[0]];
             if (pathName.length > 0 && pathName[0] !== '') {
