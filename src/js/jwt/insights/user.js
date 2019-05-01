@@ -7,6 +7,10 @@ const pathMapper = {
     openshift: 'openshift'
 };
 
+function getWindow() {
+    return window;
+}
+
 /* eslint-disable camelcase */
 function buildUser(token) {
     const user = token ? {
@@ -37,7 +41,7 @@ function buildUser(token) {
 module.exports = (token) => {
     let user = buildUser(token);
 
-    const pathName = location.pathname.split('/');
+    const pathName = getWindow().location.pathname.split('/');
     pathName.shift();
     if (pathName[0] === 'beta') {
         pathName.shift();
@@ -49,11 +53,11 @@ module.exports = (token) => {
         // NOTE: Openshift supports Users with Account Number of -1
         // thus we need to bypass here
         // dont call entitlements on / /beta /openshift or /beta/openshift
-        if (window.location.pathname === '/' ||
-            window.location.pathname === '/beta' ||
-            window.location.pathname === '/beta/' ||
-            window.location.pathname.indexOf('/openshift') === 0 ||
-            window.location.pathname.indexOf('/beta/openshift') === 0) {
+        if (getWindow().location.pathname === '/' ||
+            getWindow().location.pathname === '/beta' ||
+            getWindow().location.pathname === '/beta/' ||
+            getWindow().location.pathname.indexOf('/openshift') === 0 ||
+            getWindow().location.pathname.indexOf('/beta/openshift') === 0) {
             return new Promise(resolve => {
                 user.identity = {
                     ...user.identity,
@@ -71,7 +75,7 @@ module.exports = (token) => {
                 } else {
                     log('Not entitled!');
                     if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
-                        location.replace(`${document.baseURI}?not_entitled=${service}`);
+                        getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
                     }
                 }
             }
