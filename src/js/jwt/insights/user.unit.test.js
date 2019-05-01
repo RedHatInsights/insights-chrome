@@ -29,19 +29,30 @@ describe('User', () => {
     describe('tryBounceIfUnentitled', () => {
         const tryBounceIfUnentitled = user.__get__('tryBounceIfUnentitled');
         const ents = {
-            insights: {
-                is_entitled: false
-            }
+            insights: { is_entitled: false },
+            smart_management: { is_entitled: false },
+            openshift: { is_entitled: false },
+            hybrid: { is_entitled: false }
         };
 
         beforeEach(() => {
             replaceMock.mockReset();
         });
 
-        test('shouild bounce if unentitled', () => {
+        test('should *not* bounce if the section is unkown', () => {
             ents.insights.is_entitled = false;
+            tryBounceIfUnentitled(ents, 'apps');
+            tryBounceIfUnentitled(ents, 'foo');
+            tryBounceIfUnentitled(ents, 'test');
+            expect(replaceMock).not.toBeCalled();
+        });
+
+        test('should bounce if unentitled', () => {
             tryBounceIfUnentitled(ents, 'insights');
-            expect(replaceMock).toBeCalledWith('http://localhost/?not_entitled=insights');
+            expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
+
+            tryBounceIfUnentitled(ents, 'hybrid');
+            expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=hybrid_cloud');
         });
 
         test('should *not* bounce if entitled', () => {
