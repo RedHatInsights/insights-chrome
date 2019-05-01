@@ -7,6 +7,10 @@ const pathMapper = {
     openshift: 'openshift'
 };
 
+function getWindow() {
+    return window;
+}
+
 /* eslint-disable camelcase */
 function buildUser(token) {
     const user = token ? {
@@ -34,10 +38,32 @@ function buildUser(token) {
 }
 /* eslint-enable camelcase */
 
+function tryBounceIfUnentitled(data, section) {
+    // only test this on the apps that are in valid sections
+    // we need to keep /apps and other things functional
+    if (section !== 'insights' && section !== 'rhel' &&
+        section !== 'openshift' && section !== 'hybrid') {
+        return;
+    }
+
+    const service = pathMapper[section];
+
+    if (section && section !== '') {
+        if (data[service] && data[service].is_entitled) {
+            log('Entitled.');
+        } else {
+            log('Not entitled!');
+            if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
+                getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+            }
+        }
+    }
+}
+
 module.exports = (token) => {
     let user = buildUser(token);
 
-    const pathName = location.pathname.split('/');
+    const pathName = getWindow().location.pathname.split('/');
     pathName.shift();
     if (pathName[0] === 'beta') {
         pathName.shift();
@@ -46,18 +72,28 @@ module.exports = (token) => {
     if (user) {
         log(`Account Number: ${user.identity.account_number}`);
 
+        // NOTE: Openshift supports Users with Account Number of -1
+        // thus we need to bypass here
+        // dont call entitlements on / /beta /openshift or /beta/openshift
+        //
+        // Landing Page *does* support accounts with -1
+        // it has to
+        if (getWindow().location.pathname === '/' ||
+            getWindow().location.pathname === '/beta' ||
+            getWindow().location.pathname === '/beta/' ||
+            getWindow().location.pathname.indexOf('/openshift') === 0 ||
+            getWindow().location.pathname.indexOf('/beta/openshift') === 0) {
+            return new Promise(resolve => {
+                user.identity = {
+                    ...user.identity,
+                    entitlements: {}
+                };
+                resolve(user);
+            });
+        }
+
         return servicesApi(token.jti).servicesGet().then(data => {
-            const service = pathMapper[pathName[0]];
-            if (pathName.length > 0 && pathName[0] !== '') {
-                if (data[service] && data[service].is_entitled) {
-                    log('Entitled.');
-                } else {
-                    log('Not entitled!');
-                    if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
-                        location.replace(`${document.baseURI}?not_entitled=${service}`);
-                    }
-                }
-            }
+            tryBounceIfUnentitled(data, pathName[0]);
 
             return {
                 ...user,
@@ -70,4 +106,3 @@ module.exports = (token) => {
 
     return new Promise((res) => res());
 };
-
