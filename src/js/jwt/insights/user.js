@@ -38,6 +38,26 @@ function buildUser(token) {
 }
 /* eslint-enable camelcase */
 
+function tryBounceIfUnentitled(data, section) {
+    // only test this on the apps that are in valid sections
+    // we need to keep /apps and other things functional
+    if (section !== 'insights' && section !== 'rhel' &&
+        section !== 'openshift' && section !== 'hybrid') {
+        return;
+    }
+
+    const service = pathMapper[section];
+
+    if (section && section !== '') {
+        if (data[service] && data[service].is_entitled) {
+            log(`Entitled to: ${service}`);
+        } else {
+            log(`Not entitled to: ${service}`);
+            getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+        }
+    }
+}
+
 module.exports = (token) => {
     let user = buildUser(token);
 
@@ -53,6 +73,9 @@ module.exports = (token) => {
         // NOTE: Openshift supports Users with Account Number of -1
         // thus we need to bypass here
         // dont call entitlements on / /beta /openshift or /beta/openshift
+        //
+        // Landing Page *does* support accounts with -1
+        // it has to
         if (getWindow().location.pathname === '/' ||
             getWindow().location.pathname === '/beta' ||
             getWindow().location.pathname === '/beta/' ||
@@ -68,17 +91,7 @@ module.exports = (token) => {
         }
 
         return servicesApi(token.jti).servicesGet().then(data => {
-            const service = pathMapper[pathName[0]];
-            if (pathName.length > 0 && pathName[0] !== '') {
-                if (data[service] && data[service].is_entitled) {
-                    log('Entitled.');
-                } else {
-                    log('Not entitled!');
-                    if (document.baseURI.indexOf('ci') === -1 && document.baseURI.indexOf('qa') === -1) {
-                        getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
-                    }
-                }
-            }
+            tryBounceIfUnentitled(data, pathName[0]);
 
             return {
                 ...user,
