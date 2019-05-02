@@ -5,7 +5,7 @@ import {
     Level, LevelItem,
     Stack, StackItem
 } from '@patternfly/react-core';
-import logo from '../../../../static/images/rh-logo-white.svg';
+import logo from '../../../../static/images/logo.svg';
 import { connect } from 'react-redux';
 import './InsightsAbout.scss';
 
@@ -60,10 +60,10 @@ class InsightsAbout extends Component {
                 { name: 'Dashboard', path: `apps/dashboard/app.info.json`, version: 'N/A' },
                 { name: 'Inventory', path: `apps/inventory/app.info.json`, version: 'N/A' },
                 { name: 'Remediations', path: `apps/remediations/app.info.json`, version: 'N/A' },
-                { name: 'Vulnerabilities', path: 'apps/vulnerability/app.info.json', version: 'N/A' },
+                { name: 'Vulnerability', path: 'apps/vulnerability/app.info.json', version: 'N/A' },
                 { name: 'Compliance', path: 'apps/compliance/app.info.json', version: 'N/A' },
                 { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
-                { name: 'Insights', path: 'apps/advisor/app.info.json', version: 'N/A' }
+                { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' }
             ] },
             currentApp: app && app.title
         };

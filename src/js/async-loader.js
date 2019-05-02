@@ -11,7 +11,7 @@ const asyncLoader = (imports, callback = ([cmp]) => cmp) => {
 export default {
     loadVulnerabilities: asyncLoader([
         import('@red-hat-insights/insights-frontend-components/components/Vulnerabilities'),
-        import('./vulnerabilitiesStyles')
+        import('./vulnerabilityStyles')
     ]),
     loadAdvisor: asyncLoader([
         import('@red-hat-insights/insights-frontend-components/components/Advisor'),

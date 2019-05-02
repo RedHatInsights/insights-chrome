@@ -21,6 +21,33 @@ describe('JWT', () => {
         __rewire_reset_all__();
     });
 
+    describe('getCookieExpires', () => {
+        const getCookieExpires = jwt.__get__('getCookieExpires');
+        test('should expire at epoch if 0 is given', () => {
+            expect(getCookieExpires(0)).toBe('Thu, 01 Jan 1970 00:00:00 GMT');
+        });
+
+        test('should expire at now if now is given', () => {
+            const now = new Date();
+            const nowString = now.toGMTString();
+            const nowUnix   = Math.floor(now.getTime() / 1000);
+            expect(getCookieExpires(nowUnix)).toBe(nowString);
+        });
+    });
+
+    describe('setCookie', () => {
+        test('sets a cookie that expires on the same second the JWT expires', () => {
+            const setCookie = jwt.__get__('setCookie');
+            const setCookieWrapper = jest.fn();
+            jwt.__set__('setCookieWrapper', setCookieWrapper);
+            setCookie(encodedToken);
+            expect(setCookieWrapper).toBeCalledWith(`cs_jwt=${encodedToken};` +
+                                `path=/;` +
+                                `secure=true;` +
+                                `expires=Wed, 24 Apr 2019 17:13:47 GMT`);
+        });
+    });
+
     describe('decodeToken', () => {
         const decodeToken = jwt.__get__('decodeToken');
 

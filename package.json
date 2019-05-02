@@ -24,6 +24,7 @@
     "verify": "npm-run-all lint build      test",
     "verify:beta": "npm-run-all lint build:beta test",
     "watch": "npm-run-all --parallel watch:*",
+    "watch:images":  "npm run build:images-chrome -- -w",
     "watch:js": "parcel watch src/js/chrome.js -d build/js --public-url /apps/chrome/js",
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w"
@@ -67,7 +68,7 @@
     "@babel/plugin-transform-runtime": "^7.4.0",
     "@babel/preset-env": "^7.4.1",
     "@babel/preset-react": "^7.0.0",
-    "@red-hat-insights/insights-frontend-components": "^3.41.38",
+    "@red-hat-insights/insights-frontend-components": "^3.41.48",
     "@types/node": "^10.12.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^7.0.0-bridge.0",

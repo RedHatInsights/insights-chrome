@@ -9,6 +9,7 @@ import loadRemediations from './remediations';
 import asyncObject from './async-loader';
 import qe from './iqeEnablement';
 import consts from './consts';
+import allowUnauthed from './auth';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -30,7 +31,11 @@ export function chromeInit(libjwt) {
     libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
             actions.userLogIn(user);
-            loadChrome();
+            loadChrome(user);
+        }).catch(() => {
+            if (allowUnauthed()) {
+                loadChrome(false);
+            }
         });
     });
 
@@ -105,12 +110,13 @@ export function bootstrap(libjwt, initFunc) {
     };
 }
 
-function loadChrome() {
+function loadChrome(user) {
     import('./App/index').then(
-        ({ Header, Sidenav }) => {
+        ({ UnauthedHeader, Header, Sidenav }) => {
             const store = insights.chrome.$internal.store;
             const chromeState = store.getState().chrome;
             let defaultActive = {};
+
             if (chromeState && !chromeState.appNav && chromeState.globalNav) {
                 const activeApp = chromeState.globalNav.find(item => item.active);
                 if (activeApp && activeApp.hasOwnProperty('subItems')) {
@@ -121,9 +127,10 @@ function loadChrome() {
             }
 
             store.dispatch(appNavClick(defaultActive));
+
             render(
                 <Provider store={store}>
-                    <Header />
+                    { user ? <Header /> : <UnauthedHeader /> }
                 </Provider>,
                 document.querySelector('header')
             );

@@ -239,11 +239,27 @@ function updateToken() {
     });
 }
 
-// Set the cookie fo 3scale
+function getCookieExpires(exp) {
+    // we want the cookie to expire at the same time as the JWT session
+    // so we take the exp and get a new GTMString from that
+    const date = new Date(0);
+    date.setUTCSeconds(exp);
+    return date.toGMTString();
+}
+
+// Set the cookie for 3scale
 function setCookie(token) {
     if (token && token.length > 10) {
-        document.cookie = `${priv.cookie.cookieName}=${token};path=/;secure=true;`;
+        setCookieWrapper(`${priv.cookie.cookieName}=${token};` +
+                         `path=/;` +
+                         `secure=true;` +
+                         `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
+}
+
+// do this so we can mock out for test
+function setCookieWrapper(str) {
+    document.cookie = str;
 }
 
 // Encoded WIP
