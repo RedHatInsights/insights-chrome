@@ -2,25 +2,11 @@
 const auth = require('./auth');
 
 function mockWindow(pathname) {
-    const add    = jest.fn();
-    const remove = jest.fn();
     const w = {
-        location: { pathname },
-        document: {
-            querySelector: jest.fn(() => {
-                return {
-                    classList: { add, remove }
-                };
-            })
-        }
+        location: { pathname }
     };
 
     auth.__set__('getWindow', () => { return w; });
-    return {
-        querySelector: w.document.querySelector,
-        remove,
-        add
-    };
 }
 
 describe('Auth', () => {
@@ -28,19 +14,15 @@ describe('Auth', () => {
         for (const t of ['/insights', '/insights/foo', '/rhel/dashboard',
             '/hybrid', '/openshift/clusters', '/openshift']) {
             test(`should not allow ${t}`, () => {
-                const mocks = mockWindow(t);
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(false);
-                expect(mocks.querySelector).toBeCalledWith('body');
-                expect(mocks.remove).toBeCalledWith('unauthed');
             });
         }
 
         for (const t of ['/', '/logout', '/beta', '/beta/']) {
             test(`should allow ${t}`, () => {
-                const mocks = mockWindow(t);
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(true);
-                expect(mocks.querySelector).toBeCalledWith('body');
-                expect(mocks.add).toBeCalledWith('unauthed');
             });
         }
     });

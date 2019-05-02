@@ -34,11 +34,9 @@ function getAllowedUnauthedPaths() {
 
 export function allowUnauthed() {
     if (getAllowedUnauthedPaths().includes(getWindow().location.pathname)) {
-        getWindow().document.querySelector('body').classList.add('unauthed');
         return true;
     }
 
-    getWindow().document.querySelector('body').classList.remove('unauthed');
     return false;
 }
 
