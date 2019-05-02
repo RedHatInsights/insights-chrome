@@ -58,6 +58,19 @@ function tryBounceIfUnentitled(data, section) {
     }
 }
 
+function tryBounceIfAccountNumberMissing(accountNumber, section) {
+    // it is valid for a user with account_number -1
+    // to be on / /beta /404 /openshift etc.
+    // only do this check if we are not on one of those
+    if (section === 'openshift' || section === '') {
+        return;
+    }
+
+    if (!accountNumber || accountNumber === '-1' || accountNumber === -1) {
+        getWindow().location.href = 'https://www.redhat.com/wapps/eval/index.html?evaluation_id=1036';
+    }
+}
+
 module.exports = (token) => {
     let user = buildUser(token);
 
@@ -90,9 +103,7 @@ module.exports = (token) => {
             });
         }
 
-        if (!user.identity.account_number || user.identity.account_number === '-1' || user.identity.account_number === -1) {
-            window.location.href = 'https://www.redhat.com/wapps/eval/index.html?evaluation_id=1036';
-        }
+        tryBounceIfAccountNumberMissing(user.identity.account_number, pathName[0]);
 
         return servicesApi(token.jti).servicesGet().then(data => {
             tryBounceIfUnentitled(data, pathName[0]);

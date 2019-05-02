@@ -6,15 +6,22 @@ const token       = require('../../../../testdata/token.json');
 const userOutput  = require('../../../../testdata/user.json');
 const user        = require('./user');
 const replaceMock = jest.fn();
+const evalUrl     = 'https://www.redhat.com/wapps/eval/index.html?evaluation_id=1036';
+const mockWindow  = {
+    location: {
+        pathname: '/insights/foo',
+        href: '/insights',
+        replace: replaceMock
+    }
+};
 
-user.__set__('getWindow', () => {
-    return {
-        location: {
-            pathname: '/insights/foo',
-            replace: replaceMock
-        }
-    };
-});
+function doMockWindow() {
+    user.__set__('getWindow', () => {
+        return { ...mockWindow };
+    });
+}
+
+beforeEach(doMockWindow);
 
 describe('User', () => {
     const buildUser = user.__get__('buildUser');
@@ -22,6 +29,36 @@ describe('User', () => {
     describe('buildUser', () => {
         test('transforms a token into a User object', () => {
             expect(buildUser(token)).toMatchObject(userOutput);
+        });
+    });
+
+    /* eslint-disable camelcase */
+    describe('tryBounceIfAccountNumberMissing', () => {
+        const tryBounceIfAccountNumberMissing = user.__get__('tryBounceIfAccountNumberMissing');
+        describe('When account_number is -1', () => {
+            for (const section of ['openshift', '']) {
+                test(`should *not* bounce on /${section}`, () => {
+                    mockWindow.location.href = `/${section}`;
+                    tryBounceIfAccountNumberMissing(-1, section);
+                    expect(mockWindow.location.href).toBe(`/${section}`);
+                });
+            }
+            for (const section of ['insights', 'rhel', 'hybrid', 'apps']) {
+                test(`should bounce on /${section}`, () => {
+                    mockWindow.location.href = `/${section}`;
+                    tryBounceIfAccountNumberMissing(-1, section);
+                    expect(mockWindow.location.href).toBe(evalUrl);
+                });
+            }
+        });
+        describe('When account_number is 540155', () => {
+            for (const section of ['openshift', 'insights', 'rhel', 'hybrid', 'apps']) {
+                test(`should *not* bounce on /${section}`, () => {
+                    mockWindow.location.href = `/${section}`;
+                    tryBounceIfAccountNumberMissing(540155, section);
+                    expect(mockWindow.location.href).toBe(`/${section}`);
+                });
+            }
         });
     });
 
