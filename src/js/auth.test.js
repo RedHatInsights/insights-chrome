@@ -3,7 +3,7 @@ const auth = require('./auth');
 
 function mockWindow(pathname) {
     const w = {
-        location: { pathname },
+        location: { pathname }
     };
 
     auth.__set__('getWindow', () => { return w; });
