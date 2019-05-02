@@ -20,7 +20,7 @@
     "lint:js": "eslint src",
     "lint:js-fix": "eslint src --fix",
     "lint:sass": "stylelint 'src/sass/**/*.scss' --config .stylelintrc.json",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --forceExit",
     "verify": "npm-run-all lint build      test",
     "verify:beta": "npm-run-all lint build:beta test",
     "watch": "npm-run-all --parallel watch:*",
