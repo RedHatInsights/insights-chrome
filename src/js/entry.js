@@ -128,21 +128,13 @@ function loadChrome(user) {
 
             store.dispatch(appNavClick(defaultActive));
 
-            if (user) {
-                render(
-                    <Provider store={store}>
-                        <Header />
-                    </Provider>,
-                    document.querySelector('header')
-                );
-            } else {
-                render(
-                    <Provider store={store}>
-                        <UnauthedHeader />
-                    </Provider>,
-                    document.querySelector('header')
-                );
-            }
+
+            render(
+                <Provider store={store}>
+                    { user ? <Header /> : <UnauthedHeader /> }
+                </Provider>,
+                document.querySelector('header')
+            );
 
             if (document.querySelector('aside')) {
                 render(
