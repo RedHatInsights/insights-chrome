@@ -2,11 +2,20 @@
 import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
 import consts from './consts';
 
+// Started off using Array.flat
+// Edge lacks this and every version of IE
+// Use lodash instead
+import { flatten } from 'lodash';
+
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 const { options: defaultOptions } = require('./jwt/constants');
+
+function getWindow() {
+    return window;
+}
 
 function bouncer() {
     if (allowUnauthed()) { return; }
@@ -20,12 +29,12 @@ function bouncer() {
 }
 
 function getAllowedUnauthedPaths() {
-    return consts.allowedUnauthedPaths.map(e => ([e, e + '/'])).flat();
+    return flatten(consts.allowedUnauthedPaths.map(e => ([e, e + '/'])));
 }
 
 export function allowUnauthed() {
-    if (getAllowedUnauthedPaths().includes(window.location.pathname)) {
-        window.document.querySelector('body').classList.add('unauthed');
+    if (getAllowedUnauthedPaths().includes(getWindow().location.pathname)) {
+        getWindow().document.querySelector('body').classList.add('unauthed');
         return true;
     }
 
@@ -47,7 +56,7 @@ export default () => {
     // on every page load
     if (token && token.length > 10) {
         options.token = token;
-        options.refreshToken = window.localStorage.getItem(options.cookieName);
+        options.refreshToken = getWindow().localStorage.getItem(options.cookieName);
     }
 
     const promise = jwt.init(options).then(bouncer);
