@@ -3,7 +3,7 @@ const auth = require('./auth');
 
 function mockWindow(pathname) {
     const w = {
-        location: { pathname },
+        location: { pathname }
     };
 
     auth.__set__('getWindow', () => { return w; });
@@ -14,14 +14,14 @@ describe('Auth', () => {
         for (const t of ['/insights', '/insights/foo', '/rhel/dashboard',
             '/hybrid', '/openshift/clusters', '/openshift']) {
             test(`should not allow ${t}`, () => {
-                const mocks = mockWindow(t);
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(false);
             });
         }
 
         for (const t of ['/', '/logout', '/beta', '/beta/']) {
             test(`should allow ${t}`, () => {
-                const mocks = mockWindow(t);
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(true);
             });
         }
