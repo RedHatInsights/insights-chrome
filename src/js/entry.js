@@ -32,10 +32,8 @@ export function chromeInit(libjwt) {
         libjwt.jwt.getUserInfo().then((user) => {
             actions.userLogIn(user);
             loadChrome(user);
-            window.document.querySelector('body').classList.remove('unauthed');
         }).catch(() => {
             if (allowUnauthed()) {
-                window.document.querySelector('body').classList.add('unauthed');
                 loadChrome(false);
             }
         });
