@@ -1,17 +1,27 @@
 /*global describe, jest, test, require, expect, beforeEach*/
 const auth = require('./auth');
 
+function mockWindow(pathname) {
+    const w = {
+        location: { pathname },
+    };
+
+    auth.__set__('getWindow', () => { return w; });
+}
+
 describe('Auth', () => {
     describe('allowUnauthed', () => {
         for (const t of ['/insights', '/insights/foo', '/rhel/dashboard',
             '/hybrid', '/openshift/clusters', '/openshift']) {
             test(`should not allow ${t}`, () => {
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(false);
             });
         }
 
         for (const t of ['/', '/logout', '/beta', '/beta/']) {
             test(`should allow ${t}`, () => {
+                mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(true);
             });
         }
