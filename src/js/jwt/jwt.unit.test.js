@@ -21,6 +21,19 @@ describe('JWT', () => {
         __rewire_reset_all__();
     });
 
+    describe('setCookie', () => {
+        const setCookie = jwt.__get__('setCookie');
+        const setCookieWrapper = jest.fn();
+        jwt.__set__('setCookieWrapper', setCookieWrapper);
+        test('sets a cookie that expires on the same second the JWT expires', () => {
+            setCookie(encodedToken);
+            expect(setCookieWrapper).toBeCalledWith(`cs_jwt=${encodedToken};` +
+                                `path=/;` +
+                                `secure=true;` +
+                                `expires=Wed, 24 Apr 2019 17:13:47 GMT`);
+        });
+    });
+
     describe('decodeToken', () => {
         const decodeToken = jwt.__get__('decodeToken');
 
