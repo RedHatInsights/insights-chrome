@@ -43,6 +43,7 @@ describe('User', () => {
                     expect(mockWindow.location.href).toBe(`/${section}`);
                 });
             }
+
             for (const section of ['insights', 'rhel', 'hybrid', 'apps']) {
                 test(`should bounce on /${section}`, () => {
                     mockWindow.location.href = `/${section}`;
