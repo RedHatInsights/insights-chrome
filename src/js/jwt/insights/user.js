@@ -90,6 +90,10 @@ module.exports = (token) => {
             });
         }
 
+        if (!user.identity.account_number || user.identity.account_number === '-1' || user.identity.account_number === -1) {
+            window.location.href = 'https://www.redhat.com/wapps/eval/index.html?evaluation_id=1036';
+        }
+
         return servicesApi(token.jti).servicesGet().then(data => {
             tryBounceIfUnentitled(data, pathName[0]);
 
