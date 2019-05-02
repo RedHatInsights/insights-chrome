@@ -38,6 +38,7 @@ export function allowUnauthed() {
         return true;
     }
 
+    getWindow().document.querySelector('body').classList.remove('unauthed');
     return false;
 }
 

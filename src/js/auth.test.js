@@ -2,12 +2,15 @@
 const auth = require('./auth');
 
 function mockWindow(pathname) {
-    const add = jest.fn();
+    const add    = jest.fn();
+    const remove = jest.fn();
     const w = {
         location: { pathname },
         document: {
             querySelector: jest.fn(() => {
-                return { classList: { add } };
+                return {
+                    classList: { add, remove }
+                };
             })
         }
     };
@@ -15,6 +18,7 @@ function mockWindow(pathname) {
     auth.__set__('getWindow', () => { return w; });
     return {
         querySelector: w.document.querySelector,
+        remove,
         add
     };
 }
@@ -26,8 +30,8 @@ describe('Auth', () => {
             test(`should not allow ${t}`, () => {
                 const mocks = mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(false);
-                expect(mocks.querySelector).not.toBeCalled();
-                expect(mocks.add).not.toBeCalled();
+                expect(mocks.querySelector).toBeCalledWith('body');
+                expect(mocks.remove).toBeCalledWith('unauthed');
             });
         }
 
