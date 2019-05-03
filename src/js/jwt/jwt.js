@@ -2,6 +2,7 @@
 import Keycloak from 'keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
+import { pageRequiresAuthentication } from '../utils';
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -201,6 +202,11 @@ function loginAllTabs() {
 // Get user information
 exports.getUserInfo = () => {
     log('Getting User Information');
+
+    if (!cookie.get(DEFAULT_COOKIE_NAME) && pageRequiresAuthentication()) {
+        exports.login();
+        return false;
+    }
 
     if (isExistingValid(priv.keycloak.token)) {
         return insightsUser(priv.keycloak.tokenParsed);
