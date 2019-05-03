@@ -7,6 +7,7 @@ function getWindow() {
 function getSection() {
     const sections = getWindow().location.pathname.split('/');
     if (sections[1] === 'beta') { return sections[2] || ''; }
+
     return sections[1];
 }
 
