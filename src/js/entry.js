@@ -91,7 +91,12 @@ export function bootstrap(libjwt, initFunc) {
                     // vars are set
 
                     qe.init();
-                    return libjwt.initPromise.then(libjwt.jwt.getUserInfo);
+                    return libjwt
+                    .initPromise
+                    .then(libjwt.jwt.getUserInfo)
+                    .catch(() => {
+                        libjwt.jwt.logoutAllTabs();
+                    });
                 },
                 qe: qe,
                 logout: () => libjwt.jwt.logoutAllTabs(),
