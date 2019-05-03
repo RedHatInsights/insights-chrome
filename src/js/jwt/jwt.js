@@ -203,8 +203,9 @@ function loginAllTabs() {
 exports.getUserInfo = () => {
     log('Getting User Information');
 
-    if (pageRequiresAuthentication()) {
+    if (!cookie.get(DEFAULT_COOKIE_NAME) && pageRequiresAuthentication()) {
         exports.login();
+        return false;
     }
 
     if (isExistingValid(priv.keycloak.token)) {

@@ -196,11 +196,13 @@ describe('JWT', () => {
             expect(cookie.get('cs_jwt')).toBeDefined();
         });
 
-        test('logout', () => {
-            const logout = jwt.__get__('logout');
-            cookie.set('cs_jwt', 'testvalue');
-            logout();
-            expect(cookie.get('cs_jwt')).not.toBeDefined();
+        describe('logout', () => {
+            test('should destroy the cookie', () => {
+                const logout = jwt.__get__('logout');
+                cookie.set('cs_jwt', 'testvalue');
+                logout();
+                expect(cookie.get('cs_jwt')).not.toBeDefined();
+            });
         });
 
         test('expiredToken', () => {
@@ -218,15 +220,48 @@ describe('JWT', () => {
     });
 
     describe('helper functions', () => {
-
-        test('getUserInfo', () => {
-            let mockUser = { name: 'John Guy' };
-            let options = {};
-            options.tokenParsed = decodedToken;
-            jwt.init(options);
-            JWTRewireAPI.__Rewire__('isExistingValid', (data) => data ? true : false);
-            JWTRewireAPI.__Rewire__('insightsUser', (data) => data ? mockUser : null);
-            expect(jwt.getUserInfo()).toBe(mockUser);
+        describe('getUserInfo', () => {
+            beforeEach(() => {
+                cookie.set('cs_jwt', 'deadbeef');
+            });
+            function doMockWindow(path) {
+                require('../utils').__set__('getWindow', () => {
+                    return {
+                        location: {
+                            pathname: path
+                        }
+                    };
+                });
+            }
+            test('should call login if the cookie is missing and on an authenticated page', () => {
+                cookie.remove('cs_jwt');
+                doMockWindow('/insights/foobar');
+                jwt.login = jest.fn();
+                jwt.getUserInfo();
+                expect(jwt.login).toBeCalled();
+            });
+            test('should *not* call login if the cookie is missing and on an unauthenticated page', () => {
+                cookie.remove('cs_jwt');
+                doMockWindow('/');
+                jwt.login = jest.fn();
+                jwt.getUserInfo();
+                expect(jwt.login).not.toBeCalled();
+            });
+            test('should *not* call login if the cookie is present', () => {
+                doMockWindow('/insights/foo');
+                jwt.login = jest.fn();
+                jwt.getUserInfo();
+                expect(jwt.login).not.toBeCalled();
+            });
+            test('should give you a valid user object', () => {
+                let mockUser = { name: 'John Guy' };
+                let options = {};
+                options.tokenParsed = decodedToken;
+                jwt.init(options);
+                JWTRewireAPI.__Rewire__('isExistingValid', (data) => data ? true : false);
+                JWTRewireAPI.__Rewire__('insightsUser', (data) => data ? mockUser : null);
+                expect(jwt.getUserInfo()).toBe(mockUser);
+            });
         });
 
         test('getEncodedToken', () => {
