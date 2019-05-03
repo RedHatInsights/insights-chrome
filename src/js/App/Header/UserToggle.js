@@ -35,7 +35,7 @@ function buildItems(username, accountNumber = -1, extraItems) {
         <DropdownItem key="User Management" href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html">
             User Management
         </DropdownItem>,
-        <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout()}>
+        <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout(true)}>
             Logout
         </DropdownItem>,
         [...extraItems]

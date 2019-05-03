@@ -12,8 +12,6 @@ const insightsUser = require('./insights/user');
 const urijs        = require('urijs');
 const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 
-const DEFAULT_REDIRECT_PATH = `logout`;
-
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
 const priv = {};
@@ -86,8 +84,6 @@ exports.doOffline = (key, val) => {
 exports.init = (options) => {
     log('Initializing');
 
-    const currentEnv = window.location.href;
-
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
 
     priv.cookie = {
@@ -96,8 +92,6 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-
-    options.redirectUri = (`${options.redirectUri ? options.redirectUri : currentEnv + DEFAULT_REDIRECT_PATH}`);
 
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = updateToken;
@@ -179,7 +173,8 @@ exports.login = () => {
     priv.keycloak.login({ redirectUri: location.href });
 };
 
-function logout() {
+function logout(bounce) {
+    console.log(arguments);
     log('Logging out');
 
     // Clear cookies and tokens
@@ -187,12 +182,16 @@ function logout() {
     cookie.remove(priv.cookie.cookieName);
 
     // Redirect to logout
-    priv.keycloak.logout(priv.keycloak);
+    if (bounce) {
+        priv.keycloak.logout({
+            redirectUri: `https://${window.location.host}/logout`
+        });
+    }
 }
 
-exports.logoutAllTabs = () => {
+exports.logoutAllTabs = (bounce) => {
     authChannel.postMessage({ type: 'logout' });
-    logout();
+    logout(bounce);
 };
 
 function loginAllTabs() {
