@@ -76,7 +76,7 @@ class Tools extends Component {
         return (
             <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
-                    <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-lg">
+                    <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
                         {actions.map((oneItem, key) => (
                             oneItem.items ?
                                 <ToolbarToggle icon={oneItem.icon} dropdownItems={oneItem.items} /> :
@@ -98,7 +98,7 @@ class Tools extends Component {
                                 <DropdownItem key={key} component="button" isDisabled>{action.title}</DropdownItem>
                             ))} />
                         </ToolbarItem>
-                        <ToolbarItem className="pf-u-sr-only pf-u-visible-on-lg">
+                        <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-lg">
                             <UserToggle className='ins-c-dropdown__user'/>
                         </ToolbarItem>
                     </ToolbarGroup>
