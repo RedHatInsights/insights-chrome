@@ -174,7 +174,6 @@ exports.login = () => {
 };
 
 function logout(bounce) {
-    console.log(arguments);
     log('Logging out');
 
     // Clear cookies and tokens
