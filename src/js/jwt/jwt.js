@@ -12,7 +12,7 @@ const insightsUser = require('./insights/user');
 const urijs        = require('urijs');
 const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
 
-// const DEFAULT_REDIRECT_URI = `${window.location}/logout`;
+const DEFAULT_REDIRECT_PATH = `logout`;
 
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
@@ -86,6 +86,8 @@ exports.doOffline = (key, val) => {
 exports.init = (options) => {
     log('Initializing');
 
+    const currentEnv = window.location.href;
+
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
 
     priv.cookie = {
@@ -95,8 +97,7 @@ exports.init = (options) => {
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
 
-    // TODO, add redirect back
-    // options.redirectUri = ((options.redirectUri) ? options.redirectUri : DEFAULT_REDIRECT_URI);
+    options.redirectUri = (`${options.redirectUri ? options.redirectUri : currentEnv + DEFAULT_REDIRECT_PATH}`);
 
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = updateToken;
