@@ -113,19 +113,19 @@ class InsightsAbout extends Component {
                 isOpen={isModalOpen}
                 onClose={onClose}
                 brandImageSrc={logo}
-                productName="Red Hat Cloud Services"
                 brandImageAlt="Red Hat Logo"
                 trademark={<Copyright />}
             >
                 <Stack gutter='sm'>
                     <StackItem>
-                        Please include these details when opening a support case against Insights
+                        Please include these details when opening a support case.
+
                     </StackItem>
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
                             <TextList component="dl" className='ins-debug-info'>
                                 {this.getItem('User Name', user && user.username)}
-                                {this.getItem('Current Application', this.state.currentApp)}
+                                {this.getItem('Current Application', this.state.currentApp || 'Landing')}
                                 {this.getItem('Application Path', window.location.pathname)}
                                 {this.state.appDetails.apps.map((app) => {
                                     return this.getItem(app.name + ' Version', app.version);
