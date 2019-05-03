@@ -233,6 +233,7 @@ describe('JWT', () => {
                     };
                 });
             }
+
             test('should call login if the cookie is missing and on an authenticated page', () => {
                 cookie.remove('cs_jwt');
                 doMockWindow('/insights/foobar');
