@@ -10,7 +10,7 @@ const basepath = document.baseURI;
 const openshiftLinks = {
     operatorhub: {
         title: 'OperatorHub.io',
-        link: 'https://docs.openshift.com/container-platform/4.1/'
+        link: 'https://operatorhub.io/'
     },
     feedback: {
         title: 'Cluster Manager Feedback',
