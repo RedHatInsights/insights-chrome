@@ -1,4 +1,4 @@
-/*global expect, require, test, describe, jest, beforeAll, afterEach, __rewire_reset_all__*/
+/*global expect, require, test, describe, jest, beforeAll, beforeEach, afterEach, __rewire_reset_all__*/
 import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
 import cookie from 'js-cookie';
 
@@ -221,9 +221,6 @@ describe('JWT', () => {
 
     describe('helper functions', () => {
         describe('getUserInfo', () => {
-            beforeEach(() => {
-                cookie.set('cs_jwt', 'deadbeef');
-            });
             function doMockWindow(path) {
                 require('../utils').__set__('getWindow', () => {
                     return {
@@ -234,26 +231,73 @@ describe('JWT', () => {
                 });
             }
 
-            test('should call login if the cookie is missing and on an authenticated page', () => {
-                cookie.remove('cs_jwt');
-                doMockWindow('/insights/foobar');
-                jwt.login = jest.fn();
-                jwt.getUserInfo();
-                expect(jwt.login).toBeCalled();
+            const updateTokenMock = jest.fn();
+            const isExistingValidMock = jest.fn();
+
+            beforeEach(() => {
+                isExistingValidMock.mockReset();
+                updateTokenMock.mockReset();
+                cookie.set('cs_jwt', 'deadbeef');
+                jwt.__set__('updateToken', updateTokenMock);
+                jwt.__set__('isExistingValid', isExistingValidMock);
             });
-            test('should *not* call login if the cookie is missing and on an unauthenticated page', () => {
-                cookie.remove('cs_jwt');
-                doMockWindow('/');
-                jwt.login = jest.fn();
-                jwt.getUserInfo();
-                expect(jwt.login).not.toBeCalled();
+
+            test('return right away if the cookie and token are good', () => {
+                cookie.set('cs_jwt', encodedToken);
+                isExistingValidMock.mockReturnValueOnce(true);
+                isExistingValidMock.mockReturnValueOnce(true);
+                updateTokenMock.mockReturnValue(new Promise((res) => {
+                    res();
+                }));
+
+                return jwt.getUserInfo().then(() => {
+                    expect(isExistingValidMock).toHaveBeenCalledTimes(2);
+                    expect(updateTokenMock).not.toHaveBeenCalled();
+                });
             });
-            test('should *not* call login if the cookie is present', () => {
-                doMockWindow('/insights/foo');
-                jwt.login = jest.fn();
-                jwt.getUserInfo();
-                expect(jwt.login).not.toBeCalled();
+
+            describe('token update fails', () => {
+                function doTest(url, expectedToWork) {
+                    isExistingValidMock.mockReturnValueOnce(false);
+                    doMockWindow(url);
+                    jwt.login = jest.fn();
+                    updateTokenMock.mockReturnValue(new Promise((res, rej) => {
+                        rej();
+                    }));
+
+                    return jwt.getUserInfo().then(() => {
+                        if (expectedToWork) {
+                            expect(jwt.login).toBeCalled();
+                        } else {
+                            expect(jwt.login).not.toBeCalled();
+                        }
+                    });
+                }
+
+                test('should call login on an authenticated page', () => {
+                    return doTest('/insights/foobar', true);
+                });
+
+                test('should *not* call login on an unauthenticated page', () => {
+                    return doTest('/', false);
+                });
             });
+
+            describe('token update passes', () => {
+                test('should *not* call login', () => {
+                    cookie.remove('cs_jwt');
+                    doMockWindow('/insights/foobar');
+                    jwt.login = jest.fn();
+                    updateTokenMock.mockReturnValue(new Promise((res) => {
+                        res();
+                    }));
+
+                    return jwt.getUserInfo().then(() => {
+                        expect(jwt.login).not.toBeCalled();
+                    });
+                });
+            });
+
             test('should give you a valid user object', () => {
                 let mockUser = { name: 'John Guy' };
                 let options = {};

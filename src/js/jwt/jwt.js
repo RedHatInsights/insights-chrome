@@ -1,3 +1,5 @@
+/*global exports, require*/
+
 // Imports
 import Keycloak from 'keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
@@ -129,27 +131,29 @@ exports.init = (options) => {
 
 function isExistingValid(token) {
     log('Checking validity of existing JWT');
-    // TODO: Remove next line
-    // let test = Keycloak({});
-    if (!token) { return false; }
+    try {
+        if (!token) { return false; }
 
-    const parsed = decodeToken(token);
-    if (!parsed.exp) { return false; }
+        const parsed = decodeToken(token);
+        if (!parsed.exp) { return false; }
 
-    // Date.now() has extra precision...
-    // it includes milis
-    // we need to trim it down to valid seconds from epoch
-    // because we compare to KC's exp which is seconds from epoch
-    const now = Date.now().toString().substr(0, 10);
-    const exp = parsed.exp - now;
+        // Date.now() has extra precision...
+        // it includes milis
+        // we need to trim it down to valid seconds from epoch
+        // because we compare to KC's exp which is seconds from epoch
+        const now = Date.now().toString().substr(0, 10);
+        const exp = parsed.exp - now;
 
-    log(`expires in ${exp}`);
+        log(`expires in ${exp}`);
 
-    if (exp > 90) {
-        priv.keycloak.tokenParsed = parsed;
-        return true;
-    } else {
-        log('token expired');
+        if (exp > 90) {
+            priv.keycloak.tokenParsed = parsed;
+            return true;
+        } else {
+            log('token expired');
+            return false;
+        }
+    } catch (e) {
         return false;
     }
 }
@@ -171,7 +175,7 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
-    priv.keycloak.login({ redirectUri: location.href });
+    return priv.keycloak.login({ redirectUri: location.href });
 };
 
 function logout(bounce) {
@@ -202,17 +206,21 @@ function loginAllTabs() {
 // Get user information
 exports.getUserInfo = () => {
     log('Getting User Information');
+    const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
-    if (!cookie.get(DEFAULT_COOKIE_NAME) && pageRequiresAuthentication()) {
-        exports.login();
-        return false;
-    }
-
-    if (isExistingValid(priv.keycloak.token)) {
+    if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
-    return updateToken().then(() => insightsUser(priv.keycloak.tokenParsed));
+    return updateToken()
+    .then(() => {
+        insightsUser(priv.keycloak.tokenParsed);
+    })
+    .catch(() => {
+        if (pageRequiresAuthentication()) {
+            return exports.login();
+        }
+    });
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
@@ -232,9 +240,13 @@ function refreshTokens() {
 
 // Actually update the token
 function updateToken() {
-    log('Trying to update token');
+    return priv.keycloak.updateToken().then(refreshed => {
+        // Important! after we update the token
+        // we have to again populate the Cookie!
+        // Otherwise we just update and dont send
+        // the updated token down stream... and things 401
+        setCookie(priv.keycloak.token);
 
-    return priv.keycloak.updateToken().then(function(refreshed) {
         if (refreshed) {
             log('Token was successfully refreshed');
         } else {
