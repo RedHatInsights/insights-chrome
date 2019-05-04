@@ -8,19 +8,19 @@ import NavigationItem from './NavigationItem';
 const basepath = document.baseURI;
 
 const openshiftLinks = {
-    'operatorhub': {
+    operatorhub: {
         title: 'OperatorHub.io',
         link: 'https://docs.openshift.com/container-platform/4.1/'
     },
-    'feedback': {
+    feedback: {
         title: 'Cluster Manager Feedback',
         link: 'mailto:uhc-feedback@redhat.com'
     },
-    'bugs': {
+    bugs: {
         title: 'Report an OpenShift Bug',
         link: 'https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform'
     }
-}
+};
 
 class Navigation extends Component {
     constructor(props) {
@@ -129,7 +129,7 @@ class Navigation extends Component {
                                     navigate={value.link}
                                     onClick={() => {
                                         window.open(value.link, '_blank');
-                                    } }/>
+                                    } }/>;
                             }
                         )
                     }
