@@ -7,6 +7,21 @@ import NavigationItem from './NavigationItem';
 
 const basepath = document.baseURI;
 
+const openshiftLinks = {
+    'operatorhub': {
+        title: 'OperatorHub.io',
+        link: 'https://docs.openshift.com/container-platform/4.1/'
+    },
+    'feedback': {
+        title: 'Cluster Manager Feedback',
+        link: 'mailto:uhc-feedback@redhat.com'
+    },
+    'bugs': {
+        title: 'Report an OpenShift Bug',
+        link: 'https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform'
+    }
+}
+
 class Navigation extends Component {
     constructor(props) {
         super(props);
@@ -105,6 +120,19 @@ class Navigation extends Component {
                             window.location.href = documentation;
                         } }
                     /> }
+                    { activeLocation === 'openshift' &&
+                        Object.entries(openshiftLinks).map(
+                            ([key, value]) => {
+                                return <NavigationItem
+                                    title={value.title}
+                                    key={key}
+                                    navigate={value.link}
+                                    onClick={() => {
+                                        window.open(value.link, '_blank');
+                                    } }/>
+                            }
+                        )
+                    }
                 </NavList>
             </Nav>
         );

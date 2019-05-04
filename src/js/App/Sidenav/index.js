@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 
 const documentationLink = {
     rhel: 'https://access.redhat.com/documentation/cloud_management_services_for_red_hat_enterprise_linux',
-    insights: 'https://access.redhat.com/documentation/red_hat_insights/'
+    insights: 'https://access.redhat.com/documentation/red_hat_insights/',
+    openshift: 'https://docs.openshift.com/container-platform/4.1/'
 };
 
 class SideNav extends Component {
