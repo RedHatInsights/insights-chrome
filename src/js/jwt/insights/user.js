@@ -1,3 +1,4 @@
+const utils = require('../../utils');
 const log = require('../logger')('insights/user.js');
 const servicesApi = require('./entitlements');
 const pathMapper = {
@@ -48,6 +49,11 @@ function tryBounceIfUnentitled(data, section) {
 
     const service = pathMapper[section];
 
+    if (data === true) {
+        // this is a force bounce scenario!
+        getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+    }
+
     if (section && section !== '') {
         if (data[service] && data[service].is_entitled) {
             log(`Entitled to: ${service}`);
@@ -76,11 +82,7 @@ module.exports = (token) => {
         //
         // Landing Page *does* support accounts with -1
         // it has to
-        if (getWindow().location.pathname === '/' ||
-            getWindow().location.pathname === '/beta' ||
-            getWindow().location.pathname === '/beta/' ||
-            getWindow().location.pathname.indexOf('/openshift') === 0 ||
-            getWindow().location.pathname.indexOf('/beta/openshift') === 0) {
+        if (utils.pageAllowsUnentitled()) {
             return new Promise(resolve => {
                 user.identity = {
                     ...user.identity,
@@ -90,9 +92,21 @@ module.exports = (token) => {
             });
         }
 
+        // Important this has to come after the above -1 allow checks
+        // Otherwise we get bounced on those paths
+        //
+        // It also needs to not go int he servicesApi call
+        // because 3scale 403s if the Account number is -1
+        //
+        // we "force" a bounce here because the entitlements API
+        // was never called
+        if (!utils.isValidAccountNumber(user.identity.account_number)) {
+            tryBounceIfUnentitled(true, pathName[0]);
+            return;
+        }
+
         return servicesApi(token.jti).servicesGet().then(data => {
             tryBounceIfUnentitled(data, pathName[0]);
-
             return {
                 ...user,
                 entitlements: data

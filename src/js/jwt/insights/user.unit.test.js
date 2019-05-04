@@ -65,6 +65,14 @@ describe('User', () => {
 
     describe('default', () => {
         test('appends the entitlements data onto the user object', () => {
+            require('../../utils').__set__('getWindow', () => {
+                return {
+                    location: {
+                        pathname: '/insights/foo'
+                    }
+                };
+            });
+
             const o = user(token);
             expect(o).toHaveProperty('entitlements', { foo: 'bar' });
             expect(o).toHaveProperty('identity');
