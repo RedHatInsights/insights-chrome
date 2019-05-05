@@ -127,9 +127,7 @@ class Navigation extends Component {
                                     title={value.title}
                                     key={key}
                                     navigate={value.link}
-                                    onClick={() => {
-                                        window.open(value.link, '_blank');
-                                    } }/>;
+                                    target='_blank'/>;
                             }
                         )
                     }
