@@ -120,7 +120,7 @@ class Navigation extends Component {
                             window.location.href = documentation;
                         } }
                     /> }
-                    { activeLocation === 'insights' &&
+                    { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
                                 return <NavItem
