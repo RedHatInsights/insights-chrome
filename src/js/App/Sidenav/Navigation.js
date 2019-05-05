@@ -111,7 +111,7 @@ class Navigation extends Component {
                             }
                         })
                     }
-                    { documentation && <NavigationItem
+                    { documentation && activeLocation !== 'openshift' && <NavigationItem
                         className="ins-c-page__documentation"
                         itemID="documentation"
                         title="Documentation"
@@ -120,6 +120,10 @@ class Navigation extends Component {
                             window.location.href = documentation;
                         } }
                     /> }
+                    { activeLocation === 'openshift' && <NavItem
+                        className="ins-c-page__documentation"
+                        to={documentation}
+                        target='_blank'>Documentation</NavItem> }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
