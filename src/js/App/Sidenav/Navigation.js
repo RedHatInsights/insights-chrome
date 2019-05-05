@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
+import { Nav, NavItem, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
@@ -111,7 +111,7 @@ class Navigation extends Component {
                             }
                         })
                     }
-                    { documentation && <NavigationItem
+                    { documentation && activeLocation !== 'openshift' && <NavigationItem
                         className="ins-c-page__documentation"
                         itemID="documentation"
                         title="Documentation"
@@ -120,14 +120,19 @@ class Navigation extends Component {
                             window.location.href = documentation;
                         } }
                     /> }
+                    { activeLocation === 'openshift' && <NavItem
+                        className="ins-c-page__documentation"
+                        to={documentation}
+                        target='_blank'>Documentation</NavItem> }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
-                                return <NavigationItem
-                                    title={value.title}
+                                return <NavItem
                                     key={key}
-                                    navigate={value.link}
-                                    target='_blank'/>;
+                                    to={value.link}
+                                    target='_blank'>
+                                    {value.title}
+                                </NavItem>;
                             }
                         )
                     }
