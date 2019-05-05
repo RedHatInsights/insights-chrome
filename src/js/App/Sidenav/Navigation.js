@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
+import { Nav, NavItem, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
@@ -120,14 +120,15 @@ class Navigation extends Component {
                             window.location.href = documentation;
                         } }
                     /> }
-                    { activeLocation === 'openshift' &&
+                    { activeLocation === 'insights' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
-                                return <NavigationItem
-                                    title={value.title}
-                                    key={key}
-                                    navigate={value.link}
-                                    target='_blank'/>;
+                                return <NavItem
+                                        key={key}
+                                        to={value.link}
+                                        target='_blank'>
+                                            {value.title}
+                                        </NavItem>;
                             }
                         )
                     }
