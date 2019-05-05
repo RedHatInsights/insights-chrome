@@ -124,11 +124,11 @@ class Navigation extends Component {
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
                                 return <NavItem
-                                        key={key}
-                                        to={value.link}
-                                        target='_blank'>
-                                            {value.title}
-                                        </NavItem>;
+                                    key={key}
+                                    to={value.link}
+                                    target='_blank'>
+                                    {value.title}
+                                </NavItem>;
                             }
                         )
                     }
