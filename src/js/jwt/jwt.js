@@ -78,7 +78,7 @@ exports.doOffline = (key, val) => {
     const kc = Keycloak(options);
     kc.init(options).then(() => {
         kc.login({
-            scope: 'offline'
+            scope: 'offline_access'
         });
     });
 };
