@@ -22,18 +22,20 @@ const priv = {};
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
 authChannel.onmessage = (e) => {
-    log(`BroadcastChannel, Received event : ${e.data.type}`);
+    if (e && e.data && e.data.type) {
+        log(`BroadcastChannel, Received event : ${e.data.type}`);
 
-    switch (e.data.type) {
-        case 'logout':
-            logout();
-            break;
-        case 'login':
-            exports.login();
-            break;
-        case 'refresh':
-            updateToken();
-            break;
+        switch (e.data.type) {
+            case 'logout':
+                logout();
+                break;
+            case 'login':
+                exports.login();
+                break;
+            case 'refresh':
+                updateToken();
+                break;
+        }
     }
 };
 
