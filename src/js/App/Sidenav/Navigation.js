@@ -114,6 +114,7 @@ class Navigation extends Component {
                     { documentation && <NavItem
                         className="ins-c-page__documentation"
                         to={documentation}
+                        rel='noopener'
                         target='_blank'>Documentation</NavItem>
                     }
                     { activeLocation === 'openshift' &&
