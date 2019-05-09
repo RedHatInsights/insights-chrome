@@ -111,19 +111,12 @@ class Navigation extends Component {
                             }
                         })
                     }
-                    { documentation && activeLocation !== 'openshift' && <NavigationItem
-                        className="ins-c-page__documentation"
-                        itemID="documentation"
-                        title="Documentation"
-                        navigate={documentation}
-                        onClick={() => {
-                            window.location.href = documentation;
-                        } }
-                    /> }
-                    { activeLocation === 'openshift' && <NavItem
+                    { documentation && <NavItem
                         className="ins-c-page__documentation"
                         to={documentation}
-                        target='_blank'>Documentation</NavItem> }
+                        rel='noopener'
+                        target='_blank'>Documentation</NavItem>
+                    }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
