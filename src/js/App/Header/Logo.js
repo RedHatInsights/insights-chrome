@@ -1,4 +1,6 @@
 import React from 'react';
 import logo from '../../../../static/images/logo.svg';
 
-export default () => <img src={logo} alt="Red Hat Logo" />;
+const Logo = () => <img src={logo} alt="Red Hat Logo" />;
+
+export default Logo;

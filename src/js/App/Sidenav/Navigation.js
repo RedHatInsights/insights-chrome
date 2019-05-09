@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavItem, NavExpandable, NavList } from '@patternfly/react-core/dist/esm/components/Nav';
+import { Nav, NavItem, NavExpandable, NavList, NavItemSeparator } from '@patternfly/react-core/dist/esm/components/Nav';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
@@ -111,11 +111,16 @@ class Navigation extends Component {
                             }
                         })
                     }
-                    { documentation && <NavItem
-                        className="ins-c-page__documentation"
-                        to={documentation}
-                        rel='noopener'
-                        target='_blank'>Documentation</NavItem>
+                    { documentation &&
+                        <React.Fragment>
+                            <NavItemSeparator/>
+                            <NavItem
+                                className="ins-c-page__documentation"
+                                to={documentation}
+                                rel='noopener noreferrer'
+                                target='_blank'>Documentation
+                            </NavItem>
+                        </React.Fragment>
                     }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
@@ -123,7 +128,8 @@ class Navigation extends Component {
                                 return <NavItem
                                     key={key}
                                     to={value.link}
-                                    target='_blank'>
+                                    target='_blank'
+                                    rel='noopener noreferrer'>
                                     {value.title}
                                 </NavItem>;
                             }
@@ -147,7 +153,10 @@ Navigation.propTypes = {
     activeApp: PropTypes.string,
     navHidden: PropTypes.bool,
     activeLocation: PropTypes.string,
-    documentation: PropTypes.string
+    documentation: PropTypes.string,
+    onNavigate: PropTypes.func,
+    onClearActive: PropTypes.func,
+    activeGroup: PropTypes.string
 };
 
 function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup, appId } }) {

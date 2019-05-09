@@ -11,7 +11,7 @@ export function unauthed() {
 }
 
 ;
-
+// eslint-disable-next-line
 export default () => (
     <Fragment>
         <Brand />

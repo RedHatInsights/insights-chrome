@@ -39,6 +39,7 @@ class ToolbarToggle extends Component {
     render() {
         const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) =>
             <DropdownItem
+                key={title}
                 component={ url ? 'a' : 'button' }
                 {
                 ...url ? { href: url } : {}
@@ -68,8 +69,8 @@ class ToolbarToggle extends Component {
 }
 
 ToolbarToggle.propTypes = {
-    icon: PropTypes.node,
-    dropdownItems: PropTypes.arrayOf(PropTypes.node)
+    icon: PropTypes.func,
+    dropdownItems: PropTypes.array
 };
 
 export default ToolbarToggle;
