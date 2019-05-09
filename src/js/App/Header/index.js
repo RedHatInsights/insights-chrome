@@ -11,10 +11,12 @@ export function unauthed() {
 }
 
 ;
-// eslint-disable-next-line
-export default () => (
+
+const Header = () => (
     <Fragment>
         <Brand />
         <Tools />
     </Fragment>
 );
+
+export default Header;
