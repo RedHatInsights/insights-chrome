@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { onToggle } from '../../redux/actions';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
@@ -22,6 +23,11 @@ const Brand = ({ toggleNav, navHidden }) => (
         </a>
     </div>
 );
+
+Brand.propTypes = {
+    navHidden: PropTypes.bool,
+    toggleNav: PropTypes.func
+};
 
 function mapDispatchToProps(dispatch) {
     return {

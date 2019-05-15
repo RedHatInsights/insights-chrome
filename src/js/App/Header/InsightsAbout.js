@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
     AboutModal,
     TextContent, TextList, TextListItem,
@@ -14,25 +15,28 @@ const Copyright = () => (
         <div>Copyright © 2019 Red Hat, Inc.</div>
         <Level>
             <LevelItem>
-                <a class="nav-link"
+                <a className="nav-link"
                     href="https://www.redhat.com/en/about/privacy-policy"
                     target="_blank"
+                    rel='noopener noreferrer'
                 >
                     Privacy Policy
                 </a>
             </LevelItem>
             <LevelItem>
-                <a class="nav-link"
+                <a className="nav-link"
                     href="https://access.redhat.com/help/terms"
                     target="_blank"
+                    rel='noopener noreferrer'
                 >
                     Customer Portal Terms of Use
                 </a>
             </LevelItem>
             <LevelItem>
-                <a class="nav-link"
+                <a className="nav-link"
                     href="https://www.redhat.com/en/about/all-policies-guidelines"
                     target="_blank"
+                    rel='noopener noreferrer'
                 >
                     All Policies and Guidelines
                 </a>
@@ -138,6 +142,14 @@ class InsightsAbout extends Component {
         );
     }
 }
+
+InsightsAbout.propTypes = {
+    globalNav: PropTypes.any,
+    activeApp: PropTypes.string,
+    isModalOpen: PropTypes.bool,
+    onClose: PropTypes.func,
+    user: PropTypes.object
+};
 
 function mapStateToProps({ chrome: { user: { identity: { user } }, appId, globalNav, activeApp } }) {
     return { appId, globalNav, user, activeApp };

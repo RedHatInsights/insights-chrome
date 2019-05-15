@@ -12,9 +12,11 @@ export function unauthed() {
 
 ;
 
-export default () => (
+const Header = () => (
     <Fragment>
         <Brand />
         <Tools />
     </Fragment>
 );
+
+export default Header;

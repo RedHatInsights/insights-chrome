@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { login } from '../../jwt/jwt';
 
-export default () => (
+const Login = () => (
     <div className="pf-c-page__header-tools">
         <Button
             variant="tertiary"
@@ -14,3 +14,4 @@ export default () => (
     </div>
 );
 
+export default Login;

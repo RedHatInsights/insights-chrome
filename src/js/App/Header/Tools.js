@@ -79,9 +79,10 @@ class Tools extends Component {
                     <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
                         {actions.map((oneItem, key) => (
                             oneItem.items ?
-                                <ToolbarToggle icon={oneItem.icon} dropdownItems={oneItem.items} /> :
+                                <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :
                                 <ToolbarItem key={key} data-key={key}>
                                     <Button
+                                        key={key}
                                         variant="plain"
                                         aria-label={`Overflow ${oneItem.title}`}
                                         widget-type={oneItem.widget}
