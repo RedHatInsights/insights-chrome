@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 
 function buildItems(username, accountNumber = -1, extraItems) {
     return [
-        <DropdownItem key="Username" isDisabled>
+        <DropdownItem key="Username">
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
                 <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
@@ -20,7 +20,7 @@ function buildItems(username, accountNumber = -1, extraItems) {
         </DropdownItem>,
         <React.Fragment key="account wrapper">
             { accountNumber > -1 &&
-                <DropdownItem key="Account" isDisabled>
+                <DropdownItem key="Account">
                     <dl className='ins-c-dropdown-item__stack'>
                         <dt className="ins-c-dropdown-item__stack--header">Account Number:</dt>
                         <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
