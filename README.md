@@ -117,3 +117,11 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
 ```bash
 > npm run start
 ```
+
+## LocalStorage Debugging
+
+To set a short jwt session, log out of your account and then do the following in the web console:
+
+`window.localStorage.setItem('chrome:jwt:shortSession', true);`
+
+Note: You must log out of your short session and set `window.localStorage.setItem('chrome:jwt:shortSession', false);` to return to the regular realm.
