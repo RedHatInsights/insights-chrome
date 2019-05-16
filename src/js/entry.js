@@ -6,7 +6,6 @@ import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
 import loadRemediations from './remediations';
-import asyncObject from './async-loader';
 import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
@@ -60,8 +59,7 @@ export function chromeInit(libjwt) {
         loadInventory,
         experimental: {
             loadRemediations
-        },
-        async: asyncObject
+        }
 
     };
 }
@@ -111,8 +109,7 @@ export function bootstrap(libjwt, initFunc) {
         loadInventory,
         experimental: {
             loadRemediations
-        },
-        async: asyncObject
+        }
     };
 }
 

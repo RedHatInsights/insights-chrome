@@ -5,7 +5,7 @@ import consts from './consts';
 // Started off using Array.flat
 // Edge lacks this and every version of IE
 // Use lodash instead
-import { flatten } from 'lodash';
+import flatten from 'lodash/flatten';
 
 const jwt       = require('./jwt/jwt');
 const cookie    = require('js-cookie');
