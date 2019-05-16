@@ -98,6 +98,10 @@ exports.init = (options) => {
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
 
+    if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
+        options.realm = 'short-session';
+    }
+
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = updateToken;
     priv.keycloak.onAuthSuccess = loginAllTabs;
