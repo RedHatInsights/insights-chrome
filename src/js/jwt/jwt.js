@@ -229,6 +229,20 @@ exports.getUserInfo = () => {
     });
 };
 
+// Challenge auth and login if the user could be logged in, but in an unauth state
+exports.challengeAuth = () => {
+    log('Challenging Auth');
+    priv.keycloak.login({ onLoad: 'check-sso' })
+    .then(() => {
+        log('Auth challenge successful, logging in');
+        return true;
+    })
+    .catch(() => {
+        log('Auth challenge failed');
+        return false;
+    });
+};
+
 // Check to see if the user is loaded, this is what API calls should wait on
 exports.isAuthenticated = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);
