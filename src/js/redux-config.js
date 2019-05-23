@@ -1,8 +1,9 @@
 import * as actionTemplates from './redux/actions';
 import chromeReducer from './redux';
-import ReducerRegistry, { dispatchActionsToStore }
-    from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
-import MiddlewareListener from '@red-hat-insights/insights-frontend-components/Utilities/MiddlewareListener';
+import ReducerRegistry, {
+    dispatchActionsToStore
+} from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import MiddlewareListener from '@redhat-cloud-services/frontend-components-utilities/files/MiddlewareListener';
 
 import options, { grouppedNav } from './nav/globalNav.js';
 
