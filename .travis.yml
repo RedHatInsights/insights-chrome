@@ -15,11 +15,11 @@ jobs:
     - stage: Test
       script: npm run test && npx codecov
     - stage: Deploy Stable
-      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable)
+      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable) AND type != pull_request
       name: deploy:stable
       script: npm run build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
     - stage: Deploy Beta
-      if: branch IN (master, prod-beta, qa-beta)
+      if: branch IN (master, prod-beta, qa-beta) AND type != pull_request
       name: deploy:beta
       script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
