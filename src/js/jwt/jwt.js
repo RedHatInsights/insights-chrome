@@ -152,6 +152,13 @@ function isExistingValid(token) {
 
         log(`expires in ${exp}`);
 
+        // We want to invalidate tokens if they are getting close
+        // to the expiry time
+        // So that we can be someone safe from time skew
+        // issues on our APIs
+        // i.e. the client could have a slight time skew
+        // and the API is true (because NTP) and we could send down
+        // a JWT that is actually exipred
         if (exp > 90) {
             priv.keycloak.tokenParsed = parsed;
             return true;
