@@ -4,6 +4,6 @@ export default (dependencies) => {
     setDependencies(dependencies);
 
     return import('./inventoryStyles').then(
-        () => import('@red-hat-insights/insights-frontend-components/components/Inventory')
+        () => import('@redhat-cloud-services/frontend-components-inventory')
     );
 };

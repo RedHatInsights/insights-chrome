@@ -1,2 +1,2 @@
-import '@red-hat-insights/insights-frontend-components/components/Inventory.css';
+import '@redhat-cloud-services/frontend-components-inventory/index.css';
 import '../sass/inventory.scss';

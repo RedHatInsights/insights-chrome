@@ -1,4 +1,4 @@
-import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
+import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 
 import {
     clickReducer, globalNavReducer, appNavClick, navToggleReducer, loginReducer, clearActive

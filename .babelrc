@@ -12,6 +12,7 @@
     "@babel/plugin-proposal-class-properties",
     "transform-inline-environment-variables",
     "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-syntax-object-rest-spread",
     "@babel/plugin-transform-runtime"
   ],
   "env": {
