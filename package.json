@@ -105,7 +105,7 @@
     "@patternfly/react-icons": "^3.7.5",
     "@redhat-cloud-services/entitlements-client": "^1.0.4",
     "@redhat-cloud-services/frontend-components": "0.0.5",
-    "@redhat-cloud-services/frontend-components-inventory": "0.0.9",
+    "@redhat-cloud-services/frontend-components-inventory": "0.0.11",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.5",
     "axios": "^0.18.0",
