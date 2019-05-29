@@ -1,4 +1,6 @@
-const API_KEY = 'https://80e5a70255df4bd3ba6eb3b4bfebc58c@sentry.io/1466891'
+import * as Sentry from '@sentry/browser';
+
+const API_KEY = 'https://80e5a70255df4bd3ba6eb3b4bfebc58c@sentry.io/1466891';
 
 // - Sentry Options
 // dsn: key
@@ -20,15 +22,17 @@ function initSentry() {
     });
 }
 
+/* eslint-disable camelcase */
 function sentryUser(user) {
     // TODO: Add request_id to this
     Sentry.configureScope((scope) => {
         scope.setUser({
-            "id": user.identity.account_number,
-            "account_id": user.identity.internal.account_id
+            id: user.identity.account_number,
+            account_id: user.identity.internal.account_id
         });
     });
 }
+/* eslint-enable camelcase */
 
 export default (user) => {
     let environment = window.location.host.split('.')[0];
@@ -36,7 +40,5 @@ export default (user) => {
     if (environment === 'cloud') {
         initSentry();
         sentryUser(user);
-    } else {
-        console.log('[sentry.js] Sentry not initialized for pre-prod');
     }
-}
+};
