@@ -12,7 +12,7 @@ function buildNavFromConfig(masterConfig) {
         globalNav[app.id] = {
             title: app.title
         };
-        globalNav[app.id].routes = getRoutesForApp(app, 'routes', masterConfig);
+        globalNav[app.id].routes = getRoutesForApp(app, masterConfig);
     });
 
     console.log('Global Nav:');
@@ -20,48 +20,55 @@ function buildNavFromConfig(masterConfig) {
 }
 
 // Returns a list of routes/subItems owned by an app
-function getRoutesForApp(app, propName, masterConfig) {
+function getRoutesForApp(app, masterConfig) {
     let routes = [];
     if (_.has(app, 'sub_apps')) {
         app.sub_apps.forEach((subApp => {
-            let route = {};
-            route.id = subApp.id ? subApp.id : '';
-            if (subApp.default) {
-                route.default = subApp.default;
+            let subAppData = getAppData(subApp.id, 'subItems', masterConfig);
+            if (!subAppData) {
+                subAppData = {
+                    id: subApp.id ? subApp.title : '',
+                    title: subApp.title ? subApp.title : ''
+                };
             }
 
-            if (subApp.reload) {
-                route.reload = subApp.reload;
-            }
+            console.log('subAppData:');
+            console.log(subAppData);
 
-            // If the title exists, you have all you need for this route.
-            if (_.has(subApp, 'title')) {
-                route.title = subApp.title;
-            } else {
-                // Look up app in masterConfig
-                let lookupApp = masterConfig.filter(x => x.id === route.id)[0];
-                if (lookupApp) {
-                    route.title = lookupApp.title;
-                    if (_.has(lookupApp, 'sub_apps')) {
-                        route.subItems = getRoutesForApp(lookupApp, 'subItems', masterConfig);
-                    }
-                }
-            }
-
-            routes.push(route);
+            routes.push(subAppData);
         }));
     }
+
+    console.log('all routes:');
+    console.log(routes);
 
     return routes;
 }
 
-function getAppData(appId, masterConfig) {
+function getAppData(appId, propName, masterConfig) {
     let appList = masterConfig.filter(x => x.id === appId);
 
-    // If the app doesn't exist, don't return anything.
-    if (appList.length() > 0) {
+    // Only return data if the app exists.
+    if (appList.length > 0) {
         let app = appList[0];
-        
+        let formattedApp = {};
+        formattedApp.id = app.id ? app.id : '';
+        formattedApp.title = app.title ? app.title : '';
+
+        // Optional fields
+        if (app.default) {
+            formattedApp.default = app.default;
+        }
+
+        if (app.reload) {
+            formattedApp.reload = app.reload;
+        }
+
+        if (_.has(app, 'sub_apps')) {
+            formattedApp[propName] = getRoutesForApp(app, masterConfig);
+        }
+
+        return formattedApp;
     } else {
         return;
     }
