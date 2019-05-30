@@ -48,27 +48,18 @@ function getRoutesForApp(app, masterConfig) {
     return routes;
 }
 
+// Gets the app's data from the master config, if it exists
 function getAppData(appId, propName, masterConfig) {
     let appList = masterConfig.filter(x => x.id === appId);
 
     // Only return data if the app exists.
     if (appList.length > 0) {
         let app = appList[0];
-        let formattedApp = {};
-        formattedApp.id = app.id ? app.id : '';
-        formattedApp.title = app.title ? app.title : '';
-
-        // Optional fields
-        formattedApp.default = app.default;
-        formattedApp.reload = app.reload;
-        formattedApp.group = app.group;
-        formattedApp.disabledOnStable = app.disabled_on_stable;
-
         if (_.has(app, 'sub_apps')) {
-            formattedApp[propName] = getRoutesForApp(app, masterConfig);
+            app[propName] = getRoutesForApp(app, masterConfig);
         }
 
-        return formattedApp;
+        return app;
     } else {
         return;
     }
