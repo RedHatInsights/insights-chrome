@@ -12,8 +12,6 @@ if (process.env.NODE_ENV === 'development') {
     import('redux-logger').then(logger => basicMiddlewares.push(logger.default));
 }
 
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 export function spinUpStore(middlewares = []) {
     const middlewareListener = new MiddlewareListener();
     const reduxRegistry = new ReducerRegistry(

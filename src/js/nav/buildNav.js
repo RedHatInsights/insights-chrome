@@ -21,7 +21,6 @@ function buildNavFromConfig(masterConfig) {
         if (err) {
             throw err;
         }
-        console.log('complete');
     });
 
 }
@@ -34,7 +33,7 @@ function getRoutesForApp(app, masterConfig) {
             let subAppData = getAppData(subApp.id, 'subItems', masterConfig);
             if (!subAppData) {
                 subAppData = {
-                    id: subApp.id ? subApp.title : '',
+                    id: subApp.id ? subApp.id : '',
                     title: subApp.title ? subApp.title : ''
                 };
                 if (subApp.default) {
