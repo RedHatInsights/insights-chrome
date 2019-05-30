@@ -5,7 +5,7 @@ import ReducerRegistry, {
 } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import MiddlewareListener from '@redhat-cloud-services/frontend-components-utilities/files/MiddlewareListener';
 
-import options, { grouppedNav } from './nav/globalNav.js';
+import groupedNav from './nav/globalNav.json';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development') {
@@ -35,14 +35,15 @@ export function spinUpStore(middlewares = []) {
 function initialState () {
     const splitted = location.pathname.split('/') ;
     const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
+
     return {
         chrome: {
-            ...grouppedNav[active] ? {
-                globalNav: grouppedNav[active].routes,
-                activeTechnology: grouppedNav[active].title,
+            ...groupedNav[active] ? {
+                globalNav: groupedNav[active].routes,
+                activeTechnology: groupedNav[active].title,
                 activeLocation: active
             } : {
-                globalNav: options,
+                globalNav: groupedNav.insights.routes,
                 activeTechnology: 'Applications'
             }
         }
