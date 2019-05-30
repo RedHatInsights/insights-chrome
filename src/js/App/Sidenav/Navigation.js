@@ -75,7 +75,7 @@ class Navigation extends Component {
                 <NavList>
                     {
                         settings.map((item, key) => {
-                            if (!item.disabled) {
+                            if (!(item.disabledOnStable && window.location.pathname.indexOf('/beta') === -1)) {
                                 if (item.subItems) {
                                     return <NavExpandable
                                         title={item.title}
@@ -85,7 +85,8 @@ class Navigation extends Component {
                                         isExpanded={item.active}>
                                         {
                                             item.subItems.map((subItem, subKey) => {
-                                                if (!subItem.disabled) {
+                                                if (!(subItem.disabledOnStable
+                                                    && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
                                                         itemID={subItem.reload || subItem.id}
                                                         key={subKey}

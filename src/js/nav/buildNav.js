@@ -59,13 +59,10 @@ function getAppData(appId, propName, masterConfig) {
         formattedApp.title = app.title ? app.title : '';
 
         // Optional fields
-        if (app.default) {
-            formattedApp.default = app.default;
-        }
-
-        if (app.reload) {
-            formattedApp.reload = app.reload;
-        }
+        formattedApp.default = app.default;
+        formattedApp.reload = app.reload;
+        formattedApp.group = app.group;
+        formattedApp.disabledOnStable = app.disabled_on_stable;
 
         if (_.has(app, 'sub_apps')) {
             formattedApp[propName] = getRoutesForApp(app, masterConfig);
