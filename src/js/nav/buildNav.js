@@ -15,8 +15,8 @@ function buildNavFromConfig(masterConfig) {
         globalNav[app.id].routes = getRoutesForApp(app, masterConfig);
     });
 
-    console.log('Global Nav:');
     console.log(JSON.stringify(globalNav));
+
 }
 
 // Returns a list of routes/subItems owned by an app
@@ -30,17 +30,14 @@ function getRoutesForApp(app, masterConfig) {
                     id: subApp.id ? subApp.title : '',
                     title: subApp.title ? subApp.title : ''
                 };
+                if (subApp.default) {
+                    subAppData.default = subApp.default;
+                }
             }
-
-            console.log('subAppData:');
-            console.log(subAppData);
 
             routes.push(subAppData);
         }));
     }
-
-    console.log('all routes:');
-    console.log(routes);
 
     return routes;
 }
