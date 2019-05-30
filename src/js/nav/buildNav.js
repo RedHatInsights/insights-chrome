@@ -1,6 +1,7 @@
 const yaml = require('js-yaml');
 const axios = require('axios');
 const _ = require('lodash');
+const fs = require('fs');
 
 axios.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/enhancements/chrome-nav/main.yml')
 .then(response => yaml.safeLoad(response.data)).then(data => buildNavFromConfig(data));
@@ -15,7 +16,13 @@ function buildNavFromConfig(masterConfig) {
         globalNav[app.id].routes = getRoutesForApp(app, masterConfig);
     });
 
-    console.log(JSON.stringify(globalNav));
+    // Write to appropriate file
+    fs.writeFile('src/js/nav/globalNav.json', JSON.stringify(globalNav), 'utf8', function(err) {
+        if (err) {
+            throw err;
+        }
+        console.log('complete');
+    });
 
 }
 
