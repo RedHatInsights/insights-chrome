@@ -36,14 +36,15 @@ function getRoutesForApp(app, masterConfig) {
                     id: subApp.id || '',
                     title: subApp.title || ''
                 };
+            } else {
+                subAppData.id = subAppData.id_override || subAppData.id;
+                delete subAppData.id_override;
+                delete subAppData.sub_apps;
+                delete subAppData.channel;
+                delete subAppData.deployment_repo;
+                delete subAppData.frontend_paths;
             }
 
-            subAppData.id = app.id_override || app.id;
-            delete subAppData.id_override;
-            delete subAppData.sub_apps;
-            delete subAppData.channel;
-            delete subAppData.deployment_repo;
-            delete subAppData.frontend_paths;
             routes.push(subAppData);
         }));
     }
