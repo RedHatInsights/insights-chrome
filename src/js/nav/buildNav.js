@@ -33,14 +33,17 @@ function getRoutesForApp(app, masterConfig) {
             let subAppData = getAppData(subApp.id, 'subItems', masterConfig);
             if (!subAppData) {
                 subAppData = {
-                    id: subApp.id ? subApp.id : '',
-                    title: subApp.title ? subApp.title : ''
+                    id: subApp.id || '',
+                    title: subApp.title || ''
                 };
-                if (subApp.default) {
-                    subAppData.default = subApp.default;
-                }
             }
 
+            subAppData.id = app.id_override || app.id;
+            delete subAppData.id_override;
+            delete subAppData.sub_apps;
+            delete subAppData.channel;
+            delete subAppData.deployment_repo;
+            delete subAppData.frontend_paths;
             routes.push(subAppData);
         }));
     }
