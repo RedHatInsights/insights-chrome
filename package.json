@@ -1,6 +1,6 @@
 {
   "name": "insights-chrome",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Chroming for Insights",
   "main": "index.js",
   "scripts": {
