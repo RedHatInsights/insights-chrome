@@ -9,10 +9,7 @@ function buildNavFromConfig(masterConfig) {
     let globalNav = {};
     // Get the top-level apps from the master config
     Object.keys(masterConfig).filter(appid => masterConfig[appid].top_level).forEach((appid) => {
-        globalNav[appid] = {
-            title: masterConfig[appid].frontend.title || masterConfig[appid].title
-        };
-        globalNav[appid].routes = getRoutesForApp(masterConfig[appid], masterConfig);
+        globalNav[appid] = getAppData(appid, 'routes', masterConfig);
     });
 
     // Write to appropriate file
