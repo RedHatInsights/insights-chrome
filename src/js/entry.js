@@ -146,6 +146,11 @@ function loadChrome(user) {
                     document.querySelector('aside')
                 );
             }
+
+            const tempContent = document.querySelector('#temp');
+            if (tempContent) {
+                tempContent.remove();
+            }
         }
     );
 }
