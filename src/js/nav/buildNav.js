@@ -1,6 +1,5 @@
 const yaml = require('js-yaml');
 const axios = require('axios');
-const _ = require('lodash');
 const fs = require('fs');
 
 axios.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/enhancements/chrome-nav/main.yml')
@@ -9,11 +8,11 @@ axios.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-confi
 function buildNavFromConfig(masterConfig) {
     let globalNav = {};
     // Get the top-level apps from the master config
-    masterConfig.filter(app => app.top_level).forEach((app) => {
-        globalNav[app.id] = {
-            title: app.title
+    Object.keys(masterConfig).filter(appid => masterConfig[appid].top_level).forEach((appid) => {
+        globalNav[appid] = {
+            title: masterConfig[appid].frontend.title || masterConfig[appid].title
         };
-        globalNav[app.id].routes = getRoutesForApp(app, masterConfig);
+        globalNav[appid].routes = getRoutesForApp(masterConfig[appid], masterConfig);
     });
 
     // Write to appropriate file
@@ -27,48 +26,33 @@ function buildNavFromConfig(masterConfig) {
 
 // Returns a list of routes/subItems owned by an app
 function getRoutesForApp(app, masterConfig) {
-    let routes = [];
-    if (_.has(app, 'sub_apps')) {
-        app.sub_apps.forEach((subApp => {
-            let subAppData = getAppData(subApp.id, 'subItems', masterConfig);
+    if (app.hasOwnProperty('frontend') && app.frontend.hasOwnProperty('sub_apps')) {
+        let routes = [];
+        app.frontend.sub_apps.forEach((subItem => {
+            let subAppData = getAppData(subItem.id || subItem, 'subItems', masterConfig);
             if (!subAppData) {
                 subAppData = {
-                    id: subApp.id || '',
-                    title: subApp.title || ''
+                    id: subItem.id || '',
+                    title: subItem.title || ''
                 };
-            } else {
-                if (subAppData.suppress_id) {
-                    delete subAppData.id;
-                }
-
-                delete subAppData.suppress_id;
-                delete subAppData.sub_apps;
-                delete subAppData.channel;
-                delete subAppData.deployment_repo;
-                delete subAppData.frontend_paths;
             }
 
-            subAppData.default = subApp.default;
+            subAppData.default = subItem.default;
             routes.push(subAppData);
         }));
+        return routes;
     }
-
-    return routes;
 }
 
 // Gets the app's data from the master config, if it exists
 function getAppData(appId, propName, masterConfig) {
-    let appList = masterConfig.filter(x => x.id === appId);
-
-    // Only return data if the app exists.
-    if (appList.length > 0) {
-        let app = appList[0];
-        if (_.has(app, 'sub_apps')) {
-            app[propName] = getRoutesForApp(app, masterConfig);
-        }
-
-        return app;
-    } else {
-        return;
+    const app = masterConfig[appId];
+    if (app && app.hasOwnProperty('frontend')) {
+        return {
+            id: app.frontend.suppress_id ? undefined : appId,
+            title: app.frontend.title || app.title,
+            reload: app.frontend.reload,
+            [propName]: getRoutesForApp(app, masterConfig)
+        };
     }
 }
