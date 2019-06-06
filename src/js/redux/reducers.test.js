@@ -1,7 +1,7 @@
 import '../test';
 import * as actions from './actions';
 import * as reducers from './reducers';
-import globalNav from '../nav/globalNav.json';
+import globalNav from '../nav/globalNav.js';
 
 describe('Reducers', () => {
     describe('Navigation', () => {
