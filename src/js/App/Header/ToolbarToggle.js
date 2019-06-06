@@ -37,14 +37,22 @@ class ToolbarToggle extends Component {
     }
 
     render() {
+        // Render the questionmark icon items
         const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) =>
             <DropdownItem
                 key={title}
                 component={ url ? 'a' : 'button' }
+                // Because the urls are using 'a', don't use onClick for accessibility
+                // If it is a button, use the onClick prop
                 {
-                ...url ? { href: url } : {}
+                ...url ? {
+                    href: url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer'
+                    } : {
+                        onClick: (ev => this.onClick(ev, url, onClick))
+                    }
                 }
-                onClick={ev => this.onClick(ev, url, onClick)}
             >
                 { title }
             </DropdownItem>

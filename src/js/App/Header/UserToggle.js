@@ -29,11 +29,11 @@ function buildItems(username, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <DropdownItem key="My Profile" href="https://access.redhat.com/user">
-            My Profile
+        <DropdownItem key="My Profile" href="https://access.redhat.com/user" target="_blank" rel='noopener noreferrer'>
+            My profile
         </DropdownItem>,
-        <DropdownItem key="User Management" href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html">
-            User Management
+        <DropdownItem key="User management" href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html" target="_blank" rel='noopener noreferrer'>
+            User management
         </DropdownItem>,
         <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout(true)}>
             Logout
