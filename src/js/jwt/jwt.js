@@ -218,10 +218,11 @@ function loginAllTabs() {
 /*** User Functions ***/
 // Get user information
 exports.getUserInfo = () => {
-    log('Getting User Information');
+    log('Getting User Information CHANGES!');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
-
+    
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
+        l
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
@@ -233,6 +234,19 @@ exports.getUserInfo = () => {
         if (pageRequiresAuthentication()) {
             return exports.login();
         }
+    });
+};
+// Challenge auth and login if the user could be logged in, but in an unauth state
+exports.challengeAuth = () => {
+    log('Challenging Auth');
+    priv.keycloak.login({ onLoad: 'check-sso' })
+    .then(() => {
+        log('Auth challenge successful, logging in');
+        return true;
+    })
+    .catch(() => {
+        log('Auth challenge failed');
+        return false;
     });
 };
 
