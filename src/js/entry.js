@@ -114,6 +114,7 @@ export function bootstrap(libjwt, initFunc) {
 }
 
 function loadChrome(user) {
+
     import('./App/index').then(
         ({ UnauthedHeader, Header, Sidenav }) => {
             const store = insights.chrome.$internal.store;
@@ -145,6 +146,11 @@ function loadChrome(user) {
                     </Provider>,
                     document.querySelector('aside')
                 );
+            }
+
+            const tempContent = document.querySelector('#temp');
+            if (tempContent) {
+                tempContent.remove();
             }
         }
     );
