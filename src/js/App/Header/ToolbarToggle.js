@@ -49,9 +49,7 @@ class ToolbarToggle extends Component {
                     href: url,
                     target: '_blank',
                     rel: 'noopener noreferrer'
-                    } : {
-                        onClick: (ev => this.onClick(ev, url, onClick))
-                    }
+                } : { onClick: (ev => this.onClick(ev, url, onClick)) }
                 }
             >
                 { title }
