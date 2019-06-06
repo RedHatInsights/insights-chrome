@@ -76,3 +76,11 @@ export function loginReducer(state, { payload }) {
         user: payload
     };
 }
+
+export function chromeNavUpdate(state, { payload }) {
+    console.log('in the reducer');
+    return {
+        ...state,
+        chrome: { ...payload }
+    };
+}

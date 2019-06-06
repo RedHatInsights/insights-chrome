@@ -7,3 +7,4 @@ export const APP_NAV_CLICK = '@@chrome/app-nav-click';
 export const CLEAR_ACTIVE = '@@chrome/app-clear-active';
 
 export const GLOBAL_NAV_IDENT = '@@chrome/identify-app';
+export const CHROME_NAV_UPDATE = '@@chrome/chrome-nav-update';
