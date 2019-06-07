@@ -33,9 +33,10 @@ export function chromeInit(libjwt) {
 
     // First, get the source of truth to build the nav.
     // TODO: Only get this YAML if the cache has expired
-    get('https://raw.githubusercontent.com/'
+    const navigationResolver = get('https://raw.githubusercontent.com/'
     + 'RedHatInsights/cloud-services-config/enhancements/chrome-nav/main.yml')
-    .then(({ data }) => loadNav(data)).then(chromeNavUpdate);
+    .then(({ data }) => loadNav(data))
+    .then(chromeNavUpdate);
 
     libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
@@ -49,7 +50,9 @@ export function chromeInit(libjwt) {
     });
 
     return {
-        identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
+        identifyApp: (data) => {
+            return navigationResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
+        },
         navigation: appNav,
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
