@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick, chromeNavUpdate } from './redux/actions';
+import { appNavClick } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory';
@@ -28,14 +28,14 @@ const PUBLIC_EVENTS = {
 export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
+    // public API actions
+    const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
+
     // First, get the source of truth to build the nav.
     // TODO: Only get this YAML if the cache has expired
     get('https://raw.githubusercontent.com/'
     + 'RedHatInsights/cloud-services-config/enhancements/chrome-nav/main.yml')
-    .then(response => loadNav(safeLoad(response.data)));
-
-    // public API actions
-    const { identifyApp, appNav, appNavClick, clearActive } = actions;
+    .then(({ data }) => loadNav(data)).then(chromeNavUpdate);
 
     libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
@@ -123,13 +123,12 @@ export function bootstrap(libjwt, initFunc) {
     };
 }
 
-function loadNav(config) {
-    const store = insights.chrome.$internal.store;
-    const groupedNav = getNavFromConfig(config);
+function loadNav(yamlConfig) {
+    const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
 
     const splitted = location.pathname.split('/') ;
     const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
-    const payload = groupedNav[active] ? {
+    return groupedNav[active] ? {
         globalNav: groupedNav[active].routes,
         activeTechnology: groupedNav[active].title,
         activeLocation: active
@@ -137,9 +136,6 @@ function loadNav(config) {
         globalNav: groupedNav.insights.routes,
         activeTechnology: 'Applications'
     };
-    console.log('about to dispatch');
-    store.dispatch(chromeNavUpdate(payload));
-
 }
 
 function loadChrome(user) {

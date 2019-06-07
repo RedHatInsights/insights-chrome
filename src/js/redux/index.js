@@ -13,8 +13,7 @@ const reducers = {
     [GLOBAL_NAV_IDENT]: globalNavReducer,
     [APP_NAV_CLICK]: appNavClick,
     [NAVIGATION_TOGGLE]: navToggleReducer,
-    [USER_LOGIN]: loginReducer,
-    [CHROME_NAV_UPDATE]: chromeNavUpdate
+    [USER_LOGIN]: loginReducer
 };
 
 export default function() {
