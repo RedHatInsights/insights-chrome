@@ -20,7 +20,7 @@ const Copyright = () => (
                     target="_blank"
                     rel='noopener noreferrer'
                 >
-                    Privacy Policy
+                    Privacy policy
                 </a>
             </LevelItem>
             <LevelItem>
@@ -29,7 +29,7 @@ const Copyright = () => (
                     target="_blank"
                     rel='noopener noreferrer'
                 >
-                    Customer Portal Terms of Use
+                    Terms of use
                 </a>
             </LevelItem>
             <LevelItem>
@@ -38,7 +38,7 @@ const Copyright = () => (
                     target="_blank"
                     rel='noopener noreferrer'
                 >
-                    All Policies and Guidelines
+                    All policies and guidelines
                 </a>
             </LevelItem>
         </Level>
