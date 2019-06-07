@@ -11,38 +11,37 @@ import { connect } from 'react-redux';
 import './InsightsAbout.scss';
 
 const Copyright = () => (
-    <React.Fragment>
-        <div>Copyright © 2019 Red Hat, Inc.</div>
-        <Level>
-            <LevelItem>
-                <a className="nav-link"
-                    href="https://www.redhat.com/en/about/privacy-policy"
-                    target="_blank"
-                    rel='noopener noreferrer'
-                >
-                    Privacy Policy
-                </a>
-            </LevelItem>
-            <LevelItem>
-                <a className="nav-link"
-                    href="https://access.redhat.com/help/terms"
-                    target="_blank"
-                    rel='noopener noreferrer'
-                >
-                    Customer Portal Terms of Use
-                </a>
-            </LevelItem>
-            <LevelItem>
-                <a className="nav-link"
-                    href="https://www.redhat.com/en/about/all-policies-guidelines"
-                    target="_blank"
-                    rel='noopener noreferrer'
-                >
-                    All Policies and Guidelines
-                </a>
-            </LevelItem>
-        </Level>
-    </React.Fragment>
+    <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer'>
+        <p className='copyright pf-m-spacer-xl-on-lg'>Copyright © 2019 Red Hat, Inc.</p>
+        <nav>
+            <ul className='pf-l-flex pf-m-column pf-m-row-on-md'>
+                <li>
+                    <a className='nav-link'
+                        href='https://www.redhat.com/en/about/privacy-policy'
+                        target="_blank"
+                        rel='noopener noreferrer'>
+                        Privacy Policy
+                    </a>
+                </li>
+                <li>
+                    <a className='nav-link'
+                        href='https://access.redhat.com/help/terms/'
+                        target="_blank"
+                        rel='noopener noreferrer'>
+                        Terms of Use
+                    </a>
+                </li>
+                <li>
+                    <a className='nav-link'
+                        href='https://www.redhat.com/en/about/all-policies-guidelines'
+                        target="_blank"
+                        rel='noopener noreferrer'>
+                        All Policies and Guidelines
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 );
 
 class InsightsAbout extends Component {
