@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {
     AboutModal,
     TextContent, TextList, TextListItem,
-    Level, LevelItem,
     Stack, StackItem
 } from '@patternfly/react-core';
 import logo from '../../../../static/images/logo.svg';
@@ -11,7 +10,8 @@ import { connect } from 'react-redux';
 import './InsightsAbout.scss';
 
 const Copyright = () => (
-    <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer'>
+    <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column
+                    pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer'>
         <p className='copyright pf-m-spacer-xl-on-lg'>Copyright © 2019 Red Hat, Inc.</p>
         <nav>
             <ul className='pf-l-flex pf-m-column pf-m-row-on-md'>
