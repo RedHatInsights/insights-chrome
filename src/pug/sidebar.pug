@@ -3,7 +3,7 @@ script
     | console.warn('Chrome Deprecation: We deprecated the sidenav snippet. For instructions, please see: http://platform-docs.cloud.paas.upshift.redhat.com/frontend/chrome.html')
 script(src='./apps/chrome/js/chrome.js')
 aside.pf-c-page__sidebar.pf-l-page__sidebar#ins-c-sidebar
-    nav.pf-c-nav(aria-label='Insights Global Navigation')
+    nav.pf-c-nav(aria-label='Insights Global Navigation', data-ouia-safe='false')
         ul.pf-c-nav__list
             while i < 4
                 li.pf-c-nav__item
