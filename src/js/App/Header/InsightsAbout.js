@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     AboutModal,
+    Alert, AlertActionCloseButton,
     Button,
-    Tooltip, TooltipPosition,
+    Tooltip,
     TextContent, TextList, TextListItem,
     Stack, StackItem
 } from '@patternfly/react-core';
@@ -74,8 +75,12 @@ class InsightsAbout extends Component {
                 { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
                 { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' }
             ] },
+            showCopyAlert: false,
+            showCopyAlertError: false,
             currentApp: app && app.title
         };
+        this.hideCopyAlert = () => this.setState({ showCopyAlert: false });
+        this.hideCopyAlertError = () => this.setState({ showCopyAlertError: false });
         this.updateAppVersion = this.updateAppVersion.bind(this);
     }
 
@@ -116,9 +121,11 @@ class InsightsAbout extends Component {
         }
 
         navigator.clipboard.writeText(JSON.stringify(debugDetails, null, 2))
-            .then(function() {
+            .then(() => {
+                this.setState({ showCopyAlert: true });
                 console.info('Copy to clipboard successful');
-            }, function(err) {
+            }, (err) => {
+                this.setState({ showCopyAlertError: true });
                 console.error('Could not copy text: ', err);
                 Sentry.captureException(err);
             });
@@ -135,6 +142,7 @@ class InsightsAbout extends Component {
 
     render() {
         const { isModalOpen, onClose, user } = this.props;
+        const { showCopyAlert, showCopyAlertError } = this.state;
 
         return (
             <AboutModal
@@ -143,6 +151,7 @@ class InsightsAbout extends Component {
                 brandImageSrc={logo}
                 brandImageAlt="Red Hat Logo"
                 trademark={<Copyright />}
+                className='ins-c-about-modal'
             >
                 <Stack gutter='sm'>
                     <StackItem>
@@ -154,6 +163,26 @@ class InsightsAbout extends Component {
                                 <CopyIcon/>
                             </Button>
                         </Tooltip>
+                    {showCopyAlert && (
+                        <StackItem>
+                            <Alert
+                                className='ins-c-alert__copied'
+                                variant="success"
+                                title="Successfully copied details"
+                                action={<AlertActionCloseButton onClose={this.hideCopyAlert} />}
+                            />
+                        </StackItem>
+                    )}
+                    {showCopyAlertError && (
+                        <StackItem>
+                            <Alert
+                                className='ins-c-alert__copied'
+                                variant="danger"
+                                title="Error copying details"
+                                action={<AlertActionCloseButton onClose={this.hideCopyAlertError} />}
+                            />
+                        </StackItem>
+                    )}
                     </StackItem>
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
