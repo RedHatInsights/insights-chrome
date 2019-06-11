@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     AboutModal,
+    Button,
+    Tooltip, TooltipPosition,
     TextContent, TextList, TextListItem,
     Stack, StackItem
 } from '@patternfly/react-core';
+
+import { CopyIcon } from '@patternfly/react-icons';
+
 import logo from '../../../../static/images/logo.svg';
 import { connect } from 'react-redux';
 import './InsightsAbout.scss';
+import * as Sentry from '@sentry/browser';
 
 const Copyright = () => (
     <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column
@@ -99,6 +105,25 @@ class InsightsAbout extends Component {
         this.setState(appDetails);
     }
 
+
+    copyDetails(username) {
+
+        const debugDetails = {
+            Username: username, 
+            Current_App: this.state.currentApp || 'Landing',
+            Application_Path: window.location.pathname,
+            ...this.state.appDetails
+        }
+
+        navigator.clipboard.writeText(JSON.stringify(debugDetails, null, 2))
+            .then(function() {
+                console.info('Copy to clipboard successful');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                Sentry.captureException(err);
+            });
+    }
+
     componentDidMount() {
         this.state.appDetails.apps.forEach((app) => {
             fetch(app.path)
@@ -122,7 +147,13 @@ class InsightsAbout extends Component {
                 <Stack gutter='sm'>
                     <StackItem>
                         Please include these details when opening a support case.
-
+                        <Tooltip
+                            position='top'
+                            content={<span> Copy to clipboard </span>}>
+                            <Button variant='plain' onClick={() => this.copyDetails(user.username)} aria-label='Copy details'>
+                                <CopyIcon/>
+                            </Button>
+                        </Tooltip>
                     </StackItem>
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
