@@ -110,25 +110,22 @@ class InsightsAbout extends Component {
         this.setState(appDetails);
     }
 
-
     copyDetails(username) {
 
         const debugDetails = {
-            Username: username, 
-            Current_App: this.state.currentApp || 'Landing',
-            Application_Path: window.location.pathname,
+            Username: username,
+            CurrentApp: this.state.currentApp || 'Landing',
+            ApplicationPath: window.location.pathname,
             ...this.state.appDetails
-        }
+        };
 
         navigator.clipboard.writeText(JSON.stringify(debugDetails, null, 2))
-            .then(() => {
-                this.setState({ showCopyAlert: true });
-                console.info('Copy to clipboard successful');
-            }, (err) => {
-                this.setState({ showCopyAlertError: true });
-                console.error('Could not copy text: ', err);
-                Sentry.captureException(err);
-            });
+        .then(() => {
+            this.setState({ showCopyAlert: true });
+        }, (err) => {
+            this.setState({ showCopyAlertError: true });
+            Sentry.captureException(err);
+        });
     }
 
     componentDidMount() {
@@ -163,6 +160,7 @@ class InsightsAbout extends Component {
                                 <CopyIcon/>
                             </Button>
                         </Tooltip>
+                    </StackItem>
                     {showCopyAlert && (
                         <StackItem>
                             <Alert
@@ -183,7 +181,6 @@ class InsightsAbout extends Component {
                             />
                         </StackItem>
                     )}
-                    </StackItem>
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
                             <TextList component="dl" className='ins-debug-info'>
