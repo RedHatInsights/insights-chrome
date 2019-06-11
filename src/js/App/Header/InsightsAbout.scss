@@ -1,4 +1,5 @@
 @import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_all.scss';
+@import '~@patternfly/patternfly/sass-utilities/_all';
 
 .pf-c-about-modal-box__content {
     --pf-c-about-modal-box__content--MarginTop: var(--pf-global--spacer--md);
@@ -11,4 +12,25 @@
 
 .ins-c-page__about--modal dl {
     --pf-c-content--dl--RowGap: var(--pf-global--spacer--sm);
+}
+
+.ins-c-page__about--modal-footer {
+    .copyright {
+        color: var(--pf-global--Color--200);
+        @include rem('margin-right', 30px);
+    }
+
+    * {
+        font-size: var(--pf-global--FontSize--sm);
+    }
+
+    li + li {
+        @media screen and (min-width: $pf-global--breakpoint--lg) {
+            &::before {
+                content: '|';
+                color: var(--pf-global--Color--200);
+                margin-right: var(--pf-global--spacer--md);
+            }
+        }
+    }
 }
