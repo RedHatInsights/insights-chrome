@@ -87,7 +87,6 @@ export function bootstrap(libjwt, initFunc) {
                     // calls/finishes getUser
                     // this only does something if the correct localstorage
                     // vars are set
-
                     qe.init();
 
                     return libjwt.initPromise

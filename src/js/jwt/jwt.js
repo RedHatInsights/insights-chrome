@@ -97,6 +97,7 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
+    options.onLoad = 'login-required'
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -222,7 +223,7 @@ exports.getUserInfo = () => {
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
     
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
-        l
+        
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
@@ -239,7 +240,8 @@ exports.getUserInfo = () => {
 // Challenge auth and login if the user could be logged in, but in an unauth state
 exports.challengeAuth = () => {
     log('Challenging Auth');
-    priv.keycloak.login({ onLoad: 'check-sso' })
+    //return refreshTokens();
+    priv.keycloak.login({onLoad : "login-required"})
     .then(() => {
         log('Auth challenge successful, logging in');
         return true;
@@ -262,7 +264,7 @@ exports.expiredToken = () => { logout(); };
 
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
-    authChannel.postMessage({ type: 'refresh' });
+    return authChannel.postMessage({ type: 'refresh' });
 }
 
 // Actually update the token
