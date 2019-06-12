@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     AboutModal,
-    Alert, AlertActionCloseButton,
     Button,
     Tooltip,
     TextContent, TextList, TextListItem,
@@ -80,7 +79,6 @@ class InsightsAbout extends Component {
             currentApp: app && app.title
         };
         this.hideCopyAlert = () => this.setState({ showCopyAlert: false });
-        this.hideCopyAlertError = () => this.setState({ showCopyAlertError: false });
         this.updateAppVersion = this.updateAppVersion.bind(this);
     }
 
@@ -119,11 +117,15 @@ class InsightsAbout extends Component {
             ...this.state.appDetails
         };
 
+        // If the text is successfully copied, change the tooltip
+        // The tooltip exit delay is 1000ms, but the fade out is 200ms
+        // Set the timeout to 1200 so the text doesn't change while it is fading
         navigator.clipboard.writeText(JSON.stringify(debugDetails, null, 2))
         .then(() => {
-            this.setState({ showCopyAlert: true });
+            this.setState({ showCopyAlert: true }, () => {
+                setTimeout(() => { this.setState({ showCopyAlert: false }); }, 1200);
+            });
         }, (err) => {
-            this.setState({ showCopyAlertError: true });
             Sentry.captureException(err);
         });
     }
@@ -139,7 +141,7 @@ class InsightsAbout extends Component {
 
     render() {
         const { isModalOpen, onClose, user } = this.props;
-        const { showCopyAlert, showCopyAlertError } = this.state;
+        const { showCopyAlert } = this.state;
 
         return (
             <AboutModal
@@ -154,33 +156,22 @@ class InsightsAbout extends Component {
                     <StackItem>
                         Please include these details when opening a support case.
                         <Tooltip
+                            trigger="mouseenter focus click"
                             position='top'
-                            content={<span> Copy to clipboard </span>}>
-                            <Button variant='plain' onClick={() => this.copyDetails(user.username)} aria-label='Copy details'>
+                            content={
+                                showCopyAlert
+                                    ? <span> Successfully copied to clipboard</span>
+                                    : <span> Copy to clipboard </span>
+                            }
+                            entryDelay={ 100 }
+                            exitDelay={ 1000 }>
+                            <Button variant='plain'
+                                onClick={() => this.copyDetails(user.username)}
+                                aria-label='Copy details'>
                                 <CopyIcon/>
                             </Button>
                         </Tooltip>
                     </StackItem>
-                    {showCopyAlert && (
-                        <StackItem>
-                            <Alert
-                                className='ins-c-alert__copied'
-                                variant="success"
-                                title="Successfully copied details"
-                                action={<AlertActionCloseButton onClose={this.hideCopyAlert} />}
-                            />
-                        </StackItem>
-                    )}
-                    {showCopyAlertError && (
-                        <StackItem>
-                            <Alert
-                                className='ins-c-alert__copied'
-                                variant="danger"
-                                title="Error copying details"
-                                action={<AlertActionCloseButton onClose={this.hideCopyAlertError} />}
-                            />
-                        </StackItem>
-                    )}
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
                             <TextList component="dl" className='ins-debug-info'>
