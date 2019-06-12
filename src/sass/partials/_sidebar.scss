@@ -2,7 +2,7 @@ aside.pf-c-page__sidebar {
     padding-top: 0;
 
     .ins-c-navigation__header {
-        @include rem('height', 67px);
+        height: 5rem;
         overflow: hidden;
 
         .pf-l-split__item {
