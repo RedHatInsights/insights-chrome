@@ -264,7 +264,7 @@ exports.expiredToken = () => { logout(); };
 
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
-    return authChannel.postMessage({ type: 'refresh' });
+    authChannel.postMessage({ type: 'refresh' });
 }
 
 // Actually update the token
