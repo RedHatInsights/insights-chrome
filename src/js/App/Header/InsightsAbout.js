@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
     AboutModal,
+    Button,
+    Tooltip,
     TextContent, TextList, TextListItem,
     Stack, StackItem
 } from '@patternfly/react-core';
+
+import { CopyIcon } from '@patternfly/react-icons';
+
 import logo from '../../../../static/images/logo.svg';
 import { connect } from 'react-redux';
 import './InsightsAbout.scss';
+import * as Sentry from '@sentry/browser';
 
 const Copyright = () => (
     <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column
@@ -68,8 +74,11 @@ class InsightsAbout extends Component {
                 { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
                 { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' }
             ] },
+            showCopyAlert: false,
+            showCopyAlertError: false,
             currentApp: app && app.title
         };
+        this.hideCopyAlert = () => this.setState({ showCopyAlert: false });
         this.updateAppVersion = this.updateAppVersion.bind(this);
     }
 
@@ -99,6 +108,28 @@ class InsightsAbout extends Component {
         this.setState(appDetails);
     }
 
+    copyDetails(username) {
+
+        const debugDetails = {
+            Username: username,
+            CurrentApp: this.state.currentApp || 'Landing',
+            ApplicationPath: window.location.pathname,
+            ...this.state.appDetails
+        };
+
+        // If the text is successfully copied, change the tooltip
+        // The tooltip exit delay is 1000ms, but the fade out is 200ms
+        // Set the timeout to 1200 so the text doesn't change while it is fading
+        navigator.clipboard.writeText(JSON.stringify(debugDetails, null, 2))
+        .then(() => {
+            this.setState({ showCopyAlert: true }, () => {
+                setTimeout(() => { this.setState({ showCopyAlert: false }); }, 1200);
+            });
+        }, (err) => {
+            Sentry.captureException(err);
+        });
+    }
+
     componentDidMount() {
         this.state.appDetails.apps.forEach((app) => {
             fetch(app.path)
@@ -110,6 +141,7 @@ class InsightsAbout extends Component {
 
     render() {
         const { isModalOpen, onClose, user } = this.props;
+        const { showCopyAlert } = this.state;
 
         return (
             <AboutModal
@@ -118,11 +150,27 @@ class InsightsAbout extends Component {
                 brandImageSrc={logo}
                 brandImageAlt="Red Hat Logo"
                 trademark={<Copyright />}
+                className='ins-c-about-modal'
             >
                 <Stack gutter='sm'>
                     <StackItem>
                         Please include these details when opening a support case.
-
+                        <Tooltip
+                            trigger="mouseenter focus click"
+                            position='top'
+                            content={
+                                showCopyAlert
+                                    ? <span> Successfully copied to clipboard</span>
+                                    : <span> Copy to clipboard </span>
+                            }
+                            entryDelay={ 100 }
+                            exitDelay={ 1000 }>
+                            <Button variant='plain'
+                                onClick={() => this.copyDetails(user.username)}
+                                aria-label='Copy details'>
+                                <CopyIcon/>
+                            </Button>
+                        </Tooltip>
                     </StackItem>
                     <StackItem>
                         <TextContent className="ins-c-page__about--modal">
