@@ -71,7 +71,7 @@ class Navigation extends Component {
         }
 
         return (
-            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" >
+            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true" >
                 <NavList>
                     {
                         settings.map((item, key) => {

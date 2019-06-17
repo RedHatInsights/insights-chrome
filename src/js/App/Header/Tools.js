@@ -17,10 +17,10 @@ const aboutButton = {
     widget: 'InsightsFAQ',
     items: [
         {
-            title: 'Help & Assistance',
+            title: 'Help & assistance',
             url: 'https://access.redhat.com/help/'
         }, {
-            title: 'Customer Support',
+            title: 'Customer support',
             url: 'https://access.redhat.com/support'
         }, {
             title: 'Training',
