@@ -115,6 +115,7 @@ export function bootstrap(libjwt, initFunc) {
 }
 
 function loadChrome(user) {
+
     import('./App/index').then(
         ({ UnauthedHeader, Header, Sidenav }) => {
             const store = insights.chrome.$internal.store;

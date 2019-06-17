@@ -1,24 +1,29 @@
 language: node_js
 sudo: required
+notifications:
+  email: false
+  slack:
+    secure: 'd3g5oKl5kfzi2L96QTrj2g77lzLWzjnM6Ct2OTXRrk90GxxhwHS8RH4Q1IgBqkQjw68nkq7CNE9oAs+pt3si8kT4GQ164YLoTMVkDPBGOoOoMACPyanxQOEluUfdLEDIzChy/7EdlY3l1J2IM+lOK4e95jUwsT9BSXBsSladP++1EUiZfon9JcQSiSZa0e1/cVxLpEDuBB2cruUSTZ9sUATe/XZ0uH1EGzrooQJMkRgdty5UyNSsMxkvAY0Haivq8u9/gWAsLar0bA/90M5CVK7yohh9fY9UfTUbXVqwR3dFAXuW+SURrFVnPAX4FLZt/D09cg/CVCvoasiZdNi9RAeKOCfN+FoxB2ZJNnuM+4KDJX3dxnatd/stmEH1bcd75i4mh9zOWE1HX5d23HuZ4sKdDPpvhG3l7SpZfhLv0/EKL10ld9RdIaiTO2uPI3rsoyDeArzeV+09+dbB1iPKnS/3/Iw5KLhbew3mdJXKVfRk6KYcJySjT8EltrNy5Y7mty7/JzWssSpIpkMCnu6RGAtXO2v/jUfFm1WvsKK5BeH5efbLi1sjMNbVTeA3Bp8pvRPuw+50l94uDfeQ1HUTrq5zKXMUaG9dTdaYZX4fEDMmrbM1TLudjb9Xj4elaA5ioBH0gRFxAnSVTmrKFtFoCRVaqfmj3ceqxttCLUpkfvI='
 node_js:
-- 10
+- '10'
 install:
 - npm ci
 jobs:
-    include:
-    - stage: deploy:stable
-      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable)
+  include:
+    - stage: Lint
+      script: npm run lint
+    - stage: Test
+      script: npm run test && npx codecov
+    - stage: Deploy Stable
+      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable) AND type != pull_request
       name: deploy:stable
-      script: npm run verify
-    - stage: deploy:beta
-      if: branch IN (master, prod-beta, qa-beta)
+      script: npm run build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+    - stage: Deploy Beta
+      if: branch IN (master, prod-beta, qa-beta) AND type != pull_request
       name: deploy:beta
-      script: npm run verify:beta
-after_success:
-- npx codecov
-- curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+      script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
-    global:
+  global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
     - REPO_DIR="insights-chrome-build"
 cache:
