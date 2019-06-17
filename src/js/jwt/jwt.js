@@ -219,7 +219,7 @@ function loginAllTabs() {
 /*** User Functions ***/
 // Get user information
 exports.getUserInfo = () => {
-    log('Getting User Information CHANGES!');
+    log('Getting User Information');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
     
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
@@ -240,8 +240,7 @@ exports.getUserInfo = () => {
 // Challenge auth and login if the user could be logged in, but in an unauth state
 exports.challengeAuth = () => {
     log('Challenging Auth');
-    //return refreshTokens();
-    priv.keycloak.login({onLoad : "login-required"})
+    return priv.keycloak.login({onLoad : "login-required"})
     .then(() => {
         log('Auth challenge successful, logging in');
         return true;
