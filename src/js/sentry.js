@@ -58,7 +58,7 @@ function initSentry() {
 
     Sentry.init({
         dsn: API_KEY,
-        environment: `DEV${appDetails.beta}`,
+        environment: `Prod${appDetails.beta}`,
         maxBreadcrumbs: 50,
         attachStacktrace: true,
         debug: true
