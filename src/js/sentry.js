@@ -1,13 +1,5 @@
 import * as Sentry from '@sentry/browser';
 
-// - Sentry Options
-// dsn: key
-// environment: logs PROD or PROD Beta for filtering
-// maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
-// attachStacktrace: attach the actual console logs
-// debug: will attempt to print out useful debugging information if something goes wrong with sending the event
-// sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
-
 function getAppDetails() {
 
     const pathName = window.location.pathname.split('/');
@@ -36,6 +28,7 @@ function getAppDetails() {
     return appDetails;
 }
 
+// Actually initialize sentry with the group's api key
 function initSentry() {
 
     const appDetails = getAppDetails();
@@ -56,6 +49,12 @@ function initSentry() {
             break;
     }
 
+    // dsn: key
+    // environment: logs Prod or Prod Beta for filtering
+    // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
+    // attachStacktrace: attach the actual console logs
+    // debug: will attempt to print out useful debugging information if something goes wrong with sending the event
+    // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
     Sentry.init({
         dsn: API_KEY,
         environment: `Prod${appDetails.beta}`,
@@ -65,8 +64,9 @@ function initSentry() {
     });
 }
 
+// Sets up the tagging in sentry. This is stuff that can be filtered.
 /* eslint-disable camelcase */
-function sentryUser(user) {
+function sentryTags(user) {
 
     const appDetails = getAppDetails();
 
@@ -82,13 +82,14 @@ function sentryUser(user) {
         });
     });
 }
-/* eslint-enable camelcase */
 
+/* eslint-enable camelcase */
 export default (user) => {
     let environment = window.location.host.split('.')[0];
 
+    // if env === [cloud].redhat.com, actually init. 
     if (environment === 'cloud') {
         initSentry();
-        sentryUser(user);
+        sentryTags(user);
     }
 };
