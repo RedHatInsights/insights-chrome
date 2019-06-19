@@ -70,7 +70,7 @@ function sentryTags(user) {
 
     const appDetails = getAppDetails();
 
-    // TODO: Add request_id to this
+    // TODO: Add request_id to this when we have it
     Sentry.configureScope((scope) => {
         scope.setUser({
             id: user.identity.account_number,
@@ -87,7 +87,7 @@ function sentryTags(user) {
 export default (user) => {
     let environment = window.location.host.split('.')[0];
 
-    // if env === [cloud].redhat.com, actually init. 
+    // if env === [cloud].redhat.com, actually init.
     if (environment === 'cloud') {
         initSentry();
         sentryTags(user);
