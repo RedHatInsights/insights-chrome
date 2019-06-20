@@ -151,6 +151,9 @@ export const grouppedNav = {
                 ]
             }
         ]
+    },
+    apps: {
+        title: 'General app space'
     }
 };
 

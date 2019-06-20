@@ -7,8 +7,8 @@ export function clickReducer(state, action) {
     return state;
 }
 
-export function globalNavReducer(state, { data: { id, activeApp } }) {
-    const activeGroup = state.globalNav.filter(item => item.group === id);
+export function globalNavReducer(state, { data: { id, activeApp, customNav } }) {
+    const activeGroup = (state.globalNav || [customNav]).filter(item => item.group === id);
     let active;
     if (activeGroup.length > 0) {
         active = activeGroup.find(item => window.location.href.indexOf(item.id) !== -1);
@@ -24,7 +24,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
         globalNav: state.globalNav && state.globalNav.map(item => ({
             ...item,
             active: active && (item.id === active.id || item.title === active.id)
-        }))
+        })) || [customNav]
     };
 }
 

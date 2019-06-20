@@ -28,6 +28,17 @@ export function identifyApp (data, options) {
         return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
     }
 
+    if (window.location.pathname.indexOf('apps') !== -1) {
+        const title = data.replace(/-/g, ' ');
+        return {
+            type: actionTypes.GLOBAL_NAV_IDENT,
+            data: {
+                id: data,
+                customNav: { id: data, title: title.charAt(0).toUpperCase() + title.slice(1), active: true }
+            }
+        };
+    }
+
     if (!options.some(item => isCurrApp(item, data))) {
         throw new Error(`unknown app identifier: ${data}`);
     }
