@@ -9,7 +9,10 @@ const libjwt = auth();
 function noop () {}
 
 libjwt.initPromise.then(() => {
-    libjwt.jwt.getUserInfo().then(analytics && sentry).catch(noop);
+    libjwt.jwt.getUserInfo().then((...data) => {
+        analytics(...data);
+        sentry(...data);
+    }).catch(noop);
 });
 
 window.insights = window.insights || {};
