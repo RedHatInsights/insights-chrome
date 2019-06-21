@@ -194,13 +194,14 @@ exports.login = () => {
 
 function logout(bounce) {
     log('Logging out');
-
+    alert("logging out")
     // Clear cookies and tokens
     priv.keycloak.clearToken();
     cookie.remove(priv.cookie.cookieName);
 
     // Redirect to logout
     if (bounce) {
+        alert("triggered")
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}/logout`
         });
