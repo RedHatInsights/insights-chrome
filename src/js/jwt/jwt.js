@@ -97,7 +97,7 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    options.onLoad = 'login-required';
+    //options.onLoad = 'login-required';
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -194,7 +194,6 @@ exports.login = () => {
 
 function logout(bounce) {
     log('Logging out');
-    alert("logging out")
     // Clear cookies and tokens
     priv.keycloak.clearToken();
     cookie.remove(priv.cookie.cookieName);
@@ -240,13 +239,16 @@ exports.getUserInfo = () => {
 // Challenge auth and login if the user could be logged in, but in an unauth state
 exports.challengeAuth = () => {
     log('Challenging Auth');
-    return priv.keycloak.login({ onLoad: 'login-required' })
+    alert("jwt 242");
+    priv.keycloak.login({ prompt: 'none' })
     .then(() => {
         log('Auth challenge successful, logging in');
+        alert("jwt 245");
         return true;
     })
     .catch(() => {
         log('Auth challenge failed');
+        alert("jwt 250")
         return false;
     });
 };
