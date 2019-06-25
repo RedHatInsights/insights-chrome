@@ -97,7 +97,7 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    //options.onLoad = 'login-required';
+    //options.onLoad = 'check-sso';
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -189,6 +189,7 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
+    alert(location.href)
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
