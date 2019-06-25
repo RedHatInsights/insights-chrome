@@ -22,6 +22,10 @@ jobs:
       if: branch IN (master, prod-beta, qa-beta) AND type != pull_request
       name: deploy:beta
       script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+    - stage: Deploy Nightly
+      if: branch IN (nightly) AND type != pull_request
+      name: deploy:beta
+      script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
   global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
