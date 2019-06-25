@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-function buildItems(username, accountNumber = -1, extraItems) {
+function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
     return [
         <DropdownItem key="Username" isDisabled>
             <dl className='ins-c-dropdown-item__stack'>
@@ -29,14 +29,28 @@ function buildItems(username, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <DropdownItem key="My Profile" href="https://access.redhat.com/user">
-            My Profile
+        <DropdownItem
+            key="My Profile"
+            href="https://access.redhat.com/user"
+            target="_blank"
+            rel='noopener noreferrer'>
+                My profile
         </DropdownItem>,
-        <DropdownItem key="User Management" href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html">
-            User Management
-        </DropdownItem>,
-        <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout(true)}>
-            Logout
+        <React.Fragment key="user management wrapper">
+            { isOrgAdmin &&
+                <DropdownItem
+                    key="User management"
+                    href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+                    target="_blank" rel='noopener noreferrer'>
+                        User management
+                </DropdownItem>
+            }
+        </React.Fragment>,
+        <DropdownItem
+            key="logout"
+            component="button"
+            onClick={() => window.insights.chrome.auth.logout(true)}>
+                Logout
         </DropdownItem>,
         [...extraItems]
     ];
@@ -77,7 +91,7 @@ class UserToggle extends Component {
                 toggle={toggle}
                 isPlain
                 isOpen={isOpen}
-                dropdownItems={buildItems(account.username, account.number, extraItems)}
+                dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, extraItems)}
             />
         );
     }
@@ -111,7 +125,8 @@ export default connect(({
                 user: {
                     username,
                     first_name,
-                    last_name
+                    last_name,
+                    is_org_admin
                 }
             }
         }
@@ -119,6 +134,7 @@ export default connect(({
     account: {
         number: accountNumber,
         username: username,
+        isOrgAdmin: is_org_admin,
         name: `${first_name} ${last_name}`
     }
 }))(UserToggle);

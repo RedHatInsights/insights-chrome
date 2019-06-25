@@ -25,7 +25,7 @@ if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
     done
 fi
 
-elif [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
+if [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
     echo
     echo
     echo "PUSHING ${TRAVIS_BRANCH}"

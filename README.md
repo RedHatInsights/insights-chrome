@@ -125,3 +125,9 @@ To set a short jwt session, log out of your account and then do the following in
 `window.localStorage.setItem('chrome:jwt:shortSession', true);`
 
 Note: You must log out of your short session and set `window.localStorage.setItem('chrome:jwt:shortSession', false);` to return to the regular realm.
+
+## Sentry
+
+This project captures events with [Sentry.io](https://sentry.io/welcome/).
+
+Out of the box, we capture all fatal errors. We also provide Sentry to developers so they can [throw their own errors](https://docs.sentry.io/error-reporting/capturing/?platform=javascript).
