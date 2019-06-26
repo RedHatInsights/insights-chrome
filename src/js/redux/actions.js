@@ -24,6 +24,8 @@ function isCurrApp(item, app) {
 }
 
 export function identifyApp (data, options) {
+    console.log('IdentifyApp options:');
+    console.log(options);
     if (data === 'landing') {
         return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
     }
@@ -66,6 +68,6 @@ export function clearActive() {
 }
 
 export function chromeNavUpdate(newNav) {
-    console.log('in the action');
-    return { type: actionTypes.CHROME_NAV_UPDATE, payload: { newNav } };
+    console.log('in the redux action');
+    return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
 }

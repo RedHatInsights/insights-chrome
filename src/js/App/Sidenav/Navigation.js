@@ -161,6 +161,8 @@ Navigation.propTypes = {
 };
 
 function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup, appId } }) {
+    console.log('State to props:');
+    console.log(globalNav);
     return ({ settings: globalNav, activeApp, navHidden, activeLocation, activeGroup, appId });
 }
 
