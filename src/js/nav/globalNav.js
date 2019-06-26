@@ -151,6 +151,17 @@ export const grouppedNav = {
                 ]
             }
         ]
+    },
+    staging: {
+        title: 'Staging Bundle',
+        routes: [
+            {
+                id: 'migration-analytics',
+                title: 'Migration Analytics',
+                disabled: window.location.pathname.indexOf('/beta') === -1 || window.location.hostname === 'cloud.redhat.com',
+                default: true
+            }
+        ]
     }
 };
 
@@ -248,5 +259,11 @@ export default Object.freeze([
         id: 'tower-analytics',
         title: 'Tower Analytics',
         disabled: window.location.hostname === 'cloud.redhat.com'
+    },
+    {
+        id: 'migration-analytics',
+        title: 'Migration Analytics',
+        disabled: window.location.pathname.indexOf('/beta') === -1 || window.location.hostname === 'cloud.redhat.com',
+        default: true
     }
 ]);
