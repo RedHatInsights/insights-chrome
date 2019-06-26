@@ -97,7 +97,6 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    options.onLoad = 'login-required';
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -194,6 +193,7 @@ exports.login = () => {
 
 function logout(bounce) {
     log('Logging out');
+
     // Clear cookies and tokens
     priv.keycloak.clearToken();
     cookie.remove(priv.cookie.cookieName);
@@ -201,7 +201,7 @@ function logout(bounce) {
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout.html`
+            redirectUri: `https://${window.location.host}/logout`
         });
     }
 }
@@ -220,6 +220,7 @@ function loginAllTabs() {
 exports.getUserInfo = () => {
     log('Getting User Information');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
+
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
         return insightsUser(priv.keycloak.tokenParsed);
     }
