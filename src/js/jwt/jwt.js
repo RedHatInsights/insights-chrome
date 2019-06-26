@@ -240,16 +240,13 @@ exports.getUserInfo = () => {
 // Challenge auth and login if the user could be logged in, but in an unauth state
 exports.challengeAuth = () => {
     log('Challenging Auth');
-    alert("jwt 242");
     priv.keycloak.login({ prompt: 'none' })
     .then(() => {
         log('Auth challenge successful, logging in');
-        alert("jwt 245");
         return true;
     })
     .catch(() => {
         log('Auth challenge failed');
-        alert("jwt 250")
         return false;
     });
 };
