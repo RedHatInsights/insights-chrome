@@ -109,7 +109,7 @@
     "@redhat-cloud-services/frontend-components-inventory": "0.0.16",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.7",
-    "@sentry/browser": "^5.3.0",
+    "@sentry/browser": "^5.4.3",
     "axios": "^0.19.0",
     "axios-cache-adapter": "^2.3.0",
     "babel-plugin-rewire": "^1.2.0",

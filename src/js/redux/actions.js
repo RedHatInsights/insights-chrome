@@ -67,5 +67,5 @@ export function clearActive() {
 
 export function chromeNavUpdate(newNav) {
     console.log('in the action');
-    return { type: actionTypes.CHROME_NAV_UPDATE, payload: {newNav} };
+    return { type: actionTypes.CHROME_NAV_UPDATE, payload: { newNav } };
 }

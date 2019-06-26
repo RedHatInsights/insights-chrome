@@ -1,10 +1,10 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 
 import {
-    clickReducer, globalNavReducer, appNavClick, navToggleReducer, loginReducer, clearActive, chromeNavUpdate
+    clickReducer, globalNavReducer, appNavClick, navToggleReducer, loginReducer, clearActive
 } from './reducers';
 import {
-    CLICK_ACTION, GLOBAL_NAV_IDENT, APP_NAV_CLICK, NAVIGATION_TOGGLE, USER_LOGIN, CLEAR_ACTIVE, CHROME_NAV_UPDATE
+    CLICK_ACTION, GLOBAL_NAV_IDENT, APP_NAV_CLICK, NAVIGATION_TOGGLE, USER_LOGIN, CLEAR_ACTIVE
 } from './action-types';
 
 const reducers = {

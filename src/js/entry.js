@@ -10,8 +10,8 @@ import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
 import get from 'axios';
-import safeLoad from 'js-yaml';
-import getNavFromConfig from './nav/globalNav.js';
+import { safeLoad } from 'js-yaml';
+import { getNavFromConfig } from './nav/globalNav.js';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -34,7 +34,7 @@ export function chromeInit(libjwt) {
     // First, get the source of truth to build the nav.
     // TODO: Only get this YAML if the cache has expired
     const navigationResolver = get('https://raw.githubusercontent.com/'
-    + 'RedHatInsights/cloud-services-config/enhancements/chrome-nav/main.yml')
+    + 'RedHatInsights/cloud-services-config/master/main.yml')
     .then(({ data }) => loadNav(data))
     .then(chromeNavUpdate);
 
