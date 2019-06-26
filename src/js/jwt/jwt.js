@@ -203,7 +203,7 @@ function logout(bounce) {
     if (bounce) {
         alert("triggered")
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout`
+            redirectUri: `https://${window.location.host}/logout.html`
         });
     }
 }
@@ -243,7 +243,7 @@ exports.challengeAuth = () => {
     alert("jwt 242");
     priv.keycloak.login({ prompt: 'none' })
     .then(() => {
-        log('Auth challenge successful, logging in');
+        log('Auth challenege successful, logging in');
         alert("jwt 245");
         return true;
     })
