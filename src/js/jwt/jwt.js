@@ -97,7 +97,7 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    //options.onLoad = 'check-sso';
+    options.onLoad = 'login-required';
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -236,24 +236,6 @@ exports.getUserInfo = () => {
         }
     });
 };
-
-// Challenge auth and login if the user could be logged in, but in an unauth state
-exports.challengeAuth = () => {
-    log('Challenging Auth');
-    alert("jwt 242");
-    priv.keycloak.login({ prompt: 'none' })
-    .then(() => {
-        log('Auth challenege successful, logging in');
-        alert("jwt 245");
-        return true;
-    })
-    .catch(() => {
-        log('Auth challenge failed');
-        alert("jwt 250")
-        return false;
-    });
-};
-
 // Check to see if the user is loaded, this is what API calls should wait on
 exports.isAuthenticated = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);

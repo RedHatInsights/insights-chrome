@@ -87,6 +87,7 @@ export function bootstrap(libjwt, initFunc) {
                     // calls/finishes getUser
                     // this only does something if the correct localstorage
                     // vars are set
+
                     qe.init();
 
                     return libjwt.initPromise
@@ -98,8 +99,6 @@ export function bootstrap(libjwt, initFunc) {
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login(),
-                challengeAuth: () => libjwt.jwt.challengeAuth()
-
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => {
