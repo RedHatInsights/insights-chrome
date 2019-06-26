@@ -17,7 +17,6 @@ function getWindow() {
     return window;
 }
 
-
 function bouncer() {
     if (allowUnauthed()) { return; }
 

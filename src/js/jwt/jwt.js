@@ -189,7 +189,6 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
-    alert(location.href)
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
@@ -201,7 +200,6 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
-        alert("triggered")
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}/logout.html`
         });
@@ -236,6 +234,7 @@ exports.getUserInfo = () => {
         }
     });
 };
+
 // Check to see if the user is loaded, this is what API calls should wait on
 exports.isAuthenticated = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);
