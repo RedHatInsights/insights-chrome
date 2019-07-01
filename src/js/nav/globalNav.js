@@ -1,6 +1,4 @@
 export let getNavFromConfig = (masterConfig) => {
-    console.log('master config:');
-    console.log(masterConfig);
     let globalNav = {};
     // Get the top-level apps from the master config
     Object.keys(masterConfig).filter(appid => masterConfig[appid].top_level).forEach((appid) => {

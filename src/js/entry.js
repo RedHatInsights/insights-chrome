@@ -31,7 +31,7 @@ export function chromeInit(libjwt) {
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
 
-    const jwtAndNavResolver = () => libjwt.initPromise.then(() => {
+    const jwtAndNavResolver = libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
             actions.userLogIn(user);
             loadChrome(user);
@@ -44,7 +44,11 @@ export function chromeInit(libjwt) {
 
     return {
         identifyApp: (data) => {
-            return jwtAndNavResolver().then(() => identifyApp(data, store.getState().chrome.globalNav));
+            return jwtAndNavResolver.then(() => {
+                console.log("Here's the store's state");
+                console.log(store.getState());
+                return identifyApp(data, store.getState().chrome.globalNav);
+            });
         },
         navigation: appNav,
         appNavClick: ({ secondaryNav, ...payload }) => {
@@ -124,7 +128,6 @@ function loadNav(yamlConfig) {
 
     const splitted = location.pathname.split('/') ;
     const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
-    console.log('active app = ' + active);
     return groupedNav[active] ? {
         globalNav: groupedNav[active].routes,
         activeTechnology: groupedNav[active].title,
