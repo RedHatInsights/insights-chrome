@@ -29,13 +29,6 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
 }
 
 export function navUpdateReducer(state, { payload }) {
-    console.log("Input state:");
-    console.log(state);
-    console.log("Output state:");
-    console.log({
-        ...state,
-        ...payload
-    });
     return {
         ...state,
         ...payload

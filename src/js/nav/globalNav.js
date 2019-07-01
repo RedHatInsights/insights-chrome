@@ -26,6 +26,8 @@ function getRoutesForApp(app, masterConfig) {
 
             if (subItem.default) {subAppData.default = subItem.default;}
 
+            if (subItem.group) {subAppData.group = subItem.group;}
+
             routes.push(subAppData);
         }));
         return routes;
@@ -42,7 +44,7 @@ function getAppData(appId, propName, masterConfig) {
         };
         if (!app.frontend.suppress_id) {appData.id = appId;}
 
-        if (appData.reload) {appData.reload = app.frontend.reload;}
+        if (app.frontend.reload) {appData.reload = app.frontend.reload;}
 
         if (routes) {appData[propName] = routes;}
 

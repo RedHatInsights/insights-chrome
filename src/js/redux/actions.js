@@ -24,8 +24,6 @@ function isCurrApp(item, app) {
 }
 
 export function identifyApp (data, options) {
-    console.log('IdentifyApp options:');
-    console.log(options);
     if (data === 'landing') {
         return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
     }

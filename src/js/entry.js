@@ -9,9 +9,9 @@ import loadRemediations from './remediations';
 import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
-import get from 'axios';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -31,14 +31,7 @@ export function chromeInit(libjwt) {
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
 
-    // First, get the source of truth to build the nav.
-    // TODO: Only get this YAML if the cache has expired
-    const navigationResolver = get('https://raw.githubusercontent.com/'
-    + 'RedHatInsights/cloud-services-config/master/main.yml')
-    .then(({ data }) => loadNav(data))
-    .then(chromeNavUpdate);
-
-    libjwt.initPromise.then(() => {
+    const jwtAndNavResolver = () => libjwt.initPromise.then(() => {
         libjwt.jwt.getUserInfo().then((user) => {
             actions.userLogIn(user);
             loadChrome(user);
@@ -46,12 +39,12 @@ export function chromeInit(libjwt) {
             if (allowUnauthed()) {
                 loadChrome(false);
             }
-        });
+        }).then(() => sourceOfTruth(libjwt.jwt.getEncodedToken()).then(({ data }) => loadNav(data)).then(chromeNavUpdate));
     });
 
     return {
         identifyApp: (data) => {
-            return navigationResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
+            return jwtAndNavResolver().then(() => identifyApp(data, store.getState().chrome.globalNav));
         },
         navigation: appNav,
         appNavClick: ({ secondaryNav, ...payload }) => {
@@ -131,6 +124,7 @@ function loadNav(yamlConfig) {
 
     const splitted = location.pathname.split('/') ;
     const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
+    console.log('active app = ' + active);
     return groupedNav[active] ? {
         globalNav: groupedNav[active].routes,
         activeTechnology: groupedNav[active].title,
