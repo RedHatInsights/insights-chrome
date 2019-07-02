@@ -162,6 +162,16 @@ export const grouppedNav = {
                 default: true
             }
         ]
+    },
+    ruledev: {
+        title: 'Rule Development',
+        routes: [
+            {
+                id: 'ruledev',
+                title: 'Home',
+                default: true
+            }
+        ]
     }
 };
 
