@@ -160,12 +160,7 @@ export const grouppedNav = {
                 title: 'Migration Analytics',
                 disabled: window.location.pathname.indexOf('/beta') === -1 || window.location.hostname === 'cloud.redhat.com',
                 default: true
-            }
-        ]
-    },
-    ruledev: {
-        title: 'Rule Development',
-        routes: [
+            },
             {
                 id: 'ruledev',
                 title: 'Home',
