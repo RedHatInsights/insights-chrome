@@ -164,6 +164,11 @@ export const grouppedNav = {
                 title: 'Migration Analytics',
                 disabled: window.location.pathname.indexOf('/beta') === -1 || window.location.hostname === 'cloud.redhat.com',
                 default: true
+            },
+            {
+                id: 'ruledev',
+                title: 'Home',
+                default: true
             }
         ]
     }
