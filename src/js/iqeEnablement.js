@@ -62,7 +62,7 @@ export default {
 
         return xhrResults.length > 0 || fetchResults.length > 0;
     },
-    isPageSafe: () => document.querySelectorAll('[data-ouia-safe=false]').length > 0,
+    isPageSafe: () => !document.querySelectorAll('[data-ouia-safe=false]').length !== 0,
     xhrResults: () => {
         return xhrResults;
     },
