@@ -98,8 +98,8 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    options.onLoad = 'login-required';
-
+    //options.onLoad = 'login-required';
+    
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
     }
@@ -108,6 +108,7 @@ exports.init = (options) => {
     priv.keycloak.onTokenExpired = updateToken;
     priv.keycloak.onAuthSuccess = loginAllTabs;
     priv.keycloak.onAuthRefreshSuccess = refreshTokens;
+    
 
     if (options.token) {
         if (isExistingValid(options.token)) {
@@ -203,7 +204,7 @@ function logout(bounce) {
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout`
+            redirectUri: `https://${window.location.host}/logout.html`
         });
     }
 }
@@ -220,7 +221,7 @@ function loginAllTabs() {
 /*** User Functions ***/
 // Get user information
 exports.getUserInfo = () => {
-    log('Getting User Information');
+    log('Getting User Information changes!!!');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
@@ -242,6 +243,21 @@ exports.getUserInfo = () => {
 exports.challengeAuth = () => {
     log('Challenging Auth');
     priv.keycloak.login({ prompt: 'none' })
+    .then(() => {
+        log('Auth challenge successful, logging in');
+        return true;
+    })
+    .catch(() => {
+        log('Auth challenge failed');
+        return false;
+    });
+};
+
+// Challenge auth and login if the user could be logged in, but in an unauth state
+exports.challengeAuth = () => {
+    log('Challenging Auth');
+    alert("challenign auth")
+    priv.keycloak.login({ onLoad: 'check-sso' })
     .then(() => {
         log('Auth challenge successful, logging in');
         return true;
