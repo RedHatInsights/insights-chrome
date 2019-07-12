@@ -10,7 +10,7 @@ function init () {
     const oldFetch = window.fetch;
 
     // must use function here because arrows dont "this" like functions
-    window.XMLHttpRequest.prototype.open = function openReplacement(method, url) { // eslint-disable-line func-names
+    window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) { // eslint-disable-line func-names
         this._url = url;
         return open.apply(this, arguments);
     };
@@ -46,8 +46,8 @@ export default {
         }
     },
     hasPendingAjax: () => {
-        const xhrRemoved = xhrResults.filter(result => result.readyState === 4);
-        xhrResults = xhrResults.filter(result => result.readyState !== 4);
+        const xhrRemoved = xhrResults.filter(result => result.readyState === 4 || result.readyState === 0);
+        xhrResults = xhrResults.filter(result => result.readyState !== 4 && result.readyState !== 0);
         for (const e of xhrRemoved) {
             console.log(`[iqe] xhr complete:   ${e._url}`);// eslint-disable-line no-console
         }
