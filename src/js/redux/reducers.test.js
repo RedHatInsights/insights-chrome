@@ -1,7 +1,6 @@
 import '../test';
 import * as actions from './actions';
 import * as reducers from './reducers';
-import * as actionTypes from './action-types';
 
 const mockNav = [{
     id: 'dashboard',
