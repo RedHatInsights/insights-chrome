@@ -1,4 +1,3 @@
-import get from 'axios';
 const axios = require('axios');
 const { setupCache } = require('axios-cache-adapter');
 const localforage = require('localforage');
@@ -19,6 +18,6 @@ module.exports = (cachePrefix) => {
 
     instance.interceptors.response.use((response) => response.data || response);
 
-    return get('https://raw.githubusercontent.com/'
+    return instance.get('https://raw.githubusercontent.com/'
     + 'RedHatInsights/cloud-services-config/master/main.yml');
 };
