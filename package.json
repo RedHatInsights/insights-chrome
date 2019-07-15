@@ -28,7 +28,7 @@
     "watch:js": "parcel watch src/js/chrome.js -d build/js --public-url /apps/chrome/js",
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w",
-    "nightly": "npm run verify:beta"
+    "nightly": "npm run verify"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
