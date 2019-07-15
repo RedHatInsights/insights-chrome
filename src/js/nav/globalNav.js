@@ -4,8 +4,6 @@ export let getNavFromConfig = (masterConfig) => {
     Object.keys(masterConfig).filter(appid => masterConfig[appid].top_level).forEach((appid) => {
         globalNav[appid] = getAppData(appid, 'routes', masterConfig);
     });
-    console.log('global nav:');
-    console.log(globalNav);
     return globalNav;
 };
 

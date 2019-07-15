@@ -2,6 +2,7 @@ const axios = require('axios');
 const { setupCache } = require('axios-cache-adapter');
 const localforage = require('localforage');
 
+// Gets the source of truth from the CS Config repository, and caches it for 10 minutes.
 module.exports = (cachePrefix) => {
     const store = localforage.createInstance({
         driver: [

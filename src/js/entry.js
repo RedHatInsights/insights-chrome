@@ -31,18 +31,22 @@ export function chromeInit(libjwt) {
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
 
-    const userInfo = libjwt.initPromise.then(() => {
-        libjwt.jwt.getUserInfo().then((user) => {
-            actions.userLogIn(user);
-            loadChrome(user);
-        });
-    }).catch(() => {
-        if (allowUnauthed()) {
-            loadChrome(false);
-        }
-    });
-    const jwtAndNavResolver = userInfo.then(() => sourceOfTruth(libjwt.jwt.getEncodedToken()))
-    .then((data) => loadNav(data)).then(chromeNavUpdate);
+    // Init JWT first.
+    const jwtAndNavResolver = libjwt.initPromise
+    .then(libjwt.jwt.getUserInfo)
+    .then((user) => {
+        // Log in the user
+        actions.userLogIn(user);
+        // Then, generate the global nav from the source of truth.
+        // We use the JWT token as part of the cache key.
+        return sourceOfTruth(libjwt.jwt.getEncodedToken())
+        // Gets the navigation for the current bundle.
+        .then(loadNav)
+        // Updates Redux's state with the new nav.
+        .then(chromeNavUpdate)
+        .then(() => loadChrome(user));
+    })
+    .catch(() => allowUnauthed() && loadChrome(false));
 
     return {
         identifyApp: (data) => {
@@ -121,6 +125,7 @@ export function bootstrap(libjwt, initFunc) {
     };
 }
 
+// Loads the navigation for the current bundle.
 function loadNav(yamlConfig) {
     const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
 
