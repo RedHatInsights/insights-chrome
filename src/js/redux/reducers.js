@@ -28,6 +28,13 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     };
 }
 
+export function navUpdateReducer(state, { payload }) {
+    return {
+        ...state,
+        ...payload
+    };
+}
+
 export function appNavReducer(state, action) {
     return {
         ...state,
