@@ -111,7 +111,7 @@ export function bootstrap(libjwt, initFunc) {
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login(),
-                challengeAuth: () => libjwt.jwt.challengeAuth()
+                checkAuth: () => libjwt.jwt.checkAuth()
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => {

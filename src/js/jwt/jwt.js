@@ -190,6 +190,7 @@ function initError() {
 /*** Login/Logout ***/
 exports.login = () => {
     log('Logging in');
+    //alert("logging")
     // Redirect to login
     return priv.keycloak.login({ redirectUri: location.href });
 };
@@ -254,9 +255,11 @@ exports.challengeAuth = () => {
 };
 
 // Challenge auth and login if the user could be logged in, but in an unauth state
-exports.challengeAuth = () => {
+exports.checkAuth = () => {
     log('Challenging Auth');
-    priv.keycloak.login({})
+    alert('challenging auth')
+    //priv.keycloak.login({})
+    refreshTokens()
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
