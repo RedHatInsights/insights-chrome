@@ -57,7 +57,7 @@ class Navigation extends Component {
                 onClearActive && onClearActive();
                 onNavigate && onNavigate(item);
             } else {
-                const prefix = (parent && parent.id) ? `/${parent.id}/` : '/';
+                const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
                 window.location.href = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
             }
         }
