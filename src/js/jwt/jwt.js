@@ -202,7 +202,7 @@ function logout(bounce) {
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout.html`
+            redirectUri: `https://${window.location.host}/logout`
         });
     }
 }
