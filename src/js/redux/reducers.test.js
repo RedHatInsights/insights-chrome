@@ -1,20 +1,48 @@
 import '../test';
 import * as actions from './actions';
 import * as reducers from './reducers';
-import globalNav from '../nav/globalNav';
+
+const mockNav = [{
+    id: 'dashboard',
+    title: 'Dashboard'
+},
+{
+    id: 'advisor',
+    title: 'Insights',
+    subItems: [
+        {
+            id: 'actions',
+            title: 'Actions',
+            default: true
+        },
+        {
+            id: 'rules',
+            title: 'Rules'
+        }
+    ]
+},
+{
+    id: 'vulnerability',
+    title: 'Vulnerability'
+},
+{
+    id: 'inventory',
+    title: 'Inventory'
+},
+{
+    id: 'remediations',
+    title: 'Remediations'
+}
+];
 
 describe('Reducers', () => {
     describe('Navigation', () => {
-        it('activates global navigation element on identifyApp()', () => {
-            const state = reducers.globalNavReducer({ globalNav }, actions.identifyApp('inventory', globalNav));
-            expect(state.appId).toEqual('inventory');
-            const activeItems = state.globalNav.filter(i => i.active);
-            expect(activeItems.length).toBe(1);
-            expect(activeItems[0].id).toBe('inventory');
+        it('finds the app using identifyApp()', () => {
+            expect(() => actions.identifyApp('inventory', mockNav)).not.toThrowError('unknown app identifier: inventory');
         });
 
         it('throws error on unknown app', () => {
-            expect(() => actions.identifyApp('foo', globalNav)).toThrowError('unknown app identifier: foo');
+            expect(() => actions.identifyApp('foo', mockNav)).toThrowError('unknown app identifier: foo');
         });
 
         it('defines app navigation with appNav()', () => {

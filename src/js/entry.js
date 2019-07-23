@@ -9,6 +9,9 @@ import loadRemediations from './remediations';
 import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
+import { safeLoad } from 'js-yaml';
+import { getNavFromConfig } from './nav/globalNav.js';
+const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -26,20 +29,29 @@ export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNav, appNavClick, clearActive } = actions;
-    libjwt.initPromise.then(() => {
-        libjwt.jwt.getUserInfo().then((user) => {
-            actions.userLogIn(user);
-            loadChrome(user);
-        }).catch(() => {
-            if (allowUnauthed()) {
-                loadChrome(false);
-            }
-        });
-    });
+    const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
+
+    // Init JWT first.
+    const jwtAndNavResolver = libjwt.initPromise
+    .then(libjwt.jwt.getUserInfo)
+    .then((user) => {
+        // Log in the user
+        actions.userLogIn(user);
+        // Then, generate the global nav from the source of truth.
+        // We use the JWT token as part of the cache key.
+        return sourceOfTruth(libjwt.jwt.getEncodedToken())
+        // Gets the navigation for the current bundle.
+        .then(loadNav)
+        // Updates Redux's state with the new nav.
+        .then(chromeNavUpdate)
+        .then(() => loadChrome(user));
+    })
+    .catch(() => allowUnauthed() && loadChrome(false));
 
     return {
-        identifyApp: (data) => identifyApp(data, store.getState().chrome.globalNav),
+        identifyApp: (data) => {
+            return jwtAndNavResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
+        },
         navigation: appNav,
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
@@ -111,6 +123,22 @@ export function bootstrap(libjwt, initFunc) {
         experimental: {
             loadRemediations
         }
+    };
+}
+
+// Loads the navigation for the current bundle.
+function loadNav(yamlConfig) {
+    const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
+
+    const splitted = location.pathname.split('/') ;
+    const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
+    return groupedNav[active] ? {
+        globalNav: groupedNav[active].routes,
+        activeTechnology: groupedNav[active].title,
+        activeLocation: active
+    } : {
+        globalNav: groupedNav.insights.routes,
+        activeTechnology: 'Applications'
     };
 }
 
