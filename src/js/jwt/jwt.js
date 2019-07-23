@@ -97,8 +97,7 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
-    //options.onLoad = 'check-sso';
-    
+
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
     }
@@ -107,7 +106,6 @@ exports.init = (options) => {
     priv.keycloak.onTokenExpired = updateToken;
     priv.keycloak.onAuthSuccess = loginAllTabs;
     priv.keycloak.onAuthRefreshSuccess = refreshTokens;
-    
 
     if (options.token) {
         if (isExistingValid(options.token)) {
@@ -189,7 +187,6 @@ function initError() {
 /*** Login/Logout ***/
 exports.login = () => {
     log('Logging in');
-    //alert("logging")
     // Redirect to login
     return priv.keycloak.login({ redirectUri: location.href });
 };
@@ -221,7 +218,7 @@ function loginAllTabs() {
 /*** User Functions ***/
 // Get user information
 exports.getUserInfo = () => {
-    log('Getting User Information changes!!!');
+    log('Getting User Information');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
@@ -241,10 +238,8 @@ exports.getUserInfo = () => {
 
 // Challenge auth and login if the user could be logged in, but in an unauth state
 exports.checkAuth = () => {
-    log('Challenging Auth');
-    alert('challenging auth')
-    //priv.keycloak.login({})
-    refreshTokens()
+    log('Checking Auth');
+    return priv.keycloak.authenticated;
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
