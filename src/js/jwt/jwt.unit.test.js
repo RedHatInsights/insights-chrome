@@ -309,8 +309,24 @@ describe('JWT', () => {
             });
         });
 
-        test('getEncodedToken', () => {
-            expect(jwt.getEncodedToken()).toBe(encodedToken);
+        test('getEncodedToken that is expired', () => {
+            expect(jwt.getEncodedToken()).toBe(undefined);
+        });
+
+        test('getEncodedToken that is valid', () => {
+            const now = new Date();
+            let notExpiring = decodedToken;
+            notExpiring.exp   = Math.floor(now.getTime() / 1000);
+
+            JWTRewireAPI.__Rewire__('decodeToken', () => {
+                return notExpiring;
+            });
+
+            expect(jwt.getEncodedToken()).toBeTruthy();
+        });
+
+        test('isTokenExpired', () => {
+            expect(jwt.isTokenExpired()).toBe(false);
         });
 
         test('getUrl', () => {

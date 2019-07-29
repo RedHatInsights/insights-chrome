@@ -1,6 +1,7 @@
 /*global module*/
 import cookie from 'js-cookie';
 const encodedToken = require('../../../../testdata/encodedToken.json').data;
+const decodedToken = require('../../../../testdata/decodedToken.json');
 
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
@@ -44,6 +45,15 @@ const Keycloak = (options) => {
         },
         logout: () => {
             cookie.remove('cs_jwt');
+        },
+        isTokenExpired: () => {
+            const now = new Date();
+            const nowUnix   = Math.floor(now.getTime() / 1000);
+            if(decodedToken.exp > nowUnix) {
+                return true;
+            } else {
+                return false;
+            }
         }
     };
 };
