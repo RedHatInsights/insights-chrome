@@ -49,7 +49,7 @@ const Keycloak = (options) => {
         isTokenExpired: () => {
             const now = new Date();
             const nowUnix   = Math.floor(now.getTime() / 1000);
-            if(decodedToken.exp > nowUnix) {
+            if (decodedToken.exp > nowUnix) {
                 return true;
             } else {
                 return false;
