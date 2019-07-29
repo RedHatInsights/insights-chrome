@@ -297,16 +297,18 @@ function setCookieWrapper(str) {
 // Encoded WIP
 exports.getEncodedToken = () => {
     log('Getting encoded token');
-    if(!exports.isTokenExpired()) {
+    // Check if the token is expired, if expired - report to sentry
+    if (!exports.isTokenExpired()) {
         return (priv.keycloak.token);
     } else {
         Sentry.captureException(new Error('Fetching token failed - expired token'));
     }
 };
 
+// Checks if the token is expired
 exports.isTokenExpired = () => {
     priv.keycloak.isTokenExpired();
-}
+};
 
 // Keycloak server URL
 exports.getUrl = () => {
