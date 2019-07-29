@@ -11,6 +11,8 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+import * as Sentry from '@sentry/browser';
+
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -88,9 +90,11 @@ export function bootstrap(libjwt, initFunc) {
                 },
                 getToken: () => {
                     return new Promise((res) => {
-                        libjwt.jwt.getUserInfo().then(() => {
-                            res(libjwt.jwt.getEncodedToken());
-                        });
+                        libjwt.jwt.getUserInfo()
+                        .then(() => { res(libjwt.jwt.getEncodedToken()); })
+                        .catch((err) => { Sentry.captureException(err); });
+                    }, (err) => {
+                        Sentry.captureException(err);
                     });
                 },
                 getUser: () => {
