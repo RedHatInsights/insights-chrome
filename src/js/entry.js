@@ -97,6 +97,9 @@ export function bootstrap(libjwt, initFunc) {
                         Sentry.captureException(err);
                     });
                 },
+                isTokenExpired: () => {
+                    return libjwt.jwt.isTokenExpired();
+                },
                 getUser: () => {
                     // here we need to init the qe plugin
                     // the "contract" is we will do this before anyone

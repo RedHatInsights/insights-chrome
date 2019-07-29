@@ -5,6 +5,7 @@ import Keycloak from 'keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
+import * as Sentry from '@sentry/browser';
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -97,6 +98,8 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
+
+    options.timeSkew = 10;
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -294,8 +297,16 @@ function setCookieWrapper(str) {
 // Encoded WIP
 exports.getEncodedToken = () => {
     log('Getting encoded token');
-    return (priv.keycloak.token);
+    if(!exports.isTokenExpired()) {
+        return (priv.keycloak.token);
+    } else {
+        Sentry.captureException(new Error('Fetching token failed - expired token'));
+    }
 };
+
+exports.isTokenExpired = () => {
+    priv.keycloak.isTokenExpired();
+}
 
 // Keycloak server URL
 exports.getUrl = () => {
