@@ -307,7 +307,7 @@ exports.getEncodedToken = () => {
 
 // Checks if the token is expired
 exports.isTokenExpired = () => {
-    priv.keycloak.isTokenExpired();
+    return priv.keycloak.isTokenExpired();
 };
 
 // Keycloak server URL
