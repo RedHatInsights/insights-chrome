@@ -25,7 +25,5 @@ module.exports = (cachePrefix) => {
         prefix = '/beta';
     }
 
-    console.log('Getting index from ' + window.location.host + prefix + '/config/main.yml');
-
     return instance.get(window.location.host + prefix + '/config/main.yml');
 };
