@@ -19,6 +19,13 @@ module.exports = (cachePrefix) => {
 
     instance.interceptors.response.use((response) => response.data || response);
 
-    return instance.get('https://raw.githubusercontent.com/'
-    + 'RedHatInsights/cloud-services-config/master/main.yml');
+    // TODO: Add prefix (/beta) depending on environment
+    let prefix = '';
+    if (window.location.pathname.indexOf('/beta')) {
+        prefix = '/beta';
+    }
+
+    console.log('Getting index from ' + window.location.host + prefix + '/config/main.yml');
+
+    return instance.get(window.location.host + prefix + '/config/main.yml');
 };
