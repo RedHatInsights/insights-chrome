@@ -2,29 +2,33 @@
 set -e
 set -x
 
-# for now in chrome... push everywhere when master updates
+# CI
 if [ "${TRAVIS_BRANCH}" = "master" ]; then
-    for env in ci qa
-    do
-        echo
-        echo
-        echo "PUSHING ${env}-beta"
-        rm -rf ./build/.git
-        .travis/release.sh "${env}-beta"
-    done
+    echo
+    echo
+    echo "PUSHING ci-beta"
+    rm -rf ./build/.git
+    .travis/release.sh "ci-beta"
 fi
 
-if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
-    for env in ci qa
-    do
-        echo
-        echo
-        echo "PUSHING ${env}-beta"
-        rm -rf ./build/.git
-        .travis/release.sh "${env}-stable"
-    done
+if [ "${TRAVIS_BRANCH}" = "ci-stable" ]; then
+    echo
+    echo
+    echo "PUSHING ci-stable"
+    rm -rf ./build/.git
+    .travis/release.sh "ci-stable"
 fi
 
+# QA
+if [[ "${TRAVIS_BRANCH}" = "qa-beta" || "${TRAVIS_BRANCH}" = "qa-stable" ]]; then
+    echo
+    echo
+    echo "PUSHING ${TRAVIS_BRANCH}"
+    rm -rf ./build/.git
+    .travis/release.sh "${TRAVIS_BRANCH}"
+fi
+
+# PROD
 if [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
     echo
     echo
