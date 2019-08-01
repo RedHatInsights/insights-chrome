@@ -21,9 +21,9 @@ module.exports = (cachePrefix) => {
 
     // TODO: Add prefix (/beta) depending on environment
     let prefix = '';
-    if (window.location.pathname.indexOf('/beta') > -1) {
+    if (window.location.pathname.indexOf('/beta') !== -1) {
         prefix = '/beta';
     }
 
-    return instance.get('https://' + window.location.host + prefix + '/config/main.yml');
+    return instance.get(window.location.origin + prefix + '/config/main.yml');
 };
