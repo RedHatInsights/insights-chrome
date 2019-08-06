@@ -10,18 +10,18 @@ function getAppDetails() {
     if (pathName[1] === 'beta') {
         betaCheck = ' Beta';
         appGroup = pathName[2];
-        appName = pathName[3];
+        appName = (appGroup === 'landing' ? 'landing' : pathName[3]);
     } else {
         betaCheck = '';
         appGroup = pathName[1];
-        appName = pathName[2];
+        appName = (appGroup === 'landing' ? 'landing' : pathName[2]);
     }
 
     const appDetails = {
         beta: betaCheck,
         app: {
-            group: appGroup || 'landing',
-            name: appName || 'landing'
+            group: appGroup,
+            name: appName
         }
     };
 
