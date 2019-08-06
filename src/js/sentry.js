@@ -78,7 +78,8 @@ function sentryTags(user) {
         });
         scope.setTags({
             app_name: appDetails.app.name,
-            app_group: appDetails.app.group
+            app_group: appDetails.app.group,
+            location: 'frontend'
         });
     });
 }
