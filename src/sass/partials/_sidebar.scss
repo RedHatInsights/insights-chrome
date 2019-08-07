@@ -18,10 +18,15 @@ aside.pf-c-page__sidebar {
                 align-items: center;
             }
 
+            &.ins-c-navigation__header-title__wrapper { 
+                display: flex;
+                align-items: center;
+            }
+
             .ins-c-navigation__header-title { @include rem('width', 160px); }
         }
 
-        .ins-c-page__home-icon { @include rem('padding-left', 30px); }
+        .ins-c-page__home-icon { padding-left: 25px; }
 
     }
 }
