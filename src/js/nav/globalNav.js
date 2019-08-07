@@ -33,7 +33,8 @@ function getRoutesForApp(app, masterConfig) {
 // Gets the app's data from the master config, if it exists
 function getAppData(appId, propName, masterConfig) {
     const app = masterConfig[appId];
-    if (app && app.hasOwnProperty('frontend')) {
+    if (app && app.hasOwnProperty('frontend') &&
+        !(app.disabled_on_prod && window.location.hostname === 'cloud.redhat.com')) {
         const routes = getRoutesForApp(app, masterConfig);
         let appData = {
             title: app.frontend.title || app.title
