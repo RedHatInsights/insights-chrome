@@ -24,7 +24,9 @@ function getRoutesForApp(app, masterConfig) {
 
             if (subItem.group) {subAppData.group = subItem.group;}
 
-            routes.push(subAppData);
+            if (!(subAppData.disabled_on_prod && window.location.hostname === 'cloud.redhat.com')) {
+                routes.push(subAppData);
+            }
         }));
         return routes;
     }
@@ -33,8 +35,7 @@ function getRoutesForApp(app, masterConfig) {
 // Gets the app's data from the master config, if it exists
 function getAppData(appId, propName, masterConfig) {
     const app = masterConfig[appId];
-    if (app && app.hasOwnProperty('frontend') &&
-        !(app.disabled_on_prod && window.location.hostname === 'cloud.redhat.com')) {
+    if (app && app.hasOwnProperty('frontend')) {
         const routes = getRoutesForApp(app, masterConfig);
         let appData = {
             title: app.frontend.title || app.title
@@ -42,6 +43,10 @@ function getAppData(appId, propName, masterConfig) {
         if (!app.frontend.suppress_id) {appData.id = appId;}
 
         if (app.frontend.reload) {appData.reload = app.frontend.reload;}
+
+        if (app.disabled_on_prod) {
+            appData.disabled_on_prod = app.disabled_on_prod; // eslint-disable-line camelcase
+        }
 
         if (routes) {appData[propName] = routes;}
 
