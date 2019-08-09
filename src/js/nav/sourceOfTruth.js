@@ -19,7 +19,7 @@ module.exports = (cachePrefix) => {
 
     instance.interceptors.response.use((response) => response.data || response);
 
-    // TODO: Add prefix (/beta) depending on environment
+    // Add prefix (/beta) depending on environment
     let prefix = '';
     if (window.location.pathname.indexOf('/beta') !== -1) {
         prefix = '/beta';
