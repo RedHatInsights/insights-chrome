@@ -160,7 +160,10 @@ Sentry object spec:
             app_name: app.name,
 
             // Location: frontend. Backends can also send events, so we want to be able to query on this
-            location: 'frontend'
+            location: 'frontend',
+
+            // Browser width
+            browser_width: window.innerWidth + ' px'
         });
     });
 ```
