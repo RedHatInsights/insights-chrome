@@ -238,20 +238,6 @@ exports.getUserInfo = () => {
 };
 
 // Challenge auth and login if the user could be logged in, but in an unauth state
-exports.challengeAuth = () => {
-    log('Challenging Auth');
-    priv.keycloak.login({ prompt: 'none' })
-    .then(() => {
-        log('Auth challenge successful, logging in');
-        return true;
-    })
-    .catch(() => {
-        log('Auth challenge failed');
-        return false;
-    });
-};
-
-// Challenge auth and login if the user could be logged in, but in an unauth state
 exports.checkAuth = () => {
     log('Checking Auth');
     return priv.keycloak.authenticated;
