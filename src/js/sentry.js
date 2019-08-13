@@ -70,7 +70,7 @@ function initSentry() {
 function sentryTags(user) {
 
     const appDetails = getAppDetails();
-    const browser_width = window.innerWidth;
+    const browser_width = window.innerWidth + ' px';
 
     // TODO: Add request_id to this when we have it
     Sentry.configureScope((scope) => {
