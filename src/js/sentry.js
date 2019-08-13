@@ -65,10 +65,12 @@ function initSentry() {
 }
 
 // Sets up the tagging in sentry. This is stuff that can be filtered.
+// Any window variable needs to be declared *above* the configureScope
 /* eslint-disable camelcase */
 function sentryTags(user) {
 
     const appDetails = getAppDetails();
+    const browser_width = window.innerWidth;
 
     // TODO: Add request_id to this when we have it
     Sentry.configureScope((scope) => {
@@ -79,7 +81,8 @@ function sentryTags(user) {
         scope.setTags({
             app_name: appDetails.app.name,
             app_group: appDetails.app.group,
-            location: 'frontend'
+            location: 'frontend',
+            browser_width: browser_width
         });
     });
 }
