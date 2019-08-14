@@ -127,6 +127,10 @@ export const grouppedNav = {
                     {
                         id: 'aws',
                         title: 'Cloud details'
+                    },
+                    {
+                        id: 'cost-models',
+                        title: 'Cost model details'
                     }
                 ]
             },
