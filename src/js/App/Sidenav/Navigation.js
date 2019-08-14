@@ -57,7 +57,7 @@ class Navigation extends Component {
                 onClearActive && onClearActive();
                 onNavigate && onNavigate(item);
             } else {
-                const prefix = (parent && parent.id) ? `/${parent.id}/` : '/';
+                const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
                 window.location.href = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
             }
         }
@@ -75,7 +75,7 @@ class Navigation extends Component {
                 <NavList>
                     {
                         settings.map((item, key) => {
-                            if (!item.disabled) {
+                            if (!(item.disabled_on_stable && window.location.pathname.indexOf('/beta') === -1)) {
                                 if (item.subItems) {
                                     return <NavExpandable
                                         title={item.title}
@@ -85,7 +85,8 @@ class Navigation extends Component {
                                         isExpanded={item.active}>
                                         {
                                             item.subItems.map((subItem, subKey) => {
-                                                if (!subItem.disabled) {
+                                                if (!(subItem.disabled_on_stable
+                                                    && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
                                                         itemID={subItem.reload || subItem.id}
                                                         key={subKey}
