@@ -41,9 +41,9 @@ function initSentry() {
         case 'rhel':
             API_KEY = 'https://4eef42e265754c63bbd5da89e0d4870a@sentry.io/1484046';
             break;
-        case 'openshift':
-            API_KEY = 'https://ec932d46ba4b43d8a4bb21289c1e34a3@sentry.io/1484057';
-            break;
+        // case 'openshift':
+        //     API_KEY = 'https://ec932d46ba4b43d8a4bb21289c1e34a3@sentry.io/1484057';
+        //     break;
         case 'landing':
             API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@sentry.io/1484026';
             break;
