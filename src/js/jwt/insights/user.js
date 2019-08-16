@@ -5,7 +5,8 @@ const pathMapper = {
     rhel: 'smart_management',
     hybrid: 'hybrid_cloud',
     insights: 'insights',
-    openshift: 'openshift'
+    openshift: 'openshift',
+    migration: 'migration'
 };
 
 function getWindow() {
