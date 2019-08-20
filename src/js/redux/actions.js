@@ -68,3 +68,11 @@ export function clearActive() {
 export function chromeNavUpdate(newNav) {
     return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
 }
+
+export function appAction(action) {
+    return { type: actionTypes.CHROME_PAGE_ACTION, payload: action };
+}
+
+export function appObjectId(objectId) {
+    return { type: actionTypes.CHROME_PAGE_OBJECT, payload: objectId };
+}
