@@ -86,7 +86,13 @@ describe('Reducers', () => {
         });
 
         it('should replace pageAction', () =>{
-            const state = reducers.onPageAction({ someState: {}, pageAction: 'test-action' }, actions.appAction('different-action'));
+            const state = reducers.onPageAction(
+                {
+                    someState: {},
+                    pageAction: 'test-action'
+                },
+                actions.appAction('different-action')
+            );
             expect(state).toEqual({
                 someState: {},
                 pageAction: 'different-action'
