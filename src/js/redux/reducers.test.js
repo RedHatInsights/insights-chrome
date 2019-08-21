@@ -99,4 +99,36 @@ describe('Reducers', () => {
             });
         });
     });
+
+    describe('onPageObjectId', () => {
+        it('should add new pageObjectId', () => {
+            const state = reducers.onPageObjectId({ someState: {} }, actions.appObjectId('test-object-id'));
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: 'test-object-id'
+            });
+        });
+
+        it('should remove pageObjectId', () => {
+            const state = reducers.onPageObjectId({ someState: {}, pageObjectId: 'test-object-id' }, actions.appObjectId());
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: undefined
+            });
+        });
+
+        it('should replace pageObjectId', () => {
+            const state = reducers.onPageObjectId(
+                {
+                    someState: {},
+                    pageObjectId: 'test-object-id'
+                },
+                actions.appObjectId('different-object-id')
+            );
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: 'different-object-id'
+            });
+        });
+    });
 });
