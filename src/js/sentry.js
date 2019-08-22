@@ -41,9 +41,9 @@ function initSentry() {
         case 'rhel':
             API_KEY = 'https://4eef42e265754c63bbd5da89e0d4870a@sentry.io/1484046';
             break;
-        case 'openshift':
-            API_KEY = 'https://ec932d46ba4b43d8a4bb21289c1e34a3@sentry.io/1484057';
-            break;
+        // case 'openshift':
+        //     API_KEY = 'https://ec932d46ba4b43d8a4bb21289c1e34a3@sentry.io/1484057';
+        //     break;
         case 'landing':
             API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@sentry.io/1484026';
             break;
@@ -65,10 +65,12 @@ function initSentry() {
 }
 
 // Sets up the tagging in sentry. This is stuff that can be filtered.
+// Any window variable needs to be declared *above* the configureScope
 /* eslint-disable camelcase */
 function sentryTags(user) {
 
     const appDetails = getAppDetails();
+    const browser_width = window.innerWidth + ' px';
 
     // TODO: Add request_id to this when we have it
     Sentry.configureScope((scope) => {
@@ -79,7 +81,8 @@ function sentryTags(user) {
         scope.setTags({
             app_name: appDetails.app.name,
             app_group: appDetails.app.group,
-            location: 'frontend'
+            location: 'frontend',
+            browser_width: browser_width
         });
     });
 }
