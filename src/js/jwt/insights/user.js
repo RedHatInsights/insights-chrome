@@ -6,7 +6,7 @@ const pathMapper = {
     hybrid: 'hybrid_cloud',
     insights: 'insights',
     openshift: 'openshift',
-    migration: 'migration'
+    migrations: 'migrations'
 };
 
 function getWindow() {

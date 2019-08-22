@@ -75,7 +75,7 @@ class InsightsAbout extends Component {
                 { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' },
                 { name: 'System Comparison', path: 'apps/drift/app.info.json', version: 'N/A' },
                 //concerned about this bit
-                { name: 'Migration', path: 'migrations/migration-analytics/app.info.json', version: 'N/A' }
+                { name: 'Migrations', path: 'migrations/migration-analytics/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,
