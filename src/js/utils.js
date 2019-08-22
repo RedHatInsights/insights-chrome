@@ -38,7 +38,8 @@ export function pageRequiresAuthentication() {
     if (section === 'insights' ||
         section === 'rhel'     ||
         section === 'hybrid'   ||
-        section === 'apps') {
+        section === 'apps'     ||
+        section === 'migrations') {
         return true;
     }
 
