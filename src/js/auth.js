@@ -1,4 +1,3 @@
-/*global require*/
 import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
 import consts from './consts';
 

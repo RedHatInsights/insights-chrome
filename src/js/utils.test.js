@@ -1,4 +1,3 @@
-/*global describe, test, require, expect*/
 const utils = require('./utils');
 
 const testData = [
@@ -34,20 +33,20 @@ function doMockWindow(path) {
 
 describe('utils', () => {
     describe('pageRequiresAuthentication', () => {
-        for (const item of testData) {
+        testData.map(item => {
             test(`should return ${item.auth} for ${item.path}`, () => {
                 doMockWindow(item.path);
                 expect(utils.pageRequiresAuthentication()).toBe(item.auth);
             });
-        }
+        });
     });
     describe('getSections', () => {
         const getSection = utils.__get__('getSection');
-        for (const item of testData) {
+        testData.map(item => {
             test(`should extract give you ${item.sec} from ${item.path}`, () => {
                 doMockWindow(item.path);
                 expect(getSection()).toBe(item.sec);
             });
-        }
+        });
     });
 });
