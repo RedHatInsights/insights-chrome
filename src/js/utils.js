@@ -39,6 +39,7 @@ export function pageRequiresAuthentication() {
         section === 'rhel'     ||
         section === 'hybrid'   ||
         section === 'apps'     ||
+        section === 'ansible'  ||
         section === 'migrations') {
         return true;
     }
