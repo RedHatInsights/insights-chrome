@@ -5,6 +5,7 @@ import Keycloak from 'keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
+import * as Sentry from '@sentry/browser';
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -294,6 +295,11 @@ function setCookieWrapper(str) {
 // Encoded WIP
 exports.getEncodedToken = () => {
     log('Getting encoded token');
+
+    if (!isExistingValid(priv.keycloak.token)) {
+        Sentry.captureException(new Error('Fetching token failed - expired token'));
+    }
+
     return (priv.keycloak.token);
 };
 

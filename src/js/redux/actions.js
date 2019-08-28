@@ -64,3 +64,7 @@ export function clearActive() {
         type: actionTypes.CLEAR_ACTIVE
     };
 }
+
+export function chromeNavUpdate(newNav) {
+    return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
+}

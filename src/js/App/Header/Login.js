@@ -9,7 +9,7 @@ const Login = () => (
             aria-label="Toggle primary navigation"
             widget-type="InsightsNavToggle"
             onClick={ login }>
-          Login
+          Log in
         </Button>
     </div>
 );
