@@ -14,7 +14,7 @@ const openshiftLinks = {
     },
     feedback: {
         title: 'Cluster Manager Feedback',
-        link: 'mailto:uhc-feedback@redhat.com'
+        link: 'mailto:ocm-feedback@redhat.com'
     },
     bugs: {
         title: 'Report an OpenShift Bug',
