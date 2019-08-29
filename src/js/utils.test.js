@@ -15,6 +15,12 @@ const testData = [
     { auth: true,  path: '/hybrid/foo/bar/', sec: 'hybrid' },
     { auth: true,  path: '/apps/foo/bar/', sec: 'apps' },
     { auth: true,  path: '/apps/insights/bar/', sec: 'apps' },
+    { auth: true,  path: '/migrations', sec: 'migrations' },
+    { auth: true,  path: '/migrations/foo', sec: 'migrations' },
+    { auth: true,  path: '/migrations/foo/bar', sec: 'migrations' },
+    { auth: true,  path: '/ansible', sec: 'ansible' },
+    { auth: true,  path: '/ansible/foo', sec: 'ansible' },
+    { auth: true,  path: '/ansible/foo/bar', sec: 'ansible' },
     { auth: false, path: '/', sec: '' },
     { auth: false, path: '/beta', sec: '' },
     { auth: false, path: '/404', sec: '404' }
