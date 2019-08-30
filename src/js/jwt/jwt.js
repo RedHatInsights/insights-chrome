@@ -1,7 +1,7 @@
 /*global exports, require*/
 
 // Imports
-import Keycloak from 'keycloak-js';
+import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';

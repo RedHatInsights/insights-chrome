@@ -1,0 +1,3497 @@
+{
+    "_id": "keycloak-js",
+    "_rev": "76-4fc61341708b64060838913b1cf9b367",
+    "name": "keycloak-js",
+    "description": "Keycloak Adapter",
+    "dist-tags": {
+        "latest": "7.0.0"
+    },
+    "versions": {
+        "1.4.0": {
+            "name": "keycloak-js",
+            "version": "1.4.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "https://github.com/keycloak/keycloak-js-bower"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "b562e9f4698cd75b4d223963e9406bc4d209f50d",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.4.0",
+            "_shasum": "8fd3c88b04f9f3ad48224c50a6b0c029c322a31a",
+            "_from": ".",
+            "_npmVersion": "1.4.21",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "stian@redhat.com"
+            },
+            "maintainers": [{
+                "name": "stianst",
+                "email": "stian@redhat.com"
+            }],
+            "dist": {
+                "shasum": "8fd3c88b04f9f3ad48224c50a6b0c029c322a31a",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.4.0.tgz"
+            },
+            "directories": {}
+        },
+        "1.7.0": {
+            "name": "keycloak-js",
+            "version": "1.7.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "https://github.com/keycloak/keycloak-js-bower"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "3c57a8f4f481d584044bdd80a420a2cbff5f491c",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.7.0",
+            "_shasum": "0e454a5d603d2cbdb8a18343395dd974b4eae9ac",
+            "_from": ".",
+            "_npmVersion": "1.4.21",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "0e454a5d603d2cbdb8a18343395dd974b4eae9ac",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.7.0.tgz"
+            },
+            "directories": {}
+        },
+        "1.8.0-cr.3": {
+            "name": "keycloak-js",
+            "version": "1.8.0-cr.3",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "https://github.com/keycloak/keycloak-js-bower"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "4b3a81c2e673c9fef7ed1617b4f26e95543a5ec6",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.8.0-cr.3",
+            "_shasum": "fdbd5aa0e8933fa59a267a68b9e26ee8b82ccf13",
+            "_from": ".",
+            "_npmVersion": "1.4.21",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "fdbd5aa0e8933fa59a267a68b9e26ee8b82ccf13",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.8.0-cr.3.tgz"
+            },
+            "directories": {}
+        },
+        "1.9.5": {
+            "name": "keycloak-js",
+            "version": "1.9.5",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "72004537563166b8588850f222804fa78142bb7a",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.5",
+            "_shasum": "79f92e823a40a1b9bbd4a14245307fcdb339fee6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "79f92e823a40a1b9bbd4a14245307fcdb339fee6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.5.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.5.tgz_1464590719625_0.05704683531075716"
+            },
+            "directories": {}
+        },
+        "1.5.0": {
+            "name": "keycloak-js",
+            "version": "1.5.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6fdc10b67d836e757def87fcaf5d27ab5c9f50c6",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.5.0",
+            "_shasum": "d7efd4e7732bd5c37513f4bc9742db5ab17196a6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "d7efd4e7732bd5c37513f4bc9742db5ab17196a6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.5.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.5.0.tgz_1464590801218_0.8321131458505988"
+            },
+            "directories": {}
+        },
+        "1.6.0": {
+            "name": "keycloak-js",
+            "version": "1.6.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "b0ead3ccd8bba80f82a033973af4cb9ce2ae37e0",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.6.0",
+            "_shasum": "9ed376fcd94865c423da82b4b1df789f41605cb3",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "9ed376fcd94865c423da82b4b1df789f41605cb3",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.6.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.6.0.tgz_1464590808120_0.2266811360605061"
+            },
+            "directories": {}
+        },
+        "1.8.0": {
+            "name": "keycloak-js",
+            "version": "1.8.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "1c302daa955b842f799cf1007ad49aace21be1f6",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.8.0",
+            "_shasum": "77403358de8698dc1440c211395b5e57eaf4d69c",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "77403358de8698dc1440c211395b5e57eaf4d69c",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.8.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.8.0.tgz_1464590814036_0.04909363645128906"
+            },
+            "directories": {}
+        },
+        "1.8.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "1.8.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "8855f7f659092c3503d84b29373879800bea1f34",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.8.0-cr.1",
+            "_shasum": "579ae1735ace02bb4ff19c715308dccd11b4295d",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "579ae1735ace02bb4ff19c715308dccd11b4295d",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.8.0-cr.1.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.8.0-cr.1.tgz_1464590818792_0.6878309429157525"
+            },
+            "directories": {}
+        },
+        "1.8.0-cr.2": {
+            "name": "keycloak-js",
+            "version": "1.8.0-cr.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "9cf56968be1d36b427c5965af867e3a70d0c432d",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.8.0-cr.2",
+            "_shasum": "c3aa183f68e31514a38487f0fd24a4677ccd7c96",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "c3aa183f68e31514a38487f0fd24a4677ccd7c96",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.8.0-cr.2.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.8.0-cr.2.tgz_1464590822783_0.9363795768003911"
+            },
+            "directories": {}
+        },
+        "1.8.1": {
+            "name": "keycloak-js",
+            "version": "1.8.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6332b3829a5beeadd0fa4a8f54f9e3560720e3fd",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.8.1",
+            "_shasum": "db0ab484e08bc76ac5f5280dd54ce74a7f7ec716",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "db0ab484e08bc76ac5f5280dd54ce74a7f7ec716",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.8.1.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.8.1.tgz_1464590828867_0.607535251416266"
+            },
+            "directories": {}
+        },
+        "1.9.0": {
+            "name": "keycloak-js",
+            "version": "1.9.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "4cd7284616d165c3d1e2ebe63eb4b84691351b30",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.0",
+            "_shasum": "ceeabda1a5911498a1fef7ac0bb605c182770e46",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "ceeabda1a5911498a1fef7ac0bb605c182770e46",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.0.tgz_1464590833180_0.8583314057905227"
+            },
+            "directories": {}
+        },
+        "1.9.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "1.9.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "9cfbb7f1c67126b4d9c2a24ff008981e3f98619f",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.0-cr.1",
+            "_shasum": "38320089d988078fb298b72046f4a4bb10c5308b",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "38320089d988078fb298b72046f4a4bb10c5308b",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.0-cr.1.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.0-cr.1.tgz_1464590837545_0.4847048867959529"
+            },
+            "directories": {}
+        },
+        "1.9.1": {
+            "name": "keycloak-js",
+            "version": "1.9.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "57952899f2fef01a6da4a4d567e1231b434613d1",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.1",
+            "_shasum": "845d3a16243a9fbb0c7c96d44815e46d7319ca74",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "845d3a16243a9fbb0c7c96d44815e46d7319ca74",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.1.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.1.tgz_1464590841961_0.7794757422525436"
+            },
+            "directories": {}
+        },
+        "1.9.2": {
+            "name": "keycloak-js",
+            "version": "1.9.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "eee1209bee364172be27e73e77fce8e09535a91e",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.2",
+            "_shasum": "9b549c07baddd2ae52b617e0180614ee73510569",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "9b549c07baddd2ae52b617e0180614ee73510569",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.2.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.2.tgz_1464590846423_0.3819629850331694"
+            },
+            "directories": {}
+        },
+        "1.9.3": {
+            "name": "keycloak-js",
+            "version": "1.9.3",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "06d8f76a85cbbac0273749caec0812e3dc98b5c8",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.3",
+            "_shasum": "bc05cb708b65d02779d8bda935c57f25edc3f099",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "bc05cb708b65d02779d8bda935c57f25edc3f099",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.3.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.3.tgz_1464590850695_0.0034336356911808252"
+            },
+            "directories": {}
+        },
+        "1.9.4": {
+            "name": "keycloak-js",
+            "version": "1.9.4",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "32bd848677e0b52cbfce6370f4de66db397c1d5c",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.4",
+            "_shasum": "6268688db6c4cf5447492d0479dd8e79119eb30d",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "6268688db6c4cf5447492d0479dd8e79119eb30d",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.4.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.4.tgz_1464590855326_0.78202996077016"
+            },
+            "directories": {}
+        },
+        "1.9.7": {
+            "name": "keycloak-js",
+            "version": "1.9.7",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "f34ae403bb5079e1919f029ec29e94c5e0aca65d",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.7",
+            "_shasum": "8473ef7b976815dee2d7a88613826d8101c80ab4",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "8473ef7b976815dee2d7a88613826d8101c80ab4",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.7.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.7.tgz_1464957633140_0.6977209819015115"
+            },
+            "directories": {}
+        },
+        "1.9.8": {
+            "name": "keycloak-js",
+            "version": "1.9.8",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "db4bbb6764e10acfac1180a0660906153c6f0f69",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@1.9.8",
+            "_shasum": "abcd4d766f9ed1827f5600f822698fec06477de1",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "abcd4d766f9ed1827f5600f822698fec06477de1",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-1.9.8.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-1.9.8.tgz_1465997585507_0.9517520016524941"
+            },
+            "directories": {}
+        },
+        "2.1.0": {
+            "name": "keycloak-js",
+            "version": "2.1.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "d2155693a2ecc0d6323a3a220e3f582a3dfdbea2",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.1.0",
+            "_shasum": "c0375435c8a42bbaa62d53c4a31ec33ca38551ee",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "c0375435c8a42bbaa62d53c4a31ec33ca38551ee",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.1.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.1.0.tgz_1471235996798_0.6930320605169982"
+            },
+            "directories": {}
+        },
+        "2.0.0": {
+            "name": "keycloak-js",
+            "version": "2.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "19f8a94fd35830c805cf15b73dbc83d75c2c0c56",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.0.0",
+            "_shasum": "73552a7f1fd8dc95518b2cacc5ed56f5d93c9be5",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "stianst",
+                "email": "sthorger@redhat.com"
+            },
+            "maintainers": [{
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "dist": {
+                "shasum": "73552a7f1fd8dc95518b2cacc5ed56f5d93c9be5",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.0.0.tgz"
+            },
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.0.0.tgz_1471236006655_0.27806750452145934"
+            },
+            "directories": {}
+        },
+        "2.2.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "2.2.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "afd5db325fc4e6fce8f4951a2abacb48fc06705d",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.2.0-cr.1",
+            "_shasum": "94cbcafeb3ad0e5cbac1b3aa5f722e5e88bb7ed2",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "94cbcafeb3ad0e5cbac1b3aa5f722e5e88bb7ed2",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.2.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.2.0-cr.1.tgz_1473667877147_0.09554112539626658"
+            },
+            "directories": {}
+        },
+        "2.2.0": {
+            "name": "keycloak-js",
+            "version": "2.2.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "4de64d183b827f4c05c5cd2c6b343ef13d046234",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.2.0",
+            "_shasum": "f3b67b935168c3b3bc6513b0c88780ab5c6b6cc3",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "f3b67b935168c3b3bc6513b0c88780ab5c6b6cc3",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.2.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.2.0.tgz_1473936455627_0.3079315307550132"
+            },
+            "directories": {}
+        },
+        "2.2.1": {
+            "name": "keycloak-js",
+            "version": "2.2.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "9830890df9887c74343d0510f37bf7ea63b1217a",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.2.1",
+            "_shasum": "6af2792ee89130fc3783d567cfb9dde693afa6e4",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "6af2792ee89130fc3783d567cfb9dde693afa6e4",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.2.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-16-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.2.1.tgz_1474448758100_0.6185003004502505"
+            },
+            "directories": {}
+        },
+        "2.3.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "2.3.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "ab2f8457c562bc6c7929df8da50b6e1c7f182c08",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.3.0-cr.1",
+            "_shasum": "f2542036b340cce57737e9925caa3e6ea9a39601",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "f2542036b340cce57737e9925caa3e6ea9a39601",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.3.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.3.0-cr.1.tgz_1477040898188_0.16684463201090693"
+            },
+            "directories": {}
+        },
+        "2.3.0": {
+            "name": "keycloak-js",
+            "version": "2.3.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "8bf064db6f15896cd48b00d255e079a5b2d69d5f",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.3.0",
+            "_shasum": "5122a70e4398c5e3ec84c9d4ef44a7abdfecb71e",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "5122a70e4398c5e3ec84c9d4ef44a7abdfecb71e",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.3.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.3.0.tgz_1477474651509_0.7532535889185965"
+            },
+            "directories": {}
+        },
+        "2.4.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "2.4.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "a2c7fc5f94da04c6aadc502f9ce6a4fdd471fe54",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.4.0-cr.1",
+            "_shasum": "40a9920ef7a711f63c32e3542c456472077e65e8",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "40a9920ef7a711f63c32e3542c456472077e65e8",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.4.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-18-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.4.0-cr.1.tgz_1479765171034_0.9171872020233423"
+            },
+            "directories": {}
+        },
+        "2.4.0": {
+            "name": "keycloak-js",
+            "version": "2.4.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "9195b723d5c89c5b468ac7a31bcbeecd30bdb332",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.4.0",
+            "_shasum": "5718821f171fcb8260cf34223e5acafce167ce95",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "5718821f171fcb8260cf34223e5acafce167ce95",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.4.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-18-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.4.0.tgz_1479937823811_0.5684561422094703"
+            },
+            "directories": {}
+        },
+        "2.5.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "2.5.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "41486587e176579676fb3e0b1ca163c55fbd51e0",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.5.0-cr.1",
+            "_shasum": "6c743be316baa61a211c398b03ccacc35d881f35",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "6c743be316baa61a211c398b03ccacc35d881f35",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.5.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.5.0-cr.1.tgz_1482475451992_0.16098564211279154"
+            },
+            "directories": {}
+        },
+        "2.5.0": {
+            "name": "keycloak-js",
+            "version": "2.5.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "8de2a1c0316ba5c8dc13156a4e4f50b11d0dd7c8",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.5.0",
+            "_shasum": "71005dcb6623dbabbf9b3c37302f36b5424f5270",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "71005dcb6623dbabbf9b3c37302f36b5424f5270",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.5.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-18-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.5.0.tgz_1483457314852_0.15062610269524157"
+            },
+            "directories": {}
+        },
+        "2.5.1": {
+            "name": "keycloak-js",
+            "version": "2.5.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "e2588500dd62c333348b176dfc43358e28c17e56",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.5.1",
+            "_shasum": "85f2185d33e45c6f825317a9f4b9e39a445f700f",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "85f2185d33e45c6f825317a9f4b9e39a445f700f",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.5.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.5.1.tgz_1485414063707_0.404069141484797"
+            },
+            "directories": {}
+        },
+        "2.5.4": {
+            "name": "keycloak-js",
+            "version": "2.5.4",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "ec15437bf163cf7564ab23d644793921bc110199",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.5.4",
+            "_shasum": "fe344fd610d2d748aa128d3573ef2720fedb3d7b",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "fe344fd610d2d748aa128d3573ef2720fedb3d7b",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.5.4.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.5.4.tgz_1487796091514_0.5765772997401655"
+            },
+            "directories": {}
+        },
+        "2.5.5": {
+            "name": "keycloak-js",
+            "version": "2.5.5",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "d0dc352ab50e9fbc1e66126e101a746227647a35",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@2.5.5",
+            "_shasum": "c4b51f5a14635b13508a9a247b2a364e807618c5",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "c4b51f5a14635b13508a9a247b2a364e807618c5",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-2.5.5.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-18-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-2.5.5.tgz_1489495097951_0.027302186470478773"
+            },
+            "directories": {}
+        },
+        "3.0.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.0.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "29d213c0238015f2e066971cb49b99c7c726243b",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.0.0-cr.1",
+            "_shasum": "c133f3520b1c8e55265c8b1234defbe117d475ca",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "c133f3520b1c8e55265c8b1234defbe117d475ca",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.0.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-18-east.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-3.0.0-cr.1.tgz_1489674777034_0.35833113198168576"
+            },
+            "directories": {}
+        },
+        "3.0.0": {
+            "name": "keycloak-js",
+            "version": "3.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "41e55f4bdf710d6c203d7fbc7c90516cdd38fb17",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.0.0",
+            "_shasum": "8d21e75d16495193b5257fd216c586ce6309920d",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "8d21e75d16495193b5257fd216c586ce6309920d",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.0.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-3.0.0.tgz_1490175733332_0.13732904847711325"
+            },
+            "directories": {}
+        },
+        "3.1.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.1.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "fb8bb141632bcecfa53c2147b35afa0b675f6ed6",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.1.0-cr.1",
+            "_shasum": "b5b8b82adf09f99be5ac46ea1e0427218f202008",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "b5b8b82adf09f99be5ac46ea1e0427218f202008",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.1.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-3.1.0-cr.1.tgz_1493313017544_0.11728715407662094"
+            },
+            "directories": {}
+        },
+        "3.1.0": {
+            "name": "keycloak-js",
+            "version": "3.1.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "b65cd0bc9fabec9e1910ba2fbdaba0d406e45763",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.1.0",
+            "_shasum": "094a620837f147190b0877b707f11a8e2fb76bcf",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "094a620837f147190b0877b707f11a8e2fb76bcf",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.1.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "packages-12-west.internal.npmjs.com",
+                "tmp": "tmp/keycloak-js-3.1.0.tgz_1493800498154_0.00797351449728012"
+            },
+            "directories": {}
+        },
+        "3.2.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.2.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "3ad0ddcfb46180197df53f5a03556ea1133cb35f",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.2.0-cr.1",
+            "_shasum": "836b72ef81dd82d17a74972fe1d581122cc96497",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "836b72ef81dd82d17a74972fe1d581122cc96497",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.2.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.2.0-cr.1.tgz_1498819187462_0.6037958755623549"
+            },
+            "directories": {}
+        },
+        "3.2.0": {
+            "name": "keycloak-js",
+            "version": "3.2.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "8776450e2c13034c11a7dc524be56ff324ee78d4",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.2.0",
+            "_shasum": "36c89092efbceeda5cf7555f942d257fa639cf87",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "36c89092efbceeda5cf7555f942d257fa639cf87",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.2.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.2.0.tgz_1499239318708_0.8081047767773271"
+            },
+            "directories": {}
+        },
+        "3.2.1": {
+            "name": "keycloak-js",
+            "version": "3.2.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6e9264e8c121f229a55dbf0658843aeb78d8b969",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.2.1",
+            "_shasum": "d0246328b662f28e6b869b0799f5584118696543",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "d0246328b662f28e6b869b0799f5584118696543",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.2.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.2.1.tgz_1500643645509_0.7310563998762518"
+            },
+            "directories": {}
+        },
+        "3.3.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.3.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "c8e8b3db028aea3c3833ce22013536306b37fc4b",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.3.0-cr.1",
+            "_shasum": "49841d45254b98c62ab62d92e02d6df8f3fd32ed",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "49841d45254b98c62ab62d92e02d6df8f3fd32ed",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.3.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.3.0-cr.1.tgz_1503937253381_0.7701734320726246"
+            },
+            "directories": {}
+        },
+        "3.3.0-cr.2": {
+            "name": "keycloak-js",
+            "version": "3.3.0-cr.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "c9dc93751ad054de5ef90b790f068994219ec60c",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.3.0-cr.2",
+            "_shasum": "5c9f9c1ebddcf4816aa1770e2df563e8787bba06",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "5c9f9c1ebddcf4816aa1770e2df563e8787bba06",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.3.0-cr.2.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.3.0-cr.2.tgz_1505217093008_0.9240513667464256"
+            },
+            "directories": {}
+        },
+        "3.3.0": {
+            "name": "keycloak-js",
+            "version": "3.3.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "03caa32b01910e6e2e24a5e6bea7bdf34d9f8d9e",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.3.0",
+            "_shasum": "d4b50b4da3dab9d0ecf75803e20890f2a90fa71a",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "d4b50b4da3dab9d0ecf75803e20890f2a90fa71a",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.3.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.3.0.tgz_1509045891307_0.6237044695299119"
+            },
+            "directories": {}
+        },
+        "3.4.0-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.4.0-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "471de45cbd28ead0a404e88a1383296a47a86a59",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.0-cr.1",
+            "_shasum": "8c5ac9dce7c4c39f4f48c199a1b4af161cd827a9",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "8c5ac9dce7c4c39f4f48c199a1b4af161cd827a9",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.0-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.0-cr.1.tgz_1510150980282_0.955264434684068"
+            },
+            "directories": {}
+        },
+        "3.4.0": {
+            "name": "keycloak-js",
+            "version": "3.4.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "987d96913bb9f16f02f95c5080d3b98ecbf5536e",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.0",
+            "_shasum": "4ceda44b305aa655e8beb3db1a095151f6f96f86",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "4ceda44b305aa655e8beb3db1a095151f6f96f86",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.0.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.0.tgz_1510302731056_0.19102899706922472"
+            },
+            "directories": {}
+        },
+        "3.4.1-cr.1": {
+            "name": "keycloak-js",
+            "version": "3.4.1-cr.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6bb2212b6ed70ef45c4c4cea732b41183b4b5460",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.1-cr.1",
+            "_shasum": "d483c7e0c58a153dd1b3939eb77337e9110cebc6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "d483c7e0c58a153dd1b3939eb77337e9110cebc6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.1-cr.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.1-cr.1.tgz_1512063744376_0.6987583967857063"
+            },
+            "directories": {}
+        },
+        "3.4.1": {
+            "name": "keycloak-js",
+            "version": "3.4.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "115f4caeea6e0b2b7425c0b5e25696c04863b4da",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.1",
+            "_shasum": "3d5a743a66f0fcc2b4cbc03e2672630501f39a01",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "3d5a743a66f0fcc2b4cbc03e2672630501f39a01",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.1.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.1.tgz_1512735500423_0.8303755933884531"
+            },
+            "directories": {}
+        },
+        "3.4.2": {
+            "name": "keycloak-js",
+            "version": "3.4.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "0649f420cae3293cda587eaf5243a3438060e343",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.2",
+            "_shasum": "3e8daac94f1cf5a43b64bfff65086caf28b6d6e1",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "3e8daac94f1cf5a43b64bfff65086caf28b6d6e1",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.2.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.2.tgz_1513867753833_0.5066298036836088"
+            },
+            "directories": {}
+        },
+        "3.4.3": {
+            "name": "keycloak-js",
+            "version": "3.4.3",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "72644061259ce62cc9bd061d8334506880e2377d",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@3.4.3",
+            "_shasum": "9fbb1ba7b2433229f5cc8babbd308ff0e945dac7",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "9fbb1ba7b2433229f5cc8babbd308ff0e945dac7",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-3.4.3.tgz"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js-3.4.3.tgz_1515063700266_0.2767506972886622"
+            },
+            "directories": {}
+        },
+        "4.0.0-beta.1": {
+            "name": "keycloak-js",
+            "version": "4.0.0-beta.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "dda0f359daec6e0457bd050392def1da434b2973",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.0.0-beta.1",
+            "_shasum": "7f8d2d63c53a512e7b98f6a47e10e32b1df3ac28",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "7f8d2d63c53a512e7b98f6a47e10e32b1df3ac28",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.0.0-beta.1.tgz",
+                "fileCount": 22,
+                "unpackedSize": 214137
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.0.0-beta.1_1521743322637_0.25161270182659723"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.0.0-beta.2": {
+            "name": "keycloak-js",
+            "version": "4.0.0-beta.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "be55743d4f52cb9c8d3f173a1e6b777cc318457c",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.0.0-beta.2",
+            "_shasum": "01f791da18db2cecce467cd00d79dd49f847ba7d",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "01f791da18db2cecce467cd00d79dd49f847ba7d",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.0.0-beta.2.tgz",
+                "fileCount": 23,
+                "unpackedSize": 226653,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJa6Y/8CRA9TVsSAnZWagAAWNgP/ipQuqQxYsDPiansKjc0\nuv4KOS2wHe3zldVZwnNve+2FWDgpi5VqntjfcB96iJ/Z/BaWKjKUGkM1C40Z\nmvRMt9XHOPSjQd4jC50oZlg9dgyEvSBtuNuLPF5ac+JmzgXSan7jQxzjLNA4\nxar58KUdU31f4MFcyWZ2ePSeV1Upk6LA8Hm9li1xs2Xy4nNHbftwAkNHtiuf\nnp6W9S4hV31Pi7mnvwWW6FvjL7IUpyWFAY+XNlh/uk4KBWeyh6O/Z7tdvTVD\nFISEQuDXoLPkBUzkO+QXLjsbHumzfDDesB/knWCzxyHBKhnKAtWs7IqJzNj3\nSaQ0Mn47phkCMgGWDC1wMMsiNCOfnWUHW9lw7lZHVLSospcIyDVrxpRkoKIY\n6phntzutSo/TzOmp0uBMmUFP0/TgDMElFUx36XYLVMJ97ZCisYWjVD4Zy1oy\n8VQBfgmeRuZ6MvXWfKQqoLfd6NDeMjigI5w0ZLNSpocWwcdeVf7Rre0TCwHG\nMWhyz438EHZ6Iqi7ZQJXknfzGKvZ30Bo9ce6Wu4rHQbcrfpZ827ODa8VSVse\nd2fNj0PUgGw1Vb4SiutFoa6j4J2lcwcSOxvp0LX7+muZMQbuGAFk/3o/juCU\noRXF+lL4x1vTa7eSCwXV7Dpf+NpkOsDrS9FnMx9vNjFNSRxtb1vmOYRkVi8P\nUSzk\r\n=vLxQ\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.0.0-beta.2_1525256187875_0.12360676203915255"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.0.0-beta.3": {
+            "name": "keycloak-js",
+            "version": "4.0.0-beta.3",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "2d3e27a34154cf3e54dddea80b69488ebc72dad3",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.0.0-beta.3",
+            "_shasum": "0f624af6d62296a0a44c9a4c70512d2cc73c0293",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "0f624af6d62296a0a44c9a4c70512d2cc73c0293",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.0.0-beta.3.tgz",
+                "fileCount": 24,
+                "unpackedSize": 242981,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbBsDZCRA9TVsSAnZWagAAWNMP/2lEL2+1sxa17Ai2NA8i\n+ASMA38DyaUrPX2s3k+SCyR/hjbFDd9bUEryloVWxjRazMZn7Xz/tsgBMqXN\n9VOIc8IBImwNratIlJ26zbGWtRsQ4dyIwx1/wpkG/SGlCMZfEVNB+kLK4nkL\nQHZcW3mVp1L6xf0GG2HxxxRbMDutmO+OCcyZ3dh+vDi9ipyxDuLcIH6hykIq\njlBaxRLrLQBh8o+woaAANWLBLa1IRuR0VnNXICogaDacscLbZdGQFpVGGvJw\n2F5TX0xgwvcgatjDtUJrFA0Z9ZVHbBwU3qv3xcrWy1mDYeOtpKliaeHk7Sk9\ng0OlXxxpkE2S2WW4tvZtySZv9sRNL3zbf9GdtOWwGS+yGBzCTvUqW/uHtFqE\nowJ8fL/wZ8Vd5cAV/w+qOEcxbAf6eZZzVXyx9U4t3ZfSb6ejCpn3q38OFslf\nbeGaaJEwsP+l0xrw9LXCU+k4vOrSdutCx1SpRgVflRce630m9Eza1ouLNGr8\nJigWoCrwbB0O45wc9QcS7Mc/HIQnk9CO4WEc0lmxO8NYpKX2CBfTUg5uzufw\nf3HDOvAwFOBKvyGuE89rznH5hJwxaDZV13BSqmQcuRjNNPkUh3FuW+R25re6\nzATXj9U9AWHkhXGnetNkjt1M7y/RLkhEfAkY9Wp12XUd/tn0mojlJ3a9nc9S\n/CCM\r\n=6VRq\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.0.0-beta.3_1527169240212_0.10564925815717663"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.0.0": {
+            "name": "keycloak-js",
+            "version": "4.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "7f9ac6ccda6ad411cf32a8bf09b7bb1fd09f8c86",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.0.0",
+            "_shasum": "40373fedec374c1ae1bccaebcc38021e28a581de",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "40373fedec374c1ae1bccaebcc38021e28a581de",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.0.0.tgz",
+                "fileCount": 24,
+                "unpackedSize": 243753
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.0.0_1528926030934_0.04509717936212154"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.1.0": {
+            "name": "keycloak-js",
+            "version": "4.1.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "355fc70264b2b4227d7f314ca8f3716e06d9ffe0",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.1.0",
+            "_shasum": "762615d17df93b0a25daff8d7f6ffd2c39d25ea6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            },
+            "dist": {
+                "shasum": "762615d17df93b0a25daff8d7f6ffd2c39d25ea6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.1.0.tgz",
+                "fileCount": 24,
+                "unpackedSize": 243753
+            },
+            "maintainers": [{
+                "name": "keycloak",
+                "email": "stian@redhat.com"
+            }, {
+                "name": "stianst",
+                "email": "stianst@gmail.com"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.1.0_1530732116763_0.30823953899654444"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.2.0": {
+            "name": "keycloak-js",
+            "version": "4.2.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6994a91ef7a927e68e1f8cc0e6b31a1c7a45df50",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.2.0",
+            "_shasum": "a9bfdf4917677d41474e49d15917bb87693b49aa",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "shasum": "a9bfdf4917677d41474e49d15917bb87693b49aa",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.2.0.tgz",
+                "fileCount": 24,
+                "unpackedSize": 250006
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.2.0_1533125135754_0.4763061345975157"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.2.1": {
+            "name": "keycloak-js",
+            "version": "4.2.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "a518ffe8dbc286b43082e81e53be872d7bdd8a08",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.2.1",
+            "_shasum": "1cae6860b601cccf814fde5e15c7e8d80bcf1bea",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "4.2.6",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "shasum": "1cae6860b601cccf814fde5e15c7e8d80bcf1bea",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.2.1.tgz",
+                "fileCount": 24,
+                "unpackedSize": 250006
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.2.1_1533271825108_0.6213164196168339"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.3.0": {
+            "name": "keycloak-js",
+            "version": "4.3.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6e7b42ae18ed2d2a587862a2a45269de23bdf458",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.3.0",
+            "_shasum": "69f1b63105061898529b968740a763c37408aac6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "8.10.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "shasum": "69f1b63105061898529b968740a763c37408aac6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.3.0.tgz",
+                "integrity": "sha512-iRuL8LKnjoYGmcWfCLUP+C6+FHYI/fHnHHzwpT0mbd+EI5o21Lo/Oq5QJqDM9OJPAKT/BsOtInU19oD9gZ3m6w==",
+                "fileCount": 24,
+                "unpackedSize": 250006,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbdJzzCRA9TVsSAnZWagAAklEQAKDum/CjcipK69sj8WdZ\nhvHI/PISV4wSJh2GznItI67kENEqchNY4r3hGPOYWI3AWtBTWZbMJdkG9OAo\n/pvebCS2tI1FpyUzgVwczJatQ+/CTc//TgjyvbEvF3jpI5K97rb1XMINB+rc\n5gLOy2CJkZv+yOTS1bD4cGdpFLB1WMnf0quW6sIJpCeC3mp45UrPnlKtpH3C\nezETkxEPC1ix1sCWs3rPiXG8Ol/p7eU87DfZSo6xPXupHvGJ+IdoSJ5s7AEB\n7yaV6QJFssSaN4CYlvTiDKk1IRRXh5Ww07Q9im5Ebt3i4Pt8+z8rSoxgFbyM\nF+oa7qQZcPuZCJt6kvohZ2HhvxRhM9DmgMdWG3Z4dPQcxEV+ZrPkC51EUzGH\nxrJ7hujEi5cLo1NYrm1CPljKCAvJC6EFwzbP4wReixcihCxQOvtp+BDXrTJa\nOYyrFI8SDgW6lzoWwEJFi2wjGI6GFmZi0Uht6IikJIG0pk7FvjE08I3FQ4o5\ne1jEKQwqL2FVe0plxWqsEm3D8o7u+OFdhQiY4EVOMrSq60QWRCqMJ/Z8vSr0\ne74N7dUoZHqTTpEtAc6dr0S2P9nMlHlOcHaYwdtS3EuZJpurkE63N0IrUOyL\nchxE/DKUsUpHv/FrmwE0kA4rwkRc5J/EkbeStDZh/r8Hu7V0//dG7Gxg+k8J\nOO0p\r\n=2UQ0\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.3.0_1534369011681_0.6203765143785729"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.4.0": {
+            "name": "keycloak-js",
+            "version": "4.4.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "fecba679324225f1886e9e5092c5f3a4966df92f",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.4.0",
+            "_shasum": "08d019bf250c0fb1d52f93cab7b6892db84c14f6",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "8.10.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "shasum": "08d019bf250c0fb1d52f93cab7b6892db84c14f6",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.4.0.tgz",
+                "integrity": "sha512-MIVF8dJ77s+13xvwLUCnNRHXGzzTSRS2yM4Ho81qhu026okkDseVbrQSIBZ5jiexEZwlVf8sjhwcaZA2vLTmAQ==",
+                "fileCount": 24,
+                "unpackedSize": 250002,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbkB7/CRA9TVsSAnZWagAAyEAP/3P6KS6NHFZQSLdC7JW1\ns+Yn6Teqf+U9vE9tcx1SBlDLGt4IrMQhgJEnU+v6xQw4S41kMxpe7t098sZo\nMQPiVl8eVwd/hM2HCtNhUare+8nGwoyVWxy30iR/1OEU8msl4/VfRfQrTVxk\n8EB92M3VIjHjyIBeik70FGfvN8eW4W7aAdLoHTGcfzVmzcj7/kfJ/8dqgZrA\nfJAvtheAvn0AbGtxzgKKKyci4Q8lvloi+ksgHEUUFNZL4g9GM07eSkcXelq+\nfDUhbEWRi9EYwJbjRWn1mjDC8Am/fQMheBdhvkWkLy+VXVG0/lvWDcCCQWTj\n9u4CWiH9HX5xh1pnAK77gBFqKM91ueF+QkKW7F3JQJF44EUyOOzCEV3Qi3hD\n1nWT4Z4AvHqO4n7Flf2QLuNwcTGlNUvbjy4N0uCVTLmce+1OfsXZGhClgVO2\nLFAwIhSHJAZ7MQ/imgDEc50VhgYf96YE4s5NVVroMRa5WaZ5w22mlCT6fcvw\nxiMAlowBVvWrehfebsYVfWYmOGtLEwqy8E7gsDIUVOthX4sM1M1WwjPX2dom\nW4OT4xWrPxD2OIXMW7ihL+2m/xKYylyqufUK2xFAIgXLzbRNfQzMFINuCmzI\nFqm5vZHzM0Rjc9aCgoRVDBDUmIt564fbL34zDgZFUaLHlPFMcC0M0xwFoPYk\nW4/0\r\n=hG1v\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.4.0_1536171775133_0.17720327485403287"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.5.0": {
+            "name": "keycloak-js",
+            "version": "4.5.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "e1ed9f3b5e31df75f7bdb4e5ce8925efce05e127",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.5.0",
+            "_shasum": "e910178d16c1a4663abcc40a8ed1e47f2835f4ed",
+            "_from": ".",
+            "_npmVersion": "3.5.2",
+            "_nodeVersion": "8.10.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "shasum": "e910178d16c1a4663abcc40a8ed1e47f2835f4ed",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.5.0.tgz",
+                "integrity": "sha512-50F1TtVzcxEuq99S3gNNIAS/n+BFTQIk+aJxoF3DtgFy4yDAJ+Sa0G62LFRU2A+MS6rL23T7t6p/yrgK4ktH+Q==",
+                "fileCount": 24,
+                "unpackedSize": 250002,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbq9YnCRA9TVsSAnZWagAA9FcP/2sRZnP7xcczRZoopsHu\n8jS4AT6Wobqpik+aRd/QODKUzfj0HI55aTVdYN6D/i9VygQzjtF/44Bm9pze\ndrKuAiasfuSe4a7zlk3yMLbOVWKE6ya7oP1+/sy/zSeqbSg9D9XDGEeIagE1\nxyK7elsqYjycXrxSdWYvVo33SFjByJWQFYojBuabsHmVWGMBTJ9UNPCRSKYz\nu/ESlOuw/BiH8GafITpD9RJKZfqkz11NJ8BP1DZTYZ8jdpTTBWOUpFruBGxZ\nXYjdNZPtBYB4X8wom2nmKFjCK/lTJij6eJ4eyjKzTrr7XR4SKTV89vbezy69\nY7LjyQUkfzYyh/0BpW0HeNdBMRWQ0W9A9PIc48Rg0UyVYBiV4+tfCyIOgo9t\nDpSa7QE/LfJlyeE2DZ1ZkcUzAeGOl5cui1FjbULZrWgz65EazQUAWG242Cra\nq7XmJNn2Qqf7qwN9oa1Q3bbxJKn3svCMcOsPuKbFTnn2pbY7py7m7oYwrX3X\naBpzaz9HMviYjql7hk143kff1uWDK/5YqK+kqw93OXaSnRK7YL+S5Zc9JvN+\nYwgF7L1mmQXRBSWGnzS8qfRfXOJ+2CCXZoi8v5pVqW7lJoH9Rd31HQqAYkXc\nTwcSdKxYa/sEmFKrg1fKpfE0CO3ns7B5gSxkiIQu7e/CFd9Y7QCaSJkfe/SJ\nsHPn\r\n=qgv/\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.5.0_1537988134629_0.6938973264506672"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.6.0": {
+            "name": "keycloak-js",
+            "version": "4.6.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "ab3aa588bfc9f182b1852d4afe3328e862b70936",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.6.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-aToMU1KkDuM5VU3nr+cB9gJMmXHH5GQ52wXjg3LhCw6L6YurZh9NfMuWWZ5u/OMhYRhyI1lzWN7u5gcox7hkgw==",
+                "shasum": "325199ab4cafb705964b905dbc55d6734b2416a1",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.6.0.tgz",
+                "fileCount": 23,
+                "unpackedSize": 250995,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb7JunCRA9TVsSAnZWagAATKoP/1oyxzE8hca99pTsBhWC\njSNbOXP2V2zO+9JS7H8XqTbNxvu3R9YBQ6Wof1ciqCN9Uct4wY5jFmjNgdTL\nnWX25NzXXYciT+WATeb1C7vmAWRJD4HwIYeA4c4p+b2jvFr6lUAf/aMh8vxE\nYkjHAv2sFCzJsjojVnRydG60dxM5NgQblcYqZlEKBIzeghhnCbEF+6A83QTo\nEIZuTOtz0VzrrgzT/aLDQXIA9ERC6HegU9xb5HgPbSP/bwa534gOSB0k6+Rq\nVzQQJ/bANIjM8gcWPCSJ14urKnekcnTtdtpoou9NIHnWYSD4GRojIYus0y9m\nMAkp2Zkk7ma132FcWr37C8K2kI+gDt5J0ipYCTCRv6dvBONDJ+oeW26GdCly\ncBwPNz9g3AQAOaRrhamYJco6Gt+CWW5bLXXI0PCQoHsRtax0CctjdYPgLV/4\nGFmLgZu+4uJ+M3sNT7W2DH22/s0X0ThvupLSamWBxr4plCQ4ZSyNXkzJq/dK\nR41DnP9j3I5LOFm5lYlqmXi1W27Y0poESYPLOMZXmh+siZ8qLh/XPrb4UKJG\nPqJod+wH0arGe69RlRqlfLMKDwns6HmjBfBiwNaoGYx/Mc6PRZ7YzO0niCiD\nFxIdQnSJwvQwYHDJVedmyK3aA2OaHL849kyMdWCzk0DKVpfd9G78qHezoq6F\neC7B\r\n=6mNs\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.6.0_1542232998959_0.001967133224085149"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.7.0": {
+            "name": "keycloak-js",
+            "version": "4.7.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "6888a0b9a9bf34c605fbeb35104c84c8139aed20",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.7.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-UfVX1X3A7HoRbJhSCm6g/qpU2tS6J9o8RIc6oL32xaoe6x0ZxvQiNzxZFKCOu0PF9bswaQ7tvltaGoPn9faSCg==",
+                "shasum": "b1c753186cad9d8863591b3d2ffff06e75c8277b",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.7.0.tgz",
+                "fileCount": 23,
+                "unpackedSize": 250995,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcBkvXCRA9TVsSAnZWagAAXTkP/j72U6bNyvXcnJpgowZi\nnQBZh+C4cst/Mt2kqVhXVgBQ9ExLJ/YyTyMHHxHiCDBojcozTjQIFR5YehMu\nyqTkx1qg/vMnUx67ZzyscnpDzQwtVFMIJl//2dl1yB1gBYtdPrv/2d5wOm6i\nhKnMODlicGHa6xty7q1efVvMhTwVtIivFo4cSVNjWkkcz0VnK0CpUydRT0lC\nythEvxMVK6B2yPVEtFE4HiC1EEYxzfiVaJxKH5918CALuWnmgyiDJ+YGl9jS\nfOKcDlh4wj1sFAWhHVolwpJEA58r6MtNfoJDWnF83V0a8Mbj/xmMYMws0YeU\nrIVCkg7KF0W3/36eyE/M+WQbX71IOt5xrHZlsZaoxwZuwSM4zB3I0LeJcbFc\nT2bV/ESximSTrqCLjgD/9pA4gcDURnpOOgLQ9fuuNl7Z+UCFSlda97lYkJyv\nOkpKt+c8wivuTGVdBq2DKWRwEpT7iYtlKHlpphjtHem1ALzeEvgsSq9UUEaU\nRBqCuNwrmqnzb9ycqJTdXkKcZm/cKCy2Q0CoxxQzbVHl+30Npld/o+EaB2ux\ntwMDlp2TuriMaf5LTn4aiQ7FJ2VM7p0beig8v10StDBXoIqdMV5qFu2gLsCa\nwB9W/uQ18lEjhi67WsAImk0FbbEvDcg7f0A2/OvSI7e/GwwxkYFNd04eTTui\nE4w+\r\n=1fmd\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.7.0_1543916502783_0.8946595711282979"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.8.0": {
+            "name": "keycloak-js",
+            "version": "4.8.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "5294225707f0f62afb3b200e08b1bbda308347ab",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.8.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-YwsEf6D6yKAKta1CbQJlPPA4EOvarwtlONXHLPycukpOdALjiYPQ4xh2k4HGJ+C+WRYBoPnLSORBY1cgtxshVw==",
+                "shasum": "e735db4a34ed0a91b3f0fcaa766cc830f31628eb",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.8.0.tgz",
+                "fileCount": 23,
+                "unpackedSize": 251132,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcF20pCRA9TVsSAnZWagAA7wEP/3Cgx/qkc/NY46BwLilq\nItNr8DPix2VBMH27lesc3hPfd5fxaG4YB6l4Phu8wAnDhVsOZMRNtJouYD5C\ngpbw5RUon7XT9F+RrJR6HnHQWITrCuWrFmyNWx9QZ6fKt9RYqeXDnUvLoxd6\n204nnltpuWHvQIfLqh2bMOzFuKtmRdq3DjgES1+zaj1n2aZDVeiZQJfCX7xb\n/jQ/dZ3gSH7XP//9V0l/yQHBN3pticBR5anbLo/JmYBvYCKELMfrwZcDtCaY\nzmUZanyNSOBt0HOHsZQXNK/jQjhaM8XgywLBnHb7YxbySTtKGTjPVYum7V64\nFaX5rJ0+ht9aMjvskFncu9PnFMKSl/yNh1XhlfLXbkv5JjcyDl5iWqDswG3h\nHQEB2R4IN7yma/muIxwEe2flXc6EztjnvvKAzr53JLsKh2aTG/ORbwO4TK+X\nODI2oUc0uUn0YoRmAph/wU4vxFdii1QJtlFq3Clxu1gcxyLeivyK+JhEaZMf\nqHH3Cn93npqyDRcBb5NzaVXvtiXwhv9DXJe80ks48Hf2ZSoyCLwDlqzOgC1H\nSXLJmaESZ3ee9YcWkGFc9OQyfG7Ka9bBeh/rb9OYws0iWf+lYM/aNmeJBnD1\nCHNoZ6tVwvPfP6BJWPT0LT1v81Ig1LRvtm/P3KWBAfpC2uQtqxe07hfd2Kph\nZ+Oe\r\n=yetf\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.8.0_1545039144878_0.05186481326751302"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.8.1": {
+            "name": "keycloak-js",
+            "version": "4.8.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "1ffb0e2f5ac0d524081785b829ca3355fa5d2060",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.8.1",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-LTVp4Slo7vW0LvaqwBY3A2PSH8HHy5t3fF+/TzEQu2U2xlpeoMGaF+IQ1WYOzcScdNWRARxoDySOwt2ALrQR/Q==",
+                "shasum": "99d4eba9df6018bf9deec4ee08888c63e08587e9",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.8.1.tgz",
+                "fileCount": 23,
+                "unpackedSize": 251132,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcGji7CRA9TVsSAnZWagAAr1sP/R1UmMWgX46y7T1bAKrV\nHzWcFn0P7mHwmhWh/jfVK1ZnSrvjOjsszQxqz3eOWf4MC+8tus+9Pwxf17vX\njGugywevu6hs3/A3Pe0C8VeMY1FJtTS76TW3AYlql9z3d8hTgaMiwsnp1hGP\nDi/DQWLUE4cFe6voigmZEVP+ZYE5M85oolf8tRNrGdlO7ixUXxe0XBPLG+Or\ndv7P1jfxhq4cGnj/0OKyXsAgkg+7RLbqviS20JngZhPNEYU/cKWFc9T76IPy\n17oSHDbGiTiqzrCSO6rKAuD9N2Bgqyz10G3//ldnUcinf9Lol0o0Xp0x1NBE\nd4dMybS3wgY12Qztr4ZRsJQDb5KKFIewfg16+xQJqNprJ4OFNUn2GcM6tXDX\napRm3Aqb/Ex4bBhVM/RDZaSgTp7gsI6QYnnXaMKo0qeR32BuKkahxtdBaayf\nrG9g0XsAq8aV2paj3Zj0zYMog+S3ZPEorkDanZ5GgFyQMLryyQoAZ9iIj7pb\nAS2dh31CrYmCfCR0ftOVKfpailaXqYnMo1g0/PT+wNoxCJds5tDfiV42gGfZ\nGGnKKXyQIM0rxhNJJDOpNp7EkWOII0BLQLsb9qiY/70+mTERSaB2m0f10+yZ\n8MFa4IiDodHtzHPgMH2k/f8+R10cQwwHL+R31WyoJE3ETEg1obuXBW+15YUi\nuKJF\r\n=fktO\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.8.1_1545222331039_0.9111397263832257"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.8.2": {
+            "name": "keycloak-js",
+            "version": "4.8.2",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "93ac7a78cce9397e07da1a8513ddee81083f9841",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.8.2",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-wWqkvT9gbdGriA0HNdTRDRgkqaRneQET5Af5GXNtcYNsCKAuhtmP382SSklAlzQs1T/oJK3L/Y7ZFpKB6MRZEA==",
+                "shasum": "0ba32fdf145144e8a9d857700621eb5b6a4e787f",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.8.2.tgz",
+                "fileCount": 23,
+                "unpackedSize": 251132,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcLm6lCRA9TVsSAnZWagAAKnoP/2rh64oJFdGfqL9Mxb9j\nHv6waXb8oXej9Pty2QItzs1UpOr7btb5Lsg1KSJEui6d9IqncfslNxVS9UNK\nZJV067eE4VQpFk8o8GDK40izqpJ7RfRcOKog1vWsT2S6AlGWB3fSuRNGiiVM\nI7Ng6kwq3sfLOQT89XHV5IB/BWmuZsoFqFa0iKEfxFU5Cm+luedCV8mwVd6f\nLp65x//iU7cyIw+807v+hqP+rxSpoarlU0a6eazbZiPp4+ZTbma9l+z09+v+\nX4BuCDEQmKvMdDBGZQays5mFormvhhcVaYrfYyj2wtI09tXrJIqWTJ0NpP9v\nyZHAOp5vTeNz/IcxJDuOgH7FaG5W0Z9qAyGLbssUn36xTWzRSneCKFLqI/ZW\nnP9tyx6u45qCHksVaeLdbKG6KE6NVxY+sBazWv5A0sJ2SNHwkfzCbBgDF0nC\nhDr1dBI6zT8wXvrbmlDhqTXMqgfUvD9moQ6215Xusg2aTfh8pPpZVdUvbZn9\nVG3xb0HmjvUZNXwAOLBv1CK/r7mOdlO5iZYCUtdMq46lZ08TNCupaBaZORaI\nag0fgqi2NEYYzk7H/UxdPYga+aeQ0Su/P9WfCz6ONJRRIOKQU/vDr3EBRvRh\nz3im78iyKzMRfpWkY6B19hsCDIEPrNRCAweGDfX1R6IebH6N9s31lAcX2Aa8\nB2oz\r\n=6qZL\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.8.2_1546546852848_0.4683585235874559"
+            },
+            "_hasShrinkwrap": false
+        },
+        "4.8.3": {
+            "name": "keycloak-js",
+            "version": "4.8.3",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak-js-bower.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/keycloak/keycloak-js-bower",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "gitHead": "934ca3402f7d425c34a862ccc253db5a548c3431",
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak-js-bower/issues"
+            },
+            "_id": "keycloak-js@4.8.3",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-TXoZdoOYu2ScYs58L95/xSYjsTto9KRvZ+vt6mv4Dyf4pYhYZSgwMPnmi128qj/z8sm4mL1Z8nncR6XdWgNKMQ==",
+                "shasum": "e065f41d144d260afa8466b5b587a65d5f308d30",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-4.8.3.tgz",
+                "fileCount": 23,
+                "unpackedSize": 251132,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcPeK+CRA9TVsSAnZWagAAQAAQAKKzzs8Z8q/sEWETSV6i\n0F3hHDNRBqOkT8PmYb96qLsMLgRI2HChbp8RMIFj+N5R2jfRq1brfYfEDRx6\nvXybiOPmz77Q1z0WMkbt5T+gT50EecvAv7v+OU9e4SQdLzIJeTX+xBauPLvM\nx5aVOvLRgvGMQPEHjiRIoxPtmLRggpTgT13KmtrtZjtm4PDL1gx/W5lalXiJ\nJO8clIo9f2pznrJUDuXfIyKjp2P28OIzNnQi1OC4KbCKlI9pifa9pKsYxPZ2\ndph5rwm7evy3zok5h+PLTDgXFUx8rkuk3+/y0gbydXwMeOieAt5WhJa+YwME\n6braRal1xNJOua0JHUDeCFrn34G8oiwJczeRLY4p4AoWZ7uByJLnuLKDWjXu\nErCLpN3C2UBvUgZeR61M25WxirZQgFaen+xxtOnIIxOB4je/lHodFSDYErxz\nx0kUDorer5xLIPUqR7FmEW92Edvv2PWjZV9ZPk9dunLi5K3OKO0imZABZDFi\nmLUHoOJg22+15YZ5pxQWEubKM0qsAsDt8pwSk43Ck7K/FncmEuL+wFa/t2bv\nEQE+LqxXtRqxWfA126FSmRa6PxW5k1E52Z4cg6yA8DI+6PUTZt6UloQVbXQd\ndW3Hr0nwM9bXVGiECMn9uhvgC1afjK+BnzhM04CaMtdQe4XlduDtwCLduEmB\n110a\r\n=aa/3\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_4.8.3_1547559614123_0.35701861560613324"
+            },
+            "_hasShrinkwrap": false
+        },
+        "5.0.0": {
+            "name": "keycloak-js",
+            "version": "5.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://www.keycloak.org",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak/issues"
+            },
+            "_id": "keycloak-js@5.0.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-zJRgb9E1IV3GLXTMow2cpvRK1PEx9shVDx96uac7zO+uTG2ptLvrYxs1umemjGqDPmy5LJiaUgF30fc9MS3ykQ==",
+                "shasum": "ed7f640d7a1748135ae8ad1750f8925005d4895f",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-5.0.0.tgz",
+                "fileCount": 10,
+                "unpackedSize": 157613,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcf5csCRA9TVsSAnZWagAAaW0P/RYwO0l2aSLhPFA8vbkG\naojMb4x8hn+MSrch04RTh9kM+oLMXobCio1bqf3LpxpUMeKo1D1rkReG4Lay\nfKtsO/hoEt/oUWNoSyb/g4+yxjism1v4ksIGPG845owhwGflYIaUPAjx/98J\nDMeHZZxSJ0gHkiUJUYN0VoEYDRJJ4vGM6baPzGVElS+RZeVruOQqn4Qu3Pa0\ng0xRx32Enq6Ex79VDkZ7Jf+Rqkymoxm3/qSiaVbF1C+BsNFuGf66zB1Trxuk\nT8EOGSquU01hDuArBC86rcT48mIt8xaaaGFO0tWAvSNE1F/zFtiDydEGTeiy\nvvr/Gpjxa7+jrjU3sY1TX51nJlpJTyEgyQsz65eUfPEw2MHMQ9RMdgpywovy\n21ippHl+XZjNy+qbfR1VYHHxSTEQOoFWML9DIHEgnnitm6DFO2wq5jF7D0AD\nZFzVtUtIAQYA2oBWfkkuqlVoBArqIQRCHQ0IS/luqbpQzlqBHpDikVOHP0zN\ndGlTkIQIg/sjZdhkTsAAN+s2uOAqEb5pBgNRnZjiFuUr/D3QkMtcMMpUdas5\nw1j51/K+qTh0Q6NYVUa72FOZbSeAsm2ZcaG3DesJU+4qf37+mWoIMxxZINzh\nmzjyeRgpBgb/uJdAv6/fGl3TOK7xv8M6qen6uD2/Dal2pUA4NmzM1rphcwDp\nflnu\r\n=WRLC\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_5.0.0_1551865643668_0.9501783856079176"
+            },
+            "_hasShrinkwrap": false
+        },
+        "6.0.0": {
+            "name": "keycloak-js",
+            "version": "6.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://www.keycloak.org",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak/issues"
+            },
+            "_id": "keycloak-js@6.0.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-sPxiaUGXVRc0pxh62jt34YyZO9/Pc/i77YP13QyGxOr+cC86mgTLFWuvp2t0tQSEpNtKoLEaH9cQd8kQq7K7iQ==",
+                "shasum": "d91230c2514cb45b4979e2bb1bd974fef61f2232",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-6.0.0.tgz",
+                "fileCount": 10,
+                "unpackedSize": 157897,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJctuURCRA9TVsSAnZWagAAmL4P/i35cV0OGdgv7Kf1Y3go\n3odFSRYt49jEKScvckBOKHIA8wr0gdl9+YvpNewUcf9tJyo4iZ04SUGDl2FC\n/Raxtfij9idyrz/zF7KGP67LXXgPcdv0FMt7hdidmI3z2WRWz6y17FdsvBGN\nCf+4+GGJXPaJ1E9HGZKR2zDFwrKsgyc6hpYgIlERhgudPoa3mbXFRUCjbyJO\nfmNujXnfoO47nCRzJI5EHn1bJC7g1fJ+xVM2p5y+ITq9xJjuNYYGgfSCSdtd\nGwhYF/oza3arQnfLFKVuRTrhobyRzSMNYyzcmwlS0xu2rHCWATX+p93F9JvN\n1j5sl6zlNILCg9LU87b0KLcb87+rMHgzxxOsqfF0bg5p2dLshPpDZ4eT4pmO\n28y5Aw2l91JEojvbGCD0lRVFlJ40Alok4G9KhrU4CS39dymI1s3Wz/YnC0y1\n382i/KCDMrtAILPNTqTebYZb7QN1cbvMHnkt6npgo8anLucFt7ezXCUjRuP8\nnPpct11+mk/9VlLZO2PXlqu4UVjFDfTBKo4wBV1AOzQPaw8BjO4wOQSQ8J1J\n9sUeCWWmpPNZXmjYKuoYC54E5WxoMvsomSzF+MHvfCHm3qYj2I+390eCD+dQ\nCvWVEieH/xhK5ouIC1o/NahUTxba7ebFGEApdrAQ6AhC5/hEd5O27cCu3h7q\niZRq\r\n=j1zz\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_6.0.0_1555490064343_0.7217814216209149"
+            },
+            "_hasShrinkwrap": false
+        },
+        "6.0.1": {
+            "name": "keycloak-js",
+            "version": "6.0.1",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://www.keycloak.org",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak/issues"
+            },
+            "_id": "keycloak-js@6.0.1",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "8.12.0",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-p02dBCA9pSH1xvTmRIEMdeMz00eCGKmZF+rjMeqrkiQD4xhXkzu50J9sQjaANolMlLhazOtfql70+N5QWm8Upg==",
+                "shasum": "329a5e77210dfc4a7d4acf96f95dd0132455bea3",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-6.0.1.tgz",
+                "fileCount": 10,
+                "unpackedSize": 157897,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcwB3jCRA9TVsSAnZWagAAAAMP/2+X1s/kti5fh2GcseMv\ng7x9a20IS781pFs9StLkQuzbkQMZlAnkZPC1eSYGV9+/2H3sb8D6aQBTQ1UR\nAPDC8fuC+DQtBAxjR8GcXVWZteFGCSDz2aX7JcZLYBCGiNj/iBw8HAJGuxsU\n8dysMu/AVkLssTWDBc0epe3X6bpOwRuTEI+NHHCCYn5JXSkS4na2c0MxMU4a\nx6NQncZ7XmD6T8XP4paDmrWZJZITSp4t992w6Yl8xCDBPOP+tO4HFEZiPVMu\nmRDtiD+UXQzYHZBgvD3V80K4BXzjfSjto6teWgWun83agVbwBeIM96BnJHgX\neKYdLERT0fYFUg1pajSuHD75kY38yu+f/fZzASbafg9TTmZut9Xd57Z8xHJb\nzFApLXgq/s1BFX75YGLK/mMEJvBhqPyl4whSawkaJI1PRnRkqvKcKKPlDenv\nYutwHXAiDDfLMCRmCwTJ5vERFMGooX/k6hFJYcQxGL7PgDNHJNMYjVQSY7qx\nyUV0LG+HzLZvRepcELX5TPeCfKwdRSHCC+sglqmRfzWs9JE6kweCfBzi3BwG\ncLrIdXqJ8H21FfskTuTaIMc3fMzFr9+m3JZ2lvPdXMbh4QpKHhdqAVZpVFTE\nb1NTKp1eABEHM1iDkUAfFYLNolErtXe/t8ZI3EYWkJL0Eew+4JuGZAI211eC\nTabO\r\n=l4q7\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_6.0.1_1556094434809_0.20912053495511929"
+            },
+            "_hasShrinkwrap": false
+        },
+        "7.0.0": {
+            "name": "keycloak-js",
+            "version": "7.0.0",
+            "description": "Keycloak Adapter",
+            "main": "dist/keycloak.js",
+            "typings": "dist/keycloak.d.ts",
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "repository": {
+                "type": "git",
+                "url": "git+https://github.com/keycloak/keycloak.git"
+            },
+            "author": {
+                "name": "Keycloak"
+            },
+            "license": "Apache-2.0",
+            "homepage": "https://www.keycloak.org",
+            "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+            "bugs": {
+                "url": "https://github.com/keycloak/keycloak/issues"
+            },
+            "_id": "keycloak-js@7.0.0",
+            "_npmVersion": "6.4.1",
+            "_nodeVersion": "10.15.3",
+            "_npmUser": {
+                "name": "keycloak.bot",
+                "email": "keycloak.bot@gmail.com"
+            },
+            "dist": {
+                "integrity": "sha512-d4CLYbPvYyGzp5Xce6OI3m7LfUYFoRhCgyHKxgoDL/q7nZoH/utv3ppGi/qwFhAN+QmzFQBACaDdEe/XCKf6rw==",
+                "shasum": "d39d57e2f174a19e12c41a11211a85d9a7e2afb8",
+                "tarball": "https://registry.npmjs.org/keycloak-js/-/keycloak-js-7.0.0.tgz",
+                "fileCount": 10,
+                "unpackedSize": 215979,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJdYTNsCRA9TVsSAnZWagAAufcP/00Y7/at3XX9PMO8s0m2\nI+tngRU9wHRIb9DHBwoluaQ3kPPuN8qZ7UBwQmqdvn8Jvr7NrkJEb9ZpXVa2\n36CIgXUqYMO7exVkIABQAmtvsym0gkEVwpVdmrMIB9b36ooCyUVDEf62D1V2\nXPO1VSIQLJEVn6lbt6+6My4/0nCH0nGD8qXxgZ+aVuCLb2vDjWWtFkxac0DW\nORn7hPq7eScoHstlAnfeUnslFqt4ccLTsZJgDO/W/nbOe1KE4iFX/QjKrnHe\ndgg+bwuRG4sGrtAP2xUbctaiv3RaTZlt9/kxQEA/DT1Sn7N4KkUjM+9/eLMQ\neYHZU6TB9PefoR9lmK9Pb2OKnJBDdOQBzeMFiwETvzTJobr/NuRa4HXNTqve\nSZ9TSkatwC8qAPhCadw9uH/KOwntumZ9TVg4byMhCJrvEMYcEd3VckwVBwgy\nuPOiEWrYRLmhD33bAIoZIujniZiihip+m6fAbGxXQZw+Jve03b5z+28noUL1\nbjy4fEIX/JefJuZwCRJTeLy6d2CK3WxAku8WlAfOvI0bnurrLCLD7OnMPD7L\nAb944I06InYbQVYkayTof5Xiv6DfZpD79Y2ekEuARe1i7nTPjzJl/yXFhvX5\nHiOU6zheNQ6k6IPmsO4SR7az0fuLUiPHUAf+4ep8JZXNjuxjzmqDHvTySeiV\n/jEc\r\n=SaQA\r\n-----END PGP SIGNATURE-----\r\n"
+            },
+            "maintainers": [{
+                "email": "stian@redhat.com",
+                "name": "keycloak-user"
+            }, {
+                "email": "keycloak.bot@gmail.com",
+                "name": "keycloak.bot"
+            }, {
+                "email": "stianst@gmail.com",
+                "name": "stianst"
+            }],
+            "directories": {},
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/keycloak-js_7.0.0_1566651242985_0.32509994289529565"
+            },
+            "_hasShrinkwrap": false
+        }
+    },
+    "readme": "ERROR: No README data found!",
+    "maintainers": [{
+        "email": "stian@redhat.com",
+        "name": "keycloak-user"
+    }, {
+        "email": "keycloak.bot@gmail.com",
+        "name": "keycloak.bot"
+    }, {
+        "email": "stianst@gmail.com",
+        "name": "stianst"
+    }],
+    "time": {
+        "modified": "2019-08-24T12:54:06.055Z",
+        "created": "2015-09-02T13:51:34.165Z",
+        "1.4.0": "2015-09-02T13:51:34.165Z",
+        "1.7.0": "2016-01-26T10:31:17.398Z",
+        "1.8.0-cr.3": "2016-01-26T10:36:27.163Z",
+        "1.9.5": "2016-05-30T06:45:21.528Z",
+        "1.5.0": "2016-05-30T06:46:43.871Z",
+        "1.6.0": "2016-05-30T06:46:50.127Z",
+        "1.8.0": "2016-05-30T06:46:56.703Z",
+        "1.8.0-cr.1": "2016-05-30T06:47:00.819Z",
+        "1.8.0-cr.2": "2016-05-30T06:47:04.752Z",
+        "1.8.1": "2016-05-30T06:47:11.175Z",
+        "1.9.0": "2016-05-30T06:47:15.655Z",
+        "1.9.0-cr.1": "2016-05-30T06:47:19.854Z",
+        "1.9.1": "2016-05-30T06:47:24.385Z",
+        "1.9.2": "2016-05-30T06:47:28.576Z",
+        "1.9.3": "2016-05-30T06:47:33.174Z",
+        "1.9.4": "2016-05-30T06:47:37.810Z",
+        "1.9.7": "2016-06-03T12:40:35.549Z",
+        "1.9.8": "2016-06-15T13:33:08.041Z",
+        "2.1.0": "2016-08-15T04:39:58.465Z",
+        "2.0.0": "2016-08-15T04:40:08.342Z",
+        "2.2.0-cr.1": "2016-09-12T08:11:19.256Z",
+        "2.2.0": "2016-09-15T10:47:36.864Z",
+        "2.2.1": "2016-09-21T09:06:00.355Z",
+        "2.3.0-cr.1": "2016-10-21T09:08:20.046Z",
+        "2.3.0": "2016-10-26T09:37:33.502Z",
+        "2.4.0-cr.1": "2016-11-21T21:52:51.553Z",
+        "2.4.0": "2016-11-23T21:50:24.339Z",
+        "2.5.0-cr.1": "2016-12-23T06:44:13.951Z",
+        "2.5.0": "2017-01-03T15:28:35.494Z",
+        "2.5.1": "2017-01-26T07:01:06.552Z",
+        "2.5.4": "2017-02-22T20:41:33.394Z",
+        "2.5.5": "2017-03-14T12:38:18.575Z",
+        "3.0.0-cr.1": "2017-03-16T14:32:57.686Z",
+        "3.0.0": "2017-03-22T09:42:15.455Z",
+        "3.1.0-cr.1": "2017-04-27T17:10:19.540Z",
+        "3.1.0": "2017-05-03T08:35:00.180Z",
+        "3.2.0-cr.1": "2017-06-30T10:39:48.532Z",
+        "3.2.0": "2017-07-05T07:21:59.710Z",
+        "3.2.1": "2017-07-21T13:27:26.555Z",
+        "3.3.0-cr.1": "2017-08-28T16:20:54.656Z",
+        "3.3.0-cr.2": "2017-09-12T11:51:34.000Z",
+        "3.3.0": "2017-10-26T19:24:52.361Z",
+        "3.4.0-cr.1": "2017-11-08T14:23:01.270Z",
+        "3.4.0": "2017-11-10T08:32:12.026Z",
+        "3.4.1-cr.1": "2017-11-30T17:42:25.985Z",
+        "3.4.1": "2017-12-08T12:18:21.480Z",
+        "3.4.2": "2017-12-21T14:49:13.953Z",
+        "3.4.3": "2018-01-04T11:01:41.271Z",
+        "4.0.0-beta.1": "2018-03-22T18:28:42.692Z",
+        "4.0.0-beta.2": "2018-05-02T10:16:28.028Z",
+        "4.0.0-beta.3": "2018-05-24T13:40:40.272Z",
+        "4.0.0": "2018-06-13T21:40:31.015Z",
+        "4.1.0": "2018-07-04T19:21:56.827Z",
+        "4.2.0": "2018-08-01T12:05:35.809Z",
+        "4.2.1": "2018-08-03T04:50:25.176Z",
+        "4.3.0": "2018-08-15T21:36:51.828Z",
+        "4.4.0": "2018-09-05T18:22:55.289Z",
+        "4.5.0": "2018-09-26T18:55:34.784Z",
+        "4.6.0": "2018-11-14T22:03:19.122Z",
+        "4.7.0": "2018-12-04T09:41:42.921Z",
+        "4.8.0": "2018-12-17T09:32:25.038Z",
+        "4.8.1": "2018-12-19T12:25:31.268Z",
+        "4.8.2": "2019-01-03T20:20:52.995Z",
+        "4.8.3": "2019-01-15T13:40:14.260Z",
+        "5.0.0": "2019-03-06T09:47:23.853Z",
+        "6.0.0": "2019-04-17T08:34:24.484Z",
+        "6.0.1": "2019-04-24T08:27:14.929Z",
+        "7.0.0": "2019-08-24T12:54:03.212Z"
+    },
+    "homepage": "https://www.keycloak.org",
+    "keywords": ["keycloak", "sso", "oauth", "oauth2", "authentication"],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/keycloak/keycloak.git"
+    },
+    "author": {
+        "name": "Keycloak"
+    },
+    "bugs": {
+        "url": "https://github.com/keycloak/keycloak/issues"
+    },
+    "license": "Apache-2.0",
+    "readmeFilename": "",
+    "users": {
+        "giovannicandido": true
+    }
+}
