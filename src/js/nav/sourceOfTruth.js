@@ -25,5 +25,10 @@ module.exports = (cachePrefix) => {
         prefix = '/beta';
     }
 
-    return instance.get(window.location.origin + prefix + '/config/main.yml');
+    if (prefix.length >= 0) {
+        return instance.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/ci-stable/main.yml');
+    }
+
+    //return instance.get(window.location.origin + prefix + '/config/main.yml');
+    return instance.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/ci-stable/main.yml');
 };

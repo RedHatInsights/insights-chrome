@@ -192,6 +192,22 @@ exports.login = () => {
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
+// eslint-disable-next-line no-unused-vars
+function login() {
+    return priv.keycloak.login({ redirectUri: location.href });
+}
+
+exports.checkKeycloakToken = () =>{
+    log('checking keycloak token');
+    let ifrm = document.createElement('iframe');
+    ifrm.setAttribute('srcDoc', '<script type="text/javascript">' + login() + '</script>');
+    ifrm.setAttribute('title', 'keycloak-silent-check-sso');
+    //ifrm.style.display = 'none';
+    ifrm.style.backgroundColor = 'red';
+    document.body.appendChild(ifrm);
+
+};
+
 function logout(bounce) {
     log('Logging out');
 
@@ -201,8 +217,10 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
+        alert('asjf;dskjafds');
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout`
+            //redirectUri: `https://${window.location.host}`
+            redirectUri: `${location.href}`
         });
     }
 }

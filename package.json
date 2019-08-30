@@ -120,7 +120,7 @@
     "js-cookie": "^2.2.0",
     "js-yaml": "^3.13.1",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
-    "keycloak-js": "^4.5.0",
+    "keycloak-js": "^6.0.1",
     "lodash": "^4.17.14",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
