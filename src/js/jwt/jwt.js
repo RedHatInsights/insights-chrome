@@ -1,7 +1,7 @@
 /*global exports, require*/
 
 // Imports
-import Keycloak from 'keycloak-js';
+import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
@@ -98,6 +98,10 @@ exports.init = (options) => {
 
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
+    options.onLoad = 'check-sso';
+    //options.silentCheckSsoRedirectUri = `https://google.com`;
+    options.silentCheckSsoRedirectUri = `https://${window.location.host}/logout.html`;
+    //options.silentCheckSsoRedirectUri = `https://${window.location.host}/silent-check-sso.html`;
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
@@ -202,7 +206,7 @@ function logout(bounce) {
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout`
+            redirectUri: `https://${window.location.host}`
         });
     }
 }
@@ -219,7 +223,7 @@ function loginAllTabs() {
 /*** User Functions ***/
 // Get user information
 exports.getUserInfo = () => {
-    log('Getting User Information CHANGES!!!!!');
+    log('Getting User Information');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
