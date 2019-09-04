@@ -47,8 +47,8 @@ class Navigation extends Component {
             if (activeLevel) {
                 const activeItem = activeLevel.subItems.find(navItem => navItem.id === activeGroup);
                 if (activeItem && activeItem.reload && !item.reload) {
-                    url = `${basepath}${activeLocation}/${appId}/${item.id}`
-                    isMetaKey ? window.open(url) : window.location.href = url
+                    url = `${basepath}${activeLocation}/${appId}/${item.id}`;
+                    isMetaKey ? window.open(url) : window.location.href = url;
                 }
             }
 
@@ -60,7 +60,7 @@ class Navigation extends Component {
             }
         } else {
             if (item.group && activeGroup === item.group) {
-                if(isMetaKey) {
+                if (isMetaKey) {
                     window.open(`${basepath}${activeLocation}/${item.id}`);
                 } else {
                     onClearActive && onClearActive();
@@ -68,8 +68,8 @@ class Navigation extends Component {
                 }
             } else {
                 const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
-                url = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`
-                isMetaKey ? window.open(url) : window.location.href = url
+                url = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
+                isMetaKey ? window.open(url) : window.location.href = url;
             }
         }
     }
