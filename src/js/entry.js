@@ -11,6 +11,8 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+import cookie from 'js-cookie'
+import Beta from './App/Header/Beta';
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -27,6 +29,7 @@ const PUBLIC_EVENTS = {
 
 export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
+    checkBetaPreference();
 
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
@@ -182,4 +185,22 @@ function loadChrome(user) {
             }
         }
     );
+}
+
+function checkBetaPreference() {
+    console.log("HOWDY!");
+    if(cookie.get("betaDefault")) {
+        const splitted = window.location.href.split('/') ;
+        
+        if(splitted[3] !== 'beta') {
+            let betaPath = '/beta/';
+            for(let i = 3; i < splitted.length; i++) {
+                betaPath += splitted[i];
+            }
+            //console.log(betaPath);
+            window.location = betaPath;
+        } else {
+            console.log("already on beta");
+        }
+    }
 }
