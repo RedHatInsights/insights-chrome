@@ -99,9 +99,8 @@ exports.init = (options) => {
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
     options.promiseType = 'native';
     options.onLoad = 'check-sso';
-    //options.silentCheckSsoRedirectUri = `https://google.com`;
-    options.silentCheckSsoRedirectUri = `https://${window.location.host}/logout.html`;
-    //options.silentCheckSsoRedirectUri = `https://${window.location.host}/silent-check-sso.html`;
+    options.checkLoginIframe = false;
+    options.silentCheckSsoRedirectUri = `https://${window.location.host}/silent-check-sso.html`;
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
