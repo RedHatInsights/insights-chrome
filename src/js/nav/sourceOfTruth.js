@@ -1,4 +1,3 @@
-
 const axios = require('axios');
 const { setupCache } = require('axios-cache-adapter');
 const localforage = require('localforage');
@@ -26,10 +25,5 @@ module.exports = (cachePrefix) => {
         prefix = '/beta';
     }
 
-    if (prefix.length >= 0) {
-        return instance.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/ci-stable/main.yml');
-    }
-
-    //return instance.get(window.location.origin + prefix + '/config/main.yml');
-    return instance.get('https://raw.githubusercontent.com/RedHatInsights/cloud-services-config/ci-stable/main.yml');
+    return instance.get(window.location.origin + prefix + '/config/main.yml');
 };
