@@ -104,7 +104,7 @@
     "@patternfly/react-core": "^3.104.0",
     "@patternfly/react-icons": "^3.7.5",
     "@redhat-cloud-services/entitlements-client": "^1.0.18",
-    "@redhat-cloud-services/frontend-components": "0.0.14",
+    "@redhat-cloud-services/frontend-components": "0.0.18",
     "@redhat-cloud-services/frontend-components-inventory": "0.0.18",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.8",

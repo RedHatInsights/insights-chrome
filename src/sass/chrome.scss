@@ -18,6 +18,7 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
