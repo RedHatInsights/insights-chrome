@@ -1,3 +1,5 @@
+$dark-nav-border: #4f5255;
+
 aside.pf-c-page__sidebar {
     padding-top: 0;
 
@@ -7,10 +9,10 @@ aside.pf-c-page__sidebar {
 
         .pf-l-split__item {
             @include rem('padding', 18px);
-            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+            border-bottom: var(--pf-global--BorderWidth--sm) solid $dark-nav-border;
 
             &:first-child {
-                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+                border-right: var(--pf-global--BorderWidth--sm) solid $dark-nav-border;
             }
 
             &.ins-c-page__home-icon {
