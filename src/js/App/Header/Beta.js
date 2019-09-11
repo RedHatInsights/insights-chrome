@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Tooltip } from '@patternfly/react-core';
+import BarsIcon from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import cookie from 'js-cookie';
 
 const Beta = () => (
-    <div className="ins-c-page__beta" style={{display: !window.location.href.includes("/beta") ? "none" : "flex"}}>
+    <div className='ins-c-page__beta' style={{ display: !window.location.href.includes('/beta') ? 'none' : 'flex' }}>
+        <BarsIcon size='sm'/>
         <Tooltip
             content={
-                <div>This is a beta environment and contains Technology Preview 
-                features that are not supported by Red Hat production service-level 
-                agreements (SLAs) and might not be functionally complete. Red Hat 
-                recommends not sing them for production. See fore information here.</div>
+                <div>This is a beta environment and contains Technology Preview
+                 features that are not supported by Red Hat production service-level
+                 agreements (SLAs) and might not be functionally complete. Red Hat
+                 recommends not sing them for production. See fore information here.</div>
             }
         >
             <p>Insights & Cloud Management Services Beta.</p>
@@ -28,11 +29,11 @@ Beta.propTypes = {
 
 function goToStable() {
     cookie.remove('betaDefault');
-    window.location = window.location.href.replace("/beta","");
+    window.location = window.location.href.replace('/beta', '');
 }
 
 function setBetaDefault() {
-    cookie.set('betaDefault',true, { expires: 9999 });
+    cookie.set('betaDefault', true, { expires: 9999 });
 }
 
 //export default Beta;

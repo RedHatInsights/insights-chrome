@@ -11,8 +11,7 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
-import cookie from 'js-cookie'
-import Beta from './App/Header/Beta';
+import cookie from 'js-cookie';
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -188,19 +187,15 @@ function loadChrome(user) {
 }
 
 function checkBetaPreference() {
-    console.log("HOWDY!");
-    if(cookie.get("betaDefault")) {
+    if (cookie.get('betaDefault')) {
         const splitted = window.location.href.split('/') ;
-        
-        if(splitted[3] !== 'beta') {
+        if (splitted[3] !== 'beta') {
             let betaPath = '/beta/';
-            for(let i = 3; i < splitted.length; i++) {
+            for (let i = 3; i < splitted.length; i++) {
                 betaPath += splitted[i];
             }
-            //console.log(betaPath);
+
             window.location = betaPath;
-        } else {
-            console.log("already on beta");
         }
     }
 }
