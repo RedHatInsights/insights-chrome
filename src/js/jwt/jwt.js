@@ -95,8 +95,12 @@ exports.init = (options) => {
     priv.cookie = {
         cookieName
     };
-
+    //constructor for new Keycloak Object?
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
+    options.clientId = 'cloud-services';
+    options.realm = 'redhat-external';
+
+    //options for keycloak.init method
     options.promiseType = 'native';
     options.onLoad = 'check-sso';
     options.checkLoginIframe = false;
@@ -106,6 +110,7 @@ exports.init = (options) => {
         options.realm = 'short-session';
     }
 
+    //priv.keycloak = Keycloak(options);
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = updateToken;
     priv.keycloak.onAuthSuccess = loginAllTabs;
