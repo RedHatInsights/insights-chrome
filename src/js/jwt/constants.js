@@ -11,6 +11,10 @@ export const DEFAULT_ROUTES = {
     ci: {
         url: ['ci.foo.redhat.com'],
         sso: 'https://sso.qa.redhat.com/auth'
+    },
+    qaprodauth: {
+        url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com'],
+        sso: 'https://sso.redhat.com/auth'
     }
 };
 
