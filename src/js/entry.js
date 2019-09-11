@@ -11,6 +11,8 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+import RootApp from './App/RootApp';
+
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -187,16 +189,14 @@ function loadChrome(user) {
 }
 
 export function rootApp() {
-    import('./App/index').then(({ RootApp }) => {
-        const { store } = spinUpStore();
-        const pageRoot = document.querySelector('.pf-c-page__drawer');
-        if (pageRoot) {
-            render(
-                <Provider store={store}>
-                    <RootApp />
-                </Provider>,
-                pageRoot
-            );
-        }
-    });
+    const { store } = spinUpStore();
+    const pageRoot = document.querySelector('.pf-c-page__drawer');
+    if (pageRoot) {
+        render(
+            <Provider store={store}>
+                <RootApp />
+            </Provider>,
+            pageRoot
+        );
+    }
 }
