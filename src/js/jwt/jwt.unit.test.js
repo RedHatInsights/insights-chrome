@@ -6,7 +6,22 @@ const encodedToken      = require('../../../testdata/encodedToken.json').data;
 const decodedToken      = require('../../../testdata/decodedToken.json');
 const jwt               = require('./jwt');
 
-jest.mock('keycloak-js');
+jest.mock('@redhat-cloud-services/keycloak-js');
+// jest.mock('@redhat-cloud-services/keycloak-js', () => jest.fn().mockImplementation((options) => {
+//     const token = require('../../../testdata/encodedToken.json').data;
+//     return {
+//         ...options,
+//         token,
+//         refreshToken: token,
+//         init: () => new Promise(res => res()),
+//         login: () => {
+//             // document.cookie = `cs_jwt=${token};`;
+//             return new Promise(res => res());
+//         },
+//         clearToken: () => new Promise(res => res()),
+//         updateToken: () => new Promise(res => res())
+//     };
+// }));
 jest.mock('urijs');
 
 describe('JWT', () => {

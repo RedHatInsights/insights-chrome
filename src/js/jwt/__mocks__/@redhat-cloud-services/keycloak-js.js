@@ -1,6 +1,6 @@
 /*global module*/
 import cookie from 'js-cookie';
-const encodedToken = require('../../../../testdata/encodedToken.json').data;
+const encodedToken = require('../../../../../testdata/encodedToken.json').data;
 
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
