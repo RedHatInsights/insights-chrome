@@ -26,6 +26,9 @@ const aboutButton = {
             title: 'Training',
             url: 'https://www.redhat.com/en/services/training-and-certification'
         }, {
+            title: 'API Documentation',
+            onClick: () => window.location.href = `${document.baseURI}docs/api`
+        }, {
             title: 'About'
         }
     ]
@@ -60,7 +63,7 @@ class Tools extends Component {
     constructor(props) {
         super(props);
         this.onModalToggle = this.onModalToggle.bind(this);
-        aboutButton.items[3].onClick = this.onModalToggle.bind(this);
+        aboutButton.items[4].onClick = this.onModalToggle.bind(this);
         this.state = {
             isModalOpen: false
         };
