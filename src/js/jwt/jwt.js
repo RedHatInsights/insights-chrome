@@ -105,7 +105,7 @@ exports.init = (options) => {
     options.onLoad = 'check-sso';
     options.checkLoginIframe = false;
 
-    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '')
+    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
 
     options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/silent-check-sso.html`;
 
