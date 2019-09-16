@@ -210,10 +210,12 @@ function logout(bounce) {
     priv.keycloak.clearToken();
     cookie.remove(priv.cookie.cookieName);
 
+    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
+
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}`
+            redirectUri: `https://${window.location.host}${isBeta}`
         });
     }
 }
