@@ -104,7 +104,10 @@ exports.init = (options) => {
     options.promiseType = 'native';
     options.onLoad = 'check-sso';
     options.checkLoginIframe = false;
-    options.silentCheckSsoRedirectUri = `https://${window.location.host}/silent-check-sso.html`;
+
+    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
+
+    options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/silent-check-sso.html`;
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
