@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV='development' npm run watch",
-    "build": "npm-run-all build:images-chrome build:js      build:pug      build:sass build:fonts build:Fafonts",
+    "build": "NODE_ENV='production' npm-run-all build:images-chrome build:js      build:pug      build:sass build:fonts build:Fafonts",
     "build:beta": "npm-run-all build:images-chrome build:js:beta build:pug:beta build:sass build:fonts build:Fafonts",
     "build:js": "parcel build src/js/chrome.js -d build/js --public-url /apps/chrome/js --no-minify",
     "build:js:beta": "parcel build src/js/chrome.js -d build/js --public-url /beta/apps/chrome/js",
