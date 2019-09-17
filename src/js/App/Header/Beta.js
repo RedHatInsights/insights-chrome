@@ -4,7 +4,7 @@ import { Tooltip, Button } from '@patternfly/react-core';
 import cookie from 'js-cookie';
 
 const Beta = () => (
-    <div className={'ins-c-page__beta ' + (window.location.href.includes('/beta') ? '' : 'ins-c-button_hidden')}>
+    <div className={'ins-c-page__beta ' + (window.location.href.includes('/beta') ? '' : 'ins-c-page_beta-hidden')}>
         <i className='fas fa-flask'></i>
         <Tooltip
             content={
