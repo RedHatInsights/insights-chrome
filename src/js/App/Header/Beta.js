@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button';
-import { Tooltip } from '@patternfly/react-core';
-import BarsIcon from '@patternfly/react-icons/dist/esm/icons/bars-icon';
+import { Tooltip, Button } from '@patternfly/react-core';
 import cookie from 'js-cookie';
 
+
 const Beta = () => (
-    <div className='ins-c-page__beta' style={{ display: !window.location.href.includes('/beta') ? 'none' : 'flex' }}>
-        <BarsIcon size='sm'/>
+    <div className='ins-c-page__beta' style={{ display: window.location.href.includes('/beta') ? 'flex' : 'none' }}>
+        <i className='fas fa-flask'></i>
         <Tooltip
             content={
                 <div>This is a beta environment and contains Technology Preview
@@ -19,7 +18,9 @@ const Beta = () => (
             <p>Insights & Cloud Management Services Beta.</p>
         </Tooltip>
         <p><a onClick={ goToStable }> Take me to Stable</a>.</p>
-        <Button variant="primary" onClick={ setBetaDefault }> Set as Default </Button>
+        <Button variant="primary" id="beta_button" className={{ display: cookie.get('betaDefault') ? 'none' : 'flex' }} onClick={ setBetaDefault }>
+            Set as Default
+        </Button>
     </div>
 );
 
@@ -34,6 +35,7 @@ function goToStable() {
 
 function setBetaDefault() {
     cookie.set('betaDefault', true, { expires: 9999 });
+    document.getElementById("beta_button").style.display = 'none';
 }
 
 //export default Beta;
