@@ -1,0 +1,21 @@
+@import 'helpers.scss';
+
+
+// Beta Banner
+.ins-c-page__beta {
+    background: $bg-betabar;
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+    grid-area: beta;
+
+    .pf-c-button {
+        margin: auto 1em;
+        //background-color: var(--pf-c-button--m-primary--BackgroundColor) !important;
+        //color: var(--pf-c-button--m-primary--Color) !important;
+    }
+
+    i {
+        padding-right: 6px;
+    }
+}
