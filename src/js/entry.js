@@ -162,14 +162,13 @@ function loadChrome(user) {
 
             store.dispatch(appNavClick(defaultActive));
 
-            
             render(
                 <Provider store={store}>
                     { user ? <Header /> : <UnauthedHeader /> }
                 </Provider>,
                 document.querySelector('header')
-                );
-                
+            );
+
             render(
                 <Beta />,
                 document.querySelector('#beta')
