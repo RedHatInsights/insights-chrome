@@ -146,7 +146,7 @@ function loadNav(yamlConfig) {
 function loadChrome(user) {
 
     import('./App/index').then(
-        ({ UnauthedHeader, Header, Sidenav }) => {
+        ({ UnauthedHeader, Header, Sidenav, Beta }) => {
             const store = insights.chrome.$internal.store;
             const chromeState = store.getState().chrome;
             let defaultActive = {};
@@ -162,11 +162,17 @@ function loadChrome(user) {
 
             store.dispatch(appNavClick(defaultActive));
 
+            
             render(
                 <Provider store={store}>
                     { user ? <Header /> : <UnauthedHeader /> }
                 </Provider>,
                 document.querySelector('header')
+                );
+                
+            render(
+                <Beta />,
+                document.querySelector('#beta')
             );
 
             if (document.querySelector('aside')) {

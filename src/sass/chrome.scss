@@ -51,7 +51,7 @@ aside {
 // Header
 .pf-c-page__header {
     overflow: visible;
-    grid-template-areas: "beta beta beta" "header header header";
+    //grid-template-areas: "beta beta beta" "header header header";
     .ins-c-dropdown-item__stack {
         white-space: nowrap;
         padding: var(--pf-c-dropdown__menu-item--PaddingTop)
@@ -103,6 +103,31 @@ aside {
 
     &:hover {
         background: var(--pf-global--BackgroundColor--dark-transparent-200);
+    }
+}
+
+// Beta Banner
+.ins-c-page__beta {
+    background: $bg-betabar;
+    width: 100vw;
+    padding: 10px 0;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    flex-direction: column;
+
+    a {
+        color: white;
+        text-decoration: underline;
+        margin: auto 10px;
+    }
+
+    i {
+        padding-right: 6px;
+    }
+
+    @media screen and (min-width: $pf-global--breakpoint--md) {
+        flex-direction: row;
     }
 }
 

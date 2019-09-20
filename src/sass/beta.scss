@@ -1,21 +1,30 @@
 @import 'helpers.scss';
+@import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
+
+//@import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
 
 
 // Beta Banner
 .ins-c-page__beta {
     background: $bg-betabar;
-    width: 100%;
-    height: 50px;
+    width: 100vw;
+    padding: 10px 0;
     justify-content: center;
-    grid-area: beta;
+    color: white;
+    text-align: center;
+    flex-direction: column;
 
-    .pf-c-button {
-        margin: auto 1em;
-        //background-color: var(--pf-c-button--m-primary--BackgroundColor) !important;
-        //color: var(--pf-c-button--m-primary--Color) !important;
+    a {
+        color: white;
+        text-decoration: underline;
+        margin: auto 10px;
     }
 
     i {
         padding-right: 6px;
+    }
+
+    @media screen and (min-width: $pf-global--breakpoint--md) {
+        flex-direction: row;
     }
 }
