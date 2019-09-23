@@ -29,13 +29,6 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <DropdownItem
-            key="My Profile"
-            href="https://access.redhat.com/user"
-            target="_blank"
-            rel='noopener noreferrer'>
-                My profile
-        </DropdownItem>,
         <React.Fragment key="user management wrapper">
             { isOrgAdmin &&
                 <DropdownItem
@@ -46,6 +39,13 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
                 </DropdownItem>
             }
         </React.Fragment>,
+        <DropdownItem
+            key="My Profile"
+            href="https://access.redhat.com/user"
+            target="_blank"
+            rel='noopener noreferrer'>
+                My profile
+        </DropdownItem>,
         <DropdownItem
             key="logout"
             component="button"
