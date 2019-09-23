@@ -11,6 +11,8 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+import RootApp from './App/RootApp';
+
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -29,7 +31,7 @@ export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
+    const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
     // Init JWT first.
     const jwtAndNavResolver = libjwt.initPromise
@@ -53,6 +55,8 @@ export function chromeInit(libjwt) {
             return jwtAndNavResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
         },
         navigation: appNav,
+        appAction,
+        appObjectId,
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();
@@ -145,7 +149,7 @@ function loadChrome(user) {
 
     import('./App/index').then(
         ({ UnauthedHeader, Header, Sidenav }) => {
-            const store = insights.chrome.$internal.store;
+            const { store } = spinUpStore();
             const chromeState = store.getState().chrome;
             let defaultActive = {};
 
@@ -182,4 +186,17 @@ function loadChrome(user) {
             }
         }
     );
+}
+
+export function rootApp() {
+    const { store } = spinUpStore();
+    const pageRoot = document.querySelector('.pf-c-page__drawer');
+    if (pageRoot) {
+        render(
+            <Provider store={store}>
+                <RootApp />
+            </Provider>,
+            pageRoot
+        );
+    }
 }

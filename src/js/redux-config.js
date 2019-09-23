@@ -10,20 +10,20 @@ if (process.env.NODE_ENV === 'development') {
     import('redux-logger').then(logger => basicMiddlewares.push(logger.default));
 }
 
-export function spinUpStore(middlewares = []) {
-    const middlewareListener = new MiddlewareListener();
-    const reduxRegistry = new ReducerRegistry(
-        { chrome: {} },
-        [
-            middlewareListener.getMiddleware(),
-            ...basicMiddlewares,
-            ...middlewares
-        ]
-    );
+const middlewareListener = new MiddlewareListener();
+const reduxRegistry = new ReducerRegistry(
+    { chrome: {} },
+    [
+        middlewareListener.getMiddleware(),
+        ...basicMiddlewares
+    ]
+);
 
-    reduxRegistry.register(chromeReducer());
-    const store = reduxRegistry.getStore();
+reduxRegistry.register(chromeReducer());
+const store = reduxRegistry.getStore();
 
-    const actions = dispatchActionsToStore(actionTemplates, store);
+const actions = dispatchActionsToStore(actionTemplates, store);
+
+export function spinUpStore() {
     return { store, middlewareListener, actions };
 }
