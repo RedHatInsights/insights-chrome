@@ -1,12 +1,14 @@
 import auth from './auth';
 import analytics from './analytics';
 import sentry from './sentry';
-import { bootstrap, chromeInit }   from './entry';
+import { bootstrap, chromeInit, rootApp }   from './entry';
 
 // start auth asap
 const libjwt = auth();
 
 function noop () {}
+
+rootApp();
 
 libjwt.initPromise.then(() => {
     libjwt.jwt.getUserInfo().then((...data) => {
