@@ -48,6 +48,11 @@ aside {
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
 }
 
+// Page layout styles
+.pf-c-drawer__content, #root.pf-c-page__main {
+    height: 100%;
+}
+
 // Page root background color
 .pf-c-page__main#root {
     background: var(--pf-c-page__main-section--BackgroundColor);
