@@ -7,7 +7,7 @@
     "start": "NODE_ENV='development' npm run watch",
     "build": "npm-run-all build:images-chrome build:js      build:pug      build:sass build:fonts build:Fafonts",
     "build:beta": "npm-run-all build:images-chrome build:js:beta build:pug:beta build:sass build:fonts build:Fafonts",
-    "build:js": "parcel build src/js/chrome.js -d build/js --public-url /apps/chrome/js",
+    "build:js": "parcel build src/js/chrome.js -d build/js --public-url /apps/chrome/js --no-minify",
     "build:js:beta": "parcel build src/js/chrome.js -d build/js --public-url /beta/apps/chrome/js",
     "build:images-chrome": "cpx 'static/images/*' build/assets/images",
     "build:pug": "pug src/pug -o build/snippets -O \"{release: 'insights'}\"",
@@ -19,7 +19,7 @@
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
     "lint:sass": "stylelint 'src/sass/**/*.scss' --config .stylelintrc.json",
-    "test": "jest --forceExit",
+    "test": "jest --forceExit --detectOpenHandles",
     "verify": "npm-run-all lint build test",
     "verify:beta": "npm-run-all lint build:beta test",
     "watch": "npm-run-all --parallel watch:*",
@@ -41,6 +41,9 @@
     ],
     "moduleFileExtensions": [
       "js"
+    ],
+    "setupFiles": [
+        "<rootDir>/config/setupTests.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy"
@@ -80,6 +83,9 @@
     "babel-runtime": "^6.26.0",
     "concurrently": "^3.5.1",
     "cpx": "^1.5.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "enzyme-to-json": "^3.4.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-react": "^7.11.1",
@@ -93,6 +99,7 @@
     "pug": "^2.0.3",
     "pug-cli": "^1.0.0-alpha6",
     "redux-logger": "^3.0.6",
+    "redux-mock-store": "^1.5.3",
     "stylelint": "^9.10.1",
     "stylelint-config-recommended-scss": "^3.2.0",
     "stylelint-scss": "^3.3.2"
@@ -108,6 +115,7 @@
     "@redhat-cloud-services/frontend-components-inventory": "0.0.18",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.8",
+    "@redhat-cloud-services/keycloak-js": "0.0.2",
     "@sentry/browser": "^5.4.3",
     "axios": "^0.19.0",
     "axios-cache-adapter": "^2.3.0",

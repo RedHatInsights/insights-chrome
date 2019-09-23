@@ -12,12 +12,14 @@ function getRoutesForApp(app, masterConfig) {
     if (app.hasOwnProperty('frontend') && app.frontend.hasOwnProperty('sub_apps')) {
         let routes = [];
         app.frontend.sub_apps.forEach((subItem => {
-            let subAppData = getAppData(subItem.id || subItem, 'subItems', masterConfig);
-            if (!subAppData) {
+            let subAppData;
+            if (subItem.title) {
                 subAppData = {
                     id: subItem.id || '',
-                    title: subItem.title || ''
+                    title: subItem.title
                 };
+            } else {
+                subAppData = getAppData(subItem.id || subItem, 'subItems', masterConfig);
             }
 
             if (subItem.default) {subAppData.default = subItem.default;}

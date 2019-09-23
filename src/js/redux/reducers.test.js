@@ -67,4 +67,68 @@ describe('Reducers', () => {
             expect(() => actions.appNav([{ title: 'Foo' }])).toThrowError('missing id field');
         });
     });
+
+    describe('onPageAction', () => {
+        it('should add new pageAction', () => {
+            const state = reducers.onPageAction({ someState: {} }, actions.appAction('test-action'));
+            expect(state).toEqual({
+                someState: {},
+                pageAction: 'test-action'
+            });
+        });
+
+        it('should remove pageAction', () => {
+            const state = reducers.onPageAction({ someState: {}, pageAction: 'test-action' }, actions.appAction());
+            expect(state).toEqual({
+                someState: {},
+                pageAction: undefined
+            });
+        });
+
+        it('should replace pageAction', () =>{
+            const state = reducers.onPageAction(
+                {
+                    someState: {},
+                    pageAction: 'test-action'
+                },
+                actions.appAction('different-action')
+            );
+            expect(state).toEqual({
+                someState: {},
+                pageAction: 'different-action'
+            });
+        });
+    });
+
+    describe('onPageObjectId', () => {
+        it('should add new pageObjectId', () => {
+            const state = reducers.onPageObjectId({ someState: {} }, actions.appObjectId('test-object-id'));
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: 'test-object-id'
+            });
+        });
+
+        it('should remove pageObjectId', () => {
+            const state = reducers.onPageObjectId({ someState: {}, pageObjectId: 'test-object-id' }, actions.appObjectId());
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: undefined
+            });
+        });
+
+        it('should replace pageObjectId', () => {
+            const state = reducers.onPageObjectId(
+                {
+                    someState: {},
+                    pageObjectId: 'test-object-id'
+                },
+                actions.appObjectId('different-object-id')
+            );
+            expect(state).toEqual({
+                someState: {},
+                pageObjectId: 'different-object-id'
+            });
+        });
+    });
 });

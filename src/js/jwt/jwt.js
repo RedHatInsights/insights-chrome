@@ -1,7 +1,7 @@
 /*global exports, require*/
 
 // Imports
-import Keycloak from 'keycloak-js';
+import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
@@ -95,14 +95,25 @@ exports.init = (options) => {
     priv.cookie = {
         cookieName
     };
-
+    //constructor for new Keycloak Object?
     options.url = insightsUrl(((options.routes) ? options.routes : DEFAULT_ROUTES));
+    options.clientId = 'cloud-services';
+    options.realm = 'redhat-external';
+
+    //options for keycloak.init method
     options.promiseType = 'native';
+    options.onLoad = 'check-sso';
+    options.checkLoginIframe = false;
+
+    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
+
+    options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/silent-check-sso.html`;
 
     if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
         options.realm = 'short-session';
     }
 
+    //priv.keycloak = Keycloak(options);
     priv.keycloak = Keycloak(options);
     priv.keycloak.onTokenExpired = updateToken;
     priv.keycloak.onAuthSuccess = loginAllTabs;
@@ -199,10 +210,12 @@ function logout(bounce) {
     priv.keycloak.clearToken();
     cookie.remove(priv.cookie.cookieName);
 
+    const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
+
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
-            redirectUri: `https://${window.location.host}/logout`
+            redirectUri: `https://${window.location.host}${isBeta}`
         });
     }
 }
