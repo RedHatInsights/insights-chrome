@@ -9,7 +9,7 @@ header.pf-c-page__header.pf-l-page__header(role="banner")
         .pf-l-toolbar.ins-c-header-toolbar__loading
             .pf-l-toolbar__group.pf-u-screen-reader.pf-u-visible-on-lg
                 .pf-l-toolbar__item(data-key='0')
-                    button.pf-c-button.pf-m-plain(aria-label='Overflow FAQ' widget-type='InsightsFAQ' type='button')
+                    button.pf-c-button.pf-m-plain.pf-c-dropdown__toggle(aria-label='Overflow FAQ' widget-type='InsightsFAQ' type='button')
                         img(src="apps/chrome/assets/images/faq-button.svg")
             .pf-l-toolbar__group
                 .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
@@ -20,5 +20,5 @@ header.pf-c-page__header.pf-l-page__header(role="banner")
                     .pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
                         button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-1(type='button' aria-expanded='false' aria-haspopup='true')
                             span.pf-c-dropdown__toggle-text Logging in...
-                            img(src="apps/chrome/assets/images/overflow-actions-lg.svg")
+                            img.pf-c-dropdown__toggle-icon(src="apps/chrome/assets/images/overflow-actions-lg.svg")
         img.pf-c-avatar(src="apps/chrome/assets/images/img_avatar.svg" alt="Avatar Image")
