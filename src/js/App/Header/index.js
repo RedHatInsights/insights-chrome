@@ -6,7 +6,6 @@ import LogoutAlert from './LogoutAlert';
 
 export function unauthed() {
     return <Fragment>
-        <LogoutAlert />
         <Brand />
         <Login />
         <LogoutAlert delay={5000}/>
