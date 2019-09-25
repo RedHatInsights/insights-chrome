@@ -5,8 +5,11 @@ class LogoutAlert extends React.Component {
     constructor(props) {
         super(props);
         this.state = { alertOneVisible: true };
-        this.hideAlertOne = () => this.setState({ alertOneVisible: false });
     }
+
+    visibleAlertOne = () => this.setState({ alertOneVisible: true });
+    hideAlertOne = () => this.setState({ alertOneVisible: false });
+
     render() {
         const { alertOneVisible } = this.state;
         return (
