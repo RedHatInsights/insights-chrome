@@ -28,6 +28,7 @@ $pf-global--image-path: './assets/images/';
 @import 'partials/_footer.scss';
 @import 'partials/_sidebar.scss';
 
+
 body {
     position: relative;
 }
@@ -42,6 +43,7 @@ aside {
     display: none;
 }
 
+.ins-c-page_logout_notification{ width: 100% }
 // Page temp styles
 .pf-c-page {
   --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);

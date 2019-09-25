@@ -5,6 +5,7 @@ import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
+import { visibleAlertOne } from '../App/LogoutAlert';
 import * as Sentry from '@sentry/browser';
 
 // Utils
@@ -214,6 +215,7 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
+        visibleAlertOne();
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
         });
