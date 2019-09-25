@@ -36,7 +36,8 @@ class Navigation extends Component {
         });
     };
 
-    onClick(_event, item, parent) {
+    onClick(event, item, parent) {
+        event.persist();
         const { onNavigate, onClearActive, activeGroup, activeLocation, settings, appId } = this.props;
 
         const isMetaKey = (event.ctrlKey || event.metaKey || event.which === 2);
@@ -53,7 +54,7 @@ class Navigation extends Component {
             }
 
             if (!item.reload) {
-                isMetaKey ?  window.open(`${basepath}${activeLocation}/${item.reload}`) :  onNavigate && onNavigate(item);
+                isMetaKey ?  window.open(`${basepath}${activeLocation}/${item.reload}`) :  onNavigate && onNavigate(item, event);
             } else {
                 url = `${basepath}${activeLocation}/${item.reload}`;
                 isMetaKey ? window.open(url) : window.location.href = url;
@@ -64,7 +65,7 @@ class Navigation extends Component {
                     window.open(`${basepath}${activeLocation}/${item.id}`);
                 } else {
                     onClearActive && onClearActive();
-                    onNavigate && onNavigate(item);
+                    onNavigate && onNavigate(item, event);
                 }
             } else {
                 const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
@@ -177,7 +178,7 @@ function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocatio
 
 function dispatchToProps(dispatch) {
     return {
-        onNavigate: (item) => dispatch(appNavClick(item)),
+        onNavigate: (item, event) => dispatch(appNavClick(item, event)),
         onClearActive: () => dispatch(clearActive())
     };
 }
