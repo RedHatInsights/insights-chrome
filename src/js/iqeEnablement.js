@@ -48,17 +48,9 @@ export default {
     hasPendingAjax: () => {
         const xhrRemoved = xhrResults.filter(result => result.readyState === 4 || result.readyState === 0);
         xhrResults = xhrResults.filter(result => result.readyState !== 4 && result.readyState !== 0);
-        for (const e of xhrRemoved) {
-            console.log(`[iqe] xhr complete:   ${e._url}`);// eslint-disable-line no-console
-        }
-
-        for (const e of xhrResults) {
-            console.log(`[iqe] xhr incomplete: ${e._url}`);// eslint-disable-line no-console
-        }
-
-        for (const e of Object.values(fetchResults)) {
-            console.log(`[iqe] fetch incomplete: ${e}`);// eslint-disable-line no-console
-        }
+        xhrRemoved.map(e => console.log(`[iqe] xhr complete:   ${e._url}`)); // eslint-disable-line no-console
+        xhrResults.map(e => console.log(`[iqe] xhr incomplete: ${e._url}`)); // eslint-disable-line no-console
+        Object.values(fetchResults).map(e => console.log(`[iqe] fetch incomplete: ${e}`)); // eslint-disable-line no-console
 
         return xhrResults.length > 0 || fetchResults.length > 0;
     },

@@ -65,7 +65,7 @@ export function chromeInit(libjwt) {
             appNavClick(payload);
         },
         on: (type, callback) => {
-            if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
+            if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
                 throw new Error(`Unknown event type: ${type}`);
             }
 
@@ -155,7 +155,7 @@ function loadChrome(user) {
 
             if (chromeState && !chromeState.appNav && chromeState.globalNav) {
                 const activeApp = chromeState.globalNav.find(item => item.active);
-                if (activeApp && activeApp.hasOwnProperty('subItems')) {
+                if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
                     ) || activeApp.subItems.find(subItem => subItem.default);

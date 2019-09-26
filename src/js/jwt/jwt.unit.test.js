@@ -1,4 +1,3 @@
-/*global expect, require, test, describe, jest, beforeAll, beforeEach, afterEach, __rewire_reset_all__*/
 import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
 import cookie from 'js-cookie';
 
