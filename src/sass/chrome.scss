@@ -64,10 +64,6 @@ aside {
     overflow: visible;
     .ins-c-dropdown-item__stack {
         white-space: nowrap;
-        padding: var(--pf-c-dropdown__menu-item--PaddingTop)
-                 var(--pf-c-dropdown__menu-item--PaddingRight)
-                 var(--pf-c-dropdown__menu-item--PaddingBottom)
-                 var(--pf-c-dropdown__menu-item--PaddingLeft);
         * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
 
