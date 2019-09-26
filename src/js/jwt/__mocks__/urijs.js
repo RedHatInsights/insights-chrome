@@ -1,4 +1,3 @@
-/*global module*/
 const urijs = (inputUrl) => {
     let url = inputUrl;
     let searchMap = {

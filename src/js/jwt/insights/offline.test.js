@@ -1,4 +1,3 @@
-/*global describe, test, expect, require, beforeEach, jest*/
 const mockAxios = require('jest-mock-axios').default;
 const offline = require('./offline');
 

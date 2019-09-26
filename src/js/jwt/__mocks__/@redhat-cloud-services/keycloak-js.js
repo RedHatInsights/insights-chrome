@@ -1,4 +1,3 @@
-/*global module*/
 import cookie from 'js-cookie';
 const encodedToken = require('../../../../../testdata/encodedToken.json').data;
 

@@ -1,4 +1,3 @@
-/*global require*/
 const consts = require('../../consts').default;
 const { DEFAULT_ROUTES } = require('../constants');
 const insightsUrl = require('./url');
