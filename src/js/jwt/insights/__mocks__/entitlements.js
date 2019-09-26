@@ -1,5 +1,3 @@
-/*global module, jest*/
-
 let priv = {};
 
 module.exports.priv = priv;

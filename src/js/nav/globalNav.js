@@ -9,7 +9,9 @@ export let getNavFromConfig = (masterConfig) => {
 
 // Returns a list of routes/subItems owned by an app
 function getRoutesForApp(app, masterConfig) {
-    if (app.hasOwnProperty('frontend') && app.frontend.hasOwnProperty('sub_apps')) {
+    if (Object.prototype.hasOwnProperty.call(app, 'frontend') &&
+        Object.prototype.hasOwnProperty.call(app.frontend, 'sub_apps')
+    ) {
         let routes = [];
         app.frontend.sub_apps.forEach((subItem => {
             let subAppData;
@@ -37,7 +39,7 @@ function getRoutesForApp(app, masterConfig) {
 // Gets the app's data from the master config, if it exists
 function getAppData(appId, propName, masterConfig) {
     const app = masterConfig[appId];
-    if (app && app.hasOwnProperty('frontend')) {
+    if (app && Object.prototype.hasOwnProperty.call(app, 'frontend')) {
         const routes = getRoutesForApp(app, masterConfig);
         let appData = {
             title: app.frontend.title || app.title

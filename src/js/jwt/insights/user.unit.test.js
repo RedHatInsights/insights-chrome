@@ -1,4 +1,3 @@
-/*global expect, require, test, describe, jest, beforeEach*/
 jest.mock('./entitlements');
 
 const mockedEntitlements = require('./entitlements');
