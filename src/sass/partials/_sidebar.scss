@@ -7,10 +7,10 @@ aside.pf-c-page__sidebar {
 
         .pf-l-split__item {
             @include rem('padding', 18px);
-            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+            border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BackgroundColor--dark-400);
 
             &:first-child {
-                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+                border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BackgroundColor--dark-400);
             }
 
             &.ins-c-page__home-icon {
