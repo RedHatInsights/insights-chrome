@@ -1,31 +1,36 @@
-import React from 'react';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+// import React from 'react';
+// import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+// import PropTypes from 'prop-types';
+// import { connect } from 'react-redux';
+// import { onToggle } from '../../redux/actions';
 
-class LogoutAlert extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { alertOneVisible: true };
-    }
+// class LogoutAlert extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = { alertOneVisible: true };
+//     }
 
-    visibleAlertOne = () => this.setState({ alertOneVisible: true });
-    hideAlertOne = () => this.setState({ alertOneVisible: false });
+//     visibleAlertOne = () => this.setState({ alertOneVisible: true });
+//     hideAlertOne = () => this.setState({ alertOneVisible: false });
 
-    render() {
-        const { alertOneVisible } = this.state;
-        return (
-            <React.Fragment>
-                { alertOneVisible && (
-                    <Alert
-                        variant="success"
-                        isInline={ true }
-                        title="Congratualtions you have successfully logged out!"
-                        action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
-                    >
-                    </Alert>
-                ) }
-            </React.Fragment>
-        );
-    }
-}
+//     render() {
+//         const { alertOneVisible } = this.state;
+//         return (
+//             <React.Fragment>
+//                 { alertOneVisible && (
+//                     <Alert
+//                         variant="success"
+//                         isInline={ true }
+//                         title="Congratualtions you have successfully logged out!"
+//                         action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
+//                     >
+//                     </Alert>
+//                 ) }
+//             </React.Fragment>
+//         );
+//     }
+// }
 
-export default LogoutAlert;
+// const LogoutAlert = ({})
+
+// export default LogoutAlert;
