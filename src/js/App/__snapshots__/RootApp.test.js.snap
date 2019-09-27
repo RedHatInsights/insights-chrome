@@ -9,7 +9,41 @@ Array [
       class="pf-c-page__main pf-l-page__main"
       id="root"
       role="main"
-    />
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -32,7 +66,41 @@ Array [
       class="pf-c-page__main pf-l-page__main"
       id="root"
       role="main"
-    />
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -56,7 +124,41 @@ Array [
       class="pf-c-page__main pf-l-page__main"
       id="root"
       role="main"
-    />
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -80,7 +182,41 @@ Array [
       class="pf-c-page__main pf-l-page__main"
       id="root"
       role="main"
-    />
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -105,7 +241,41 @@ Array [
       class="pf-c-page__main pf-l-page__main"
       id="root"
       role="main"
-    />
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
   </div>,
   <aside
     class="pf-c-drawer__panel"
