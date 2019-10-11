@@ -214,7 +214,9 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
-        cookie.set('justLoggedOut', 'true');
+        cookie.set('justLoggedOut', 'true', {
+            expires: 1 / 11520
+        });
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
         });

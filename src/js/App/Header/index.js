@@ -8,7 +8,7 @@ export function unauthed() {
     return <Fragment>
         <Brand />
         <Login />
-        <LogoutAlert />
+        <LogoutAlert delay={5000}/>
     </Fragment>;
 }
 

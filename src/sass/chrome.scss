@@ -61,8 +61,15 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
+
+.pf-c-alert.ins-c-alert__logout{
+    position: absolute;
+    top: var(--pf-c-page__header--MinHeight);
+    right: var(--pf-c-page__header-tools--MarginRight)
+
+}
 // Header
-.pf-c-page__header {
+.pf-c-page__header { 
     overflow: visible;
     .ins-c-dropdown-item__stack {
         white-space: nowrap;
