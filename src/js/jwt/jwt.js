@@ -3,6 +3,7 @@ import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
+//import { visibleAlertOne } from '../App/LogoutAlert';
 import * as Sentry from '@sentry/browser';
 
 // Utils
@@ -198,6 +199,7 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
+    cookie.set('justLoggedOut', 'false');
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
@@ -212,6 +214,9 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
+        cookie.set('justLoggedOut', 'true', {
+            expires: 1 / 11520
+        });
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
         });
