@@ -5,7 +5,10 @@ import cookie from 'js-cookie';
 class LogoutAlert extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { alertOneVisible: cookie.get('justLoggedOut') === 'true' };
+        this.state = {
+            alertOneVisible: cookie.get('justLoggedOut') === 'true',
+            delay: 5000
+        };
     }
 
     hideAlertOne = () => {
@@ -23,9 +26,9 @@ class LogoutAlert extends React.Component {
 
         // hide after `delay` milliseconds
         this._timer = setTimeout(function() {
-            this.setState({ visible: false });
+            this.setState({ alertOneVisible: false });
             this._timer = null;
-        }.bind(this), this.props.delay);
+        }.bind(this), this.state.delay);
     }
 
     render() {
