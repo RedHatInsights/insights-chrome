@@ -3,7 +3,6 @@ import Keycloak from '@redhat-cloud-services/keycloak-js';
 import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
-//import { visibleAlertOne } from '../App/LogoutAlert';
 import * as Sentry from '@sentry/browser';
 
 // Utils
