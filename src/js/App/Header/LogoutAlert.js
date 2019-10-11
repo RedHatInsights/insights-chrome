@@ -1,9 +1,6 @@
 import React from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import cookie from 'js-cookie';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { log } from 'util';
 
 class LogoutAlert extends React.Component {
     constructor(props) {
@@ -15,6 +12,21 @@ class LogoutAlert extends React.Component {
         this.setState({ alertOneVisible: false });
         cookie.set('justLoggedOut', 'false');
     }
+    componentDidMount() {
+        this.setTimer();
+    }
+
+    setTimer = () => {
+        if (this._timer !== null) {
+            clearTimeout(this._timer);
+        }
+
+        // hide after `delay` milliseconds
+        this._timer = setTimeout(function() {
+            this.setState({ visible: false });
+            this._timer = null;
+        }.bind(this), this.props.delay);
+    }
 
     render() {
         const { alertOneVisible } = this.state;
@@ -23,8 +35,8 @@ class LogoutAlert extends React.Component {
                 { alertOneVisible && (
                     <Alert
                         variant="success"
-                        isInline={ true }
                         title="Congratualtions you have successfully logged out!"
+                        className="ins-c-alert__logout"
                         action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
                     >
                     </Alert>
