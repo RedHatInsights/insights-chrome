@@ -59,10 +59,11 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
+// Landing page logout alert
 .pf-c-alert.ins-c-alert__logout{
     position: absolute;
     top: var(--pf-c-page__header--MinHeight);
-    right: var(--pf-c-page__header-tools--MarginRight)
+    right: var(--pf-c-page__header-tools--MarginRight);
 
 }
 // Header

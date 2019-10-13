@@ -6,14 +6,14 @@ class LogoutAlert extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            alertOneVisible: cookie.get('justLoggedOut') === 'true',
+            alertOneVisible: cookie.get('cs_loggedOut') === 'true',
             delay: 5000
         };
     }
 
     hideAlertOne = () => {
         this.setState({ alertOneVisible: false });
-        cookie.set('justLoggedOut', 'false');
+        cookie.set('cs_loggedOut', 'false');
     }
     componentDidMount() {
         this.setTimer();
@@ -38,7 +38,7 @@ class LogoutAlert extends React.Component {
                 { alertOneVisible && (
                     <Alert
                         variant="success"
-                        title="Congratualtions you have successfully logged out!"
+                        title="You have successfully logged out."
                         className="ins-c-alert__logout"
                         action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
                     >
