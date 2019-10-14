@@ -1,4 +1,3 @@
-/*global describe, test, require, expect*/
 const analytics = require('./analytics');
 const user      = require('./jwt/insights/user');
 const token     = require('../../testdata/token.json');

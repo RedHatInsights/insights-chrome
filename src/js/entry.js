@@ -11,6 +11,8 @@ import consts from './consts';
 import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
+import RootApp from './App/RootApp';
+
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
 // used for translating event names exposed publicly to internal event names
@@ -29,7 +31,7 @@ export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNav, appNavClick, clearActive, chromeNavUpdate } = actions;
+    const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
     // Init JWT first.
     const jwtAndNavResolver = libjwt.initPromise
@@ -53,6 +55,8 @@ export function chromeInit(libjwt) {
             return jwtAndNavResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
         },
         navigation: appNav,
+        appAction,
+        appObjectId,
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();
@@ -61,7 +65,7 @@ export function chromeInit(libjwt) {
             appNavClick(payload);
         },
         on: (type, callback) => {
-            if (!PUBLIC_EVENTS.hasOwnProperty(type)) {
+            if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
                 throw new Error(`Unknown event type: ${type}`);
             }
 
@@ -145,13 +149,13 @@ function loadChrome(user) {
 
     import('./App/index').then(
         ({ UnauthedHeader, Header, Sidenav }) => {
-            const store = insights.chrome.$internal.store;
+            const { store } = spinUpStore();
             const chromeState = store.getState().chrome;
             let defaultActive = {};
 
             if (chromeState && !chromeState.appNav && chromeState.globalNav) {
                 const activeApp = chromeState.globalNav.find(item => item.active);
-                if (activeApp && activeApp.hasOwnProperty('subItems')) {
+                if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
                     ) || activeApp.subItems.find(subItem => subItem.default);
@@ -182,4 +186,17 @@ function loadChrome(user) {
             }
         }
     );
+}
+
+export function rootApp() {
+    const { store } = spinUpStore();
+    const pageRoot = document.querySelector('.pf-c-page__drawer');
+    if (pageRoot) {
+        render(
+            <Provider store={store}>
+                <RootApp />
+            </Provider>,
+            pageRoot
+        );
+    }
 }

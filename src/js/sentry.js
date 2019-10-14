@@ -10,18 +10,18 @@ function getAppDetails() {
     if (pathName[1] === 'beta') {
         betaCheck = ' Beta';
         appGroup = pathName[2];
-        appName = pathName[3];
+        appName = (appGroup === 'landing' ? 'landing' : pathName[3]);
     } else {
         betaCheck = '';
         appGroup = pathName[1];
-        appName = pathName[2];
+        appName = (appGroup === 'landing' ? 'landing' : pathName[2]);
     }
 
     const appDetails = {
         beta: betaCheck,
         app: {
-            group: appGroup || 'landing',
-            name: appName || 'landing'
+            group: appGroup,
+            name: appName
         }
     };
 
@@ -41,11 +41,11 @@ function initSentry() {
         case 'rhel':
             API_KEY = 'https://4eef42e265754c63bbd5da89e0d4870a@sentry.io/1484046';
             break;
-        case 'openshift':
-            API_KEY = 'https://ec932d46ba4b43d8a4bb21289c1e34a3@sentry.io/1484057';
-            break;
         case 'landing':
             API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@sentry.io/1484026';
+            break;
+        case 'ansible':
+            API_KEY = 'https://03f062e075954433a296e71f243239fd@sentry.io/1769648';
             break;
     }
 
@@ -53,22 +53,22 @@ function initSentry() {
     // environment: logs Prod or Prod Beta for filtering
     // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
     // attachStacktrace: attach the actual console logs
-    // debug: will attempt to print out useful debugging information if something goes wrong with sending the event
     // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
     Sentry.init({
         dsn: API_KEY,
         environment: `Prod${appDetails.beta}`,
         maxBreadcrumbs: 50,
-        attachStacktrace: true,
-        debug: true
+        attachStacktrace: true
     });
 }
 
 // Sets up the tagging in sentry. This is stuff that can be filtered.
+// Any window variable needs to be declared *above* the configureScope
 /* eslint-disable camelcase */
 function sentryTags(user) {
 
     const appDetails = getAppDetails();
+    const browser_width = window.innerWidth + ' px';
 
     // TODO: Add request_id to this when we have it
     Sentry.configureScope((scope) => {
@@ -78,7 +78,9 @@ function sentryTags(user) {
         });
         scope.setTags({
             app_name: appDetails.app.name,
-            app_group: appDetails.app.group
+            app_group: appDetails.app.group,
+            location: 'frontend',
+            browser_width: browser_width
         });
     });
 }

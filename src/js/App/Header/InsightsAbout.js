@@ -72,7 +72,11 @@ class InsightsAbout extends Component {
                 { name: 'Vulnerability', path: 'apps/vulnerability/app.info.json', version: 'N/A' },
                 { name: 'Compliance', path: 'apps/compliance/app.info.json', version: 'N/A' },
                 { name: 'Cost Management', path: 'apps/cost-management/app.info.json', version: 'N/A' },
-                { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' }
+                { name: 'Insights', path: 'apps/insights/app.info.json', version: 'N/A' },
+                { name: 'System Comparison', path: 'apps/drift/app.info.json', version: 'N/A' },
+                { name: 'Migration Analytics', path: 'apps/migration-analytics/app.info.json', version: 'N/A' },
+                { name: 'Automation Hub', path: 'apps/automation-hub/app.info.json', version: 'N/A' },
+                { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,

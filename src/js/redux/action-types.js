@@ -8,3 +8,6 @@ export const CLEAR_ACTIVE = '@@chrome/app-clear-active';
 
 export const GLOBAL_NAV_IDENT = '@@chrome/identify-app';
 export const CHROME_NAV_UPDATE = '@@chrome/app-nav-update';
+
+export const CHROME_PAGE_ACTION = '@@chrome/app-page-action';
+export const CHROME_PAGE_OBJECT = '@@chrome/app-object-id';

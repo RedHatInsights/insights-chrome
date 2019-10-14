@@ -83,3 +83,17 @@ export function loginReducer(state, { payload }) {
         user: payload
     };
 }
+
+export function onPageAction(state, { payload }) {
+    return {
+        ...state,
+        pageAction: payload
+    };
+}
+
+export function onPageObjectId(state, { payload }) {
+    return {
+        ...state,
+        pageObjectId: payload
+    };
+}

@@ -14,7 +14,7 @@ const openshiftLinks = {
     },
     feedback: {
         title: 'Cluster Manager Feedback',
-        link: 'mailto:uhc-feedback@redhat.com'
+        link: 'mailto:ocm-feedback@redhat.com'
     },
     bugs: {
         title: 'Report an OpenShift Bug',
@@ -36,29 +36,41 @@ class Navigation extends Component {
         });
     };
 
-    onClick(_event, item, parent) {
+    onClick(event, item, parent) {
+        event.persist();
         const { onNavigate, onClearActive, activeGroup, activeLocation, settings, appId } = this.props;
+
+        const isMetaKey = (event.ctrlKey || event.metaKey || event.which === 2);
+        let url;
+
         if (parent && parent.active) {
             const activeLevel = settings.find(navItem => navItem.id === appId);
             if (activeLevel) {
                 const activeItem = activeLevel.subItems.find(navItem => navItem.id === activeGroup);
                 if (activeItem && activeItem.reload && !item.reload) {
-                    window.location.href = `${basepath}${activeLocation}/${appId}/${item.id}`;
+                    url = `${basepath}${activeLocation}/${appId}/${item.id}`;
+                    isMetaKey ? window.open(url) : window.location.href = url;
                 }
             }
 
             if (!item.reload) {
-                onNavigate && onNavigate(item);
+                isMetaKey ?  window.open(`${basepath}${activeLocation}/${item.reload}`) :  onNavigate && onNavigate(item, event);
             } else {
-                window.location.href = `${basepath}${activeLocation}/${item.reload}`;
+                url = `${basepath}${activeLocation}/${item.reload}`;
+                isMetaKey ? window.open(url) : window.location.href = url;
             }
         } else {
             if (item.group && activeGroup === item.group) {
-                onClearActive && onClearActive();
-                onNavigate && onNavigate(item);
+                if (isMetaKey) {
+                    window.open(`${basepath}${activeLocation}/${item.id}`);
+                } else {
+                    onClearActive && onClearActive();
+                    onNavigate && onNavigate(item, event);
+                }
             } else {
-                const prefix = (parent && parent.id) ? `/${parent.id}/` : '/';
-                window.location.href = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
+                const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
+                url = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
+                isMetaKey ? window.open(url) : window.location.href = url;
             }
         }
     }
@@ -71,7 +83,7 @@ class Navigation extends Component {
         }
 
         return (
-            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true" >
+            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true" theme="dark">
                 <NavList>
                     {
                         settings.map((item, key) => {
@@ -166,7 +178,7 @@ function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocatio
 
 function dispatchToProps(dispatch) {
     return {
-        onNavigate: (item) => dispatch(appNavClick(item)),
+        onNavigate: (item, event) => dispatch(appNavClick(item, event)),
         onClearActive: () => dispatch(clearActive())
     };
 }

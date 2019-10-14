@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RootApp should render correctly - no data 1`] = `
+Array [
+  <div
+    class="pf-c-drawer__content"
+  >
+    <main
+      class="pf-c-page__main pf-l-page__main"
+      id="root"
+      role="main"
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>,
+  <aside
+    class="pf-c-drawer__panel"
+  >
+    <div
+      class="pf-c-drawer__panel-body"
+    />
+  </aside>,
+]
+`;
+
+exports[`RootApp should render correctly 1`] = `
+Array [
+  <div
+    class="pf-c-drawer__content"
+    ouia-page-group="some-location"
+    ouia-page-type="some-app"
+  >
+    <main
+      class="pf-c-page__main pf-l-page__main"
+      id="root"
+      role="main"
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>,
+  <aside
+    class="pf-c-drawer__panel"
+  >
+    <div
+      class="pf-c-drawer__panel-body"
+    />
+  </aside>,
+]
+`;
+
+exports[`RootApp should render correctly with pageAction 1`] = `
+Array [
+  <div
+    class="pf-c-drawer__content"
+    ouia-page-action="some-action"
+    ouia-page-group="some-location"
+    ouia-page-type="some-app"
+  >
+    <main
+      class="pf-c-page__main pf-l-page__main"
+      id="root"
+      role="main"
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>,
+  <aside
+    class="pf-c-drawer__panel"
+  >
+    <div
+      class="pf-c-drawer__panel-body"
+    />
+  </aside>,
+]
+`;
+
+exports[`RootApp should render correctly with pageObjectId 1`] = `
+Array [
+  <div
+    class="pf-c-drawer__content"
+    ouia-page-group="some-location"
+    ouia-page-object-id="some-object-id"
+    ouia-page-type="some-app"
+  >
+    <main
+      class="pf-c-page__main pf-l-page__main"
+      id="root"
+      role="main"
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>,
+  <aside
+    class="pf-c-drawer__panel"
+  >
+    <div
+      class="pf-c-drawer__panel-body"
+    />
+  </aside>,
+]
+`;
+
+exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = `
+Array [
+  <div
+    class="pf-c-drawer__content"
+    ouia-page-action="some-action"
+    ouia-page-group="some-location"
+    ouia-page-object-id="some-object-id"
+    ouia-page-type="some-app"
+  >
+    <main
+      class="pf-c-page__main pf-l-page__main"
+      id="root"
+      role="main"
+    >
+      <section
+        class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+        widget-type="InsightsPageHeader"
+      >
+        <div
+          class="pf-c-content"
+        >
+          <h1
+            class="pf-c-title pf-m-2xl ins-l-page__header--loading"
+            widget-type="InsightsPageHeaderTitle"
+          >
+            <div
+              class="ins-c-skeleton ins-c-skeleton__sm"
+            >
+               
+            </div>
+          </h1>
+        </div>
+      </section>
+      <section
+        class="pf-c-page__main-section pf-l-page__main-section--loading"
+      >
+        <div
+          class="ins-c-spinner ins-m-center"
+          role="status"
+        >
+          <span
+            class="pf-u-screen-reader"
+          >
+            Loading...
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>,
+  <aside
+    class="pf-c-drawer__panel"
+  >
+    <div
+      class="pf-c-drawer__panel-body"
+    />
+  </aside>,
+]
+`;

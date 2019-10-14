@@ -18,6 +18,7 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
@@ -48,15 +49,21 @@ aside {
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
 }
 
+// Page layout styles
+.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main {
+    height: 100%;
+}
+
+// Page root background color
+.pf-c-page__main#root {
+    background: var(--pf-c-page__main-section--BackgroundColor);
+}
+
 // Header
 .pf-c-page__header {
     overflow: visible;
     .ins-c-dropdown-item__stack {
         white-space: nowrap;
-        padding: var(--pf-c-dropdown__menu-item--PaddingTop)
-                 var(--pf-c-dropdown__menu-item--PaddingRight)
-                 var(--pf-c-dropdown__menu-item--PaddingBottom)
-                 var(--pf-c-dropdown__menu-item--PaddingLeft);
         * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
 

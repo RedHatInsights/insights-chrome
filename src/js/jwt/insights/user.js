@@ -5,7 +5,9 @@ const pathMapper = {
     rhel: 'smart_management',
     hybrid: 'hybrid_cloud',
     insights: 'insights',
-    openshift: 'openshift'
+    openshift: 'openshift',
+    migrations: 'migrations',
+    ansible: 'ansible'
 };
 
 function getWindow() {
@@ -43,7 +45,8 @@ function tryBounceIfUnentitled(data, section) {
     // only test this on the apps that are in valid sections
     // we need to keep /apps and other things functional
     if (section !== 'insights' && section !== 'rhel' &&
-        section !== 'openshift' && section !== 'hybrid') {
+        section !== 'openshift' && section !== 'hybrid' &&
+        section !== 'migrations' && section !== 'ansible') {
         return;
     }
 
