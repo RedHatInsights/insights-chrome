@@ -74,6 +74,10 @@ aside {
         @include rem('height', 21px);
         @include rem('width', 21px);
     }
+
+    .pf-c-page__header-tools .pf-c-avatar {
+        height: var(--pf-global--FontSize--4xl);
+    }
 }
 
 // Brand
