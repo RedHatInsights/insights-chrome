@@ -7,7 +7,7 @@ class LogoutAlert extends React.Component {
         super(props);
         this.state = {
             alertOneVisible: cookie.get('cs_loggedOut') === 'true',
-            delay: 5000
+            delay: 8000
         };
     }
 
@@ -18,6 +18,9 @@ class LogoutAlert extends React.Component {
     componentDidMount() {
         this.setTimer();
     }
+    componentWillUnmount() {
+        clearTimeout(this._timer);
+    }
 
     setTimer = () => {
         if (this._timer !== null) {
@@ -27,7 +30,7 @@ class LogoutAlert extends React.Component {
         // hide after `delay` milliseconds
         this._timer = setTimeout(function() {
             this.setState({ alertOneVisible: false });
-            this._timer = null;
+            clearTimeout(this._timer);
         }.bind(this), this.state.delay);
     }
 

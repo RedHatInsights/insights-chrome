@@ -213,8 +213,9 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
+        let eightSeconds = new Date(new Date().getTime() + 8 * 1000);
         cookie.set('cs_loggedOut', 'true', {
-            expires: 1 / 11520
+            expires: eightSeconds
         });
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
