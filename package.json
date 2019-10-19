@@ -64,7 +64,7 @@
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
     "@babel/core": "7.5.5",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
