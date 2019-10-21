@@ -11,7 +11,7 @@ function mockWindow(pathname) {
 describe('Auth', () => {
     describe('allowUnauthed', () => {
         ['/insights', '/insights/foo', '/rhel/dashboard',
-            '/hybrid', '/openshift/clusters', '/openshift'].map(t => {
+            '/cost-management', '/openshift/clusters', '/openshift'].map(t => {
             test(`should not allow ${t}`, () => {
                 mockWindow(t);
                 expect(auth.allowUnauthed()).toBe(false);
