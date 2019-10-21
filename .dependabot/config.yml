@@ -1,0 +1,12 @@
+version: 1
+update_configs:
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "live"
+    default_reviewers:
+      - "karelhala"
+      - "ryelo"
+      - "tahmidefaz"
+    allowed_updates:
+      - match:
+          dependency_name: "@redhat-cloud-services/frontend*"
