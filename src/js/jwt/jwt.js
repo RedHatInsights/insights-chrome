@@ -198,6 +198,7 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
+    cookie.set('cs_loggedOut', 'false');
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
@@ -212,6 +213,10 @@ function logout(bounce) {
 
     // Redirect to logout
     if (bounce) {
+        let eightSeconds = new Date(new Date().getTime() + 8 * 1000);
+        cookie.set('cs_loggedOut', 'true', {
+            expires: eightSeconds
+        });
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
         });
