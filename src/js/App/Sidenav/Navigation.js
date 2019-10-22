@@ -104,7 +104,6 @@ class Navigation extends Component {
                                                         itemID={subItem.reload || subItem.id}
                                                         ouia-nav-item={item.id}
                                                         key={subKey}
-                                                        skldj="tekst"
                                                         title={subItem.title}
                                                         parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
                                                         isActive={item.active && subItem.id === activeApp}
