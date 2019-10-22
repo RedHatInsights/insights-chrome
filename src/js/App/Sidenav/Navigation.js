@@ -91,6 +91,7 @@ class Navigation extends Component {
                                 if (item.subItems) {
                                     return <NavExpandable
                                         title={item.title}
+                                        ouia-nav-group={item.id}
                                         itemID={item.id}
                                         key={key}
                                         isActive={item.active}
@@ -101,7 +102,9 @@ class Navigation extends Component {
                                                     && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
                                                         itemID={subItem.reload || subItem.id}
+                                                        ouia-nav-item={item.id}
                                                         key={subKey}
+                                                        skldj="tekst"
                                                         title={subItem.title}
                                                         parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
                                                         isActive={item.active && subItem.id === activeApp}
@@ -114,6 +117,7 @@ class Navigation extends Component {
                                 } else {
                                     return <NavigationItem
                                         itemID={item.id}
+                                        ouia-nav-item={item.id}
                                         key={key}
                                         title={item.title}
                                         parent={activeLocation}
