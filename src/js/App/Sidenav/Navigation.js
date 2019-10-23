@@ -102,7 +102,7 @@ class Navigation extends Component {
                                                     && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
                                                         itemID={subItem.reload || subItem.id}
-                                                        ouia-nav-item={item.id}
+                                                        ouia-nav-item={subItem.reload || subItem.id}
                                                         key={subKey}
                                                         title={subItem.title}
                                                         parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
