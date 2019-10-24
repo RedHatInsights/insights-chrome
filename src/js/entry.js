@@ -62,7 +62,10 @@ export function chromeInit(libjwt) {
                 clearActive();
             }
 
-            appNavClick(payload);
+            appNavClick({
+                ...payload,
+                custom: true
+            });
         },
         on: (type, callback) => {
             if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
