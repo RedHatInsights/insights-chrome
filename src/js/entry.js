@@ -158,7 +158,8 @@ function loadChrome(user) {
                 if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
-                    ) || activeApp.subItems.find(subItem => subItem.default);
+                    ) || activeApp.subItems.find(subItem => subItem.default)
+                    || activeApp.subItems[0];
                 }
             }
 
