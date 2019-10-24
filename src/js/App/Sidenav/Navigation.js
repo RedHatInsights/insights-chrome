@@ -138,7 +138,7 @@ class Navigation extends Component {
                             </NavItem>
                         </React.Fragment>
                     }
-                    { activeLocation === 'openshift' &&
+                    { activeLocation === 'openshift' || activeLocation === 'docs' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
                                 return <NavItem
