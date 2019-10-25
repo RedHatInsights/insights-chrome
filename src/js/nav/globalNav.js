@@ -24,12 +24,13 @@ function getRoutesForApp(app, masterConfig) {
                 subAppData = getAppData(subItem.id || subItem, 'subItems', masterConfig);
             }
 
-            if (subItem.default) {subAppData.default = subItem.default;}
-
-            if (subItem.group) {subAppData.group = subItem.group;}
-
             if (!(subAppData.disabled_on_prod && window.location.hostname === 'cloud.redhat.com')) {
-                routes.push(subAppData);
+                routes.push({
+                    ...subAppData,
+                    ...subItem.default && { default: subItem.default },
+                    ...subItem.group && { group: subItem.group },
+                    ...subItem.reload && { reload: subItem.reload }
+                });
             }
         }));
         return routes;

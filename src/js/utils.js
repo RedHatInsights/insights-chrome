@@ -35,11 +35,11 @@ export function pageAllowsUnentitled() {
 
 export function pageRequiresAuthentication() {
     const section = getSection();
-    if (section === 'insights' ||
-        section === 'rhel'     ||
-        section === 'hybrid'   ||
-        section === 'apps'     ||
-        section === 'ansible'  ||
+    if (section === 'insights'          ||
+        section === 'rhel'              ||
+        section === 'cost-management'   ||
+        section === 'apps'              ||
+        section === 'ansible'           ||
         section === 'migrations') {
         return true;
     }
