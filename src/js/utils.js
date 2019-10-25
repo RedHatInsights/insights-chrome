@@ -66,3 +66,7 @@ export function createReduxListener(store, path, fn) {
         }
     };
 }
+
+export function deleteLocalStorageItems(keys) {
+    keys.map(key => localStorage.removeItem(key));
+}
