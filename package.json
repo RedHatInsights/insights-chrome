@@ -114,7 +114,7 @@
     "@redhat-cloud-services/entitlements-client": "^1.0.18",
     "@redhat-cloud-services/frontend-components": "0.0.27",
     "@redhat-cloud-services/frontend-components-inventory": "0.0.29",
-    "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
+    "@redhat-cloud-services/frontend-components-remediations": "0.0.4",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.9",
     "@redhat-cloud-services/keycloak-js": "0.0.2",
     "@sentry/browser": "^5.4.3",
