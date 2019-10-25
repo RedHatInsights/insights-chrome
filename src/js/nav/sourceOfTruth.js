@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { setupCache } = require('axios-cache-adapter');
 const localforage = require('localforage');
+const { deleteLocalStorageItems } = require('../utils');
 
 // Gets the source of truth from the CS Config repository, and caches it for 10 minutes.
 module.exports = (cachePrefix) => {
@@ -16,6 +17,15 @@ module.exports = (cachePrefix) => {
     });
 
     const instance = axios.create({ adapter: cache.adapter });
+
+    instance.interceptors.response.use((response) => {
+        if (response && response.request && response.request.fromCache !== true) {
+            const keys = Object.keys(localStorage).filter(key => key.endsWith('/config/main.yml')).slice(0, -1);
+            deleteLocalStorageItems(keys);
+        }
+
+        return response;
+    });
 
     instance.interceptors.response.use((response) => response.data || response);
 

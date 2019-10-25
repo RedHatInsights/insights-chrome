@@ -4,6 +4,7 @@ import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
+const { deleteLocalStorageItems } = require('../utils');
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -209,7 +210,10 @@ function logout(bounce) {
     cookie.remove(priv.cookie.cookieName);
 
     const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
-
+    const keys = Object.keys(localStorage).filter(key => (
+        key.endsWith('/api/entitlements/v1/services' || key.endsWith('/config/main.yml'))
+    ));
+    deleteLocalStorageItems(keys);
     // Redirect to logout
     if (bounce) {
         priv.keycloak.logout({
