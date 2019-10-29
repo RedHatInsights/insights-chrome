@@ -56,7 +56,7 @@ export function appNav (data) {
 }
 
 export function appNavClick(item, event) {
-    return { type: actionTypes.APP_NAV_CLICK, payload: { id: item && item.id, event } };
+    return { type: actionTypes.APP_NAV_CLICK, payload: { ...item || {}, id: item && item.id, event } };
 }
 
 export function clearActive() {

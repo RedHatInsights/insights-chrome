@@ -45,7 +45,12 @@ export function appNavReducer(state, action) {
 export function appNavClick(state, { payload }) {
     return {
         ...state,
-        activeApp: payload.id
+        activeApp: payload.id,
+        globalNav: payload.custom ? state.globalNav && state.globalNav.map(item => ({
+            ...item,
+            active: payload && (item.id === payload.id || item.title === payload.id)
+                || (item.subItems && item.subItems.some(({ id }) => id === payload.id))
+        })) : state.globalNav
     };
 }
 

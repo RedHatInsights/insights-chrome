@@ -62,7 +62,10 @@ export function chromeInit(libjwt) {
                 clearActive();
             }
 
-            appNavClick(payload);
+            appNavClick({
+                ...payload,
+                custom: true
+            });
         },
         on: (type, callback) => {
             if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
@@ -158,7 +161,8 @@ function loadChrome(user) {
                 if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
-                    ) || activeApp.subItems.find(subItem => subItem.default);
+                    ) || activeApp.subItems.find(subItem => subItem.default)
+                    || activeApp.subItems[0];
                 }
             }
 
