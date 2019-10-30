@@ -126,6 +126,7 @@
     "broadcast-channel": "^2.1.9",
     "classnames": "^2.2.6",
     "core-js": "^3.2.1",
+    "enzyme-adapter-react-16": "^1.15.1",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.5",
     "js-cookie": "^2.2.0",
@@ -137,6 +138,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
+    "react-test-renderer": "^16.11.0",
     "redux": "^4.0.4",
     "urijs": "^1.19.1",
     "url-parse": "^1.4.3"
