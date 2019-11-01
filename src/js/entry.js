@@ -12,6 +12,7 @@ import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
+import debugFunctions from './debugFunctions';
 
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
@@ -78,8 +79,8 @@ export function chromeInit(libjwt) {
         loadInventory,
         experimental: {
             loadRemediations
-        }
-
+        },
+        enable: debugFunctions
     };
 }
 
