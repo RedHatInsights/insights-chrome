@@ -46,7 +46,8 @@
       "<rootDir>/config/setupTests.js"
     ],
     "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy"
+      "\\.(css|scss)$": "identity-obj-proxy",
+      "\\.(svg)$": "identity-obj-proxy"
     }
   },
   "repository": {
@@ -126,6 +127,7 @@
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
     "font-awesome": "^4.7.0",
+    "jest-enzyme": "^7.1.2",
     "js-cookie": "^2.2.0",
     "js-yaml": "^3.13.1",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
