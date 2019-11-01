@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const glob = require('glob');
 const path = require('path');
 
-glob("build/chrome.*.css", function (err, files) {
+glob("build/chrome.*.css", (err, files) => {
     if (err) throw err;
 
     release = process.argv[2]; //"insights or insightsbeta"
@@ -10,7 +10,7 @@ glob("build/chrome.*.css", function (err, files) {
 
     let pugvars = `{release: '${ release }', chrome:'${ chromeFileName }'}`;
 
-    exec(`pug src/pug -o build/snippets -O "${ pugvars }"`, function(err, stdout, stderr){
+    exec(`pug src/pug -o build/snippets -O "${ pugvars }"`, (err, stdout, stderr) => {
         if (err) throw err;
         console.log(stdout);
         console.log(stderr);
