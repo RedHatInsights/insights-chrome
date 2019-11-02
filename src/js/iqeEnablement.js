@@ -27,9 +27,15 @@ function init () {
         return send.apply(this, arguments);
     };
 
-    window.fetch = function fetchReplacement() { // eslint-disable-line func-names
+    window.fetch = function fetchReplacement(path, options, ...rest) { // eslint-disable-line func-names
         let tid = Math.random().toString(36);
-        let prom = oldFetch.apply(this, arguments);
+        let prom = oldFetch.apply(this, [path, {
+            ...options || {},
+            headers: {
+                ...(options && options.headers) || {},
+                [wafkey]: 1
+            }
+        }, ...rest]);
         fetchResults[tid] = arguments[0];
         prom.then(function () {
             delete fetchResults[tid];
