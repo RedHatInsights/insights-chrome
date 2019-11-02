@@ -16,7 +16,7 @@ function isCurrApp(item, app) {
         return true;
     } else if (item.subItems && item.subItems.some(sub => sub.id === app)) {
         return true;
-    } else if (item.group === app) {
+    } else if (item.group === app && item.active) {
         return true;
     }
 
