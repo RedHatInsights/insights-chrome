@@ -7,7 +7,10 @@ import MiddlewareListener from '@redhat-cloud-services/frontend-components-utili
 import logger from 'redux-logger';
 
 const basicMiddlewares = [];
-if (window && window.localStorage.getItem('chrome:redux:debug') === 'true') {
+if (
+    process.env.NODE_ENV === 'development' ||
+    (window && window.localStorage.getItem('chrome:redux:debug') === 'true')
+) {
     basicMiddlewares.push(logger);
 }
 
