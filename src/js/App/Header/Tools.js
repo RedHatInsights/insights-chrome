@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
-import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/esm/components/Tooltip';
+import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip';
 import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 // import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
@@ -43,9 +43,9 @@ const settingsButton = (
     <ToolbarItem>
         <Tooltip position='bottom' content={<span> Settings </span>}>
             <Button variant="plain"
-                    aria-label="Go to settings"
-                    widget-type='SettingsButton'
-                    onClick={() => window.open(`${document.baseURI}settings/`, '_blank')}>
+                aria-label="Go to settings"
+                widget-type='SettingsButton'
+                onClick={() => window.open(`${document.baseURI}settings/`, '_blank')}>
                 <CogIcon/>
             </Button>
         </Tooltip>
