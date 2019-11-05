@@ -8,7 +8,7 @@ export function clickReducer(state, action) {
 }
 
 export function globalNavReducer(state, { data: { id, activeApp } }) {
-    const activeGroup = state.globalNav.filter(item => item.group === id);
+    const activeGroup = state.globalNav ? state.globalNav.filter(item => item.group === id) : [];
     let active;
     if (activeGroup.length > 0) {
         active = activeGroup.find(item => window.location.href.indexOf(item.id) !== -1);
@@ -28,10 +28,14 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     };
 }
 
-export function navUpdateReducer(state, { payload }) {
+export function navUpdateReducer(state, { payload: { activeSection, globalNav, ...payload } }) {
     return {
         ...state,
-        ...payload
+        ...payload,
+        globalNav: globalNav.map(app => ({
+            ...app,
+            active: activeSection && (app.title === activeSection.title || app.id === activeSection.id)
+        }))
     };
 }
 
