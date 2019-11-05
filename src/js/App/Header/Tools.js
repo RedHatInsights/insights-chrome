@@ -45,7 +45,7 @@ const settingsButton = (
             <Button variant="plain"
                 aria-label="Go to settings"
                 widget-type='SettingsButton'
-                onClick={() => window.open(`${document.baseURI}settings/`, '_blank')}>
+                onClick={() => window.location.href = `${document.baseURI}settings/`}>
                 <CogIcon/>
             </Button>
         </Tooltip>
