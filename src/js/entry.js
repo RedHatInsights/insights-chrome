@@ -139,7 +139,7 @@ function loadNav(yamlConfig) {
 
     const splitted = location.pathname.split('/') ;
     const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
-    const globalNav = groupedNav[active].routes;
+    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
     let activeSection = globalNav.find(({ id }) => id === section);
     return groupedNav[active] ? {
         globalNav,
@@ -147,7 +147,7 @@ function loadNav(yamlConfig) {
         activeLocation: active,
         activeSection
     } : {
-        globalNav: groupedNav.insights.routes,
+        globalNav,
         activeTechnology: 'Applications'
     };
 }
