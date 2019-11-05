@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
+import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip';
 import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 // import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 // import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-// import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
+import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import UserToggle from './UserToggle';
 import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
@@ -35,29 +36,21 @@ const aboutButton = {
 };
 
 const actions = [
-    // {
-    //     title: 'Search',
-    //     icon: SearchIcon,
-    //     widget: 'InsightsSearch'
-    // },
-    // {
-    //     title: 'Notification',
-    //     icon: BellIcon,
-    //     widget: 'InsightsNotifications'
-    // },
-    // {
-    //     title: 'Settings',
-    //     icon: CogIcon,
-    //     widget: 'InsightsSettings',
-    //     items: [
-    //         {
-    //             title: 'Topological Inventory',
-    //             url: 'topological-inventory'
-    //         }
-    //     ]
-    // },
     aboutButton
 ];
+
+const settingsButton = (
+    <ToolbarItem>
+        <Tooltip position='bottom' content={<span> Settings </span>}>
+            <Button variant="plain"
+                aria-label="Go to settings"
+                widget-type='SettingsButton'
+                onClick={() => window.open(`${document.baseURI}settings/`, '_blank')}>
+                <CogIcon/>
+            </Button>
+        </Tooltip>
+    </ToolbarItem>
+);
 
 class Tools extends Component {
     constructor(props) {
@@ -80,6 +73,7 @@ class Tools extends Component {
             <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
                     <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
+                        {settingsButton}
                         {actions.map((oneItem, key) => (
                             oneItem.items ?
                                 <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :
