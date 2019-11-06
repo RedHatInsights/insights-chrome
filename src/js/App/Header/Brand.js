@@ -6,7 +6,7 @@ import { Button } from '@patternfly/react-core';
 import BarsIcon from '@patternfly/react-icons';
 import Logo from './Logo';
 
-const Brand = ({ toggleNav, navHidden }) => (
+export const Brand = ({ toggleNav, navHidden }) => (
     <div className="pf-c-page__header-brand">
         <div hidden={navHidden} className='pf-c-page__header-brand-toggle'>
             <Button
