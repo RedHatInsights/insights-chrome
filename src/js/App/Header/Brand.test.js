@@ -1,14 +1,10 @@
 import React from 'react';
-import Brand from './Brand';
-import { render } from 'enzyme';
+import ConnectedBrand, { Brand }  from './Brand';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { shallow } from 'enzyme';
-
-// it('renders without crashing!', () => {
-//     shallow(<Brand />);
-// });
+import { render } from 'enzyme';
 
 describe('Brand', () => {
     let initialState;
@@ -24,11 +20,49 @@ describe('Brand', () => {
 
     it('should render correctly with initial state', () => {
         const store = mockStore(initialState);
-        const wrapper = render(
+        const wrapper = shallow(
             <Provider store={store}>
-                <Brand/>
+                <ConnectedBrand/>
             </Provider>);
         expect(toJson(wrapper)).toMatchSnapshot();
+    });
+    it('should render correctly with state navHidden: false', () => {
+        const store = mockStore({ chrome: { navHidden: false } });
+        const wrapper = shallow(
+            <Provider store={store}>
+                <ConnectedBrand/>
+            </Provider>);
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+    it('should render correctly with button', () => {
+        const wrapper = shallow(
+            <Brand toggleNav={() => { return; }} isHidden={true}/>
+        );
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+    it('onClick should fire', () => {
+
+        const mockCallBack = jest.fn();
+
+        const wrapper = shallow(
+            <Brand toggleNav={ mockCallBack } navHidden={true}/>
+        );
+        expect(toJson(wrapper)).toMatchSnapshot();
+
+        // eslint-disable-next-line quotes
+        wrapper.find("[widget-type='InsightsNavToggle']").simulate('click');
+        expect(mockCallBack).toHaveBeenCalledTimes(1);
+    });
+    it('mapDispatchToProps function fires', () => {
+        const store = mockStore(initialState);
+        store.dispatch = jest.fn();
+        shallow(
+            <Provider store={store}>
+                <ConnectedBrand/>
+            </Provider>);
+
+        //expect(toJson(wrapper)).toMatchSnapshot();
+        expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
 
 });

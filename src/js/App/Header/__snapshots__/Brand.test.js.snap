@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Brand mapDispatchToProps function fires 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(Brand) />
+</ContextProvider>
+`;
+
+exports[`Brand onClick should fire 1`] = `
+<div
+  className="pf-c-page__header-brand"
+>
+  <div
+    className="pf-c-page__header-brand-toggle"
+    hidden={true}
+  >
+    <Component
+      aria-label="Toggle primary navigation"
+      onClick={[Function]}
+      variant="plain"
+      widget-type="InsightsNavToggle"
+    >
+      <Component
+        size="md"
+      />
+    </Component>
+  </div>
+  <a
+    className="pf-c-page__header-brand-link"
+    href="./"
+  >
+    <Logo />
+  </a>
+</div>
+`;
+
+exports[`Brand should render correctly with button 1`] = `
+<div
+  className="pf-c-page__header-brand"
+>
+  <div
+    className="pf-c-page__header-brand-toggle"
+  >
+    <Component
+      aria-label="Toggle primary navigation"
+      onClick={[Function]}
+      variant="plain"
+      widget-type="InsightsNavToggle"
+    >
+      <Component
+        size="md"
+      />
+    </Component>
+  </div>
+  <a
+    className="pf-c-page__header-brand-link"
+    href="./"
+  >
+    <Logo />
+  </a>
+</div>
+`;
+
+exports[`Brand should render correctly with initial state 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(Brand) />
+</ContextProvider>
+`;
+
+exports[`Brand should render correctly with state navHidden: false 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(Brand) />
+</ContextProvider>
+`;
