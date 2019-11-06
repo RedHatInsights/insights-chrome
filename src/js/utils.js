@@ -73,10 +73,9 @@ export function deleteLocalStorageItems(keys) {
     keys.map(key => localStorage.removeItem(key));
 }
 
-export function lastActive(searhString, fallback) {
+export function lastActive(searchString, fallback) {
     return Object.keys(localStorage).reduce((acc, curr) => {
-        console.log(curr, searhString);
-        if (curr.includes(searhString)) {
+        if (curr.includes(searchString)) {
             try {
                 let accDate;
                 try {
@@ -85,7 +84,6 @@ export function lastActive(searhString, fallback) {
                     accDate = new Date();
                 }
 
-                console.log(accDate);
                 const currObj = JSON.parse(localStorage.getItem(curr));
                 return (accDate >= new Date(currObj.expires)) ? acc : curr;
             } catch (e) {
@@ -99,7 +97,6 @@ export function lastActive(searhString, fallback) {
 
 export function bootstrapCache(endpoint, cacheKey) {
     const name = lastActive(endpoint, cacheKey);
-    console.log(name, 'fff');
     const store = localforage.createInstance({
         driver: [
             localforage.LOCALSTORAGE
