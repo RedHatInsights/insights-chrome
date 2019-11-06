@@ -138,13 +138,16 @@ function loadNav(yamlConfig) {
     const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
 
     const splitted = location.pathname.split('/') ;
-    const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
+    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
+    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
+    let activeSection = globalNav.find(({ id }) => id === section);
     return groupedNav[active] ? {
-        globalNav: groupedNav[active].routes,
+        globalNav,
         activeTechnology: groupedNav[active].title,
-        activeLocation: active
+        activeLocation: active,
+        activeSection
     } : {
-        globalNav: groupedNav.insights.routes,
+        globalNav,
         activeTechnology: 'Applications'
     };
 }
