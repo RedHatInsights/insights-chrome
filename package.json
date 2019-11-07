@@ -109,7 +109,7 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/runtime": "^7.4.4",
     "@patternfly/patternfly": "^2.40.9",
-    "@patternfly/react-core": "^3.112.3",
+    "@patternfly/react-core": "^3.120.5",
     "@patternfly/react-icons": "^3.14.18",
     "@redhat-cloud-services/entitlements-client": "^1.0.18",
     "@redhat-cloud-services/frontend-components": "0.0.37",
