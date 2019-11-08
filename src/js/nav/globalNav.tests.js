@@ -1,1 +1,0 @@
-const globalNav = require('./globalNav');
