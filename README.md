@@ -16,10 +16,10 @@ You can include/use chrome in your development project by running the insights-p
 <html>
   <head>
     <!-- your own HEAD tags -->
-    <esi:include src="/beta/apps/static/chrome/snippets/head.html" />
+    <esi:include src="/@@env/chrome/snippets/head.html" />
   </head>
   <body>
-    <esi:include src="/beta/apps/static/chrome/snippets/body.html"/>
+    <esi:include src="/@@env/chrome/snippets/body.html"/>
   </body>
 </html>
 ```
