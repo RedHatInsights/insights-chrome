@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login should render correctly 1`] = `
+<div
+  className="pf-c-page__header-tools"
+>
+  <Component
+    aria-label="Toggle primary navigation"
+    onClick={[Function]}
+    variant="tertiary"
+    widget-type="InsightsNavToggle"
+  >
+    Log in
+  </Component>
+</div>
+`;
