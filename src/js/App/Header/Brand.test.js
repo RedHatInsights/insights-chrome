@@ -4,7 +4,6 @@ import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { shallow } from 'enzyme';
-import { render } from 'enzyme';
 
 describe('Brand', () => {
     let initialState;
@@ -55,14 +54,9 @@ describe('Brand', () => {
     });
     it('mapDispatchToProps function fires', () => {
         const store = mockStore(initialState);
-        store.dispatch = jest.fn();
-        shallow(
-            <Provider store={store}>
-                <ConnectedBrand/>
-            </Provider>);
-
-        //expect(toJson(wrapper)).toMatchSnapshot();
-        expect(store.dispatch).toHaveBeenCalledTimes(1);
+        const wrapper = shallow(
+            <ConnectedBrand store= {store}/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
     });
 
 });
