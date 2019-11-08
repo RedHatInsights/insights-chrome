@@ -2,32 +2,25 @@ import React from 'react';
 import { render } from 'enzyme';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import ConnectedInsightsAbout, { InsightsAbout, Copyright } from './InsightsAbout';
+import ConnectedInsightsAbout, { InsightsAbout } from './InsightsAbout';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
-describe('ConnectedInsightsAbout', () => {
+describe('InsightsAbout', () => {
     let initialState;
     let mockStore;
 
     beforeEach(() => {
         mockStore = configureStore();
         initialState = {
-            chrome: { 
-                user: {
-                    identity: {
-                        user: {}
-                    }
-                },
-                appId: 'test',
-                globalNav: [{
-                    item: {
-                        active: 'test'
-                    }
-                }],
-                activeApp: 'test'
-            }
-        }
+            chrome: { user: { identity: { user: { username: 'some-name' }  } } }
+            // appID: 'someID',
+            // activeApp: 'some-app',
+            // appDetails: { apps: 'some-apps' },
+            // showCopyAlert: false,
+            // showCopyAlertError: false,
+            // currentApp: 'app' && 'app.title'
+        };
     });
 
     it('should render correctly with no state data', () =>{
@@ -49,10 +42,3 @@ describe('ConnectedInsightsAbout', () => {
         expect(toJson(wrapper)).toMatchSnapshot();
     });
 });
-
-describe('Copyright', () => {
-    it('should render', () => {
-        const wrapper = shallow(<Copyright/>);
-        expect(toJson(wrapper)).toMatchSnapshot();
-    });
-})
