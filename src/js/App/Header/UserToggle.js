@@ -33,7 +33,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             { isOrgAdmin &&
                 <DropdownItem
                     key="User management"
-                    href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+                    href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
                     target="_blank" rel='noopener noreferrer'>
                         User management
                 </DropdownItem>
