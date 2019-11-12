@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`InsightsAbout should render correctly with just username 1`] = `null`;
+exports[`ConnectedInsightsAbout should render correctly with just username 1`] = `null`;
 
-exports[`InsightsAbout should render correctly with no state data 1`] = `
+exports[`ConnectedInsightsAbout should render correctly with no state data 1`] = `
 <ContextProvider
   value={
     Object {
@@ -36,4 +36,52 @@ exports[`InsightsAbout should render correctly with no state data 1`] = `
 >
   <Connect(InsightsAbout) />
 </ContextProvider>
+`;
+
+exports[`Copyright should render 1`] = `
+<div
+  className="ins-c-footer__traditional-nav pf-l-flex pf-m-column pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer"
+>
+  <p
+    className="copyright pf-m-spacer-xl-on-lg"
+  >
+    Copyright © 2019 Red Hat, Inc.
+  </p>
+  <nav>
+    <ul
+      className="pf-l-flex pf-m-column pf-m-row-on-md"
+    >
+      <li>
+        <a
+          className="nav-link"
+          href="https://www.redhat.com/en/about/privacy-policy"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>
+      </li>
+      <li>
+        <a
+          className="nav-link"
+          href="https://access.redhat.com/help/terms/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Terms of Use
+        </a>
+      </li>
+      <li>
+        <a
+          className="nav-link"
+          href="https://www.redhat.com/en/about/all-policies-guidelines"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          All Policies and Guidelines
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 `;
