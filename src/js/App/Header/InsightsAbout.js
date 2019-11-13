@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import './InsightsAbout.scss';
 import * as Sentry from '@sentry/browser';
 
-const Copyright = () => (
+export const Copyright = () => (
     <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column
                     pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer'>
         <p className='copyright pf-m-spacer-xl-on-lg'>Copyright © 2019 Red Hat, Inc.</p>
@@ -50,7 +50,7 @@ const Copyright = () => (
     </div>
 );
 
-class InsightsAbout extends Component {
+export class InsightsAbout extends Component {
     constructor(props) {
         super(props);
 
