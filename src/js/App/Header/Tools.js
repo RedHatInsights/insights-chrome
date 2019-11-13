@@ -41,14 +41,12 @@ const actions = [
 
 const settingsButton = (
     <ToolbarItem>
-        <Tooltip position='bottom' content={<span> Settings </span>}>
-            <Button variant="plain"
-                aria-label="Go to settings"
-                widget-type='SettingsButton'
-                onClick={() => window.location.href = `${document.baseURI}settings/`}>
-                <CogIcon/>
-            </Button>
-        </Tooltip>
+        <Button variant="plain"
+            aria-label="Go to settings"
+            widget-type='SettingsButton'
+            onClick={() => window.location.href = `${document.baseURI}settings/`}>
+            <CogIcon/>
+        </Button>
     </ToolbarItem>
 );
 
@@ -73,8 +71,8 @@ class Tools extends Component {
             <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
                     <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
-                        {settingsButton}
-                        {actions.map((oneItem, key) => (
+                        { window.insights.chrome.isBeta() ? settingsButton : null }
+                        { actions.map((oneItem, key) => (
                             oneItem.items ?
                                 <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :
                                 <ToolbarItem key={key} data-key={key}>
