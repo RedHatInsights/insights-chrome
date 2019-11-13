@@ -6,7 +6,7 @@ import {
     DropdownItem,
     DropdownSeparator,
     DropdownPosition
-} from '@patternfly/react-core/dist/esm/components/Dropdown';
+} from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 

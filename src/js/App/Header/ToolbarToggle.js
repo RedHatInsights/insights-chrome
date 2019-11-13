@@ -4,7 +4,7 @@ import {
     DropdownToggle,
     DropdownItem,
     DropdownPosition
-} from '@patternfly/react-core/dist/esm/components/Dropdown';
+} from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 class ToolbarToggle extends Component {
