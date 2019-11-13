@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
-import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip';
 import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 // import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
