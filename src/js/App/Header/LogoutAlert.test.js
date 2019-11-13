@@ -1,12 +1,12 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import LogoutAlert from './LogoutAlert';
 
 describe('Login', () => {
 
     it('should render correctly', () =>{
-        const wrapper = shallow(<LogoutAlert />);
+        const wrapper = mount(<LogoutAlert />);
         expect(toJson(wrapper)).toMatchSnapshot();
     });
 
