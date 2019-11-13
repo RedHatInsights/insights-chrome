@@ -132,6 +132,7 @@
     "js-yaml": "^3.13.1",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
     "lodash": "^4.17.14",
+    "node-fetch": "^2.6.0",
     "prop-types": "^15.6.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

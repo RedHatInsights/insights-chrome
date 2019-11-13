@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tools should render correctly 1`] = `
+<div
+  className="pf-l-page__header-tools pf-c-page__header-tools"
+  widget-type="InsightsToolbar"
+>
+  <Toolbar>
+    <ToolbarGroup
+      className="pf-u-mr-0 pf-u-mr-lg-on-lg"
+    >
+      <ToolbarItem>
+        <Tooltip
+          appendTo={[Function]}
+          aria="describedby"
+          boundary="window"
+          className=""
+          content={
+            <span>
+               Settings 
+            </span>
+          }
+          distance={15}
+          enableFlip={true}
+          entryDelay={500}
+          exitDelay={500}
+          flipBehavior={
+            Array [
+              "top",
+              "right",
+              "bottom",
+              "left",
+              "top",
+              "right",
+              "bottom",
+            ]
+          }
+          id=""
+          isAppLauncher={false}
+          isContentLeftAligned={false}
+          isVisible={false}
+          maxWidth="18.75rem"
+          position="bottom"
+          tippyProps={Object {}}
+          trigger="mouseenter focus"
+          zIndex={9999}
+        >
+          <Component
+            aria-label="Go to settings"
+            onClick={[Function]}
+            variant="plain"
+            widget-type="SettingsButton"
+          >
+            <Component />
+          </Component>
+        </Tooltip>
+      </ToolbarItem>
+      <ToolbarToggle
+        dropdownItems={
+          Array [
+            Object {
+              "title": "Help & assistance",
+              "url": "https://access.redhat.com/help/",
+            },
+            Object {
+              "title": "Customer support",
+              "url": "https://access.redhat.com/support",
+            },
+            Object {
+              "title": "Training",
+              "url": "https://www.redhat.com/en/services/training-and-certification",
+            },
+            Object {
+              "onClick": [Function],
+              "title": "API Documentation",
+            },
+            Object {
+              "onClick": [Function],
+              "title": "About",
+            },
+          ]
+        }
+        key="0"
+      />
+    </ToolbarGroup>
+    <ToolbarGroup>
+      <ToolbarItem
+        className="pf-u-hidden-on-lg pf-u-mr-0"
+      >
+        <Connect(UserToggle)
+          extraItems={
+            Array [
+              <DropdownItem
+                component="button"
+                isDisabled={true}
+              >
+                FAQ
+              </DropdownItem>,
+            ]
+          }
+          isSmall={true}
+        />
+      </ToolbarItem>
+      <ToolbarItem
+        className="pf-u-screen-reader pf-u-visible-on-lg"
+      >
+        <Connect(UserToggle)
+          className="ins-c-dropdown__user"
+        />
+      </ToolbarItem>
+    </ToolbarGroup>
+  </Toolbar>
+  <Connect(UserIcon) />
+</div>
+`;
