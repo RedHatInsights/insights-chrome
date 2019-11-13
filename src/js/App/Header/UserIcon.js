@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Avatar } from '@patternfly/react-core/dist/esm/components/Avatar';
+import { Avatar } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-class UserIcon extends Component {
+export class UserIcon extends Component {
 
     constructor(props) {
         super(props);
