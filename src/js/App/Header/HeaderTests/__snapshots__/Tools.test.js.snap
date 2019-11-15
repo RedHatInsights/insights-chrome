@@ -9,52 +9,6 @@ exports[`Tools should render correctly 1`] = `
     <ToolbarGroup
       className="pf-u-mr-0 pf-u-mr-lg-on-lg"
     >
-      <ToolbarItem>
-        <Tooltip
-          appendTo={[Function]}
-          aria="describedby"
-          boundary="window"
-          className=""
-          content={
-            <span>
-               Settings 
-            </span>
-          }
-          distance={15}
-          enableFlip={true}
-          entryDelay={500}
-          exitDelay={500}
-          flipBehavior={
-            Array [
-              "top",
-              "right",
-              "bottom",
-              "left",
-              "top",
-              "right",
-              "bottom",
-            ]
-          }
-          id=""
-          isAppLauncher={false}
-          isContentLeftAligned={false}
-          isVisible={false}
-          maxWidth="18.75rem"
-          position="bottom"
-          tippyProps={Object {}}
-          trigger="mouseenter focus"
-          zIndex={9999}
-        >
-          <Component
-            aria-label="Go to settings"
-            onClick={[Function]}
-            variant="plain"
-            widget-type="SettingsButton"
-          >
-            <Component />
-          </Component>
-        </Tooltip>
-      </ToolbarItem>
       <ToolbarToggle
         dropdownItems={
           Array [

@@ -1,5 +1,5 @@
 import React from 'react';
-import ConnectedBrand, { Brand }  from './Brand';
+import ConnectedBrand, { Brand }  from '../Brand';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';

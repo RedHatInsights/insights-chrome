@@ -15,6 +15,9 @@ global.window.insights = {
     ...window.insights || {},
     chrome: {
         ...(window.insights && window.insights.chrome) || {},
+        isBeta: () => {
+            return null;
+        },
         auth: {
             ...(window.insights && window.insights.chrome && window.insights.chrome) || {},
             getUser: () => new Promise((res) => res({

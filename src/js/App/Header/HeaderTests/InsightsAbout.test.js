@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'enzyme';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import ConnectedInsightsAbout, { InsightsAbout, Copyright } from './InsightsAbout';
+import ConnectedInsightsAbout, { InsightsAbout, Copyright } from '../InsightsAbout';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
@@ -13,7 +13,7 @@ describe('ConnectedInsightsAbout', () => {
     beforeEach(() => {
         mockStore = configureStore();
         initialState = {
-            chrome: { 
+            chrome: {
                 user: {
                     identity: {
                         user: {}
@@ -27,7 +27,7 @@ describe('ConnectedInsightsAbout', () => {
                 }],
                 activeApp: 'test'
             }
-        }
+        };
     });
 
     it('should render correctly with no state data', () =>{
@@ -55,4 +55,4 @@ describe('Copyright', () => {
         const wrapper = shallow(<Copyright/>);
         expect(toJson(wrapper)).toMatchSnapshot();
     });
-})
+});

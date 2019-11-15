@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavItem, NavExpandable, NavList, NavItemSeparator } from '@patternfly/react-core/dist/esm/components/Nav';
+import { Nav, NavItem, NavExpandable, NavList, NavItemSeparator } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
