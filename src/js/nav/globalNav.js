@@ -5,9 +5,6 @@ export let getNavFromConfig = (masterConfig) => {
         globalNav[appid] = getAppData(appid, 'routes', masterConfig);
     });
 
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!');
-    console.log(globalNav);
-
     return globalNav;
 
 };
