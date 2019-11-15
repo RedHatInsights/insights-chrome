@@ -22,7 +22,7 @@ const openshiftLinks = {
     }
 };
 
-class Navigation extends Component {
+export class Navigation extends Component {
     constructor(props) {
         super(props);
         this.onSelect = this.onSelect.bind(this);
