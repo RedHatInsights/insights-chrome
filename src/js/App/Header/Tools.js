@@ -3,9 +3,8 @@ import { Button } from '@patternfly/react-core';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { Tooltip } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core';
-import QuestionCircleIcon from '@patternfly/react-icons';
+import { QuestionCircleIcon, CogIcon } from '@patternfly/react-icons';
 
-import CogIcon from '@patternfly/react-icons';
 import UserToggle from './UserToggle';
 import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
