@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ConnectedNavigation should render correctly 1`] = `
+exports[`ConnectedNavigation should render correctly with empty state 1`] = `
 <ContextProvider
   value={
     Object {
@@ -34,4 +34,78 @@ exports[`ConnectedNavigation should render correctly 1`] = `
 >
   <Connect(Navigation) />
 </ContextProvider>
+`;
+
+exports[`ConnectedNavigation should render correctly with initial state 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(Navigation) />
+</ContextProvider>
+`;
+
+exports[`Navigation should render corectly with nav not Hidden 1`] = `
+<Component
+  aria-label="Insights Global Navigation"
+  data-ouia-safe="true"
+  onSelect={[Function]}
+  theme="dark"
+>
+  <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
+    className=""
+    variant="default"
+  >
+    <NavigationItem
+      isActive={false}
+      key="0"
+      onClick={[Function]}
+      parent="someLocation"
+    />
+    <NavigationItem
+      isActive={false}
+      key="1"
+      onClick={[Function]}
+      parent="someLocation"
+    />
+    <NavItemSeparator />
+    <NavItem
+      className="ins-c-page__documentation"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="someDocs"
+    >
+      Documentation
+    </NavItem>
+  </NavList>
+</Component>
 `;
