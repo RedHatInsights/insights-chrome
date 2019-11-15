@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectedUserToggle should render correctly 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(UserToggle) />
+</ContextProvider>
+`;
+
+exports[`UserToggle should render correctly 1`] = `
+<Dropdown
+  aria-label="Overflow actions"
+  dropdownItems={
+    Array [
+      <DropdownItem
+        isDisabled={true}
+      >
+        <dl
+          className="ins-c-dropdown-item__stack"
+        >
+          <dt
+            className="ins-c-dropdown-item__stack--header"
+          >
+            Username:
+          </dt>
+          <dd
+            className="ins-c-dropdown-item__stack--value"
+          />
+        </dl>
+      </DropdownItem>,
+      <React.Fragment />,
+      <DropdownSeparator />,
+      <React.Fragment />,
+      <DropdownItem
+        href="https://access.redhat.com/user"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        My profile
+      </DropdownItem>,
+      <DropdownItem
+        component="button"
+        onClick={[Function]}
+      >
+        Logout
+      </DropdownItem>,
+      Array [],
+    ]
+  }
+  isOpen={false}
+  isPlain={true}
+  onSelect={[Function]}
+  position="right"
+  toggle={
+    <DropdownToggle
+      onToggle={[Function]}
+    >
+      someName
+    </DropdownToggle>
+  }
+  widget-type="InsightsOverflowActions"
+/>
+`;

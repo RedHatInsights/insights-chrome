@@ -15,7 +15,6 @@ describe('SideNav', () => {
         );
         expect(toJson(wrapper)).toMatchSnapshot();
     });
-
 });
 
 describe('ConnectedSideNav', () =>{
@@ -23,23 +22,20 @@ describe('ConnectedSideNav', () =>{
     let mockStore;
 
     beforeEach(() =>{
-        mockStore = configureStore();        
+        mockStore = configureStore();
         initialState = ({ chrome: {
-            activeTechnology,
-            activeLocation
-        } }) => ({
-            activeTechnology: activeTechnology,
-            activeLocation
-        });
+            activeTechnology: 'someTechnology',
+            activeLocation: 'someLocation'
+        } });
     });
     it('should render correctly', () => {
-        const store = mockStore(initialState)
+        const store = mockStore(initialState);
         const wrapper = shallow(
             <Provider store={store}>
                 <ConnectedSideNav/>
             </Provider>
         );
         expect(toJson(wrapper)).toMatchSnapshot();
-    })
+    });
 
-})
+});

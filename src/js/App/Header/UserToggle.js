@@ -56,7 +56,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
     ];
 }
 
-class UserToggle extends Component {
+export class UserToggle extends Component {
     constructor(props) {
         super(props);
         this.state = {
