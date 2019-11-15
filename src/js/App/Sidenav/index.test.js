@@ -37,5 +37,11 @@ describe('ConnectedSideNav', () =>{
         );
         expect(toJson(wrapper)).toMatchSnapshot();
     });
+    it('should render correctly part 2', () => {
+        const store = mockStore(initialState);
+        const wrapper = shallow(
+            <ConnectedSideNav store= {store}/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
 
 });

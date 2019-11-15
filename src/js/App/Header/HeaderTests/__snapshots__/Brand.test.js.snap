@@ -35,8 +35,11 @@ exports[`Brand onClick should fire 1`] = `
       variant="plain"
       widget-type="InsightsNavToggle"
     >
-      <Component
+      <BarsIcon
+        color="currentColor"
+        noVerticalAlign={false}
         size="md"
+        title={null}
       />
     </Component>
   </div>
@@ -62,8 +65,11 @@ exports[`Brand should render correctly with button 1`] = `
       variant="plain"
       widget-type="InsightsNavToggle"
     >
-      <Component
+      <BarsIcon
+        color="currentColor"
+        noVerticalAlign={false}
         size="md"
+        title={null}
       />
     </Component>
   </div>
