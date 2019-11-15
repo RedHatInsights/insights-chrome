@@ -69,8 +69,11 @@ exports[`SideNav should render correctly 1`] = `
       <a
         href="http://localhost/"
       >
-        <Component
+        <HomeIcon
+          color="currentColor"
+          noVerticalAlign={false}
           size="md"
+          title={null}
         />
       </a>
     </SplitItem>
