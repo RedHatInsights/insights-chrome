@@ -6,7 +6,25 @@ import configureStore from 'redux-mock-store';
 import ConnectedUserToggle, { UserToggle } from '../UserToggle';
 import { Provider } from 'react-redux';
 
-describe('UserToggle', () => {
+describe('UserToggle', ()=>{
+    it('should render correctly', () =>{
+        const props = {
+            isOpen: false,
+            account: {
+                number: 'someNumber',
+                name: 'someName'
+            },
+            isSmall: false,
+            extraItems: []
+        };
+        const wrapper = shallow(
+            <UserToggle {...props}/>
+        );
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+});
+
+describe('ConnectedUserToggle', () => {
     let initialState;
     let mockStore;
 
@@ -16,23 +34,15 @@ describe('UserToggle', () => {
             chrome: {
                 user: {
                     identity: {
-                        account_number: accountNumber,
+                        account_number: 'some accountNumber',
                         user: {
-                            username,
-                            first_name,
-                            last_name,
-                            is_org_admin
+                            username: 'someUsername',
+                            first_name: 'someFirstName',
+                            last_name: 'someLastName',
+                            is_org_admin: false
                         }
                     }
                 }
-            }
-
-        }) => ({
-            account: {
-                number: accountNumber,
-                username: username,
-                isOrgAdmin: is_org_admin,
-                name: `${first_name} ${last_name}`
             }
         });
     });

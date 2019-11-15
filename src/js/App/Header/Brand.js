@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { onToggle } from '../../redux/actions';
 import { Button } from '@patternfly/react-core';
-import BarsIcon from '@patternfly/react-icons';
+import { BarsIcon } from '@patternfly/react-icons';
 import Logo from './Logo';
 
-export const Brand = ({ toggleNav, navHidden }) => (
+const Brand = ({ toggleNav, navHidden }) => (
     <div className="pf-c-page__header-brand">
         <div hidden={navHidden} className='pf-c-page__header-brand-toggle'>
             <Button
