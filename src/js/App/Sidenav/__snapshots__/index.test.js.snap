@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SideNav should render correctly 1`] = `
+<Fragment>
+  <Split
+    className="ins-c-navigation__header"
+  >
+    <SplitItem
+      className="ins-c-page__home-icon"
+    >
+      <a
+        href="http://localhost/"
+      >
+        <Component
+          size="md"
+        />
+      </a>
+    </SplitItem>
+    <SplitItem
+      className="pf-u-display-flex pf-u-align-items-center ins-c-navigation__header-title__wrapper"
+      isFilled={true}
+    >
+      <div
+        className="ins-c-navigation__header-title"
+      >
+        someTechnology
+      </div>
+    </SplitItem>
+  </Split>
+  <Connect(Navigation) />
+</Fragment>
+`;

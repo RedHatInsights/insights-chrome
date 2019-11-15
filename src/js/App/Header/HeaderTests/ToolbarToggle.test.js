@@ -1,7 +1,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 import { shallow } from 'enzyme';
-import ToolbarToggle from './ToolbarToggle';
+import ToolbarToggle from '../ToolbarToggle';
 
 describe('ToolbarToggle', () => {
 
