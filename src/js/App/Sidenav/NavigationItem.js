@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavItem } from '@patternfly/react-core/dist/esm/components/Nav';
+import { NavItem } from '@patternfly/react-core';
 
 const basepath = document.baseURI;
 

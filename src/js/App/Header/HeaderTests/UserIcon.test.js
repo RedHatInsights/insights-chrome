@@ -1,5 +1,5 @@
 import React from 'react';
-import ConnectedUserIcon, { UserIcon }  from './UserIcon';
+import ConnectedUserIcon, { UserIcon }  from '../UserIcon';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -38,7 +38,7 @@ describe('User Icon', () => {
     it('should render correctly with initial state', () => {
         const account = {
             username: 'test'
-        }
+        };
         const wrapper = shallow(
             <UserIcon account={account}/>
         );
