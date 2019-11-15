@@ -1,7 +1,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 import { shallow } from 'enzyme';
-import Header, { unauthed } from '../index';
+import Header, { unauthed as UnauthedHeader } from '../index';
 
 describe('Header', () => {
 
@@ -13,7 +13,7 @@ describe('Header', () => {
 
 describe('unauthed', () => {
     it('should render correctly', () => {
-        const wrapper = shallow(<unauthed/>);
+        const wrapper = shallow(<UnauthedHeader/>);
         expect(toJson(wrapper)).toMatchSnapshot();
     });
 });

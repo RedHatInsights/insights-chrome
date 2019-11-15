@@ -7,4 +7,10 @@ exports[`Header should render correctly 1`] = `
 </Fragment>
 `;
 
-exports[`unauthed should render correctly 1`] = `<unauthed />`;
+exports[`unauthed should render correctly 1`] = `
+<Fragment>
+  <Connect(Brand) />
+  <Login />
+  <LogoutAlert />
+</Fragment>
+`;

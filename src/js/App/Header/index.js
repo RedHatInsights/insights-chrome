@@ -4,21 +4,13 @@ import Tools from './Tools';
 import Login from './Login';
 import LogoutAlert from './LogoutAlert';
 
-// export function unauthed() {
-//     return <Fragment>
-//         <Brand />
-//         <Login />
-//         <LogoutAlert/>
-//     </Fragment>;
-// }
-
-export const unauthed = () =>(
-    <Fragment>
+export function unauthed() {
+    return <Fragment>
         <Brand />
         <Login />
         <LogoutAlert/>
-    </Fragment>
-);
+    </Fragment>;
+}
 
 const Header = () => (
     <Fragment>

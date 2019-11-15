@@ -36,6 +36,28 @@ exports[`ConnectedSideNav should render correctly 1`] = `
 </ContextProvider>
 `;
 
+exports[`ConnectedSideNav should render correctly part 2 1`] = `
+<ContextProvider
+  value={null}
+>
+  <SideNav
+    activeLocation="someLocation"
+    activeTechnology="someTechnology"
+    dispatch={[Function]}
+    store={
+      Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      }
+    }
+  />
+</ContextProvider>
+`;
+
 exports[`SideNav should render correctly 1`] = `
 <Fragment>
   <Split
