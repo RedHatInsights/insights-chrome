@@ -77,6 +77,7 @@ describe('ConnectedInsightsAbout', () => {
             <Provider store={store}>
                 <ConnectedInsightsAbout />
             </Provider>);
+        //wrapper.setState({ isOpen: true });
         expect(toJson(wrapper)).toMatchSnapshot();
     });
 });
