@@ -33,13 +33,13 @@ describe('Navigation', () => {
 describe('ConnectedNavigation', () => {
     let initialState;
     let mockStore;
-    let globalNavData = require('../../../../testdata/globalNav.json')
+    let globalNavData = require('../../../../testdata/globalNav.json');
 
     beforeEach(() =>{
         mockStore = configureStore();
         initialState = ({
             chrome: {
-                globalNav: globalNavData,
+                globalNav: [globalNavData],
                 activeApp: 'someApp',
                 navHidden: false,
                 activeLocation: 'someLocation',

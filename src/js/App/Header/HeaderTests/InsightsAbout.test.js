@@ -1,15 +1,52 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import { render } from 'enzyme';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import ConnectedInsightsAbout, { InsightsAbout, Copyright } from '../InsightsAbout';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
+describe('InsightsAbout', () => {
+    beforeEach(() => {
+        fetch.resetMocks();
+        //fetch.mockResponse('');
+    });
+    const initialProps = {
+        activeApp: 'someApp',
+        appId: 'someID',
+        dispatch: jest.fn(),
+        //isModalOpen: true,
+        onClose: jest.fn()
+    };
+    it('should render correctly with modal closed', ()=>{
+        let props = {
+            ...initialProps,
+            isModalOpen: false
+        };
+        const wrapper = shallow(<InsightsAbout { ...props }/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+    it('should render correctly with modal open', ()=>{
+        let props = {
+            ...initialProps,
+            isModalOpen: true
+        };
+        fetch.mockResponse(JSON.stringify({
+            app: 'someApp', data:
+                                { src_hash: 'somehash', build_id: 'someID' }
+        }));
+        // const onResponse = jest.fn();
+        // const onError = jest.fn();
+        const wrapper = mount(<InsightsAbout { ...props }/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+});
+
 describe('ConnectedInsightsAbout', () => {
     let initialState;
     let mockStore;
-
+    let globalNavData = require('../../../../../testdata/globalNav.json');
     beforeEach(() => {
         mockStore = configureStore();
         initialState = {
@@ -20,11 +57,7 @@ describe('ConnectedInsightsAbout', () => {
                     }
                 },
                 appId: 'test',
-                globalNav: [{
-                    item: {
-                        active: 'test'
-                    }
-                }],
+                globalNav: [globalNavData],
                 activeApp: 'test'
             }
         };
@@ -46,6 +79,7 @@ describe('ConnectedInsightsAbout', () => {
             <Provider store={store}>
                 <ConnectedInsightsAbout />
             </Provider>);
+        //wrapper.setState({ isOpen: true });
         expect(toJson(wrapper)).toMatchSnapshot();
     });
 });
