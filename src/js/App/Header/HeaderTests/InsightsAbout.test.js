@@ -10,9 +10,7 @@ import { Provider } from 'react-redux';
 describe('InsightsAbout', () => {
     beforeEach(() => {
         fetch.resetMocks();
-        fetch.mockResponse(JSON.stringify({ app_name: 'chrome', src_hash: 'f3d0275e021cfa46982fd9a4376bda7a5ee9e079',
-            src_tag: '', src_branch: 'prod-stable', travis: { event_type: 'push' },
-            build_branch: 'prod-stable', build_hash: 'b5b92cf36f81fec1c9abc302a365bff111b9f5b0', build_id: '7'  }));
+        //fetch.mockResponse('');
     });
     const initialProps = {
         activeApp: 'someApp',
@@ -26,18 +24,22 @@ describe('InsightsAbout', () => {
             ...initialProps,
             isModalOpen: false
         };
-        shallow(<InsightsAbout { ...props }/>);
-        //expect(toJson(wrapper)).toMatchSnapshot();
+        const wrapper = shallow(<InsightsAbout { ...props }/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
     });
     it('should render correctly with modal open', ()=>{
         let props = {
             ...initialProps,
             isModalOpen: true
         };
+        fetch.mockResponse(JSON.stringify({
+            app: 'someApp', data:
+                                { src_hash: 'somehash', build_id: 'someID' }
+        }));
         // const onResponse = jest.fn();
         // const onError = jest.fn();
-        shallow(<InsightsAbout { ...props }/>);
-        //expect(toJson(wrapper)).toMatchSnapshot();
+        const wrapper = mount(<InsightsAbout { ...props }/>);
+        expect(toJson(wrapper)).toMatchSnapshot();
     });
 });
 
