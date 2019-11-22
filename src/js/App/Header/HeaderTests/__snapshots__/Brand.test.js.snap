@@ -1,26 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Brand mapDispatchToProps function fires 1`] = `
-<ContextProvider
-  value={null}
->
-  <Brand
-    navHidden={true}
-    store={
-      Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      }
-    }
-    toggleNav={[Function]}
-  />
-</ContextProvider>
-`;
-
 exports[`Brand onClick should fire 1`] = `
 <div
   className="pf-c-page__header-brand"
