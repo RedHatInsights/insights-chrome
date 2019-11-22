@@ -79,6 +79,7 @@ export class Navigation extends Component {
         const { settings, activeApp, navHidden, activeLocation, documentation } = this.props;
 
         if (navHidden) {
+            console.log(document);
             document.querySelector('aside').setAttribute('hidden', true);
         }
 
