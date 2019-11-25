@@ -4,9 +4,7 @@ export let getNavFromConfig = (masterConfig) => {
     Object.keys(masterConfig).filter(appid => masterConfig[appid].top_level).forEach((appid) => {
         globalNav[appid] = getAppData(appid, 'routes', masterConfig);
     });
-
     return globalNav;
-
 };
 
 // Returns a list of routes/subItems owned by an app
