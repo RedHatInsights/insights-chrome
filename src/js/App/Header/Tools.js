@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from '@patternfly/react-core';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+// eslint-disable-next-line no-unused-vars
 import { Tooltip } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core';
 import { QuestionCircleIcon, CogIcon } from '@patternfly/react-icons';

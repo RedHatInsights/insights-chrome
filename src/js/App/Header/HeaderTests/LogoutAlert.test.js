@@ -3,10 +3,9 @@ import React from 'react';
 import toJson from 'enzyme-to-json';
 import { shallow } from 'enzyme';
 import LogoutAlert from '../LogoutAlert';
-import { render } from 'enzyme';
 
 describe('Login', () => {
- 
+
     it('should render correctly with no content', () =>{
         Object.defineProperty(window.document, 'cookie', {
             writable: true,

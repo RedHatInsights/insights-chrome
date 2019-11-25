@@ -1,4 +1,3 @@
-///const globalNavData = require('../../../testdata/globalNav.json');
 const masterConfig = require('../../../testdata/masterConfig.json');
 const navFunctions = require('./globalNav');
 

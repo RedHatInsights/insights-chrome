@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { render } from 'enzyme';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import ConnectedInsightsAbout, { InsightsAbout, Copyright } from '../InsightsAbout';
 import configureStore from 'redux-mock-store';
@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 describe('InsightsAbout', () => {
     beforeEach(() => {
         fetch.resetMocks();
-        fetch.mockResponse(JSON.stringify({ app_name: 'chrome', src_hash: 'f3d0275e021cfa46982fd9a4376bda7a5ee9e079', src_tag: 'someTag', 
+        fetch.mockResponse(JSON.stringify({ app_name: 'chrome', src_hash: 'f3d0275e021cfa46982fd9a4376bda7a5ee9e079', src_tag: 'someTag',
             src_branch: 'prod-stable', travis: { event_type: 'push' }, build_branch: 'prod-stable',
             build_hash: 'b5b92cf36f81fec1c9abc302a365bff111b9f5b0', build_id: '7' }));
     });
@@ -30,29 +30,14 @@ describe('InsightsAbout', () => {
             isModalOpen: false
         };
         shallow(<InsightsAbout { ...props }/>);
-        //expect(toJson(wrapper)).toMatchSnapshot();
     });
     it('should render correctly with modal open', ()=>{
         let props = {
             ...initialProps,
             isModalOpen: true
         };
-        // const onResponse = jest.fn();
-        // const onError = jest.fn();
         shallow(<InsightsAbout { ...props }/>);
-        //expect(toJson(wrapper)).toMatchSnapshot();
     });
-    // it('button onClick should work properly', () => {
-    //     let props = {
-    //         ...initialProps,
-    //         isModalOpen: true
-    //     };
-    //     const mockCallBack = jest.fn();
-    //     const wrapper = shallow(<InsightsAbout onClick={ mockCallBack } { ...props }/>);
-    //     //console.log(wrapper.find('button'));
-    //     wrapper.find('Button').simulate('click');
-    //     expect(mockCallBack.mock.calls.length).toEqual(1);
-    // });
 });
 
 describe('ConnectedInsightsAbout', () => {
