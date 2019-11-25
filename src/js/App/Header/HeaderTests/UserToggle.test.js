@@ -2,7 +2,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import toJson from 'enzyme-to-json';
-import { shallow, render } from 'enzyme';
+import { shallow } from 'enzyme';
 import configureStore from 'redux-mock-store';
 import ConnectedUserToggle, { UserToggle } from '../UserToggle';
 import { Provider } from 'react-redux';

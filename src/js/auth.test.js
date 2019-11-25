@@ -44,6 +44,6 @@ describe('Auth', () => {
         });
     });
     it('token works', () => {
-        
+
     });
 });

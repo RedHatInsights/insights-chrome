@@ -8,7 +8,6 @@ describe('ToolbarToggle', () => {
 
     it('should render correctly', () =>{
         const mockOnClick = jest.fn();
-        const mockOnToggle = jest.fn();
         const toolbarToggleProps = {
             dropdownItems: [
                 {
@@ -24,7 +23,6 @@ describe('ToolbarToggle', () => {
         };
         const wrapper = shallow(<ToolbarToggle { ...toolbarToggleProps }/>);
         expect(toJson(wrapper)).toMatchSnapshot();
-        //wrapper.find("[aria-label='Settings']").getElements();
     });
 
 });
