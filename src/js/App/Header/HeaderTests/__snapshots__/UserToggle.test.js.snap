@@ -36,7 +36,7 @@ exports[`ConnectedUserToggle should render correctly 1`] = `
 </ContextProvider>
 `;
 
-exports[`UserToggle should render correctly 1`] = `
+exports[`UserToggle should render correctly with isSmall false 1`] = `
 <Dropdown
   aria-label="Overflow actions"
   dropdownItems={
@@ -86,6 +86,59 @@ exports[`UserToggle should render correctly 1`] = `
     >
       someName
     </DropdownToggle>
+  }
+  widget-type="InsightsOverflowActions"
+/>
+`;
+
+exports[`UserToggle should render correctly with isSmall true 1`] = `
+<Dropdown
+  aria-label="Overflow actions"
+  dropdownItems={
+    Array [
+      <DropdownItem
+        isDisabled={true}
+      >
+        <dl
+          className="ins-c-dropdown-item__stack"
+        >
+          <dt
+            className="ins-c-dropdown-item__stack--header"
+          >
+            Username:
+          </dt>
+          <dd
+            className="ins-c-dropdown-item__stack--value"
+          />
+        </dl>
+      </DropdownItem>,
+      <React.Fragment />,
+      <DropdownSeparator />,
+      <React.Fragment />,
+      <DropdownItem
+        href="https://access.redhat.com/user"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        My profile
+      </DropdownItem>,
+      <DropdownItem
+        component="button"
+        onClick={[Function]}
+      >
+        Logout
+      </DropdownItem>,
+      Array [],
+    ]
+  }
+  isOpen={false}
+  isPlain={true}
+  onSelect={[Function]}
+  position="right"
+  toggle={
+    <KebabToggle
+      onToggle={[Function]}
+    />
   }
   widget-type="InsightsOverflowActions"
 />

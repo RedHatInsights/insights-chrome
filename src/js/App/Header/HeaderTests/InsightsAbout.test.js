@@ -10,17 +10,19 @@ import { Provider } from 'react-redux';
 describe('InsightsAbout', () => {
     beforeEach(() => {
         fetch.resetMocks();
-        fetch.mockResponse(JSON.stringify({
-            app: 'someApp', data:
-                                { src_hash: 'somehash', build_id: 'someID' }
-        }));
+        fetch.mockResponse(JSON.stringify({ app_name: 'chrome', src_hash: 'f3d0275e021cfa46982fd9a4376bda7a5ee9e079', src_tag: 'someTag', 
+            src_branch: 'prod-stable', travis: { event_type: 'push' }, build_branch: 'prod-stable',
+            build_hash: 'b5b92cf36f81fec1c9abc302a365bff111b9f5b0', build_id: '7' }));
     });
+    let globalNavData = require('../../../../../testdata/globalNav.json');
+
     const initialProps = {
         activeApp: 'someApp',
         appId: 'someID',
         dispatch: jest.fn(),
-        //isModalOpen: true,
-        onClose: jest.fn()
+        onClose: jest.fn(),
+        user: 'someUser',
+        globalNav: [globalNavData]
     };
     it('should render correctly with modal closed', ()=>{
         let props = {
@@ -40,6 +42,17 @@ describe('InsightsAbout', () => {
         shallow(<InsightsAbout { ...props }/>);
         //expect(toJson(wrapper)).toMatchSnapshot();
     });
+    // it('button onClick should work properly', () => {
+    //     let props = {
+    //         ...initialProps,
+    //         isModalOpen: true
+    //     };
+    //     const mockCallBack = jest.fn();
+    //     const wrapper = shallow(<InsightsAbout onClick={ mockCallBack } { ...props }/>);
+    //     //console.log(wrapper.find('button'));
+    //     wrapper.find('Button').simulate('click');
+    //     expect(mockCallBack.mock.calls.length).toEqual(1);
+    // });
 });
 
 describe('ConnectedInsightsAbout', () => {

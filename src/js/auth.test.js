@@ -1,5 +1,5 @@
 const auth = require('./auth');
-
+//const decodedToken = require('../../testdata/')
 function mockWindow(pathname) {
     const w = {
         location: { pathname }
@@ -42,5 +42,8 @@ describe('Auth', () => {
             expect(jwt.isAuthenticated).not.toBeCalled();
             expect(jwt.login).not.toBeCalled();
         });
+    });
+    it('token works', () => {
+        
     });
 });
