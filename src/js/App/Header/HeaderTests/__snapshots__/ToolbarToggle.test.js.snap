@@ -6,17 +6,19 @@ exports[`ToolbarToggle should render correctly 1`] = `
   dropdownItems={
     Array [
       <DropdownItem
-        component="button"
-        onClick={[Function]}
-      />,
+        component="a"
+        href="url1"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        title1
+      </DropdownItem>,
       <DropdownItem
         component="button"
         onClick={[Function]}
-      />,
-      <DropdownItem
-        component="button"
-        onClick={[Function]}
-      />,
+      >
+        title2
+      </DropdownItem>,
     ]
   }
   isOpen={false}

@@ -13,10 +13,11 @@ global.MutationObserver = class {
 };
 
 global.fetch = require('jest-fetch-mock');
+global.window = Object.create(window);
 
-const dom = new JSDOM(`<!DOCTYPE html><aside>Hello world</aside>`);
-global.document = dom.window.document;
-global.window = dom.window;
+// const dom = new JSDOM(`<!DOCTYPE html><aside>Hello world</aside>`);
+// global.document = dom.window.document;
+// global.window = dom.window;
 
 global.window.insights = {
     ...window.insights || {},

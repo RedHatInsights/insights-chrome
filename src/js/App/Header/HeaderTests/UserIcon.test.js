@@ -39,8 +39,9 @@ describe('User Icon', () => {
         const account = {
             username: 'test'
         };
+        const mockGetImage = jest.fn();
         const wrapper = shallow(
-            <UserIcon account={account}/>
+            <UserIcon account={account} getImage = { mockGetImage }/>
         );
         expect(toJson(wrapper)).toMatchSnapshot();
     });

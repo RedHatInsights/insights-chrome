@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable camelcase */
 import React from 'react';
 import toJson from 'enzyme-to-json';
@@ -7,7 +8,7 @@ import ConnectedUserToggle, { UserToggle } from '../UserToggle';
 import { Provider } from 'react-redux';
 
 describe('UserToggle', ()=>{
-    it('should render correctly', () =>{
+    it('should render correctly with isSmall false', () =>{
         const props = {
             isOpen: false,
             account: {
@@ -17,8 +18,26 @@ describe('UserToggle', ()=>{
             isSmall: false,
             extraItems: []
         };
+        const mockSelect = jest.fn();
         const wrapper = shallow(
-            <UserToggle {...props}/>
+            <UserToggle {...props} onSelect = { mockSelect } />
+        );
+        expect(toJson(wrapper)).toMatchSnapshot();
+        wrapper.find("[widget-type='InsightsOverflowActions']").simulate('select');
+    });
+    it('should render correctly with isSmall true', () =>{
+        const props = {
+            isOpen: false,
+            account: {
+                number: 'someNumber',
+                name: 'someName'
+            },
+            isSmall: true,
+            extraItems: []
+        };
+        const mockSelect = jest.fn();
+        const wrapper = shallow(
+            <UserToggle {...props} onSelect = { mockSelect } />
         );
         expect(toJson(wrapper)).toMatchSnapshot();
     });
