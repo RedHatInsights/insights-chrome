@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 import React from 'react';
 import ConnectedNavigation, { Navigation, dispatchToProps }  from './Navigation';
 import toJson from 'enzyme-to-json';
@@ -55,9 +54,9 @@ describe('Navigation', () => {
         const store = mockStore(initialState);
         const wrapper = shallow(<Navigation onSelect= { mockSelect } onClick={ mockClick } store={ store }{ ...props }/>);
         expect(toJson(wrapper)).toMatchSnapshot();
-        wrapper.find("[itemID='someID']").simulate('click', { persist: jest.fn() });
-        wrapper.find("[itemID='rules']").simulate('click', { persist: jest.fn() });
-        wrapper.find("[aria-label='Insights Global Navigation']").simulate('select', { groupId: 'someID1', itemID: 'someID2' });
+        wrapper.find(`[itemID='someID']`).simulate('click', { persist: jest.fn() });
+        wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
+        wrapper.find(`[aria-label='Insights Global Navigation']`).simulate('select', { groupId: 'someID1', itemID: 'someID2' });
 
     });
     it('should render correctly 2', () =>{
@@ -74,7 +73,7 @@ describe('Navigation', () => {
         const wrapper = shallow(<Navigation onSelect= { mockSelect } onClick={ mockClick }
             onNavigate={ mockNavigate } onClearActive = { mockClear } store={ store }{ ...props }/>);
         expect(toJson(wrapper)).toMatchSnapshot();
-        wrapper.find("[itemID='rules']").simulate('click', { persist: jest.fn() });
+        wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
 
     });
 });

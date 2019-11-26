@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 /* eslint-disable camelcase */
 import React from 'react';
 import toJson from 'enzyme-to-json';
@@ -23,7 +22,7 @@ describe('UserToggle', ()=>{
             <UserToggle {...props} onSelect = { mockSelect } />
         );
         expect(toJson(wrapper)).toMatchSnapshot();
-        wrapper.find("[widget-type='InsightsOverflowActions']").simulate('select');
+        wrapper.find(`[widget-type='InsightsOverflowActions']`).simulate('select');
     });
     it('should render correctly with isSmall true', () =>{
         const props = {
