@@ -48,8 +48,7 @@ describe('Brand', () => {
         );
         expect(toJson(wrapper)).toMatchSnapshot();
 
-        // eslint-disable-next-line quotes
-        wrapper.find("[widget-type='InsightsNavToggle']").simulate('click');
+        wrapper.find(`[widget-type='InsightsNavToggle']`).simulate('click');
         expect(mockCallBack).toHaveBeenCalledTimes(1);
     });
     it('mapDispatchToProps function fires', () => {
