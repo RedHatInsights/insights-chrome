@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import configureStore from 'redux-mock-store';
 import ConnectedUserToggle, { UserToggle } from '../UserToggle';
 import { Provider } from 'react-redux';
@@ -67,7 +67,7 @@ describe('ConnectedUserToggle', () => {
 
     it('should render correctly', () =>{
         const store = mockStore(initialState);
-        const wrapper = shallow(
+        const wrapper = mount(
             <Provider store={store}>
                 <ConnectedUserToggle/>
             </Provider>

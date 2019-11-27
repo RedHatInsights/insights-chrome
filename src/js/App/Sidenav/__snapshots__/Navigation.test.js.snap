@@ -160,76 +160,156 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
 </Connect(Navigation)>
 `;
 
-exports[`ConnectedNavigation should render correctly with empty state 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
->
-  <Connect(Navigation) />
-</ContextProvider>
-`;
-
 exports[`ConnectedNavigation should render correctly with initial state 1`] = `
-<ContextProvider
-  value={
+<Provider
+  store={
     Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
     }
   }
 >
-  <Connect(Navigation) />
-</ContextProvider>
+  <Connect(Navigation)>
+    <Navigation
+      activeApp="someApp"
+      activeGroup="someGroup"
+      activeLocation="someLocation"
+      appId="someId"
+      navHidden={false}
+      onClearActive={[Function]}
+      onNavigate={[Function]}
+      settings={
+        Array [
+          Object {
+            "ansible": Object {
+              "id": "ansible",
+              "routes": Array [],
+              "title": "Red Hat Ansible Automation Platform",
+            },
+            "docs": Object {
+              "id": "docs",
+              "routes": Array [],
+              "title": "Documentation",
+            },
+            "insights": Object {
+              "id": "insights",
+              "routes": Array [],
+              "title": "Red Hat Insights",
+            },
+            "openshift": Object {
+              "id": "openshift",
+              "routes": Array [],
+              "title": "Red Hat Openshift Cluster Manager",
+            },
+            "rhel": Object {
+              "id": "rhel",
+              "routes": Array [],
+              "title": "Cloud Management Services",
+            },
+            "staging": Object {
+              "id": "staging",
+              "routes": Array [],
+              "title": "Staging Bundle",
+            },
+          },
+        ]
+      }
+    >
+      <Component
+        aria-label="Insights Global Navigation"
+        data-ouia-safe="true"
+        onSelect={[Function]}
+        theme="dark"
+      >
+        <ComponentWithOuia
+          component={[Function]}
+          componentProps={
+            Object {
+              "aria-label": "Insights Global Navigation",
+              "children": <NavList
+                ariaLeftScroll="Scroll left"
+                ariaRightScroll="Scroll right"
+                className=""
+                variant="default"
+              >
+                <NavigationItem
+                  isActive={false}
+                  onClick={[Function]}
+                  parent="someLocation"
+                />
+              </NavList>,
+              "data-ouia-safe": "true",
+              "onSelect": [Function],
+              "theme": "dark",
+            }
+          }
+          consumerContext={null}
+        >
+          <Nav
+            aria-label="Insights Global Navigation"
+            className=""
+            data-ouia-safe="true"
+            onSelect={[Function]}
+            onToggle={[Function]}
+            ouiaContext={
+              Object {
+                "isOuia": false,
+                "ouiaId": null,
+              }
+            }
+            theme="dark"
+          >
+            <nav
+              aria-label="Insights Global Navigation"
+              className="pf-c-nav pf-m-dark"
+              data-ouia-safe="true"
+            >
+              <NavList
+                ariaLeftScroll="Scroll left"
+                ariaRightScroll="Scroll right"
+                className=""
+                variant="default"
+              >
+                <ul
+                  className="pf-c-nav__list"
+                >
+                  <NavigationItem
+                    isActive={false}
+                    key="0"
+                    onClick={[Function]}
+                    parent="someLocation"
+                  >
+                    <NavItem
+                      isActive={false}
+                      onClick={[Function]}
+                      preventDefault={true}
+                      to="http://localhost/someLocation/undefined"
+                    >
+                      <li
+                        className="pf-c-nav__item"
+                      >
+                        <a
+                          aria-current={null}
+                          className="pf-c-nav__link"
+                          href="http://localhost/someLocation/undefined"
+                          onClick={[Function]}
+                        />
+                      </li>
+                    </NavItem>
+                  </NavigationItem>
+                </ul>
+              </NavList>
+            </nav>
+          </Nav>
+        </ComponentWithOuia>
+      </Component>
+    </Navigation>
+  </Connect(Navigation)>
+</Provider>
 `;
 
 exports[`Navigation should render corectly 1`] = `

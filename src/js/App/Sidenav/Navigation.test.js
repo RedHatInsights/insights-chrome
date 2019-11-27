@@ -97,19 +97,9 @@ describe('ConnectedNavigation', () => {
         });
     });
 
-    it('should render correctly with empty state', () =>{
-        const store = mockStore(({}));
-        const wrapper = shallow(
-            <Provider store={store}>
-                <ConnectedNavigation/>
-            </Provider>
-        );
-        expect(toJson(wrapper)).toMatchSnapshot();
-    });
-
     it('should render correctly with initial state', () =>{
         const store = mockStore(initialState);
-        const wrapper = shallow(
+        const wrapper = mount(
             <Provider store={store}>
                 <ConnectedNavigation/>
             </Provider>

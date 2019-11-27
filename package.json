@@ -129,6 +129,7 @@
     "classnames": "^2.2.6",
     "core-js": "^3.2.1",
     "enzyme-adapter-react-16": "^1.15.1",
+    "enzyme-adapter-utils": "^1.12.1",
     "enzyme-to-json": "^3.4.3",
     "font-awesome": "^4.7.0",
     "jest-enzyme": "^7.1.2",

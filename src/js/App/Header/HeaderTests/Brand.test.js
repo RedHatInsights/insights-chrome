@@ -19,7 +19,7 @@ describe('Brand', () => {
 
     it('should render correctly with initial state', () => {
         const store = mockStore(initialState);
-        const wrapper = shallow(
+        const wrapper = mount(
             <Provider store={store}>
                 <ConnectedBrand/>
             </Provider>);
@@ -27,7 +27,7 @@ describe('Brand', () => {
     });
     it('should render correctly with state navHidden: false', () => {
         const store = mockStore({ chrome: { navHidden: false } });
-        const wrapper = shallow(
+        const wrapper = mount(
             <Provider store={store}>
                 <ConnectedBrand/>
             </Provider>);

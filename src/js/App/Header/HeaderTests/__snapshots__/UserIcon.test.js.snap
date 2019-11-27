@@ -1,39 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connected User Icon should render correctly with initial state 1`] = `
-<ContextProvider
-  value={
+<Provider
+  store={
     Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
     }
   }
 >
-  <Connect(UserIcon) />
-</ContextProvider>
+  <Connect(UserIcon)>
+    <UserIcon
+      account={
+        Object {
+          "username": "test-user",
+        }
+      }
+      dispatch={[Function]}
+    >
+      <Avatar
+        alt="User Avatar"
+        src="apps/chrome/assets/images/img_avatar.svg"
+      >
+        <img
+          alt="User Avatar"
+          className="pf-c-avatar"
+          src="apps/chrome/assets/images/img_avatar.svg"
+        />
+      </Avatar>
+    </UserIcon>
+  </Connect(UserIcon)>
+</Provider>
 `;
 
 exports[`User Icon should render correctly with initial state 1`] = `
