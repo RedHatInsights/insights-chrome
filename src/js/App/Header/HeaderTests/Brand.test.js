@@ -3,7 +3,7 @@ import ConnectedBrand, { Brand }  from '../Brand';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 describe('Brand', () => {
     let initialState;
@@ -53,7 +53,7 @@ describe('Brand', () => {
     });
     it('mapDispatchToProps function fires', () => {
         const store = mockStore(initialState);
-        const wrapper = shallow(
+        const wrapper = mount(
             <ConnectedBrand store= {store}/>);
         expect(toJson(wrapper)).toMatchSnapshot();
     });

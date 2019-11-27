@@ -38,23 +38,37 @@ exports[`ConnectedSideNav should render correctly 1`] = `
 
 exports[`ConnectedSideNav should render correctly part 2 1`] = `
 <ContextProvider
-  value={null}
->
-  <SideNav
-    activeLocation="someLocation"
-    activeTechnology="someTechnology"
-    dispatch={[Function]}
-    store={
-      Object {
+  value={
+    Object {
+      "store": Object {
         "clearActions": [Function],
         "dispatch": [Function],
         "getActions": [Function],
         "getState": [Function],
         "replaceReducer": [Function],
         "subscribe": [Function],
-      }
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
     }
-  />
+  }
+>
+  <Connect(SideNav) />
 </ContextProvider>
 `;
 

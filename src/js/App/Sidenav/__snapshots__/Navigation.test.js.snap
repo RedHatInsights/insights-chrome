@@ -1,8 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
-<ContextProvider
-  value={null}
+<Connect(Navigation)
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
 >
   <Navigation
     activeApp="someApp"
@@ -58,8 +67,97 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
         "subscribe": [Function],
       }
     }
-  />
-</ContextProvider>
+  >
+    <Component
+      aria-label="Insights Global Navigation"
+      data-ouia-safe="true"
+      onSelect={[Function]}
+      theme="dark"
+    >
+      <ComponentWithOuia
+        component={[Function]}
+        componentProps={
+          Object {
+            "aria-label": "Insights Global Navigation",
+            "children": <NavList
+              ariaLeftScroll="Scroll left"
+              ariaRightScroll="Scroll right"
+              className=""
+              variant="default"
+            >
+              <NavigationItem
+                isActive={false}
+                onClick={[Function]}
+                parent="someLocation"
+              />
+            </NavList>,
+            "data-ouia-safe": "true",
+            "onSelect": [Function],
+            "theme": "dark",
+          }
+        }
+        consumerContext={null}
+      >
+        <Nav
+          aria-label="Insights Global Navigation"
+          className=""
+          data-ouia-safe="true"
+          onSelect={[Function]}
+          onToggle={[Function]}
+          ouiaContext={
+            Object {
+              "isOuia": false,
+              "ouiaId": null,
+            }
+          }
+          theme="dark"
+        >
+          <nav
+            aria-label="Insights Global Navigation"
+            className="pf-c-nav pf-m-dark"
+            data-ouia-safe="true"
+          >
+            <NavList
+              ariaLeftScroll="Scroll left"
+              ariaRightScroll="Scroll right"
+              className=""
+              variant="default"
+            >
+              <ul
+                className="pf-c-nav__list"
+              >
+                <NavigationItem
+                  isActive={false}
+                  key="0"
+                  onClick={[Function]}
+                  parent="someLocation"
+                >
+                  <NavItem
+                    isActive={false}
+                    onClick={[Function]}
+                    preventDefault={true}
+                    to="http://localhost/someLocation/undefined"
+                  >
+                    <li
+                      className="pf-c-nav__item"
+                    >
+                      <a
+                        aria-current={null}
+                        className="pf-c-nav__link"
+                        href="http://localhost/someLocation/undefined"
+                        onClick={[Function]}
+                      />
+                    </li>
+                  </NavItem>
+                </NavigationItem>
+              </ul>
+            </NavList>
+          </nav>
+        </Nav>
+      </ComponentWithOuia>
+    </Component>
+  </Navigation>
+</Connect(Navigation)>
 `;
 
 exports[`ConnectedNavigation should render correctly with empty state 1`] = `

@@ -1,7 +1,7 @@
 import React from 'react';
 import ConnectedNavigation, { Navigation, dispatchToProps }  from './Navigation';
 import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
@@ -118,7 +118,7 @@ describe('ConnectedNavigation', () => {
     });
     it('mapDispatchToProps function fires', () => {
         const store = mockStore(initialState);
-        const wrapper = shallow(
+        const wrapper = mount(
             <ConnectedNavigation store= {store}/>);
         expect(toJson(wrapper)).toMatchSnapshot();
         const mockDispatch = jest.fn();
