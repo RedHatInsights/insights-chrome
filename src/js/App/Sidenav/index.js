@@ -1,8 +1,8 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { Split, SplitItem } from '@patternfly/react-core/dist/esm/layouts/Split';
-import HomeIcon from '@patternfly/react-icons/dist/esm/icons/home-icon';
+import { Split, SplitItem } from '@patternfly/react-core';
+import { HomeIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
 const documentationLink = {
@@ -12,7 +12,7 @@ const documentationLink = {
     subscriptions: 'https://access.redhat.com/documentation/en-us/red_hat_insights/1.0/'
 };
 
-class SideNav extends Component {
+export class SideNav extends Component {
     render() {
         const { activeTechnology, activeLocation } = this.props;
         return (<Fragment>

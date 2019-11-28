@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button';
+import { Button } from '@patternfly/react-core';
 import { login } from '../../jwt/jwt';
 
 const Login = () => (

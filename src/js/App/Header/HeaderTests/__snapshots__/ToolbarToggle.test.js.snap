@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ToolbarToggle should render correctly 1`] = `
+<Dropdown
+  aria-label="Settings"
+  dropdownItems={
+    Array [
+      <DropdownItem
+        component="a"
+        href="url1"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        title1
+      </DropdownItem>,
+      <DropdownItem
+        component="button"
+        onClick={[Function]}
+      >
+        title2
+      </DropdownItem>,
+    ]
+  }
+  isOpen={false}
+  isPlain={true}
+  onSelect={[Function]}
+  position="right"
+  toggle={
+    <DropdownToggle
+      iconComponent={null}
+      onToggle={[Function]}
+    >
+      <UNDEFINED />
+    </DropdownToggle>
+  }
+/>
+`;

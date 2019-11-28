@@ -1,0 +1,529 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
+<Connect(Navigation)
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Navigation
+    activeApp="someApp"
+    activeGroup="someGroup"
+    activeLocation="someLocation"
+    appId="someId"
+    navHidden={false}
+    onClearActive={[Function]}
+    onNavigate={[Function]}
+    settings={
+      Array [
+        Object {
+          "ansible": Object {
+            "id": "ansible",
+            "routes": Array [],
+            "title": "Red Hat Ansible Automation Platform",
+          },
+          "docs": Object {
+            "id": "docs",
+            "routes": Array [],
+            "title": "Documentation",
+          },
+          "insights": Object {
+            "id": "insights",
+            "routes": Array [],
+            "title": "Red Hat Insights",
+          },
+          "openshift": Object {
+            "id": "openshift",
+            "routes": Array [],
+            "title": "Red Hat Openshift Cluster Manager",
+          },
+          "rhel": Object {
+            "id": "rhel",
+            "routes": Array [],
+            "title": "Cloud Management Services",
+          },
+          "staging": Object {
+            "id": "staging",
+            "routes": Array [],
+            "title": "Staging Bundle",
+          },
+        },
+      ]
+    }
+    store={
+      Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      }
+    }
+  >
+    <Component
+      aria-label="Insights Global Navigation"
+      data-ouia-safe="true"
+      onSelect={[Function]}
+      theme="dark"
+    >
+      <ComponentWithOuia
+        component={[Function]}
+        componentProps={
+          Object {
+            "aria-label": "Insights Global Navigation",
+            "children": <NavList
+              ariaLeftScroll="Scroll left"
+              ariaRightScroll="Scroll right"
+              className=""
+              variant="default"
+            >
+              <NavigationItem
+                isActive={false}
+                onClick={[Function]}
+                parent="someLocation"
+              />
+            </NavList>,
+            "data-ouia-safe": "true",
+            "onSelect": [Function],
+            "theme": "dark",
+          }
+        }
+        consumerContext={null}
+      >
+        <Nav
+          aria-label="Insights Global Navigation"
+          className=""
+          data-ouia-safe="true"
+          onSelect={[Function]}
+          onToggle={[Function]}
+          ouiaContext={
+            Object {
+              "isOuia": false,
+              "ouiaId": null,
+            }
+          }
+          theme="dark"
+        >
+          <nav
+            aria-label="Insights Global Navigation"
+            className="pf-c-nav pf-m-dark"
+            data-ouia-safe="true"
+          >
+            <NavList
+              ariaLeftScroll="Scroll left"
+              ariaRightScroll="Scroll right"
+              className=""
+              variant="default"
+            >
+              <ul
+                className="pf-c-nav__list"
+              >
+                <NavigationItem
+                  isActive={false}
+                  key="0"
+                  onClick={[Function]}
+                  parent="someLocation"
+                >
+                  <NavItem
+                    isActive={false}
+                    onClick={[Function]}
+                    preventDefault={true}
+                    to="http://localhost/someLocation/undefined"
+                  >
+                    <li
+                      className="pf-c-nav__item"
+                    >
+                      <a
+                        aria-current={null}
+                        className="pf-c-nav__link"
+                        href="http://localhost/someLocation/undefined"
+                        onClick={[Function]}
+                      />
+                    </li>
+                  </NavItem>
+                </NavigationItem>
+              </ul>
+            </NavList>
+          </nav>
+        </Nav>
+      </ComponentWithOuia>
+    </Component>
+  </Navigation>
+</Connect(Navigation)>
+`;
+
+exports[`ConnectedNavigation should render correctly with initial state 1`] = `
+<Provider
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Connect(Navigation)>
+    <Navigation
+      activeApp="someApp"
+      activeGroup="someGroup"
+      activeLocation="someLocation"
+      appId="someId"
+      navHidden={false}
+      onClearActive={[Function]}
+      onNavigate={[Function]}
+      settings={
+        Array [
+          Object {
+            "ansible": Object {
+              "id": "ansible",
+              "routes": Array [],
+              "title": "Red Hat Ansible Automation Platform",
+            },
+            "docs": Object {
+              "id": "docs",
+              "routes": Array [],
+              "title": "Documentation",
+            },
+            "insights": Object {
+              "id": "insights",
+              "routes": Array [],
+              "title": "Red Hat Insights",
+            },
+            "openshift": Object {
+              "id": "openshift",
+              "routes": Array [],
+              "title": "Red Hat Openshift Cluster Manager",
+            },
+            "rhel": Object {
+              "id": "rhel",
+              "routes": Array [],
+              "title": "Cloud Management Services",
+            },
+            "staging": Object {
+              "id": "staging",
+              "routes": Array [],
+              "title": "Staging Bundle",
+            },
+          },
+        ]
+      }
+    >
+      <Component
+        aria-label="Insights Global Navigation"
+        data-ouia-safe="true"
+        onSelect={[Function]}
+        theme="dark"
+      >
+        <ComponentWithOuia
+          component={[Function]}
+          componentProps={
+            Object {
+              "aria-label": "Insights Global Navigation",
+              "children": <NavList
+                ariaLeftScroll="Scroll left"
+                ariaRightScroll="Scroll right"
+                className=""
+                variant="default"
+              >
+                <NavigationItem
+                  isActive={false}
+                  onClick={[Function]}
+                  parent="someLocation"
+                />
+              </NavList>,
+              "data-ouia-safe": "true",
+              "onSelect": [Function],
+              "theme": "dark",
+            }
+          }
+          consumerContext={null}
+        >
+          <Nav
+            aria-label="Insights Global Navigation"
+            className=""
+            data-ouia-safe="true"
+            onSelect={[Function]}
+            onToggle={[Function]}
+            ouiaContext={
+              Object {
+                "isOuia": false,
+                "ouiaId": null,
+              }
+            }
+            theme="dark"
+          >
+            <nav
+              aria-label="Insights Global Navigation"
+              className="pf-c-nav pf-m-dark"
+              data-ouia-safe="true"
+            >
+              <NavList
+                ariaLeftScroll="Scroll left"
+                ariaRightScroll="Scroll right"
+                className=""
+                variant="default"
+              >
+                <ul
+                  className="pf-c-nav__list"
+                >
+                  <NavigationItem
+                    isActive={false}
+                    key="0"
+                    onClick={[Function]}
+                    parent="someLocation"
+                  >
+                    <NavItem
+                      isActive={false}
+                      onClick={[Function]}
+                      preventDefault={true}
+                      to="http://localhost/someLocation/undefined"
+                    >
+                      <li
+                        className="pf-c-nav__item"
+                      >
+                        <a
+                          aria-current={null}
+                          className="pf-c-nav__link"
+                          href="http://localhost/someLocation/undefined"
+                          onClick={[Function]}
+                        />
+                      </li>
+                    </NavItem>
+                  </NavigationItem>
+                </ul>
+              </NavList>
+            </nav>
+          </Nav>
+        </ComponentWithOuia>
+      </Component>
+    </Navigation>
+  </Connect(Navigation)>
+</Provider>
+`;
+
+exports[`Navigation should render corectly 1`] = `
+<Component
+  aria-label="Insights Global Navigation"
+  data-ouia-safe="true"
+  onSelect={[Function]}
+  theme="dark"
+>
+  <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
+    className=""
+    variant="default"
+  >
+    <NavExpandable
+      className=""
+      groupId={null}
+      id=""
+      isActive={true}
+      isExpanded={true}
+      itemID="overview"
+      key="0"
+      ouia-nav-group="overview"
+      srText=""
+      title="Overview"
+    >
+      <NavigationItem
+        isActive={false}
+        itemID="someID"
+        key="0"
+        onClick={[Function]}
+        ouia-nav-item="someID"
+        parent="openshift/overview"
+        title="Clusters"
+      />
+    </NavExpandable>
+    <NavigationItem
+      isActive={false}
+      itemID="rules"
+      key="1"
+      onClick={[Function]}
+      ouia-nav-item="rules"
+      parent="openshift"
+      title="Rules"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="topics"
+      key="2"
+      onClick={[Function]}
+      ouia-nav-item="topics"
+      parent="openshift"
+      title="Topics"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="inventory"
+      key="3"
+      onClick={[Function]}
+      ouia-nav-item="inventory"
+      parent="openshift"
+      title="Inventory"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="remediations"
+      key="4"
+      onClick={[Function]}
+      ouia-nav-item="remediations"
+      parent="openshift"
+      title="Remediations"
+    />
+    <NavItemSeparator />
+    <NavItem
+      className="ins-c-page__documentation"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="someDocs"
+    >
+      Documentation
+    </NavItem>
+    <NavItem
+      key="operatorhub"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://operatorhub.io/"
+    >
+      OperatorHub.io
+    </NavItem>
+    <NavItem
+      key="feedback"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="mailto:ocm-feedback@redhat.com"
+    >
+      Cluster Manager Feedback
+    </NavItem>
+    <NavItem
+      key="bugs"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform"
+    >
+      Report an OpenShift Bug
+    </NavItem>
+  </NavList>
+</Component>
+`;
+
+exports[`Navigation should render correctly 2 1`] = `
+<Component
+  aria-label="Insights Global Navigation"
+  data-ouia-safe="true"
+  onSelect={[Function]}
+  theme="dark"
+>
+  <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
+    className=""
+    variant="default"
+  >
+    <NavExpandable
+      className=""
+      groupId={null}
+      id=""
+      isActive={true}
+      isExpanded={true}
+      itemID="overview"
+      key="0"
+      ouia-nav-group="overview"
+      srText=""
+      title="Overview"
+    >
+      <NavigationItem
+        isActive={false}
+        itemID="someID"
+        key="0"
+        onClick={[Function]}
+        ouia-nav-item="someID"
+        parent="openshift/overview"
+        title="Clusters"
+      />
+    </NavExpandable>
+    <NavigationItem
+      isActive={false}
+      itemID="rules"
+      key="1"
+      onClick={[Function]}
+      ouia-nav-item="rules"
+      parent="openshift"
+      title="Rules"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="topics"
+      key="2"
+      onClick={[Function]}
+      ouia-nav-item="topics"
+      parent="openshift"
+      title="Topics"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="inventory"
+      key="3"
+      onClick={[Function]}
+      ouia-nav-item="inventory"
+      parent="openshift"
+      title="Inventory"
+    />
+    <NavigationItem
+      isActive={false}
+      itemID="remediations"
+      key="4"
+      onClick={[Function]}
+      ouia-nav-item="remediations"
+      parent="openshift"
+      title="Remediations"
+    />
+    <NavItemSeparator />
+    <NavItem
+      className="ins-c-page__documentation"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="someDocs"
+    >
+      Documentation
+    </NavItem>
+    <NavItem
+      key="operatorhub"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://operatorhub.io/"
+    >
+      OperatorHub.io
+    </NavItem>
+    <NavItem
+      key="feedback"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="mailto:ocm-feedback@redhat.com"
+    >
+      Cluster Manager Feedback
+    </NavItem>
+    <NavItem
+      key="bugs"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform"
+    >
+      Report an OpenShift Bug
+    </NavItem>
+  </NavList>
+</Component>
+`;

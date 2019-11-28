@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button';
-import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/esm/layouts/Toolbar';
-import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
-// import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
-// import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-import CogIcon from '@patternfly/react-icons/dist/esm/icons/cog-icon';
+import { Button } from '@patternfly/react-core';
+import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { DropdownItem } from '@patternfly/react-core';
+import { QuestionCircleIcon, CogIcon } from '@patternfly/react-icons';
+
 import UserToggle from './UserToggle';
 import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';

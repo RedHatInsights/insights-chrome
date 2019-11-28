@@ -48,7 +48,8 @@
       "<rootDir>/config/setupTests.js"
     ],
     "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy"
+      "\\.(css|scss)$": "identity-obj-proxy",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js"
     }
   },
   "repository": {
@@ -86,13 +87,12 @@
     "concurrently": "^4.1.2",
     "del-cli": "^3.0.0",
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
-    "enzyme-to-json": "^3.4.0",
-    "eslint": "^6.2.2",
-    "eslint-config-prettier": "^6.1.0",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-react": "^7.11.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.5.0",
+    "jest-fetch-mock": "^2.1.2",
     "jest-mock-axios": "^3.1.0",
     "localforage": "^1.7.3",
     "mkdir": "0.0.2",
@@ -128,17 +128,23 @@
     "broadcast-channel": "^2.1.9",
     "classnames": "^2.2.6",
     "core-js": "^3.2.1",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "enzyme-adapter-utils": "^1.12.1",
+    "enzyme-to-json": "^3.4.3",
     "font-awesome": "^4.7.0",
-    "glob": "^7.1.5",
+    "jest-enzyme": "^7.1.2",
     "js-cookie": "^2.2.0",
     "js-yaml": "^3.13.1",
+    "jsdom": "^15.2.1",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
     "lodash": "^4.17.14",
     "md5-file": "^4.0.0",
+    "node-fetch": "^2.6.0",
     "prop-types": "^15.6.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
+    "react-test-renderer": "^16.11.0",
     "redux": "^4.0.4",
     "urijs": "^1.19.1",
     "url-parse": "^1.4.3"
