@@ -16,7 +16,7 @@ function isCurrApp(item, app) {
         return true;
     } else if (item.subItems && item.subItems.some(sub => sub.id === app)) {
         return true;
-    } else if (item.group === app) {
+    } else if (item.group === app && item.active) {
         return true;
     }
 
@@ -56,7 +56,7 @@ export function appNav (data) {
 }
 
 export function appNavClick(item, event) {
-    return { type: actionTypes.APP_NAV_CLICK, payload: { id: item && item.id, event } };
+    return { type: actionTypes.APP_NAV_CLICK, payload: { ...item || {}, id: item && item.id, event } };
 }
 
 export function clearActive() {
