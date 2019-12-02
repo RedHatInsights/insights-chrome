@@ -49,4 +49,15 @@ describe('utils', () => {
             });
         });
     });
+    describe('isValidAccountNumber', () => {
+        test('not a number; should return false', () => {
+            expect(utils.isValidAccountNumber(null)).toBe(false);
+        });
+        test('-1 should return false', () => {
+            expect(utils.isValidAccountNumber(-1)).toBe(false);
+        });
+        test('string -1 should return false', () => {
+            expect(utils.isValidAccountNumber('-1')).toBe(false);
+        });
+    });
 });

@@ -1,4 +1,6 @@
 import get from 'lodash/get';
+import { setupCache } from 'axios-cache-adapter';
+import localforage from 'localforage';
 
 function getWindow() {
     return window;
@@ -65,4 +67,44 @@ export function createReduxListener(store, path, fn) {
             fn(current, store);
         }
     };
+}
+
+export function deleteLocalStorageItems(keys) {
+    keys.map(key => localStorage.removeItem(key));
+}
+
+export function lastActive(searchString, fallback) {
+    return Object.keys(localStorage).reduce((acc, curr) => {
+        if (curr.includes(searchString)) {
+            try {
+                let accDate;
+                try {
+                    accDate = new Date(JSON.parse(localStorage.getItem(acc).expires));
+                } catch {
+                    accDate = new Date();
+                }
+
+                const currObj = JSON.parse(localStorage.getItem(curr));
+                return (accDate >= new Date(currObj.expires)) ? acc : curr;
+            } catch (e) {
+                return acc;
+            }
+        }
+
+        return acc;
+    }, fallback);
+}
+
+export function bootstrapCache(endpoint, cacheKey) {
+    const name = lastActive(endpoint, cacheKey);
+    const store = localforage.createInstance({
+        driver: [
+            localforage.LOCALSTORAGE
+        ],
+        name: name.split('/')[0]
+    });
+    return setupCache({
+        store,
+        maxAge: 10 * 60 * 1000 // 10 minutes
+    });
 }

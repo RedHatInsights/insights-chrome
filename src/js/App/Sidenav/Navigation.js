@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Nav, NavItem, NavExpandable, NavList, NavItemSeparator } from '@patternfly/react-core/dist/esm/components/Nav';
+import { Nav, NavItem, NavExpandable, NavList, NavItemSeparator } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
@@ -22,7 +22,7 @@ const openshiftLinks = {
     }
 };
 
-class Navigation extends Component {
+export class Navigation extends Component {
     constructor(props) {
         super(props);
         this.onSelect = this.onSelect.bind(this);
@@ -76,11 +76,10 @@ class Navigation extends Component {
     }
 
     render() {
-        const { settings, activeApp, navHidden, activeLocation, documentation } = this.props;
-
-        if (navHidden) {
-            document.querySelector('aside').setAttribute('hidden', true);
-        }
+        const { settings, activeApp, /*navHidden,*/ activeLocation, documentation } = this.props;
+        // if (navHidden) {
+        //     //document.querySelector('aside').setAttribute('hidden', true);
+        // }
 
         return (
             <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true" theme="dark">
@@ -91,6 +90,7 @@ class Navigation extends Component {
                                 if (item.subItems) {
                                     return <NavExpandable
                                         title={item.title}
+                                        ouia-nav-group={item.id}
                                         itemID={item.id}
                                         key={key}
                                         isActive={item.active}
@@ -101,6 +101,7 @@ class Navigation extends Component {
                                                     && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
                                                         itemID={subItem.reload || subItem.id}
+                                                        ouia-nav-item={subItem.reload || subItem.id}
                                                         key={subKey}
                                                         title={subItem.title}
                                                         parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
@@ -114,6 +115,7 @@ class Navigation extends Component {
                                 } else {
                                     return <NavigationItem
                                         itemID={item.id}
+                                        ouia-nav-item={item.id}
                                         key={key}
                                         title={item.title}
                                         parent={activeLocation}
@@ -176,7 +178,7 @@ function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocatio
     return ({ settings: globalNav, activeApp, navHidden, activeLocation, activeGroup, appId });
 }
 
-function dispatchToProps(dispatch) {
+export function dispatchToProps(dispatch) {
     return {
         onNavigate: (item, event) => dispatch(appNavClick(item, event)),
         onClearActive: () => dispatch(clearActive())

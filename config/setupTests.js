@@ -11,10 +11,16 @@ global.MutationObserver = class {
     observe(element, initObject) {}
 };
 
+global.fetch = require('jest-fetch-mock');
+global.window = Object.create(window);
+
 global.window.insights = {
     ...window.insights || {},
     chrome: {
         ...(window.insights && window.insights.chrome) || {},
+        isBeta: () => {
+            return null;
+        },
         auth: {
             ...(window.insights && window.insights.chrome && window.insights.chrome) || {},
             getUser: () => new Promise((res) => res({

@@ -16,10 +16,10 @@ You can include/use chrome in your development project by running the insights-p
 <html>
   <head>
     <!-- your own HEAD tags -->
-    <esi:include src="/insightsbeta/static/chrome/snippets/head.html" />
+    <esi:include src="/@@env/chrome/snippets/head.html" />
   </head>
   <body>
-    <esi:include src="/@@insights/static/chrome/snippets/body.html"/>
+    <esi:include src="/@@env/chrome/snippets/body.html"/>
   </body>
 </html>
 ```
@@ -122,11 +122,15 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
 
 ## LocalStorage Debugging
 
-To set a short jwt session, log out of your account and then do the following in the web console:
+There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
 
-`window.localStorage.setItem('chrome:jwt:shortSession', true);`
+Available function:
 
-Note: You must log out of your short session and set `window.localStorage.setItem('chrome:jwt:shortSession', false);` to return to the regular realm.
+* `iqe` - to enable some iqe functions for QE purposes
+* `invTags` - to enable experimental tags in inventory
+* `jwtDebug` - to enable debugging of JWT
+* `remediationsDebug` - to enable debug buttons in remediations app
+* `shortSession` - to enable short session in order to test automatic logouts
 
 ## Sentry
 
