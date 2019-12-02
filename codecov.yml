@@ -4,6 +4,7 @@ codecov:
 
 coverage:
   precision: 2
+  round: down
   range: "60...80"
   status:
     project:
@@ -26,3 +27,4 @@ comment:
   layout: "reach,diff,flags,tree"
   behavior: default
   require_changes: no
+  
