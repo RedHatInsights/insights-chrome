@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connected User Icon should render correctly with initial state 1`] = `
+<Provider
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Connect(UserIcon)>
+    <UserIcon
+      account={
+        Object {
+          "username": "test-user",
+        }
+      }
+      dispatch={[Function]}
+    >
+      <Avatar
+        alt="User Avatar"
+        src="apps/chrome/assets/images/img_avatar.svg"
+      >
+        <img
+          alt="User Avatar"
+          className="pf-c-avatar"
+          src="apps/chrome/assets/images/img_avatar.svg"
+        />
+      </Avatar>
+    </UserIcon>
+  </Connect(UserIcon)>
+</Provider>
+`;
+
+exports[`User Icon should render correctly with initial state 1`] = `
+<Avatar
+  alt="User Avatar"
+  src="apps/chrome/assets/images/img_avatar.svg"
+/>
+`;

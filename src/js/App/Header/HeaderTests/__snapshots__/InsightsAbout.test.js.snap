@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectedInsightsAbout should render correctly with just username 1`] = `
+<Provider
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Connect(InsightsAbout)>
+    <InsightsAbout
+      activeApp="test"
+      appId="test"
+      dispatch={[Function]}
+      globalNav={
+        Array [
+          Object {
+            "ansible": Object {
+              "id": "ansible",
+              "routes": Array [],
+              "title": "Red Hat Ansible Automation Platform",
+            },
+            "docs": Object {
+              "id": "docs",
+              "routes": Array [],
+              "title": "Documentation",
+            },
+            "insights": Object {
+              "id": "insights",
+              "routes": Array [],
+              "title": "Red Hat Insights",
+            },
+            "openshift": Object {
+              "id": "openshift",
+              "routes": Array [],
+              "title": "Red Hat Openshift Cluster Manager",
+            },
+            "rhel": Object {
+              "id": "rhel",
+              "routes": Array [],
+              "title": "Cloud Management Services",
+            },
+            "staging": Object {
+              "id": "staging",
+              "routes": Array [],
+              "title": "Staging Bundle",
+            },
+          },
+        ]
+      }
+      user={Object {}}
+    >
+      <AboutModal
+        appendTo={null}
+        backgroundImageSrc=""
+        brandImageAlt="Red Hat Logo"
+        brandImageSrc="test-file-stub"
+        className="ins-c-about-modal"
+        isOpen={false}
+        noAboutModalBoxContentContainer={false}
+        onClose={[Function]}
+        productName=""
+        trademark={<Copyright />}
+      >
+        <Portal
+          containerInfo={<div />}
+        >
+          <AboutModalContainer
+            appendTo={null}
+            ariaDescribedById="pf-about-modal-content-0"
+            ariaLabelledbyId="pf-about-modal-title-0"
+            backgroundImageSrc=""
+            brandImageAlt="Red Hat Logo"
+            brandImageSrc="test-file-stub"
+            className="ins-c-about-modal"
+            isOpen={false}
+            noAboutModalBoxContentContainer={false}
+            onClose={[Function]}
+            productName=""
+            trademark={<Copyright />}
+          />
+        </Portal>
+      </AboutModal>
+    </InsightsAbout>
+  </Connect(InsightsAbout)>
+</Provider>
+`;
+
+exports[`Copyright should render 1`] = `
+<div
+  className="ins-c-footer__traditional-nav pf-l-flex pf-m-column pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer"
+>
+  <p
+    className="copyright pf-m-spacer-xl-on-lg"
+  >
+    Copyright © 2019 Red Hat, Inc.
+  </p>
+  <nav>
+    <ul
+      className="pf-l-flex pf-m-column pf-m-row-on-md"
+    >
+      <li>
+        <a
+          className="nav-link"
+          href="https://www.redhat.com/en/about/privacy-policy"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>
+      </li>
+      <li>
+        <a
+          className="nav-link"
+          href="https://access.redhat.com/help/terms/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Terms of Use
+        </a>
+      </li>
+      <li>
+        <a
+          className="nav-link"
+          href="https://www.redhat.com/en/about/all-policies-guidelines"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          All Policies and Guidelines
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+`;
