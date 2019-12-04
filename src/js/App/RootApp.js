@@ -9,6 +9,7 @@ const RootApp = ({
     pageAction,
     pageObjectId
 }) => {
+    console.log(activeApp, activeLocation, appId);
     return (
         <Fragment>
             <div
