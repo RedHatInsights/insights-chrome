@@ -41,7 +41,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         </React.Fragment>,
         <DropdownItem
             key="My Profile"
-            href="https://access.redhat.com/user"
+            href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
             target="_blank"
             rel='noopener noreferrer'>
                 My profile
