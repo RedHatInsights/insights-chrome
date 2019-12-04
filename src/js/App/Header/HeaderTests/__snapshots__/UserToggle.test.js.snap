@@ -53,7 +53,7 @@ exports[`ConnectedUserToggle should render correctly 1`] = `
             <DropdownSeparator />,
             <React.Fragment />,
             <DropdownItem
-              href="https://access.redhat.com/user"
+              href="https://access.qa.redhat.com/user"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -107,7 +107,7 @@ exports[`ConnectedUserToggle should render correctly 1`] = `
               <DropdownSeparator />,
               <React.Fragment />,
               <DropdownItem
-                href="https://access.redhat.com/user"
+                href="https://access.qa.redhat.com/user"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -162,7 +162,7 @@ exports[`ConnectedUserToggle should render correctly 1`] = `
                   <DropdownSeparator />,
                   <React.Fragment />,
                   <DropdownItem
-                    href="https://access.redhat.com/user"
+                    href="https://access.qa.redhat.com/user"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -218,7 +218,7 @@ exports[`ConnectedUserToggle should render correctly 1`] = `
                   <DropdownSeparator />,
                   <React.Fragment />,
                   <DropdownItem
-                    href="https://access.redhat.com/user"
+                    href="https://access.qa.redhat.com/user"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -440,7 +440,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       <DropdownSeparator />,
       <React.Fragment />,
       <DropdownItem
-        href="https://access.redhat.com/user"
+        href="https://access.qa.redhat.com/user"
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -495,7 +495,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       <DropdownSeparator />,
       <React.Fragment />,
       <DropdownItem
-        href="https://access.redhat.com/user"
+        href="https://access.qa.redhat.com/user"
         rel="noopener noreferrer"
         target="_blank"
       >
