@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
-    const dropdownItems= [
+    const dropdownItems = [
         <DropdownItem key="Username" isDisabled>
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
@@ -46,13 +46,13 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
     ];
 
     // Dropdown cannot focus when a <DropdownItem> is wrapped in a Fragment, so we're going to just splice it into place instead.
-    if(isOrgAdmin) {
+    if (isOrgAdmin) {
         dropdownItems.splice(3, 0, <DropdownItem
             key="User management"
             href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
             target="_blank" rel='noopener noreferrer'>
                 User management
-        </DropdownItem>); 
+        </DropdownItem>);
     }
 
     return dropdownItems;
