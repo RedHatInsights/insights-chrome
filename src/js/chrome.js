@@ -1,7 +1,7 @@
 import auth from './auth';
 import analytics from './analytics';
 import sentry from './sentry';
-import { bootstrap, chromeInit, rootApp }   from './entry';
+import { bootstrap, chromeInit, rootApp, noAccess }   from './entry';
 
 // start auth asap
 const libjwt = auth();
@@ -30,3 +30,5 @@ window.insights = {
     ...window.insights,
     ...bootstrap(libjwt, init)
 };
+
+// noAccess();

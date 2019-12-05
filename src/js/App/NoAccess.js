@@ -1,6 +1,8 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { spinUpStore } from '../redux-config';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
 import {
     Title,
@@ -14,13 +16,12 @@ import {
 import { LockIcon } from '@patternfly/react-icons';
 
 const NoAccess = ({ appName }) => {
-    console.log('hit!');
     return (
         <React.Fragment>
             <PageHeader>
                 <PageHeaderTitle title={ `${ appName }` }/>
             </PageHeader>
-            <Main>
+            <div>
                 <EmptyState variant={ EmptyStateVariant.full }>
                     <EmptyStateIcon icon={ LockIcon } />
                     <Title headingLevel="h5" size="lg">
@@ -35,7 +36,7 @@ const NoAccess = ({ appName }) => {
                             <Button variant="primary" onClick={ () => window.location.replace('/') }>Go to landing page</Button>
                     }
                 </EmptyState>
-            </Main>
+            </div>
         </React.Fragment>
     );
 };
@@ -44,4 +45,8 @@ NoAccess.propTypes = {
     appName: PropTypes.string
 };
 
-export default NoAccess;
+const { store } = spinUpStore();
+ReactDOM.render(
+    <NoAccess />,
+    document.getElementById('root')
+);
