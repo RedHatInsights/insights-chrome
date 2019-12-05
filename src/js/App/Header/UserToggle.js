@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
-    return [
+    const dropdownItems= [
         <DropdownItem key="Username" isDisabled>
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
@@ -29,19 +29,9 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <React.Fragment key="user management wrapper">
-            { isOrgAdmin &&
-                <DropdownItem
-                    key="User management"
-                    href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
-                    target="_blank" rel='noopener noreferrer'>
-                        User management
-                </DropdownItem>
-            }
-        </React.Fragment>,
         <DropdownItem
             key="My Profile"
-            href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
+            href="https://access.redhat.com/user"
             target="_blank"
             rel='noopener noreferrer'>
                 My profile
@@ -54,6 +44,18 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         </DropdownItem>,
         [...extraItems]
     ];
+
+    // Dropdown cannot focus when a <DropdownItem> is wrapped in a Fragment, so we're going to just splice it into place instead.
+    if(isOrgAdmin) {
+        dropdownItems.splice(3, 0, <DropdownItem
+            key="User management"
+            href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
+            target="_blank" rel='noopener noreferrer'>
+                User management
+        </DropdownItem>); 
+    }
+
+    return dropdownItems;
 }
 
 export class UserToggle extends Component {
