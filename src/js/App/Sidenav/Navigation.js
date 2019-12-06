@@ -8,9 +8,9 @@ import NavigationItem from './NavigationItem';
 const basepath = document.baseURI;
 
 const openshiftLinks = {
-    operatorhub: {
-        title: 'OperatorHub.io',
-        link: 'https://operatorhub.io/'
+    supportcases: {
+        title: 'Support Cases',
+        link: 'https://access.redhat.com/support/cases'
     },
     feedback: {
         title: 'Cluster Manager Feedback',
