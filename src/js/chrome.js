@@ -31,4 +31,4 @@ window.insights = {
     ...bootstrap(libjwt, init)
 };
 
-// noAccess();
+noAccess();

@@ -13,9 +13,7 @@ import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
-// import NoAccess from './App/NoAccess';
-// import { BrowserRouter as Router } from 'react-router-dom';
-// import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+import NoAccess from './App/NoAccess';
 
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
@@ -216,9 +214,8 @@ export function noAccess() {
     const { store } = spinUpStore();
     render(
         <Provider store={ store }>
-            
+            <NoAccess />
         </Provider>,
-    
-        document.getElementById('root')
+        document.querySelector('.pf-c-content')
     );
 }
