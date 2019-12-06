@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
-    const dropdownItems = [
+    return [
         <DropdownItem key="Username" isDisabled>
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
@@ -29,6 +29,14 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
+        ...isOrgAdmin ? [
+            <DropdownItem
+                key="User management"
+                href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
+                target="_blank" rel='noopener noreferrer'>
+                    User management
+            </DropdownItem>
+        ] : [],
         <DropdownItem
             key="My Profile"
             href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
@@ -55,7 +63,6 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         </DropdownItem>);
     }
 
-    return dropdownItems;
 }
 
 export class UserToggle extends Component {
