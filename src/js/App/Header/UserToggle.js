@@ -52,17 +52,6 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         </DropdownItem>,
         [...extraItems]
     ];
-
-    // Dropdown cannot focus when a <DropdownItem> is wrapped in a Fragment, so we're going to just splice it into place instead.
-    if (isOrgAdmin) {
-        dropdownItems.splice(3, 0, <DropdownItem
-            key="User management"
-            href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
-            target="_blank" rel='noopener noreferrer'>
-                User management
-        </DropdownItem>);
-    }
-
 }
 
 export class UserToggle extends Component {
