@@ -4,42 +4,44 @@ const log = require('./jwt/logger')('analytics.js');
 
 const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
 
-// Keycloak returns account_id as a string
 const internalAccounts = [
-    '6089719',
-    '1460290',
-    '540155',
-    '1212729',
-    '5910538',
-    '6212377',
-    '477931',
-    '6289401',
-    '6266656',
-    '6289400',
-    '901532',
-    '6235908',
-    '1455657',
-    '6278023',
-    '6193296',
-    '5685364',
-    '6234340',
-    '901578',
-    '6292437',
-    '6229994',
-    '6038690',
-    '6267425',
-    '6077072'
+    6089719,
+    1460290,
+    540155,
+    1212729,
+    5910538,
+    6212377,
+    477931,
+    6289401,
+    6266656,
+    6289400,
+    901532,
+    6235908,
+    1455657,
+    6278023,
+    6193296,
+    5685364,
+    6234340,
+    901578,
+    6292437,
+    6229994,
+    6038690,
+    6267425,
+    6077072
 ];
 
 function shouldInitPendo(data) {
 
     const environment = window.location.host.split('.')[0];
 
+    // Keycloak returns data.account_number as a string
+    const account_number = Number(data.account_number);
+    
     if (environment !== 'cloud' ||
-        data.account_number < 100 ||
-        data.account_number === NaN ||
+        account_number < 100 ||
+        account_number === NaN ||
         data.user.is_internal === true ||
-        internalAccounts.includes(data.account_number)) {
+        internalAccounts.includes(account_number)) {
         log('User is internal or this is pre-production, Pendo will not be initialized');
         return false;
     } else {
