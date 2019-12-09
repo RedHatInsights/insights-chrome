@@ -29,16 +29,14 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <React.Fragment key="user management wrapper">
-            { isOrgAdmin &&
-                <DropdownItem
-                    key="User management"
-                    href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
-                    target="_blank" rel='noopener noreferrer'>
-                        User management
-                </DropdownItem>
-            }
-        </React.Fragment>,
+        ...isOrgAdmin ? [
+            <DropdownItem
+                key="User management"
+                href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
+                target="_blank" rel='noopener noreferrer'>
+                    User management
+            </DropdownItem>
+        ] : [],
         <DropdownItem
             key="My Profile"
             href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
