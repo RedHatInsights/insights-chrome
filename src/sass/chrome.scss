@@ -59,11 +59,7 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
-[ouia-page-group="settings"] {
-    #root {
-        display: none;
-    }
-}
+[ouia-page-group="settings"] #root { display: none; }
 
 #no-access {
     background: var(--pf-c-page__main-section--BackgroundColor);
