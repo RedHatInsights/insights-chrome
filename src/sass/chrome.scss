@@ -59,6 +59,16 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
+[ouia-page-group="settings"] {
+    #root {
+        display: none;
+    }
+}
+
+#no-access {
+    background: var(--pf-c-page__main-section--BackgroundColor);
+}
+
 // Landing page logout alert
 .pf-c-alert.ins-c-alert__logout{
     position: absolute;

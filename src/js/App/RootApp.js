@@ -41,6 +41,25 @@ const RootApp = ({
                         </div>
                     </section>
                 </main>
+                <main className="pf-c-page__main pf-l-page__main" id="no-access">
+                    <section
+                        className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
+                        widget-type="InsightsPageHeader"
+                    >
+                        <div className="pf-c-content">
+                            <h1
+                                className="pf-c-title pf-m-2xl ins-l-page__header"
+                                widget-type='InsightsPageHeaderTitle'
+                            >
+                                <div className="ins-c-skeleton ins-c-skeleton__sm">
+                                    &nbsp;
+                                </div>
+                            </h1>
+                        </div>
+                    </section>
+                    <section className="pf-c-page__no-access"></section>
+                </main>
+
             </div>
             <aside className="pf-c-drawer__panel">
                 <div className="pf-c-drawer__panel-body" />
