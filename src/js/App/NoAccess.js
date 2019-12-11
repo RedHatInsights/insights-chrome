@@ -14,6 +14,9 @@ import {
 import { LockIcon } from '@patternfly/react-icons';
 
 const NoAccess = ({ appName }) => {
+    appName = appName.charAt(0).toUpperCase()+appName.slice(1);
+    const headerClass = document.querySelector('.appTitle');
+    headerClass.innerHTML = appName;
     return (
         <div>
             <EmptyState variant={ EmptyStateVariant.full }>
@@ -38,8 +41,4 @@ NoAccess.propTypes = {
     appName: PropTypes.string
 };
 
-// ReactDOM.render(
-//     <NoAccess/>,
-//     document.querySelector('.pf-c-content')
-// );
 export default connect()(NoAccess);

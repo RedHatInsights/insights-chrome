@@ -117,6 +117,12 @@ export function bootstrap(libjwt, initFunc) {
                         libjwt.jwt.logoutAllTabs();
                     });
                 },
+                getUserEntitlements: () => {
+                    const keys = Object.keys(localStorage).filter(key => (
+                        key.endsWith('/api/entitlements/v1/services')
+                    ));
+                    return keys;
+                },
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login()
@@ -212,9 +218,10 @@ export function rootApp() {
 
 export function noAccess() {
     const { store } = spinUpStore();
+    const app = location.pathname.split('/').pop();
     render(
         <Provider store={ store }>
-            <NoAccess />
+            <NoAccess appName={ app } />
         </Provider>,
         document.querySelector('.pf-c-page__no-access')
     );
