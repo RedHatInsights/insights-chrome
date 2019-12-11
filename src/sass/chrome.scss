@@ -59,9 +59,9 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
-[ouia-page-group="settings"] #root { display: none; }
-
+// NoAccess styling
 #no-access {
+    height: 100%;
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 

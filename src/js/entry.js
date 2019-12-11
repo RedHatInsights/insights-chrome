@@ -121,7 +121,9 @@ export function bootstrap(libjwt, initFunc) {
                     const keys = Object.keys(localStorage).filter(key => (
                         key.endsWith('/api/entitlements/v1/services')
                     ));
-                    return keys;
+                    if (keys.length < 1) { return {} }; 
+                    const key = localStorage.getItem(keys.pop());
+                    return JSON.parse(key).data.data;
                 },
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
@@ -219,10 +221,17 @@ export function rootApp() {
 export function noAccess() {
     const { store } = spinUpStore();
     const app = location.pathname.split('/').pop();
-    render(
-        <Provider store={ store }>
-            <NoAccess appName={ app } />
-        </Provider>,
-        document.querySelector('.pf-c-page__no-access')
-    );
+    if (app === 'insights') {
+        const userEntitlements = window.insights.chrome.auth.getUserEntitlements();
+        const grantAccess = userEntitlements.insights.is_entitled
+        if ( !grantAccess ) {
+            document.getElementById('root').style.display = 'none';
+            render(
+                <Provider store={ store }>
+                    <NoAccess appName={ app } />
+                </Provider>,
+                document.querySelector('.pf-c-page__no-access')
+            );
+        }
+    }
 }
