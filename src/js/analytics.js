@@ -1,34 +1,10 @@
 'use strict';
 
+import { internalAccounts } from './internalAccounts';
+
 const log = require('./jwt/logger')('analytics.js');
 
 const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
-
-const internalAccounts = [
-    6089719,
-    1460290,
-    540155,
-    1212729,
-    5910538,
-    6212377,
-    477931,
-    6289401,
-    6266656,
-    6289400,
-    901532,
-    6235908,
-    1455657,
-    6278023,
-    6193296,
-    5685364,
-    6234340,
-    901578,
-    6292437,
-    6229994,
-    6038690,
-    6267425,
-    6077072
-];
 
 function shouldInitPendo(data) {
 
