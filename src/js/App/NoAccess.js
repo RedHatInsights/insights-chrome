@@ -14,7 +14,7 @@ import {
 import { LockIcon } from '@patternfly/react-icons';
 
 const NoAccess = ({ appName }) => {
-    appName = appName.charAt(0).toUpperCase()+appName.slice(1);
+    appName = appName.charAt(0).toUpperCase() + appName.slice(1);
     const headerClass = document.querySelector('.appTitle');
     headerClass.innerHTML = appName;
     return (
