@@ -60,7 +60,7 @@ Array [
             widget-type="InsightsPageHeaderTitle"
           >
             <div
-              class="appTitle"
+              class="apptitle"
             >
                
             </div>
@@ -144,7 +144,7 @@ Array [
             widget-type="InsightsPageHeaderTitle"
           >
             <div
-              class="appTitle"
+              class="apptitle"
             >
                
             </div>
@@ -229,7 +229,7 @@ Array [
             widget-type="InsightsPageHeaderTitle"
           >
             <div
-              class="appTitle"
+              class="apptitle"
             >
                
             </div>
@@ -314,7 +314,7 @@ Array [
             widget-type="InsightsPageHeaderTitle"
           >
             <div
-              class="appTitle"
+              class="apptitle"
             >
                
             </div>
@@ -400,7 +400,7 @@ Array [
             widget-type="InsightsPageHeaderTitle"
           >
             <div
-              class="appTitle"
+              class="apptitle"
             >
                
             </div>

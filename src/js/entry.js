@@ -118,14 +118,14 @@ export function bootstrap(libjwt, initFunc) {
                     });
                 },
                 getUserEntitlements: () => {
-                    const keys = Object.keys(localStorage).filter(key => (
+                    const entitlementStorages = window.localStorage && Object.keys(localStorage).filter(key => (
                         key.endsWith('/api/entitlements/v1/services')
                     ));
 
-                    if (keys.length < 1) { return {};}
+                    if (entitlementStorages.length < 1) { return {};}
 
-                    const key = localStorage.getItem(keys.pop());
-                    return JSON.parse(key).data.data;
+                    const entitlements = localStorage.getItem(entitlementStorages.pop());
+                    return JSON.parse(entitlements).data.data;
                 },
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
@@ -222,10 +222,13 @@ export function rootApp() {
 
 export function noAccess() {
     const { store } = spinUpStore();
-    const app = location.pathname.split('/').pop();
-    if (app === 'insights') {
-        const userEntitlements = window.insights.chrome.auth.getUserEntitlements();
-        const grantAccess = userEntitlements.insights.is_entitled;
+    const currPath = location.pathname;
+    const app = currPath.split('/').pop();
+    const userEntitlements = window.insights.chrome.auth.getUserEntitlements();
+    const apps = { insights: userEntitlements.insights.is_entitled };
+    //Only restrict this in settings/applications for now
+    if (currPath.includes('/settings/applications') && app in apps) {
+        const grantAccess = apps[app];
         if (!grantAccess) {
             document.getElementById('root').style.display = 'none';
             render(

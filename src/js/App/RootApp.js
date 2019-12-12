@@ -51,7 +51,7 @@ const RootApp = ({
                                 className="pf-c-title pf-m-2xl ins-l-page__header"
                                 widget-type='InsightsPageHeaderTitle'
                             >
-                                <div className="appTitle">
+                                <div className="apptitle">
                                     &nbsp;
                                 </div>
                             </h1>

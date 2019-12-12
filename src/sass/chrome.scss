@@ -50,18 +50,12 @@ aside {
 }
 
 // Page layout styles
-.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main {
+.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main, #no-access.pf-c-page__main {
     height: 100%;
 }
 
 // Page root background color
-.pf-c-page__main#root {
-    background: var(--pf-c-page__main-section--BackgroundColor);
-}
-
-// NoAccess styling
-#no-access {
-    height: 100%;
+.pf-c-page__main#root, .pf-c-page__main#no-access {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
