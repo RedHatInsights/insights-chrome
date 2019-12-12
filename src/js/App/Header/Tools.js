@@ -68,7 +68,7 @@ class Tools extends Component {
             <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
                     <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
-                        { window.insights.chrome.isBeta() ? settingsButton : null }
+                        { settingsButton }
                         { actions.map((oneItem, key) => (
                             oneItem.items ?
                                 <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :

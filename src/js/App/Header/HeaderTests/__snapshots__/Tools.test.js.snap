@@ -9,6 +9,21 @@ exports[`Tools should render correctly 1`] = `
     <ToolbarGroup
       className="pf-u-mr-0 pf-u-mr-lg-on-lg"
     >
+      <ToolbarItem>
+        <Component
+          aria-label="Go to settings"
+          onClick={[Function]}
+          variant="plain"
+          widget-type="SettingsButton"
+        >
+          <CogIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Component>
+      </ToolbarItem>
       <ToolbarToggle
         dropdownItems={
           Array [
