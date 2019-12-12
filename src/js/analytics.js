@@ -19,7 +19,7 @@ function shouldInitPendo(data) {
         data.user.is_internal === true ||
         internalAccounts.includes(accountNumber)) {
             if(window.localStorage && window.localStorage.getItem('forcePendo') === 'true') {
-                log('Focing Pendo initialization');
+                log('Forcing Pendo initialization');
                 return true;
             } else {
                 log('User is internal or this is pre-production, Pendo will not be initialized');
