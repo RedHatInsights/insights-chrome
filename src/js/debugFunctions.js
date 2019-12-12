@@ -9,5 +9,6 @@ export default ({
     invTags: () => functionBuilder('rhcs-tags', true),
     shortSession: () => functionBuilder('chrome:jwt:shortSession', true),
     jwtDebug: () => functionBuilder('chrome:jwt:debug', true),
-    reduxDebug: () => functionBuilder('chrome:redux:debug', true)
+    reduxDebug: () => functionBuilder('chrome:redux:debug', true),
+    forcePendo: () => functionBuilder('forcePendo', true)
 });

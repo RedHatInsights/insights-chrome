@@ -18,8 +18,13 @@ function shouldInitPendo(data) {
         isNaN(accountNumber) ||
         data.user.is_internal === true ||
         internalAccounts.includes(accountNumber)) {
-        log('User is internal or this is pre-production, Pendo will not be initialized');
-        return false;
+            if(window.localStorage && window.localStorage.getItem('forcePendo') === 'true') {
+                log('Focing Pendo initialization');
+                return true;
+            } else {
+                log('User is internal or this is pre-production, Pendo will not be initialized');
+                return false;
+            }
     } else {
         log('Initializing Pendo');
         return true;

@@ -131,6 +131,7 @@ Available function:
 * `jwtDebug` - to enable debugging of JWT
 * `remediationsDebug` - to enable debug buttons in remediations app
 * `shortSession` - to enable short session in order to test automatic logouts
+* `forcePendo` - to force Pendo initializtion
 
 ## Sentry
 
