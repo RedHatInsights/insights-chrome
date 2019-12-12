@@ -42,7 +42,7 @@ describe('UserToggle', ()=>{
     });
 });
 
-describe('ConnectedUserToggle', () => {
+describe('ConnectedUserToggle -- not org admin', () => {
     let initialState;
     let mockStore;
 
@@ -58,6 +58,41 @@ describe('ConnectedUserToggle', () => {
                             first_name: 'someFirstName',
                             last_name: 'someLastName',
                             is_org_admin: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    it('should render correctly', () =>{
+        const store = mockStore(initialState);
+        const wrapper = mount(
+            <Provider store={store}>
+                <ConnectedUserToggle/>
+            </Provider>
+        );
+        expect(toJson(wrapper)).toMatchSnapshot();
+    });
+
+});
+
+describe('ConnectedUserToggle -- org admin', () => {
+    let initialState;
+    let mockStore;
+
+    beforeEach(() =>{
+        mockStore = configureStore();
+        initialState = ({
+            chrome: {
+                user: {
+                    identity: {
+                        account_number: 'some accountNumber',
+                        user: {
+                            username: 'someUsername',
+                            first_name: 'someFirstName',
+                            last_name: 'someLastName',
+                            is_org_admin: true
                         }
                     }
                 }

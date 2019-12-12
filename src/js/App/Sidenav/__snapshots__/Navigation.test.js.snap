@@ -393,12 +393,12 @@ exports[`Navigation should render corectly 1`] = `
       Documentation
     </NavItem>
     <NavItem
-      key="operatorhub"
+      key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://operatorhub.io/"
+      to="https://access.redhat.com/support/cases"
     >
-      OperatorHub.io
+      Support Cases
     </NavItem>
     <NavItem
       key="feedback"
@@ -501,12 +501,12 @@ exports[`Navigation should render correctly 2 1`] = `
       Documentation
     </NavItem>
     <NavItem
-      key="operatorhub"
+      key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://operatorhub.io/"
+      to="https://access.redhat.com/support/cases"
     >
-      OperatorHub.io
+      Support Cases
     </NavItem>
     <NavItem
       key="feedback"
