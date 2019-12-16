@@ -233,7 +233,7 @@ export function noAccess() {
             document.getElementById('root').style.display = 'none';
             render(
                 <Provider store={ store }>
-                    <NoAccess appName={ app } />
+                    <NoAccess />
                 </Provider>,
                 document.querySelector('.pf-c-page__no-access')
             );

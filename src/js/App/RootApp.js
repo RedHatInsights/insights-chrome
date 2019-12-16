@@ -52,6 +52,7 @@ const RootApp = ({
                                 widget-type='InsightsPageHeaderTitle'
                             >
                                 <div className="apptitle">
+                                    { `${activeApp}` }
                                     &nbsp;
                                 </div>
                             </h1>

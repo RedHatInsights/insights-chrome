@@ -13,30 +13,31 @@ import {
 
 import { LockIcon } from '@patternfly/react-icons';
 
-const NoAccess = ({ appName }) => {
-    appName = appName.charAt(0).toUpperCase() + appName.slice(1);
-    const headerClass = document.querySelector('.apptitle');
-    headerClass.innerHTML = appName;
+const NoAccess = ({ activeApp }) => {
     return (
         <EmptyState variant={ EmptyStateVariant.full }>
             <EmptyStateIcon icon={ LockIcon } />
             <Title headingLevel="h5" size="lg">
-                { `You do not have access to ${ appName }` }
+                { `You do not have access to ${ activeApp }` }
             </Title>
             <EmptyStateBody>
                 Contact your organization administrator(s) for more information.
             </EmptyStateBody>
             {
                 document.referrer ?
-                    <Button variant="primary" onClick={ () => history.back() }>Return to previous page</Button> :
-                    <Button variant="primary" onClick={ () => window.location.replace('/') }>Go to landing page</Button>
+                    <Button variant="primary" component="a" onClick={ () => history.back() }>Return to previous page</Button> :
+                    <Button variant="primary" component="a" href=".">Go to landing page</Button>
             }
         </EmptyState>
     );
 };
 
 NoAccess.propTypes = {
-    appName: PropTypes.string
+    activeApp: PropTypes.string
 };
 
-export default connect()(NoAccess);
+function stateToProps({ chrome: { activeApp } }) {
+    return ({ activeApp });
+}
+
+export default connect(stateToProps,null)(NoAccess);
