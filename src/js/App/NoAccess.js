@@ -40,4 +40,4 @@ function stateToProps({ chrome: { activeApp } }) {
     return ({ activeApp });
 }
 
-export default connect(stateToProps,null)(NoAccess);
+export default connect(stateToProps, null)(NoAccess);
