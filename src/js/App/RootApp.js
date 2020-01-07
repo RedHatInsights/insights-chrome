@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 
 const RootApp = ({
     activeApp,
+    activeAppTitle,
     activeLocation,
     appId,
     pageAction,
     pageObjectId
 }) => {
-
+    console.log(activeApp, activeLocation, appId, activeAppTitle);
     return (
         <Fragment>
             <div
@@ -52,7 +53,7 @@ const RootApp = ({
                                 widget-type='InsightsPageHeaderTitle'
                             >
                                 <div className="apptitle">
-                                    { `${activeApp}` }
+                                    { `${activeAppTitle}` }
                                     &nbsp;
                                 </div>
                             </h1>
@@ -72,13 +73,14 @@ const RootApp = ({
 RootApp.propTypes = {
     appId: PropTypes.string,
     activeApp: PropTypes.string,
+    activeAppTitle: PropTypes.string,
     activeLocation: PropTypes.string,
     pageAction: PropTypes.string,
     pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId } }) {
-    return ({ activeApp, activeLocation, appId, pageAction, pageObjectId });
+function stateToProps({ chrome: { activeApp, activeLocation, activeAppTitle, appId, pageAction, pageObjectId } }) {
+    return ({ activeApp, activeLocation, activeAppTitle,appId, pageAction, pageObjectId });
 }
 
 export default connect(stateToProps, null)(RootApp);

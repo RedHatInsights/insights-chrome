@@ -13,12 +13,12 @@ import {
 
 import { LockIcon } from '@patternfly/react-icons';
 
-const NoAccess = ({ activeApp }) => {
+const NoAccess = ({ activeAppTitle }) => {
     return (
         <EmptyState variant={ EmptyStateVariant.full }>
             <EmptyStateIcon icon={ LockIcon } />
             <Title headingLevel="h5" size="lg">
-                { `You do not have access to ${ activeApp }` }
+                { `You do not have access to ${ activeAppTitle }` }
             </Title>
             <EmptyStateBody>
                 Contact your organization administrator(s) for more information.
@@ -33,11 +33,12 @@ const NoAccess = ({ activeApp }) => {
 };
 
 NoAccess.propTypes = {
-    activeApp: PropTypes.string
+    activeAppTitle: PropTypes.string
 };
 
-function stateToProps({ chrome: { activeApp } }) {
-    return ({ activeApp });
+function stateToProps({ chrome: { activeAppTitle } }) {
+    console.log("From NoAccess", activeAppTitle);
+    return ({ activeAppTitle });
 }
 
 export default connect(stateToProps, null)(NoAccess);
