@@ -14,6 +14,7 @@ describe('RootApp', () => {
         initialState = {
             chrome: {
                 activeApp: 'some-app',
+                activeAppTitle: 'some-app-title',
                 activeLocation: 'some-location',
                 appId: 'app-id'
             }
