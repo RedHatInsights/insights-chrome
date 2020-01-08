@@ -6,7 +6,7 @@ const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
 function generateEmail(email, isInternal) {
 
     if (email.includes('redhat') || isInternal) {
-        return `${email}-internal`;
+        return `${email}-redhat`;
     } else {
         return email;
     }
