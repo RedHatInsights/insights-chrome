@@ -1,12 +1,15 @@
 'use strict';
 
-const log = require('./jwt/logger')('analytics.js');
-
 const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
 
 // Checks to see if email contains "redhat" string to blacklist in Pendo
-function generateEmail(email) {
-    return email.includes('redhat') ? `${email}-internal` : email;
+function generateEmail(email, isInternal) {
+
+    if(email.includes('redhat') || isInternal) {
+        return `${email}-internal`;
+    } else {
+        return email;
+    }
 } 
 
 function initPendo(pendoConf) {
@@ -15,7 +18,7 @@ function initPendo(pendoConf) {
 
 function getPendoConf(data) {
         
-    const email = generateEmail(data.user.email);
+    const email = generateEmail(data.user.email, data.user.is_internal);
 
     return {
         visitor: {
