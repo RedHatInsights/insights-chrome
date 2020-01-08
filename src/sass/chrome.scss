@@ -53,7 +53,7 @@ aside {
 }
 
 // Page root background color
-.pf-c-page__main#root, .pf-c-page__main#no-access {
+.pf-c-page__main#root, #no-access.pf-c-page__main {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 

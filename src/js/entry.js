@@ -235,7 +235,7 @@ export function noAccess() {
                 <Provider store={ store }>
                     <NoAccess />
                 </Provider>,
-                document.querySelector('.pf-c-page__no-access')
+                document.querySelector('#no-access')
             );
         }
     }
