@@ -117,16 +117,6 @@ export function bootstrap(libjwt, initFunc) {
                         libjwt.jwt.logoutAllTabs();
                     });
                 },
-                getUserEntitlements: () => {
-                    const entitlementStorages = window.localStorage && Object.keys(localStorage).filter(key => (
-                        key.endsWith('/api/entitlements/v1/services')
-                    ));
-
-                    if (entitlementStorages.length < 1) { return {};}
-
-                    const entitlements = localStorage.getItem(entitlementStorages.pop());
-                    return JSON.parse(entitlements).data.data;
-                },
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login()
@@ -224,19 +214,20 @@ export function noAccess() {
     const { store } = spinUpStore();
     const currPath = location.pathname;
     const app = currPath.split('/').pop();
-    const userEntitlements = window.insights.chrome.auth.getUserEntitlements();
-    const apps = { insights: userEntitlements.insights.is_entitled };
-    //Only restrict this in settings/applications for now
-    if (currPath.includes('/settings/applications') && app in apps) {
-        const grantAccess = apps[app];
-        if (!grantAccess) {
-            document.getElementById('root').style.display = 'none';
-            render(
-                <Provider store={ store }>
-                    <NoAccess />
-                </Provider>,
-                document.querySelector('#no-access')
-            );
+    window.insights.chrome.auth.getUser().then(({ entitlements }) => {
+        const apps = { insights: entitlements.insights.is_entitled };
+        //Only restrict this in settings/applications for now
+        if (currPath.includes('/settings/applications') && app in apps) {
+            const grantAccess = apps[app];
+            if (!grantAccess) {
+                document.getElementById('root').style.display = 'none';
+                render(
+                    <Provider store={ store }>
+                        <NoAccess />
+                    </Provider>,
+                    document.querySelector('#no-access')
+                );
+            }
         }
-    }
+    });
 }
