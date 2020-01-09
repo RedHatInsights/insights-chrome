@@ -3,6 +3,9 @@ import analytics from './analytics';
 import sentry from './sentry';
 import { bootstrap, chromeInit, rootApp, noAccess }   from './entry';
 
+//Add redhat font to body
+document.querySelector('body').classList.add('pf-m-redhat-font');
+
 // start auth asap
 const libjwt = auth();
 
