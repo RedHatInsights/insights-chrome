@@ -212,22 +212,30 @@ export function rootApp() {
 
 export function noAccess() {
     const { store } = spinUpStore();
-    const currPath = location.pathname;
-    const app = currPath.split('/').pop();
     window.insights.chrome.auth.getUser().then(({ entitlements }) => {
-        const apps = { insights: entitlements.insights.is_entitled };
-        //Only restrict this in settings/applications for now
-        if (currPath.includes('/settings/applications') && app in apps) {
-            const grantAccess = apps[app];
-            if (!grantAccess) {
-                document.getElementById('root').style.display = 'none';
-                render(
-                    <Provider store={ store }>
-                        <NoAccess />
-                    </Provider>,
-                    document.querySelector('#no-access')
-                );
-            }
+        // rhel has different entitlements key and URL partial
+        entitlements.rhel = entitlements.smart_management;
+        const path = location.pathname.split('/');
+        const apps = [];
+
+        /* eslint-disable camelcase */
+        const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
+            // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
+            apps.push(app);
+            return path.includes(app) && is_entitled;
+        });
+        /* eslint-enable camelcase */
+
+        // also grant access to other pages like settings/general
+        const untrackedApp = path.filter(value => apps.includes(value)).length < 1 ? true : false;
+        if (!(grantAccess && grantAccess.length > 0) && !untrackedApp) {
+            document.getElementById('root').style.display = 'none';
+            render(
+                <Provider store={ store }>
+                    <NoAccess />
+                </Provider>,
+                document.querySelector('#no-access')
+            );
         }
     });
 }
