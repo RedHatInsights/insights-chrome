@@ -6,11 +6,22 @@ function initPendo(pendoConf) {
     window.pendo.initialize(pendoConf);
 }
 
+function isInternalFlag(email, isInternal) {
+
+    if (email.includes('redhat') || isInternal) {
+        return '_redhat';
+    } else {
+        return '';
+    }
+}
+
 function getPendoConf(data) {
+
+    const accountID = `${data.internal.account_id}${isInternalFlag(data.user.email, data.user.is_internal)}`;
 
     return {
         visitor: {
-            id: data.internal.account_id,
+            id: accountID,
             internal: data.user.is_internal,
             lang: data.user.locale
         },
