@@ -15,6 +15,7 @@ import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
 
 const sourceOfTruth = require('./nav/sourceOfTruth');
+const userPermissions = require('./rbac/userPermissions');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -42,6 +43,8 @@ export function chromeInit(libjwt) {
         actions.userLogIn(user);
         // Then, generate the global nav from the source of truth.
         // We use the JWT token as part of the cache key.
+        userPermissions(libjwt.jwt.getEncodedToken())
+        .then((rbacResult) => console.log('rbac: ', rbacResult));
         return sourceOfTruth(libjwt.jwt.getEncodedToken())
         // Gets the navigation for the current bundle.
         .then(loadNav)
