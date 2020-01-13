@@ -216,19 +216,18 @@ export function noAccess() {
         // rhel has different entitlements key and URL partial
         entitlements.rhel = entitlements.smart_management;
         const path = location.pathname.split('/');
-        const apps = [];
+        const apps = Object.keys(entitlements);
 
         /* eslint-disable camelcase */
         const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
             // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
-            apps.push(app);
             return path.includes(app) && is_entitled;
         });
         /* eslint-enable camelcase */
 
         // also grant access to other pages like settings/general
-        const untrackedApp = path.filter(value => apps.includes(value)).length < 1 ? true : false;
-        if (!(grantAccess && grantAccess.length > 0) && !untrackedApp) {
+        const isTrackedApp = path.some(value => apps.includes(value));
+        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
             document.getElementById('root').style.display = 'none';
             render(
                 <Provider store={ store }>
