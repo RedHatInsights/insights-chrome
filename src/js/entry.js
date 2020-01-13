@@ -236,5 +236,6 @@ export function noAccess() {
                 document.querySelector('#no-access')
             );
         }
-    });
+    })
+    .catch(window.console.log('Error fetching user entitlements!'));
 }
