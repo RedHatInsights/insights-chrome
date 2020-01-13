@@ -45,7 +45,7 @@ Array [
       </section>
     </main>
     <main
-      class="pf-c-page__main pf-l-page__main"
+      class="pf-c-page__main"
       id="no-access"
     />
   </div>,
@@ -106,7 +106,7 @@ Array [
       </section>
     </main>
     <main
-      class="pf-c-page__main pf-l-page__main"
+      class="pf-c-page__main"
       id="no-access"
     />
   </div>,
@@ -168,7 +168,7 @@ Array [
       </section>
     </main>
     <main
-      class="pf-c-page__main pf-l-page__main"
+      class="pf-c-page__main"
       id="no-access"
     />
   </div>,
@@ -230,7 +230,7 @@ Array [
       </section>
     </main>
     <main
-      class="pf-c-page__main pf-l-page__main"
+      class="pf-c-page__main"
       id="no-access"
     />
   </div>,
@@ -293,7 +293,7 @@ Array [
       </section>
     </main>
     <main
-      class="pf-c-page__main pf-l-page__main"
+      class="pf-c-page__main"
       id="no-access"
     />
   </div>,
