@@ -1,0 +1,957 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
+<Provider
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Connect(UserToggle)>
+    <UserToggle
+      account={
+        Object {
+          "isOrgAdmin": false,
+          "name": "someFirstName someLastName",
+          "number": "some accountNumber",
+          "username": "someUsername",
+        }
+      }
+      dispatch={[Function]}
+      extraItems={Array []}
+      isSmall={false}
+    >
+      <Dropdown
+        aria-label="Overflow actions"
+        dropdownItems={
+          Array [
+            <DropdownItem
+              isDisabled={true}
+            >
+              <dl
+                className="ins-c-dropdown-item__stack"
+              >
+                <dt
+                  className="ins-c-dropdown-item__stack--header"
+                >
+                  Username:
+                </dt>
+                <dd
+                  className="ins-c-dropdown-item__stack--value"
+                >
+                  someUsername
+                </dd>
+              </dl>
+            </DropdownItem>,
+            <React.Fragment />,
+            <DropdownSeparator />,
+            <DropdownItem
+              href="https://access.qa.redhat.com/user"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              My profile
+            </DropdownItem>,
+            <DropdownItem
+              component="button"
+              onClick={[Function]}
+            >
+              Logout
+            </DropdownItem>,
+            Array [],
+          ]
+        }
+        isOpen={false}
+        isPlain={true}
+        onSelect={[Function]}
+        position="right"
+        toggle={
+          <DropdownToggle
+            onToggle={[Function]}
+          >
+            someFirstName someLastName
+          </DropdownToggle>
+        }
+        widget-type="InsightsOverflowActions"
+      >
+        <Component
+          aria-label="Overflow actions"
+          dropdownItems={
+            Array [
+              <DropdownItem
+                isDisabled={true}
+              >
+                <dl
+                  className="ins-c-dropdown-item__stack"
+                >
+                  <dt
+                    className="ins-c-dropdown-item__stack--header"
+                  >
+                    Username:
+                  </dt>
+                  <dd
+                    className="ins-c-dropdown-item__stack--value"
+                  >
+                    someUsername
+                  </dd>
+                </dl>
+              </DropdownItem>,
+              <React.Fragment />,
+              <DropdownSeparator />,
+              <DropdownItem
+                href="https://access.qa.redhat.com/user"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                My profile
+              </DropdownItem>,
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Logout
+              </DropdownItem>,
+              Array [],
+            ]
+          }
+          isOpen={false}
+          isPlain={true}
+          position="right"
+          toggle={
+            <DropdownToggle
+              onToggle={[Function]}
+            >
+              someFirstName someLastName
+            </DropdownToggle>
+          }
+          widget-type="InsightsOverflowActions"
+        >
+          <ComponentWithOuia
+            component={[Function]}
+            componentProps={
+              Object {
+                "aria-label": "Overflow actions",
+                "dropdownItems": Array [
+                  <DropdownItem
+                    isDisabled={true}
+                  >
+                    <dl
+                      className="ins-c-dropdown-item__stack"
+                    >
+                      <dt
+                        className="ins-c-dropdown-item__stack--header"
+                      >
+                        Username:
+                      </dt>
+                      <dd
+                        className="ins-c-dropdown-item__stack--value"
+                      >
+                        someUsername
+                      </dd>
+                    </dl>
+                  </DropdownItem>,
+                  <React.Fragment />,
+                  <DropdownSeparator />,
+                  <DropdownItem
+                    href="https://access.qa.redhat.com/user"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    My profile
+                  </DropdownItem>,
+                  <DropdownItem
+                    component="button"
+                    onClick={[Function]}
+                  >
+                    Logout
+                  </DropdownItem>,
+                  Array [],
+                ],
+                "isOpen": false,
+                "isPlain": true,
+                "position": "right",
+                "toggle": <DropdownToggle
+                  onToggle={[Function]}
+                >
+                  someFirstName someLastName
+                </DropdownToggle>,
+                "widget-type": "InsightsOverflowActions",
+              }
+            }
+            consumerContext={null}
+          >
+            <DropdownWithContext
+              aria-label="Overflow actions"
+              autoFocus={true}
+              className=""
+              direction="down"
+              dropdownItems={
+                Array [
+                  <DropdownItem
+                    isDisabled={true}
+                  >
+                    <dl
+                      className="ins-c-dropdown-item__stack"
+                    >
+                      <dt
+                        className="ins-c-dropdown-item__stack--header"
+                      >
+                        Username:
+                      </dt>
+                      <dd
+                        className="ins-c-dropdown-item__stack--value"
+                      >
+                        someUsername
+                      </dd>
+                    </dl>
+                  </DropdownItem>,
+                  <React.Fragment />,
+                  <DropdownSeparator />,
+                  <DropdownItem
+                    href="https://access.qa.redhat.com/user"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    My profile
+                  </DropdownItem>,
+                  <DropdownItem
+                    component="button"
+                    onClick={[Function]}
+                  >
+                    Logout
+                  </DropdownItem>,
+                  Array [],
+                ]
+              }
+              isGrouped={false}
+              isOpen={false}
+              isPlain={true}
+              onSelect={[Function]}
+              ouiaComponentType="Dropdown"
+              ouiaContext={
+                Object {
+                  "isOuia": false,
+                  "ouiaId": null,
+                }
+              }
+              position="right"
+              toggle={
+                <DropdownToggle
+                  onToggle={[Function]}
+                >
+                  someFirstName someLastName
+                </DropdownToggle>
+              }
+              widget-type="InsightsOverflowActions"
+            >
+              <div
+                aria-label="Overflow actions"
+                className="pf-c-dropdown"
+                widget-type="InsightsOverflowActions"
+              >
+                <DropdownToggle
+                  ariaHasPopup={true}
+                  id="pf-toggle-id-0"
+                  isOpen={false}
+                  isPlain={true}
+                  key=".0"
+                  onEnter={[Function]}
+                  onToggle={[Function]}
+                  parentRef={
+                    Object {
+                      "current": <div
+                        aria-label="Overflow actions"
+                        class="pf-c-dropdown"
+                        widget-type="InsightsOverflowActions"
+                      >
+                        <button
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          class="pf-c-dropdown__toggle pf-m-plain"
+                          id="pf-toggle-id-0"
+                          type="button"
+                        >
+                          <span
+                            class="pf-c-dropdown__toggle-text"
+                          >
+                            someFirstName someLastName
+                          </span>
+                          <svg
+                            aria-hidden="true"
+                            class="pf-c-dropdown__toggle-icon"
+                            fill="currentColor"
+                            height="1em"
+                            role="img"
+                            style="vertical-align: -0.125em;"
+                            viewBox="0 0 320 512"
+                            width="1em"
+                          >
+                            <path
+                              d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                              transform=""
+                            />
+                          </svg>
+                        </button>
+                      </div>,
+                    }
+                  }
+                >
+                  <Toggle
+                    ariaHasPopup={true}
+                    className=""
+                    id="pf-toggle-id-0"
+                    isActive={false}
+                    isDisabled={false}
+                    isFocused={false}
+                    isHovered={false}
+                    isOpen={false}
+                    isPlain={true}
+                    isPrimary={false}
+                    isSplitButton={false}
+                    onEnter={[Function]}
+                    onToggle={[Function]}
+                    parentRef={
+                      Object {
+                        "current": <div
+                          aria-label="Overflow actions"
+                          class="pf-c-dropdown"
+                          widget-type="InsightsOverflowActions"
+                        >
+                          <button
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            class="pf-c-dropdown__toggle pf-m-plain"
+                            id="pf-toggle-id-0"
+                            type="button"
+                          >
+                            <span
+                              class="pf-c-dropdown__toggle-text"
+                            >
+                              someFirstName someLastName
+                            </span>
+                            <svg
+                              aria-hidden="true"
+                              class="pf-c-dropdown__toggle-icon"
+                              fill="currentColor"
+                              height="1em"
+                              role="img"
+                              style="vertical-align: -0.125em;"
+                              viewBox="0 0 320 512"
+                              width="1em"
+                            >
+                              <path
+                                d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                                transform=""
+                              />
+                            </svg>
+                          </button>
+                        </div>,
+                      }
+                    }
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup={true}
+                      className="pf-c-dropdown__toggle pf-m-plain"
+                      disabled={false}
+                      id="pf-toggle-id-0"
+                      onClick={[Function]}
+                      onKeyDown={[Function]}
+                      type="button"
+                    >
+                      <span
+                        className="pf-c-dropdown__toggle-text"
+                      >
+                        someFirstName someLastName
+                      </span>
+                      <CaretDownIcon
+                        className="pf-c-dropdown__toggle-icon"
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      >
+                        <svg
+                          aria-hidden={true}
+                          aria-labelledby={null}
+                          className="pf-c-dropdown__toggle-icon"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          style={
+                            Object {
+                              "verticalAlign": "-0.125em",
+                            }
+                          }
+                          viewBox="0 0 320 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                            transform=""
+                          />
+                        </svg>
+                      </CaretDownIcon>
+                    </button>
+                  </Toggle>
+                </DropdownToggle>
+              </div>
+            </DropdownWithContext>
+          </ComponentWithOuia>
+        </Component>
+      </Dropdown>
+    </UserToggle>
+  </Connect(UserToggle)>
+</Provider>
+`;
+
+exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
+<Provider
+  store={
+    Object {
+      "clearActions": [Function],
+      "dispatch": [Function],
+      "getActions": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <Connect(UserToggle)>
+    <UserToggle
+      account={
+        Object {
+          "isOrgAdmin": true,
+          "name": "someFirstName someLastName",
+          "number": "some accountNumber",
+          "username": "someUsername",
+        }
+      }
+      dispatch={[Function]}
+      extraItems={Array []}
+      isSmall={false}
+    >
+      <Dropdown
+        aria-label="Overflow actions"
+        dropdownItems={
+          Array [
+            <DropdownItem
+              isDisabled={true}
+            >
+              <dl
+                className="ins-c-dropdown-item__stack"
+              >
+                <dt
+                  className="ins-c-dropdown-item__stack--header"
+                >
+                  Username:
+                </dt>
+                <dd
+                  className="ins-c-dropdown-item__stack--value"
+                >
+                  someUsername
+                </dd>
+              </dl>
+            </DropdownItem>,
+            <React.Fragment />,
+            <DropdownSeparator />,
+            <DropdownItem
+              href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              User management
+            </DropdownItem>,
+            <DropdownItem
+              href="https://access.qa.redhat.com/user"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              My profile
+            </DropdownItem>,
+            <DropdownItem
+              component="button"
+              onClick={[Function]}
+            >
+              Logout
+            </DropdownItem>,
+            Array [],
+          ]
+        }
+        isOpen={false}
+        isPlain={true}
+        onSelect={[Function]}
+        position="right"
+        toggle={
+          <DropdownToggle
+            onToggle={[Function]}
+          >
+            someFirstName someLastName
+          </DropdownToggle>
+        }
+        widget-type="InsightsOverflowActions"
+      >
+        <Component
+          aria-label="Overflow actions"
+          dropdownItems={
+            Array [
+              <DropdownItem
+                isDisabled={true}
+              >
+                <dl
+                  className="ins-c-dropdown-item__stack"
+                >
+                  <dt
+                    className="ins-c-dropdown-item__stack--header"
+                  >
+                    Username:
+                  </dt>
+                  <dd
+                    className="ins-c-dropdown-item__stack--value"
+                  >
+                    someUsername
+                  </dd>
+                </dl>
+              </DropdownItem>,
+              <React.Fragment />,
+              <DropdownSeparator />,
+              <DropdownItem
+                href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                User management
+              </DropdownItem>,
+              <DropdownItem
+                href="https://access.qa.redhat.com/user"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                My profile
+              </DropdownItem>,
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Logout
+              </DropdownItem>,
+              Array [],
+            ]
+          }
+          isOpen={false}
+          isPlain={true}
+          position="right"
+          toggle={
+            <DropdownToggle
+              onToggle={[Function]}
+            >
+              someFirstName someLastName
+            </DropdownToggle>
+          }
+          widget-type="InsightsOverflowActions"
+        >
+          <ComponentWithOuia
+            component={[Function]}
+            componentProps={
+              Object {
+                "aria-label": "Overflow actions",
+                "dropdownItems": Array [
+                  <DropdownItem
+                    isDisabled={true}
+                  >
+                    <dl
+                      className="ins-c-dropdown-item__stack"
+                    >
+                      <dt
+                        className="ins-c-dropdown-item__stack--header"
+                      >
+                        Username:
+                      </dt>
+                      <dd
+                        className="ins-c-dropdown-item__stack--value"
+                      >
+                        someUsername
+                      </dd>
+                    </dl>
+                  </DropdownItem>,
+                  <React.Fragment />,
+                  <DropdownSeparator />,
+                  <DropdownItem
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    User management
+                  </DropdownItem>,
+                  <DropdownItem
+                    href="https://access.qa.redhat.com/user"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    My profile
+                  </DropdownItem>,
+                  <DropdownItem
+                    component="button"
+                    onClick={[Function]}
+                  >
+                    Logout
+                  </DropdownItem>,
+                  Array [],
+                ],
+                "isOpen": false,
+                "isPlain": true,
+                "position": "right",
+                "toggle": <DropdownToggle
+                  onToggle={[Function]}
+                >
+                  someFirstName someLastName
+                </DropdownToggle>,
+                "widget-type": "InsightsOverflowActions",
+              }
+            }
+            consumerContext={null}
+          >
+            <DropdownWithContext
+              aria-label="Overflow actions"
+              autoFocus={true}
+              className=""
+              direction="down"
+              dropdownItems={
+                Array [
+                  <DropdownItem
+                    isDisabled={true}
+                  >
+                    <dl
+                      className="ins-c-dropdown-item__stack"
+                    >
+                      <dt
+                        className="ins-c-dropdown-item__stack--header"
+                      >
+                        Username:
+                      </dt>
+                      <dd
+                        className="ins-c-dropdown-item__stack--value"
+                      >
+                        someUsername
+                      </dd>
+                    </dl>
+                  </DropdownItem>,
+                  <React.Fragment />,
+                  <DropdownSeparator />,
+                  <DropdownItem
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    User management
+                  </DropdownItem>,
+                  <DropdownItem
+                    href="https://access.qa.redhat.com/user"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    My profile
+                  </DropdownItem>,
+                  <DropdownItem
+                    component="button"
+                    onClick={[Function]}
+                  >
+                    Logout
+                  </DropdownItem>,
+                  Array [],
+                ]
+              }
+              isGrouped={false}
+              isOpen={false}
+              isPlain={true}
+              onSelect={[Function]}
+              ouiaComponentType="Dropdown"
+              ouiaContext={
+                Object {
+                  "isOuia": false,
+                  "ouiaId": null,
+                }
+              }
+              position="right"
+              toggle={
+                <DropdownToggle
+                  onToggle={[Function]}
+                >
+                  someFirstName someLastName
+                </DropdownToggle>
+              }
+              widget-type="InsightsOverflowActions"
+            >
+              <div
+                aria-label="Overflow actions"
+                className="pf-c-dropdown"
+                widget-type="InsightsOverflowActions"
+              >
+                <DropdownToggle
+                  ariaHasPopup={true}
+                  id="pf-toggle-id-1"
+                  isOpen={false}
+                  isPlain={true}
+                  key=".0"
+                  onEnter={[Function]}
+                  onToggle={[Function]}
+                  parentRef={
+                    Object {
+                      "current": <div
+                        aria-label="Overflow actions"
+                        class="pf-c-dropdown"
+                        widget-type="InsightsOverflowActions"
+                      >
+                        <button
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          class="pf-c-dropdown__toggle pf-m-plain"
+                          id="pf-toggle-id-1"
+                          type="button"
+                        >
+                          <span
+                            class="pf-c-dropdown__toggle-text"
+                          >
+                            someFirstName someLastName
+                          </span>
+                          <svg
+                            aria-hidden="true"
+                            class="pf-c-dropdown__toggle-icon"
+                            fill="currentColor"
+                            height="1em"
+                            role="img"
+                            style="vertical-align: -0.125em;"
+                            viewBox="0 0 320 512"
+                            width="1em"
+                          >
+                            <path
+                              d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                              transform=""
+                            />
+                          </svg>
+                        </button>
+                      </div>,
+                    }
+                  }
+                >
+                  <Toggle
+                    ariaHasPopup={true}
+                    className=""
+                    id="pf-toggle-id-1"
+                    isActive={false}
+                    isDisabled={false}
+                    isFocused={false}
+                    isHovered={false}
+                    isOpen={false}
+                    isPlain={true}
+                    isPrimary={false}
+                    isSplitButton={false}
+                    onEnter={[Function]}
+                    onToggle={[Function]}
+                    parentRef={
+                      Object {
+                        "current": <div
+                          aria-label="Overflow actions"
+                          class="pf-c-dropdown"
+                          widget-type="InsightsOverflowActions"
+                        >
+                          <button
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            class="pf-c-dropdown__toggle pf-m-plain"
+                            id="pf-toggle-id-1"
+                            type="button"
+                          >
+                            <span
+                              class="pf-c-dropdown__toggle-text"
+                            >
+                              someFirstName someLastName
+                            </span>
+                            <svg
+                              aria-hidden="true"
+                              class="pf-c-dropdown__toggle-icon"
+                              fill="currentColor"
+                              height="1em"
+                              role="img"
+                              style="vertical-align: -0.125em;"
+                              viewBox="0 0 320 512"
+                              width="1em"
+                            >
+                              <path
+                                d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                                transform=""
+                              />
+                            </svg>
+                          </button>
+                        </div>,
+                      }
+                    }
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup={true}
+                      className="pf-c-dropdown__toggle pf-m-plain"
+                      disabled={false}
+                      id="pf-toggle-id-1"
+                      onClick={[Function]}
+                      onKeyDown={[Function]}
+                      type="button"
+                    >
+                      <span
+                        className="pf-c-dropdown__toggle-text"
+                      >
+                        someFirstName someLastName
+                      </span>
+                      <CaretDownIcon
+                        className="pf-c-dropdown__toggle-icon"
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      >
+                        <svg
+                          aria-hidden={true}
+                          aria-labelledby={null}
+                          className="pf-c-dropdown__toggle-icon"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          style={
+                            Object {
+                              "verticalAlign": "-0.125em",
+                            }
+                          }
+                          viewBox="0 0 320 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                            transform=""
+                          />
+                        </svg>
+                      </CaretDownIcon>
+                    </button>
+                  </Toggle>
+                </DropdownToggle>
+              </div>
+            </DropdownWithContext>
+          </ComponentWithOuia>
+        </Component>
+      </Dropdown>
+    </UserToggle>
+  </Connect(UserToggle)>
+</Provider>
+`;
+
+exports[`UserToggle should render correctly with isSmall false 1`] = `
+<Dropdown
+  aria-label="Overflow actions"
+  dropdownItems={
+    Array [
+      <DropdownItem
+        isDisabled={true}
+      >
+        <dl
+          className="ins-c-dropdown-item__stack"
+        >
+          <dt
+            className="ins-c-dropdown-item__stack--header"
+          >
+            Username:
+          </dt>
+          <dd
+            className="ins-c-dropdown-item__stack--value"
+          />
+        </dl>
+      </DropdownItem>,
+      <React.Fragment />,
+      <DropdownSeparator />,
+      <DropdownItem
+        href="https://access.qa.redhat.com/user"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        My profile
+      </DropdownItem>,
+      <DropdownItem
+        component="button"
+        onClick={[Function]}
+      >
+        Logout
+      </DropdownItem>,
+      Array [],
+    ]
+  }
+  isOpen={false}
+  isPlain={true}
+  onSelect={[Function]}
+  position="right"
+  toggle={
+    <DropdownToggle
+      onToggle={[Function]}
+    >
+      someName
+    </DropdownToggle>
+  }
+  widget-type="InsightsOverflowActions"
+/>
+`;
+
+exports[`UserToggle should render correctly with isSmall true 1`] = `
+<Dropdown
+  aria-label="Overflow actions"
+  dropdownItems={
+    Array [
+      <DropdownItem
+        isDisabled={true}
+      >
+        <dl
+          className="ins-c-dropdown-item__stack"
+        >
+          <dt
+            className="ins-c-dropdown-item__stack--header"
+          >
+            Username:
+          </dt>
+          <dd
+            className="ins-c-dropdown-item__stack--value"
+          />
+        </dl>
+      </DropdownItem>,
+      <React.Fragment />,
+      <DropdownSeparator />,
+      <DropdownItem
+        href="https://access.qa.redhat.com/user"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        My profile
+      </DropdownItem>,
+      <DropdownItem
+        component="button"
+        onClick={[Function]}
+      >
+        Logout
+      </DropdownItem>,
+      Array [],
+    ]
+  }
+  isOpen={false}
+  isPlain={true}
+  onSelect={[Function]}
+  position="right"
+  toggle={
+    <KebabToggle
+      onToggle={[Function]}
+    />
+  }
+  widget-type="InsightsOverflowActions"
+/>
+`;

@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tools should render correctly 1`] = `
+<div
+  className="pf-l-page__header-tools pf-c-page__header-tools"
+  widget-type="InsightsToolbar"
+>
+  <Toolbar>
+    <ToolbarGroup
+      className="pf-u-mr-0 pf-u-mr-lg-on-lg"
+    >
+      <ToolbarItem>
+        <Component
+          aria-label="Go to settings"
+          onClick={[Function]}
+          variant="plain"
+          widget-type="SettingsButton"
+        >
+          <CogIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Component>
+      </ToolbarItem>
+      <ToolbarToggle
+        dropdownItems={
+          Array [
+            Object {
+              "title": "Help & assistance",
+              "url": "https://access.redhat.com/help/",
+            },
+            Object {
+              "title": "Customer support",
+              "url": "https://access.redhat.com/support",
+            },
+            Object {
+              "title": "Training",
+              "url": "https://www.redhat.com/en/services/training-and-certification",
+            },
+            Object {
+              "onClick": [Function],
+              "title": "API Documentation",
+            },
+            Object {
+              "onClick": [Function],
+              "title": "About",
+            },
+          ]
+        }
+        icon={[Function]}
+        key="0"
+      />
+    </ToolbarGroup>
+    <ToolbarGroup>
+      <ToolbarItem
+        className="pf-u-hidden-on-lg pf-u-mr-0"
+      >
+        <Connect(UserToggle)
+          extraItems={
+            Array [
+              <DropdownItem
+                component="button"
+                isDisabled={true}
+              >
+                FAQ
+              </DropdownItem>,
+            ]
+          }
+          isSmall={true}
+        />
+      </ToolbarItem>
+      <ToolbarItem
+        className="pf-u-screen-reader pf-u-visible-on-lg"
+      >
+        <Connect(UserToggle)
+          className="ins-c-dropdown__user"
+        />
+      </ToolbarItem>
+    </ToolbarGroup>
+  </Toolbar>
+  <Connect(UserIcon) />
+</div>
+`;

@@ -1,24 +1,23 @@
-header.pf-c-page__header.pf-l-page__header(role="banner")
-    .pf-c-page__header-brand.pf-l-page__header-brand.ins-c-page__header-brand--loading
+header.pf-c-page__header(role='banner')
+    .pf-c-page__header-brand.ins-c-page__header-brand--loading
         .pf-c-page__header-brand-toggle
             button.pf-c-button.pf-m-plain(aria-label='Toggle primary navigation' widget-type='InsightsNavToggle' type='button')
-                img(src="apps/chrome/assets/images/primary-nav-hamburger-toggle.svg")
-        a.pf-c-page__header-brand-link.pf-l-page__header-brand-link(href='#')
-            img(src="apps/chrome/assets/images/logo.svg")
-    .pf-c-page__header-tools.pf-l-page__header-tools(widget-type='InsightsToolbar')
-        .pf-l-toolbar.ins-c-header-toolbar__loading
-            .pf-l-toolbar__group.pf-u-screen-reader.pf-u-visible-on-lg
-                .pf-l-toolbar__item(data-key='0')
-                    button.pf-c-button.pf-m-plain.pf-c-dropdown__toggle(aria-label='Overflow FAQ' widget-type='InsightsFAQ' type='button')
-                        img(src="apps/chrome/assets/images/faq-button.svg")
-            .pf-l-toolbar__group
-                .pf-l-toolbar__item.pf-u-hidden-on-lg.pf-u-mr-0
-                    .pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
-                        button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-1(aria-label='Actions' type='button' aria-expanded='false' aria-haspopup='true')
-                            img(src="apps/chrome/assets/images/overflow-actions-sm.svg")
-                .pf-l-toolbar__item.pf-u-screen-reader.pf-u-visible-on-lg
-                    .pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
-                        button.pf-c-dropdown__toggle.pf-m-plain#pf-toggle-id-1(type='button' aria-expanded='false' aria-haspopup='true')
-                            span.pf-c-dropdown__toggle-text Logging in...
-                            img.pf-c-dropdown__toggle-icon(src="apps/chrome/assets/images/overflow-actions-lg.svg")
-        img.pf-c-avatar(src="apps/chrome/assets/images/img_avatar.svg" alt="Avatar Image")
+                img(src='apps/chrome/assets/images/primary-nav-hamburger-toggle.svg')
+        a.pf-c-page__header-brand-link(href='#')
+            img(src='apps/chrome/assets/images/logo.svg' alt='cloud.redhat.com logo')
+    .pf-c-page__header-tools(widget-type='InsightsToolbar')
+        .pf-c-page__header-tools-group.pf-m-icons
+            button.pf-c-button.pf-m-plain(aria-label='Settings' widget-type='SettingsButton' type='button')
+                img(src='apps/chrome/assets/images/settings-button.svg')
+            button.pf-c-button.pf-m-plain(aria-label='Overflow FAQ' widget-type='InsightsFAQ' type='button')
+                img(src='apps/chrome/assets/images/faq-button.svg')
+        .pf-c-page__header-tools-group
+            .pf-c-dropdown.pf-u-hidden-on-lg(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
+                button.pf-c-dropdown__toggle.pf-m-plain(aria-label='Actions' type='button' aria-expanded='false' aria-haspopup='true')
+                    img(src='apps/chrome/assets/images/overflow-actions-sm.svg')
+            .pf-m-user
+                .pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
+                    .pf-c-dropdown__toggle.pf-m-plain(aria-expanded='false')
+                        span.pf-c-dropdown__toggle-text Logging in...
+                        img.pf-c-dropdown__toggle-icon(src='apps/chrome/assets/images/overflow-actions-lg.svg')
+        img.pf-c-avatar(src='apps/chrome/assets/images/img_avatar.svg' alt='Avatar Image')

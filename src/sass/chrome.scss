@@ -37,8 +37,6 @@ aside {
     overflow: auto !important;
 }
 
-.ins-c-header-toolbar__loading { padding: 0; }
-
 .pf-c-about-modal-box__logo {
     display: none;
 }
@@ -59,6 +57,13 @@ aside {
     background: var(--pf-c-page__main-section--BackgroundColor);
 }
 
+// Landing page logout alert
+.pf-c-alert.ins-c-alert__logout{
+    position: absolute;
+    top: var(--pf-c-page__header--MinHeight);
+    right: var(--pf-c-page__header-tools--MarginRight);
+
+}
 // Header
 .pf-c-page__header {
     overflow: visible;
@@ -73,6 +78,10 @@ aside {
     .pf-c-page__header-brand-toggle svg {
         @include rem('height', 21px);
         @include rem('width', 21px);
+    }
+
+    .pf-c-page__header-tools .pf-c-avatar {
+        height: var(--pf-global--FontSize--4xl);
     }
 }
 

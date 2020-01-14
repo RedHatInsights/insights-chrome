@@ -6,7 +6,7 @@ import {
     DropdownItem,
     DropdownSeparator,
     DropdownPosition
-} from '@patternfly/react-core/dist/esm/components/Dropdown';
+} from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -29,19 +29,17 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        <React.Fragment key="user management wrapper">
-            { isOrgAdmin &&
-                <DropdownItem
-                    key="User management"
-                    href="https://www.redhat.com/wapps/ugc/protected/usermgt/userList.html"
-                    target="_blank" rel='noopener noreferrer'>
-                        User management
-                </DropdownItem>
-            }
-        </React.Fragment>,
+        ...isOrgAdmin ? [
+            <DropdownItem
+                key="User management"
+                href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
+                target="_blank" rel='noopener noreferrer'>
+                    User management
+            </DropdownItem>
+        ] : [],
         <DropdownItem
             key="My Profile"
-            href="https://access.redhat.com/user"
+            href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
             target="_blank"
             rel='noopener noreferrer'>
                 My profile
@@ -56,7 +54,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
     ];
 }
 
-class UserToggle extends Component {
+export class UserToggle extends Component {
     constructor(props) {
         super(props);
         this.state = {

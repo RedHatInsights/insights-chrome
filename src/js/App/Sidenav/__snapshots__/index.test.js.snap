@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectedSideNav should render correctly 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(SideNav) />
+</ContextProvider>
+`;
+
+exports[`ConnectedSideNav should render correctly part 2 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+  }
+>
+  <Connect(SideNav) />
+</ContextProvider>
+`;
+
+exports[`SideNav should render correctly 1`] = `
+<Fragment>
+  <Split
+    className="ins-c-navigation__header"
+  >
+    <SplitItem
+      className="ins-c-page__home-icon"
+    >
+      <a
+        href="http://localhost/"
+      >
+        <HomeIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="md"
+          title={null}
+        />
+      </a>
+    </SplitItem>
+    <SplitItem
+      className="pf-u-display-flex pf-u-align-items-center ins-c-navigation__header-title__wrapper"
+      isFilled={true}
+    >
+      <div
+        className="ins-c-navigation__header-title"
+      >
+        someTechnology
+      </div>
+    </SplitItem>
+  </Split>
+  <Connect(Navigation) />
+</Fragment>
+`;

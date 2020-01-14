@@ -8,10 +8,10 @@ const testData = [
     { auth: true,  path: '/insights/beta/', sec: 'insights' },
     { auth: true,  path: '/insights/beta/foo', sec: 'insights' },
     { auth: true,  path: '/insights/foo/bar/', sec: 'insights' },
-    { auth: true,  path: '/hybrid', sec: 'hybrid' },
-    { auth: true,  path: '/hybrid/', sec: 'hybrid' },
-    { auth: true,  path: '/hybrid/foo', sec: 'hybrid' },
-    { auth: true,  path: '/hybrid/foo/bar/', sec: 'hybrid' },
+    { auth: true,  path: '/cost-management', sec: 'cost-management' },
+    { auth: true,  path: '/cost-management/', sec: 'cost-management' },
+    { auth: true,  path: '/cost-management/foo', sec: 'cost-management' },
+    { auth: true,  path: '/cost-management/foo/bar/', sec: 'cost-management' },
     { auth: true,  path: '/apps/foo/bar/', sec: 'apps' },
     { auth: true,  path: '/apps/insights/bar/', sec: 'apps' },
     { auth: true,  path: '/migrations', sec: 'migrations' },
@@ -47,6 +47,17 @@ describe('utils', () => {
                 doMockWindow(item.path);
                 expect(getSection()).toBe(item.sec);
             });
+        });
+    });
+    describe('isValidAccountNumber', () => {
+        test('not a number; should return false', () => {
+            expect(utils.isValidAccountNumber(null)).toBe(false);
+        });
+        test('-1 should return false', () => {
+            expect(utils.isValidAccountNumber(-1)).toBe(false);
+        });
+        test('string -1 should return false', () => {
+            expect(utils.isValidAccountNumber('-1')).toBe(false);
         });
     });
 });

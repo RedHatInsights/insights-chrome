@@ -12,6 +12,7 @@ import allowUnauthed from './auth';
 import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
+import debugFunctions from './debugFunctions';
 
 const sourceOfTruth = require('./nav/sourceOfTruth');
 
@@ -62,7 +63,10 @@ export function chromeInit(libjwt) {
                 clearActive();
             }
 
-            appNavClick(payload);
+            appNavClick({
+                ...payload,
+                custom: true
+            });
         },
         on: (type, callback) => {
             if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
@@ -75,8 +79,8 @@ export function chromeInit(libjwt) {
         loadInventory,
         experimental: {
             loadRemediations
-        }
-
+        },
+        enable: debugFunctions
     };
 }
 
@@ -134,13 +138,16 @@ function loadNav(yamlConfig) {
     const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
 
     const splitted = location.pathname.split('/') ;
-    const active = splitted[1] === 'beta' ? splitted[2] : splitted[1];
+    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
+    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
+    let activeSection = globalNav.find(({ id }) => id === section);
     return groupedNav[active] ? {
-        globalNav: groupedNav[active].routes,
+        globalNav,
         activeTechnology: groupedNav[active].title,
-        activeLocation: active
+        activeLocation: active,
+        activeSection
     } : {
-        globalNav: groupedNav.insights.routes,
+        globalNav,
         activeTechnology: 'Applications'
     };
 }
@@ -158,7 +165,8 @@ function loadChrome(user) {
                 if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
                     defaultActive = activeApp.subItems.find(
                         subItem => location.pathname.split('/').find(item => item === subItem.id)
-                    ) || activeApp.subItems.find(subItem => subItem.default);
+                    ) || activeApp.subItems.find(subItem => subItem.default)
+                    || activeApp.subItems[0];
                 }
             }
 

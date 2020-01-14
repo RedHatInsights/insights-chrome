@@ -31,7 +31,7 @@ describe('User', () => {
             insights: { is_entitled: false },
             smart_management: { is_entitled: false },
             openshift: { is_entitled: false },
-            hybrid: { is_entitled: false }
+            cost_management: { is_entitled: false }
         };
 
         beforeEach(() => {
@@ -50,8 +50,8 @@ describe('User', () => {
             tryBounceIfUnentitled(ents, 'insights');
             expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
 
-            tryBounceIfUnentitled(ents, 'hybrid');
-            expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=hybrid_cloud');
+            tryBounceIfUnentitled(ents, 'cost-management');
+            expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=cost_management');
         });
 
         test('should *not* bounce if entitled', () => {

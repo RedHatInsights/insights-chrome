@@ -4,6 +4,7 @@ import BroadcastChannel from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
+const { deleteLocalStorageItems } = require('../utils');
 
 // Utils
 const log = require('./logger')('jwt.js');
@@ -198,6 +199,7 @@ function initError() {
 exports.login = () => {
     log('Logging in');
     // Redirect to login
+    cookie.set('cs_loggedOut', 'false');
     return priv.keycloak.login({ redirectUri: location.href });
 };
 
@@ -209,9 +211,16 @@ function logout(bounce) {
     cookie.remove(priv.cookie.cookieName);
 
     const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
-
+    const keys = Object.keys(localStorage).filter(key => (
+        key.endsWith('/api/entitlements/v1/services' || key.endsWith('/config/main.yml')) || key.startsWith('kc-callback')
+    ));
+    deleteLocalStorageItems(keys);
     // Redirect to logout
     if (bounce) {
+        let eightSeconds = new Date(new Date().getTime() + 8 * 1000);
+        cookie.set('cs_loggedOut', 'true', {
+            expires: eightSeconds
+        });
         priv.keycloak.logout({
             redirectUri: `https://${window.location.host}${isBeta}`
         });
