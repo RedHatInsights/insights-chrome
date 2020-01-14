@@ -41,6 +41,10 @@ aside {
     display: none;
 }
 
+#no-access.pf-c-page__main {
+    display: none;
+}
+
 // Page temp styles
 .pf-c-page {
   --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);

@@ -229,6 +229,7 @@ export function noAccess() {
         const isTrackedApp = path.some(value => apps.includes(value));
         if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
             document.getElementById('root').style.display = 'none';
+            document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
             render(
                 <Provider store={ store }>
                     <NoAccess />
