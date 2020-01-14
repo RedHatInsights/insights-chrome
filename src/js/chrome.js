@@ -1,7 +1,7 @@
 import auth from './auth';
 import analytics from './analytics';
 import sentry from './sentry';
-import { bootstrap, chromeInit, rootApp }   from './entry';
+import { bootstrap, chromeInit, rootApp, noAccess }   from './entry';
 
 //Add redhat font to body
 document.querySelector('body').classList.add('pf-m-redhat-font');
@@ -33,3 +33,5 @@ window.insights = {
     ...window.insights,
     ...bootstrap(libjwt, init)
 };
+
+noAccess();
