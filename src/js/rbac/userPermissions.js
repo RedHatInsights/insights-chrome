@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { bootstrapCache } = require('../utils');
 
 const getAllPermissions = (url, permissions, resolve, reject) => {
     axios.get(url)
@@ -16,23 +15,30 @@ const getAllPermissions = (url, permissions, resolve, reject) => {
     })
 }
 
-module.exports = (cachePrefix) => {
+const permissionsInfo = () => {
+    return new Promise((resolve, reject) => {
+        getAllPermissions(window.location.origin + '/api/rbac/v1/access/?application=*', [], resolve, reject)
+    })
+}
+
+module.exports = () => {
     if(window.localStorage){
-        rbacStore = Object.keys(window.localStorage).filter(key => key.includes('-rbac-response'))
-        if(rbacStore.length < 1 || ( Date.now() > JSON.parse(window.localStorage.getItem(rbacStore[0]).expires ))) {
-            rbacResponse = new Promise((resolve, reject) => {
-                getAllPermissions(window.location.origin + '/api/rbac/v1/access/?application=*', [], resolve, reject)
+        if(!window.localStorage.getItem('rbac-response') || (Date.now() > JSON.parse(window.localStorage.getItem('rbac-response')).expires)) {
+            permissionsInfo().then((info) => {
+                // caching for 10 minutes
+                expTime = Date.now() + 10 * 60 * 1000;
+                data = { expires: expTime, permissions: info }
+                window.localStorage.setItem('rbac-response', JSON.stringify(data));
+                return data
+                // FIX: doesn't work the first time
             })
-            rbacResponse.then((response) => {
-                expTime = Date.now() + 10 * 60 * 1000
-                window.localStorage.removeItem(rbacStore[0])
-                window.localStorage.setItem(`${cachePrefix}-rbac-response`,
-                JSON.stringify({ expires: expTime, permissions: response }));
-                console.log(response);
-                return response
+            .catch(error => {
+                console.log(error)
             });
         }
-        return JSON.parse(window.localStorage.getItem(rbacStore[0].permissions)).permissions
+        else{
+            return JSON.parse(window.localStorage.getItem('rbac-response'))
+        }
     }
 
 };
