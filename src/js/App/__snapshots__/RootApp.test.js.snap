@@ -44,6 +44,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -101,6 +105,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -159,6 +167,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -217,6 +229,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -276,6 +292,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"

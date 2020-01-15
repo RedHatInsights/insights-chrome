@@ -40,6 +40,7 @@ const RootApp = ({
                         </div>
                     </section>
                 </main>
+                <main className="pf-c-page__main" id="no-access"></main>
             </div>
             <aside className="pf-c-drawer__panel">
                 <div className="pf-c-drawer__panel-body" />
