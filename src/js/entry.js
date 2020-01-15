@@ -44,8 +44,7 @@ export function chromeInit(libjwt) {
         actions.userLogIn(user);
         // Then, generate the global nav from the source of truth.
         // We use the JWT token as part of the cache key.
-        userPermissions(libjwt.jwt.getEncodedToken())
-        .then((rbacResult) => console.log('rbac: ', rbacResult));
+        // console.log('rbac: ', userPermissions("cAcHe"));
         return sourceOfTruth(libjwt.jwt.getEncodedToken())
         // Gets the navigation for the current bundle.
         .then(loadNav)
