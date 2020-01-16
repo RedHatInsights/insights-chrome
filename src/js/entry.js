@@ -128,7 +128,9 @@ export function bootstrap(libjwt, initFunc) {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
             getUserPermissions: () => {
-                return userPermissions()
+                if (window.localStorage) {
+                    return userPermissions();
+                }
             },
             init: initFunc
         },
