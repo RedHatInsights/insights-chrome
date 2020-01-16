@@ -17,7 +17,7 @@ const getAllPermissions = (url, permissions, resolve, reject) => {
 
 const permissionsInfo = () => {
     return new Promise((resolve, reject) => {
-        getAllPermissions(window.location.origin + '/api/rbac/v1/access/?application=*', [], resolve, reject);
+        getAllPermissions(window.location.origin + '/api/rbac/v1/access/?application=*&limit=25', [], resolve, reject);
     });
 };
 
