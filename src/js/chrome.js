@@ -17,6 +17,7 @@ libjwt.initPromise.then(() => {
     libjwt.jwt.getUserInfo().then((...data) => {
         analytics(...data);
         sentry(...data);
+        noAccess();
     }).catch(noop);
 });
 
@@ -33,5 +34,3 @@ window.insights = {
     ...window.insights,
     ...bootstrap(libjwt, init)
 };
-
-noAccess();
