@@ -1,4 +1,5 @@
 const axios = require('axios');
+const log = require('../jwt/logger')('userPermissions.js');
 
 const getAllPermissions = (url, permissions, resolve, reject) => {
     axios.get(url)
@@ -11,7 +12,7 @@ const getAllPermissions = (url, permissions, resolve, reject) => {
         }
     })
     .catch(error => {
-        window.console.log(error);
+        log(error);
     });
 };
 
@@ -31,7 +32,7 @@ module.exports = () => {
             return data;
         })
         .catch(error => {
-            window.console.log(error);
+            log(error);
         });
     }
     else {
