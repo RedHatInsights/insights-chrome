@@ -21,6 +21,7 @@ global.window.insights = {
         isBeta: () => {
             return null;
         },
+        isProd: false,
         auth: {
             ...(window.insights && window.insights.chrome && window.insights.chrome) || {},
             getUser: () => new Promise((res) => res({
@@ -28,6 +29,12 @@ global.window.insights = {
                     // eslint-disable-next-line camelcase
                     account_number: '0',
                     type: 'User'
+                },
+                entitlements: {
+                    insights: {
+                        // eslint-disable-next-line camelcase
+                        is_entitled: true
+                    }
                 }
             }))
         }

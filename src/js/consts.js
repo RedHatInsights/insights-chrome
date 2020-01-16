@@ -9,15 +9,27 @@ const obj =  {
 export const visibilityFunctions = {
     isOrgAdmin: async () => {
         const { identity } = await insights.chrome.auth.getUser();
-        return identity.user.is_org_admin;
+        try {
+            return identity.user.is_org_admin;
+        } catch {
+            return false;
+        }
     },
     isActive: async () => {
         const { identity } = await insights.chrome.auth.getUser();
-        return identity.user.is_active;
+        try {
+            return identity.user.is_active;
+        } catch {
+            return false;
+        }
     },
     isInternal: async () => {
         const { identity } = await insights.chrome.auth.getUser();
-        return identity.user.is_internal;
+        try {
+            return identity.user.is_internal;
+        } catch {
+            return false;
+        }
     },
     isEntitled: async (appName) => {
         const { entitlements } = await insights.chrome.auth.getUser();
@@ -25,18 +37,14 @@ export const visibilityFunctions = {
             // eslint-disable-next-line camelcase
             Object.entries(entitlements).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
     },
-    isProd: () => {
-        return insights.chrome.isProd;
-    },
-    isBeta: () => {
-        return insights.chrome.isBeta();
-    },
-    apiRequest: async ({ url, method, ...props }) => {
+    isProd: () => insights.chrome.isProd,
+    isBeta: () => insights.chrome.isBeta(),
+    apiRequest: async ({ url, method, ...options }) => {
         // TODO: add caching
         return instance.axios({
             url,
             method: method || 'GET',
-            ...props
+            ...options
         });
     }
 };
