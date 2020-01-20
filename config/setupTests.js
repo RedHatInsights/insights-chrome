@@ -31,10 +31,6 @@ global.window.insights = {
                 }
             }))
         },
-        getUserPermissions: () => {
-            return new Promise((permissionsObj) => permissionsObj({
-                permissions: [],
-            }))
-        }
+        getUserPermissions: () => Promise.resolve([])
     }
 };

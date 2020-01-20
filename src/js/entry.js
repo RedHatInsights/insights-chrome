@@ -16,7 +16,7 @@ import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
 
 const sourceOfTruth = require('./nav/sourceOfTruth');
-const userPermissions = require('./rbac/userPermissions');
+import { fetchPermissions } from './rbac/fetchPermissions';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -127,9 +127,7 @@ export function bootstrap(libjwt, initFunc) {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
             getUserPermissions: () => {
-                if (window.localStorage) {
-                    return userPermissions();
-                }
+                return fetchPermissions(libjwt.jwt.getEncodedToken());
             },
             init: initFunc
         },
