@@ -15,6 +15,7 @@ import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
 
+const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
 import { fetchPermissions } from './rbac/fetchPermissions';
 
@@ -242,5 +243,5 @@ export function noAccess() {
             );
         }
     })
-    .catch(window.console.log('Error fetching user entitlements!'));
+    .catch(log('Error fetching user entitlements!'));
 }
