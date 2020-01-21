@@ -1,0 +1,55 @@
+{
+    "meta": {
+        "count": 10,
+        "limit": 25,
+        "offset": 0
+    },
+    "links": {
+        "first": "/api/rbac/v1/access/?application=%2A&limit=10&offset=0",
+        "next": null,
+        "previous": null,
+        "last": "/api/rbac/v1/access/?application=%2A&limit=10&offset=0"
+    },
+    "data": [
+        {
+            "permission": "ansible-hub:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "vulnerability:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "compliance:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        }
+    ]
+}
