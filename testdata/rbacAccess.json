@@ -1,14 +1,8 @@
 {
     "meta": {
-        "count": 10,
+        "count": 25,
         "limit": 25,
         "offset": 0
-    },
-    "links": {
-        "first": "/api/rbac/v1/access/?application=%2A&limit=10&offset=0",
-        "next": null,
-        "previous": null,
-        "last": "/api/rbac/v1/access/?application=%2A&limit=10&offset=0"
     },
     "data": [
         {
@@ -29,6 +23,66 @@
         },
         {
             "permission": "compliance:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "ansible-hub:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "vulnerability:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "compliance:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
             "resourceDefinitions": []
         },
         {
