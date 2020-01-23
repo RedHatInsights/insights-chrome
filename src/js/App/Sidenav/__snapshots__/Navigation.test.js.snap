@@ -408,14 +408,6 @@ exports[`Navigation should render corectly 1`] = `
     >
       Cluster Manager Feedback
     </NavItem>
-    <NavItem
-      key="bugs"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform"
-    >
-      Report an OpenShift Bug
-    </NavItem>
   </NavList>
 </Component>
 `;
@@ -515,14 +507,6 @@ exports[`Navigation should render correctly 2 1`] = `
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </NavItem>
-    <NavItem
-      key="bugs"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform"
-    >
-      Report an OpenShift Bug
     </NavItem>
   </NavList>
 </Component>

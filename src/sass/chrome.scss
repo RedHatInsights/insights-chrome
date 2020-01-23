@@ -41,6 +41,10 @@ aside {
     display: none;
 }
 
+#no-access.pf-c-page__main {
+    display: none;
+}
+
 // Page temp styles
 .pf-c-page {
   --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
@@ -48,13 +52,15 @@ aside {
 }
 
 // Page layout styles
-.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main {
+.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main, #no-access.pf-c-page__main {
     height: 100%;
 }
 
 // Page root background color
-.pf-c-page__main#root {
-    background: var(--pf-c-page__main-section--BackgroundColor);
+.pf-c-page__main {
+    &#root, &#no-access {
+        background: var(--pf-c-page__main-section--BackgroundColor);
+    }
 }
 
 // Landing page logout alert

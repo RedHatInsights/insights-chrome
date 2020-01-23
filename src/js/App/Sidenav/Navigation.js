@@ -15,10 +15,6 @@ const openshiftLinks = {
     feedback: {
         title: 'Cluster Manager Feedback',
         link: 'mailto:ocm-feedback@redhat.com'
-    },
-    bugs: {
-        title: 'Report an OpenShift Bug',
-        link: 'https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform'
     }
 };
 
