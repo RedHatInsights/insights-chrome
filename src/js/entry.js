@@ -15,7 +15,9 @@ import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
 
+const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
+import { fetchPermissions } from './rbac/fetchPermissions';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -119,6 +121,9 @@ export function bootstrap(libjwt, initFunc) {
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
+            },
+            getUserPermissions: () => {
+                return fetchPermissions(libjwt.jwt.getEncodedToken());
             },
             init: initFunc
         },
@@ -233,5 +238,5 @@ export function noAccess() {
             );
         }
     })
-    .catch(window.console.log('Error fetching user entitlements!'));
+    .catch(log('Error fetching user entitlements!'));
 }

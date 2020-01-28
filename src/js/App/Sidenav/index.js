@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 const documentationLink = {
     rhel: 'https://access.redhat.com/documentation/en-us/cloud_management_services_for_red_hat_enterprise_linux/1.0/',
     insights: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
-    openshift: 'https://docs.openshift.com/container-platform/4.2/',
+    openshift: 'https://docs.openshift.com/container-platform/latest/',
     subscriptions: 'https://access.redhat.com/documentation/Subscription_Central/'
 };
 

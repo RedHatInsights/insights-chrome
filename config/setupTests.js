@@ -37,6 +37,7 @@ global.window.insights = {
                     }
                 }
             }))
-        }
+        },
+        getUserPermissions: () => Promise.resolve([])
     }
 };
