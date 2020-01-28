@@ -30,6 +30,7 @@ global.window.insights = {
                     type: 'User'
                 }
             }))
-        }
+        },
+        getUserPermissions: () => Promise.resolve([])
     }
 };

@@ -1,0 +1,109 @@
+{
+    "meta": {
+        "count": 25,
+        "limit": 25,
+        "offset": 0
+    },
+    "data": [
+        {
+            "permission": "ansible-hub:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "vulnerability:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "compliance:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "ansible-hub:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "vulnerability:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "compliance:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "insights:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "remediations:*:*",
+            "resourceDefinitions": []
+        },
+        {
+            "permission": "inventory:*:*",
+            "resourceDefinitions": []
+        }
+    ]
+}
