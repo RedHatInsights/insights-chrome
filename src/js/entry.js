@@ -17,6 +17,7 @@ import NoAccess from './App/NoAccess';
 
 const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
+import { fetchPermissions } from './rbac/fetchPermissions';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -38,18 +39,13 @@ export function chromeInit(libjwt) {
 
     // Init JWT first.
     const jwtAndNavResolver = libjwt.initPromise
-    .then(libjwt.jwt.getUserInfo)
-    .then((user) => {
-        // Log in the user
+    .then(async () => {
+        const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        // Then, generate the global nav from the source of truth.
-        // We use the JWT token as part of the cache key.
-        return sourceOfTruth(libjwt.jwt.getEncodedToken())
-        // Gets the navigation for the current bundle.
-        .then(loadNav)
-        // Updates Redux's state with the new nav.
-        .then(chromeNavUpdate)
-        .then(() => loadChrome(user));
+        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+        const navigationData = await loadNav(navigationYml);
+        chromeNavUpdate(navigationData);
+        loadChrome(user);
     })
     .catch(() => allowUnauthed() && loadChrome(false));
 
@@ -126,6 +122,9 @@ export function bootstrap(libjwt, initFunc) {
             isBeta: () => {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
+            getUserPermissions: () => {
+                return fetchPermissions(libjwt.jwt.getEncodedToken());
+            },
             init: initFunc
         },
         loadInventory,
@@ -136,8 +135,8 @@ export function bootstrap(libjwt, initFunc) {
 }
 
 // Loads the navigation for the current bundle.
-function loadNav(yamlConfig) {
-    const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
+async function loadNav(yamlConfig) {
+    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
 
     const splitted = location.pathname.split('/') ;
     const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
