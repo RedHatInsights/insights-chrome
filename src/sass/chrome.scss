@@ -45,6 +45,12 @@ aside {
     display: none;
 }
 
+.pf-c-page__header-tools[widget-type="InsightsToolbar"] {
+    .pf-l-toolbar, .pf-c-toolbar, .pf-l-toolbar__group, .pf-c-toolbar__group {
+        display: flex;
+    }
+}
+
 // Page temp styles
 .pf-c-page {
   --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
