@@ -72,7 +72,6 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
           containerInfo={<div />}
         >
           <AboutModalContainer
-            appendTo={null}
             ariaDescribedById="pf-about-modal-content-0"
             ariaLabelledbyId="pf-about-modal-title-0"
             backgroundImageSrc=""
