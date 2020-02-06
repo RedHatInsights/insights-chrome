@@ -252,7 +252,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             >
               <div
                 aria-label="Overflow actions"
-                className="pf-c-dropdown"
+                className="pf-c-dropdown pf-m-align-right"
                 widget-type="InsightsOverflowActions"
               >
                 <DropdownToggle
@@ -267,7 +267,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                     Object {
                       "current": <div
                         aria-label="Overflow actions"
-                        class="pf-c-dropdown"
+                        class="pf-c-dropdown pf-m-align-right"
                         widget-type="InsightsOverflowActions"
                       >
                         <button
@@ -320,7 +320,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                       Object {
                         "current": <div
                           aria-label="Overflow actions"
-                          class="pf-c-dropdown"
+                          class="pf-c-dropdown pf-m-align-right"
                           widget-type="InsightsOverflowActions"
                         >
                           <button
@@ -691,7 +691,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             >
               <div
                 aria-label="Overflow actions"
-                className="pf-c-dropdown"
+                className="pf-c-dropdown pf-m-align-right"
                 widget-type="InsightsOverflowActions"
               >
                 <DropdownToggle
@@ -706,7 +706,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     Object {
                       "current": <div
                         aria-label="Overflow actions"
-                        class="pf-c-dropdown"
+                        class="pf-c-dropdown pf-m-align-right"
                         widget-type="InsightsOverflowActions"
                       >
                         <button
@@ -759,7 +759,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       Object {
                         "current": <div
                           aria-label="Overflow actions"
-                          class="pf-c-dropdown"
+                          class="pf-c-dropdown pf-m-align-right"
                           widget-type="InsightsOverflowActions"
                         >
                           <button
