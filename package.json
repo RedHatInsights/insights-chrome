@@ -114,7 +114,7 @@
     "@babel/runtime": "^7.4.4",
     "@patternfly/patternfly": "^2.57.0",
     "@patternfly/react-core": "^3.134.2",
-    "@patternfly/react-icons": "^3.14.19",
+    "@patternfly/react-icons": "^3.14.40",
     "@redhat-cloud-services/entitlements-client": "^1.0.18",
     "@redhat-cloud-services/frontend-components": "0.0.48",
     "@redhat-cloud-services/frontend-components-inventory": "0.0.50",
