@@ -13,10 +13,10 @@ const RootApp = ({
         <Fragment>
             <div
                 className="pf-c-drawer__content"
-                ouia-page-type={activeApp || appId}
-                ouia-page-group={activeLocation}
-                {...pageAction && { 'ouia-page-action': pageAction }}
-                {...pageObjectId && { 'ouia-page-object-id': pageObjectId }}
+                data-ouia-page-type={activeApp || appId}
+                data-ouia-page-group={activeLocation}
+                {...pageAction && { 'data-ouia-page-action': pageAction }}
+                {...pageObjectId && { 'data-ouia-page-object-id': pageObjectId }}
             >
                 <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
                     <section
@@ -40,6 +40,7 @@ const RootApp = ({
                         </div>
                     </section>
                 </main>
+                <main className="pf-c-page__main" id="no-access"></main>
             </div>
             <aside className="pf-c-drawer__panel">
                 <div className="pf-c-drawer__panel-body" />

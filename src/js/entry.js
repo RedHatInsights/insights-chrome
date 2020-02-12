@@ -13,8 +13,11 @@ import { safeLoad } from 'js-yaml';
 import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
+import NoAccess from './App/NoAccess';
 
+const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
+import { fetchPermissions } from './rbac/fetchPermissions';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -36,18 +39,13 @@ export function chromeInit(libjwt) {
 
     // Init JWT first.
     const jwtAndNavResolver = libjwt.initPromise
-    .then(libjwt.jwt.getUserInfo)
-    .then((user) => {
-        // Log in the user
+    .then(async () => {
+        const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        // Then, generate the global nav from the source of truth.
-        // We use the JWT token as part of the cache key.
-        return sourceOfTruth(libjwt.jwt.getEncodedToken())
-        // Gets the navigation for the current bundle.
-        .then(loadNav)
-        // Updates Redux's state with the new nav.
-        .then(chromeNavUpdate)
-        .then(() => loadChrome(user));
+        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+        const navigationData = await loadNav(navigationYml);
+        chromeNavUpdate(navigationData);
+        loadChrome(user);
     })
     .catch(() => allowUnauthed() && loadChrome(false));
 
@@ -124,6 +122,9 @@ export function bootstrap(libjwt, initFunc) {
             isBeta: () => {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
+            getUserPermissions: () => {
+                return fetchPermissions(libjwt.jwt.getEncodedToken());
+            },
             init: initFunc
         },
         loadInventory,
@@ -134,8 +135,8 @@ export function bootstrap(libjwt, initFunc) {
 }
 
 // Loads the navigation for the current bundle.
-function loadNav(yamlConfig) {
-    const groupedNav = getNavFromConfig(safeLoad(yamlConfig));
+async function loadNav(yamlConfig) {
+    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
 
     const splitted = location.pathname.split('/') ;
     const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
@@ -207,4 +208,35 @@ export function rootApp() {
             pageRoot
         );
     }
+}
+
+export function noAccess() {
+    const { store } = spinUpStore();
+    window.insights.chrome.auth.getUser().then(({ entitlements }) => {
+        // rhel has different entitlements key and URL partial
+        entitlements.rhel = entitlements.smart_management;
+        const path = location.pathname.split('/');
+        const apps = Object.keys(entitlements);
+
+        /* eslint-disable camelcase */
+        const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
+            // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
+            return path.includes(app) && is_entitled;
+        });
+        /* eslint-enable camelcase */
+
+        // also grant access to other pages like settings/general
+        const isTrackedApp = path.some(value => apps.includes(value));
+        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
+            document.getElementById('root').style.display = 'none';
+            document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
+            render(
+                <Provider store={ store }>
+                    <NoAccess />
+                </Provider>,
+                document.querySelector('#no-access')
+            );
+        }
+    })
+    .catch(log('Error fetching user entitlements!'));
 }

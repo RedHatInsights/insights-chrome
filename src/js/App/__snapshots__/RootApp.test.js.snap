@@ -44,6 +44,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -59,8 +63,8 @@ exports[`RootApp should render correctly 1`] = `
 Array [
   <div
     class="pf-c-drawer__content"
-    ouia-page-group="some-location"
-    ouia-page-type="some-app"
+    data-ouia-page-group="some-location"
+    data-ouia-page-type="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -101,6 +105,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -116,9 +124,9 @@ exports[`RootApp should render correctly with pageAction 1`] = `
 Array [
   <div
     class="pf-c-drawer__content"
-    ouia-page-action="some-action"
-    ouia-page-group="some-location"
-    ouia-page-type="some-app"
+    data-ouia-page-action="some-action"
+    data-ouia-page-group="some-location"
+    data-ouia-page-type="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -159,6 +167,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -174,9 +186,9 @@ exports[`RootApp should render correctly with pageObjectId 1`] = `
 Array [
   <div
     class="pf-c-drawer__content"
-    ouia-page-group="some-location"
-    ouia-page-object-id="some-object-id"
-    ouia-page-type="some-app"
+    data-ouia-page-group="some-location"
+    data-ouia-page-object-id="some-object-id"
+    data-ouia-page-type="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -217,6 +229,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
@@ -232,10 +248,10 @@ exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = 
 Array [
   <div
     class="pf-c-drawer__content"
-    ouia-page-action="some-action"
-    ouia-page-group="some-location"
-    ouia-page-object-id="some-object-id"
-    ouia-page-type="some-app"
+    data-ouia-page-action="some-action"
+    data-ouia-page-group="some-location"
+    data-ouia-page-object-id="some-object-id"
+    data-ouia-page-type="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -276,6 +292,10 @@ Array [
         </div>
       </section>
     </main>
+    <main
+      class="pf-c-page__main"
+      id="no-access"
+    />
   </div>,
   <aside
     class="pf-c-drawer__panel"
