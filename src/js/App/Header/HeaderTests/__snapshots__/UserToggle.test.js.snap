@@ -52,7 +52,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             <React.Fragment />,
             <DropdownSeparator />,
             <DropdownItem
-              href="https://access.qa.redhat.com/user"
+              href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -105,7 +105,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               <React.Fragment />,
               <DropdownSeparator />,
               <DropdownItem
-                href="https://access.qa.redhat.com/user"
+                href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -159,7 +159,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   <React.Fragment />,
                   <DropdownSeparator />,
                   <DropdownItem
-                    href="https://access.qa.redhat.com/user"
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -214,7 +214,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   <React.Fragment />,
                   <DropdownSeparator />,
                   <DropdownItem
-                    href="https://access.qa.redhat.com/user"
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -470,7 +470,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               User management
             </DropdownItem>,
             <DropdownItem
-              href="https://access.qa.redhat.com/user"
+              href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -530,7 +530,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                 User management
               </DropdownItem>,
               <DropdownItem
-                href="https://access.qa.redhat.com/user"
+                href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -591,7 +591,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     User management
                   </DropdownItem>,
                   <DropdownItem
-                    href="https://access.qa.redhat.com/user"
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -653,7 +653,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     User management
                   </DropdownItem>,
                   <DropdownItem
-                    href="https://access.qa.redhat.com/user"
+                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -874,7 +874,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       <React.Fragment />,
       <DropdownSeparator />,
       <DropdownItem
-        href="https://access.qa.redhat.com/user"
+        href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -928,7 +928,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       <React.Fragment />,
       <DropdownSeparator />,
       <DropdownItem
-        href="https://access.qa.redhat.com/user"
+        href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
