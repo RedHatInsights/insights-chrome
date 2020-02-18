@@ -39,7 +39,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         ] : [],
         <DropdownItem
             key="My Profile"
-            href={`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/user`}
+            href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/wapps/ugc/protected/personalInfo.html`}
             target="_blank"
             rel='noopener noreferrer'>
                 My profile
