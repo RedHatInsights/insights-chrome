@@ -76,6 +76,16 @@ To activate certain app within your app (your app is using some kind of router a
 
 You can also use Chrome to update a page action and object ID for OUIA. You can use `insights.chrome.appAction('action')` to activate a certain action, and `insights.chrome.appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `insights.chrome.appAction('edit-name')` and then `insights.chrome.appObjectId(5)`. Once the user is done editing, you have to call `insights.chrome.appAction()` and `insights.chrome.appObjectId()` in order to indicate that the action is done.
 
+## Permissions
+
+List of available permissions methods:
+ * `isOrgAdmin` - test if logged in user is organization admin
+ * `isActive` - test if logged in user is active
+ * `isInternal` - test if logged in user is internal
+ * `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as rgument
+ * `isProd` - test if current environment is production (prod-beta and prod-stable)
+ * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
+
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
 entire app or to watch files.
