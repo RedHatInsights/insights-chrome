@@ -122,8 +122,8 @@ export function bootstrap(libjwt, initFunc) {
             isBeta: () => {
                 return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
             },
-            getUserPermissions: () => {
-                return fetchPermissions(libjwt.jwt.getEncodedToken());
+            getUserPermissions: (app = '') => {
+                return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
             },
             init: initFunc
         },
