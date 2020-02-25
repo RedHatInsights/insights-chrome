@@ -27,6 +27,8 @@ export function pageAllowsUnentitled() {
     if (pathname === '/' ||
         pathname === '/beta' ||
         pathname === '/beta/' ||
+        pathname.indexOf('/subscriptions') === 0 ||
+        pathname.indexOf('/beta/subscriptions') === 0 ||
         pathname.indexOf('/openshift') === 0 ||
         pathname.indexOf('/beta/openshift') === 0) {
         return true;

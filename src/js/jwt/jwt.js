@@ -243,6 +243,7 @@ exports.getUserInfo = () => {
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
     if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
+        console.log(priv.keycloak.tokenParsed);
         return insightsUser(priv.keycloak.tokenParsed);
     }
 
