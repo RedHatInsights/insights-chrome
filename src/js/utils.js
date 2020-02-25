@@ -42,6 +42,8 @@ export function pageRequiresAuthentication() {
         section === 'cost-management'   ||
         section === 'apps'              ||
         section === 'ansible'           ||
+        section === 'subscriptions'     ||
+        section === 'settings'          ||
         section === 'migrations') {
         return true;
     }
