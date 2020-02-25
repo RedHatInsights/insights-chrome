@@ -29,6 +29,8 @@ export function pageAllowsUnentitled() {
         pathname === '/beta/' ||
         pathname.indexOf('/subscriptions') === 0 ||
         pathname.indexOf('/beta/subscriptions') === 0 ||
+        pathname.indexOf('/settings') === 0 ||
+        pathname.indexOf('/beta/settings') === 0 ||
         pathname.indexOf('/openshift') === 0 ||
         pathname.indexOf('/beta/openshift') === 0) {
         return true;
@@ -45,7 +47,6 @@ export function pageRequiresAuthentication() {
         section === 'apps'              ||
         section === 'ansible'           ||
         section === 'subscriptions'     ||
-        section === 'settings'          ||
         section === 'migrations') {
         return true;
     }
