@@ -7,7 +7,7 @@ const pathMapper = {
     insights: 'insights',
     openshift: 'openshift',
     migrations: 'migrations',
-    ansible: 'ansible',
+    ansible: 'ansible'
 };
 
 function getWindow() {
