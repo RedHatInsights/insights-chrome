@@ -1,10 +1,13 @@
 import { visibilityFunctions, isVisible } from '../consts';
 
 export let getNavFromConfig = async (masterConfig) => {
-    return await Object.keys(masterConfig).filter(appId => masterConfig[appId].top_level).reduce(async (acc, appId) => ({
-        ...await acc,
-        [appId]: await getAppData(appId, 'routes', masterConfig)
-    }), {});
+    return await Object.keys(masterConfig).filter(appId => masterConfig[appId].top_level).reduce(async (acc, appId) => {
+        const routes = await getAppData(appId, 'routes', masterConfig);
+        return {
+            ...await acc,
+            ...routes && { [appId]: routes }
+        };
+    }, {});
 };
 
 export async function calculateVisibility({ permissions: appPermisions }, { permissions, id }, groupVisibility) {
@@ -71,6 +74,10 @@ async function getAppData(appId, propName, masterConfig) {
 
         if (routes && routes.length > 0) {
             appData[propName] = routes;
+        }
+
+        if (routes && routes.length === 0 &&  Object.prototype.hasOwnProperty.call(app.frontend, 'sub_apps')) {
+            return undefined;
         }
 
         return appData;

@@ -94,6 +94,17 @@
         },
         "title": "appE"
     },
+    "appF": {
+      "top_level": "someotherstuff",
+      "routes": "fakeroutes",
+      "frontend": {
+          "sub_apps": [
+              {
+                  "id": "not_visible"
+              }
+          ]},
+      "title": "appD"
+    },
     "insights": {
         "frontend": {
             "title": "Bla"

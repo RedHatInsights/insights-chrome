@@ -36,4 +36,8 @@ describe('globalNav with permissions', () => {
         expect(calculatedNav.appD.routes[0].id).toBe('subid1');
         expect(calculatedNav.appD.routes[1].id).toBe('insights');
     });
+
+    test('appF', () => {
+        expect(calculatedNav.appF).not.toBeDefined();
+    });
 });
