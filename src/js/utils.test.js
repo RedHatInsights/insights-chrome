@@ -20,6 +20,9 @@ const testData = [
     { auth: true,  path: '/ansible', sec: 'ansible' },
     { auth: true,  path: '/ansible/foo', sec: 'ansible' },
     { auth: true,  path: '/ansible/foo/bar', sec: 'ansible' },
+    { auth: true,  path: '/subscriptions', sec: 'subscriptions' },
+    { auth: true,  path: '/subscriptions/foo', sec: 'subscriptions' },
+    { auth: true,  path: '/subscriptions/foo/bar', sec: 'subscriptions' },
     { auth: false, path: '/', sec: '' },
     { auth: false, path: '/beta', sec: '' },
     { auth: false, path: '/404', sec: '404' }
