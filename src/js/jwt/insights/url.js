@@ -7,9 +7,10 @@ module.exports = (env) => Object.entries(env)
     const urlFound = values.url.some(url => url === location.hostname);
     if (urlFound) {
         log(`Found pen test cookie, using QA auth`);
-        if(cookie.get('x-rh-insights-pentest')) {
+        if (cookie.get('x-rh-insights-pentest')) {
             return 'https://sso.qa.redhat.com/auth';
         };
+    
         log(`SSO: ${values.sso}`);
         log(`ENV: ${keys}`);
         return values.sso;
