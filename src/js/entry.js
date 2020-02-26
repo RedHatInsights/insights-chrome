@@ -213,29 +213,31 @@ export function rootApp() {
 export function noAccess() {
     const { store } = spinUpStore();
     window.insights.chrome.auth.getUser().then(({ entitlements }) => {
-        // rhel has different entitlements key and URL partial
-        entitlements.rhel = entitlements.smart_management;
-        const path = location.pathname.split('/');
-        const apps = Object.keys(entitlements);
+        if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
+            // rhel has different entitlements key and URL partial
+            entitlements.rhel = entitlements.smart_management;
+            const path = location.pathname.split('/');
+            const apps = Object.keys(entitlements);
 
-        /* eslint-disable camelcase */
-        const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
+            /* eslint-disable camelcase */
+            const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
             // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
-            return path.includes(app) && is_entitled;
-        });
-        /* eslint-enable camelcase */
+                return path.includes(app) && is_entitled;
+            });
+            /* eslint-enable camelcase */
 
-        // also grant access to other pages like settings/general
-        const isTrackedApp = path.some(value => apps.includes(value));
-        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
-            document.getElementById('root').style.display = 'none';
-            document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
-            render(
-                <Provider store={ store }>
-                    <NoAccess />
-                </Provider>,
-                document.querySelector('#no-access')
-            );
+            // also grant access to other pages like settings/general
+            const isTrackedApp = path.some(value => apps.includes(value));
+            if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
+                document.getElementById('root').style.display = 'none';
+                document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
+                render(
+                    <Provider store={ store }>
+                        <NoAccess />
+                    </Provider>,
+                    document.querySelector('#no-access')
+                );
+            }
         }
     })
     .catch(log('Error fetching user entitlements!'));
