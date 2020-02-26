@@ -33,9 +33,9 @@ export const visibilityFunctions = {
     },
     isEntitled: async (appName) => {
         const { entitlements } = await insights.chrome.auth.getUser();
-        return appName ? Boolean(entitlements[appName] && entitlements[appName].is_entitled) :
+        return entitlements && appName ? Boolean(entitlements[appName] && entitlements[appName].is_entitled) :
             // eslint-disable-next-line camelcase
-            Object.entries(entitlements).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
+            Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
     },
     isProd: () => insights.chrome.isProd,
     isBeta: () => insights.chrome.isBeta(),
