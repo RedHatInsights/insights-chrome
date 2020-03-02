@@ -2,7 +2,7 @@ const analytics = require('./analytics');
 const user      = require('./jwt/insights/user');
 const token     = require('../../testdata/token.json');
 const externalToken = require('../../testdata/externalToken.json');
-const ibmToken = require('../../testdata/ibmToken.json')
+const ibmToken = require('../../testdata/ibmToken.json');
 
 describe('User + Analytics', () => {
     const getPendoConf = analytics.__get__('getPendoConf');
