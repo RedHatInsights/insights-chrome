@@ -15,9 +15,6 @@ const aboutButton = {
     widget: 'InsightsFAQ',
     items: [
         {
-            title: 'Help & assistance',
-            url: 'https://access.redhat.com/help/'
-        }, {
             title: 'Customer support',
             url: 'https://access.redhat.com/support'
         }, {
@@ -51,7 +48,7 @@ class Tools extends Component {
     constructor(props) {
         super(props);
         this.onModalToggle = this.onModalToggle.bind(this);
-        aboutButton.items[4].onClick = this.onModalToggle.bind(this);
+        aboutButton.items[3].onClick = this.onModalToggle.bind(this);
         this.state = {
             isModalOpen: false
         };
