@@ -28,10 +28,6 @@ exports[`Tools should render correctly 1`] = `
         dropdownItems={
           Array [
             Object {
-              "title": "Help & assistance",
-              "url": "https://access.redhat.com/help/",
-            },
-            Object {
               "title": "Customer support",
               "url": "https://access.redhat.com/support",
             },
