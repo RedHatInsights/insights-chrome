@@ -2,6 +2,7 @@ const analytics = require('./analytics');
 const user      = require('./jwt/insights/user');
 const token     = require('../../testdata/token.json');
 const externalToken = require('../../testdata/externalToken.json');
+const ibmToken = require('../../testdata/ibmToken.json')
 
 describe('User + Analytics', () => {
     const getPendoConf = analytics.__get__('getPendoConf');
@@ -29,6 +30,20 @@ describe('User + Analytics', () => {
                 },
                 visitor: {
                     id: '5299389',
+                    internal: false,
+                    lang: 'en_US'
+                }
+            });
+        });
+
+        test('should build a valid IBM pendo config', () => {
+            const conf = getPendoConf(buildUser(ibmToken).identity);
+            expect(conf).toMatchObject({
+                account: {
+                    id: '540155'
+                },
+                visitor: {
+                    id: '5299389_ibm',
                     internal: false,
                     lang: 'en_US'
                 }
