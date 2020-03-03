@@ -105,6 +105,15 @@
           ]},
       "title": "appD"
     },
+    "appG": {
+        "top_level": "hue",
+        "routes": "fakeroutes",
+        "permissions": {
+            "method": "hasPermissions",
+            "args": [ ["something:terrible:happened"] ]
+        },
+        "title": "appG"
+    },
     "insights": {
         "frontend": {
             "title": "Bla"
