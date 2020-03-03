@@ -39,6 +39,10 @@ export const visibilityFunctions = {
     },
     isProd: () => insights.chrome.isProd,
     isBeta: () => insights.chrome.isBeta(),
+    hasPermissions: async (permissions = []) => {
+        const userPermissions = await insights.chrome.getUserPermissions();
+        return userPermissions && permissions.every(item => userPermissions.find(({ permission }) => permission === item));
+    },
     apiRequest: async ({ url, method, ...options }) => {
         // TODO: add caching
         return instance.axios({
