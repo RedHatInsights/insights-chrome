@@ -1,6 +1,8 @@
 const masterConfig = require('../../../testdata/masterConfig.json');
 const masterConfigPermissions = require('../../../testdata/masterConfigPermissions.json');
 const navFunctions = require('./globalNav');
+const mock = require('../../__mocks__/rbacApi').mock;
+const mockedRbac = require('../../../testdata/rbacAccess.json');
 
 const globalNav = { appA: { title: 'title1', id: 'appA', routes: [{ id: 'subid1', title: 'subtitle1' }] } };
 
@@ -39,5 +41,10 @@ describe('globalNav with permissions', () => {
 
     test('appF', () => {
         expect(calculatedNav.appF).not.toBeDefined();
+    });
+
+    test('appG, should have empty navigation', () => {
+        mock.onGet('/api/rbac/v1/access/?application=&limit=50').reply(200, mockedRbac);
+        expect(calculatedNav.appG).not.toBeDefined();
     });
 });
