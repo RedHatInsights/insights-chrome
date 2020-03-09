@@ -10,9 +10,13 @@ function isInternalFlag(email, isInternal) {
 
     if (email.includes('redhat') || isInternal) {
         return '_redhat';
-    } else {
-        return '';
     }
+
+    if (email.includes('ibm')) {
+        return '_ibm';
+    }
+
+    return '';
 }
 
 function getPendoConf(data) {
