@@ -37,7 +37,7 @@ exports[`Tools should render correctly 1`] = `
             },
             Object {
               "onClick": [Function],
-              "title": "API Documentation",
+              "title": "API documentation",
             },
             Object {
               "onClick": [Function],
