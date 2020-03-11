@@ -21,7 +21,7 @@ const aboutButton = {
             title: 'Training',
             url: 'https://www.redhat.com/en/services/training-and-certification'
         }, {
-            title: 'API Documentation',
+            title: 'API documentation',
             onClick: () => window.location.href = `${document.baseURI}docs/api`
         }, {
             title: 'About'
