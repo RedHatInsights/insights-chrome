@@ -82,9 +82,10 @@ List of available permissions methods:
  * `isOrgAdmin` - test if logged in user is organization admin
  * `isActive` - test if logged in user is active
  * `isInternal` - test if logged in user is internal
- * `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as rgument
+ * `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as an argument
  * `isProd` - test if current environment is production (prod-beta and prod-stable)
  * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
+ * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission']
 
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the

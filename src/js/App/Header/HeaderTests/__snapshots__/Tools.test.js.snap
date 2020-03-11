@@ -16,10 +16,6 @@ exports[`Tools should render correctly 1`] = `
         dropdownItems={
           Array [
             Object {
-              "title": "Help & assistance",
-              "url": "https://access.redhat.com/help/",
-            },
-            Object {
               "title": "Customer support",
               "url": "https://access.redhat.com/support",
             },
@@ -29,7 +25,7 @@ exports[`Tools should render correctly 1`] = `
             },
             Object {
               "onClick": [Function],
-              "title": "API Documentation",
+              "title": "API documentation",
             },
             Object {
               "onClick": [Function],

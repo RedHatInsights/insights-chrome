@@ -22,7 +22,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             { accountNumber > -1 &&
                 <DropdownItem key="Account" isDisabled>
                     <dl className='ins-c-dropdown-item__stack'>
-                        <dt className="ins-c-dropdown-item__stack--header">Account Number:</dt>
+                        <dt className="ins-c-dropdown-item__stack--header">Account number:</dt>
                         <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
                     </dl>
                 </DropdownItem>
