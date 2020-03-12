@@ -23,7 +23,8 @@ function getPendoConf(data) {
         visitor: {
             id: accountID,
             internal: data.user.is_internal,
-            lang: data.user.locale
+            lang: data.user.locale,
+            isOrgAdmin: data.user.is_org_admin
         },
         account: {
             // TODO add in customer name as name:
