@@ -44,6 +44,14 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             rel='noopener noreferrer'>
                 My profile
         </DropdownItem>,
+        ...window.insights.chrome.isBeta() ? [
+            <DropdownItem
+                key="User preferences"
+                href="./user-preferences"
+            >
+                    User preferences
+            </DropdownItem>
+        ] : [],
         <DropdownItem
             key="logout"
             component="button"
