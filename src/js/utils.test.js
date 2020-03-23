@@ -23,6 +23,9 @@ const testData = [
     { auth: true,  path: '/subscriptions', sec: 'subscriptions' },
     { auth: true,  path: '/subscriptions/foo', sec: 'subscriptions' },
     { auth: true,  path: '/subscriptions/foo/bar', sec: 'subscriptions' },
+    { auth: true,  path: '/settings', sec: 'settings' },
+    { auth: true,  path: '/settings/foo', sec: 'settings' },
+    { auth: true,  path: '/settings/foo/bar', sec: 'settings' },
     { auth: false, path: '/', sec: '' },
     { auth: false, path: '/beta', sec: '' },
     { auth: false, path: '/404', sec: '404' }

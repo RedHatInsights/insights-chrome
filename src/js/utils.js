@@ -43,7 +43,8 @@ export function pageRequiresAuthentication() {
         section === 'apps'              ||
         section === 'ansible'           ||
         section === 'migrations'        ||
-        section === 'subscriptions') {
+        section === 'subscriptions'     ||
+        section === 'settings') {
         return true;
     }
 

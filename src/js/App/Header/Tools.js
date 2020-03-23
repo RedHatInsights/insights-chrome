@@ -9,6 +9,8 @@ import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
+import PropTypes from 'prop-types';
+
 const aboutButton = {
     title: 'FAQ',
     icon: QuestionCircleIcon,
@@ -21,7 +23,7 @@ const aboutButton = {
             title: 'Training',
             url: 'https://www.redhat.com/en/services/training-and-certification'
         }, {
-            title: 'API Documentation',
+            title: 'API documentation',
             onClick: () => window.location.href = `${document.baseURI}docs/api`
         }, {
             title: 'About'
@@ -33,16 +35,21 @@ const actions = [
     aboutButton
 ];
 
-const settingsButton = (
+const SettingsButton = ({ isDisabled }) => (
     <ToolbarItem>
         <Button variant="plain"
             aria-label="Go to settings"
             widget-type='SettingsButton'
+            isDisabled={ isDisabled }
             onClick={() => window.location.href = `${document.baseURI}settings/`}>
             <CogIcon/>
         </Button>
     </ToolbarItem>
 );
+
+SettingsButton.propTypes = {
+    isDisabled: PropTypes.bool
+};
 
 class Tools extends Component {
     constructor(props) {
@@ -50,9 +57,21 @@ class Tools extends Component {
         this.onModalToggle = this.onModalToggle.bind(this);
         aboutButton.items[3].onClick = this.onModalToggle.bind(this);
         this.state = {
-            isModalOpen: false
+            isModalOpen: false,
+            isSettingsDisabled: true
         };
     }
+
+    componentDidMount() {
+        window.insights.chrome.auth.getUser().then((user)=> user.identity.account_number && this.handleSettingsCog());
+    }
+
+    handleSettingsCog() {
+        this.setState({
+            isSettingsDisabled: false
+        });
+    }
+
     onModalToggle() {
         this.setState({
             isModalOpen: !this.state.isModalOpen
@@ -60,12 +79,12 @@ class Tools extends Component {
     }
 
     render() {
-        const { isModalOpen } = this.state;
+        const { isModalOpen, isSettingsDisabled } = this.state;
         return (
             <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
                 <Toolbar>
                     <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
-                        { settingsButton }
+                        { <SettingsButton isDisabled={ isSettingsDisabled }/> }
                         { actions.map((oneItem, key) => (
                             oneItem.items ?
                                 <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :
