@@ -13,6 +13,7 @@ exports[`Tools should render correctly 1`] = `
         isDisabled={true}
       />
       <ToolbarToggle
+        className="ins-c-toolbar__menu-help"
         dropdownItems={
           Array [
             Object {
@@ -34,7 +35,9 @@ exports[`Tools should render correctly 1`] = `
           ]
         }
         icon={[Function]}
+        id="HelpMenu"
         key="0"
+        widget-type="HelpMenu"
       />
     </ToolbarGroup>
     <ToolbarGroup>

@@ -56,13 +56,17 @@ class ToolbarToggle extends Component {
             </DropdownItem>
         );
 
-        const toggle = <DropdownToggle iconComponent={null} onToggle={this.onToggle}>
+        const toggle = <DropdownToggle
+            widget-type={this.props.widgetType}
+            className={this.props.className}
+            id={this.props.id}
+            iconComponent={null}
+            onToggle={this.onToggle}>
             <this.props.icon />
         </DropdownToggle>;
 
         return (
             <Dropdown
-                aria-label='Settings'
                 position={DropdownPosition.right}
                 toggle={toggle}
                 isOpen={this.state.isOpen}

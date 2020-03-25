@@ -2,7 +2,6 @@
 
 exports[`ToolbarToggle should render correctly 1`] = `
 <Dropdown
-  aria-label="Settings"
   dropdownItems={
     Array [
       <DropdownItem
