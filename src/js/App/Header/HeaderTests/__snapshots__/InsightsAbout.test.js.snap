@@ -98,7 +98,7 @@ exports[`Copyright should render 1`] = `
   <p
     className="copyright pf-m-spacer-xl-on-lg"
   >
-    Copyright © 2019 Red Hat, Inc.
+    Copyright © 2020 Red Hat, Inc.
   </p>
   <nav>
     <ul

@@ -73,7 +73,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
         position="right"
         toggle={
           <DropdownToggle
+            className="ins-c-toolbar__menu-user"
+            id="UserMenu"
             onToggle={[Function]}
+            widget-type="UserMenu"
           >
             someFirstName someLastName
           </DropdownToggle>
@@ -125,7 +128,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
           position="right"
           toggle={
             <DropdownToggle
+              className="ins-c-toolbar__menu-user"
+              id="UserMenu"
               onToggle={[Function]}
+              widget-type="UserMenu"
             >
               someFirstName someLastName
             </DropdownToggle>
@@ -177,7 +183,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                 "isPlain": true,
                 "position": "right",
                 "toggle": <DropdownToggle
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   onToggle={[Function]}
+                  widget-type="UserMenu"
                 >
                   someFirstName someLastName
                 </DropdownToggle>,
@@ -243,7 +252,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               position="right"
               toggle={
                 <DropdownToggle
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   onToggle={[Function]}
+                  widget-type="UserMenu"
                 >
                   someFirstName someLastName
                 </DropdownToggle>
@@ -257,7 +269,8 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               >
                 <DropdownToggle
                   ariaHasPopup={true}
-                  id="pf-toggle-id-0"
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   isOpen={false}
                   isPlain={true}
                   key=".0"
@@ -273,9 +286,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                         <button
                           aria-expanded="false"
                           aria-haspopup="true"
-                          class="pf-c-dropdown__toggle pf-m-plain"
-                          id="pf-toggle-id-0"
+                          class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                          id="UserMenu"
                           type="button"
+                          widget-type="UserMenu"
                         >
                           <span
                             class="pf-c-dropdown__toggle-text"
@@ -301,11 +315,12 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                       </div>,
                     }
                   }
+                  widget-type="UserMenu"
                 >
                   <Toggle
                     ariaHasPopup={true}
-                    className=""
-                    id="pf-toggle-id-0"
+                    className="ins-c-toolbar__menu-user"
+                    id="UserMenu"
                     isActive={false}
                     isDisabled={false}
                     isFocused={false}
@@ -326,9 +341,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                           <button
                             aria-expanded="false"
                             aria-haspopup="true"
-                            class="pf-c-dropdown__toggle pf-m-plain"
-                            id="pf-toggle-id-0"
+                            class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                            id="UserMenu"
                             type="button"
+                            widget-type="UserMenu"
                           >
                             <span
                               class="pf-c-dropdown__toggle-text"
@@ -354,16 +370,18 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                         </div>,
                       }
                     }
+                    widget-type="UserMenu"
                   >
                     <button
                       aria-expanded={false}
                       aria-haspopup={true}
-                      className="pf-c-dropdown__toggle pf-m-plain"
+                      className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
                       disabled={false}
-                      id="pf-toggle-id-0"
+                      id="UserMenu"
                       onClick={[Function]}
                       onKeyDown={[Function]}
                       type="button"
+                      widget-type="UserMenu"
                     >
                       <span
                         className="pf-c-dropdown__toggle-text"
@@ -491,7 +509,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
         position="right"
         toggle={
           <DropdownToggle
+            className="ins-c-toolbar__menu-user"
+            id="UserMenu"
             onToggle={[Function]}
+            widget-type="UserMenu"
           >
             someFirstName someLastName
           </DropdownToggle>
@@ -550,7 +571,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
           position="right"
           toggle={
             <DropdownToggle
+              className="ins-c-toolbar__menu-user"
+              id="UserMenu"
               onToggle={[Function]}
+              widget-type="UserMenu"
             >
               someFirstName someLastName
             </DropdownToggle>
@@ -609,7 +633,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                 "isPlain": true,
                 "position": "right",
                 "toggle": <DropdownToggle
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   onToggle={[Function]}
+                  widget-type="UserMenu"
                 >
                   someFirstName someLastName
                 </DropdownToggle>,
@@ -682,7 +709,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               position="right"
               toggle={
                 <DropdownToggle
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   onToggle={[Function]}
+                  widget-type="UserMenu"
                 >
                   someFirstName someLastName
                 </DropdownToggle>
@@ -696,7 +726,8 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               >
                 <DropdownToggle
                   ariaHasPopup={true}
-                  id="pf-toggle-id-1"
+                  className="ins-c-toolbar__menu-user"
+                  id="UserMenu"
                   isOpen={false}
                   isPlain={true}
                   key=".0"
@@ -712,9 +743,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                         <button
                           aria-expanded="false"
                           aria-haspopup="true"
-                          class="pf-c-dropdown__toggle pf-m-plain"
-                          id="pf-toggle-id-1"
+                          class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                          id="UserMenu"
                           type="button"
+                          widget-type="UserMenu"
                         >
                           <span
                             class="pf-c-dropdown__toggle-text"
@@ -740,11 +772,12 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       </div>,
                     }
                   }
+                  widget-type="UserMenu"
                 >
                   <Toggle
                     ariaHasPopup={true}
-                    className=""
-                    id="pf-toggle-id-1"
+                    className="ins-c-toolbar__menu-user"
+                    id="UserMenu"
                     isActive={false}
                     isDisabled={false}
                     isFocused={false}
@@ -765,9 +798,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                           <button
                             aria-expanded="false"
                             aria-haspopup="true"
-                            class="pf-c-dropdown__toggle pf-m-plain"
-                            id="pf-toggle-id-1"
+                            class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                            id="UserMenu"
                             type="button"
+                            widget-type="UserMenu"
                           >
                             <span
                               class="pf-c-dropdown__toggle-text"
@@ -793,16 +827,18 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                         </div>,
                       }
                     }
+                    widget-type="UserMenu"
                   >
                     <button
                       aria-expanded={false}
                       aria-haspopup={true}
-                      className="pf-c-dropdown__toggle pf-m-plain"
+                      className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
                       disabled={false}
-                      id="pf-toggle-id-1"
+                      id="UserMenu"
                       onClick={[Function]}
                       onKeyDown={[Function]}
                       type="button"
+                      widget-type="UserMenu"
                     >
                       <span
                         className="pf-c-dropdown__toggle-text"
@@ -895,7 +931,10 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   position="right"
   toggle={
     <DropdownToggle
+      className="ins-c-toolbar__menu-user"
+      id="UserMenu"
       onToggle={[Function]}
+      widget-type="UserMenu"
     >
       someName
     </DropdownToggle>

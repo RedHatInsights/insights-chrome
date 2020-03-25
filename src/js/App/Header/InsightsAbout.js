@@ -18,7 +18,7 @@ import * as Sentry from '@sentry/browser';
 export const Copyright = () => (
     <div className='ins-c-footer__traditional-nav pf-l-flex pf-m-column
                     pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer'>
-        <p className='copyright pf-m-spacer-xl-on-lg'>Copyright © 2019 Red Hat, Inc.</p>
+        <p className='copyright pf-m-spacer-xl-on-lg'>Copyright © 2020 Red Hat, Inc.</p>
         <nav>
             <ul className='pf-l-flex pf-m-column pf-m-row-on-md'>
                 <li>
@@ -76,7 +76,8 @@ export class InsightsAbout extends Component {
                 { name: 'System Comparison', path: 'apps/drift/app.info.json', version: 'N/A' },
                 { name: 'Migration Analytics', path: 'apps/migration-analytics/app.info.json', version: 'N/A' },
                 { name: 'Automation Hub', path: 'apps/automation-hub/app.info.json', version: 'N/A' },
-                { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' }
+                { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' },
+                { name: 'Custom Policies', path: 'apps/custom-policies/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,
