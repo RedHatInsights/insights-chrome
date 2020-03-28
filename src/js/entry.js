@@ -14,6 +14,7 @@ import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
+import { visibilityFunctions } from './consts';
 
 const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
@@ -125,6 +126,7 @@ export function bootstrap(libjwt, initFunc) {
             getUserPermissions: (app = '') => {
                 return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
             },
+            visibilityFunctions,
             init: initFunc
         },
         loadInventory,
