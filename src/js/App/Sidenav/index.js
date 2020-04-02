@@ -11,7 +11,7 @@ const documentationLink = {
     openshift: 'https://docs.openshift.com/container-platform/latest/',
     subscriptions: 'https://access.redhat.com/products/subscription-central',
     'cost-management': 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
-    ansible: 'https://https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/1.0/'
+    ansible: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/1.0/'
 };
 
 export class SideNav extends Component {
