@@ -214,8 +214,6 @@ export function noAccess() {
     const { store } = spinUpStore();
     window.insights.chrome.auth.getUser().then(({ entitlements }) => {
         if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
-            // rhel has different entitlements key and URL partial
-            entitlements.rhel = entitlements.smart_management;
             const path = location.pathname.split('/');
             const apps = Object.keys(entitlements);
 

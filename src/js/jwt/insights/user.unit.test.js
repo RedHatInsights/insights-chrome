@@ -29,7 +29,6 @@ describe('User', () => {
         const tryBounceIfUnentitled = user.__get__('tryBounceIfUnentitled');
         const ents = {
             insights: { is_entitled: false },
-            smart_management: { is_entitled: false },
             openshift: { is_entitled: false },
             cost_management: { is_entitled: false }
         };
