@@ -23,7 +23,7 @@ const insightsLinks = {
         title: 'Subscription Watch',
         link: `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}subscriptions/`
     }
-}
+};
 
 export class Navigation extends Component {
     constructor(props) {
