@@ -18,6 +18,13 @@ const openshiftLinks = {
     }
 };
 
+const insightsLinks = {
+    subscriptionWatch: {
+        title: 'Subscription Watch',
+        link: `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}subscriptions/`
+    }
+}
+
 export class Navigation extends Component {
     constructor(props) {
         super(props);
@@ -122,16 +129,29 @@ export class Navigation extends Component {
                             }
                         })
                     }
+                    { (documentation || activeLocation === 'openshift' ||  activeLocation === 'insights') &&
+                        <NavItemSeparator/>
+                    }
+                    { activeLocation === 'insights' &&
+                        Object.entries(insightsLinks).map(
+                            ([key, value]) => {
+                                return <NavItem
+                                    key={key}
+                                    to={value.link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'>
+                                    {value.title}
+                                </NavItem>;
+                            }
+                        )
+                    }
                     { documentation &&
-                        <React.Fragment>
-                            <NavItemSeparator/>
-                            <NavItem
-                                className="ins-c-page__documentation"
-                                to={documentation}
-                                rel='noopener noreferrer'
-                                target='_blank'>Documentation
-                            </NavItem>
-                        </React.Fragment>
+                        <NavItem
+                            className="ins-c-page__documentation"
+                            to={documentation}
+                            rel='noopener noreferrer'
+                            target='_blank'>Documentation
+                        </NavItem>
                     }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
