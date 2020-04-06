@@ -77,7 +77,7 @@ export class InsightsAbout extends Component {
                 { name: 'Migration Analytics', path: 'apps/migration-analytics/app.info.json', version: 'N/A' },
                 { name: 'Automation Hub', path: 'apps/automation-hub/app.info.json', version: 'N/A' },
                 { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' },
-                { name: 'Custom Policies', path: 'apps/custom-policies/app.info.json', version: 'N/A' }
+                { name: 'Policies', path: 'apps/policies/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,
