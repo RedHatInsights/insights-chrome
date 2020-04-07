@@ -129,9 +129,6 @@ export class Navigation extends Component {
                             }
                         })
                     }
-                    { (documentation || activeLocation === 'openshift' ||  activeLocation === 'insights') &&
-                        <NavItemSeparator/>
-                    }
                     { activeLocation === 'insights' &&
                         Object.entries(insightsLinks).map(
                             ([key, value]) => {
@@ -146,12 +143,15 @@ export class Navigation extends Component {
                         )
                     }
                     { documentation &&
-                        <NavItem
-                            className="ins-c-page__documentation"
-                            to={documentation}
-                            rel='noopener noreferrer'
-                            target='_blank'>Documentation
-                        </NavItem>
+                        <React.Fragment>
+                            <NavItemSeparator/>
+                            <NavItem
+                                className="ins-c-page__documentation"
+                                to={documentation}
+                                rel='noopener noreferrer'
+                                target='_blank'>Documentation
+                            </NavItem>
+                        </React.Fragment>
                     }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
