@@ -21,7 +21,7 @@ const openshiftLinks = {
 const insightsLinks = {
     subscriptionWatch: {
         title: 'Subscription Watch',
-        link: `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}subscriptions/`
+        link: './subscriptions/'
     }
 };
 
