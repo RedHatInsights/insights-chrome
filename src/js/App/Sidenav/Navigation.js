@@ -18,6 +18,13 @@ const openshiftLinks = {
     }
 };
 
+const insightsLinks = {
+    subscriptionWatch: {
+        title: 'Subscription Watch',
+        link: './subscriptions/'
+    }
+};
+
 export class Navigation extends Component {
     constructor(props) {
         super(props);
@@ -121,6 +128,19 @@ export class Navigation extends Component {
                                 }
                             }
                         })
+                    }
+                    { activeLocation === 'insights' &&
+                        Object.entries(insightsLinks).map(
+                            ([key, value]) => {
+                                return <NavItem
+                                    key={key}
+                                    to={value.link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'>
+                                    {value.title}
+                                </NavItem>;
+                            }
+                        )
                     }
                     { documentation &&
                         <React.Fragment>
