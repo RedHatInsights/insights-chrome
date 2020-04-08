@@ -44,11 +44,6 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
             "routes": Array [],
             "title": "Red Hat Openshift Cluster Manager",
           },
-          "rhel": Object {
-            "id": "rhel",
-            "routes": Array [],
-            "title": "Cloud Management Services",
-          },
           "staging": Object {
             "id": "staging",
             "routes": Array [],
@@ -204,11 +199,6 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
               "id": "openshift",
               "routes": Array [],
               "title": "Red Hat Openshift Cluster Manager",
-            },
-            "rhel": Object {
-              "id": "rhel",
-              "routes": Array [],
-              "title": "Cloud Management Services",
             },
             "staging": Object {
               "id": "staging",
