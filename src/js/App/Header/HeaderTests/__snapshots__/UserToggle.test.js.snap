@@ -319,7 +319,6 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                 >
                   <Toggle
                     ariaHasPopup={true}
-                    bubbleEvent={false}
                     className="ins-c-toolbar__menu-user"
                     id="UserMenu"
                     isActive={false}
@@ -777,7 +776,6 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                 >
                   <Toggle
                     ariaHasPopup={true}
-                    bubbleEvent={false}
                     className="ins-c-toolbar__menu-user"
                     id="UserMenu"
                     isActive={false}
