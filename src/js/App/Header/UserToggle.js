@@ -47,7 +47,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         ...window.insights.chrome.isBeta() ? [
             <DropdownItem
                 key="User preferences"
-                href="./user-preferences"
+                href="./user-preferences/email"
             >
                     User preferences
             </DropdownItem>
@@ -87,7 +87,13 @@ export class UserToggle extends Component {
         const { account, isSmall, extraItems } = this.props;
         const toggle = isSmall ?
             <KebabToggle onToggle={this.onToggle} /> :
-            <DropdownToggle onToggle={this.onToggle}>{account.name}</DropdownToggle>;
+            <DropdownToggle
+                id='UserMenu'
+                className='ins-c-toolbar__menu-user'
+                widget-type='UserMenu'
+                onToggle={this.onToggle}>
+                {account.name}
+            </DropdownToggle>;
         return (
             <Dropdown
                 position={DropdownPosition.right}

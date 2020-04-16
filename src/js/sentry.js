@@ -38,9 +38,6 @@ function initSentry() {
         case 'insights':
             API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@sentry.io/1484024';
             break;
-        case 'rhel':
-            API_KEY = 'https://4eef42e265754c63bbd5da89e0d4870a@sentry.io/1484046';
-            break;
         case 'landing':
             API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@sentry.io/1484026';
             break;

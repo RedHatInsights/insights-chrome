@@ -2,7 +2,6 @@ const utils = require('../../utils');
 const log = require('../logger')('insights/user.js');
 const servicesApi = require('./entitlements');
 const pathMapper = {
-    rhel: 'smart_management',
     'cost-management': 'cost_management',
     insights: 'insights',
     openshift: 'openshift',
@@ -46,7 +45,7 @@ function buildUser(token) {
 function tryBounceIfUnentitled(data, section) {
     // only test this on the apps that are in valid sections
     // we need to keep /apps and other things functional
-    if (section !== 'insights' && section !== 'rhel' &&
+    if (section !== 'insights' &&
         section !== 'openshift' && section !== 'cost-management' &&
         section !== 'migrations' && section !== 'ansible' &&
         section !== 'subscriptions' && section !== 'settings') {

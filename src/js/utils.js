@@ -38,7 +38,6 @@ export function pageAllowsUnentitled() {
 export function pageRequiresAuthentication() {
     const section = getSection();
     if (section === 'insights'          ||
-        section === 'rhel'              ||
         section === 'cost-management'   ||
         section === 'apps'              ||
         section === 'ansible'           ||

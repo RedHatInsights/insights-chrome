@@ -14,7 +14,9 @@ import PropTypes from 'prop-types';
 const aboutButton = {
     title: 'FAQ',
     icon: QuestionCircleIcon,
-    widget: 'InsightsFAQ',
+    id: 'HelpMenu',
+    className: 'ins-c-toolbar__menu-help',
+    widget: 'HelpMenu',
     items: [
         {
             title: 'Customer support',
@@ -40,8 +42,9 @@ const SettingsButton = ({ isDisabled }) => (
         <Button variant="plain"
             aria-label="Go to settings"
             widget-type='SettingsButton'
+            className='ins-c-toolbar__button-settings'
             isDisabled={ isDisabled }
-            onClick={() => window.location.href = `${document.baseURI}settings/`}>
+            onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
             <CogIcon/>
         </Button>
     </ToolbarItem>
@@ -87,10 +90,18 @@ class Tools extends Component {
                         { <SettingsButton isDisabled={ isSettingsDisabled }/> }
                         { actions.map((oneItem, key) => (
                             oneItem.items ?
-                                <ToolbarToggle key={key} icon={oneItem.icon} dropdownItems={oneItem.items} /> :
+                                <ToolbarToggle
+                                    key={key}
+                                    icon={oneItem.icon}
+                                    id={oneItem.id}
+                                    className={oneItem.className}
+                                    widget-type={oneItem.widget}
+                                    dropdownItems={oneItem.items} /> :
                                 <ToolbarItem key={key} data-key={key}>
                                     <Button
                                         key={key}
+                                        id={oneItem.id}
+                                        className={oneItem.className}
                                         variant="plain"
                                         aria-label={`Overflow ${oneItem.title}`}
                                         widget-type={oneItem.widget}

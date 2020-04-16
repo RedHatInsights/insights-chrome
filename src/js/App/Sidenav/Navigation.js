@@ -15,6 +15,17 @@ const openshiftLinks = {
     feedback: {
         title: 'Cluster Manager Feedback',
         link: 'mailto:ocm-feedback@redhat.com'
+    },
+    marketplace: {
+        title: 'Red Hat Marketplace',
+        link: 'marketplace.redhat.com'
+    }
+};
+
+const insightsLinks = {
+    subscriptionWatch: {
+        title: 'Subscription Watch',
+        link: './subscriptions/'
     }
 };
 
@@ -121,6 +132,19 @@ export class Navigation extends Component {
                                 }
                             }
                         })
+                    }
+                    { activeLocation === 'insights' &&
+                        Object.entries(insightsLinks).map(
+                            ([key, value]) => {
+                                return <NavItem
+                                    key={key}
+                                    to={value.link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'>
+                                    {value.title}
+                                </NavItem>;
+                            }
+                        )
                     }
                     { documentation &&
                         <React.Fragment>

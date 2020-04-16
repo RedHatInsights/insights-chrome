@@ -19,11 +19,6 @@
         "routes": [],
         "title": "Red Hat Openshift Cluster Manager"
     },
-    "rhel": {
-        "id": "rhel",
-        "routes": [],
-        "title": "Cloud Management Services"
-    },
     "staging": {
         "id": "staging",
         "routes": [],
