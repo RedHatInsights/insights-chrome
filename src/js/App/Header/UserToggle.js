@@ -47,7 +47,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
         ...window.insights.chrome.isBeta() ? [
             <DropdownItem
                 key="User preferences"
-                href="./user-preferences"
+                href="./user-preferences/email"
             >
                     User preferences
             </DropdownItem>
