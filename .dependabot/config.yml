@@ -6,7 +6,7 @@ update_configs:
     default_reviewers:
       - "karelhala"
       - "ryelo"
-      - "tahmidefaz"
+      - "PanSpagetka"
     allowed_updates:
       - match:
           dependency_name: "@redhat-cloud-services/frontend*"

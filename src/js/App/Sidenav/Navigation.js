@@ -15,6 +15,10 @@ const openshiftLinks = {
     feedback: {
         title: 'Cluster Manager Feedback',
         link: 'mailto:ocm-feedback@redhat.com'
+    },
+    marketplace: {
+        title: 'Red Hat Marketplace',
+        link: 'marketplace.redhat.com'
     }
 };
 

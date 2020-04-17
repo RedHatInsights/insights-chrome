@@ -44,7 +44,7 @@ const SettingsButton = ({ isDisabled }) => (
             widget-type='SettingsButton'
             className='ins-c-toolbar__button-settings'
             isDisabled={ isDisabled }
-            onClick={() => window.location.href = `${document.baseURI}settings/`}>
+            onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
             <CogIcon/>
         </Button>
     </ToolbarItem>

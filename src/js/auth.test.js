@@ -10,7 +10,7 @@ function mockWindow(pathname) {
 
 describe('Auth', () => {
     describe('allowUnauthed', () => {
-        ['/insights', '/insights/foo', '/rhel/dashboard',
+        ['/insights', '/insights/foo', '/insights/dashboard',
             '/cost-management', '/openshift/clusters', '/openshift'].map(t => {
             test(`should not allow ${t}`, () => {
                 mockWindow(t);
