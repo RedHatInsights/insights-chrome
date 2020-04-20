@@ -398,14 +398,6 @@ exports[`Navigation should render corectly 1`] = `
     >
       Cluster Manager Feedback
     </NavItem>
-    <NavItem
-      key="marketplace"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="marketplace.redhat.com"
-    >
-      Red Hat Marketplace
-    </NavItem>
   </NavList>
 </Component>
 `;
@@ -505,14 +497,6 @@ exports[`Navigation should render correctly 2 1`] = `
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </NavItem>
-    <NavItem
-      key="marketplace"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="marketplace.redhat.com"
-    >
-      Red Hat Marketplace
     </NavItem>
   </NavList>
 </Component>
