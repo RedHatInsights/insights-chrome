@@ -29,6 +29,10 @@ const PUBLIC_EVENTS = {
                 fn({ navId: data.id, domEvent: data.event });
             }
         }
+    }),
+    NAVIGATION_TOGGLE: callback => ({
+        on: actionTypes.NAVIGATION_TOGGLE,
+        callback
     })
 };
 
