@@ -11,7 +11,6 @@ module.exports = (cachePrefix) => {
         if (response && response.request && response.request.fromCache !== true) {
             const last = lastActive('/config/main.yml', 'fallback');
             const keys = Object.keys(localStorage).filter(key => key.endsWith('config/main.yml') && key !== last);
-            localStorage.setItem('test', keys.length);
             deleteLocalStorageItems(keys);
         }
 
