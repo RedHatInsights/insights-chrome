@@ -212,7 +212,9 @@ function logout(bounce) {
 
     const isBeta = (window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '');
     const keys = Object.keys(localStorage).filter(key => (
-        key.endsWith('/api/entitlements/v1/services' || key.endsWith('/config/main.yml')) || key.startsWith('kc-callback')
+        key.endsWith('/api/entitlements/v1/services') ||
+        key.endsWith('/config/main.yml') ||
+        key.startsWith('kc-callback')
     ));
     deleteLocalStorageItems(keys);
     // Redirect to logout
