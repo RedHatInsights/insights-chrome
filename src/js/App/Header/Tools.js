@@ -37,7 +37,7 @@ const actions = [
     aboutButton
 ];
 
-const userToggleExtras = []
+const userToggleExtras = [];
 
 const SettingsButton = ({ isDisabled }) => (
     <ToolbarItem>
