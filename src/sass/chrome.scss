@@ -4,18 +4,10 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
 
 // Components
-@import 'node_modules/@patternfly/patternfly/components/Toolbar/toolbar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Page/page.scss';
-@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
-@import 'node_modules/@patternfly/patternfly/components/Nav/nav.scss';
-@import 'node_modules/@patternfly/patternfly/components/Button/button.scss';
-@import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
-@import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
+@import 'node_modules/@patternfly/patternfly/components/_all.scss';
 
 // Layouts
-@import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
-@import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/_all.scss';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
