@@ -16,6 +16,9 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
                 <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
+                { isOrgAdmin &&
+                    <dd className="ins-c-dropdown-item__stack--subValue">Org. Administrator</dd>
+                }
             </dl>
         </DropdownItem>,
         <React.Fragment key="account wrapper">
@@ -29,14 +32,6 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        ...isOrgAdmin ? [
-            <DropdownItem
-                key="User management"
-                href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
-                target="_blank" rel='noopener noreferrer'>
-                    User management
-            </DropdownItem>
-        ] : [],
         <DropdownItem
             key="My Profile"
             href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/wapps/ugc/protected/personalInfo.html`}
