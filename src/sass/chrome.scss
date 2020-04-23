@@ -3,6 +3,7 @@ $pf-global--image-path: './assets/images/';
 
 @import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
 
+// We need to import component styles and layouts because these could be reset by apps and we don't want that
 // Components
 @import 'node_modules/@patternfly/patternfly/components/_all.scss';
 
