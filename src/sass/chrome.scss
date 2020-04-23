@@ -3,12 +3,26 @@ $pf-global--image-path: './assets/images/';
 
 @import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
 
-// We need to import component styles and layouts because these could be reset by apps and we don't want that
 // Components
-@import 'node_modules/@patternfly/patternfly/components/_all.scss';
+@import 'node_modules/@patternfly/patternfly/components/Toolbar/toolbar.scss';
+@import 'node_modules/@patternfly/patternfly/components/Page/page.scss';
+@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
+@import 'node_modules/@patternfly/patternfly/components/Nav/nav.scss';
+@import 'node_modules/@patternfly/patternfly/components/Button/button.scss';
+@import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
+@import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
+@import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
+@import 'node_modules/@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
+@import 'node_modules/@patternfly/patternfly/components/ModalBox/modal-box.scss';
+@import 'node_modules/@patternfly/patternfly/components/Backdrop/backdrop.scss';
+@import 'node_modules/@patternfly/patternfly/components/Switch/switch.scss';
+@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
+
 
 // Layouts
-@import 'node_modules/@patternfly/patternfly/layouts/_all.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
