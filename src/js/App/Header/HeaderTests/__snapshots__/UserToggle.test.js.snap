@@ -496,17 +496,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                 >
                   someUsername
                 </dd>
+                <dd
+                  className="ins-c-dropdown-item__stack--subValue"
+                >
+                  Org. Administrator
+                </dd>
               </dl>
             </DropdownItem>,
             <React.Fragment />,
             <DropdownSeparator />,
-            <DropdownItem
-              href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              User management
-            </DropdownItem>,
             <DropdownItem
               href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
@@ -564,17 +562,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   >
                     someUsername
                   </dd>
+                  <dd
+                    className="ins-c-dropdown-item__stack--subValue"
+                  >
+                    Org. Administrator
+                  </dd>
                 </dl>
               </DropdownItem>,
               <React.Fragment />,
               <DropdownSeparator />,
-              <DropdownItem
-                href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                User management
-              </DropdownItem>,
               <DropdownItem
                 href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
@@ -633,17 +629,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       >
                         someUsername
                       </dd>
+                      <dd
+                        className="ins-c-dropdown-item__stack--subValue"
+                      >
+                        Org. Administrator
+                      </dd>
                     </dl>
                   </DropdownItem>,
                   <React.Fragment />,
                   <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    User management
-                  </DropdownItem>,
                   <DropdownItem
                     href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"
@@ -703,17 +697,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       >
                         someUsername
                       </dd>
+                      <dd
+                        className="ins-c-dropdown-item__stack--subValue"
+                      >
+                        Org. Administrator
+                      </dd>
                     </dl>
                   </DropdownItem>,
                   <React.Fragment />,
                   <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/usermgt/userList.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    User management
-                  </DropdownItem>,
                   <DropdownItem
                     href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                     rel="noopener noreferrer"

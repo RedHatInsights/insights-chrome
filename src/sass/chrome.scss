@@ -89,7 +89,12 @@ aside {
         * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
 
-    .ins-c-dropdown-item__stack--header { @include rem('font-size', 12px); }
+    .ins-c-dropdown-item__stack--header,
+    .ins-c-dropdown-item__stack--subValue {
+        font-size: var(--pf-global--FontSize--xs);
+    }
+
+    .ins-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
 
     .pf-c-page__header-brand-link img { @include rem('height', 30px); }
     .pf-c-page__header-brand-toggle svg {
