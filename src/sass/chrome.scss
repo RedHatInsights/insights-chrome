@@ -152,6 +152,13 @@ aside {
     .pf-c-button.pf-m-plain { top: 2px; }
 }
 
+.ins-c-loading-icon__home {
+    // This height and width are not PF variables. This will take an adjustment to the SVG itself
+    height: 34px;
+    width: 34px;
+    vertical-align: -0.1875em;
+}
+
 .ins-c-navigation__header-name--loading { width: 100%; }
 
 // abstract this
