@@ -18,7 +18,7 @@ const openshiftLinks = {
     },
     marketplace: {
         title: 'Red Hat Marketplace',
-        link: 'marketplace.redhat.com'
+        link: 'https://marketplace.redhat.com'
     }
 };
 
