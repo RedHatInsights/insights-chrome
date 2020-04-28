@@ -61,6 +61,7 @@ function initSentry() {
             if (error && error.message && error.message.match(/Request failed with status code 403/i)) {
                 return null;
             }
+
             return event;
         }
     });
