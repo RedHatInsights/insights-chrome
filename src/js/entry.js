@@ -183,8 +183,6 @@ function loadChrome(user) {
 
             store.dispatch(appNavClick(defaultActive));
 
-            const penTestClasses = window.insights.chrome.isPenTest() ? 'ins-c-pen-test' : '';
-
             render(
                 <Provider store={store}>
                     { user ? <Header /> : <UnauthedHeader /> }
@@ -193,7 +191,9 @@ function loadChrome(user) {
             );
 
             // Conditionally add classes if it's the pen testing environment
-            document.querySelector('header').classList.add(penTestClasses);
+            if (window.insights.chrome.isPenTest()) {
+                document.querySelector('header').classList.add('ins-c-pen-test');
+            }
 
             if (document.querySelector('aside')) {
                 render(
