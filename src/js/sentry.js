@@ -55,7 +55,15 @@ function initSentry() {
         dsn: API_KEY,
         environment: `Prod${appDetails.beta}`,
         maxBreadcrumbs: 50,
-        attachStacktrace: true
+        attachStacktrace: true,
+        beforeSend(event, hint) {
+            const error = hint.originalException;
+            if (error && error.message && error.message.match(/Request failed with status code 403/i)) {
+                return null;
+            } else {
+                return event;
+            }
+        }
     });
 }
 
