@@ -36,14 +36,29 @@ function initSentry() {
     let API_KEY;
     switch (appDetails.app.group) {
         case 'insights':
-            API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@sentry.io/1484024';
+            API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024"';
             break;
         case 'landing':
-            API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@sentry.io/1484026';
+            API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@o271843.ingest.sentry.io/1484026';
             break;
         case 'ansible':
-            API_KEY = 'https://03f062e075954433a296e71f243239fd@sentry.io/1769648';
+            API_KEY = 'https://03f062e075954433a296e71f243239fd@o271843.ingest.sentry.io/1769648';
             break;
+        case 'settings':
+            API_KEY = 'https://1002f82b7a444d48bc4c98d0b52f2155@o271843.ingest.sentry.io/5216681';
+            break;
+        case 'cost-management':
+            API_KEY = 'https://61d5da651248485fb89216773932666b@o271843.ingest.sentry.io/5216676';
+            break;
+        case 'migrations':
+            API_KEY = 'https://9dd048c85e524290b67ad98ff96c53ae@o271843.ingest.sentry.io/5216677';
+            break;
+        case 'subscriptions':
+            API_KEY = 'https://4bbe4ac7e9fa4507803de69f9453ce5d@o271843.ingest.sentry.io/5216678';
+            break;
+        case 'user-preferences':
+            API_KEY = 'https://eb32b0236ce045c9b0b9dcc7351c36bb@o271843.ingest.sentry.io/5216687';
+            break;        
     }
 
     // dsn: key
