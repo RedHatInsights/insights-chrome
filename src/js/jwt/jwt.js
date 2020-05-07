@@ -1,6 +1,6 @@
 // Imports
 import Keycloak from '@redhat-cloud-services/keycloak-js';
-import BroadcastChannel from 'broadcast-channel';
+import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';

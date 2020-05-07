@@ -105,7 +105,9 @@ export class UserToggle extends Component {
 UserToggle.propTypes = {
     account: PropTypes.shape({
         number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        name: PropTypes.string
+        name: PropTypes.string,
+        username: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        isOrgAdmin: PropTypes.bool
     }),
     isSmall: PropTypes.bool,
     extraItems: PropTypes.arrayOf(PropTypes.node)
