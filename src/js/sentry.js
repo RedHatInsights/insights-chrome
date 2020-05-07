@@ -36,7 +36,7 @@ function initSentry() {
     let API_KEY;
     switch (appDetails.app.group) {
         case 'insights':
-            API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024"';
+            API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024';
             break;
         case 'landing':
             API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@o271843.ingest.sentry.io/1484026';
@@ -58,7 +58,7 @@ function initSentry() {
             break;
         case 'user-preferences':
             API_KEY = 'https://eb32b0236ce045c9b0b9dcc7351c36bb@o271843.ingest.sentry.io/5216687';
-            break;        
+            break;
     }
 
     // dsn: key
