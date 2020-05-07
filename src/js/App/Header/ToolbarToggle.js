@@ -45,11 +45,11 @@ class ToolbarToggle extends Component {
                 // Because the urls are using 'a', don't use onClick for accessibility
                 // If it is a button, use the onClick prop
                 {
-                    ...url ? {
-                        href: url,
-                        target: '_blank',
-                        rel: 'noopener noreferrer'
-                    } : { onClick: (ev => this.onClick(ev, url, onClick)) }
+                ...url ? {
+                    href: url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer'
+                } : { onClick: (ev => this.onClick(ev, url, onClick)) }
                 }
             >
                 { title }
