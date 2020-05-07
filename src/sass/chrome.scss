@@ -161,6 +161,11 @@ aside {
 
 .ins-c-navigation__header-name--loading { width: 100%; }
 
+.pf-m-user-skeleton {
+    .ins-c-skeleton { width: 75px; }
+    .pf-c-dropdown__toggle-icon { height: 1em; }
+}
+
 // abstract this
 .ins-c-icon-inline {
     display: flex;
