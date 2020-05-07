@@ -43,13 +43,13 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             key="User preferences"
             href="./user-preferences/email"
         >
-            User preferences
+            User Preferences
         </DropdownItem>,
         <DropdownItem
             key="logout"
             component="button"
             onClick={() => window.insights.chrome.auth.logout(true)}>
-                Logout
+                Log out
         </DropdownItem>,
         [...extraItems]
     ];
