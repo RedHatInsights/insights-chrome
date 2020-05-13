@@ -4,6 +4,7 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownDirection,
     DropdownSeparator, KebabToggle, NotificationDrawer, NotificationDrawerBody, NotificationDrawerHeader, NotificationDrawerList,
     NotificationDrawerListItem, NotificationDrawerListItemBody, NotificationDrawerListItemHeader,
     Popover, PopoverPosition, Button } from '@patternfly/react-core';
+import { MessagesIcon } from '@patternfly/react-icons'
 
 const dropdownItems = [
     <DropdownItem key="link">Link</DropdownItem>,
@@ -84,7 +85,9 @@ const BasicNotificationDrawer = (props) => {
             position="bottom"
             minWidth="1000px"
         >
-            <Button>Notifications</Button>
+            <Button variant="plain">
+                <MessagesIcon/>
+            </Button>
         </Popover>
 
     );

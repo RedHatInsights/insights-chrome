@@ -10,7 +10,6 @@ import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 import BasicNotificationDrawer from '../NotificationDrawer/NotificationDrawer';
 
-
 import PropTypes from 'prop-types';
 
 const aboutButton = {
