@@ -8,6 +8,8 @@ import UserToggle from './UserToggle';
 import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
+import BasicNotificationDrawer from '../NotificationDrawer/NotificationDrawer';
+
 
 import PropTypes from 'prop-types';
 
@@ -113,6 +115,9 @@ class Tools extends Component {
                                     </Button>
                                 </ToolbarItem>
                         ))}
+                        <ToolbarItem>
+                            <BasicNotificationDrawer />
+                        </ToolbarItem>
                     </ToolbarGroup>
                     <ToolbarGroup>
                         <ToolbarItem className="pf-u-hidden-on-lg pf-u-mr-0">
