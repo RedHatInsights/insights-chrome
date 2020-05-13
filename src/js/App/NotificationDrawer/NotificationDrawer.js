@@ -3,8 +3,10 @@ import React, { useState, Fragment } from 'react';
 import { Dropdown, DropdownItem, DropdownPosition, DropdownDirection,
     DropdownSeparator, KebabToggle, NotificationDrawer, NotificationDrawerBody, NotificationDrawerHeader, NotificationDrawerList,
     NotificationDrawerListItem, NotificationDrawerListItemBody, NotificationDrawerListItemHeader,
-    Popover, PopoverPosition, Button } from '@patternfly/react-core';
-import { MessagesIcon } from '@patternfly/react-icons'
+    Popover, PopoverPosition, Button, Badge } from '@patternfly/react-core';
+import { MessagesIcon } from '@patternfly/react-icons';
+import './NotificationDrawer.scss';
+import PropTypes from 'prop-types';
 
 const dropdownItems = [
     <DropdownItem key="link">Link</DropdownItem>,
@@ -22,6 +24,7 @@ const BasicNotificationDrawer = (props) => {
 
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState('');
+    const [notifications, setNotifications] = useState([]);
 
     const onToggle = isOpen => setOpen(isOpen);
     const onFocus = id => {
@@ -61,8 +64,9 @@ const BasicNotificationDrawer = (props) => {
                     </NotificationDrawerHeader>
                     <NotificationDrawerBody>
                         <NotificationDrawerList>
-                            <NotificationDrawerListItem variant="info">
-                                <NotificationDrawerListItemHeader variant="info" title="Unread info notification title" srTitle="Info notification:">
+                            { notifications.map(notification => (
+                                <NotificationDrawerListItem variant="info">
+                                <NotificationDrawerListItemHeader variant="info" title={notification.title || 'Title'} srTitle="Info notification:">
                                     <Dropdown
                                         position={DropdownPosition.right}
                                         onClick={onClick}
@@ -74,10 +78,11 @@ const BasicNotificationDrawer = (props) => {
                                         id="notification-1"
                                     />
                                 </NotificationDrawerListItemHeader>
-                                <NotificationDrawerListItemBody timestamp="5 minutes ago">
-                                    This is an info notification description.
+                                <NotificationDrawerListItemBody timestamp={notification.timestamp}>
+                                    {notification.description || 'Description'}
                             </NotificationDrawerListItemBody>
                             </NotificationDrawerListItem>
+                            ))}
                         </NotificationDrawerList>
                     </NotificationDrawerBody>
                 </NotificationDrawer>
@@ -87,10 +92,17 @@ const BasicNotificationDrawer = (props) => {
         >
             <Button variant="plain">
                 <MessagesIcon/>
+            <Badge className="ins-c-notification-drawer__badge" key={1} isRead>{notifications.length}</Badge>
             </Button>
         </Popover>
 
     );
 }
+
+NotificationDrawer.propTypes = {
+    notifications: PropTypes.array,
+    open: PropTypes.bool,
+    active: PropTypes.string
+};
 
 export default BasicNotificationDrawer;
