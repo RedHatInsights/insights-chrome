@@ -14,6 +14,8 @@ import { getNavFromConfig } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
+import { visibilityFunctions } from './consts';
+import Cookies from 'js-cookie';
 
 const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
@@ -28,6 +30,10 @@ const PUBLIC_EVENTS = {
                 fn({ navId: data.id, domEvent: data.event });
             }
         }
+    }),
+    NAVIGATION_TOGGLE: callback => ({
+        on: actionTypes.NAVIGATION_TOGGLE,
+        callback
     })
 };
 
@@ -125,6 +131,10 @@ export function bootstrap(libjwt, initFunc) {
             getUserPermissions: (app = '') => {
                 return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
             },
+            isPenTest: () => {
+                return Cookies.get('x-rh-insights-pentest') ? true : false;
+            },
+            visibilityFunctions,
             init: initFunc
         },
         loadInventory,
@@ -180,6 +190,11 @@ function loadChrome(user) {
                 document.querySelector('header')
             );
 
+            // Conditionally add classes if it's the pen testing environment
+            if (window.insights.chrome.isPenTest()) {
+                document.querySelector('header').classList.add('ins-c-pen-test');
+            }
+
             if (document.querySelector('aside')) {
                 render(
                     <Provider store={store}>
@@ -214,8 +229,6 @@ export function noAccess() {
     const { store } = spinUpStore();
     window.insights.chrome.auth.getUser().then(({ entitlements }) => {
         if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
-            // rhel has different entitlements key and URL partial
-            entitlements.rhel = entitlements.smart_management;
             const path = location.pathname.split('/');
             const apps = Object.keys(entitlements);
 

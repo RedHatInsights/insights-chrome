@@ -44,11 +44,6 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
             "routes": Array [],
             "title": "Red Hat Openshift Cluster Manager",
           },
-          "rhel": Object {
-            "id": "rhel",
-            "routes": Array [],
-            "title": "Cloud Management Services",
-          },
           "staging": Object {
             "id": "staging",
             "routes": Array [],
@@ -204,11 +199,6 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
               "id": "openshift",
               "routes": Array [],
               "title": "Red Hat Openshift Cluster Manager",
-            },
-            "rhel": Object {
-              "id": "rhel",
-              "routes": Array [],
-              "title": "Cloud Management Services",
             },
             "staging": Object {
               "id": "staging",
@@ -408,6 +398,14 @@ exports[`Navigation should render corectly 1`] = `
     >
       Cluster Manager Feedback
     </NavItem>
+    <NavItem
+      key="marketplace"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://marketplace.redhat.com"
+    >
+      Red Hat Marketplace
+    </NavItem>
   </NavList>
 </Component>
 `;
@@ -507,6 +505,14 @@ exports[`Navigation should render correctly 2 1`] = `
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
+    </NavItem>
+    <NavItem
+      key="marketplace"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="https://marketplace.redhat.com"
+    >
+      Red Hat Marketplace
     </NavItem>
   </NavList>
 </Component>

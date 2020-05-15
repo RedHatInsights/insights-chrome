@@ -45,16 +45,7 @@ exports[`Tools should render correctly 1`] = `
         className="pf-u-hidden-on-lg pf-u-mr-0"
       >
         <Connect(UserToggle)
-          extraItems={
-            Array [
-              <DropdownItem
-                component="button"
-                isDisabled={true}
-              >
-                FAQ
-              </DropdownItem>,
-            ]
-          }
+          extraItems={Array []}
           isSmall={true}
         />
       </ToolbarItem>

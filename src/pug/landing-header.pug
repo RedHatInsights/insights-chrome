@@ -13,9 +13,9 @@ header.pf-c-page__header(role='banner')
             .pf-c-dropdown.pf-u-hidden-on-lg(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
                 button.pf-c-dropdown__toggle.pf-m-plain(aria-label='Actions' type='button' aria-expanded='false' aria-haspopup='true')
                     img(src='apps/chrome/assets/images/overflow-actions-sm.svg')
-            .pf-m-user
+            .pf-m-user.pf-m-user-skeleton
                 .pf-c-dropdown(aria-label='Overflow actions' widget-type='InsightsOverflowActions')
                     .pf-c-dropdown__toggle.pf-m-plain(aria-expanded='false')
-                        span.pf-c-dropdown__toggle-text Logging in...
+                        .ins-c-skeleton.ins-c-skeleton__lg.ins-m-dark &nbsp;
                         img.pf-c-dropdown__toggle-icon(src='apps/chrome/assets/images/overflow-actions-lg.svg')
         img.pf-c-avatar(src='apps/chrome/assets/images/img_avatar.svg' alt='Avatar Image')

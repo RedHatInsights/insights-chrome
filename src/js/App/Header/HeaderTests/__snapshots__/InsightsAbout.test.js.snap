@@ -41,11 +41,6 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
               "routes": Array [],
               "title": "Red Hat Openshift Cluster Manager",
             },
-            "rhel": Object {
-              "id": "rhel",
-              "routes": Array [],
-              "title": "Cloud Management Services",
-            },
             "staging": Object {
               "id": "staging",
               "routes": Array [],

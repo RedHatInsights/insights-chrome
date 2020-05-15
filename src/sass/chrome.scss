@@ -12,10 +12,15 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
 @import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
 @import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
+@import 'node_modules/@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
+@import 'node_modules/@patternfly/patternfly/components/ModalBox/modal-box.scss';
+@import 'node_modules/@patternfly/patternfly/components/Backdrop/backdrop.scss';
+@import 'node_modules/@patternfly/patternfly/components/Switch/switch.scss';
 
 // Layouts
 @import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
+@import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
@@ -84,7 +89,12 @@ aside {
         * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
     }
 
-    .ins-c-dropdown-item__stack--header { @include rem('font-size', 12px); }
+    .ins-c-dropdown-item__stack--header,
+    .ins-c-dropdown-item__stack--subValue {
+        font-size: var(--pf-global--FontSize--xs);
+    }
+
+    .ins-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
 
     .pf-c-page__header-brand-link img { @include rem('height', 30px); }
     .pf-c-page__header-brand-toggle svg {
@@ -142,7 +152,19 @@ aside {
     .pf-c-button.pf-m-plain { top: 2px; }
 }
 
+.ins-c-loading-icon__home {
+    // This height and width are not PF variables. This will take an adjustment to the SVG itself
+    height: 34px;
+    width: 34px;
+    vertical-align: -0.1875em;
+}
+
 .ins-c-navigation__header-name--loading { width: 100%; }
+
+.pf-m-user-skeleton {
+    .ins-c-skeleton { width: 75px; }
+    .pf-c-dropdown__toggle-icon { height: 1em; }
+}
 
 // abstract this
 .ins-c-icon-inline {
@@ -153,4 +175,9 @@ aside {
     > *:not(:last-child) {
         margin-right: var(--pf-global--spacer--md);
     }
+}
+
+// Pen testing
+.ins-c-pen-test {
+    border-top: 3px solid #A18FFF;
 }

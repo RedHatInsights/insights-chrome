@@ -37,6 +37,8 @@ const actions = [
     aboutButton
 ];
 
+const userToggleExtras = [];
+
 const SettingsButton = ({ isDisabled }) => (
     <ToolbarItem>
         <Button variant="plain"
@@ -44,7 +46,7 @@ const SettingsButton = ({ isDisabled }) => (
             widget-type='SettingsButton'
             className='ins-c-toolbar__button-settings'
             isDisabled={ isDisabled }
-            onClick={() => window.location.href = `${document.baseURI}settings/`}>
+            onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
             <CogIcon/>
         </Button>
     </ToolbarItem>
@@ -114,7 +116,7 @@ class Tools extends Component {
                     </ToolbarGroup>
                     <ToolbarGroup>
                         <ToolbarItem className="pf-u-hidden-on-lg pf-u-mr-0">
-                            <UserToggle isSmall extraItems={actions.map((action, key) => (
+                            <UserToggle isSmall extraItems={userToggleExtras.map((action, key) => (
                                 <DropdownItem key={key} component="button" isDisabled>{action.title}</DropdownItem>
                             ))} />
                         </ToolbarItem>

@@ -16,6 +16,9 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             <dl className='ins-c-dropdown-item__stack'>
                 <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
                 <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
+                { isOrgAdmin &&
+                    <dd className="ins-c-dropdown-item__stack--subValue">Org. Administrator</dd>
+                }
             </dl>
         </DropdownItem>,
         <React.Fragment key="account wrapper">
@@ -29,14 +32,6 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             }
         </React.Fragment>,
         <DropdownSeparator key="separator" />,
-        ...isOrgAdmin ? [
-            <DropdownItem
-                key="User management"
-                href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.' }redhat.com/wapps/ugc/protected/usermgt/userList.html`}
-                target="_blank" rel='noopener noreferrer'>
-                    User management
-            </DropdownItem>
-        ] : [],
         <DropdownItem
             key="My Profile"
             href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/wapps/ugc/protected/personalInfo.html`}
@@ -44,19 +39,17 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             rel='noopener noreferrer'>
                 My profile
         </DropdownItem>,
-        ...window.insights.chrome.isBeta() ? [
-            <DropdownItem
-                key="User preferences"
-                href="./user-preferences"
-            >
-                    User preferences
-            </DropdownItem>
-        ] : [],
+        <DropdownItem
+            key="User preferences"
+            href="./user-preferences/email"
+        >
+            User Preferences
+        </DropdownItem>,
         <DropdownItem
             key="logout"
             component="button"
             onClick={() => window.insights.chrome.auth.logout(true)}>
-                Logout
+                Log out
         </DropdownItem>,
         [...extraItems]
     ];
@@ -112,7 +105,9 @@ export class UserToggle extends Component {
 UserToggle.propTypes = {
     account: PropTypes.shape({
         number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        name: PropTypes.string
+        name: PropTypes.string,
+        username: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        isOrgAdmin: PropTypes.bool
     }),
     isSmall: PropTypes.bool,
     extraItems: PropTypes.arrayOf(PropTypes.node)

@@ -70,15 +70,15 @@ export function clearActive(state) {
 }
 
 export function navToggleReducer(state) {
-    const mq = window.matchMedia('(min-width: 768px)');
+    const mq = window.matchMedia && window.matchMedia('(min-width: 768px)');
     let page = document.getElementById('ins-c-sidebar');
 
-    if (mq.matches) {
+    if (mq && mq.matches) {
         page.classList.remove('pf-m-expanded');
         page.classList.toggle('pf-m-collapsed');
     } else {
-        page.classList.remove('pf-m-collapsed');
-        page.classList.toggle('pf-m-expanded');
+        page && page.classList.remove('pf-m-collapsed');
+        page && page.classList.toggle('pf-m-expanded');
     }
 
     return {
