@@ -117,7 +117,7 @@
     "@patternfly/react-icons": "^3.14.19",
     "@redhat-cloud-services/entitlements-client": "^1.0.18",
     "@redhat-cloud-services/frontend-components": "1.0.20",
-    "@redhat-cloud-services/frontend-components-inventory": "1.0.28",
+    "@redhat-cloud-services/frontend-components-inventory": "1.0.28-beta",
     "@redhat-cloud-services/frontend-components-notifications": "^1.0.2",
     "@redhat-cloud-services/frontend-components-remediations": "1.0.2",
     "@redhat-cloud-services/frontend-components-utilities": "1.0.0",
