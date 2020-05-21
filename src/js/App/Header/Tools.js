@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core';
-import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { DropdownItem } from '@patternfly/react-core';
-import { QuestionCircleIcon, CogIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Toolbar } from '@patternfly/react-core/dist/js/layouts/Toolbar/Toolbar';
+import { ToolbarGroup } from '@patternfly/react-core/dist/js/layouts/Toolbar/ToolbarGroup';
+import { ToolbarItem } from '@patternfly/react-core/dist/js/layouts/Toolbar/ToolbarItem';
+import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
+import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 
 import UserToggle from './UserToggle';
 import UserIcon from './UserIcon';

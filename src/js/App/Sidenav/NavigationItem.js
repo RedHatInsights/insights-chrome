@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavItem } from '@patternfly/react-core';
+import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import PropTypes from 'prop-types';
 
 const basepath = document.baseURI;

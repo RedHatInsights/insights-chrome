@@ -1,8 +1,9 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { Split, SplitItem } from '@patternfly/react-core';
-import { HomeIcon } from '@patternfly/react-icons';
+import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
+import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
+import  HomeIcon from '@patternfly/react-icons/dist/js/icons/home-icon';
 import { connect } from 'react-redux';
 
 const documentationLink = {
