@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { onToggle } from '../../redux/actions';
-import { Button } from '@patternfly/react-core';
-import { BarsIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import Logo from './Logo';
 
 export const Brand = ({ toggleNav, navHidden }) => (

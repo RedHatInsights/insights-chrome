@@ -1,5 +1,6 @@
 import React from 'react';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/js/components/Alert/Alert';
+import { AlertActionCloseButton } from '@patternfly/react-core/dist/js/components/Alert/AlertActionCloseButton';
 import cookie from 'js-cookie';
 
 class LogoutAlert extends React.Component {
