@@ -16,13 +16,16 @@ import InsightsAbout from './InsightsAbout';
 
 const Tools = () => {
 
+    {/* Set the state */}
     const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    {/* Disable settings/cog icon when a user doesn't have an account number */}
     useEffect(() => {
         window.insights.chrome.auth.getUser().then((user)=> user.identity.account_number && setIsSettingsDisabled(false));
     }, []);
 
+    {/* button that should redirect a user to RBAC with an account */}
     const SettingsButton = () => (
         <Button variant="plain"
             aria-label="Go to settings"
@@ -34,6 +37,7 @@ const Tools = () => {
         </Button>
     );
 
+    {/* list out the items for the about menu */}
     const aboutMenuDropdownItems = [
         {
             title: 'Customer support',
@@ -50,11 +54,13 @@ const Tools = () => {
         }
     ];
 
+    {/* Combine aboutMenuItems with a settings link on mobile */}
     const mobileDropdownItems = [...aboutMenuDropdownItems, {
         title: 'Settings',
         onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
     }];
 
+    {/* QuestionMark icon that should be used for "help/support" things */}
     const AboutButton = () => (
         <ToolbarToggle
             key='Help menu'
