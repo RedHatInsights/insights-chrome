@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar } from '@patternfly/react-core/dist/js/components/Avatar/Avatar';
+import { Avatar } from '@patternfly/react-core4/dist/js/components/Avatar/Avatar';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 

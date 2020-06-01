@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { Toolbar } from '@patternfly/react-core/dist/js/layouts/Toolbar/Toolbar';
-import { ToolbarGroup } from '@patternfly/react-core/dist/js/layouts/Toolbar/ToolbarGroup';
-import { ToolbarItem } from '@patternfly/react-core/dist/js/layouts/Toolbar/ToolbarItem';
-import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
+import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 
@@ -13,6 +10,9 @@ import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
 import PropTypes from 'prop-types';
+import { PageHeaderTools } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderTools';
+import { PageHeaderToolsGroup } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsGroup';
+import { PageHeaderToolsItem } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsItem';
 
 const aboutButton = {
     title: 'FAQ',
@@ -40,19 +40,34 @@ const actions = [
     aboutButton
 ];
 
-const userToggleExtras = [];
+const userToggleExtras = [
+    {
+        title: 'Customer support',
+        url: 'https://access.redhat.com/support'
+    }, {
+        title: 'Training',
+        url: 'https://www.redhat.com/en/services/training-and-certification'
+    }, {
+        title: 'API documentation',
+        onClick: () => window.location.href = `${document.baseURI}docs/api`
+    }, {
+        title: 'About',
+        onClick: () => this.onModalToggle
+    }, {
+        title: 'Settings',
+        onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
+    }
+];
 
 const SettingsButton = ({ isDisabled }) => (
-    <ToolbarItem>
-        <Button variant="plain"
-            aria-label="Go to settings"
-            widget-type='SettingsButton'
-            className='ins-c-toolbar__button-settings'
-            isDisabled={ isDisabled }
-            onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
-            <CogIcon/>
-        </Button>
-    </ToolbarItem>
+    <Button variant="plain"
+        aria-label="Go to settings"
+        widget-type='SettingsButton'
+        className='ins-c-toolbar__button-settings'
+        isDisabled={ isDisabled }
+        onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
+        <CogIcon/>
+    </Button>
 );
 
 SettingsButton.propTypes = {
@@ -89,48 +104,52 @@ class Tools extends Component {
     render() {
         const { isModalOpen, isSettingsDisabled } = this.state;
         return (
-            <div className="pf-l-page__header-tools pf-c-page__header-tools" widget-type="InsightsToolbar">
-                <Toolbar>
-                    <ToolbarGroup className='pf-u-mr-0 pf-u-mr-lg-on-lg'>
+            <PageHeaderTools widget-type="InsightsToolbar">
+                {/* This group is for larger than mobile screens */}
+                <PageHeaderToolsGroup breakpointMods={[{ modifier: 'hidden' }, { modifier: 'visible', breakpoint: 'sm' }]}>
+                    <PageHeaderToolsItem>
                         { <SettingsButton isDisabled={ isSettingsDisabled }/> }
+                    </PageHeaderToolsItem>
+                    <PageHeaderToolsItem>
                         { actions.map((oneItem, key) => (
-                            oneItem.items ?
-                                <ToolbarToggle
+                            oneItem.items
+                                ? <ToolbarToggle
                                     key={key}
                                     icon={oneItem.icon}
                                     id={oneItem.id}
                                     className={oneItem.className}
                                     widget-type={oneItem.widget}
-                                    dropdownItems={oneItem.items} /> :
-                                <ToolbarItem key={key} data-key={key}>
-                                    <Button
-                                        key={key}
-                                        id={oneItem.id}
-                                        className={oneItem.className}
-                                        variant="plain"
-                                        aria-label={`Overflow ${oneItem.title}`}
-                                        widget-type={oneItem.widget}
-                                        onClick={event => oneItem.onClick && oneItem.onClick(event)}
-                                    >
+                                    dropdownItems={oneItem.items} />
+                                : <Button
+                                    data-key={key}
+                                    key={key}
+                                    id={oneItem.id}
+                                    className={oneItem.className}
+                                    variant="plain"
+                                    aria-label={`Overflow ${oneItem.title}`}
+                                    widget-type={oneItem.widget}
+                                    onClick={event => oneItem.onClick && oneItem.onClick(event)}>
                                         <oneItem.icon />
                                     </Button>
-                                </ToolbarItem>
                         ))}
-                    </ToolbarGroup>
-                    <ToolbarGroup>
-                        <ToolbarItem className="pf-u-hidden-on-lg pf-u-mr-0">
-                            <UserToggle isSmall extraItems={userToggleExtras.map((action, key) => (
-                                <DropdownItem key={key} component="button" isDisabled>{action.title}</DropdownItem>
-                            ))} />
-                        </ToolbarItem>
-                        <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-lg">
-                            <UserToggle className='ins-c-dropdown__user'/>
-                        </ToolbarItem>
-                    </ToolbarGroup>
-                    { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} /> }
-                </Toolbar>
+                    </PageHeaderToolsItem>
+                </PageHeaderToolsGroup>
+                <PageHeaderToolsGroup>
+                    {/* Show Kebab for user menu on mobile + extras */}
+                    <PageHeaderToolsItem breakpointMods={[{ modifier: 'hidden', breakpoint: 'md' }]}>
+                        <UserToggle isSmall extraItems={userToggleExtras.map((action, key) => (
+                            <DropdownItem key={key} component="button">{action.title}</DropdownItem>
+                        ))} />
+                    </PageHeaderToolsItem>
+
+                    {/* Show regular user dropdown above mobile */}
+                    <PageHeaderToolsItem breakpointMods={[{ modifier: 'hidden' }, { modifier: 'visible', breakpoint: 'md' }]}>
+                        <UserToggle className='ins-c-dropdown__user'/>
+                    </PageHeaderToolsItem>
+                </PageHeaderToolsGroup>
                 <UserIcon/>
-            </div>
+                { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={this.onModalToggle} /> }
+            </PageHeaderTools>
         );
     }
 }
