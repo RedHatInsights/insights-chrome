@@ -60,6 +60,7 @@ class ToolbarToggle extends Component {
             className={this.props.className}
             id={this.props.id}
             iconComponent={null}
+            toggleIndicator={ this.props.hasToggleIndicator }
             onToggle={this.onToggle}>
             <this.props.icon />
         </DropdownToggle>;
@@ -82,7 +83,8 @@ ToolbarToggle.propTypes = {
     dropdownItems: PropTypes.array,
     widgetType: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     className: PropTypes.string,
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    hasToggleIndicator: PropTypes.bool
 };
 
 export default ToolbarToggle;

@@ -66,8 +66,6 @@ const Tools = () => {
         }
     ];
 
-    console.info(mobileDropdownItems);
-
     {/* QuestionMark icon that should be used for "help/support" things */}
     const AboutButton = () => (
         <ToolbarToggle
@@ -75,6 +73,7 @@ const Tools = () => {
             icon={ QuestionCircleIcon }
             id='HelpMenu'
             className='ins-c-toolbar__menu-help'
+            hasToggleIndicator={ null }
             widget-type='HelpMenu'
             dropdownItems={ aboutMenuDropdownItems }
         />
