@@ -58,12 +58,12 @@ const Tools = () => {
     {/* Combine aboutMenuItems with a settings link on mobile */}
     const mobileDropdownItems = [
         { title: 'separator' },
-        ...aboutMenuDropdownItems,
-        { title: 'separator' },
         {
             title: 'Settings',
             onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
-        }
+        },
+        { title: 'separator' },
+        ...aboutMenuDropdownItems
     ];
 
     {/* QuestionMark icon that should be used for "help/support" things */}
@@ -83,7 +83,7 @@ const Tools = () => {
         <PageHeaderTools widget-type="InsightsToolbar">
 
             {/* Show tools on medium and above screens */}
-            <PageHeaderToolsGroup breakpointMods={[{ modifier: 'hidden' }, { modifier: 'visible', breakpoint: 'sm' }]}>
+            <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
                 <PageHeaderToolsItem>
                     { <SettingsButton/> }
                 </PageHeaderToolsItem>
@@ -93,14 +93,14 @@ const Tools = () => {
             </PageHeaderToolsGroup>
 
             {/* Show full user dropdown on medium and above screens */}
-            <PageHeaderToolsGroup breakpointMods={[{ modifier: 'hidden' }, { modifier: 'visible', breakpoint: 'sm' }]}>
+            <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
                 <PageHeaderToolsItem>
                     <UserToggle className='ins-c-dropdown__user'/>
                 </PageHeaderToolsItem>
             </PageHeaderToolsGroup>
 
             {/* Collapse tools and user dropdown to kebab on small screens  */}
-            <PageHeaderToolsGroup breakpointMods={[{ modifier: 'hidden', breakpoint: 'sm' }]}>
+            <PageHeaderToolsGroup visibility={{ sm: 'hidden' }}>
                 <PageHeaderToolsItem>
                     <UserToggle isSmall extraItems={mobileDropdownItems.map((action, key) => (
                         <React.Fragment key={key}>
