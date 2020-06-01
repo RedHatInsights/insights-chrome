@@ -3,10 +3,13 @@ import { Alert } from '@patternfly/react-core4/dist/js/components/Alert/Alert';
 import { AlertActionCloseButton } from '@patternfly/react-core4/dist/js/components/Alert/AlertActionCloseButton';
 import cookie from 'js-cookie';
 
+import './LogoutAlert.scss';
+
 class LogoutAlert extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // alertOneVisible: cookie.get('cs_loggedOut') === 'true',
             alertOneVisible: cookie.get('cs_loggedOut') === 'true',
             delay: 8000
         };
@@ -48,6 +51,12 @@ class LogoutAlert extends React.Component {
                     >
                     </Alert>
                 ) }
+                <Alert
+                        variant="success"
+                        title="You have successfully logged out."
+                        className="ins-c-alert__logout"
+                        action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
+                    />
             </React.Fragment>
         );
     }
