@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
+import { DropdownSeparator } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownSeparator';
 import { PageHeaderTools } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderTools';
 import { PageHeaderToolsGroup } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsGroup';
 import { PageHeaderToolsItem } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsItem';
@@ -55,10 +56,17 @@ const Tools = () => {
     ];
 
     {/* Combine aboutMenuItems with a settings link on mobile */}
-    const mobileDropdownItems = [...aboutMenuDropdownItems, {
-        title: 'Settings',
-        onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
-    }];
+    const mobileDropdownItems = [
+        { title: 'separator' },
+        ...aboutMenuDropdownItems,
+        { title: 'separator' },
+        {
+            title: 'Settings',
+            onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
+        }
+    ];
+
+    console.info(mobileDropdownItems);
 
     {/* QuestionMark icon that should be used for "help/support" things */}
     const AboutButton = () => (
@@ -96,7 +104,12 @@ const Tools = () => {
             <PageHeaderToolsGroup breakpointMods={[{ modifier: 'hidden', breakpoint: 'sm' }]}>
                 <PageHeaderToolsItem>
                     <UserToggle isSmall extraItems={mobileDropdownItems.map((action, key) => (
-                        <DropdownItem key={key} component="button" onClick={action.onClick}>{action.title}</DropdownItem>
+                        <React.Fragment key={key}>
+                            { action.title === 'separator'
+                                ? <DropdownSeparator/>
+                                : <DropdownItem component="button" onClick={action.onClick}>{action.title}</DropdownItem>
+                            }
+                        </React.Fragment>
                     ))} />
                 </PageHeaderToolsItem>
             </PageHeaderToolsGroup>
