@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { Dropdown } from '@patternfly/react-core4/dist/js/components/Dropdown/Dropdown';
 import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
-import { DropdownToggle} from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownToggle';
+import { DropdownToggle } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownToggle';
 import { CaretDownIcon } from '@patternfly/react-icons';
 
 import './AppSwitcher.scss';
@@ -22,22 +22,23 @@ const AppSwitcher = ({ currentApp }) => {
             { title: 'Cost Management', id: 'cost-management' },
             { title: 'Migration Services', id: 'migrations' },
             { title: 'Subscription Watch', id: 'subscriptions' }
-        ]
+        ];
 
         const renderNavItems = appList.map(app =>
             <DropdownItem
                 component='a'
                 href={`${document.baseURI}${app.id}`}
-                className={classNames({'ins-c-app-switcher__current': app.title === activeApp })}
+                className={classNames({ 'ins-c-app-switcher__current': app.title === activeApp })}
                 key={app.id}>
                 {app.title}
             </DropdownItem>
         );
 
         return renderNavItems;
+
     };
 
-    return(
+    return (
         <section className='ins-c-app-switcher'>
             <Dropdown
                 isPlain
@@ -52,7 +53,11 @@ const AppSwitcher = ({ currentApp }) => {
                 dropdownItems={dropdownItems(currentApp)}
             />
         </section>
-    )
-}
+    );
+};
 
 export default AppSwitcher;
+
+AppSwitcher.propTypes = {
+    currentApp: PropTypes.string
+};
