@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppSwitcher should render correctly 1`] = `
+<section
+  className="ins-c-app-switcher"
+>
+  <Component
+    className="ins-c-app-switcher__dropdown"
+    dropdownItems={
+      Array [
+        <Unknown
+          className="ins-c-app-switcher__current"
+          component="a"
+          href="http://localhost/insights"
+        >
+          Red Hat Insights
+        </Unknown>,
+        <Unknown
+          className=""
+          component="a"
+          href="http://localhost/openshift"
+        >
+          Red Hat OpenShift Cluster Manager
+        </Unknown>,
+        <Unknown
+          className=""
+          component="a"
+          href="http://localhost/ansible"
+        >
+          Red Hat Ansible Automation Platform
+        </Unknown>,
+        <Unknown
+          className=""
+          component="a"
+          href="http://localhost/cost-management"
+        >
+          Cost Management
+        </Unknown>,
+        <Unknown
+          className=""
+          component="a"
+          href="http://localhost/migrations"
+        >
+          Migration Services
+        </Unknown>,
+        <Unknown
+          className=""
+          component="a"
+          href="http://localhost/subscriptions"
+        >
+          Subscription Watch
+        </Unknown>,
+      ]
+    }
+    isOpen={false}
+    isPlain={true}
+    onSelect={[Function]}
+    toggle={
+      <Unknown
+        id="toggle-id"
+        onToggle={[Function]}
+        toggleIndicator={[Function]}
+      >
+        Red Hat Insights
+      </Unknown>
+    }
+  />
+</section>
+`;
