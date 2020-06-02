@@ -152,8 +152,6 @@ async function loadNav(yamlConfig) {
     const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
     const globalNav = (groupedNav[active] || groupedNav.insights).routes;
     let activeSection = globalNav.find(({ id }) => id === section);
-
-    console.debug(groupedNav);
     return groupedNav[active] ? {
         globalNav,
         activeTechnology: groupedNav[active].title,
