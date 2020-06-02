@@ -154,14 +154,10 @@ aside {
     .pf-c-button.pf-m-plain { top: 2px; }
 }
 
-.ins-c-loading-icon__home {
-    // This height and width are not PF variables. This will take an adjustment to the SVG itself
-    height: 34px;
-    width: 34px;
-    vertical-align: -0.1875em;
+section.ins-c-app-switcher--loading {
+    padding: calc(16px + var(--pf-global--spacer--sm)) 24px;
+    border-bottom: 3px solid #3c3f42;
 }
-
-.ins-c-navigation__header-name--loading { width: 100%; }
 
 .pf-m-user-skeleton {
     .ins-c-skeleton { width: 75px; }

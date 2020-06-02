@@ -1,13 +1,12 @@
 .ins-c-app-switcher {
     width: 100%;
-    padding: 8px 12px;
-    margin-top: var(--pf-global--spacer--sm);
-    border-bottom: 1px solid #3c3f42;
+    padding: calc(8px + var(--pf-global--spacer--sm)) 12px;
+    border-bottom: 3px solid #3c3f42;
 
     .ins-c-app-switcher__dropdown {
         width: 100%;
         padding: 8px 12px;
-        &.pf-m-expanded {
+        &.pf-m-expanded, &:hover {
             background: #393c3d;
         }
 

@@ -15,23 +15,22 @@ const AppSwitcher = ({ currentApp }) => {
 
     const dropdownItems = (activeApp) => {
 
-        // TODO make this app list better and add urls
         const appList = [
-            'Red Hat Insights',
-            'Red Hat OpenShift Cluster Manager',
-            'Red Hat Ansible Automation Platform',
-            'Cost Management',
-            'Migration Services',
-            'Subscription Watch'
+            { title: 'Red Hat Insights', id: 'insights' },
+            { title: 'Red Hat OpenShift Cluster Manager', id: 'openshift' },
+            { title: 'Red Hat Ansible Automation Platform', id: 'ansible' },
+            { title: 'Cost Management', id: 'cost-management' },
+            { title: 'Migration Services', id: 'migrations' },
+            { title: 'Subscription Watch', id: 'subscriptions' }
         ]
 
-        // TODO add href
-        const renderNavItems = appList.map(name =>
+        const renderNavItems = appList.map(app =>
             <DropdownItem
                 component='a'
-                className={classNames({'ins-c-app-switcher__current': name === activeApp })}
-                key={name}>
-                {name}
+                href={`${document.baseURI}${app.id}`}
+                className={classNames({'ins-c-app-switcher__current': app.title === activeApp })}
+                key={app.id}>
+                {app.title}
             </DropdownItem>
         );
 
