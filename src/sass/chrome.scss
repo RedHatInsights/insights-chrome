@@ -133,17 +133,6 @@ aside {
     }
 }
 
-// Card
-.pf-c-card.pf-m-dark {
-    @extend %pf-t-dark;
-    background: transparent;
-    box-shadow: none;
-
-    &:hover {
-        background: var(--pf-global--BackgroundColor--dark-transparent-200);
-    }
-}
-
 // Loading
 .ins-l-page__header--loading {
     .ins-c-skeleton { @include rem('height', 28px); }
@@ -155,23 +144,13 @@ aside {
 
 section.ins-c-app-switcher--loading {
     padding: calc(16px + var(--pf-global--spacer--sm)) 24px;
+    margin-top: 7px;
     border-bottom: 3px solid #3c3f42;
 }
 
 .pf-m-user-skeleton {
     .ins-c-skeleton { width: 75px; }
     .pf-c-dropdown__toggle-icon { height: 1em; }
-}
-
-// abstract this
-.ins-c-icon-inline {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: baseline;
-
-    > *:not(:last-child) {
-        margin-right: var(--pf-global--spacer--md);
-    }
 }
 
 // Pen testing
