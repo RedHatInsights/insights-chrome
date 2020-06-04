@@ -4,6 +4,7 @@ exports[`RootApp should render correctly - no data 1`] = `
 Array [
   <div
     class="pf-c-drawer__content"
+    data-ouia-safe="true"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -65,6 +66,7 @@ Array [
     class="pf-c-drawer__content"
     data-ouia-page-group="some-location"
     data-ouia-page-type="some-app"
+    data-ouia-safe="true"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -127,6 +129,7 @@ Array [
     data-ouia-page-action="some-action"
     data-ouia-page-group="some-location"
     data-ouia-page-type="some-app"
+    data-ouia-safe="true"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -189,6 +192,7 @@ Array [
     data-ouia-page-group="some-location"
     data-ouia-page-object-id="some-object-id"
     data-ouia-page-type="some-app"
+    data-ouia-safe="true"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -252,6 +256,7 @@ Array [
     data-ouia-page-group="some-location"
     data-ouia-page-object-id="some-object-id"
     data-ouia-page-type="some-app"
+    data-ouia-safe="true"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
