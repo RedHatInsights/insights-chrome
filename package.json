@@ -119,7 +119,7 @@
     "@redhat-cloud-services/entitlements-client": "^1.0.63",
     "@redhat-cloud-services/frontend-components": "1.0.28",
     "@redhat-cloud-services/frontend-components-inventory": "1.0.29",
-    "@redhat-cloud-services/frontend-components-notifications": "^1.0.3",
+    "@redhat-cloud-services/frontend-components-notifications": "^2.0.3",
     "@redhat-cloud-services/frontend-components-remediations": "1.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "1.0.3",
     "@redhat-cloud-services/keycloak-js": "0.0.3",
