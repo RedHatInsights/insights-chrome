@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
-import { DropdownSeparator } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownSeparator';
 import { PageHeaderTools } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderTools';
 import { PageHeaderToolsGroup } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsGroup';
 import { PageHeaderToolsItem } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsItem';
