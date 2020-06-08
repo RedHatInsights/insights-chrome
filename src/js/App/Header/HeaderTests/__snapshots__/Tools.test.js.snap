@@ -45,7 +45,9 @@ exports[`Tools should render correctly 1`] = `
         extraItems={
           Array [
             <React.Fragment>
-              <Unknown />
+              <Unknown
+                component="li"
+              />
             </React.Fragment>,
             <React.Fragment>
               <Unknown
@@ -56,7 +58,9 @@ exports[`Tools should render correctly 1`] = `
               </Unknown>
             </React.Fragment>,
             <React.Fragment>
-              <Unknown />
+              <Unknown
+                component="li"
+              />
             </React.Fragment>,
             <React.Fragment>
               <Unknown

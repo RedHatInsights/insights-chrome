@@ -6,6 +6,7 @@ import { DropdownSeparator } from '@patternfly/react-core4/dist/js/components/Dr
 import { PageHeaderTools } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderTools';
 import { PageHeaderToolsGroup } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsGroup';
 import { PageHeaderToolsItem } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsItem';
+import { Divider } from '@patternfly/react-core4/dist/js/components/Divider/Divider';
 
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
@@ -105,7 +106,7 @@ const Tools = () => {
                     <UserToggle isSmall extraItems={mobileDropdownItems.map((action, key) => (
                         <React.Fragment key={key}>
                             { action.title === 'separator'
-                                ? <DropdownSeparator/>
+                                ? <Divider component="li"/>
                                 : <DropdownItem component="button" onClick={action.onClick}>{action.title}</DropdownItem>
                             }
                         </React.Fragment>
