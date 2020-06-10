@@ -54,7 +54,9 @@ export function appNavClick(state, { payload }) {
         globalNav: payload.custom ? state.globalNav && state.globalNav.map(item => ({
             ...item,
             active: payload && (item.id === payload.id || item.title === payload.id)
-                || (item.subItems && item.subItems.some(({ id }) => id === payload.id) && item.id === state.appId)
+                || (item.subItems && item.subItems.some(
+                    ({ id }) => id === payload.id) && (item.id === state.appId || item.id === payload.parentId)
+                )
         })) : state.globalNav
     };
 }
