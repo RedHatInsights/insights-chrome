@@ -79,7 +79,10 @@ export class InsightsAbout extends Component {
                 { name: 'Automation Hub', path: 'apps/automation-hub/app.info.json', version: 'N/A' },
                 { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' },
                 { name: 'Policies', path: 'apps/policies/app.info.json', version: 'N/A' },
-                { name: 'Patch', path: 'apps/patch/app.info.json', version: 'N/A' }
+                { name: 'Patch', path: 'apps/patch/app.info.json', version: 'N/A' },
+                { name: 'Automation Services Catalog', path: 'apps/catalog/app.info.json', version: 'N/A' },
+                { name: 'Approval', path: 'apps/approval/app.info.json', version: 'N/A' },
+                { name: 'Sources', path: 'apps/sources/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,
