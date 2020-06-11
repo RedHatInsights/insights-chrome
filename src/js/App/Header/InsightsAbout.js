@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    AboutModal,
-    Button,
-    Tooltip,
-    TextContent, TextList, TextListItem,
-    Stack, StackItem
-} from '@patternfly/react-core';
 
-import { CopyIcon } from '@patternfly/react-icons';
+import { AboutModal } from '@patternfly/react-core/dist/js/components/AboutModal/AboutModal';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
+import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
+import { TextList } from '@patternfly/react-core/dist/js/components/Text/TextList';
+import { TextListItem } from '@patternfly/react-core/dist/js/components/Text/TextListItem';
+import { Stack } from '@patternfly/react-core/dist/js/layouts/Stack/Stack';
+import { StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/StackItem';
+
+import CopyIcon from '@patternfly/react-icons/dist/js/icons/copy-icon';
 
 import logo from '../../../../static/images/logo.svg';
 import { connect } from 'react-redux';
@@ -78,7 +80,10 @@ export class InsightsAbout extends Component {
                 { name: 'Automation Hub', path: 'apps/automation-hub/app.info.json', version: 'N/A' },
                 { name: 'Automation Analytics', path: 'apps/automation-analytics/app.info.json', version: 'N/A' },
                 { name: 'Policies', path: 'apps/policies/app.info.json', version: 'N/A' },
-                { name: 'Patch', path: 'apps/patch/app.info.json', version: 'N/A' }
+                { name: 'Patch', path: 'apps/patch/app.info.json', version: 'N/A' },
+                { name: 'Automation Services Catalog', path: 'apps/catalog/app.info.json', version: 'N/A' },
+                { name: 'Approval', path: 'apps/approval/app.info.json', version: 'N/A' },
+                { name: 'Sources', path: 'apps/sources/app.info.json', version: 'N/A' }
             ] },
             showCopyAlert: false,
             showCopyAlertError: false,
