@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
 
+import './Navigation.scss';
+
 const basepath = document.baseURI;
 
 const openshiftLinks = {

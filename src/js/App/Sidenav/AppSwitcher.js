@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Dropdown } from '@patternfly/react-core4/dist/js/components/Dropdown/Dropdown';
 import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
 import { DropdownToggle } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownToggle';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 
 import './AppSwitcher.scss';
 
