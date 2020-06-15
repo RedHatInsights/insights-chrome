@@ -175,11 +175,12 @@ function isExistingValid(token) {
             return true;
         }
         else {
-            if(exp > 0) {
+            if (exp > 0) {
                 log('token is expiring in < 90 seconds');
             } else {
                 log('token is expired');
             }
+
             return false;
         }
     } catch (e) {
