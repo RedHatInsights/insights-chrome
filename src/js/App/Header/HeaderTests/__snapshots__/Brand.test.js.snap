@@ -40,75 +40,46 @@ exports[`Brand mapDispatchToProps function fires 1`] = `
           variant="plain"
           widget-type="InsightsNavToggle"
         >
-          <ComponentWithOuia
-            component={[Function]}
-            componentProps={
-              Object {
-                "aria-label": "Toggle primary navigation",
-                "children": <BarsIcon
-                  color="currentColor"
-                  noVerticalAlign={false}
-                  size="md"
-                  title={null}
-                />,
-                "onClick": [Function],
-                "variant": "plain",
-                "widget-type": "InsightsNavToggle",
-              }
-            }
-            consumerContext={null}
+          <button
+            aria-disabled={null}
+            aria-label="Toggle primary navigation"
+            className="pf-c-button pf-m-plain"
+            data-ouia-component-id={null}
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe={true}
+            disabled={false}
+            onClick={[Function]}
+            tabIndex={null}
+            type="button"
+            widget-type="InsightsNavToggle"
           >
-            <Button
-              aria-label="Toggle primary navigation"
-              onClick={[Function]}
-              ouiaContext={
-                Object {
-                  "isOuia": false,
-                  "ouiaId": null,
-                }
-              }
-              variant="plain"
-              widget-type="InsightsNavToggle"
+            <BarsIcon
+              color="currentColor"
+              noVerticalAlign={false}
+              size="md"
+              title={null}
             >
-              <button
-                aria-disabled={null}
-                aria-label="Toggle primary navigation"
-                className="pf-c-button pf-m-plain"
-                disabled={false}
-                onClick={[Function]}
-                tabIndex={null}
-                type="button"
-                widget-type="InsightsNavToggle"
+              <svg
+                aria-hidden={true}
+                aria-labelledby={null}
+                fill="currentColor"
+                height="1.5em"
+                role="img"
+                style={
+                  Object {
+                    "verticalAlign": "-0.1875em",
+                  }
+                }
+                viewBox="0 0 448 512"
+                width="1.5em"
               >
-                <BarsIcon
-                  color="currentColor"
-                  noVerticalAlign={false}
-                  size="md"
-                  title={null}
-                >
-                  <svg
-                    aria-hidden={true}
-                    aria-labelledby={null}
-                    fill="currentColor"
-                    height="1.5em"
-                    role="img"
-                    style={
-                      Object {
-                        "verticalAlign": "-0.1875em",
-                      }
-                    }
-                    viewBox="0 0 448 512"
-                    width="1.5em"
-                  >
-                    <path
-                      d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                      transform=""
-                    />
-                  </svg>
-                </BarsIcon>
-              </button>
-            </Button>
-          </ComponentWithOuia>
+                <path
+                  d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+                  transform=""
+                />
+              </svg>
+            </BarsIcon>
+          </button>
         </Component>
       </div>
       <a
@@ -219,75 +190,46 @@ exports[`Brand should render correctly with initial state 1`] = `
             variant="plain"
             widget-type="InsightsNavToggle"
           >
-            <ComponentWithOuia
-              component={[Function]}
-              componentProps={
-                Object {
-                  "aria-label": "Toggle primary navigation",
-                  "children": <BarsIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="md"
-                    title={null}
-                  />,
-                  "onClick": [Function],
-                  "variant": "plain",
-                  "widget-type": "InsightsNavToggle",
-                }
-              }
-              consumerContext={null}
+            <button
+              aria-disabled={null}
+              aria-label="Toggle primary navigation"
+              className="pf-c-button pf-m-plain"
+              data-ouia-component-id={null}
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe={true}
+              disabled={false}
+              onClick={[Function]}
+              tabIndex={null}
+              type="button"
+              widget-type="InsightsNavToggle"
             >
-              <Button
-                aria-label="Toggle primary navigation"
-                onClick={[Function]}
-                ouiaContext={
-                  Object {
-                    "isOuia": false,
-                    "ouiaId": null,
-                  }
-                }
-                variant="plain"
-                widget-type="InsightsNavToggle"
+              <BarsIcon
+                color="currentColor"
+                noVerticalAlign={false}
+                size="md"
+                title={null}
               >
-                <button
-                  aria-disabled={null}
-                  aria-label="Toggle primary navigation"
-                  className="pf-c-button pf-m-plain"
-                  disabled={false}
-                  onClick={[Function]}
-                  tabIndex={null}
-                  type="button"
-                  widget-type="InsightsNavToggle"
+                <svg
+                  aria-hidden={true}
+                  aria-labelledby={null}
+                  fill="currentColor"
+                  height="1.5em"
+                  role="img"
+                  style={
+                    Object {
+                      "verticalAlign": "-0.1875em",
+                    }
+                  }
+                  viewBox="0 0 448 512"
+                  width="1.5em"
                 >
-                  <BarsIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="md"
-                    title={null}
-                  >
-                    <svg
-                      aria-hidden={true}
-                      aria-labelledby={null}
-                      fill="currentColor"
-                      height="1.5em"
-                      role="img"
-                      style={
-                        Object {
-                          "verticalAlign": "-0.1875em",
-                        }
-                      }
-                      viewBox="0 0 448 512"
-                      width="1.5em"
-                    >
-                      <path
-                        d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                        transform=""
-                      />
-                    </svg>
-                  </BarsIcon>
-                </button>
-              </Button>
-            </ComponentWithOuia>
+                  <path
+                    d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+                    transform=""
+                  />
+                </svg>
+              </BarsIcon>
+            </button>
           </Component>
         </div>
         <a
@@ -338,75 +280,46 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
             variant="plain"
             widget-type="InsightsNavToggle"
           >
-            <ComponentWithOuia
-              component={[Function]}
-              componentProps={
-                Object {
-                  "aria-label": "Toggle primary navigation",
-                  "children": <BarsIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="md"
-                    title={null}
-                  />,
-                  "onClick": [Function],
-                  "variant": "plain",
-                  "widget-type": "InsightsNavToggle",
-                }
-              }
-              consumerContext={null}
+            <button
+              aria-disabled={null}
+              aria-label="Toggle primary navigation"
+              className="pf-c-button pf-m-plain"
+              data-ouia-component-id={null}
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe={true}
+              disabled={false}
+              onClick={[Function]}
+              tabIndex={null}
+              type="button"
+              widget-type="InsightsNavToggle"
             >
-              <Button
-                aria-label="Toggle primary navigation"
-                onClick={[Function]}
-                ouiaContext={
-                  Object {
-                    "isOuia": false,
-                    "ouiaId": null,
-                  }
-                }
-                variant="plain"
-                widget-type="InsightsNavToggle"
+              <BarsIcon
+                color="currentColor"
+                noVerticalAlign={false}
+                size="md"
+                title={null}
               >
-                <button
-                  aria-disabled={null}
-                  aria-label="Toggle primary navigation"
-                  className="pf-c-button pf-m-plain"
-                  disabled={false}
-                  onClick={[Function]}
-                  tabIndex={null}
-                  type="button"
-                  widget-type="InsightsNavToggle"
+                <svg
+                  aria-hidden={true}
+                  aria-labelledby={null}
+                  fill="currentColor"
+                  height="1.5em"
+                  role="img"
+                  style={
+                    Object {
+                      "verticalAlign": "-0.1875em",
+                    }
+                  }
+                  viewBox="0 0 448 512"
+                  width="1.5em"
                 >
-                  <BarsIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="md"
-                    title={null}
-                  >
-                    <svg
-                      aria-hidden={true}
-                      aria-labelledby={null}
-                      fill="currentColor"
-                      height="1.5em"
-                      role="img"
-                      style={
-                        Object {
-                          "verticalAlign": "-0.1875em",
-                        }
-                      }
-                      viewBox="0 0 448 512"
-                      width="1.5em"
-                    >
-                      <path
-                        d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                        transform=""
-                      />
-                    </svg>
-                  </BarsIcon>
-                </button>
-              </Button>
-            </ComponentWithOuia>
+                  <path
+                    d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+                    transform=""
+                  />
+                </svg>
+              </BarsIcon>
+            </button>
           </Component>
         </div>
         <a
