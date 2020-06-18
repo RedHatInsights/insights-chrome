@@ -1,3 +1,3 @@
-const { ReactRouterDOM } = require('../src/js/externalDependencies');
+import { ReactRouterDOM } from '../src/js/externalDependencies';
 
-module.exports = ReactRouterDOM;
+export default ReactRouterDOM;

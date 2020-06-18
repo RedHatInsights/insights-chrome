@@ -1,3 +1,3 @@
-const { Graphql: graphql } = require('../src/js/externalDependencies');
+import { Graphql as graphql } from '../src/js/externalDependencies';
 
-module.exports = graphql;
+export default graphql;

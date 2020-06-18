@@ -3,6 +3,8 @@ import analytics from './analytics';
 import sentry from './sentry';
 import { bootstrap, chromeInit, rootApp, noAccess }   from './entry';
 
+console.log('dev mode');
+
 //Add redhat font to body
 document.querySelector('body').classList.add('pf-m-redhat-font');
 

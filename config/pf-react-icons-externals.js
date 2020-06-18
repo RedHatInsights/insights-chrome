@@ -1,3 +1,3 @@
-const { PFReactIcons } = require('../src/js/externalDependencies');
+import { PFReactIcons } from '../src/js/externalDependencies';
 
-module.exports = PFReactIcons;
+export default PFReactIcons;

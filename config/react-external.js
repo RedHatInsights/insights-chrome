@@ -1,3 +1,3 @@
-const { customReact } = require('../src/js/externalDependencies');
+import { customReact } from '../src/js/externalDependencies';
 
-module.exports = customReact;
+export default customReact;

@@ -1,9 +1,9 @@
-const axios = require('axios');
-const { AccessApi } = require('@redhat-cloud-services/rbac-client');
-const { bootstrapCache } = require('../utils');
+import axios from 'axios';
+import { AccessApi } from '@redhat-cloud-services/rbac-client';
+import { bootstrapCache } from '../utils';
 const BASE_PATH = '/api/rbac/v1';
 
-module.exports = (cachePrefix) => {
+export default (cachePrefix) => {
     const cache = bootstrapCache(BASE_PATH, `${cachePrefix}-rbac`);
 
     const instance = axios.create({ adapter: cache.adapter });
