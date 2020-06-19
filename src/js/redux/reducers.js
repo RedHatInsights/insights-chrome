@@ -72,7 +72,7 @@ export function clearActive(state) {
 }
 
 export function navToggleReducer(state) {
-    const mq = window.matchMedia && window.matchMedia('(min-width: 768px)');
+    const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
     let page = document.getElementById('ins-c-sidebar');
 
     if (mq && mq.matches) {

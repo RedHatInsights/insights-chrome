@@ -27,11 +27,11 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
       extraItems={Array []}
       isSmall={false}
     >
-      <Dropdown
+      <Component
         aria-label="Overflow actions"
         dropdownItems={
           Array [
-            <DropdownItem
+            <Unknown
               isDisabled={true}
             >
               <dl
@@ -48,27 +48,27 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   someUsername
                 </dd>
               </dl>
-            </DropdownItem>,
+            </Unknown>,
             <React.Fragment />,
-            <DropdownSeparator />,
-            <DropdownItem
+            <Unknown />,
+            <Unknown
               href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
               My profile
-            </DropdownItem>,
-            <DropdownItem
+            </Unknown>,
+            <Unknown
               href="./user-preferences/email"
             >
               User Preferences
-            </DropdownItem>,
-            <DropdownItem
+            </Unknown>,
+            <Unknown
               component="button"
               onClick={[Function]}
             >
               Log out
-            </DropdownItem>,
+            </Unknown>,
             Array [],
           ]
         }
@@ -77,22 +77,25 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
         onSelect={[Function]}
         position="right"
         toggle={
-          <DropdownToggle
+          <Unknown
             className="ins-c-toolbar__menu-user"
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
           >
             someFirstName someLastName
-          </DropdownToggle>
+          </Unknown>
         }
         widget-type="InsightsOverflowActions"
       >
-        <Component
+        <DropdownWithContext
           aria-label="Overflow actions"
+          autoFocus={true}
+          className=""
+          direction="down"
           dropdownItems={
             Array [
-              <DropdownItem
+              <Unknown
                 isDisabled={true}
               >
                 <dl
@@ -109,216 +112,153 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                     someUsername
                   </dd>
                 </dl>
-              </DropdownItem>,
+              </Unknown>,
               <React.Fragment />,
-              <DropdownSeparator />,
-              <DropdownItem
+              <Unknown />,
+              <Unknown
                 href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 My profile
-              </DropdownItem>,
-              <DropdownItem
+              </Unknown>,
+              <Unknown
                 href="./user-preferences/email"
               >
                 User Preferences
-              </DropdownItem>,
-              <DropdownItem
+              </Unknown>,
+              <Unknown
                 component="button"
                 onClick={[Function]}
               >
                 Log out
-              </DropdownItem>,
+              </Unknown>,
               Array [],
             ]
           }
+          isGrouped={false}
           isOpen={false}
           isPlain={true}
+          onSelect={[Function]}
+          ouiaComponentType="Dropdown"
           position="right"
           toggle={
-            <DropdownToggle
+            <Unknown
               className="ins-c-toolbar__menu-user"
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
             >
               someFirstName someLastName
-            </DropdownToggle>
+            </Unknown>
           }
           widget-type="InsightsOverflowActions"
         >
-          <ComponentWithOuia
-            component={[Function]}
-            componentProps={
-              Object {
-                "aria-label": "Overflow actions",
-                "dropdownItems": Array [
-                  <DropdownItem
-                    isDisabled={true}
-                  >
-                    <dl
-                      className="ins-c-dropdown-item__stack"
-                    >
-                      <dt
-                        className="ins-c-dropdown-item__stack--header"
-                      >
-                        Username:
-                      </dt>
-                      <dd
-                        className="ins-c-dropdown-item__stack--value"
-                      >
-                        someUsername
-                      </dd>
-                    </dl>
-                  </DropdownItem>,
-                  <React.Fragment />,
-                  <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    My profile
-                  </DropdownItem>,
-                  <DropdownItem
-                    href="./user-preferences/email"
-                  >
-                    User Preferences
-                  </DropdownItem>,
-                  <DropdownItem
-                    component="button"
-                    onClick={[Function]}
-                  >
-                    Log out
-                  </DropdownItem>,
-                  Array [],
-                ],
-                "isOpen": false,
-                "isPlain": true,
-                "position": "right",
-                "toggle": <DropdownToggle
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  onToggle={[Function]}
-                  widget-type="UserMenu"
-                >
-                  someFirstName someLastName
-                </DropdownToggle>,
-                "widget-type": "InsightsOverflowActions",
-              }
-            }
-            consumerContext={null}
+          <div
+            aria-label="Overflow actions"
+            className="pf-c-dropdown pf-m-align-right"
+            data-ouia-component-id={0}
+            data-ouia-component-type="PF4/Dropdown"
+            data-ouia-safe={true}
+            widget-type="InsightsOverflowActions"
           >
-            <DropdownWithContext
-              aria-label="Overflow actions"
-              autoFocus={true}
-              className=""
-              direction="down"
-              dropdownItems={
-                Array [
-                  <DropdownItem
-                    isDisabled={true}
-                  >
-                    <dl
-                      className="ins-c-dropdown-item__stack"
-                    >
-                      <dt
-                        className="ins-c-dropdown-item__stack--header"
-                      >
-                        Username:
-                      </dt>
-                      <dd
-                        className="ins-c-dropdown-item__stack--value"
-                      >
-                        someUsername
-                      </dd>
-                    </dl>
-                  </DropdownItem>,
-                  <React.Fragment />,
-                  <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    My profile
-                  </DropdownItem>,
-                  <DropdownItem
-                    href="./user-preferences/email"
-                  >
-                    User Preferences
-                  </DropdownItem>,
-                  <DropdownItem
-                    component="button"
-                    onClick={[Function]}
-                  >
-                    Log out
-                  </DropdownItem>,
-                  Array [],
-                ]
-              }
-              isGrouped={false}
+            <Component
+              aria-haspopup={true}
+              className="ins-c-toolbar__menu-user"
+              id="UserMenu"
               isOpen={false}
               isPlain={true}
-              onSelect={[Function]}
-              ouiaComponentType="Dropdown"
-              ouiaContext={
+              key=".0"
+              onEnter={[Function]}
+              onToggle={[Function]}
+              parentRef={
                 Object {
-                  "isOuia": false,
-                  "ouiaId": null,
+                  "current": <div
+                    aria-label="Overflow actions"
+                    class="pf-c-dropdown pf-m-align-right"
+                    data-ouia-component-id="0"
+                    data-ouia-component-type="PF4/Dropdown"
+                    data-ouia-safe="true"
+                    widget-type="InsightsOverflowActions"
+                  >
+                    <button
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                      id="UserMenu"
+                      type="button"
+                      widget-type="UserMenu"
+                    >
+                      <span
+                        class="pf-c-dropdown__toggle-text"
+                      >
+                        someFirstName someLastName
+                      </span>
+                      <span
+                        class="pf-c-dropdown__toggle-icon"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          style="vertical-align: -0.125em;"
+                          viewBox="0 0 320 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                            transform=""
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </div>,
                 }
               }
-              position="right"
-              toggle={
-                <DropdownToggle
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  onToggle={[Function]}
-                  widget-type="UserMenu"
-                >
-                  someFirstName someLastName
-                </DropdownToggle>
-              }
-              widget-type="InsightsOverflowActions"
+              widget-type="UserMenu"
             >
-              <div
-                aria-label="Overflow actions"
-                className="pf-c-dropdown pf-m-align-right"
-                widget-type="InsightsOverflowActions"
-              >
-                <DropdownToggle
-                  ariaHasPopup={true}
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  isOpen={false}
-                  isPlain={true}
-                  key=".0"
-                  onEnter={[Function]}
-                  onToggle={[Function]}
-                  parentRef={
-                    Object {
-                      "current": <div
-                        aria-label="Overflow actions"
-                        class="pf-c-dropdown pf-m-align-right"
-                        widget-type="InsightsOverflowActions"
+              <Toggle
+                aria-haspopup={true}
+                bubbleEvent={false}
+                className="ins-c-toolbar__menu-user"
+                id="UserMenu"
+                isActive={false}
+                isDisabled={false}
+                isOpen={false}
+                isPlain={true}
+                isPrimary={false}
+                isSplitButton={false}
+                onEnter={[Function]}
+                onToggle={[Function]}
+                parentRef={
+                  Object {
+                    "current": <div
+                      aria-label="Overflow actions"
+                      class="pf-c-dropdown pf-m-align-right"
+                      data-ouia-component-id="0"
+                      data-ouia-component-type="PF4/Dropdown"
+                      data-ouia-safe="true"
+                      widget-type="InsightsOverflowActions"
+                    >
+                      <button
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                        id="UserMenu"
+                        type="button"
+                        widget-type="UserMenu"
                       >
-                        <button
-                          aria-expanded="false"
-                          aria-haspopup="true"
-                          class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                          id="UserMenu"
-                          type="button"
-                          widget-type="UserMenu"
+                        <span
+                          class="pf-c-dropdown__toggle-text"
                         >
-                          <span
-                            class="pf-c-dropdown__toggle-text"
-                          >
-                            someFirstName someLastName
-                          </span>
+                          someFirstName someLastName
+                        </span>
+                        <span
+                          class="pf-c-dropdown__toggle-icon"
+                        >
                           <svg
                             aria-hidden="true"
-                            class="pf-c-dropdown__toggle-icon"
                             fill="currentColor"
                             height="1em"
                             role="img"
@@ -331,120 +271,64 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                               transform=""
                             />
                           </svg>
-                        </button>
-                      </div>,
-                    }
+                        </span>
+                      </button>
+                    </div>,
                   }
+                }
+                widget-type="UserMenu"
+              >
+                <button
+                  aria-expanded={false}
+                  aria-haspopup={true}
+                  className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                  disabled={false}
+                  id="UserMenu"
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  type="button"
                   widget-type="UserMenu"
                 >
-                  <Toggle
-                    ariaHasPopup={true}
-                    bubbleEvent={false}
-                    className="ins-c-toolbar__menu-user"
-                    id="UserMenu"
-                    isActive={false}
-                    isDisabled={false}
-                    isFocused={false}
-                    isHovered={false}
-                    isOpen={false}
-                    isPlain={true}
-                    isPrimary={false}
-                    isSplitButton={false}
-                    onEnter={[Function]}
-                    onToggle={[Function]}
-                    parentRef={
-                      Object {
-                        "current": <div
-                          aria-label="Overflow actions"
-                          class="pf-c-dropdown pf-m-align-right"
-                          widget-type="InsightsOverflowActions"
-                        >
-                          <button
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                            id="UserMenu"
-                            type="button"
-                            widget-type="UserMenu"
-                          >
-                            <span
-                              class="pf-c-dropdown__toggle-text"
-                            >
-                              someFirstName someLastName
-                            </span>
-                            <svg
-                              aria-hidden="true"
-                              class="pf-c-dropdown__toggle-icon"
-                              fill="currentColor"
-                              height="1em"
-                              role="img"
-                              style="vertical-align: -0.125em;"
-                              viewBox="0 0 320 512"
-                              width="1em"
-                            >
-                              <path
-                                d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                                transform=""
-                              />
-                            </svg>
-                          </button>
-                        </div>,
-                      }
-                    }
-                    widget-type="UserMenu"
+                  <span
+                    className="pf-c-dropdown__toggle-text"
                   >
-                    <button
-                      aria-expanded={false}
-                      aria-haspopup={true}
-                      className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                      disabled={false}
-                      id="UserMenu"
-                      onClick={[Function]}
-                      onKeyDown={[Function]}
-                      type="button"
-                      widget-type="UserMenu"
+                    someFirstName someLastName
+                  </span>
+                  <span
+                    className="pf-c-dropdown__toggle-icon"
+                  >
+                    <CaretDownIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
                     >
-                      <span
-                        className="pf-c-dropdown__toggle-text"
-                      >
-                        someFirstName someLastName
-                      </span>
-                      <CaretDownIcon
-                        className="pf-c-dropdown__toggle-icon"
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          className="pf-c-dropdown__toggle-icon"
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
+                      <svg
+                        aria-hidden={true}
+                        aria-labelledby={null}
+                        fill="currentColor"
+                        height="1em"
+                        role="img"
+                        style={
+                          Object {
+                            "verticalAlign": "-0.125em",
                           }
-                          viewBox="0 0 320 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                            transform=""
-                          />
-                        </svg>
-                      </CaretDownIcon>
-                    </button>
-                  </Toggle>
-                </DropdownToggle>
-              </div>
-            </DropdownWithContext>
-          </ComponentWithOuia>
-        </Component>
-      </Dropdown>
+                        }
+                        viewBox="0 0 320 512"
+                        width="1em"
+                      >
+                        <path
+                          d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                          transform=""
+                        />
+                      </svg>
+                    </CaretDownIcon>
+                  </span>
+                </button>
+              </Toggle>
+            </Component>
+          </div>
+        </DropdownWithContext>
+      </Component>
     </UserToggle>
   </Connect(UserToggle)>
 </Provider>
@@ -477,11 +361,11 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
       extraItems={Array []}
       isSmall={false}
     >
-      <Dropdown
+      <Component
         aria-label="Overflow actions"
         dropdownItems={
           Array [
-            <DropdownItem
+            <Unknown
               isDisabled={true}
             >
               <dl
@@ -503,27 +387,27 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   Org. Administrator
                 </dd>
               </dl>
-            </DropdownItem>,
+            </Unknown>,
             <React.Fragment />,
-            <DropdownSeparator />,
-            <DropdownItem
+            <Unknown />,
+            <Unknown
               href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
               My profile
-            </DropdownItem>,
-            <DropdownItem
+            </Unknown>,
+            <Unknown
               href="./user-preferences/email"
             >
               User Preferences
-            </DropdownItem>,
-            <DropdownItem
+            </Unknown>,
+            <Unknown
               component="button"
               onClick={[Function]}
             >
               Log out
-            </DropdownItem>,
+            </Unknown>,
             Array [],
           ]
         }
@@ -532,22 +416,25 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
         onSelect={[Function]}
         position="right"
         toggle={
-          <DropdownToggle
+          <Unknown
             className="ins-c-toolbar__menu-user"
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
           >
             someFirstName someLastName
-          </DropdownToggle>
+          </Unknown>
         }
         widget-type="InsightsOverflowActions"
       >
-        <Component
+        <DropdownWithContext
           aria-label="Overflow actions"
+          autoFocus={true}
+          className=""
+          direction="down"
           dropdownItems={
             Array [
-              <DropdownItem
+              <Unknown
                 isDisabled={true}
               >
                 <dl
@@ -569,226 +456,153 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     Org. Administrator
                   </dd>
                 </dl>
-              </DropdownItem>,
+              </Unknown>,
               <React.Fragment />,
-              <DropdownSeparator />,
-              <DropdownItem
+              <Unknown />,
+              <Unknown
                 href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 My profile
-              </DropdownItem>,
-              <DropdownItem
+              </Unknown>,
+              <Unknown
                 href="./user-preferences/email"
               >
                 User Preferences
-              </DropdownItem>,
-              <DropdownItem
+              </Unknown>,
+              <Unknown
                 component="button"
                 onClick={[Function]}
               >
                 Log out
-              </DropdownItem>,
+              </Unknown>,
               Array [],
             ]
           }
+          isGrouped={false}
           isOpen={false}
           isPlain={true}
+          onSelect={[Function]}
+          ouiaComponentType="Dropdown"
           position="right"
           toggle={
-            <DropdownToggle
+            <Unknown
               className="ins-c-toolbar__menu-user"
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
             >
               someFirstName someLastName
-            </DropdownToggle>
+            </Unknown>
           }
           widget-type="InsightsOverflowActions"
         >
-          <ComponentWithOuia
-            component={[Function]}
-            componentProps={
-              Object {
-                "aria-label": "Overflow actions",
-                "dropdownItems": Array [
-                  <DropdownItem
-                    isDisabled={true}
-                  >
-                    <dl
-                      className="ins-c-dropdown-item__stack"
-                    >
-                      <dt
-                        className="ins-c-dropdown-item__stack--header"
-                      >
-                        Username:
-                      </dt>
-                      <dd
-                        className="ins-c-dropdown-item__stack--value"
-                      >
-                        someUsername
-                      </dd>
-                      <dd
-                        className="ins-c-dropdown-item__stack--subValue"
-                      >
-                        Org. Administrator
-                      </dd>
-                    </dl>
-                  </DropdownItem>,
-                  <React.Fragment />,
-                  <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    My profile
-                  </DropdownItem>,
-                  <DropdownItem
-                    href="./user-preferences/email"
-                  >
-                    User Preferences
-                  </DropdownItem>,
-                  <DropdownItem
-                    component="button"
-                    onClick={[Function]}
-                  >
-                    Log out
-                  </DropdownItem>,
-                  Array [],
-                ],
-                "isOpen": false,
-                "isPlain": true,
-                "position": "right",
-                "toggle": <DropdownToggle
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  onToggle={[Function]}
-                  widget-type="UserMenu"
-                >
-                  someFirstName someLastName
-                </DropdownToggle>,
-                "widget-type": "InsightsOverflowActions",
-              }
-            }
-            consumerContext={null}
+          <div
+            aria-label="Overflow actions"
+            className="pf-c-dropdown pf-m-align-right"
+            data-ouia-component-id={1}
+            data-ouia-component-type="PF4/Dropdown"
+            data-ouia-safe={true}
+            widget-type="InsightsOverflowActions"
           >
-            <DropdownWithContext
-              aria-label="Overflow actions"
-              autoFocus={true}
-              className=""
-              direction="down"
-              dropdownItems={
-                Array [
-                  <DropdownItem
-                    isDisabled={true}
-                  >
-                    <dl
-                      className="ins-c-dropdown-item__stack"
-                    >
-                      <dt
-                        className="ins-c-dropdown-item__stack--header"
-                      >
-                        Username:
-                      </dt>
-                      <dd
-                        className="ins-c-dropdown-item__stack--value"
-                      >
-                        someUsername
-                      </dd>
-                      <dd
-                        className="ins-c-dropdown-item__stack--subValue"
-                      >
-                        Org. Administrator
-                      </dd>
-                    </dl>
-                  </DropdownItem>,
-                  <React.Fragment />,
-                  <DropdownSeparator />,
-                  <DropdownItem
-                    href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    My profile
-                  </DropdownItem>,
-                  <DropdownItem
-                    href="./user-preferences/email"
-                  >
-                    User Preferences
-                  </DropdownItem>,
-                  <DropdownItem
-                    component="button"
-                    onClick={[Function]}
-                  >
-                    Log out
-                  </DropdownItem>,
-                  Array [],
-                ]
-              }
-              isGrouped={false}
+            <Component
+              aria-haspopup={true}
+              className="ins-c-toolbar__menu-user"
+              id="UserMenu"
               isOpen={false}
               isPlain={true}
-              onSelect={[Function]}
-              ouiaComponentType="Dropdown"
-              ouiaContext={
+              key=".0"
+              onEnter={[Function]}
+              onToggle={[Function]}
+              parentRef={
                 Object {
-                  "isOuia": false,
-                  "ouiaId": null,
+                  "current": <div
+                    aria-label="Overflow actions"
+                    class="pf-c-dropdown pf-m-align-right"
+                    data-ouia-component-id="1"
+                    data-ouia-component-type="PF4/Dropdown"
+                    data-ouia-safe="true"
+                    widget-type="InsightsOverflowActions"
+                  >
+                    <button
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                      id="UserMenu"
+                      type="button"
+                      widget-type="UserMenu"
+                    >
+                      <span
+                        class="pf-c-dropdown__toggle-text"
+                      >
+                        someFirstName someLastName
+                      </span>
+                      <span
+                        class="pf-c-dropdown__toggle-icon"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          style="vertical-align: -0.125em;"
+                          viewBox="0 0 320 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                            transform=""
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </div>,
                 }
               }
-              position="right"
-              toggle={
-                <DropdownToggle
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  onToggle={[Function]}
-                  widget-type="UserMenu"
-                >
-                  someFirstName someLastName
-                </DropdownToggle>
-              }
-              widget-type="InsightsOverflowActions"
+              widget-type="UserMenu"
             >
-              <div
-                aria-label="Overflow actions"
-                className="pf-c-dropdown pf-m-align-right"
-                widget-type="InsightsOverflowActions"
-              >
-                <DropdownToggle
-                  ariaHasPopup={true}
-                  className="ins-c-toolbar__menu-user"
-                  id="UserMenu"
-                  isOpen={false}
-                  isPlain={true}
-                  key=".0"
-                  onEnter={[Function]}
-                  onToggle={[Function]}
-                  parentRef={
-                    Object {
-                      "current": <div
-                        aria-label="Overflow actions"
-                        class="pf-c-dropdown pf-m-align-right"
-                        widget-type="InsightsOverflowActions"
+              <Toggle
+                aria-haspopup={true}
+                bubbleEvent={false}
+                className="ins-c-toolbar__menu-user"
+                id="UserMenu"
+                isActive={false}
+                isDisabled={false}
+                isOpen={false}
+                isPlain={true}
+                isPrimary={false}
+                isSplitButton={false}
+                onEnter={[Function]}
+                onToggle={[Function]}
+                parentRef={
+                  Object {
+                    "current": <div
+                      aria-label="Overflow actions"
+                      class="pf-c-dropdown pf-m-align-right"
+                      data-ouia-component-id="1"
+                      data-ouia-component-type="PF4/Dropdown"
+                      data-ouia-safe="true"
+                      widget-type="InsightsOverflowActions"
+                    >
+                      <button
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                        id="UserMenu"
+                        type="button"
+                        widget-type="UserMenu"
                       >
-                        <button
-                          aria-expanded="false"
-                          aria-haspopup="true"
-                          class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                          id="UserMenu"
-                          type="button"
-                          widget-type="UserMenu"
+                        <span
+                          class="pf-c-dropdown__toggle-text"
                         >
-                          <span
-                            class="pf-c-dropdown__toggle-text"
-                          >
-                            someFirstName someLastName
-                          </span>
+                          someFirstName someLastName
+                        </span>
+                        <span
+                          class="pf-c-dropdown__toggle-icon"
+                        >
                           <svg
                             aria-hidden="true"
-                            class="pf-c-dropdown__toggle-icon"
                             fill="currentColor"
                             height="1em"
                             role="img"
@@ -801,131 +615,75 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                               transform=""
                             />
                           </svg>
-                        </button>
-                      </div>,
-                    }
+                        </span>
+                      </button>
+                    </div>,
                   }
+                }
+                widget-type="UserMenu"
+              >
+                <button
+                  aria-expanded={false}
+                  aria-haspopup={true}
+                  className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
+                  disabled={false}
+                  id="UserMenu"
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  type="button"
                   widget-type="UserMenu"
                 >
-                  <Toggle
-                    ariaHasPopup={true}
-                    bubbleEvent={false}
-                    className="ins-c-toolbar__menu-user"
-                    id="UserMenu"
-                    isActive={false}
-                    isDisabled={false}
-                    isFocused={false}
-                    isHovered={false}
-                    isOpen={false}
-                    isPlain={true}
-                    isPrimary={false}
-                    isSplitButton={false}
-                    onEnter={[Function]}
-                    onToggle={[Function]}
-                    parentRef={
-                      Object {
-                        "current": <div
-                          aria-label="Overflow actions"
-                          class="pf-c-dropdown pf-m-align-right"
-                          widget-type="InsightsOverflowActions"
-                        >
-                          <button
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                            id="UserMenu"
-                            type="button"
-                            widget-type="UserMenu"
-                          >
-                            <span
-                              class="pf-c-dropdown__toggle-text"
-                            >
-                              someFirstName someLastName
-                            </span>
-                            <svg
-                              aria-hidden="true"
-                              class="pf-c-dropdown__toggle-icon"
-                              fill="currentColor"
-                              height="1em"
-                              role="img"
-                              style="vertical-align: -0.125em;"
-                              viewBox="0 0 320 512"
-                              width="1em"
-                            >
-                              <path
-                                d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                                transform=""
-                              />
-                            </svg>
-                          </button>
-                        </div>,
-                      }
-                    }
-                    widget-type="UserMenu"
+                  <span
+                    className="pf-c-dropdown__toggle-text"
                   >
-                    <button
-                      aria-expanded={false}
-                      aria-haspopup={true}
-                      className="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user"
-                      disabled={false}
-                      id="UserMenu"
-                      onClick={[Function]}
-                      onKeyDown={[Function]}
-                      type="button"
-                      widget-type="UserMenu"
+                    someFirstName someLastName
+                  </span>
+                  <span
+                    className="pf-c-dropdown__toggle-icon"
+                  >
+                    <CaretDownIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
                     >
-                      <span
-                        className="pf-c-dropdown__toggle-text"
-                      >
-                        someFirstName someLastName
-                      </span>
-                      <CaretDownIcon
-                        className="pf-c-dropdown__toggle-icon"
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          className="pf-c-dropdown__toggle-icon"
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
+                      <svg
+                        aria-hidden={true}
+                        aria-labelledby={null}
+                        fill="currentColor"
+                        height="1em"
+                        role="img"
+                        style={
+                          Object {
+                            "verticalAlign": "-0.125em",
                           }
-                          viewBox="0 0 320 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                            transform=""
-                          />
-                        </svg>
-                      </CaretDownIcon>
-                    </button>
-                  </Toggle>
-                </DropdownToggle>
-              </div>
-            </DropdownWithContext>
-          </ComponentWithOuia>
-        </Component>
-      </Dropdown>
+                        }
+                        viewBox="0 0 320 512"
+                        width="1em"
+                      >
+                        <path
+                          d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+                          transform=""
+                        />
+                      </svg>
+                    </CaretDownIcon>
+                  </span>
+                </button>
+              </Toggle>
+            </Component>
+          </div>
+        </DropdownWithContext>
+      </Component>
     </UserToggle>
   </Connect(UserToggle)>
 </Provider>
 `;
 
 exports[`UserToggle should render correctly with isSmall false 1`] = `
-<Dropdown
+<Component
   aria-label="Overflow actions"
   dropdownItems={
     Array [
-      <DropdownItem
+      <Unknown
         isDisabled={true}
       >
         <dl
@@ -940,27 +698,27 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
             className="ins-c-dropdown-item__stack--value"
           />
         </dl>
-      </DropdownItem>,
+      </Unknown>,
       <React.Fragment />,
-      <DropdownSeparator />,
-      <DropdownItem
+      <Unknown />,
+      <Unknown
         href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
         My profile
-      </DropdownItem>,
-      <DropdownItem
+      </Unknown>,
+      <Unknown
         href="./user-preferences/email"
       >
         User Preferences
-      </DropdownItem>,
-      <DropdownItem
+      </Unknown>,
+      <Unknown
         component="button"
         onClick={[Function]}
       >
         Log out
-      </DropdownItem>,
+      </Unknown>,
       Array [],
     ]
   }
@@ -969,25 +727,25 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   onSelect={[Function]}
   position="right"
   toggle={
-    <DropdownToggle
+    <Unknown
       className="ins-c-toolbar__menu-user"
       id="UserMenu"
       onToggle={[Function]}
       widget-type="UserMenu"
     >
       someName
-    </DropdownToggle>
+    </Unknown>
   }
   widget-type="InsightsOverflowActions"
 />
 `;
 
 exports[`UserToggle should render correctly with isSmall true 1`] = `
-<Dropdown
+<Component
   aria-label="Overflow actions"
   dropdownItems={
     Array [
-      <DropdownItem
+      <Unknown
         isDisabled={true}
       >
         <dl
@@ -1002,27 +760,27 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
             className="ins-c-dropdown-item__stack--value"
           />
         </dl>
-      </DropdownItem>,
+      </Unknown>,
       <React.Fragment />,
-      <DropdownSeparator />,
-      <DropdownItem
+      <Unknown />,
+      <Unknown
         href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
         My profile
-      </DropdownItem>,
-      <DropdownItem
+      </Unknown>,
+      <Unknown
         href="./user-preferences/email"
       >
         User Preferences
-      </DropdownItem>,
-      <DropdownItem
+      </Unknown>,
+      <Unknown
         component="button"
         onClick={[Function]}
       >
         Log out
-      </DropdownItem>,
+      </Unknown>,
       Array [],
     ]
   }
@@ -1031,7 +789,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
   onSelect={[Function]}
   position="right"
   toggle={
-    <KebabToggle
+    <Unknown
       onToggle={[Function]}
     />
   }
