@@ -7,7 +7,7 @@ import AppSwitcher from './AppSwitcher';
 
 const documentationLink = {
     insights: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
-    openshift: 'https://docs.openshift.com/container-platform/latest/',
+    openshift: 'https://docs.openshift.com/dedicated/4/',
     subscriptions: 'https://access.redhat.com/products/subscription-central',
     'cost-management': 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
     ansible: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
