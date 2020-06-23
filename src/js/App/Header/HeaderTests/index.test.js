@@ -1,7 +1,8 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 import { shallow } from 'enzyme';
-import Header, { unauthed as UnauthedHeader } from '../index';
+import Header from '../index';
+import UnauthedHeader from '../UnAuthtedHeader';
 
 describe('Header', () => {
     it('should render correctly', () => {

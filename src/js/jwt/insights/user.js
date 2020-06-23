@@ -56,7 +56,6 @@ function tryBounceIfUnentitled(data, section) {
     }
 
     const service = pathMapper[section];
-
     if (data === true) {
         // this is a force bounce scenario!
         getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
