@@ -4,12 +4,14 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 .BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 
-const commonConfig = {
+const commonConfig = ({
+    publicPath
+}) => ({
     entry: path.resolve(__dirname, '../src/js/chrome.js'),
     output: {
         path: path.resolve(__dirname, '../build/js'),
         filename: 'chrome.js',
-        publicPath: '/apps/chrome/js/',
+        publicPath,
         chunkFilename: '[name].[hash].js'
     },
     externals: {
@@ -57,29 +59,13 @@ const commonConfig = {
         ]
     },
     plugins
-};
-
-const devConfig = {
-    devServer: {
-        contentBase: path.join(__dirname, '../dist'),
-        port: 8002,
-        https: true,
-        historyApiFallback: true,
-        hot: false,
-        inline: false,
-        disableHostCheck: true
-    }
-};
+});
 
 module.exports = function(env) {
-    const common = commonConfig;
+    const config = commonConfig({ publicPath: env.publicPath });
     if (env.analyze === 'true') {
-        common.plugins.push(new BundleAnalyzerPlugin());
+        config.plugins.push(new BundleAnalyzerPlugin());
     }
 
-    if (env.prod === 'true') {
-        return common;
-    }
-
-    return merge(common, devConfig);
+    return config;
 };
