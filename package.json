@@ -27,7 +27,7 @@
     "verify:beta": "npm-run-all lint build:beta test",
     "watch": "npm-run-all --parallel watch:*",
     "watch:images": "npm run build:images-chrome -- -w",
-    "watch:js": "parcel watch src/js/chrome.js -d build/js --public-url /apps/chrome/js",
+    "watch:js": "npm run build:js -- --watch",
     "watch:pug": "npm run build:pug -- -w",
     "watch:sass": "npm run build:sass -- -w",
     "nightly": "npm run build"
@@ -107,8 +107,6 @@
     "ncp": "^2.0.0",
     "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
-    "parcel": "^1.12.4",
-    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "pug": "^3.0.0",
     "pug-cli": "^1.0.0-alpha6",
     "react-intl": "^5.4.0",
