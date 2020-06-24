@@ -26,7 +26,8 @@ function getPendoConf(data) {
     const entitlements = {};
 
     data.entitlements && Object.entries(data.entitlements).forEach(([key, value])=> {
-        entitlements[`entitlements-${key}`] = value.is_trial ? 'trial' : value.is_entitled;
+        entitlements[`entitlements_${key}`] = value.is_entitled;
+        entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
 
     return {
