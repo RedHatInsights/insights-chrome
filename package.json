@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV='development' npm run watch",
+    "analyze:js": "NODE_ENV=production webpack --config config/webpack.config.js --env.analyze=true --env.publicPath=/apps/chrome/js --mode production",
     "build": "npm-run-all build:images-chrome build:js            build:sass clean:chrome hash:chrome    build:pug  build:fonts build:Fafonts",
     "build:beta": "npm-run-all build:images-chrome build:js:beta build:sass clean:chrome hash:chrome build:pug:beta build:fonts build:Fafonts",
     "build:js": "NODE_ENV=production webpack --config config/webpack.config.js --env.publicPath=/apps/chrome/js --mode production",
