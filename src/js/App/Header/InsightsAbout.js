@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { AboutModal } from '@patternfly/react-core4/dist/js/components/AboutModal/AboutModal';
-import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
-import { Tooltip } from '@patternfly/react-core4/dist/js/components/Tooltip/Tooltip';
-import { TextContent } from '@patternfly/react-core4/dist/js/components/Text/TextContent';
-import { TextList } from '@patternfly/react-core4/dist/js/components/Text/TextList';
-import { TextListItem } from '@patternfly/react-core4/dist/js/components/Text/TextListItem';
-import { Stack } from '@patternfly/react-core4/dist/js/layouts/Stack/Stack';
-import { StackItem } from '@patternfly/react-core4/dist/js/layouts/Stack/StackItem';
+import { AboutModal } from '@patternfly/react-core/dist/js/components/AboutModal/AboutModal';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
+import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
+import { TextList } from '@patternfly/react-core/dist/js/components/Text/TextList';
+import { TextListItem } from '@patternfly/react-core/dist/js/components/Text/TextListItem';
+import { Stack } from '@patternfly/react-core/dist/js/layouts/Stack/Stack';
+import { StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/StackItem';
 
 import CopyIcon from '@patternfly/react-icons/dist/js/icons/copy-icon';
 
