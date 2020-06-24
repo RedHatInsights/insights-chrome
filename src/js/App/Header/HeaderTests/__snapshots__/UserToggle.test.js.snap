@@ -58,11 +58,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             >
               My profile
             </Unknown>,
-            <Unknown
-              href="./user-preferences/email"
-            >
-              User Preferences
-            </Unknown>,
+            <React.Fragment />,
             <Unknown
               component="button"
               onClick={[Function]}
@@ -122,11 +118,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               >
                 My profile
               </Unknown>,
-              <Unknown
-                href="./user-preferences/email"
-              >
-                User Preferences
-              </Unknown>,
+              <React.Fragment />,
               <Unknown
                 component="button"
                 onClick={[Function]}
@@ -397,11 +389,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             >
               My profile
             </Unknown>,
-            <Unknown
-              href="./user-preferences/email"
-            >
-              User Preferences
-            </Unknown>,
+            <React.Fragment />,
             <Unknown
               component="button"
               onClick={[Function]}
@@ -466,11 +454,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               >
                 My profile
               </Unknown>,
-              <Unknown
-                href="./user-preferences/email"
-              >
-                User Preferences
-              </Unknown>,
+              <React.Fragment />,
               <Unknown
                 component="button"
                 onClick={[Function]}
@@ -708,11 +692,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       >
         My profile
       </Unknown>,
-      <Unknown
-        href="./user-preferences/email"
-      >
-        User Preferences
-      </Unknown>,
+      <React.Fragment />,
       <Unknown
         component="button"
         onClick={[Function]}
@@ -770,11 +750,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       >
         My profile
       </Unknown>,
-      <Unknown
-        href="./user-preferences/email"
-      >
-        User Preferences
-      </Unknown>,
+      <React.Fragment />,
       <Unknown
         component="button"
         onClick={[Function]}
