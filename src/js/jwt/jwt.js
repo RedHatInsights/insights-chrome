@@ -161,7 +161,7 @@ function isExistingValid(token) {
         const now = Date.now().toString().substr(0, 10);
         const exp = parsed.exp - now;
 
-        log(`expires in ${exp}`);
+        log(`Token expires in ${exp}`);
 
         // We want to invalidate tokens if they are getting close
         // to the expiry time
@@ -173,11 +173,18 @@ function isExistingValid(token) {
         if (exp > 90) {
             priv.keycloak.tokenParsed = parsed;
             return true;
-        } else {
-            log('token expired');
+        }
+        else {
+            if (exp > 0) {
+                log('token is expiring in < 90 seconds');
+            } else {
+                log('token is expired');
+            }
+
             return false;
         }
     } catch (e) {
+        log(e);
         return false;
     }
 }
@@ -251,9 +258,11 @@ exports.getUserInfo = () => {
     return updateToken()
     .then(() => {
         insightsUser(priv.keycloak.tokenParsed);
+        log('Successfully updated token');
     })
     .catch(() => {
         if (pageRequiresAuthentication()) {
+            log('Trying to log in user to refresh token');
             return exports.login();
         }
     });
@@ -267,7 +276,10 @@ exports.isAuthenticated = () => {
 
 /*** Check Token Status ***/
 // If a token is expired, logout of all tabs
-exports.expiredToken = () => { logout(); };
+exports.expiredToken = () => {
+    log('Token has expired, trying to log out');
+    logout();
+};
 
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
@@ -283,10 +295,12 @@ function updateToken() {
         // the updated token down stream... and things 401
         setCookie(priv.keycloak.token);
 
+        log('Attempting to update token');
+
         if (refreshed) {
             log('Token was successfully refreshed');
         } else {
-            log('Token is still valid');
+            log('Token is still valid, not updating');
         }
     });
 }
@@ -301,6 +315,7 @@ function getCookieExpires(exp) {
 
 // Set the cookie for 3scale
 function setCookie(token) {
+    log('Setting the cs_jwt cookie');
     if (token && token.length > 10) {
         setCookieWrapper(`${priv.cookie.cookieName}=${token};` +
                          `path=/;` +
@@ -316,10 +331,12 @@ function setCookieWrapper(str) {
 
 // Encoded WIP
 exports.getEncodedToken = () => {
-    log('Getting encoded token');
+    log('Trying to get the encoded token');
 
     if (!isExistingValid(priv.keycloak.token)) {
         Sentry.captureException(new Error('Fetching token failed - expired token'));
+        log('Failed to get encoded token');
+        updateToken();
     }
 
     return (priv.keycloak.token);
