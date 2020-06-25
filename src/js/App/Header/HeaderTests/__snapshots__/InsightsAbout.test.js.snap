@@ -61,14 +61,14 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
         noAboutModalBoxContentContainer={false}
         onClose={[Function]}
         productName=""
-        trademark={<Copyright />}
+        trademark=""
       >
         <Portal
           containerInfo={<div />}
         >
-          <AboutModalContainer
-            ariaDescribedById="pf-about-modal-content-0"
-            ariaLabelledbyId="pf-about-modal-title-0"
+          <Component
+            aboutModalBoxContentId="pf-about-modal-content-0"
+            aboutModalBoxHeaderId="pf-about-modal-title-0"
             backgroundImageSrc=""
             brandImageAlt="Red Hat Logo"
             brandImageSrc="test-file-stub"
@@ -77,7 +77,7 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
             noAboutModalBoxContentContainer={false}
             onClose={[Function]}
             productName=""
-            trademark={<Copyright />}
+            trademark=""
           />
         </Portal>
       </AboutModal>
@@ -88,17 +88,15 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
 
 exports[`Copyright should render 1`] = `
 <div
-  className="ins-c-footer__traditional-nav pf-l-flex pf-m-column pf-m-row-on-lg pf-m-flex-1-on-lg ins-c-page__about--modal-footer"
+  className="ins-c-footer__traditional-nav ins-c-page__about--modal-footer"
 >
   <p
-    className="copyright pf-m-spacer-xl-on-lg"
+    className="copyright"
   >
     Copyright © 2020 Red Hat, Inc.
   </p>
   <nav>
-    <ul
-      className="pf-l-flex pf-m-column pf-m-row-on-md"
-    >
+    <ul>
       <li>
         <a
           className="nav-link"

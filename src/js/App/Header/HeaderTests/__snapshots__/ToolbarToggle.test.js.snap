@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ToolbarToggle should render correctly 1`] = `
-<Dropdown
+<Component
   dropdownItems={
     Array [
-      <DropdownItem
+      <Unknown
         component="a"
         href="url1"
         rel="noopener noreferrer"
         target="_blank"
       >
         title1
-      </DropdownItem>,
-      <DropdownItem
+      </Unknown>,
+      <Unknown
         component="button"
         onClick={[Function]}
       >
         title2
-      </DropdownItem>,
+      </Unknown>,
     ]
   }
   isOpen={false}
@@ -25,12 +25,12 @@ exports[`ToolbarToggle should render correctly 1`] = `
   onSelect={[Function]}
   position="right"
   toggle={
-    <DropdownToggle
+    <Unknown
       iconComponent={null}
       onToggle={[Function]}
     >
       <UNDEFINED />
-    </DropdownToggle>
+    </Unknown>
   }
 />
 `;

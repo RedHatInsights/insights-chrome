@@ -2,11 +2,11 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
-import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
-import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
+import { Title } from '@patternfly/react-core4/dist/js/components/Title/Title';
+import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
+import { EmptyState, EmptyStateVariant } from '@patternfly/react-core4/dist/js/components/EmptyState/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core4/dist/js/components/EmptyState/EmptyStateIcon';
+import { EmptyStateBody } from '@patternfly/react-core4/dist/js/components/EmptyState/EmptyStateBody';
 
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 

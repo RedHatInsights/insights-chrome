@@ -1,7 +1,9 @@
 import React from 'react';
-import { Alert } from '@patternfly/react-core/dist/js/components/Alert/Alert';
-import { AlertActionCloseButton } from '@patternfly/react-core/dist/js/components/Alert/AlertActionCloseButton';
+import { Alert } from '@patternfly/react-core4/dist/js/components/Alert/Alert';
+import { AlertActionCloseButton } from '@patternfly/react-core4/dist/js/components/Alert/AlertActionCloseButton';
 import cookie from 'js-cookie';
+
+import './LogoutAlert.scss';
 
 class LogoutAlert extends React.Component {
     constructor(props) {
@@ -45,8 +47,7 @@ class LogoutAlert extends React.Component {
                         title="You have successfully logged out."
                         className="ins-c-alert__logout"
                         action={ <AlertActionCloseButton onClose={ this.hideAlertOne } /> }
-                    >
-                    </Alert>
+                    />
                 ) }
             </React.Fragment>
         );

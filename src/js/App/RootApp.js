@@ -15,6 +15,7 @@ const RootApp = ({
                 className="pf-c-drawer__content"
                 data-ouia-page-type={activeApp || appId}
                 data-ouia-page-group={activeLocation}
+                data-ouia-safe='true'
                 {...pageAction && { 'data-ouia-page-action': pageAction }}
                 {...pageObjectId && { 'data-ouia-page-object-id': pageObjectId }}
             >
