@@ -13,6 +13,9 @@ exports[`Tools should render correctly 1`] = `
     }
   >
     <Component>
+      <SettingsButton />
+    </Component>
+    <Component>
       <AboutButton />
     </Component>
   </Component>

@@ -8,8 +8,7 @@ const pathMapper = {
     migrations: 'migrations',
     ansible: 'ansible',
     subscriptions: 'subscriptions',
-    settings: 'settings',
-    'user-preferences': 'user_preferences'
+    settings: 'settings'
 };
 
 function getWindow() {
@@ -49,8 +48,7 @@ function tryBounceIfUnentitled(data, section) {
     if (section !== 'insights' &&
         section !== 'openshift' && section !== 'cost-management' &&
         section !== 'migrations' && section !== 'ansible' &&
-        section !== 'subscriptions' && section !== 'settings' &&
-        section !== 'user-preferences') {
+        section !== 'subscriptions' && section !== 'settings') {
         return;
     }
 
