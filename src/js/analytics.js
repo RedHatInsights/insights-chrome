@@ -19,6 +19,20 @@ function isInternalFlag(email, isInternal) {
     return '';
 }
 
+function getUrl(type) {
+
+    if(window.location.pathname === '/beta' || '/'){
+        return 'landing';
+    }
+
+    const sections = window.location.pathname.split('/');
+    if (sections[1] === 'beta') {
+        return type === 'bundle' ? sections[2] : sections[3];
+    }
+
+    return type === 'bundle' ? sections[1] : sections[2];
+}
+
 function getPendoConf(data) {
 
     const accountID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
@@ -30,7 +44,8 @@ function getPendoConf(data) {
         entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
 
-    const pathname = window.insights.chrome.isBeta() ? window.location.pathname.split('/beta') : window.location.pathname;
+    const currentBundle = getUrl('bundle');
+    const currentApp = getUrl('app');
 
     return {
         visitor: {
@@ -38,8 +53,8 @@ function getPendoConf(data) {
             internal: data.identity.user.is_internal,
             lang: data.identity.user.locale,
             isOrgAdmin: data.identity.user.is_org_admin,
-            url: window.location.href,
-            urlPathname: pathname,
+            currentBundle: currentBundle,
+            currentApp: currentApp,
             ...entitlements
         },
         account: {
