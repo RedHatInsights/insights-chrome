@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-import { Button } from '@patternfly/react-core4/dist/js/components/Button/Button';
-import { DropdownItem } from '@patternfly/react-core4/dist/js/components/Dropdown/DropdownItem';
-import { PageHeaderTools } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderTools';
-import { PageHeaderToolsGroup } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsGroup';
-import { PageHeaderToolsItem } from '@patternfly/react-core4/dist/js/components/Page/PageHeaderToolsItem';
-import { Divider } from '@patternfly/react-core4/dist/js/components/Divider/Divider';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import { PageHeaderTools } from '@patternfly/react-core/dist/js/components/Page/PageHeaderTools';
+import { PageHeaderToolsGroup } from '@patternfly/react-core/dist/js/components/Page/PageHeaderToolsGroup';
+import { PageHeaderToolsItem } from '@patternfly/react-core/dist/js/components/Page/PageHeaderToolsItem';
+import { Divider } from '@patternfly/react-core/dist/js/components/Divider/Divider';
 
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
