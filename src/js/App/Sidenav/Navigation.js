@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Nav } from '@patternfly/react-core4/dist/js/components/Nav/Nav';
-import  { NavItem } from '@patternfly/react-core4/dist/js/components/Nav/NavItem';
-import { NavExpandable } from '@patternfly/react-core4/dist/js/components/Nav/NavExpandable';
-import { NavList } from '@patternfly/react-core4/dist/js/components/Nav/NavList';
+import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
+import  { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
+import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
+import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
