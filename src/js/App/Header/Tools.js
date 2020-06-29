@@ -32,6 +32,7 @@ const Tools = () => {
             aria-label="Go to settings"
             widget-type='SettingsButton'
             className='ins-c-toolbar__button-settings'
+            isDisabled={ isSettingsDisabled }
             onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
             <CogIcon/>
         </Button>
@@ -83,11 +84,9 @@ const Tools = () => {
 
             {/* Show tools on medium and above screens */}
             <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
-                { !isSettingsDisabled &&
-                    <PageHeaderToolsItem>
-                        { <SettingsButton/> }
-                    </PageHeaderToolsItem>
-                }
+                <PageHeaderToolsItem>
+                    { <SettingsButton/> }
+                </PageHeaderToolsItem>
                 <PageHeaderToolsItem>
                     { <AboutButton/> }
                 </PageHeaderToolsItem>

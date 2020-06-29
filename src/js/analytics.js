@@ -26,8 +26,11 @@ function getPendoConf(data) {
     const entitlements = {};
 
     data.entitlements && Object.entries(data.entitlements).forEach(([key, value])=> {
-        entitlements[`entitlements-${key}`] = value.is_trial ? 'trial' : value.is_entitled;
+        entitlements[`entitlements_${key}`] = value.is_entitled;
+        entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
+
+    const pathname = window.insights.chrome.isBeta() ? window.location.pathname.split('/beta') : window.location.pathname;
 
     return {
         visitor: {
@@ -36,7 +39,7 @@ function getPendoConf(data) {
             lang: data.identity.user.locale,
             isOrgAdmin: data.identity.user.is_org_admin,
             url: window.location.href,
-            urlPathname: window.location.pathname,
+            urlPathname: pathname,
             ...entitlements
         },
         account: {
