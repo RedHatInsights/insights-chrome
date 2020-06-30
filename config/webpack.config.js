@@ -12,7 +12,7 @@ const commonConfig = ({
         path: path.resolve(__dirname, '../build/js'),
         filename: 'chrome.js',
         publicPath,
-        chunkFilename: '[name].[hash].js'
+        chunkFilename: '[name].[chunkhash].js'
     },
     externals: {
         '@patternfly/react-table': {
