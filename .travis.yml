@@ -11,9 +11,8 @@ before_install:
 install:
 - npm ci
 jobs:
-  exclude:
-    - if: branch = nightly
   include:
+    - if: branch != nightly
     - stage: Lint
       script: npm run lint
     - stage: Test
@@ -28,8 +27,8 @@ jobs:
       script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 jobs:
   include:
+    - if: branch = nightly AND type != pull_request
     - stage: Deploy Nightly
-      if: branch IN (nightly) AND type != pull_request
       name: deploy:nightly
       script: npm run build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
