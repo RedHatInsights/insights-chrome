@@ -21,7 +21,7 @@ function isInternalFlag(email, isInternal) {
 
 function getUrl(type) {
 
-    if(window.location.pathname === '/beta' || '/'){
+    if (window.location.pathname === ('/beta' || '/')) {
         return 'landing';
     }
 
