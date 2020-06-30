@@ -44,7 +44,8 @@ export function pageRequiresAuthentication() {
         section === 'migrations'        ||
         section === 'subscriptions'     ||
         section === 'openshift'         ||
-        section === 'settings') {
+        section === 'settings'          ||
+        section === 'user-preferences') {
         return true;
     }
 
