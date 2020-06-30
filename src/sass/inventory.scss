@@ -1,3 +1,8 @@
+
 .ins-entity-table.pf-c-table .pf-c-table__check {
   position: inherit;
+}
+
+.ins-c-inventory__detail--general-info:not(.ins-inventory-detail) {
+    background: var(--pf-global--BackgroundColor--100);
 }

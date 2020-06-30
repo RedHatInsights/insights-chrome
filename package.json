@@ -39,6 +39,9 @@
       "src/**/*.js",
       "!src/**/*Styles.js"
     ],
+    "transformIgnorePatterns": [
+        "/node_modules/(?!@redhat-cloud-services)"
+    ],
     "roots": [
       "<rootDir>/src/"
     ],
