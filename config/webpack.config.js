@@ -1,4 +1,3 @@
-const merge = require('webpack-merge');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 .BundleAnalyzerPlugin;
@@ -10,7 +9,7 @@ const commonConfig = ({
     entry: path.resolve(__dirname, '../src/js/chrome.js'),
     output: {
         path: path.resolve(__dirname, '../build/js'),
-        filename: 'chrome.js',
+        filename: 'chrome.[chunkhash].js',
         publicPath,
         chunkFilename: '[name].[chunkhash].js'
     },

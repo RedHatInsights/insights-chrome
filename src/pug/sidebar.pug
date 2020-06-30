@@ -1,7 +1,7 @@
 - var i = 0;
 script
     | console.warn('Chrome Deprecation: We deprecated the sidenav snippet. For instructions, please see: http://platform-docs.cloud.paas.upshift.redhat.com/frontend/chrome.html')
-script(src='./apps/chrome/js/chrome.js')
+script(src=`./apps/chrome/${ chromeJS }`)
 aside.pf-c-page__sidebar.pf-l-page__sidebar.pf-m-dark
     nav.pf-c-nav.pf-m-dark(aria-label='Insights Global Navigation', data-ouia-safe='false')
         ul.pf-c-nav__list
