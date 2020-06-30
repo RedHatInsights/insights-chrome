@@ -16,14 +16,15 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/components/ModalBox/modal-box.scss';
 @import 'node_modules/@patternfly/patternfly/components/Backdrop/backdrop.scss';
 @import 'node_modules/@patternfly/patternfly/components/Switch/switch.scss';
+@import 'node_modules/@patternfly/patternfly/components/Alert/alert.scss';
 
 // Layouts
 @import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
 @import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/spinner.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/skeleton.css';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
@@ -32,7 +33,7 @@ $pf-global--image-path: './assets/images/';
 @import 'helpers.scss';
 
 @import 'partials/_footer.scss';
-@import 'partials/_sidebar.scss';
+@import 'partials/_tempNav.scss';
 
 body {
     position: relative;
@@ -79,8 +80,8 @@ aside {
     position: absolute;
     top: var(--pf-c-page__header--MinHeight);
     right: var(--pf-c-page__header-tools--MarginRight);
-
 }
+
 // Header
 .pf-c-page__header {
     overflow: visible;
@@ -132,17 +133,6 @@ aside {
     }
 }
 
-// Card
-.pf-c-card.pf-m-dark {
-    @extend %pf-t-dark;
-    background: transparent;
-    box-shadow: none;
-
-    &:hover {
-        background: var(--pf-global--BackgroundColor--dark-transparent-200);
-    }
-}
-
 // Loading
 .ins-l-page__header--loading {
     .ins-c-skeleton { @include rem('height', 28px); }
@@ -152,17 +142,15 @@ aside {
     .pf-c-button.pf-m-plain { top: 2px; }
 }
 
-.ins-c-navigation__header-name--loading { width: 100%; }
+section.ins-c-app-switcher--loading {
+    padding: calc(16px + var(--pf-global--spacer--sm)) 24px;
+    margin-top: 7px;
+    border-bottom: 3px solid #3c3f42;
+}
 
-// abstract this
-.ins-c-icon-inline {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: baseline;
-
-    > *:not(:last-child) {
-        margin-right: var(--pf-global--spacer--md);
-    }
+.pf-m-user-skeleton {
+    .ins-c-skeleton { width: 75px; }
+    .pf-c-dropdown__toggle-icon { height: 1em; }
 }
 
 // Pen testing

@@ -15,6 +15,10 @@ export const DEFAULT_ROUTES = {
     qaprodauth: {
         url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com'],
         sso: 'https://sso.redhat.com/auth'
+    },
+    stage: {
+        url: ['cloud.stage.redhat.com'],
+        sso: 'https://sso.stage.redhat.com/auth'
     }
 };
 

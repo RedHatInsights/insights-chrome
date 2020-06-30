@@ -63,94 +63,56 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
       }
     }
   >
-    <Component
+    <Nav
       aria-label="Insights Global Navigation"
       data-ouia-safe="true"
       onSelect={[Function]}
+      onToggle={[Function]}
       theme="dark"
     >
-      <ComponentWithOuia
-        component={[Function]}
-        componentProps={
-          Object {
-            "aria-label": "Insights Global Navigation",
-            "children": <NavList
-              ariaLeftScroll="Scroll left"
-              ariaRightScroll="Scroll right"
-              className=""
-              variant="default"
+      <nav
+        aria-label="Local"
+        className="pf-c-nav"
+        data-ouia-component-id={3}
+        data-ouia-component-type="PF4/Nav"
+        data-ouia-safe="true"
+      >
+        <NavList
+          ariaLeftScroll="Scroll left"
+          ariaRightScroll="Scroll right"
+        >
+          <ul
+            className="pf-c-nav__list"
+            onScroll={[Function]}
+          >
+            <NavigationItem
+              isActive={false}
+              key="0"
+              onClick={[Function]}
+              parent="someLocation"
             >
-              <NavigationItem
+              <Component
                 isActive={false}
                 onClick={[Function]}
-                parent="someLocation"
-              />
-            </NavList>,
-            "data-ouia-safe": "true",
-            "onSelect": [Function],
-            "theme": "dark",
-          }
-        }
-        consumerContext={null}
-      >
-        <Nav
-          aria-label="Insights Global Navigation"
-          className=""
-          data-ouia-safe="true"
-          onSelect={[Function]}
-          onToggle={[Function]}
-          ouiaContext={
-            Object {
-              "isOuia": false,
-              "ouiaId": null,
-            }
-          }
-          theme="dark"
-        >
-          <nav
-            aria-label="Insights Global Navigation"
-            className="pf-c-nav pf-m-dark"
-            data-ouia-safe="true"
-          >
-            <NavList
-              ariaLeftScroll="Scroll left"
-              ariaRightScroll="Scroll right"
-              className=""
-              variant="default"
-            >
-              <ul
-                className="pf-c-nav__list"
+                preventDefault={true}
+                to="http://localhost/someLocation/undefined"
               >
-                <NavigationItem
-                  isActive={false}
-                  key="0"
-                  onClick={[Function]}
-                  parent="someLocation"
+                <li
+                  className="pf-c-nav__item"
                 >
-                  <NavItem
-                    isActive={false}
+                  <a
+                    aria-current={null}
+                    className="pf-c-nav__link"
+                    href="http://localhost/someLocation/undefined"
                     onClick={[Function]}
-                    preventDefault={true}
-                    to="http://localhost/someLocation/undefined"
-                  >
-                    <li
-                      className="pf-c-nav__item"
-                    >
-                      <a
-                        aria-current={null}
-                        className="pf-c-nav__link"
-                        href="http://localhost/someLocation/undefined"
-                        onClick={[Function]}
-                      />
-                    </li>
-                  </NavItem>
-                </NavigationItem>
-              </ul>
-            </NavList>
-          </nav>
-        </Nav>
-      </ComponentWithOuia>
-    </Component>
+                  />
+                </li>
+              </Component>
+            </NavigationItem>
+          </ul>
+        </NavList>
+      </nav>
+    </Nav>
   </Navigation>
 </Connect(Navigation)>
 `;
@@ -209,111 +171,72 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
         ]
       }
     >
-      <Component
+      <Nav
         aria-label="Insights Global Navigation"
         data-ouia-safe="true"
         onSelect={[Function]}
+        onToggle={[Function]}
         theme="dark"
       >
-        <ComponentWithOuia
-          component={[Function]}
-          componentProps={
-            Object {
-              "aria-label": "Insights Global Navigation",
-              "children": <NavList
-                ariaLeftScroll="Scroll left"
-                ariaRightScroll="Scroll right"
-                className=""
-                variant="default"
+        <nav
+          aria-label="Local"
+          className="pf-c-nav"
+          data-ouia-component-id={1}
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="true"
+        >
+          <NavList
+            ariaLeftScroll="Scroll left"
+            ariaRightScroll="Scroll right"
+          >
+            <ul
+              className="pf-c-nav__list"
+              onScroll={[Function]}
+            >
+              <NavigationItem
+                isActive={false}
+                key="0"
+                onClick={[Function]}
+                parent="someLocation"
               >
-                <NavigationItem
+                <Component
                   isActive={false}
                   onClick={[Function]}
-                  parent="someLocation"
-                />
-              </NavList>,
-              "data-ouia-safe": "true",
-              "onSelect": [Function],
-              "theme": "dark",
-            }
-          }
-          consumerContext={null}
-        >
-          <Nav
-            aria-label="Insights Global Navigation"
-            className=""
-            data-ouia-safe="true"
-            onSelect={[Function]}
-            onToggle={[Function]}
-            ouiaContext={
-              Object {
-                "isOuia": false,
-                "ouiaId": null,
-              }
-            }
-            theme="dark"
-          >
-            <nav
-              aria-label="Insights Global Navigation"
-              className="pf-c-nav pf-m-dark"
-              data-ouia-safe="true"
-            >
-              <NavList
-                ariaLeftScroll="Scroll left"
-                ariaRightScroll="Scroll right"
-                className=""
-                variant="default"
-              >
-                <ul
-                  className="pf-c-nav__list"
+                  preventDefault={true}
+                  to="http://localhost/someLocation/undefined"
                 >
-                  <NavigationItem
-                    isActive={false}
-                    key="0"
-                    onClick={[Function]}
-                    parent="someLocation"
+                  <li
+                    className="pf-c-nav__item"
                   >
-                    <NavItem
-                      isActive={false}
+                    <a
+                      aria-current={null}
+                      className="pf-c-nav__link"
+                      href="http://localhost/someLocation/undefined"
                       onClick={[Function]}
-                      preventDefault={true}
-                      to="http://localhost/someLocation/undefined"
-                    >
-                      <li
-                        className="pf-c-nav__item"
-                      >
-                        <a
-                          aria-current={null}
-                          className="pf-c-nav__link"
-                          href="http://localhost/someLocation/undefined"
-                          onClick={[Function]}
-                        />
-                      </li>
-                    </NavItem>
-                  </NavigationItem>
-                </ul>
-              </NavList>
-            </nav>
-          </Nav>
-        </ComponentWithOuia>
-      </Component>
+                    />
+                  </li>
+                </Component>
+              </NavigationItem>
+            </ul>
+          </NavList>
+        </nav>
+      </Nav>
     </Navigation>
   </Connect(Navigation)>
 </Provider>
 `;
 
 exports[`Navigation should render corectly 1`] = `
-<Component
+<Nav
   aria-label="Insights Global Navigation"
   data-ouia-safe="true"
   onSelect={[Function]}
+  onToggle={[Function]}
   theme="dark"
 >
   <NavList
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
-    className=""
-    variant="default"
   >
     <NavExpandable
       className=""
@@ -373,55 +296,53 @@ exports[`Navigation should render corectly 1`] = `
       parent="openshift"
       title="Remediations"
     />
-    <NavItemSeparator />
-    <NavItem
+    <Component
       className="ins-c-page__documentation"
       rel="noopener noreferrer"
       target="_blank"
       to="someDocs"
     >
       Documentation
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
       to="https://access.redhat.com/support/cases"
     >
       Support Cases
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="feedback"
       rel="noopener noreferrer"
       target="_blank"
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="marketplace"
       rel="noopener noreferrer"
       target="_blank"
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
-    </NavItem>
+    </Component>
   </NavList>
-</Component>
+</Nav>
 `;
 
 exports[`Navigation should render correctly 2 1`] = `
-<Component
+<Nav
   aria-label="Insights Global Navigation"
   data-ouia-safe="true"
   onSelect={[Function]}
+  onToggle={[Function]}
   theme="dark"
 >
   <NavList
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
-    className=""
-    variant="default"
   >
     <NavExpandable
       className=""
@@ -481,39 +402,38 @@ exports[`Navigation should render correctly 2 1`] = `
       parent="openshift"
       title="Remediations"
     />
-    <NavItemSeparator />
-    <NavItem
+    <Component
       className="ins-c-page__documentation"
       rel="noopener noreferrer"
       target="_blank"
       to="someDocs"
     >
       Documentation
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
       to="https://access.redhat.com/support/cases"
     >
       Support Cases
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="feedback"
       rel="noopener noreferrer"
       target="_blank"
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </NavItem>
-    <NavItem
+    </Component>
+    <Component
       key="marketplace"
       rel="noopener noreferrer"
       target="_blank"
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
-    </NavItem>
+    </Component>
   </NavList>
-</Component>
+</Nav>
 `;

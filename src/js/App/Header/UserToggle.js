@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import {
-    Dropdown,
-    DropdownToggle,
-    KebabToggle,
-    DropdownItem,
-    DropdownSeparator,
-    DropdownPosition
-} from '@patternfly/react-core';
+import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
+import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
+import { KebabToggle } from '@patternfly/react-core/dist/js/components/Dropdown/KebabToggle';
+import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import { DropdownSeparator } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownSeparator';
+import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -39,17 +37,20 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             rel='noopener noreferrer'>
                 My profile
         </DropdownItem>,
-        <DropdownItem
-            key="User preferences"
-            href="./user-preferences/email"
-        >
-            User preferences
-        </DropdownItem>,
+        <React.Fragment key="user prefs wrapper">
+            { accountNumber > -1 &&
+                <DropdownItem
+                    key="User preferences"
+                    href="./user-preferences/email">
+                    User Preferences
+                </DropdownItem>
+            }
+        </React.Fragment>,
         <DropdownItem
             key="logout"
             component="button"
             onClick={() => window.insights.chrome.auth.logout(true)}>
-                Logout
+                Log out
         </DropdownItem>,
         [...extraItems]
     ];
@@ -105,7 +106,9 @@ export class UserToggle extends Component {
 UserToggle.propTypes = {
     account: PropTypes.shape({
         number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        name: PropTypes.string
+        name: PropTypes.string,
+        username: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        isOrgAdmin: PropTypes.bool
     }),
     isSmall: PropTypes.bool,
     extraItems: PropTypes.arrayOf(PropTypes.node)

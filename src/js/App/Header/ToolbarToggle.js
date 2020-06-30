@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import {
-    Dropdown,
-    DropdownToggle,
-    DropdownItem,
-    DropdownPosition
-} from '@patternfly/react-core';
+
+import  { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
+import  { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
+import  { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import  { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
 import PropTypes from 'prop-types';
 
 class ToolbarToggle extends Component {
@@ -45,11 +44,11 @@ class ToolbarToggle extends Component {
                 // Because the urls are using 'a', don't use onClick for accessibility
                 // If it is a button, use the onClick prop
                 {
-                ...url ? {
-                    href: url,
-                    target: '_blank',
-                    rel: 'noopener noreferrer'
-                } : { onClick: (ev => this.onClick(ev, url, onClick)) }
+                    ...url ? {
+                        href: url,
+                        target: '_blank',
+                        rel: 'noopener noreferrer'
+                    } : { onClick: (ev => this.onClick(ev, url, onClick)) }
                 }
             >
                 { title }
@@ -61,6 +60,7 @@ class ToolbarToggle extends Component {
             className={this.props.className}
             id={this.props.id}
             iconComponent={null}
+            toggleIndicator={ this.props.hasToggleIndicator }
             onToggle={this.onToggle}>
             <this.props.icon />
         </DropdownToggle>;
@@ -80,7 +80,11 @@ class ToolbarToggle extends Component {
 
 ToolbarToggle.propTypes = {
     icon: PropTypes.func,
-    dropdownItems: PropTypes.array
+    dropdownItems: PropTypes.array,
+    widgetType: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    className: PropTypes.string,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    hasToggleIndicator: PropTypes.bool
 };
 
 export default ToolbarToggle;

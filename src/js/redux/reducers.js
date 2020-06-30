@@ -54,7 +54,9 @@ export function appNavClick(state, { payload }) {
         globalNav: payload.custom ? state.globalNav && state.globalNav.map(item => ({
             ...item,
             active: payload && (item.id === payload.id || item.title === payload.id)
-                || (item.subItems && item.subItems.some(({ id }) => id === payload.id))
+                || (item.subItems && item.subItems.some(
+                    ({ id }) => id === payload.id) && (item.id === state.appId || item.id === payload.parentId)
+                )
         })) : state.globalNav
     };
 }
@@ -70,7 +72,7 @@ export function clearActive(state) {
 }
 
 export function navToggleReducer(state) {
-    const mq = window.matchMedia && window.matchMedia('(min-width: 768px)');
+    const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
     let page = document.getElementById('ins-c-sidebar');
 
     if (mq && mq.matches) {

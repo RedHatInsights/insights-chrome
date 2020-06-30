@@ -24,12 +24,25 @@
         font-size: var(--pf-global--FontSize--sm);
     }
 
+    ul {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        @media screen and (min-width: $pf-global--breakpoint--lg) {
+            flex-direction: row;
+        }
+    }
+
+    li { list-style: none; }
+
     li + li {
+        margin-top: 0;
         @media screen and (min-width: $pf-global--breakpoint--lg) {
             &::before {
                 content: '|';
                 color: var(--pf-global--Color--200);
-                margin-right: var(--pf-global--spacer--md);
+                margin: 0 var(--pf-global--spacer--md);
             }
         }
     }

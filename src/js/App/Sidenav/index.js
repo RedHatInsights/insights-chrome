@@ -1,34 +1,23 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { Split, SplitItem } from '@patternfly/react-core';
-import { HomeIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+
+import AppSwitcher from './AppSwitcher';
 
 const documentationLink = {
     insights: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
-    openshift: 'https://docs.openshift.com/container-platform/latest/',
+    openshift: 'https://docs.openshift.com/dedicated/4/',
     subscriptions: 'https://access.redhat.com/products/subscription-central',
     'cost-management': 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
-    ansible: 'https://access.redhat.com/documentation/red_hat_ansible_automation_platform/'
+    ansible: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
 };
 
 export class SideNav extends Component {
     render() {
         const { activeTechnology, activeLocation } = this.props;
         return (<Fragment>
-            <Split className="ins-c-navigation__header">
-                <SplitItem className="ins-c-page__home-icon">
-                    <a href={`${ document.baseURI }`}>
-                        <HomeIcon size="md" />
-                    </a>
-                </SplitItem>
-                <SplitItem isFilled className="pf-u-display-flex pf-u-align-items-center ins-c-navigation__header-title__wrapper">
-                    <div className="ins-c-navigation__header-title">
-                        {activeTechnology}
-                    </div>
-                </SplitItem>
-            </Split>
+            <AppSwitcher currentApp={activeTechnology}/>
             <Navigation documentation={documentationLink[activeLocation]} />
         </Fragment>);
     }

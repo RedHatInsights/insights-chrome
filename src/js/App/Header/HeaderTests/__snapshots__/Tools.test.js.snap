@@ -1,63 +1,100 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Tools should render correctly 1`] = `
-<div
-  className="pf-l-page__header-tools pf-c-page__header-tools"
+<Component
   widget-type="InsightsToolbar"
 >
-  <Toolbar>
-    <ToolbarGroup
-      className="pf-u-mr-0 pf-u-mr-lg-on-lg"
-    >
-      <SettingsButton
-        isDisabled={true}
+  <Component
+    visibility={
+      Object {
+        "default": "hidden",
+        "sm": "visible",
+      }
+    }
+  >
+    <Component>
+      <AboutButton />
+    </Component>
+  </Component>
+  <Component
+    visibility={
+      Object {
+        "default": "hidden",
+        "sm": "visible",
+      }
+    }
+  >
+    <Component>
+      <Connect(UserToggle)
+        className="ins-c-dropdown__user"
       />
-      <ToolbarToggle
-        className="ins-c-toolbar__menu-help"
-        dropdownItems={
+    </Component>
+  </Component>
+  <Component
+    visibility={
+      Object {
+        "sm": "hidden",
+      }
+    }
+  >
+    <Component>
+      <Connect(UserToggle)
+        extraItems={
           Array [
-            Object {
-              "title": "Customer support",
-              "url": "https://access.redhat.com/support",
-            },
-            Object {
-              "title": "Training",
-              "url": "https://www.redhat.com/en/services/training-and-certification",
-            },
-            Object {
-              "onClick": [Function],
-              "title": "API documentation",
-            },
-            Object {
-              "onClick": [Function],
-              "title": "About",
-            },
+            <React.Fragment>
+              <Unknown
+                component="li"
+              />
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="button"
+                onClick={[Function]}
+              >
+                Settings
+              </Unknown>
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="li"
+              />
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="button"
+              >
+                Customer support
+              </Unknown>
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="button"
+              >
+                Training
+              </Unknown>
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="button"
+                onClick={[Function]}
+              >
+                API documentation
+              </Unknown>
+            </React.Fragment>,
+            <React.Fragment>
+              <Unknown
+                component="button"
+                onClick={[Function]}
+              >
+                About
+              </Unknown>
+            </React.Fragment>,
           ]
         }
-        icon={[Function]}
-        id="HelpMenu"
-        key="0"
-        widget-type="HelpMenu"
+        isSmall={true}
       />
-    </ToolbarGroup>
-    <ToolbarGroup>
-      <ToolbarItem
-        className="pf-u-hidden-on-lg pf-u-mr-0"
-      >
-        <Connect(UserToggle)
-          extraItems={Array []}
-          isSmall={true}
-        />
-      </ToolbarItem>
-      <ToolbarItem
-        className="pf-u-screen-reader pf-u-visible-on-lg"
-      >
-        <Connect(UserToggle)
-          className="ins-c-dropdown__user"
-        />
-      </ToolbarItem>
-    </ToolbarGroup>
-  </Toolbar>
+    </Component>
+  </Component>
   <Connect(UserIcon) />
-</div>
+</Component>
 `;
