@@ -1,5 +1,7 @@
 'use strict';
 
+const log = require('./jwt/logger')('Analytics.js');
+
 const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
 
 function initPendo(pendoConf) {
@@ -70,5 +72,11 @@ export default (data) => {
     // eslint-disable-next-line
     (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];v=['initialize','identify','updateOptions','pageLoad'];for(w=0,x=v.length;w<x;++w)(function(m){o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);y=e.createElement(n);y.async=!0;y.src=`https://cdn.pendo.io/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
 
-    initPendo(getPendoConf(data));
+    // initPendo(getPendoConf(data));
+    try {
+        initPendo(getPendoConf(data))
+        log('Pendo initialized');
+    } catch {
+        log('Pendo init failed');
+    }
 };
