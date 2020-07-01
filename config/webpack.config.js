@@ -11,7 +11,8 @@ const commonConfig = ({
         path: path.resolve(__dirname, '../build/js'),
         filename: 'chrome.[chunkhash].js',
         publicPath,
-        chunkFilename: '[name].[chunkhash].js'
+        chunkFilename: '[name].[chunkhash].js',
+        jsonpFunction: 'wpJsonpChromeInstance'
     },
     externals: {
         '@patternfly/react-table': {
