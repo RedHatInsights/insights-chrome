@@ -1,36 +1,44 @@
 import setDependencies from '../externalDependencies';
-import RenderWrapper from './RenderWrapper';
-import { SystemCvesStore } from '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/esm/SystemCvesStore';
-// import { SystemAdvisoryListStore } from '@redhat-cloud-services/frontend-components-inventory-patchman/dist/esm';
-import systemProfileStore from '@redhat-cloud-services/frontend-components-inventory-general-info/esm/systemProfileStore';
+
 const isEnabled = () => {
     return window.localStorage.getItem('chrome:inventory:experimental_detail') !== undefined;
 };
 
-export default (dependencies) => {
+export default async (dependencies) => {
     setDependencies(dependencies);
 
-    return import('../inventoryStyles').then(
-        () => import('@redhat-cloud-services/frontend-components-inventory').then(data => {
-            return {
-                ...data,
-                inventoryConnector: (store) => data.inventoryConnector(store, isEnabled ? {
-                    componentMapper: RenderWrapper,
-                    appList: [
-                        { title: 'General information', name: 'general_information' },
-                        { title: 'Advisor', name: 'advisor' },
-                        { title: 'Vulnerability', name: 'vulnerabilities' },
-                        { title: 'Compliance', name: 'compliance' },
-                        { title: 'Patch', name: 'patch' }
-                    ]
-                } : undefined),
-                mergeWithDetail: (redux) => ({
-                    ...data.mergeWithDetail(redux),
-                    SystemCvesStore,
-                    systemProfileStore
-                    // SystemAdvisoryListStore
-                })
-            };
-        })
+    await import('../inventoryStyles');
+    const invData = await import('@redhat-cloud-services/frontend-components-inventory');
+    const { SystemAdvisoryListStore } = await import(
+        '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
     );
+    const { SystemCvesStore } = await import(
+        '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
+    );
+    const systemProfileStore = await import(
+        '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
+    );
+    const RenderWrapper = await import('./RenderWrapper');
+
+    return {
+        ...invData,
+        inventoryConnector: (store) => invData.inventoryConnector(store, isEnabled() ? {
+            componentMapper: RenderWrapper.default,
+            appList: [
+                { title: 'General information', name: 'general_information', pageId: 'inventory' },
+                { title: 'Advisor', name: 'advisor', pageId: 'insights' },
+                { title: 'Vulnerability', name: 'vulnerabilities', pageId: 'vulnerability' },
+                { title: 'Compliance', name: 'compliance' },
+                { title: 'Patch', name: 'patch' }
+            ]
+        } : undefined),
+        mergeWithDetail: (redux) => ({
+            ...invData.mergeWithDetail(redux),
+            ...isEnabled() && {
+                SystemCvesStore,
+                systemProfileStore: systemProfileStore.default,
+                SystemAdvisoryListStore
+            }
+        })
+    };
 };
