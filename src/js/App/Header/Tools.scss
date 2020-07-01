@@ -1,0 +1,29 @@
+@mixin focus-styles {
+    z-index: -1;
+    position: absolute;
+    left: 50%;
+    content: "";
+    background-color: var(--pf-c-page__header-tools--c-button--m-selected--before--BackgroundColor);
+    border-radius: var(--pf-c-page__header-tools--c-button--m-selected--before--BorderRadius);
+    transform: translateX(-50%);
+}
+
+.pf-c-page__header {
+    .ins-c-toolbar__menu-buttons button:focus {
+        &:after {
+            top: 0;
+            width: var(--pf-c-page__header-tools--c-button--m-selected--before--Width);
+            height: var(--pf-c-page__header-tools--c-button--m-selected--before--Height);
+            @include focus-styles();
+        }
+    }
+
+    .ins-c-toolbar__menu-dropdown button:focus {
+        &:after {
+            @include focus-styles();
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+        }
+    }
+}

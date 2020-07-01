@@ -15,6 +15,8 @@ import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
+import './Tools.scss';
+
 const Tools = () => {
 
     {/* Set the state */}
@@ -82,7 +84,7 @@ const Tools = () => {
         <PageHeaderTools widget-type="InsightsToolbar">
 
             {/* Show tools on medium and above screens */}
-            <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+            <PageHeaderToolsGroup className='ins-c-toolbar__menu-buttons' visibility={{ default: 'hidden', sm: 'visible' }}>
                 { !isSettingsDisabled &&
                     <PageHeaderToolsItem>
                         { <SettingsButton/> }
@@ -94,14 +96,14 @@ const Tools = () => {
             </PageHeaderToolsGroup>
 
             {/* Show full user dropdown on medium and above screens */}
-            <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+            <PageHeaderToolsGroup className='ins-c-toolbar__menu-dropdown' visibility={{ default: 'hidden', sm: 'visible' }}>
                 <PageHeaderToolsItem>
                     <UserToggle className='ins-c-dropdown__user'/>
                 </PageHeaderToolsItem>
             </PageHeaderToolsGroup>
 
             {/* Collapse tools and user dropdown to kebab on small screens  */}
-            <PageHeaderToolsGroup visibility={{ sm: 'hidden' }}>
+            <PageHeaderToolsGroup className='ins-c-toolbar__menu-buttons' visibility={{ sm: 'hidden' }}>
                 <PageHeaderToolsItem>
                     <UserToggle isSmall extraItems={mobileDropdownItems.map((action, key) => (
                         <React.Fragment key={key}>
