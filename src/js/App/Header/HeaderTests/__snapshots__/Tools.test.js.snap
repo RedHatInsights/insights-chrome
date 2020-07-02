@@ -5,6 +5,7 @@ exports[`Tools should render correctly 1`] = `
   widget-type="InsightsToolbar"
 >
   <Component
+    className="ins-c-toolbar__menu-buttons"
     visibility={
       Object {
         "default": "hidden",
@@ -17,6 +18,7 @@ exports[`Tools should render correctly 1`] = `
     </Component>
   </Component>
   <Component
+    className="ins-c-toolbar__menu-dropdown"
     visibility={
       Object {
         "default": "hidden",
@@ -31,6 +33,7 @@ exports[`Tools should render correctly 1`] = `
     </Component>
   </Component>
   <Component
+    className="ins-c-toolbar__menu-buttons"
     visibility={
       Object {
         "sm": "hidden",
