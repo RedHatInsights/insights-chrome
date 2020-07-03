@@ -92,7 +92,7 @@ export class UserToggle extends Component {
             <Dropdown
                 position={DropdownPosition.right}
                 aria-label="Overflow actions"
-                widget-type="InsightsOverflowActions"
+                ouiaId="chrome-user-menu"
                 onSelect={this.onSelect}
                 toggle={toggle}
                 isPlain

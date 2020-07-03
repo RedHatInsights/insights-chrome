@@ -12,7 +12,7 @@ export const Brand = ({ toggleNav, navHidden }) => (
             <Button
                 variant="plain"
                 aria-label="Toggle primary navigation"
-                widget-type="InsightsNavToggle"
+                ouiaId="chrome-nav-toggle"
                 onClick={() => toggleNav && toggleNav()}
             >
                 <BarsIcon size="md"/>
