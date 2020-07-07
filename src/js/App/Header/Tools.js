@@ -84,7 +84,7 @@ const Tools = () => {
             {/* Show tools on medium and above screens */}
             <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
                 { !isSettingsDisabled &&
-                    <PageHeaderToolsItem>
+                    <PageHeaderToolsItem isSelected={ window.insights.chrome.getBundle() === 'settings' }>
                         { <SettingsButton/> }
                     </PageHeaderToolsItem>
                 }

@@ -20,6 +20,7 @@ import Cookies from 'js-cookie';
 const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
 import { fetchPermissions } from './rbac/fetchPermissions';
+import { getUrl } from './utils';
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -133,6 +134,12 @@ export function bootstrap(libjwt, initFunc) {
             },
             isPenTest: () => {
                 return Cookies.get('x-rh-insights-pentest') ? true : false;
+            },
+            getBundle: () => {
+                return getUrl('bundle');
+            },
+            getApp: () => {
+                return getUrl('app');
             },
             visibilityFunctions,
             init: initFunc
