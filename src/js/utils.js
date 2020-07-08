@@ -111,3 +111,17 @@ export function bootstrapCache(endpoint, cacheKey) {
         maxAge: 10 * 60 * 1000 // 10 minutes
     });
 }
+
+export function getUrl(type) {
+
+    if (window.location.pathname === ('/beta' || '/')) {
+        return 'landing';
+    }
+
+    const sections = window.location.pathname.split('/');
+    if (sections[1] === 'beta') {
+        return type === 'bundle' ? sections[2] : sections[3];
+    }
+
+    return type === 'bundle' ? sections[1] : sections[2];
+}
