@@ -37,7 +37,7 @@ function getUrl(type) {
 
 function getPendoConf(data) {
 
-    const accountID = `${data.internal.account_id}${isInternalFlag(data.user.email, data.user.is_internal)}`;
+    const accountID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
     const entitlements = {};
 
@@ -62,7 +62,7 @@ function getPendoConf(data) {
         account: {
             // TODO add in customer name as name:
             // here if/when we get that in the JWT
-            id: data.account_number
+            id: data.identity.account_number
         }
     };
 }
