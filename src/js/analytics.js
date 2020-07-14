@@ -39,6 +39,13 @@ function getPendoConf(data) {
 
     const accountID = `${data.internal.account_id}${isInternalFlag(data.user.email, data.user.is_internal)}`;
 
+    const entitlements = {};
+
+    data.entitlements && Object.entries(data.entitlements).forEach(([key, value])=> {
+        entitlements[`entitlements_${key}`] = value.is_entitled;
+        entitlements[`entitlements_${key}_trial`] = value.is_trial;
+    });
+
     const currentBundle = getUrl('bundle');
     const currentApp = getUrl('app');
 
