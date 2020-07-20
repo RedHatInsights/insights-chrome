@@ -117,8 +117,8 @@
     "@patternfly/react-core": "^4.18.5",
     "@patternfly/react-icons": "^3.15.16",
     "@redhat-cloud-services/entitlements-client": "^1.0.67",
-    "@redhat-cloud-services/frontend-components": "2.1.2",
-    "@redhat-cloud-services/frontend-components-inventory": "2.1.2",
+    "@redhat-cloud-services/frontend-components": "2.3.0",
+    "@redhat-cloud-services/frontend-components-inventory": "2.2.0",
     "@redhat-cloud-services/frontend-components-notifications": "^2.1.0",
     "@redhat-cloud-services/frontend-components-remediations": "2.1.0",
     "@redhat-cloud-services/frontend-components-utilities": "2.1.0",
@@ -155,9 +155,11 @@
     "url-parse": "^1.4.7"
   },
   "alias": {
+    "PFReactTable": "./config/patternfly-table-externals.js",
     "@patternfly/react-table": "./config/patternfly-table-externals.js",
+    "customReact": "./config/react-external.js",
+    "reactRedux": "./config/react-redux-external.js",
     "react-router-dom": "./config/react-router-dom-externals.js",
-    "patternfly-react": "./config/patternfly-react-externals.js",
     "graphql": "./config/graphql-externals.js"
   },
   "insights": {
