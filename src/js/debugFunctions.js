@@ -10,5 +10,6 @@ export default ({
     shortSession: () => functionBuilder('chrome:jwt:shortSession', true),
     jwtDebug: () => functionBuilder('chrome:jwt:debug', true),
     reduxDebug: () => functionBuilder('chrome:redux:debug', true),
-    forcePendo: () => functionBuilder('forcePendo', true)
+    forcePendo: () => functionBuilder('forcePendo', true),
+    allDetails: () => functionBuilder('chrome:inventory:experimental_detail', true)
 });
