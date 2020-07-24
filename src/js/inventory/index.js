@@ -1,7 +1,11 @@
 import setDependencies from '../externalDependencies';
+import accountNumbers from './accountNumbers.json';
 
-const isEnabled = () => {
-    return window.localStorage.getItem('chrome:inventory:experimental_detail') !== undefined;
+const isEnabled = async () => {
+    const isExperimentalEnabled = window.localStorage.getItem('chrome:inventory:experimental_detail');
+    const { identity } = await insights.chrome.auth.getUser();
+    return isExperimentalEnabled !== undefined ||
+        (accountNumbers.includes(identity?.internal?.account_id) && isExperimentalEnabled !== 'false');
 };
 
 export default async (dependencies) => {
@@ -20,9 +24,10 @@ export default async (dependencies) => {
     );
     const RenderWrapper = await import('./RenderWrapper');
 
+    const isDetailsEnabled = await isEnabled();
     return {
         ...invData,
-        inventoryConnector: (store) => invData.inventoryConnector(store, isEnabled() ? {
+        inventoryConnector: (store) => invData.inventoryConnector(store, isDetailsEnabled ? {
             componentMapper: RenderWrapper.default,
             appList: [
                 { title: 'General information', name: 'general_information', pageId: 'inventory' },
@@ -34,7 +39,7 @@ export default async (dependencies) => {
         } : undefined),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
-            ...isEnabled() && {
+            ...isDetailsEnabled && {
                 SystemCvesStore,
                 systemProfileStore: systemProfileStore.default,
                 SystemAdvisoryListStore
