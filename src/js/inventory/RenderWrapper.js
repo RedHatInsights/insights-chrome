@@ -10,7 +10,6 @@ class RenderWrapper extends PureComponent {
     renderApp = () => {
         const { inventoryRef, appName, store, ...props } = this.props;
         const Component = detailsMapper[appName];
-        console.log(appName, Component, 'ffff');
         if (this.ref.current) {
             ReactDOM.render(
                 <Provider store={store}>
@@ -38,7 +37,6 @@ class RenderWrapper extends PureComponent {
     }
 
     componentDidUpdate({ appName }) {
-        console.log(appName, 'ffffw');
         if (appName !== this.props.appName) {
             if (this.ref.current) {
                 ReactDOM.unmountComponentAtNode(this.ref.current);
