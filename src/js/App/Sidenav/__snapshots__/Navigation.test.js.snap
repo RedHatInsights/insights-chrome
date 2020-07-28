@@ -92,6 +92,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
               parent="someLocation"
             >
               <Component
+                className=""
                 isActive={false}
                 onClick={[Function]}
                 preventDefault={true}
@@ -200,6 +201,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
                 parent="someLocation"
               >
                 <Component
+                  className=""
                   isActive={false}
                   onClick={[Function]}
                   preventDefault={true}
