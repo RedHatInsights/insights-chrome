@@ -4,7 +4,7 @@ import accountNumbers from './accountNumbers.json';
 const isEnabled = async () => {
     const isExperimentalEnabled = window.localStorage.getItem('chrome:inventory:experimental_detail');
     const { identity } = await insights.chrome.auth.getUser();
-    return isExperimentalEnabled !== undefined ||
+    return isExperimentalEnabled !== null ||
         // eslint-disable-next-line camelcase
         (accountNumbers.includes(identity?.internal?.account_id) && isExperimentalEnabled !== 'false');
 };
