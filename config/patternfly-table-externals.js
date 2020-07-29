@@ -1,3 +1,3 @@
-import { PFReactTable } from '../src/js/externalDependencies';
+const { PFReactTable } = require('../src/js/externalDependencies');
 
-export default PFReactTable;
+module.exports = PFReactTable;

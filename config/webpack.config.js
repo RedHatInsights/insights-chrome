@@ -14,18 +14,15 @@ const commonConfig = ({
         chunkFilename: '[name].[chunkhash].js',
         jsonpFunction: 'wpJsonpChromeInstance'
     },
-    externals: {
-        '@patternfly/react-table': {
-            commonjs: '@patternfly/react-table',
-            commonjs2: '@patternfly/react-table',
-            amd: '@patternfly/react-table',
-            root: 'PFReactTable'
-        },
-        'react-router-dom': 'react-router-dom',
-        graphql: 'graphql',
-        customReact: 'customReact',
-        reactRedux: 'reactRedux',
-        PFReactTable: 'PFReactTable'
+    resolve: {
+        alias: {
+            PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
+            '@patternfly/react-table': path.resolve(__dirname, './patternfly-table-externals.js'),
+            customReact: path.resolve(__dirname, './react-external.js'),
+            reactRedux: path.resolve(__dirname, './react-redux-external.js'),
+            'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'),
+            graphql: path.resolve(__dirname, './graphql-externals.js')
+        }
     },
     optimization: {
         minimize: true,
