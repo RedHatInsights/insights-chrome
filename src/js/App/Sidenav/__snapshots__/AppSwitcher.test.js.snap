@@ -59,6 +59,7 @@ exports[`AppSwitcher should render correctly 1`] = `
       <Unknown
         id="toggle-id"
         onToggle={[Function]}
+        toggleIndicator={[Function]}
       >
         Red Hat Insights
       </Unknown>
