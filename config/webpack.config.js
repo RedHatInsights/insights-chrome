@@ -22,7 +22,10 @@ const commonConfig = ({
             root: 'PFReactTable'
         },
         'react-router-dom': 'react-router-dom',
-        graphql: 'graphql'
+        graphql: 'graphql',
+        customReact: 'customReact',
+        reactRedux: 'reactRedux',
+        PFReactTable: 'PFReactTable'
     },
     optimization: {
         minimize: true,
