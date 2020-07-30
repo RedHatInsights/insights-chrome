@@ -23,8 +23,8 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
 @import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/spinner.css';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/skeleton.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton.css';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
