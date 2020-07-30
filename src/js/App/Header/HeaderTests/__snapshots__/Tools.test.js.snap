@@ -48,8 +48,10 @@ exports[`Tools should render correctly 1`] = `
             </React.Fragment>,
             <React.Fragment>
               <Unknown
-                component="button"
-                onClick={[Function]}
+                component="a"
+                href="http://localhost/settings/rbac/"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Settings
               </Unknown>
@@ -61,22 +63,30 @@ exports[`Tools should render correctly 1`] = `
             </React.Fragment>,
             <React.Fragment>
               <Unknown
-                component="button"
+                component="a"
+                href="https://access.redhat.com/support"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Customer support
               </Unknown>
             </React.Fragment>,
             <React.Fragment>
               <Unknown
-                component="button"
+                component="a"
+                href="https://www.redhat.com/en/services/training-and-certification"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Training
               </Unknown>
             </React.Fragment>,
             <React.Fragment>
               <Unknown
-                component="button"
-                onClick={[Function]}
+                component="a"
+                href="http://localhost/docs/api"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 API documentation
               </Unknown>
