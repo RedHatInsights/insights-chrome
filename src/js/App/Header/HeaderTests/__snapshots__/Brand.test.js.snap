@@ -57,7 +57,6 @@ exports[`Brand mapDispatchToProps function fires 1`] = `
               color="currentColor"
               noVerticalAlign={false}
               size="md"
-              title={null}
             >
               <svg
                 aria-hidden={true}
@@ -116,7 +115,6 @@ exports[`Brand onClick should fire 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="md"
-        title={null}
       />
     </Component>
   </div>
@@ -146,7 +144,6 @@ exports[`Brand should render correctly with button 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="md"
-        title={null}
       />
     </Component>
   </div>
@@ -207,7 +204,6 @@ exports[`Brand should render correctly with initial state 1`] = `
                 color="currentColor"
                 noVerticalAlign={false}
                 size="md"
-                title={null}
               >
                 <svg
                   aria-hidden={true}
@@ -297,7 +293,6 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
                 color="currentColor"
                 noVerticalAlign={false}
                 size="md"
-                title={null}
               >
                 <svg
                   aria-hidden={true}
