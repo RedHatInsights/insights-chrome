@@ -3,7 +3,7 @@ const masterConfigPermissions = require('../../../testdata/masterConfigPermissio
 const navFunctions = require('./globalNav');
 const mock = require('../../__mocks__/rbacApi').mock;
 const mockedRbac = require('../../../testdata/rbacAccess.json');
-
+// eslint-disable-next-line max-len
 const globalNav = { appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] } };
 
 describe('globalNav', () => {
