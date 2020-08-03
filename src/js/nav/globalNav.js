@@ -34,7 +34,7 @@ async function getRoutesForApp(app, masterConfig) {
                 ...subItem.title ? {
                     id: subItem.id || '',
                     title: subItem.title,
-                    ignoreCase: subItem.ignoreCase || false
+                    ignoreCase: subItem.ignoreCase
                 } : await getAppData(subItem.id || subItem, 'subItems', masterConfig),
                 ...subItem.default && { default: subItem.default },
                 ...subItem.group && { group: subItem.group },
