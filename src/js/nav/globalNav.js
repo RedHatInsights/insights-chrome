@@ -64,7 +64,7 @@ async function getAppData(appId, propName, masterConfig) {
         const routes = await getRoutesForApp(app, masterConfig);
         let appData = {
             title: app.frontend.title || app.title,
-            ignoreCase: app.ignoreCase || false
+            ignoreCase: app.ignoreCase
         };
         if (!app.frontend.suppress_id) {appData.id = appId;}
 

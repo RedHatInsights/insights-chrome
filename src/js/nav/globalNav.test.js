@@ -4,7 +4,7 @@ const navFunctions = require('./globalNav');
 const mock = require('../../__mocks__/rbacApi').mock;
 const mockedRbac = require('../../../testdata/rbacAccess.json');
 
-const globalNav = { appA: { title: 'title1', ignoreCase: false, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] } };
+const globalNav = { appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] } };
 
 describe('globalNav', () => {
     test('should work as expected', async () => {
