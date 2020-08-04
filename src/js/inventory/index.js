@@ -9,6 +9,11 @@ const isEnabled = async () => {
         (accountNumbers.includes(identity?.internal?.account_id) && isExperimentalEnabled !== 'false');
 };
 
+const isDrawerEnabled = () => {
+    const drawerEnabled = window.localStorage.getItem('chrome:inventory:experimental_drawer');
+    return drawerEnabled && drawerEnabled !== 'false';
+};
+
 export default async (dependencies) => {
     setDependencies(dependencies);
 
@@ -37,7 +42,7 @@ export default async (dependencies) => {
                 { title: 'Compliance', name: 'compliance' },
                 { title: 'Patch', name: 'patch' }
             ]
-        } : undefined),
+        } : undefined, isDrawerEnabled()),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
             ...isDetailsEnabled && {
