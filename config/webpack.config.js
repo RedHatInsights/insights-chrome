@@ -19,7 +19,8 @@ const commonConfig = ({
             PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
             customReact: path.resolve(__dirname, './react-external.js'),
             reactRedux: path.resolve(__dirname, './react-redux-external.js'),
-            'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js')
+            'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'),
+            PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js')
         }
     },
     optimization: {
