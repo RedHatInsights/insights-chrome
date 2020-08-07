@@ -170,7 +170,8 @@
     "PFReactTable": "./config/patternfly-table-externals.js",
     "reactRedux": "./config/react-redux-external.js",
     "react-router-dom": "./config/react-router-dom-externals.js",
-    "customReact": "./config/react-external.js"
+    "customReact": "./config/react-external.js",
+    "PFReactCore": "@patternfly/react-core"
   },
   "insights": {
     "appname": "chrome"

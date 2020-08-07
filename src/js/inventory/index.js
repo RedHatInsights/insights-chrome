@@ -11,7 +11,7 @@ const isEnabled = async () => {
 
 const isDrawerEnabled = () => {
     const drawerEnabled = window.localStorage.getItem('chrome:inventory:experimental_drawer');
-    return drawerEnabled && drawerEnabled !== 'false';
+    return Boolean(drawerEnabled);
 };
 
 export default async (dependencies) => {
@@ -31,6 +31,7 @@ export default async (dependencies) => {
     const RenderWrapper = await import('./RenderWrapper');
 
     const isDetailsEnabled = await isEnabled();
+
     return {
         ...invData,
         inventoryConnector: (store) => invData.inventoryConnector(store, isDetailsEnabled ? {
@@ -42,7 +43,7 @@ export default async (dependencies) => {
                 { title: 'Compliance', name: 'compliance' },
                 { title: 'Patch', name: 'patch' }
             ]
-        } : undefined, isDrawerEnabled()),
+        } : undefined, isDrawerEnabled() ? RenderWrapper.default : undefined),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
             ...isDetailsEnabled && {
