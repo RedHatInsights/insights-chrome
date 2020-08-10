@@ -1,4 +1,5 @@
 import * as actionTypes from './action-types';
+import { getAllTags } from '../App/GlobalFilter/tagsApi';
 
 export const onToggle = () => ({
     type: actionTypes.NAVIGATION_TOGGLE
@@ -75,4 +76,11 @@ export function appAction(action) {
 
 export function appObjectId(objectId) {
     return { type: actionTypes.CHROME_PAGE_OBJECT, payload: objectId };
+}
+
+export function fetchAllTags(filters, pagination) {
+    return {
+        type: actionTypes.CHROME_GET_ALL_TAGS,
+        payload: getAllTags(filters, pagination)
+    };
 }

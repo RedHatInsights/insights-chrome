@@ -25,6 +25,7 @@ $pf-global--image-path: './assets/images/';
 
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/spinner.css';
 @import 'node_modules/@redhat-cloud-services/frontend-components/components/skeleton.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/conditional-filter.css';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
@@ -156,4 +157,12 @@ section.ins-c-app-switcher--loading {
 // Pen testing
 .ins-c-pen-test {
     border-top: 3px solid #A18FFF;
+}
+
+.ins-c-chrome__global-filter {
+    padding: var(--pf-global--spacer--sm);
+    background: var(--pf-global--BackgroundColor--100);
+    border-bottom: 1px solid var(--pf-global--palette--black-500);
+    .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+    .pf-l-split__item:first-of-type { min-width: 150px;}
 }

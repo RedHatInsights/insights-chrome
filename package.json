@@ -175,6 +175,7 @@
     "react-redux": "^7.2.0",
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",
+    "redux-promise-middleware": "^6.1.2",
     "urijs": "^1.19.2",
     "url-parse": "^1.4.7"
   },
