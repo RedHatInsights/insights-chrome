@@ -154,7 +154,7 @@
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.2",
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "md5-file": "^5.0.0",
     "node-fetch": "^2.6.0",
     "prop-types": "^15.7.2",
