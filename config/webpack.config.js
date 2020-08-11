@@ -4,12 +4,13 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const plugins = require('./webpack.plugins.js');
 
 const commonConfig = ({
-    publicPath
+    publicPath,
+    noHash
 }) => ({
     entry: path.resolve(__dirname, '../src/js/chrome.js'),
     output: {
         path: path.resolve(__dirname, '../build/js'),
-        filename: 'chrome.[chunkhash].js',
+        filename: `chrome${noHash ? '' : '.[chunkhash]'}.js`,
         publicPath,
         chunkFilename: '[name].[chunkhash].js',
         jsonpFunction: 'wpJsonpChromeInstance'
@@ -61,7 +62,7 @@ const commonConfig = ({
 });
 
 module.exports = function(env) {
-    const config = commonConfig({ publicPath: env.publicPath });
+    const config = commonConfig({ publicPath: env.publicPath, noHash: env.noHash === 'true' });
     if (env.analyze === 'true') {
         config.plugins.push(new BundleAnalyzerPlugin());
     }

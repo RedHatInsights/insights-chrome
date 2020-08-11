@@ -4,13 +4,14 @@ const path = require('path');
 
 const release = process.argv[2]; //"insights or insightsbeta"
 
-async function getAssetPath(extension) {
-    const files = glob.sync(`build/**/chrome.*.${extension}`);
+async function getAssetPath(extension, noHash) {
+    const files = glob.sync(`build/**/chrome${noHash ? '' : '.*'}.${extension}`);
     return path.relative('build/', files[0]);
 }
 
 async function generate() {
-    return Promise.all([getAssetPath('css'), getAssetPath('js')]).then(([cssFileName, jsFileName]) => {
+    const noHash = process.argv[3] === 'nohash'; // look for CSS and JS with hashed name
+    return Promise.all([getAssetPath('css', noHash), getAssetPath('js', noHash)]).then(([cssFileName, jsFileName]) => {
         const pugvars = `{release: '${ release }', chromeCSS:'${ cssFileName }', chromeJS:'${ jsFileName }'}`;
 
         exec(`pug src/pug -o build/snippets -O "${ pugvars }"`, (err, stdout, stderr) => {
