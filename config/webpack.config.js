@@ -36,7 +36,7 @@ const commonConfig = ({
             },
             {
                 test: /\.s?[ac]ss$/,
-                use: ['css-loader', 'sass-loader']
+                use: ['style-loader', 'css-loader', 'sass-loader']
             },
             {
                 test: /\.(jpg|png|svg)$/,
