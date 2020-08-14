@@ -151,16 +151,6 @@ export class Navigation extends Component {
                             }
                         )
                     }
-                    { documentation &&
-                        <React.Fragment>
-                            <NavItem
-                                className="ins-c-page__documentation"
-                                to={documentation}
-                                rel='noopener noreferrer'
-                                target='_blank'>Documentation
-                            </NavItem>
-                        </React.Fragment>
-                    }
                     { activeLocation === 'openshift' &&
                         Object.entries(openshiftLinks).map(
                             ([key, value]) => {
@@ -173,6 +163,16 @@ export class Navigation extends Component {
                                 </NavItem>;
                             }
                         )
+                    }
+                    { documentation &&
+                        <React.Fragment>
+                            <NavItem
+                                className="ins-c-page__documentation"
+                                to={documentation}
+                                rel='noopener noreferrer'
+                                target='_blank'>Documentation
+                            </NavItem>
+                        </React.Fragment>
                     }
                 </NavList>
             </Nav>
