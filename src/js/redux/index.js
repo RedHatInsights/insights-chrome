@@ -22,7 +22,8 @@ import {
     CHROME_NAV_UPDATE,
     CHROME_PAGE_ACTION,
     CHROME_PAGE_OBJECT,
-    CHROME_GET_ALL_TAGS
+    CHROME_GET_ALL_TAGS,
+    GLOBAL_FILTER_SCOPE
 } from './action-types';
 
 const reducers = {
@@ -41,6 +42,10 @@ const reducers = {
         tags: {
             isLoaed: false
         }
+    }),
+    [GLOBAL_FILTER_SCOPE]: (state, { payload }) => ({
+        ...state,
+        gloablFilterScope: payload
     })
 };
 

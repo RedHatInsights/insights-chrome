@@ -25,7 +25,7 @@ export const updateSelected = (original, namespace, key, value, isSelected) => (
         [key]: {
             ...original?.[namespace]?.[key],
             isSelected,
-            tagValue: value
+            value
         }
     }
 });
@@ -41,8 +41,11 @@ export const storeFilter = (tags, token) => {
                 .reduce((
                     currValue,
                     // eslint-disable-next-line no-unused-vars
-                    [itemKey, { item, group: { items, ...group } = {}, ...rest }]
-                ) => ({ ...currValue, [itemKey]: { ...rest, group } }), {})
+                    [itemKey, { item, value: tagValue, group: { items, ...group } = {}, ...rest }]
+                ) => ({
+                    ...currValue,
+                    [itemKey]: { ...rest, item: { tagValue: item?.tagValue || tagValue }, group }
+                }), {})
             }
         }), {}))
     );

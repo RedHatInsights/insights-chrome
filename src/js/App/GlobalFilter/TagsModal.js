@@ -6,7 +6,7 @@ import { fetchAllTags } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 
-const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal }) => {
+const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
     const [selected, setSelected] = useState([]);
     const [filterBy, setFilterBy] = useState('');
     const dispatch = useDispatch();
@@ -19,6 +19,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal }) => {
     const debounceGeTags = useCallback(debounce((search) => {
         dispatch(fetchAllTags({
             registeredWith: filterScope,
+            activeTags: selectedTags,
             search
         }, { page, perPage }));
     }, 800), []);
@@ -74,27 +75,30 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal }) => {
         ]}
         onUpdateData={ (pagination) => dispatch(fetchAllTags({
             registeredWith: filterScope,
+            activeTags: selectedTags,
             search: filterBy
         }, pagination)) }
         columns={ [
             { title: 'Name' },
             { title: 'Value' },
-            { title: 'Tag Sources' }
+            { title: 'Tag sources' }
         ] }
         onSelect={(selected) => setSelected(selected)}
         selected={selected}
         onApply={() => onApplyTags(selected)}
-        systemName='All tags'
+        title='All tags'
     />;
 };
 TagsModal.propTypes = {
     isOpen: PropTypes.bool,
+    selectedTags: PropTypes.object,
     filterTagsBy: PropTypes.string,
     onApplyTags: PropTypes.func,
     toggleModal: PropTypes.func
 };
 TagsModal.defaultProps = {
     isOpen: false,
+    selectedTags: {},
     onApplyTags: () => undefined,
     toggleModal: () => undefined
 };

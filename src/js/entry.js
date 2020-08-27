@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick } from './redux/actions';
+import { appNavClick, globalFilterScope } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory/index';
@@ -40,6 +40,10 @@ const PUBLIC_EVENTS = {
     NAVIGATION_TOGGLE: callback => ({
         on: actionTypes.NAVIGATION_TOGGLE,
         callback
+    }),
+    GLOBAL_FILTER_UPDATE: callback => ({
+        on: actionTypes.GLOBAL_FILTER_UPDATE,
+        callback
     })
 };
 
@@ -68,6 +72,7 @@ export function chromeInit(libjwt) {
         navigation: appNav,
         appAction,
         appObjectId,
+        globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();

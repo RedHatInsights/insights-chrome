@@ -7,19 +7,18 @@ import flatMap from 'lodash/flatMap';
 
 */
 export function getAllTags({ search, activeTags, registeredWith } = {}, pagination = {}) {
-    console.log(activeTags, 'hu');
     let selectedTags;
     try {
         selectedTags = flatMap(
             Object.entries(activeTags),
             ([namespace, item]) => Object.entries(item)
             .filter(([, { isSelected }]) => isSelected && namespace !== 'Workloads')
-            .map(([groupKey, { tagValue }]) => `${
+            .map(([groupKey, { item, value: tagValue }]) => `${
                 namespace ? `${namespace}/` : ''
             }${
                 groupKey
             }${
-                tagValue ? `=${tagValue}` : ''
+                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
             }`)
         );
     } catch (e) {

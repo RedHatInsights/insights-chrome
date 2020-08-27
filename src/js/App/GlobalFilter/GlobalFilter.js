@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/components/cjs/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/components/cjs/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
-import { fetchAllTags } from '../../redux/actions';
+import { fetchAllTags, globalFilterChange } from '../../redux/actions';
 import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup';
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
-import TagsModal from './Tagsmodal';
+import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, GLOBAL_FILTER_KEY } from './constants';
 import { decodeToken } from '../../jwt/jwt';
 
@@ -21,14 +21,17 @@ const GlobalFilter = () => {
     const total = useSelector(({ chrome: { tags } }) => tags?.total || 0);
     const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
     const filterScope = useSelector(({ chrome: { globalFilterScope } }) => globalFilterScope || undefined);
-    const [filter, chips, selectedTags, setValue, filterTagsBy] = useTagsFilter(
+    const { filter, chips, selectedTags, setValue, filterTagsBy } = useTagsFilter(
         [
             ...workloads,
             ...tags
         ],
         isLoaded && Boolean(token),
         total - count,
-        () => setIsOpen(() => true),
+        (_e, closeFn) => {
+            setIsOpen(() => true);
+            closeFn && closeFn();
+        },
         undefined,
         'system',
         'Manage tags'
@@ -36,7 +39,8 @@ const GlobalFilter = () => {
     useEffect(() => {
         if (!token && userLoaded) {
             (async () => {
-                const currToken = decodeToken(await insights.chrome.auth.getToken())?.jti;
+                // eslint-disable-next-line camelcase
+                const currToken = decodeToken(await insights.chrome.auth.getToken())?.session_state;
                 try {
                     setValue(() => JSON.parse(localStorage.getItem(`${GLOBAL_FILTER_KEY}/${currToken}`) || '{}'));
                 } catch (e) {
@@ -44,7 +48,7 @@ const GlobalFilter = () => {
                 }
                 setToken(() => currToken);
             })();
-        } else if (userLoaded) {
+        } else if (userLoaded && token) {
             storeFilter(selectedTags, token);
             dispatch(fetchAllTags({
                 registeredWith: filterScope,
@@ -53,13 +57,22 @@ const GlobalFilter = () => {
             }));
         }
     }, [selectedTags, filterScope, filterTagsBy, userLoaded]);
+
+    useEffect(() => {
+        if (userLoaded && token) {
+            dispatch(globalFilterChange(selectedTags));
+        }
+    }, [selectedTags]);
+
+    const workloadsChip = chips?.splice(chips?.findIndex(({ key }) => key === 'Workloads'), 1);
+    chips?.splice(0, 0, ...workloadsChip || []);
     return <Fragment>
         <Split hasGutter className="ins-c-chrome__global-filter">
             <SplitItem>
                 {userLoaded ?
                     <GroupFilter
                         {...filter}
-                        placeholder="Filter by tags"
+                        placeholder="Search tags"
                     /> :
                     <Skeleton size={SkeletonSize.xl}/>
                 }
@@ -100,6 +113,7 @@ const GlobalFilter = () => {
             <TagsModal
                 isOpen={isOpen}
                 filterTagsBy={filterTagsBy}
+                selectedTags={selectedTags}
                 toggleModal={(isSubmit) => {
                     if (!isSubmit) {
                         dispatch(fetchAllTags({

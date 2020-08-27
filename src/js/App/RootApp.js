@@ -10,7 +10,10 @@ const RootApp = ({
     pageAction,
     pageObjectId
 }) => {
-    const isGlobalFilterEnabled = Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+    const isGlobalFilterEnabled = (
+        window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))
+    ) &&
+    location.pathname.includes('insights');
     return (
         <Fragment>
             <div

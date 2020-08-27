@@ -84,3 +84,17 @@ export function fetchAllTags(filters, pagination) {
         payload: getAllTags(filters, pagination)
     };
 }
+
+export function globalFilterScope(scope) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_SCOPE,
+        payload: scope
+    };
+}
+
+export function globalFilterChange(selectedTags) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_UPDATE,
+        payload: selectedTags
+    };
+}
