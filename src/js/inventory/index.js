@@ -46,9 +46,9 @@ export default async (dependencies) => {
         } : undefined, isDrawerEnabled() ? RenderWrapper.default : undefined),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
+            ...(isDetailsEnabled || isDrawerEnabled()) && { systemProfileStore: systemProfileStore.default },
             ...isDetailsEnabled && {
                 SystemCvesStore,
-                systemProfileStore: systemProfileStore.default,
                 SystemAdvisoryListStore
             }
         })
