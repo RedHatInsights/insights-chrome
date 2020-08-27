@@ -27,11 +27,11 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
       extraItems={Array []}
       isSmall={false}
     >
-      <Component
+      <Dropdown
         aria-label="Overflow actions"
         dropdownItems={
           Array [
-            <Unknown
+            <DropdownItem
               isDisabled={true}
             >
               <dl
@@ -48,23 +48,23 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   someUsername
                 </dd>
               </dl>
-            </Unknown>,
+            </DropdownItem>,
             <React.Fragment />,
-            <Unknown />,
-            <Unknown
+            <DropdownSeparator />,
+            <DropdownItem
               href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
               My profile
-            </Unknown>,
+            </DropdownItem>,
             <React.Fragment />,
-            <Unknown
+            <DropdownItem
               component="button"
               onClick={[Function]}
             >
               Log out
-            </Unknown>,
+            </DropdownItem>,
             Array [],
           ]
         }
@@ -73,14 +73,14 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
         onSelect={[Function]}
         position="right"
         toggle={
-          <Unknown
+          <DropdownToggle
             className="ins-c-toolbar__menu-user"
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
           >
             someFirstName someLastName
-          </Unknown>
+          </DropdownToggle>
         }
         widget-type="InsightsOverflowActions"
       >
@@ -91,7 +91,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
           direction="down"
           dropdownItems={
             Array [
-              <Unknown
+              <DropdownItem
                 isDisabled={true}
               >
                 <dl
@@ -108,41 +108,41 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                     someUsername
                   </dd>
                 </dl>
-              </Unknown>,
+              </DropdownItem>,
               <React.Fragment />,
-              <Unknown />,
-              <Unknown
+              <DropdownSeparator />,
+              <DropdownItem
                 href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 My profile
-              </Unknown>,
+              </DropdownItem>,
               <React.Fragment />,
-              <Unknown
+              <DropdownItem
                 component="button"
                 onClick={[Function]}
               >
                 Log out
-              </Unknown>,
+              </DropdownItem>,
               Array [],
             ]
           }
           isGrouped={false}
           isOpen={false}
           isPlain={true}
+          menuAppendTo="inline"
           onSelect={[Function]}
-          ouiaComponentType="Dropdown"
           position="right"
           toggle={
-            <Unknown
+            <DropdownToggle
               className="ins-c-toolbar__menu-user"
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
             >
               someFirstName someLastName
-            </Unknown>
+            </DropdownToggle>
           }
           widget-type="InsightsOverflowActions"
         >
@@ -154,9 +154,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             data-ouia-safe={true}
             widget-type="InsightsOverflowActions"
           >
-            <Component
+            <DropdownToggle
               aria-haspopup={true}
               className="ins-c-toolbar__menu-user"
+              getMenuRef={[Function]}
               id="UserMenu"
               isOpen={false}
               isPlain={true}
@@ -214,6 +215,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                 aria-haspopup={true}
                 bubbleEvent={false}
                 className="ins-c-toolbar__menu-user"
+                getMenuRef={[Function]}
                 id="UserMenu"
                 isActive={false}
                 isDisabled={false}
@@ -317,10 +319,10 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   </span>
                 </button>
               </Toggle>
-            </Component>
+            </DropdownToggle>
           </div>
         </DropdownWithContext>
-      </Component>
+      </Dropdown>
     </UserToggle>
   </Connect(UserToggle)>
 </Provider>
@@ -353,11 +355,11 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
       extraItems={Array []}
       isSmall={false}
     >
-      <Component
+      <Dropdown
         aria-label="Overflow actions"
         dropdownItems={
           Array [
-            <Unknown
+            <DropdownItem
               isDisabled={true}
             >
               <dl
@@ -379,23 +381,23 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   Org. Administrator
                 </dd>
               </dl>
-            </Unknown>,
+            </DropdownItem>,
             <React.Fragment />,
-            <Unknown />,
-            <Unknown
+            <DropdownSeparator />,
+            <DropdownItem
               href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
               rel="noopener noreferrer"
               target="_blank"
             >
               My profile
-            </Unknown>,
+            </DropdownItem>,
             <React.Fragment />,
-            <Unknown
+            <DropdownItem
               component="button"
               onClick={[Function]}
             >
               Log out
-            </Unknown>,
+            </DropdownItem>,
             Array [],
           ]
         }
@@ -404,14 +406,14 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
         onSelect={[Function]}
         position="right"
         toggle={
-          <Unknown
+          <DropdownToggle
             className="ins-c-toolbar__menu-user"
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
           >
             someFirstName someLastName
-          </Unknown>
+          </DropdownToggle>
         }
         widget-type="InsightsOverflowActions"
       >
@@ -422,7 +424,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
           direction="down"
           dropdownItems={
             Array [
-              <Unknown
+              <DropdownItem
                 isDisabled={true}
               >
                 <dl
@@ -444,41 +446,41 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     Org. Administrator
                   </dd>
                 </dl>
-              </Unknown>,
+              </DropdownItem>,
               <React.Fragment />,
-              <Unknown />,
-              <Unknown
+              <DropdownSeparator />,
+              <DropdownItem
                 href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 My profile
-              </Unknown>,
+              </DropdownItem>,
               <React.Fragment />,
-              <Unknown
+              <DropdownItem
                 component="button"
                 onClick={[Function]}
               >
                 Log out
-              </Unknown>,
+              </DropdownItem>,
               Array [],
             ]
           }
           isGrouped={false}
           isOpen={false}
           isPlain={true}
+          menuAppendTo="inline"
           onSelect={[Function]}
-          ouiaComponentType="Dropdown"
           position="right"
           toggle={
-            <Unknown
+            <DropdownToggle
               className="ins-c-toolbar__menu-user"
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
             >
               someFirstName someLastName
-            </Unknown>
+            </DropdownToggle>
           }
           widget-type="InsightsOverflowActions"
         >
@@ -490,9 +492,10 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             data-ouia-safe={true}
             widget-type="InsightsOverflowActions"
           >
-            <Component
+            <DropdownToggle
               aria-haspopup={true}
               className="ins-c-toolbar__menu-user"
+              getMenuRef={[Function]}
               id="UserMenu"
               isOpen={false}
               isPlain={true}
@@ -550,6 +553,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                 aria-haspopup={true}
                 bubbleEvent={false}
                 className="ins-c-toolbar__menu-user"
+                getMenuRef={[Function]}
                 id="UserMenu"
                 isActive={false}
                 isDisabled={false}
@@ -653,21 +657,21 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   </span>
                 </button>
               </Toggle>
-            </Component>
+            </DropdownToggle>
           </div>
         </DropdownWithContext>
-      </Component>
+      </Dropdown>
     </UserToggle>
   </Connect(UserToggle)>
 </Provider>
 `;
 
 exports[`UserToggle should render correctly with isSmall false 1`] = `
-<Component
+<Dropdown
   aria-label="Overflow actions"
   dropdownItems={
     Array [
-      <Unknown
+      <DropdownItem
         isDisabled={true}
       >
         <dl
@@ -682,23 +686,23 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
             className="ins-c-dropdown-item__stack--value"
           />
         </dl>
-      </Unknown>,
+      </DropdownItem>,
       <React.Fragment />,
-      <Unknown />,
-      <Unknown
+      <DropdownSeparator />,
+      <DropdownItem
         href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
         My profile
-      </Unknown>,
+      </DropdownItem>,
       <React.Fragment />,
-      <Unknown
+      <DropdownItem
         component="button"
         onClick={[Function]}
       >
         Log out
-      </Unknown>,
+      </DropdownItem>,
       Array [],
     ]
   }
@@ -707,25 +711,25 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   onSelect={[Function]}
   position="right"
   toggle={
-    <Unknown
+    <DropdownToggle
       className="ins-c-toolbar__menu-user"
       id="UserMenu"
       onToggle={[Function]}
       widget-type="UserMenu"
     >
       someName
-    </Unknown>
+    </DropdownToggle>
   }
   widget-type="InsightsOverflowActions"
 />
 `;
 
 exports[`UserToggle should render correctly with isSmall true 1`] = `
-<Component
+<Dropdown
   aria-label="Overflow actions"
   dropdownItems={
     Array [
-      <Unknown
+      <DropdownItem
         isDisabled={true}
       >
         <dl
@@ -740,23 +744,23 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
             className="ins-c-dropdown-item__stack--value"
           />
         </dl>
-      </Unknown>,
+      </DropdownItem>,
       <React.Fragment />,
-      <Unknown />,
-      <Unknown
+      <DropdownSeparator />,
+      <DropdownItem
         href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
         rel="noopener noreferrer"
         target="_blank"
       >
         My profile
-      </Unknown>,
+      </DropdownItem>,
       <React.Fragment />,
-      <Unknown
+      <DropdownItem
         component="button"
         onClick={[Function]}
       >
         Log out
-      </Unknown>,
+      </DropdownItem>,
       Array [],
     ]
   }
@@ -765,7 +769,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
   onSelect={[Function]}
   position="right"
   toggle={
-    <Unknown
+    <KebabToggle
       onToggle={[Function]}
     />
   }

@@ -1,5 +1,7 @@
 import createRbacAPI from './rbac.js';
-const log = require('../jwt/logger')('fetchPermissions.js');
+import logger from '../jwt/logger';
+
+const log = logger('fetchPermissions.js');
 
 const perPage = 25;
 

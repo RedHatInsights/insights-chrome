@@ -66,7 +66,7 @@ exports[`ConnectedInsightsAbout should render correctly with just username 1`] =
         <Portal
           containerInfo={<div />}
         >
-          <Component
+          <AboutModalContainer
             aboutModalBoxContentId="pf-about-modal-content-0"
             aboutModalBoxHeaderId="pf-about-modal-title-0"
             backgroundImageSrc=""
