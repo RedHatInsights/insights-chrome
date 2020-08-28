@@ -96,6 +96,12 @@ List of available permissions methods:
  * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
  * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission']
 
+## Global filter
+
+By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with namespace and key as object keys. This is for more complex behaviors, when you want to filter our certain items or to do something else with this complex object.
+
+If you simply want to filter systems based on these values we provide a helper function `insights.chromemapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
+
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
 entire app or to watch files.

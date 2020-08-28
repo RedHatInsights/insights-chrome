@@ -20,6 +20,7 @@ import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import flatMap from 'lodash/flatMap';
 
 const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
 const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
@@ -73,6 +74,18 @@ export function chromeInit(libjwt) {
         appAction,
         appObjectId,
         globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+        mapGlobalFilter: (filter) => flatMap(
+            Object.entries(filter),
+            ([namespace, item]) => Object.entries(item)
+            .filter(([, { isSelected }]) => isSelected)
+            .map(([groupKey, { item, value: tagValue }]) => `${
+                namespace ? `${namespace}/` : ''
+            }${
+                groupKey
+            }${
+                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
+            }`)
+        ),
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();
