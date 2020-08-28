@@ -15,22 +15,30 @@ const isDrawerEnabled = () => {
 };
 
 export default async (dependencies) => {
+    let SystemAdvisoryListStore;
+    let SystemCvesStore;
+    let systemProfileStore;
+    let RenderWrapper;
+
     setDependencies(dependencies);
 
-    await import('../inventoryStyles');
-    const invData = await import('@redhat-cloud-services/frontend-components-inventory');
-    const { SystemAdvisoryListStore } = await import(
-        '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
-    );
-    const { SystemCvesStore } = await import(
-        '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
-    );
-    const systemProfileStore = await import(
-        '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
-    );
-    const RenderWrapper = await import('./RenderWrapper');
-
     const isDetailsEnabled = await isEnabled();
+    await import(/* webpackChunkName: "inventory-styles" */ '../inventoryStyles');
+    const invData = await import(/* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory');
+
+    if (isDetailsEnabled) {
+        SystemAdvisoryListStore = await import(/* webpackChunkName: "inventory-patch-store" */
+            '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
+        )?.SystemAdvisoryListStore;
+
+        SystemCvesStore = await import(/* webpackChunkName: "inventory-vuln-store" */
+            '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
+        )?.SystemCvesStore;
+        systemProfileStore = await import(/* webpackChunkName: "inventory-gen-info-store" */
+            '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
+        );
+        RenderWrapper = await import(/* webpackChunkName: "inventory-render-wrapper" */ './RenderWrapper');
+    }
 
     return {
         ...invData,
@@ -46,9 +54,9 @@ export default async (dependencies) => {
         } : undefined, isDrawerEnabled() ? RenderWrapper.default : undefined),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
+            ...(isDetailsEnabled || isDrawerEnabled()) && { systemProfileStore: systemProfileStore.default },
             ...isDetailsEnabled && {
                 SystemCvesStore,
-                systemProfileStore: systemProfileStore.default,
                 SystemAdvisoryListStore
             }
         })

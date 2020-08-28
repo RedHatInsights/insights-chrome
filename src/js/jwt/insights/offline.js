@@ -1,10 +1,10 @@
-const consts = require('../../consts').default;
-const { DEFAULT_ROUTES } = require('../constants');
-const insightsUrl = require('./url');
-const axios  = require('axios');
-const priv   = {};
-const urijs  = require('urijs');
+import consts from '../../consts';
+import { DEFAULT_ROUTES } from '../constants';
+import insightsUrl from './url';
+import axios from 'axios';
+import urijs from 'urijs';
 
+const priv = {};
 // note this function is not exposed
 // it is a run everytime and produce some side affect thing
 // if a special condition is encountered

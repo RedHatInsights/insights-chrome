@@ -6,11 +6,10 @@ import consts from './consts';
 // Use lodash instead
 import flatten from 'lodash/flatten';
 
-const jwt       = require('./jwt/jwt');
-const cookie    = require('js-cookie');
+import * as jwt from './jwt/jwt';
+import cookie from 'js-cookie';
+import { options as defaultOptions } from './jwt/constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
-
-const { options: defaultOptions } = require('./jwt/constants');
 
 function getWindow() {
     return window;

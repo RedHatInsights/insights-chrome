@@ -92,7 +92,6 @@ export class Navigation extends Component {
         // if (navHidden) {
         //     //document.querySelector('aside').setAttribute('hidden', true);
         // }
-
         return (
             <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true">
                 <NavList>

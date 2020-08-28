@@ -4,17 +4,16 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
-const { deleteLocalStorageItems } = require('../utils');
-
-// Utils
-const log = require('./logger')('jwt.js');
+import { deleteLocalStorageItems } from '../utils';
+import logger from './logger';
 
 // Insights Specific
-const insightsUrl  = require('./insights/url');
-const insightsUser = require('./insights/user');
-const urijs        = require('urijs');
-const { DEFAULT_ROUTES, options: defaultOptions } = require('./constants');
+import insightsUrl  from './insights/url';
+import insightsUser from './insights/user';
+import urijs from 'urijs';
+import { DEFAULT_ROUTES, options as defaultOptions } from './constants';
 
+const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
 const priv = {};
@@ -27,14 +26,11 @@ authChannel.onmessage = (e) => {
 
         switch (e.data.type) {
             case 'logout':
-                logout();
-                break;
+                return logout();
             case 'login':
-                exports.login();
-                break;
+                return login();
             case 'refresh':
-                updateToken();
-                break;
+                return updateToken();
         }
     }
 };
@@ -65,7 +61,7 @@ function decodeToken (str) {
     return str;
 }
 
-exports.doOffline = (key, val) => {
+export const doOffline = (key, val) => {
     const url = urijs(window.location.href);
     url.removeSearch(key);
     url.addSearch(key, val);
@@ -86,7 +82,7 @@ exports.doOffline = (key, val) => {
 };
 
 /*** Initialization ***/
-exports.init = (options) => {
+export const init = (options) => {
     log('Initializing');
 
     const cookieName = ((options.cookieName) ? options.cookieName : DEFAULT_COOKIE_NAME);
@@ -203,12 +199,12 @@ function initError() {
 }
 
 /*** Login/Logout ***/
-exports.login = () => {
+export function login () {
     log('Logging in');
     // Redirect to login
     cookie.set('cs_loggedOut', 'false');
     return priv.keycloak.login({ redirectUri: location.href });
-};
+}
 
 function logout(bounce) {
     log('Logging out');
@@ -236,7 +232,7 @@ function logout(bounce) {
     }
 }
 
-exports.logoutAllTabs = (bounce) => {
+export const logoutAllTabs = (bounce) => {
     authChannel.postMessage({ type: 'logout' });
     logout(bounce);
 };
@@ -247,7 +243,7 @@ function loginAllTabs() {
 
 /*** User Functions ***/
 // Get user information
-exports.getUserInfo = () => {
+export const getUserInfo = () => {
     log('Getting User Information');
     const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
 
@@ -263,20 +259,20 @@ exports.getUserInfo = () => {
     .catch(() => {
         if (pageRequiresAuthentication()) {
             log('Trying to log in user to refresh token');
-            return exports.login();
+            return login();
         }
     });
 };
 
 // Check to see if the user is loaded, this is what API calls should wait on
-exports.isAuthenticated = () => {
+export const isAuthenticated = () => {
     log(`User Ready: ${priv.keycloak.authenticated}`);
     return priv.keycloak.authenticated;
 };
 
 /*** Check Token Status ***/
 // If a token is expired, logout of all tabs
-exports.expiredToken = () => {
+export const expiredToken = () => {
     log('Token has expired, trying to log out');
     logout();
 };
@@ -330,7 +326,7 @@ function setCookieWrapper(str) {
 }
 
 // Encoded WIP
-exports.getEncodedToken = () => {
+export const getEncodedToken = () => {
     log('Trying to get the encoded token');
 
     if (!isExistingValid(priv.keycloak.token)) {
@@ -343,6 +339,6 @@ exports.getEncodedToken = () => {
 };
 
 // Keycloak server URL
-exports.getUrl = () => {
+export const getUrl = () => {
     return insightsUrl(DEFAULT_ROUTES);
 };
