@@ -5,6 +5,8 @@ import { KebabToggle } from '@patternfly/react-core/dist/js/components/Dropdown/
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
 import { DropdownSeparator } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownSeparator';
 import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
+import { Avatar } from '@patternfly/react-core/dist/js/components/Avatar';
+import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -79,10 +81,12 @@ export class UserToggle extends Component {
     render() {
         const { isOpen } = this.state;
         const { account, isSmall, extraItems } = this.props;
-        const toggle = isSmall ?
+        const toggle = isSmall 
+        ?
             <KebabToggle onToggle={this.onToggle} /> :
             <DropdownToggle
                 id='UserMenu'
+                icon={<UserIcon />}
                 className='ins-c-toolbar__menu-user'
                 widget-type='UserMenu'
                 onToggle={this.onToggle}>

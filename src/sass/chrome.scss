@@ -95,6 +95,11 @@ aside {
         font-size: var(--pf-global--FontSize--xs);
     }
 
+    .ins-c-dropdown-icon {
+        height: 36px;
+        width: 36px;
+    }
+
     .ins-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
 
     .pf-c-page__header-brand-link img { @include rem('height', 30px); }
@@ -106,6 +111,7 @@ aside {
     .pf-c-page__header-tools .pf-c-avatar {
         height: var(--pf-global--FontSize--4xl);
     }
+
 }
 
 // Brand

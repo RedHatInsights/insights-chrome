@@ -131,9 +131,6 @@ const Tools = () => {
                 </PageHeaderToolsItem>
             </PageHeaderToolsGroup>
 
-            {/* User icon always visible */}
-            <UserIcon/>
-
             {/* Render About Modal */}
             { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} /> }
         </PageHeaderTools>

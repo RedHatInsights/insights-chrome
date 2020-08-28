@@ -26,7 +26,7 @@ export class UserIcon extends Component {
     }
 
     render() {
-        const { avatar } = this.state;
+         const { avatar } = this.state;
 
         return (
             <Avatar src={ avatar } alt='User Avatar'/>
