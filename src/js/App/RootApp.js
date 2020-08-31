@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import GlobalFilter from './GlobalFilter';
 
 const RootApp = ({
     activeApp,
@@ -9,6 +10,10 @@ const RootApp = ({
     pageAction,
     pageObjectId
 }) => {
+    const isGlobalFilterEnabled = (
+        window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))
+    ) &&
+    location.pathname.includes('insights');
     return (
         <Fragment>
             <div
@@ -19,6 +24,7 @@ const RootApp = ({
                 {...pageAction && { 'data-ouia-page-action': pageAction }}
                 {...pageObjectId && { 'data-ouia-page-object-id': pageObjectId }}
             >
+                {isGlobalFilterEnabled && <GlobalFilter />}
                 <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
                     <section
                         className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"

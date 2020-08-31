@@ -4,6 +4,7 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
+import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
 
@@ -35,7 +36,7 @@ authChannel.onmessage = (e) => {
     }
 };
 
-function decodeToken (str) {
+export function decodeToken (str) {
     str = str.split('.')[1];
     str = str.replace('/-/g', '+');
     str = str.replace('/_/g', '/');
@@ -217,7 +218,8 @@ function logout(bounce) {
     const keys = Object.keys(localStorage).filter(key => (
         key.endsWith('/api/entitlements/v1/services') ||
         key.endsWith('/config/main.yml') ||
-        key.startsWith('kc-callback')
+        key.startsWith('kc-callback') ||
+        key.startsWith(GLOBAL_FILTER_KEY)
     ));
     deleteLocalStorageItems(keys);
     // Redirect to logout
