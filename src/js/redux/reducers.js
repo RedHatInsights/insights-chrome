@@ -129,3 +129,19 @@ export function onGetAllTags(state, { payload }) {
         }
     };
 }
+
+export function onGetAllTagsPending(state) {
+    return {
+        ...state,
+        tags: {
+            isLoaded: false
+        }
+    };
+}
+
+export function onSetGlobalFilterScope(state, { payload }) {
+    return {
+        ...state,
+        gloablFilterScope: payload
+    };
+}

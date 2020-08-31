@@ -10,7 +10,9 @@ import {
     navUpdateReducer,
     onPageAction,
     onPageObjectId,
-    onGetAllTags
+    onGetAllTags,
+    onGetAllTagsPending,
+    onSetGlobalFilterScope
 } from './reducers';
 import {
     CLICK_ACTION,
@@ -37,16 +39,8 @@ const reducers = {
     [CHROME_PAGE_ACTION]: onPageAction,
     [CHROME_PAGE_OBJECT]: onPageObjectId,
     [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
-    [`${CHROME_GET_ALL_TAGS}_PENDING`]: (state) => ({
-        ...state,
-        tags: {
-            isLoaed: false
-        }
-    }),
-    [GLOBAL_FILTER_SCOPE]: (state, { payload }) => ({
-        ...state,
-        gloablFilterScope: payload
-    })
+    [`${CHROME_GET_ALL_TAGS}_PENDING`]: onGetAllTagsPending,
+    [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope
 };
 
 export default function() {
