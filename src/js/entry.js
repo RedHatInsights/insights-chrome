@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { appNavClick } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
-import loadInventory from './inventory';
+import loadInventory from './inventory/index';
 import loadRemediations from './remediations';
 import qe from './iqeEnablement';
 import consts from './consts';

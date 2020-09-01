@@ -22,7 +22,10 @@
             width: 100%;
             justify-content: space-between;
             .pf-c-dropdown__toggle-text {
+                text-transform: capitalize;
                 font-weight: var(--pf-global--FontWeight--semi-bold);
+                white-space: normal;
+                text-align: left;
             }
         }
         

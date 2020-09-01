@@ -28,11 +28,14 @@ const Tools = () => {
 
     {/* button that should redirect a user to RBAC with an account */}
     const SettingsButton = () => (
-        <Button variant="plain"
+        <Button
+            variant="plain"
             aria-label="Go to settings"
             widget-type='SettingsButton'
             className='ins-c-toolbar__button-settings'
-            onClick={() => window.location.href = `${document.baseURI}settings/rbac/`}>
+            href={`${document.baseURI}settings/rbac/`}
+            component="a"
+        >
             <CogIcon/>
         </Button>
     );
@@ -47,7 +50,7 @@ const Tools = () => {
             url: 'https://www.redhat.com/en/services/training-and-certification'
         }, {
             title: 'API documentation',
-            onClick: () => window.location.href = `${document.baseURI}docs/api`
+            url: `${document.baseURI}docs/api`
         }, {
             title: 'About',
             onClick: () => setIsModalOpen(true)
@@ -59,7 +62,7 @@ const Tools = () => {
         { title: 'separator' },
         {
             title: 'Settings',
-            onClick: () => window.location.href = `${document.baseURI}settings/rbac/`
+            url: `${document.baseURI}settings/rbac/`
         },
         { title: 'separator' },
         ...aboutMenuDropdownItems
@@ -107,7 +110,21 @@ const Tools = () => {
                         <React.Fragment key={key}>
                             { action.title === 'separator'
                                 ? <Divider component="li"/>
-                                : <DropdownItem component="button" onClick={action.onClick}>{action.title}</DropdownItem>
+                                : (<DropdownItem
+                                    {...(action.onClick
+                                        ? {
+                                            component: 'button',
+                                            onClick: action.onClick
+                                        } : {
+                                            href: action.url,
+                                            component: 'a',
+                                            target: '_blank',
+                                            rel: 'noopener noreferrer'
+                                        }
+                                    )}
+                                >
+                                    {action.title}
+                                </DropdownItem>)
                             }
                         </React.Fragment>
                     ))} />
