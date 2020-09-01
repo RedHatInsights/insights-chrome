@@ -69,13 +69,21 @@ Insights Chrome comes with a Javacript API that allows applications to control n
     unregister();
 ```
 
+#### Global events
+
 The following events can be observed:
 * `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
 * `NAVIGATION_TOGGLE` - fired when user clicks on burger to hide navigation. No data are given.
+* `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
 
-To activate certain app within your app (your app is using some kind of router and you want to activate certain part of navigation programatically) you can call function `insights.chrome.appNavClick({id: 'some-id'})` for first level nav and for second level navs you have to call `insights.chrome.appNavClick({id: 'ocp-on-aws', parentId: 'some-parent', secondaryNav: true})`
+#### Global actions
 
-You can also use Chrome to update a page action and object ID for OUIA. You can use `insights.chrome.appAction('action')` to activate a certain action, and `insights.chrome.appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `insights.chrome.appAction('edit-name')` and then `insights.chrome.appObjectId(5)`. Once the user is done editing, you have to call `insights.chrome.appAction()` and `insights.chrome.appObjectId()` in order to indicate that the action is done.
+* To activate certain app within your app (your app is using some kind of router and you want to activate certain part of navigation programatically) you can call function `insights.chrome.appNavClick({id: 'some-id'})` for first level nav and for second level navs you have to call `insights.chrome.appNavClick({id: 'ocp-on-aws', parentId: 'some-parent', secondaryNav: true})`
+
+* You can also use Chrome to update a page action and object ID for OUIA. You can use `insights.chrome.appAction('action')` to activate a certain action, and `insights.chrome.appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `insights.chrome.appAction('edit-name')` and then `insights.chrome.appObjectId(5)`. Once the user is done editing, you have to call `insights.chrome.appAction()` and `insights.chrome.appObjectId()` in order to indicate that the action is done.
+
+* If you want to scope global filter to specific source you can do that by firing `insights.chrome.globalFilterScope('insights')` (this will populate global filter with tags for systems only from insights source).
+
 
 ## Permissions
 
@@ -87,6 +95,12 @@ List of available permissions methods:
  * `isProd` - test if current environment is production (prod-beta and prod-stable)
  * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
  * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission']
+
+## Global filter
+
+By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with namespace and key as object keys. This is for more complex behaviors, when you want to filter our certain items or to do something else with this complex object.
+
+If you simply want to filter systems based on these values we provide a helper function `insights.chromemapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
 
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the

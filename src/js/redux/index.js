@@ -9,7 +9,10 @@ import {
     clearActive,
     navUpdateReducer,
     onPageAction,
-    onPageObjectId
+    onPageObjectId,
+    onGetAllTags,
+    onGetAllTagsPending,
+    onSetGlobalFilterScope
 } from './reducers';
 import {
     CLICK_ACTION,
@@ -20,7 +23,9 @@ import {
     CLEAR_ACTIVE,
     CHROME_NAV_UPDATE,
     CHROME_PAGE_ACTION,
-    CHROME_PAGE_OBJECT
+    CHROME_PAGE_OBJECT,
+    CHROME_GET_ALL_TAGS,
+    GLOBAL_FILTER_SCOPE
 } from './action-types';
 
 const reducers = {
@@ -32,7 +37,10 @@ const reducers = {
     [USER_LOGIN]: loginReducer,
     [CHROME_NAV_UPDATE]: navUpdateReducer,
     [CHROME_PAGE_ACTION]: onPageAction,
-    [CHROME_PAGE_OBJECT]: onPageObjectId
+    [CHROME_PAGE_OBJECT]: onPageObjectId,
+    [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
+    [`${CHROME_GET_ALL_TAGS}_PENDING`]: onGetAllTagsPending,
+    [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope
 };
 
 export default function() {

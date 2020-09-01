@@ -17,4 +17,4 @@ const urijs = (inputUrl) => {
 };
 /* eslint-enable camelcase */
 
-module.exports = urijs;
+export default urijs;

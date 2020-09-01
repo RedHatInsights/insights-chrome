@@ -4,13 +4,13 @@ exports[`Login should render correctly 1`] = `
 <div
   className="pf-c-page__header-tools"
 >
-  <Component
+  <Button
     aria-label="Toggle primary navigation"
     onClick={[Function]}
     variant="tertiary"
     widget-type="InsightsNavToggle"
   >
     Log in
-  </Component>
+  </Button>
 </div>
 `;

@@ -6,16 +6,20 @@ const userOutput  = require('../../../../testdata/user.json');
 const user        = require('./user');
 const replaceMock = jest.fn();
 
-user.__set__('getWindow', () => {
-    return {
-        location: {
+describe('User', () => {
+    const { location } = window;
+
+    beforeAll(() => {
+        delete window.location;
+        window.location = {
             pathname: '/insights/foo',
             replace: replaceMock
-        }
-    };
-});
+        } ;
+    });
 
-describe('User', () => {
+    afterAll(() => {
+        window.location = location;
+    });
     const buildUser = user.__get__('buildUser');
 
     describe('buildUser', () => {
@@ -63,21 +67,13 @@ describe('User', () => {
 
     describe('default', () => {
         test('appends the entitlements data onto the user object', () => {
-            require('../../utils').__set__('getWindow', () => {
-                return {
-                    location: {
-                        pathname: '/insights/foo'
-                    }
-                };
-            });
-
-            const o = user(token);
+            const o = user.default(token);
             expect(o).toHaveProperty('entitlements', { foo: 'bar' });
             expect(o).toHaveProperty('identity');
         });
         test('uses the token.jti field as a cache key', () => {
-            expect(mockedEntitlements).toBeCalledWith(token.jti);
-            user(token);
+            expect(mockedEntitlements.default).toBeCalledWith(token.jti);
+            user.default(token);
         });
     });
 });

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick } from './redux/actions';
+import { appNavClick, globalFilterScope } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory/index';
@@ -16,11 +16,17 @@ import debugFunctions from './debugFunctions';
 import NoAccess from './App/NoAccess';
 import { visibilityFunctions } from './consts';
 import Cookies from 'js-cookie';
-
-const log = require('./jwt/logger')('entry.js');
-const sourceOfTruth = require('./nav/sourceOfTruth');
+import logger from './jwt/logger';
+import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import flatMap from 'lodash/flatMap';
+
+const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
+const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
+const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './App/Sidenav'));
+
+const log = logger('entry.js');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -34,6 +40,10 @@ const PUBLIC_EVENTS = {
     }),
     NAVIGATION_TOGGLE: callback => ({
         on: actionTypes.NAVIGATION_TOGGLE,
+        callback
+    }),
+    GLOBAL_FILTER_UPDATE: callback => ({
+        on: actionTypes.GLOBAL_FILTER_UPDATE,
         callback
     })
 };
@@ -63,6 +73,19 @@ export function chromeInit(libjwt) {
         navigation: appNav,
         appAction,
         appObjectId,
+        globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+        mapGlobalFilter: (filter) => flatMap(
+            Object.entries(filter),
+            ([namespace, item]) => Object.entries(item)
+            .filter(([, { isSelected }]) => isSelected)
+            .map(([groupKey, { item, value: tagValue }]) => `${
+                namespace ? `${namespace}/` : ''
+            }${
+                groupKey
+            }${
+                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
+            }`)
+        ),
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();
@@ -171,52 +194,50 @@ async function loadNav(yamlConfig) {
 }
 
 function loadChrome(user) {
+    const { store } = spinUpStore();
+    const chromeState = store.getState().chrome;
+    let defaultActive = {};
 
-    import('./App/index').then(
-        ({ UnauthedHeader, Header, Sidenav }) => {
-            const { store } = spinUpStore();
-            const chromeState = store.getState().chrome;
-            let defaultActive = {};
-
-            if (chromeState && !chromeState.appNav && chromeState.globalNav) {
-                const activeApp = chromeState.globalNav.find(item => item.active);
-                if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
-                    defaultActive = activeApp.subItems.find(
-                        subItem => location.pathname.split('/').find(item => item === subItem.id)
-                    ) || activeApp.subItems.find(subItem => subItem.default)
+    if (chromeState && !chromeState.appNav && chromeState.globalNav) {
+        const activeApp = chromeState.globalNav.find(item => item.active);
+        if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
+            defaultActive = activeApp.subItems.find(
+                subItem => location.pathname.split('/').find(item => item === subItem.id)
+            ) || activeApp.subItems.find(subItem => subItem.default)
                     || activeApp.subItems[0];
-                }
-            }
-
-            store.dispatch(appNavClick(defaultActive));
-
-            render(
-                <Provider store={store}>
-                    { user ? <Header /> : <UnauthedHeader /> }
-                </Provider>,
-                document.querySelector('header')
-            );
-
-            // Conditionally add classes if it's the pen testing environment
-            if (window.insights.chrome.isPenTest()) {
-                document.querySelector('header').classList.add('ins-c-pen-test');
-            }
-
-            if (document.querySelector('aside')) {
-                render(
-                    <Provider store={store}>
-                        <Sidenav />
-                    </Provider>,
-                    document.querySelector('aside')
-                );
-            }
-
-            const tempContent = document.querySelector('#temp');
-            if (tempContent) {
-                tempContent.remove();
-            }
         }
+    }
+
+    store.dispatch(appNavClick(defaultActive));
+    render(
+        <Provider store={store}>
+            <Suspense fallback={Fragment}>
+                { user ? <Header /> : <UnauthedHeader /> }
+            </Suspense>
+        </Provider>,
+        document.querySelector('header')
     );
+
+    // Conditionally add classes if it's the pen testing environment
+    if (window.insights.chrome.isPenTest()) {
+        document.querySelector('header').classList.add('ins-c-pen-test');
+    }
+
+    if (document.querySelector('aside')) {
+        render(
+            <Provider store={store}>
+                <Suspense fallback={Fragment}>
+                    <Sidenav />
+                </Suspense>
+            </Provider>,
+            document.querySelector('aside')
+        );
+    }
+
+    const tempContent = document.querySelector('#temp');
+    if (tempContent) {
+        tempContent.remove();
+    }
 }
 
 export function rootApp() {

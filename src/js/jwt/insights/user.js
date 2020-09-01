@@ -1,6 +1,7 @@
-const utils = require('../../utils');
-const log = require('../logger')('insights/user.js');
-const servicesApi = require('./entitlements');
+import { pageAllowsUnentitled, isValidAccountNumber } from '../../utils';
+import servicesApi from './entitlements';
+import logger from '../logger';
+const log = logger('insights/user.js');
 const pathMapper = {
     'cost-management': 'cost_management',
     insights: 'insights',
@@ -55,7 +56,6 @@ function tryBounceIfUnentitled(data, section) {
     }
 
     const service = pathMapper[section];
-
     if (data === true) {
         // this is a force bounce scenario!
         getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
@@ -71,7 +71,7 @@ function tryBounceIfUnentitled(data, section) {
     }
 }
 
-module.exports = (token) => {
+export default (token) => {
     let user = buildUser(token);
 
     const pathName = getWindow().location.pathname.split('/');
@@ -89,7 +89,7 @@ module.exports = (token) => {
         //
         // Landing Page *does* support accounts with -1
         // it has to
-        if (utils.pageAllowsUnentitled()) {
+        if (pageAllowsUnentitled()) {
             return new Promise(resolve => {
                 user.identity = {
                     ...user.identity,
@@ -107,7 +107,7 @@ module.exports = (token) => {
         //
         // we "force" a bounce here because the entitlements API
         // was never called
-        if (!utils.isValidAccountNumber(user.identity.account_number)) {
+        if (!isValidAccountNumber(user.identity.account_number)) {
             tryBounceIfUnentitled(true, pathName[0]);
             return;
         }
