@@ -132,7 +132,7 @@
     "@patternfly/react-core": "^4.47.0",
     "@patternfly/react-icons": "^4.4.2",
     "@patternfly/react-table": "^4.12.1",
-    "@redhat-cloud-services/entitlements-client": "^1.0.67",
+    "@redhat-cloud-services/entitlements-client": "^1.0.71",
     "@redhat-cloud-services/frontend-components": "^2.4.2",
     "@redhat-cloud-services/frontend-components-inventory": "^2.4.4",
     "@redhat-cloud-services/frontend-components-inventory-compliance": "^2.1.5",
