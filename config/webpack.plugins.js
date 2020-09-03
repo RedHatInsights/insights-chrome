@@ -2,9 +2,11 @@ const webpack = require('webpack');
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const plugins = [
     new CleanWebpackPlugin(),
+    new HardSourceWebpackPlugin(),
     new WriteFileWebpackPlugin(),
     new webpack.SourceMapDevToolPlugin({
         test: /\.js/i,

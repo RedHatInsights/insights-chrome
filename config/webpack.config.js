@@ -2,6 +2,7 @@ const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 .BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const commonConfig = ({
     publicPath,
@@ -25,8 +26,7 @@ const commonConfig = ({
         }
     },
     optimization: {
-        minimize: true,
-        concatenateModules: false
+        minimizer: [new TerserPlugin({ sourceMap: true })]
     },
     module: {
         rules: [
