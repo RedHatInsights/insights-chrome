@@ -14,6 +14,35 @@ global.MutationObserver = class {
 global.fetch = require('jest-fetch-mock');
 global.window = Object.create(window);
 
+/**
+ * To get around Error: Not implemented: navigation (except hash changes)
+ * Also enables spy and mock implementation on replace. Add missing attributes here.
+ */
+delete window.location;
+window.location = { replace: jest.fn(), pathname: 'https://localhost' };
+
+/**
+ * Mock local storage
+ */
+const localStorageMock = (() => {
+    let store = {};
+    return {
+        getItem: function(key) {
+            return store[key];
+        },
+        setItem: function(key, value) {
+            store[key] = value.toString();
+        },
+        clear: function() {
+            store = {};
+        },
+        removeItem: function(key) {
+            delete store[key];
+        }
+    };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
 global.window.insights = {
     ...window.insights || {},
     chrome: {
