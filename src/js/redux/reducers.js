@@ -145,3 +145,10 @@ export function onSetGlobalFilterScope(state, { payload }) {
         gloablFilterScope: payload
     };
 }
+
+export function onGlobalFilterToggle(state, { payload }) {
+    return {
+        ...state,
+        globalFilterHidden: payload.isHidden
+    };
+}
