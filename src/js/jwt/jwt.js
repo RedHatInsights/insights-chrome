@@ -190,7 +190,7 @@ function isExistingValid(token) {
 function initSuccess() {
     log('JWT Initialized');
     setCookie(priv.keycloak.token);
-    window.localStorage.setItem(priv.cookie.cookieName, priv.keycloak.refreshToken);
+    setRefresh(priv.keycloak.refreshToken);
 }
 
 // keycloak init failed
@@ -320,6 +320,11 @@ function setCookie(token) {
                          `secure=true;` +
                          `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
+}
+
+function setRefresh(refreshToken) {
+    log('Setting the refresh token');
+    cookie.set('cs_jwt_refresh', refreshToken, { secure: true });
 }
 
 // do this so we can mock out for test
