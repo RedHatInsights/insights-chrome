@@ -132,3 +132,31 @@ describe('Reducers', () => {
         });
     });
 });
+
+describe('onGlobalFilterToggle', () => {
+    it('should hide global filter', () => {
+        const state = reducers.onGlobalFilterToggle(
+            {
+                someState: {}
+            },
+            actions.toggleGlobalFilter()
+        );
+        expect(state).toEqual({
+            someState: {},
+            globalFilterHidden: true
+        });
+    });
+
+    it('should show global filter', () => {
+        const state = reducers.onGlobalFilterToggle(
+            {
+                someState: {}
+            },
+            actions.toggleGlobalFilter(false)
+        );
+        expect(state).toEqual({
+            someState: {},
+            globalFilterHidden: false
+        });
+    });
+});

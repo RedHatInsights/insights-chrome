@@ -12,7 +12,8 @@ import {
     onPageObjectId,
     onGetAllTags,
     onGetAllTagsPending,
-    onSetGlobalFilterScope
+    onSetGlobalFilterScope,
+    onGlobalFilterToggle
 } from './reducers';
 import {
     CLICK_ACTION,
@@ -25,7 +26,8 @@ import {
     CHROME_PAGE_ACTION,
     CHROME_PAGE_OBJECT,
     CHROME_GET_ALL_TAGS,
-    GLOBAL_FILTER_SCOPE
+    GLOBAL_FILTER_SCOPE,
+    GLOBAL_FILTER_TOGGLE
 } from './action-types';
 
 const reducers = {
@@ -40,7 +42,8 @@ const reducers = {
     [CHROME_PAGE_OBJECT]: onPageObjectId,
     [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
     [`${CHROME_GET_ALL_TAGS}_PENDING`]: onGetAllTagsPending,
-    [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope
+    [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope,
+    [GLOBAL_FILTER_TOGGLE]: onGlobalFilterToggle
 };
 
 export default function() {

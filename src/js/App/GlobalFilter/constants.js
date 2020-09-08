@@ -10,9 +10,6 @@ export const workloads = [
         },
         {
             tag: { key: 'SAP' }
-        },
-        {
-            tag: { key: 'SQL' }
         }],
         type: 'radio'
     }

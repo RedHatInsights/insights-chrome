@@ -98,3 +98,10 @@ export function globalFilterChange(selectedTags) {
         payload: selectedTags
     };
 }
+
+export function toggleGlobalFilter(isHidden = true) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_TOGGLE,
+        payload: { isHidden }
+    };
+}

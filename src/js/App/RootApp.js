@@ -8,9 +8,10 @@ const RootApp = ({
     activeLocation,
     appId,
     pageAction,
-    pageObjectId
+    pageObjectId,
+    globalFilterHidden
 }) => {
-    const isGlobalFilterEnabled = (
+    const isGlobalFilterEnabled = !globalFilterHidden && (
         window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))
     ) &&
     location.pathname.includes('insights');
@@ -61,11 +62,12 @@ RootApp.propTypes = {
     activeApp: PropTypes.string,
     activeLocation: PropTypes.string,
     pageAction: PropTypes.string,
-    pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    globalFilterHidden: PropTypes.bool
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId } }) {
-    return ({ activeApp, activeLocation, appId, pageAction, pageObjectId });
+function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden } }) {
+    return ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden });
 }
 
 export default connect(stateToProps, null)(RootApp);

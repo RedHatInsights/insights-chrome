@@ -82,4 +82,37 @@ describe('Chrome API', () => {
         expect(callback).not.toHaveBeenCalled();
     });
 
+    test('allows for an event GLOBAL_FILTER_UPDATE to be registered', () => {
+        const callback = jest.fn();
+        const chrome = chromeInit(getMockLibJwt());
+        chrome.on('GLOBAL_FILTER_UPDATE', callback);
+
+        chrome.$internal.store.dispatch(
+            actions.globalFilterChange()
+        );
+        expect(callback).toHaveBeenCalled();
+    });
+
+    test('allows for an event GLOBAL_FILTER_UPDATE to be unregistered', () => {
+        const callback = jest.fn();
+        const chrome = chromeInit(getMockLibJwt());
+        const unregister = chrome.on('GLOBAL_FILTER_UPDATE', callback);
+        unregister();
+        chrome.$internal.store.dispatch(
+            actions.globalFilterChange()
+        );
+        expect(callback).not.toHaveBeenCalled();
+    });
+
+    test('hides global filter', () => {
+        const chrome = chromeInit(getMockLibJwt());
+        chrome.hideGlobalFilter();
+        expect(chrome.$internal.store.getState().chrome.globalFilterHidden).toBe(true);
+    });
+
+    test('shows global filter', () => {
+        const chrome = chromeInit(getMockLibJwt());
+        chrome.hideGlobalFilter(false);
+        expect(chrome.$internal.store.getState().chrome.globalFilterHidden).toBe(false);
+    });
 });
