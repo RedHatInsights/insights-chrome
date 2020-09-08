@@ -98,9 +98,32 @@ List of available permissions methods:
 
 ## Global filter
 
+On all insights application users expect to see global filter with predefined options and every app should integrate with it.
+
+### User selects in global filter
+
 By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with namespace and key as object keys. This is for more complex behaviors, when you want to filter our certain items or to do something else with this complex object.
 
+```JS
+insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    // do something with data object
+});
+```
+
 If you simply want to filter systems based on these values we provide a helper function `insights.chromemapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
+
+```JS
+insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const selectedTags = insights.chrome?.mapGlobalFilter?.(data);
+    // selectedTags is now array with selected tags and workspaces
+});
+```
+
+### Toggle global filter on certain pages
+
+If you wish to hide the global filter on any route simply call `insights.chrome.hideGlobalFilter()` once you do that global filter will be hidden on all pages in your application.
+
+If you want to hide it on certain screens call `insights.chrome.hideGlobalFilter()` on them (preferably in `componentDidMount` function) and on screens you want to show it call `insights.chrome.hideGlobalFilter(false)`. 
 
 # Running the build
 There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
