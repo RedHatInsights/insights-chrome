@@ -81,8 +81,7 @@ export class UserToggle extends Component {
     render() {
         const { isOpen } = this.state;
         const { account, isSmall, extraItems } = this.props;
-        const toggle = isSmall 
-        ?
+        const toggle = isSmall ?
             <KebabToggle onToggle={this.onToggle} /> :
             <DropdownToggle
                 id='UserMenu'

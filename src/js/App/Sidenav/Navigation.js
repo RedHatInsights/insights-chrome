@@ -18,14 +18,14 @@ const openshiftLinks = {
         link: 'https://access.redhat.com/support/cases'
     },
     feedback: {
-         title: 'Cluster Manager Feedback',
+        title: 'Cluster Manager Feedback',
         link: 'mailto:ocm-feedback@redhat.com'
     },
     marketplace: {
         title: 'Red Hat Marketplace',
         link: 'https://marketplace.redhat.com'
     }
-}; 
+};
 
 const insightsLinks = {
     subscriptionWatch: {
