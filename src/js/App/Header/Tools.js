@@ -15,6 +15,8 @@ import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
+import { getSession } from '../../utils';
+
 const Tools = () => {
 
     {/* Set the state */}
@@ -45,6 +47,9 @@ const Tools = () => {
         {
             title: 'Customer support',
             url: 'https://access.redhat.com/support'
+        }, {
+            title: 'Open support case',
+            onClick: () => getSession()
         }, {
             title: 'Training',
             url: 'https://www.redhat.com/en/services/training-and-certification'
