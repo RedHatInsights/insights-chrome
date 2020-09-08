@@ -1,9 +1,10 @@
-const log = require('../logger')('insights/url.js');
+import logger from '../logger';
+const log = logger('insights/url.js');
 
 // Parse through keycloak options routes
-module.exports = (env) => Object.entries(env)
-.reduce((acc, [keys, values]) => {
+export default env => Object.entries(env).reduce((acc, [keys, values]) => {
     const urlFound = values.url.some(url => url === location.hostname);
+
     if (urlFound) {
         log(`SSO: ${values.sso}`);
         log(`ENV: ${keys}`);

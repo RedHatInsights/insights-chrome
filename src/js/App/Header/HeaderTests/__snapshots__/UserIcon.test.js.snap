@@ -22,7 +22,7 @@ exports[`Connected User Icon should render correctly with initial state 1`] = `
       }
       dispatch={[Function]}
     >
-      <Component
+      <Avatar
         alt="User Avatar"
         src="apps/chrome/assets/images/img_avatar.svg"
       >
@@ -31,14 +31,14 @@ exports[`Connected User Icon should render correctly with initial state 1`] = `
           className="pf-c-avatar"
           src="apps/chrome/assets/images/img_avatar.svg"
         />
-      </Component>
+      </Avatar>
     </UserIcon>
   </Connect(UserIcon)>
 </Provider>
 `;
 
 exports[`User Icon should render correctly with initial state 1`] = `
-<Component
+<Avatar
   alt="User Avatar"
   src="apps/chrome/assets/images/img_avatar.svg"
 />

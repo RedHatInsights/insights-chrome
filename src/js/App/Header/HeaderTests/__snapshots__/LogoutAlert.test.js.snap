@@ -2,9 +2,9 @@
 
 exports[`Login should render correctly with content 1`] = `
 <Fragment>
-  <Component
+  <Alert
     action={
-      <Unknown
+      <AlertActionCloseButton
         onClose={[Function]}
       />
     }

@@ -11,5 +11,7 @@ export default ({
     jwtDebug: () => functionBuilder('chrome:jwt:debug', true),
     reduxDebug: () => functionBuilder('chrome:redux:debug', true),
     forcePendo: () => functionBuilder('forcePendo', true),
-    allDetails: () => functionBuilder('chrome:inventory:experimental_detail', true)
+    allDetails: () => functionBuilder('chrome:inventory:experimental_detail', true),
+    inventoryDrawer: () => functionBuilder('chrome:inventory:experimental_drawer', true),
+    globalFilter: () => functionBuilder('chrome:experimental:global-filter', true)
 });

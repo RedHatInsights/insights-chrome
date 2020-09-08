@@ -33,7 +33,8 @@ async function getRoutesForApp(app, masterConfig) {
             return (await calculateVisibility(app, subItem, visibility)) && ({
                 ...subItem.title ? {
                     id: subItem.id || '',
-                    title: subItem.title
+                    title: subItem.title,
+                    ignoreCase: subItem.ignoreCase
                 } : await getAppData(subItem.id || subItem, 'subItems', masterConfig),
                 ...subItem.default && { default: subItem.default },
                 ...subItem.group && { group: subItem.group },
@@ -62,7 +63,8 @@ async function getAppData(appId, propName, masterConfig) {
 
         const routes = await getRoutesForApp(app, masterConfig);
         let appData = {
-            title: app.frontend.title || app.title
+            title: app.frontend.title || app.title,
+            ignoreCase: app.ignoreCase
         };
         if (!app.frontend.suppress_id) {appData.id = appId;}
 

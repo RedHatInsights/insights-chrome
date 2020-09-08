@@ -5,6 +5,7 @@ import ReducerRegistry, {
 } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import MiddlewareListener from '@redhat-cloud-services/frontend-components-utilities/files/MiddlewareListener';
 import logger from 'redux-logger';
+import promise from 'redux-promise-middleware';
 
 const basicMiddlewares = [];
 if (
@@ -18,6 +19,7 @@ const middlewareListener = new MiddlewareListener();
 const reduxRegistry = new ReducerRegistry(
     { chrome: {} },
     [
+        promise,
         middlewareListener.getMiddleware(),
         ...basicMiddlewares
     ]

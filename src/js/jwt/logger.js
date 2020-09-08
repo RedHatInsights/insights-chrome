@@ -1,6 +1,6 @@
 // const pub = {};
 
-module.exports = (fileName) => {
+export default (fileName) => {
     return (msg) => {
         if (window.console) {
             if (window.localStorage &&

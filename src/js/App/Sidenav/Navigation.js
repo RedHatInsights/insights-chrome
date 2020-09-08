@@ -92,7 +92,6 @@ export class Navigation extends Component {
         // if (navHidden) {
         //     //document.querySelector('aside').setAttribute('hidden', true);
         // }
-
         return (
             <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true">
                 <NavList>
@@ -112,6 +111,7 @@ export class Navigation extends Component {
                                                 if (!(subItem.disabled_on_stable
                                                     && window.location.pathname.indexOf('/beta') === -1)) {
                                                     return <NavigationItem
+                                                        ignoreCase={subItem.ignoreCase}
                                                         itemID={subItem.reload || subItem.id}
                                                         ouia-nav-item={subItem.reload || subItem.id}
                                                         key={subKey}
@@ -126,6 +126,7 @@ export class Navigation extends Component {
                                     </NavExpandable>;
                                 } else {
                                     return <NavigationItem
+                                        ignoreCase={item.ignoreCase}
                                         itemID={item.id}
                                         ouia-nav-item={item.id}
                                         key={key}
@@ -186,6 +187,7 @@ Navigation.propTypes = {
         PropTypes.shape({
             id: PropTypes.string,
             title: PropTypes.string,
+            ignoreCase: PropTypes.bool,
             subItems: () => Navigation.propTypes.settings
         })
     ),

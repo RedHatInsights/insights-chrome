@@ -79,7 +79,7 @@ class ToolbarToggle extends Component {
 }
 
 ToolbarToggle.propTypes = {
-    icon: PropTypes.func,
+    icon: PropTypes.elementType,
     dropdownItems: PropTypes.array,
     widgetType: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     className: PropTypes.string,

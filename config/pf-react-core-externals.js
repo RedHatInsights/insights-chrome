@@ -1,3 +1,3 @@
-const { PFReactCore } = require('../src/js/externalDependencies');
+const { PFReact } = require('../src/js/externalDependencies');
 
-module.exports = PFReactCore;
+module.exports = PFReact;

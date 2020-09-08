@@ -1,14 +1,20 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import GlobalFilter from './GlobalFilter';
 
 const RootApp = ({
     activeApp,
     activeLocation,
     appId,
     pageAction,
-    pageObjectId
+    pageObjectId,
+    globalFilterHidden
 }) => {
+    const isGlobalFilterEnabled = !globalFilterHidden && (
+        window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))
+    ) &&
+    location.pathname.includes('insights');
     return (
         <Fragment>
             <div
@@ -19,6 +25,7 @@ const RootApp = ({
                 {...pageAction && { 'data-ouia-page-action': pageAction }}
                 {...pageObjectId && { 'data-ouia-page-object-id': pageObjectId }}
             >
+                {isGlobalFilterEnabled && <GlobalFilter />}
                 <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
                     <section
                         className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
@@ -55,11 +62,12 @@ RootApp.propTypes = {
     activeApp: PropTypes.string,
     activeLocation: PropTypes.string,
     pageAction: PropTypes.string,
-    pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    globalFilterHidden: PropTypes.boolean
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId } }) {
-    return ({ activeApp, activeLocation, appId, pageAction, pageObjectId });
+function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden } }) {
+    return ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden });
 }
 
 export default connect(stateToProps, null)(RootApp);
