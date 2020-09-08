@@ -23,12 +23,14 @@ $pf-global--image-path: './assets/images/';
 @import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
 @import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/spinner.css';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/skeleton.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton.css';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/conditional-filter.css';
 
 // Accessibility
 @import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
 @import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@import 'node_modules/@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
 
 @import 'helpers.scss';
 
@@ -156,4 +158,23 @@ section.ins-c-app-switcher--loading {
 // Pen testing
 .ins-c-pen-test {
     border-top: 3px solid #A18FFF;
+}
+
+.pf-c-page div.ins-c-chrome__global-filter {
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+    background: var(--pf-global--BackgroundColor--100);
+    border-bottom: 1px solid var(--pf-global--palette--black-500);
+    .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
+    .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+    .pf-l-split__item:first-of-type { min-width: 150px;}
+
+    .ins-c-tagfilter {
+      &.pf-m-expanded { width: 450px; }
+      .pf-c-select__menu {
+        max-height: 400px;
+        overflow: auto;
+      }
+
+      .ins-c-tagfilter__option-value { max-width: 360px; }
+    }
 }

@@ -1,8 +1,6 @@
 const masterConfig = require('../../../testdata/masterConfig.json');
 const masterConfigPermissions = require('../../../testdata/masterConfigPermissions.json');
 const navFunctions = require('./globalNav');
-const mock = require('../../__mocks__/rbacApi').mock;
-const mockedRbac = require('../../../testdata/rbacAccess.json');
 // eslint-disable-next-line max-len
 const globalNav = { appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] } };
 
@@ -44,7 +42,6 @@ describe('globalNav with permissions', () => {
     });
 
     test('appG, should have empty navigation', () => {
-        mock.onGet('/api/rbac/v1/access/?application=&limit=50').reply(200, mockedRbac);
         expect(calculatedNav.appG).not.toBeDefined();
     });
 });

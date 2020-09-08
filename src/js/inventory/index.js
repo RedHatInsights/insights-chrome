@@ -1,36 +1,51 @@
 import setDependencies from '../externalDependencies';
-import accountNumbers from './accountNumbers.json';
+import { allDetails, drawer } from './accountNumbers.json';
 
 const isEnabled = async () => {
     const isExperimentalEnabled = window.localStorage.getItem('chrome:inventory:experimental_detail');
     const { identity } = await insights.chrome.auth.getUser();
     return (isExperimentalEnabled && isExperimentalEnabled !== 'false') ||
         // eslint-disable-next-line camelcase
-        (accountNumbers.includes(identity?.internal?.account_id) && isExperimentalEnabled !== 'false');
+        (allDetails.includes(identity?.internal?.account_id) && isExperimentalEnabled !== 'false');
 };
 
-const isDrawerEnabled = () => {
+const isDrawerEnabled = async () => {
     const drawerEnabled = window.localStorage.getItem('chrome:inventory:experimental_drawer');
-    return Boolean(drawerEnabled);
+    const { identity } = await insights.chrome.auth.getUser();
+    return (drawerEnabled && drawerEnabled !== 'false') ||
+        // eslint-disable-next-line camelcase
+        (drawer.includes(identity?.internal?.account_id) && drawerEnabled !== 'false');
 };
 
 export default async (dependencies) => {
+    let SystemAdvisoryListStore;
+    let SystemCvesStore;
+    let systemProfileStore;
+    let RenderWrapper;
+
     setDependencies(dependencies);
 
-    await import('../inventoryStyles');
-    const invData = await import('@redhat-cloud-services/frontend-components-inventory');
-    const { SystemAdvisoryListStore } = await import(
-        '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
-    );
-    const { SystemCvesStore } = await import(
-        '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
-    );
-    const systemProfileStore = await import(
-        '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
-    );
-    const RenderWrapper = await import('./RenderWrapper');
-
     const isDetailsEnabled = await isEnabled();
+    const drawerEnabled = await isDrawerEnabled();
+    await import(/* webpackChunkName: "inventory-styles" */ '../inventoryStyles');
+    const invData = await import(/* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory');
+
+    if (isDetailsEnabled || drawerEnabled) {
+        systemProfileStore = await import(/* webpackChunkName: "inventory-gen-info-store" */
+            '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
+        );
+        RenderWrapper = await import(/* webpackChunkName: "inventory-render-wrapper" */ './RenderWrapper');
+    }
+
+    if (isDetailsEnabled) {
+        SystemAdvisoryListStore = await import(/* webpackChunkName: "inventory-patch-store" */
+            '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
+        )?.SystemAdvisoryListStore;
+
+        SystemCvesStore = await import(/* webpackChunkName: "inventory-vuln-store" */
+            '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
+        )?.SystemCvesStore;
+    }
 
     return {
         ...invData,
@@ -43,10 +58,10 @@ export default async (dependencies) => {
                 { title: 'Compliance', name: 'compliance' },
                 { title: 'Patch', name: 'patch' }
             ]
-        } : undefined, isDrawerEnabled() ? RenderWrapper.default : undefined),
+        } : undefined, drawerEnabled ? RenderWrapper.default : undefined),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
-            ...(isDetailsEnabled || isDrawerEnabled()) && { systemProfileStore: systemProfileStore.default },
+            ...(isDetailsEnabled || drawerEnabled) && { systemProfileStore: systemProfileStore.default },
             ...isDetailsEnabled && {
                 SystemCvesStore,
                 SystemAdvisoryListStore

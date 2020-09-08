@@ -1,5 +1,5 @@
 import cookie from 'js-cookie';
-const encodedToken = require('../../../../../testdata/encodedToken.json').data;
+import { data as encodedToken }  from '../../../../../testdata/encodedToken.json';
 
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
@@ -48,4 +48,4 @@ const Keycloak = (options) => {
 };
 /* eslint-enable camelcase */
 
-module.exports = Keycloak;
+export default Keycloak;

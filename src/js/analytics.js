@@ -1,6 +1,8 @@
 'use strict';
 
-const log = require('./jwt/logger')('Analytics.js');
+import logger from './jwt/logger';
+
+const log = logger('Analytics.js');
 
 const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
 

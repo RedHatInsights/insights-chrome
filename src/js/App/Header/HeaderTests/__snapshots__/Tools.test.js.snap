@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Tools should render correctly 1`] = `
-<Component
+<PageHeaderTools
   widget-type="InsightsToolbar"
 >
-  <Component
+  <PageHeaderToolsGroup
     visibility={
       Object {
         "default": "hidden",
@@ -12,11 +12,11 @@ exports[`Tools should render correctly 1`] = `
       }
     }
   >
-    <Component>
+    <PageHeaderToolsItem>
       <AboutButton />
-    </Component>
-  </Component>
-  <Component
+    </PageHeaderToolsItem>
+  </PageHeaderToolsGroup>
+  <PageHeaderToolsGroup
     visibility={
       Object {
         "default": "hidden",
@@ -24,87 +24,87 @@ exports[`Tools should render correctly 1`] = `
       }
     }
   >
-    <Component>
+    <PageHeaderToolsItem>
       <Connect(UserToggle)
         className="ins-c-dropdown__user"
       />
-    </Component>
-  </Component>
-  <Component
+    </PageHeaderToolsItem>
+  </PageHeaderToolsGroup>
+  <PageHeaderToolsGroup
     visibility={
       Object {
         "sm": "hidden",
       }
     }
   >
-    <Component>
+    <PageHeaderToolsItem>
       <Connect(UserToggle)
         extraItems={
           Array [
             <React.Fragment>
-              <Unknown
+              <Divider
                 component="li"
               />
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <DropdownItem
                 component="a"
                 href="http://localhost/settings/rbac/"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 Settings
-              </Unknown>
+              </DropdownItem>
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <Divider
                 component="li"
               />
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <DropdownItem
                 component="a"
                 href="https://access.redhat.com/support"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 Customer support
-              </Unknown>
+              </DropdownItem>
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <DropdownItem
                 component="a"
                 href="https://www.redhat.com/en/services/training-and-certification"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 Training
-              </Unknown>
+              </DropdownItem>
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <DropdownItem
                 component="a"
                 href="http://localhost/docs/api"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 API documentation
-              </Unknown>
+              </DropdownItem>
             </React.Fragment>,
             <React.Fragment>
-              <Unknown
+              <DropdownItem
                 component="button"
                 onClick={[Function]}
               >
                 About
-              </Unknown>
+              </DropdownItem>
             </React.Fragment>,
           ]
         }
         isSmall={true}
       />
-    </Component>
-  </Component>
+    </PageHeaderToolsItem>
+  </PageHeaderToolsGroup>
   <Connect(UserIcon) />
-</Component>
+</PageHeaderTools>
 `;

@@ -4,65 +4,65 @@ exports[`AppSwitcher should render correctly 1`] = `
 <section
   className="ins-c-app-switcher"
 >
-  <Component
+  <Dropdown
     className="ins-c-app-switcher__dropdown"
     dropdownItems={
       Array [
-        <Unknown
+        <DropdownItem
           className="ins-c-app-switcher__current"
           component="a"
           href="http://localhost/insights"
         >
           Red Hat Insights
-        </Unknown>,
-        <Unknown
+        </DropdownItem>,
+        <DropdownItem
           className=""
           component="a"
           href="http://localhost/openshift"
         >
           Red Hat OpenShift Cluster Manager
-        </Unknown>,
-        <Unknown
+        </DropdownItem>,
+        <DropdownItem
           className=""
           component="a"
           href="http://localhost/ansible"
         >
           Red Hat Ansible Automation Platform
-        </Unknown>,
-        <Unknown
+        </DropdownItem>,
+        <DropdownItem
           className=""
           component="a"
           href="http://localhost/cost-management"
         >
           Cost Management
-        </Unknown>,
-        <Unknown
+        </DropdownItem>,
+        <DropdownItem
           className=""
           component="a"
           href="http://localhost/migrations"
         >
           Migration Services
-        </Unknown>,
-        <Unknown
+        </DropdownItem>,
+        <DropdownItem
           className=""
           component="a"
           href="http://localhost/subscriptions"
         >
           Subscription Watch
-        </Unknown>,
+        </DropdownItem>,
       ]
     }
     isOpen={false}
     isPlain={true}
     onSelect={[Function]}
     toggle={
-      <Unknown
+      <DropdownToggle
         id="toggle-id"
         onToggle={[Function]}
         toggleIndicator={[Function]}
       >
         Red Hat Insights
-      </Unknown>
+      </DropdownToggle>
     }
   />
 </section>

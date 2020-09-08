@@ -1,8 +1,6 @@
-let priv = {};
+export let priv = {};
 
-module.exports.priv = priv;
-
-const base        = jest.fn();
+const base = jest.fn();
 const servicesGet = jest.fn();
 
 base.mockReturnValue({ servicesGet });
@@ -12,4 +10,4 @@ servicesGet.mockReturnValue({
     }
 });
 
-module.exports = base;
+export default base;
