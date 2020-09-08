@@ -20,3 +20,11 @@ it('should send the data as array', async () => {
     expect.assertions(1);
     return data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
 });
+
+it('should not call any rbac', async () => {
+    const previousGetBundle = global.insights.chrome.getBundle;
+    global.window.insights.chrome.getBundle = () => 'openshift';
+    const data = await fetchPermissions('uSeRtOkEn');
+    expect(data).not.toEqual(mockedRbac.data);
+    global.window.insights.chrome.getBundle = previousGetBundle;
+});
