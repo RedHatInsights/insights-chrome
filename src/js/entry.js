@@ -19,10 +19,8 @@ import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
 import flatMap from 'lodash/flatMap';
+import { headerLoader } from './App/Header';
 
-const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
-const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
-const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './App/Sidenav'));
 const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ './App/NoAccess'));
 
 const log = logger('entry.js');
@@ -54,23 +52,30 @@ export function chromeInit(libjwt) {
     const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
     // Init JWT first.
-    const jwtAndNavResolver = libjwt.initPromise
+    const jwtResolver = libjwt.initPromise
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        (async () => {
-            const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-            const navigationData = await loadNav(navigationYml);
-            chromeNavUpdate(navigationData);
-        })();
-        loadChrome(user);
+        loadChrome();
     })
-    .catch(() => allowUnauthed() && loadChrome(false));
+    .catch(() => {
+        if (allowUnauthed()) {
+            actions.userLogIn(false);
+            loadChrome();
+        }
+    });
+
+    // Load navigation after login
+    const navResolver = jwtResolver.then(async () => {
+        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+        const navigationData = await loadNav(navigationYml);
+        chromeNavUpdate(navigationData);
+    });
 
     return {
-        identifyApp: (data) => {
-            return jwtAndNavResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
-        },
+        identifyApp: (data) => Promise.all([jwtResolver, navResolver]).then(
+            () => identifyApp(data, store.getState().chrome.globalNav)
+        ),
         navigation: appNav,
         appAction,
         appObjectId,
@@ -118,19 +123,9 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
-                getOfflineToken: () => {
-                    return libjwt.getOfflineToken();
-                },
-                doOffline: () => {
-                    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken);
-                },
-                getToken: () => {
-                    return new Promise((res) => {
-                        libjwt.jwt.getUserInfo().then(() => {
-                            res(libjwt.jwt.getEncodedToken());
-                        });
-                    });
-                },
+                getOfflineToken: () => libjwt.getOfflineToken(),
+                doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
+                getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
                 getUser: () => {
                     // here we need to init the qe plugin
                     // the "contract" is we will do this before anyone
@@ -151,21 +146,11 @@ export function bootstrap(libjwt, initFunc) {
                 login: () => libjwt.jwt.login()
             },
             isProd: window.location.host === 'cloud.redhat.com',
-            isBeta: () => {
-                return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
-            },
-            getUserPermissions: (app = '') => {
-                return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
-            },
-            isPenTest: () => {
-                return Cookies.get('x-rh-insights-pentest') ? true : false;
-            },
-            getBundle: () => {
-                return getUrl('bundle');
-            },
-            getApp: () => {
-                return getUrl('app');
-            },
+            isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
+            getUserPermissions: (app = '') => fetchPermissions(libjwt.jwt.getEncodedToken(), app),
+            isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
+            getBundle: () =>getUrl('bundle'),
+            getApp: () => getUrl('app'),
             visibilityFunctions,
             init: initFunc
         },
@@ -176,34 +161,8 @@ export function bootstrap(libjwt, initFunc) {
     };
 }
 
-function loadChrome(user) {
-    const { store } = spinUpStore();
-
-    render(
-        <Provider store={store}>
-            <Suspense fallback={Fragment}>
-                { user ? <Header /> : <UnauthedHeader /> }
-            </Suspense>
-        </Provider>,
-        document.querySelector('header')
-    );
-
-    // Conditionally add classes if it's the pen testing environment
-    if (window.insights.chrome.isPenTest()) {
-        document.querySelector('header').classList.add('ins-c-pen-test');
-    }
-
-    if (document.querySelector('aside')) {
-        render(
-            <Provider store={store}>
-                <Suspense fallback={Fragment}>
-                    <Sidenav />
-                </Suspense>
-            </Provider>,
-            document.querySelector('aside')
-        );
-    }
-
+function loadChrome() {
+    headerLoader();
     const tempContent = document.querySelector('#temp');
     if (tempContent) {
         tempContent.remove();

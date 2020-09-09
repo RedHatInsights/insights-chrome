@@ -27,7 +27,7 @@ export default async (dependencies) => {
 
     const isDetailsEnabled = await isEnabled();
     const drawerEnabled = await isDrawerEnabled();
-    await import(/* webpackChunkName: "inventory-styles" */ '../inventoryStyles');
+    await import(/* webpackChunkName: "inventory-styles" */ './inventoryStyles');
     const invData = await import(/* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory');
 
     if (isDetailsEnabled || drawerEnabled) {

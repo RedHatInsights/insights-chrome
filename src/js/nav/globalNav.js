@@ -1,6 +1,7 @@
 import { visibilityFunctions, isVisible } from '../consts';
 import { safeLoad } from 'js-yaml';
 
+// TODO: refactor this whole file
 export let getNavFromConfig = async (masterConfig) => {
     return await Object.keys(masterConfig).filter(appId => masterConfig[appId].top_level).reduce(async (acc, appId) => {
         const routes = await getAppData(appId, 'routes', masterConfig);

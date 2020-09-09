@@ -71,12 +71,3 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
   <Connect(SideNav) />
 </ContextProvider>
 `;
-
-exports[`SideNav should render correctly 1`] = `
-<Fragment>
-  <AppSwitcher
-    currentApp="someTechnology"
-  />
-  <Connect(Navigation) />
-</Fragment>
-`;
