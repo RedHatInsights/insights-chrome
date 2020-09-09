@@ -1,9 +1,10 @@
-import React, { Fragment, Component } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import AppSwitcher from './AppSwitcher';
+import { appNavClick } from '../../redux/actions';
 
 const documentationLink = {
     insights: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
@@ -13,19 +14,39 @@ const documentationLink = {
     ansible: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
 };
 
-export class SideNav extends Component {
-    render() {
-        const { activeTechnology, activeLocation } = this.props;
-        return (<Fragment>
-            <AppSwitcher currentApp={activeTechnology}/>
-            <Navigation documentation={documentationLink[activeLocation]} />
-        </Fragment>);
-    }
-}
+export const SideNav = ({ activeTechnology, activeLocation, globalNav, appNav }) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (globalNav) {
+            let defaultActive = {};
+
+            if (!appNav && globalNav) {
+                const activeApp = globalNav.find(item => item.active);
+                if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
+                    defaultActive = activeApp.subItems.find(
+                        subItem => location.pathname.split('/').find(item => item === subItem.id)
+                    ) || activeApp.subItems.find(subItem => subItem.default)
+                            || activeApp.subItems[0];
+                }
+            }
+
+            dispatch(appNavClick(defaultActive));
+        }
+    }, [globalNav]);
+
+    return <Fragment>
+        <AppSwitcher currentApp={activeTechnology}/>
+        <Navigation documentation={documentationLink[activeLocation]} />
+    </Fragment>;
+};
 
 SideNav.propTypes = {
     activeTechnology: PropTypes.string,
-    activeLocation: PropTypes.string
+    activeLocation: PropTypes.string,
+    globalNav: PropTypes.arrayOf(PropTypes.shape({
+        [PropTypes.string]: PropTypes.any
+    })),
+    appNav: PropTypes.string
 };
 
 SideNav.defaultProps = {
@@ -35,8 +56,12 @@ SideNav.defaultProps = {
 
 export default connect(({ chrome: {
     activeTechnology,
-    activeLocation
+    activeLocation,
+    globalNav,
+    appNav
 } }) => ({
     activeTechnology,
-    activeLocation
+    activeLocation,
+    globalNav,
+    appNav
 }))(SideNav);

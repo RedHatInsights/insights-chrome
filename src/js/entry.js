@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick, globalFilterScope, toggleGlobalFilter } from './redux/actions';
+import { globalFilterScope, toggleGlobalFilter } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory/index';
@@ -9,11 +9,9 @@ import loadRemediations from './remediations';
 import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
-import { safeLoad } from 'js-yaml';
-import { getNavFromConfig } from './nav/globalNav.js';
+import { loadNav } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
-import NoAccess from './App/NoAccess';
 import { visibilityFunctions } from './consts';
 import Cookies from 'js-cookie';
 import logger from './jwt/logger';
@@ -25,6 +23,7 @@ import flatMap from 'lodash/flatMap';
 const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
 const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
 const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './App/Sidenav'));
+const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ './App/NoAccess'));
 
 const log = logger('entry.js');
 
@@ -59,9 +58,11 @@ export function chromeInit(libjwt) {
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-        const navigationData = await loadNav(navigationYml);
-        chromeNavUpdate(navigationData);
+        (async () => {
+            const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+            const navigationData = await loadNav(navigationYml);
+            chromeNavUpdate(navigationData);
+        })();
         loadChrome(user);
     })
     .catch(() => allowUnauthed() && loadChrome(false));
@@ -175,41 +176,9 @@ export function bootstrap(libjwt, initFunc) {
     };
 }
 
-// Loads the navigation for the current bundle.
-async function loadNav(yamlConfig) {
-    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
-
-    const splitted = location.pathname.split('/') ;
-    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
-    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
-    let activeSection = globalNav.find(({ id }) => id === section);
-    return groupedNav[active] ? {
-        globalNav,
-        activeTechnology: groupedNav[active].title,
-        activeLocation: active,
-        activeSection
-    } : {
-        globalNav,
-        activeTechnology: 'Applications'
-    };
-}
-
 function loadChrome(user) {
     const { store } = spinUpStore();
-    const chromeState = store.getState().chrome;
-    let defaultActive = {};
 
-    if (chromeState && !chromeState.appNav && chromeState.globalNav) {
-        const activeApp = chromeState.globalNav.find(item => item.active);
-        if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
-            defaultActive = activeApp.subItems.find(
-                subItem => location.pathname.split('/').find(item => item === subItem.id)
-            ) || activeApp.subItems.find(subItem => subItem.default)
-                    || activeApp.subItems[0];
-        }
-    }
-
-    store.dispatch(appNavClick(defaultActive));
     render(
         <Provider store={store}>
             <Suspense fallback={Fragment}>
@@ -275,7 +244,9 @@ export function noAccess() {
                 document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
                 render(
                     <Provider store={ store }>
-                        <NoAccess />
+                        <Suspense fallback={Fragment}>
+                            <NoAccess />
+                        </Suspense>
                     </Provider>,
                     document.querySelector('#no-access')
                 );

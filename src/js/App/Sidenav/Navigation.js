@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
+import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
 
 import './Navigation.scss';
 
@@ -88,15 +89,12 @@ export class Navigation extends Component {
     }
 
     render() {
-        const { settings, activeApp, /*navHidden,*/ activeLocation, documentation } = this.props;
-        // if (navHidden) {
-        //     //document.querySelector('aside').setAttribute('hidden', true);
-        // }
+        const { settings, activeApp, activeLocation, documentation } = this.props;
         return (
             <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true">
                 <NavList>
                     {
-                        settings.map((item, key) => {
+                        settings ? settings.map((item, key) => {
                             if (!(item.disabled_on_stable && window.location.pathname.indexOf('/beta') === -1)) {
                                 if (item.subItems) {
                                     return <NavExpandable
@@ -138,7 +136,14 @@ export class Navigation extends Component {
                                     />;
                                 }
                             }
-                        })
+                        }) : [...new Array(4)].map((_i, key) => (
+                            <NavigationItem
+                                key={key}
+                                title={<a className="ins-c-skeleton__link">
+                                    <Skeleton size={SkeletonSize.lg} className="ins-m-dark"/>
+                                </a>}
+                            />
+                        ))
                     }
                     { activeLocation === 'insights' &&
                         Object.entries(insightsLinks).map(

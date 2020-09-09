@@ -6,10 +6,12 @@ import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dro
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
 import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
+import { connect } from 'react-redux';
 
 import './AppSwitcher.scss';
 
-const AppSwitcher = ({ currentApp }) => {
+const AppSwitcher = ({ currentApp, globalNav }) => {
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -39,25 +41,32 @@ const AppSwitcher = ({ currentApp }) => {
     };
 
     return (
-        <section className='ins-c-app-switcher'>
-            <Dropdown
-                isPlain
-                className='ins-c-app-switcher__dropdown'
-                onSelect={() => setIsOpen(!isOpen)}
-                toggle={
-                    <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-                        { currentApp }
-                    </DropdownToggle>
-                }
-                isOpen={isOpen}
-                dropdownItems={dropdownItems(currentApp)}
-            />
+        <section className={`ins-c-app-switcher${globalNav ? '' : '--loading'}`}>
+            {
+                globalNav ? (
+                    <Dropdown
+                        isPlain
+                        className='ins-c-app-switcher__dropdown'
+                        onSelect={() => setIsOpen(!isOpen)}
+                        toggle={
+                            <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
+                                { currentApp }
+                            </DropdownToggle>
+                        }
+                        isOpen={isOpen}
+                        dropdownItems={dropdownItems(currentApp)}
+                    />
+                ) : <Skeleton size={SkeletonSize.lg} className="ins-m-dark"/>
+            }
         </section>
     );
 };
 
-export default AppSwitcher;
+export default connect(({ chrome: { globalNav } }) => ({ globalNav }))(AppSwitcher);
 
 AppSwitcher.propTypes = {
-    currentApp: PropTypes.string
+    currentApp: PropTypes.string,
+    globalNav: PropTypes.shape({
+        [PropTypes.string]: PropTypes.any
+    })
 };

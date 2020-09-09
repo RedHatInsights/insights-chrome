@@ -1,4 +1,5 @@
 import { visibilityFunctions, isVisible } from '../consts';
+import { safeLoad } from 'js-yaml';
 
 export let getNavFromConfig = async (masterConfig) => {
     return await Object.keys(masterConfig).filter(appId => masterConfig[appId].top_level).reduce(async (acc, appId) => {
@@ -84,4 +85,22 @@ async function getAppData(appId, propName, masterConfig) {
 
         return appData;
     }
+}
+
+export async function loadNav(yamlConfig) {
+    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
+
+    const splitted = location.pathname.split('/') ;
+    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
+    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
+    let activeSection = globalNav.find(({ id }) => id === section);
+    return groupedNav[active] ? {
+        globalNav,
+        activeTechnology: groupedNav[active].title,
+        activeLocation: active,
+        activeSection
+    } : {
+        globalNav,
+        activeTechnology: 'Applications'
+    };
 }
