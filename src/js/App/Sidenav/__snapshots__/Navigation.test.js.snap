@@ -302,14 +302,6 @@ exports[`Navigation should render corectly 1`] = `
       title="Remediations"
     />
     <NavItem
-      className="ins-c-page__documentation"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="someDocs"
-    >
-      Documentation
-    </NavItem>
-    <NavItem
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
@@ -332,6 +324,14 @@ exports[`Navigation should render corectly 1`] = `
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
+    </NavItem>
+    <NavItem
+      className="ins-c-page__documentation"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="someDocs"
+    >
+      Documentation
     </NavItem>
   </NavList>
 </Nav>
@@ -409,14 +409,6 @@ exports[`Navigation should render correctly 2 1`] = `
       title="Remediations"
     />
     <NavItem
-      className="ins-c-page__documentation"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="someDocs"
-    >
-      Documentation
-    </NavItem>
-    <NavItem
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
@@ -439,6 +431,14 @@ exports[`Navigation should render correctly 2 1`] = `
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
+    </NavItem>
+    <NavItem
+      className="ins-c-page__documentation"
+      rel="noopener noreferrer"
+      target="_blank"
+      to="someDocs"
+    >
+      Documentation
     </NavItem>
   </NavList>
 </Nav>

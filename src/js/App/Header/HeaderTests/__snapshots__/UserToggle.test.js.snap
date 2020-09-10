@@ -75,6 +75,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
         toggle={
           <DropdownToggle
             className="ins-c-toolbar__menu-user"
+            icon={<Memo(Connect(UserIcon)) />}
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
@@ -137,6 +138,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
           toggle={
             <DropdownToggle
               className="ins-c-toolbar__menu-user"
+              icon={<Memo(Connect(UserIcon)) />}
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
@@ -158,6 +160,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               aria-haspopup={true}
               className="ins-c-toolbar__menu-user"
               getMenuRef={[Function]}
+              icon={<Memo(Connect(UserIcon)) />}
               id="UserMenu"
               isOpen={false}
               isPlain={true}
@@ -182,6 +185,15 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                       type="button"
                       widget-type="UserMenu"
                     >
+                      <span
+                        class="pf-c-dropdown__toggle-image"
+                      >
+                        <img
+                          alt="User Avatar"
+                          class="pf-c-avatar"
+                          src="apps/chrome/assets/images/img_avatar.svg"
+                        />
+                      </span>
                       <span
                         class="pf-c-dropdown__toggle-text"
                       >
@@ -244,6 +256,15 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                         widget-type="UserMenu"
                       >
                         <span
+                          class="pf-c-dropdown__toggle-image"
+                        >
+                          <img
+                            alt="User Avatar"
+                            class="pf-c-avatar"
+                            src="apps/chrome/assets/images/img_avatar.svg"
+                          />
+                        </span>
+                        <span
                           class="pf-c-dropdown__toggle-text"
                         >
                           someFirstName someLastName
@@ -283,6 +304,31 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   type="button"
                   widget-type="UserMenu"
                 >
+                  <span
+                    className="pf-c-dropdown__toggle-image"
+                  >
+                    <Connect(UserIcon)>
+                      <UserIcon
+                        account={
+                          Object {
+                            "username": "someUsername",
+                          }
+                        }
+                        dispatch={[Function]}
+                      >
+                        <Avatar
+                          alt="User Avatar"
+                          src="apps/chrome/assets/images/img_avatar.svg"
+                        >
+                          <img
+                            alt="User Avatar"
+                            className="pf-c-avatar"
+                            src="apps/chrome/assets/images/img_avatar.svg"
+                          />
+                        </Avatar>
+                      </UserIcon>
+                    </Connect(UserIcon)>
+                  </span>
                   <span
                     className="pf-c-dropdown__toggle-text"
                   >
@@ -408,6 +454,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
         toggle={
           <DropdownToggle
             className="ins-c-toolbar__menu-user"
+            icon={<Memo(Connect(UserIcon)) />}
             id="UserMenu"
             onToggle={[Function]}
             widget-type="UserMenu"
@@ -475,6 +522,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
           toggle={
             <DropdownToggle
               className="ins-c-toolbar__menu-user"
+              icon={<Memo(Connect(UserIcon)) />}
               id="UserMenu"
               onToggle={[Function]}
               widget-type="UserMenu"
@@ -496,6 +544,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               aria-haspopup={true}
               className="ins-c-toolbar__menu-user"
               getMenuRef={[Function]}
+              icon={<Memo(Connect(UserIcon)) />}
               id="UserMenu"
               isOpen={false}
               isPlain={true}
@@ -520,6 +569,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       type="button"
                       widget-type="UserMenu"
                     >
+                      <span
+                        class="pf-c-dropdown__toggle-image"
+                      >
+                        <img
+                          alt="User Avatar"
+                          class="pf-c-avatar"
+                          src="apps/chrome/assets/images/img_avatar.svg"
+                        />
+                      </span>
                       <span
                         class="pf-c-dropdown__toggle-text"
                       >
@@ -582,6 +640,15 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                         widget-type="UserMenu"
                       >
                         <span
+                          class="pf-c-dropdown__toggle-image"
+                        >
+                          <img
+                            alt="User Avatar"
+                            class="pf-c-avatar"
+                            src="apps/chrome/assets/images/img_avatar.svg"
+                          />
+                        </span>
+                        <span
                           class="pf-c-dropdown__toggle-text"
                         >
                           someFirstName someLastName
@@ -621,6 +688,31 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   type="button"
                   widget-type="UserMenu"
                 >
+                  <span
+                    className="pf-c-dropdown__toggle-image"
+                  >
+                    <Connect(UserIcon)>
+                      <UserIcon
+                        account={
+                          Object {
+                            "username": "someUsername",
+                          }
+                        }
+                        dispatch={[Function]}
+                      >
+                        <Avatar
+                          alt="User Avatar"
+                          src="apps/chrome/assets/images/img_avatar.svg"
+                        >
+                          <img
+                            alt="User Avatar"
+                            className="pf-c-avatar"
+                            src="apps/chrome/assets/images/img_avatar.svg"
+                          />
+                        </Avatar>
+                      </UserIcon>
+                    </Connect(UserIcon)>
+                  </span>
                   <span
                     className="pf-c-dropdown__toggle-text"
                   >
@@ -713,6 +805,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   toggle={
     <DropdownToggle
       className="ins-c-toolbar__menu-user"
+      icon={<Memo(Connect(UserIcon)) />}
       id="UserMenu"
       onToggle={[Function]}
       widget-type="UserMenu"
