@@ -80,11 +80,11 @@ export function chromeInit(libjwt) {
             ([namespace, item]) => Object.entries(item)
             .filter(([, { isSelected }]) => isSelected)
             .map(([groupKey, { item, value: tagValue }]) => `${
-                namespace ? `${namespace}/` : ''
+                namespace ? `${encodeURIComponent(namespace)}/` : ''
             }${
-                groupKey
+                encodeURIComponent(groupKey)
             }${
-                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
+                (item?.tagValue || tagValue) ? `=${encodeURIComponent(item?.tagValue || tagValue)}` : ''
             }`)
         ),
         appNavClick: ({ secondaryNav, ...payload }) => {
