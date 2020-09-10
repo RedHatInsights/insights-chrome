@@ -105,6 +105,5 @@ exports[`Tools should render correctly 1`] = `
       />
     </PageHeaderToolsItem>
   </PageHeaderToolsGroup>
-  <Connect(UserIcon) />
 </PageHeaderTools>
 `;
