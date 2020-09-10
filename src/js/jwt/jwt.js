@@ -4,6 +4,7 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
+import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
 
@@ -35,7 +36,7 @@ authChannel.onmessage = (e) => {
     }
 };
 
-function decodeToken (str) {
+export function decodeToken (str) {
     str = str.split('.')[1];
     str = str.replace('/-/g', '+');
     str = str.replace('/_/g', '/');
@@ -189,7 +190,7 @@ function isExistingValid(token) {
 function initSuccess() {
     log('JWT Initialized');
     setCookie(priv.keycloak.token);
-    window.localStorage.setItem(priv.cookie.cookieName, priv.keycloak.refreshToken);
+    setRefresh(priv.keycloak.refreshToken);
 }
 
 // keycloak init failed
@@ -217,7 +218,8 @@ function logout(bounce) {
     const keys = Object.keys(localStorage).filter(key => (
         key.endsWith('/api/entitlements/v1/services') ||
         key.endsWith('/config/main.yml') ||
-        key.startsWith('kc-callback')
+        key.startsWith('kc-callback') ||
+        key.startsWith(GLOBAL_FILTER_KEY)
     ));
     deleteLocalStorageItems(keys);
     // Redirect to logout
@@ -318,6 +320,11 @@ function setCookie(token) {
                          `secure=true;` +
                          `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
+}
+
+function setRefresh(refreshToken) {
+    log('Setting the refresh token');
+    cookie.set('cs_jwt_refresh', refreshToken, { secure: true });
 }
 
 // do this so we can mock out for test

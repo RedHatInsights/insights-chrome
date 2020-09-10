@@ -1,3 +1,5 @@
+import groupBy from 'lodash/groupBy';
+
 export function clickReducer(state, action) {
     state = {
         ...state,
@@ -107,5 +109,46 @@ export function onPageObjectId(state, { payload }) {
     return {
         ...state,
         pageObjectId: payload
+    };
+}
+
+export function onGetAllTags(state, { payload }) {
+    return {
+        ...state,
+        tags: {
+            isLoaded: true,
+            items: Object.entries(groupBy(payload?.results, ({ tag: { namespace } }) => namespace)).map(([key, value]) => ({
+                name: key,
+                tags: value
+            })),
+            total: payload?.total,
+            count: payload?.count,
+            page: payload?.page,
+            // eslint-disable-next-line camelcase
+            perPage: payload?.per_page
+        }
+    };
+}
+
+export function onGetAllTagsPending(state) {
+    return {
+        ...state,
+        tags: {
+            isLoaded: false
+        }
+    };
+}
+
+export function onSetGlobalFilterScope(state, { payload }) {
+    return {
+        ...state,
+        gloablFilterScope: payload
+    };
+}
+
+export function onGlobalFilterToggle(state, { payload }) {
+    return {
+        ...state,
+        globalFilterHidden: payload.isHidden
     };
 }

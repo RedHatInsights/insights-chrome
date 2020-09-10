@@ -38,6 +38,7 @@ global.window.insights = {
                 }
             }))
         },
-        getUserPermissions: () => Promise.resolve([])
+        getUserPermissions: () => Promise.resolve([]),
+        getBundle: () => ''
     }
 };

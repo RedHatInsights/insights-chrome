@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick } from './redux/actions';
+import { appNavClick, globalFilterScope, toggleGlobalFilter } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory/index';
@@ -20,6 +20,7 @@ import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import flatMap from 'lodash/flatMap';
 
 const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
 const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
@@ -39,6 +40,10 @@ const PUBLIC_EVENTS = {
     }),
     NAVIGATION_TOGGLE: callback => ({
         on: actionTypes.NAVIGATION_TOGGLE,
+        callback
+    }),
+    GLOBAL_FILTER_UPDATE: callback => ({
+        on: actionTypes.GLOBAL_FILTER_UPDATE,
         callback
     })
 };
@@ -68,6 +73,20 @@ export function chromeInit(libjwt) {
         navigation: appNav,
         appAction,
         appObjectId,
+        hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+        globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+        mapGlobalFilter: (filter) => flatMap(
+            Object.entries(filter),
+            ([namespace, item]) => Object.entries(item)
+            .filter(([, { isSelected }]) => isSelected)
+            .map(([groupKey, { item, value: tagValue }]) => `${
+                namespace ? `${namespace}/` : ''
+            }${
+                groupKey
+            }${
+                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
+            }`)
+        ),
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();
