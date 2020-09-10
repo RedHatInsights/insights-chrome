@@ -53,7 +53,7 @@ export default () => {
     // on every page load
     if (token && token.length > 10) {
         options.token = token;
-        options.refreshToken = getWindow().localStorage.getItem(options.cookieName);
+        options.refreshToken = cookie.get('cs_jwt_refresh');
     }
 
     const promise = jwt.init(options).then(bouncer);

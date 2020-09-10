@@ -182,10 +182,6 @@ describe('JWT', () => {
     describe('init and auth functions', () => {
         describe('initSuccess()', () => {
             const initSuccess = jwt.__get__('initSuccess');
-            test('should write to localStorage', () => {
-                initSuccess();
-                expect(window.localStorage.getItem('cs_jwt')).toContain(encodedToken);
-            });
             test('should set a cookie', () => {
                 const mockSetCookie = jest.fn();
                 jwt.__set__('setCookie', mockSetCookie);
