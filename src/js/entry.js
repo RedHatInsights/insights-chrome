@@ -56,12 +56,12 @@ export function chromeInit(libjwt) {
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        loadChrome();
+        headerLoader();
     })
     .catch(() => {
         if (allowUnauthed()) {
             actions.userLogIn(false);
-            loadChrome();
+            headerLoader();
         }
     });
 
@@ -149,7 +149,7 @@ export function bootstrap(libjwt, initFunc) {
             isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
             getUserPermissions: (app = '') => fetchPermissions(libjwt.jwt.getEncodedToken(), app),
             isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
-            getBundle: () =>getUrl('bundle'),
+            getBundle: () => getUrl('bundle'),
             getApp: () => getUrl('app'),
             visibilityFunctions,
             init: initFunc
@@ -159,14 +159,6 @@ export function bootstrap(libjwt, initFunc) {
             loadRemediations
         }
     };
-}
-
-function loadChrome() {
-    headerLoader();
-    const tempContent = document.querySelector('#temp');
-    if (tempContent) {
-        tempContent.remove();
-    }
 }
 
 export function rootApp() {

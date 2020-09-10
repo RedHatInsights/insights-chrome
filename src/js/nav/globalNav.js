@@ -1,7 +1,8 @@
 import { visibilityFunctions, isVisible } from '../consts';
 import { safeLoad } from 'js-yaml';
+import flatMap from 'lodash/flatMap';
+import { getUrl } from '../utils';
 
-// TODO: refactor this whole file
 export let getNavFromConfig = async (masterConfig) => {
     return await Object.keys(masterConfig).filter(appId => masterConfig[appId].top_level).reduce(async (acc, appId) => {
         const routes = await getAppData(appId, 'routes', masterConfig);
@@ -12,24 +13,24 @@ export let getNavFromConfig = async (masterConfig) => {
     }, {});
 };
 
+const isCurrVisible = (permissions) => Promise.all(
+    flatMap([permissions], ({ method } = {}) => (
+        // (null, undefined, true) !== false
+        visibilityFunctions?.[method]?.(...permissions.args || []) !== false || false
+    ))
+).then(visibility => visibility.every(Boolean));
+
 export async function calculateVisibility({ permissions: appPermisions }, { permissions, id }, groupVisibility) {
-    const visibility = (permissions && visibilityFunctions[permissions.method]) ?
-        await visibilityFunctions[permissions.method](...permissions.args || []) :
-        true;
     return (
-        isVisible([id], id, visibility) &&
+        isVisible([id], id, await isCurrVisible(permissions)) &&
         isVisible(appPermisions && appPermisions.apps, id, groupVisibility)
     );
 }
 
 // Returns a list of routes/subItems owned by an app
 async function getRoutesForApp(app, masterConfig) {
-    if (Object.prototype.hasOwnProperty.call(app, 'frontend') &&
-        Object.prototype.hasOwnProperty.call(app.frontend, 'sub_apps')
-    ) {
-        const visibility = (app.permissions && visibilityFunctions[app.permissions.method]) ?
-            await visibilityFunctions[app.permissions.method](...app.permissions.args || []) :
-            true;
+    if (app?.frontend && app?.frontend?.sub_apps) {
+        const visibility = await isCurrVisible(app.permissions);
 
         const routes = await Promise.all(app.frontend.sub_apps.map(async subItem => {
             return (await calculateVisibility(app, subItem, visibility)) && ({
@@ -44,9 +45,7 @@ async function getRoutesForApp(app, masterConfig) {
             });
         }));
 
-        return routes.filter(subAppData => {
-            return (subAppData && subAppData.title) && !(subAppData.disabled_on_prod && window.location.hostname === 'cloud.redhat.com');
-        });
+        return routes.filter(subAppData => subAppData?.title);
     }
 
     return [];
@@ -55,44 +54,33 @@ async function getRoutesForApp(app, masterConfig) {
 // Gets the app's data from the master config, if it exists
 async function getAppData(appId, propName, masterConfig) {
     const app = masterConfig[appId];
-    if (app && Object.prototype.hasOwnProperty.call(app, 'frontend')) {
-        if (app.permissions && !app.permissions.apps) {
-            const visibility = await visibilityFunctions[app.permissions.method](...app.permissions.args || []);
-            if (!isVisible([appId], appId, visibility)) {
+    if (app?.frontend) {
+        if (app?.permissions && !app?.permissions?.apps) {
+            if (!isVisible([appId], appId, await isCurrVisible(app.permissions))) {
                 return ;
             }
         }
 
         const routes = await getRoutesForApp(app, masterConfig);
-        let appData = {
-            title: app.frontend.title || app.title,
-            ignoreCase: app.ignoreCase
-        };
-        if (!app.frontend.suppress_id) {appData.id = appId;}
 
-        if (app.frontend.reload) {appData.reload = app.frontend.reload;}
-
-        if (app.disabled_on_prod) {
-            appData.disabled_on_prod = app.disabled_on_prod; // eslint-disable-line camelcase
-        }
-
-        if (routes && routes.length > 0) {
-            appData[propName] = routes;
-        }
-
-        if (routes && routes.length === 0 &&  Object.prototype.hasOwnProperty.call(app.frontend, 'sub_apps')) {
+        if (routes?.length === 0 && app.frontend?.sub_apps) {
             return undefined;
         }
 
-        return appData;
+        return {
+            title: app.frontend.title || app.title,
+            ignoreCase: app.ignoreCase,
+            ...!app.frontend.suppress_id && { id: appId },
+            ...app.frontend.reload && { reload: app.frontend.reload },
+            ...routes?.length > 0 && { [propName]: routes }
+        };
     }
 }
 
 export async function loadNav(yamlConfig) {
     const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
 
-    const splitted = location.pathname.split('/') ;
-    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
+    const [active, section] = [getUrl('bundle'), getUrl('app')];
     const globalNav = (groupedNav[active] || groupedNav.insights).routes;
     let activeSection = globalNav.find(({ id }) => id === section);
     return groupedNav[active] ? {

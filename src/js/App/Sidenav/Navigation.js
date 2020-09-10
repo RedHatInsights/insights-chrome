@@ -47,7 +47,7 @@ const extraLinks = {
     }]
 };
 
-const Navigation = ({
+export const Navigation = ({
     settings,
     activeApp,
     activeLocation,
@@ -81,7 +81,6 @@ const Navigation = ({
         } else {
             const itemUrl = `${parent?.id ? `/${parent.id}` : ''}/${item.id}`;
             url = `${url}${item.reload || itemUrl}`;
-            console.log(url, itemUrl);
             isMetaKey ? window.open(url) : window.location.href = url;
         }
     };
