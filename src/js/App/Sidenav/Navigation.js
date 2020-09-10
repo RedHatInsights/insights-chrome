@@ -50,41 +50,34 @@ export class Navigation extends Component {
     };
 
     onClick(event, item, parent) {
-        event.persist();
         const { onNavigate, onClearActive, activeGroup, activeLocation, settings, appId } = this.props;
 
         const isMetaKey = (event.ctrlKey || event.metaKey || event.which === 2);
-        let url;
+        let url = `${basepath}${activeLocation || ''}`;
 
-        if (parent && parent.active) {
-            const activeLevel = settings.find(navItem => navItem.id === appId);
-            if (activeLevel) {
-                const activeItem = activeLevel.subItems.find(navItem => navItem.id === activeGroup);
-                if (activeItem && activeItem.reload && !item.reload) {
-                    url = `${basepath}${activeLocation}/${appId}/${item.id}`;
-                    isMetaKey ? window.open(url) : window.location.href = url;
-                }
-            }
-
-            if (!item.reload) {
-                isMetaKey ?  window.open(`${basepath}${activeLocation}/${item.reload}`) :  onNavigate && onNavigate(item, event);
-            } else {
-                url = `${basepath}${activeLocation}/${item.reload}`;
+        // always redirect if in subNav and current or new navigation has reload
+        if (parent?.active) {
+            const activeLevel = settings.find(({ id }) => id === appId);
+            const activeItem = activeLevel?.subItems?.find?.(({ id }) => id === activeGroup);
+            if (item.reload || activeItem?.reload) {
+                url = `${url}/${item.reload || `${appId}/${item.id}`}`;
                 isMetaKey ? window.open(url) : window.location.href = url;
+            }
+        }
+
+        // If in SPA do not perform redirect
+        if ((item.group && activeGroup === item.group) || parent?.active) {
+            if (isMetaKey) {
+                window.open(`${url}/${item.id}`);
+            } else {
+                !parent?.active && onClearActive();
+                onNavigate(item, event);
             }
         } else {
-            if (item.group && activeGroup === item.group) {
-                if (isMetaKey) {
-                    window.open(`${basepath}${activeLocation}/${item.id}`);
-                } else {
-                    onClearActive && onClearActive();
-                    onNavigate && onNavigate(item, event);
-                }
-            } else {
-                const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
-                url = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
-                isMetaKey ? window.open(url) : window.location.href = url;
-            }
+            const itemUrl = `${parent?.id ? `/${parent.id}` : ''}/${item.id}`;
+            url = `${url}${item.reload || itemUrl}`;
+            console.log(url, itemUrl);
+            isMetaKey ? window.open(url) : window.location.href = url;
         }
     }
 
