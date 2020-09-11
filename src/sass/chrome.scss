@@ -178,3 +178,10 @@ section.ins-c-app-switcher--loading {
       .ins-c-tagfilter__option-value { max-width: 360px; }
     }
 }
+
+// PF navigation text alignment fix
+.ins-m-navigation-align {
+    .pf-c-nav__link {
+        text-align: inherit;
+    }
+}

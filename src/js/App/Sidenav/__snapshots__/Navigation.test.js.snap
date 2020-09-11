@@ -244,7 +244,7 @@ exports[`Navigation should render corectly 1`] = `
     ariaRightScroll="Scroll right"
   >
     <NavExpandable
-      className=""
+      className="ins-m-navigation-align"
       groupId={null}
       id=""
       isActive={true}
@@ -351,7 +351,7 @@ exports[`Navigation should render correctly 2 1`] = `
     ariaRightScroll="Scroll right"
   >
     <NavExpandable
-      className=""
+      className="ins-m-navigation-align"
       groupId={null}
       id=""
       isActive={true}
