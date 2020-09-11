@@ -112,6 +112,8 @@ insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
 
 If you simply want to filter systems based on these values we provide a helper function `insights.chromemapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
 
+If you want to encode tag partials (namespace, key or value) you can pass `true` as second parameter to this function to enable `uriEncoding`.
+
 ```JS
 insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     const selectedTags = insights.chrome?.mapGlobalFilter?.(data);
