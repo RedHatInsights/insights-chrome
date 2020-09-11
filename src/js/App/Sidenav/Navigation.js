@@ -100,6 +100,7 @@ export class Navigation extends Component {
                             if (!(item.disabled_on_stable && window.location.pathname.indexOf('/beta') === -1)) {
                                 if (item.subItems) {
                                     return <NavExpandable
+                                        className="ins-m-navigation-align"
                                         title={item.title}
                                         ouia-nav-group={item.id}
                                         itemID={item.id}
