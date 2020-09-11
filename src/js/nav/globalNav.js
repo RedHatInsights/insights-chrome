@@ -14,9 +14,9 @@ export let getNavFromConfig = async (masterConfig) => {
 };
 
 const isCurrVisible = (permissions) => Promise.all(
-    flatMap([permissions], ({ method } = {}) => (
+    flatMap([permissions], async ({ method, args } = {}) => (
         // (null, undefined, true) !== false
-        visibilityFunctions?.[method]?.(...permissions.args || []) !== false || false
+        await visibilityFunctions?.[method]?.(...args || []) !== false
     ))
 ).then(visibility => visibility.every(Boolean));
 
@@ -81,13 +81,12 @@ export async function loadNav(yamlConfig) {
     const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
 
     const [active, section] = [getUrl('bundle'), getUrl('app')];
-    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
-    let activeSection = globalNav.find(({ id }) => id === section);
+    const globalNav = (groupedNav[active] || groupedNav.insights)?.routes;
     return groupedNav[active] ? {
         globalNav,
         activeTechnology: groupedNav[active].title,
         activeLocation: active,
-        activeSection
+        activeSection: globalNav?.find?.(({ id }) => id === section)
     } : {
         globalNav,
         activeTechnology: 'Applications'

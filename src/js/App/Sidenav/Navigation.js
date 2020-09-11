@@ -90,6 +90,7 @@ export const Navigation = ({
             <NavList>
                 {settings?.map((item, key) => (
                     item.subItems ? <NavExpandable
+                        className="ins-m-navigation-align"
                         title={item.title}
                         ouia-nav-group={item.id}
                         itemID={item.id}

@@ -1,7 +1,6 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { render } from 'react-dom';
-import HeaderLoader from './Loader';
 import { spinUpStore } from '../../redux-config';
 
 const Header = lazy(() => import(/* webpackChunkName: "Sidenav" */ './Header'));
@@ -11,7 +10,7 @@ export const headerLoader = () => {
     if (document.querySelector('header')) {
         render(
             <Provider store={store}>
-                <Suspense fallback={<HeaderLoader />}>
+                <Suspense fallback={<Fragment />}>
                     <Header />
                 </Suspense>
             </Provider>,
