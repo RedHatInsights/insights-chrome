@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
+import { createCacheStore } from './utils/cache';
 
 export function getWindow() {
     return window;
@@ -99,13 +100,7 @@ export function lastActive(searchString, fallback) {
 }
 
 export function bootstrapCache(endpoint, cacheKey) {
-    const name = lastActive(endpoint, cacheKey);
-    const store = localforage.createInstance({
-        driver: [
-            localforage.LOCALSTORAGE
-        ],
-        name: name.split('/')[0]
-    });
+    const store = createCacheStore(endpoint, cacheKey);
     return setupCache({
         store,
         maxAge: 10 * 60 * 1000 // 10 minutes
