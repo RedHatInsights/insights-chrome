@@ -300,7 +300,7 @@ function updateToken() {
         } else {
             log('Token is still valid, not updating');
         }
-    });
+    }).catch(err => log(err) && Sentry.captureException(new Error('Update token failed')));
 }
 
 function getCookieExpires(exp) {
