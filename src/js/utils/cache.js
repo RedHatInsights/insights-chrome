@@ -9,7 +9,7 @@ export const createCacheStore = (endpoint, cacheKey) => {
         driver: [
             localforage.LOCALSTORAGE
         ],
-        name: name.split('/')[0] || name
+        name: name?.split('/')[0] || name
     });
 };
 
@@ -18,16 +18,15 @@ let store;
 export class CacheAdapter {
     constructor(endpoint, cacheKey, maxAge = 10 * 60 * 1000) {
         this.maxAge = maxAge;
+        this.expires = (new Date()).getTime() + this.maxAge;
         if (!store) {
             const name = lastActive(endpoint, cacheKey);
             let cached;
             try {
                 cached = JSON.parse(localStorage.getItem(name));
             } catch (e) {
-                console.log(e);
                 cached = localStorage.getItem(name);
             }
-            console.log(cached, 'this is cached', name);
             this.name = name;
             this.endpoint = endpoint;
             this.cacheKey = cacheKey;

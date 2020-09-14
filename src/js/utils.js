@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
-import localforage from 'localforage';
 import { createCacheStore } from './utils/cache';
 
 export function getWindow() {
