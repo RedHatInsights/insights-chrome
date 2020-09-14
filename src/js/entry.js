@@ -18,7 +18,7 @@ import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
-import { createSupportCase } from './createCase'
+import { createSupportCase } from './createCase';
 import flatMap from 'lodash/flatMap';
 import { headerLoader } from './App/Header';
 

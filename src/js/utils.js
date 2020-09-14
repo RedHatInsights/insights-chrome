@@ -1,7 +1,6 @@
 import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
-import Cookies from 'js-cookie';
 
 export function getWindow() {
     return window;

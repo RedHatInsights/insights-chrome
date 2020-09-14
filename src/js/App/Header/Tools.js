@@ -11,8 +11,6 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
-import { getSession } from '../../utils';
-
 const Tools = () => {
 
     {/* Set the state */}
