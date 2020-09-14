@@ -337,8 +337,7 @@ export const getEncodedToken = () => {
     log('Trying to get the encoded token');
 
     if (!isExistingValid(priv.keycloak.token)) {
-        Sentry.captureException(new Error('Fetching token failed - expired token'));
-        log('Failed to get encoded token');
+        log('Failed to get encoded token, trying to update');
         updateToken();
     }
 
