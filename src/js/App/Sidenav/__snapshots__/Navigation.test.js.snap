@@ -302,34 +302,31 @@ exports[`Navigation should render corectly 1`] = `
       title="Remediations"
     />
     <NavItem
-      key="supportcases"
+      key="0"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://access.redhat.com/support/cases"
     >
       Support Cases
     </NavItem>
     <NavItem
-      key="feedback"
+      key="1"
       rel="noopener noreferrer"
       target="_blank"
-      to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
     </NavItem>
     <NavItem
-      key="marketplace"
+      key="2"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
     </NavItem>
     <NavItem
-      className="ins-c-page__documentation"
+      key="3"
       rel="noopener noreferrer"
       target="_blank"
-      to="someDocs"
+      to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
     </NavItem>
@@ -409,34 +406,31 @@ exports[`Navigation should render correctly 2 1`] = `
       title="Remediations"
     />
     <NavItem
-      key="supportcases"
+      key="0"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://access.redhat.com/support/cases"
     >
       Support Cases
     </NavItem>
     <NavItem
-      key="feedback"
+      key="1"
       rel="noopener noreferrer"
       target="_blank"
-      to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
     </NavItem>
     <NavItem
-      key="marketplace"
+      key="2"
       rel="noopener noreferrer"
       target="_blank"
-      to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
     </NavItem>
     <NavItem
-      className="ins-c-page__documentation"
+      key="3"
       rel="noopener noreferrer"
       target="_blank"
-      to="someDocs"
+      to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
     </NavItem>

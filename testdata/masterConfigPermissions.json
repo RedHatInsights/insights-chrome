@@ -128,7 +128,8 @@
             "title": "Bla"
         },
         "permissions": {
-            "method": "isEntitled"
+            "method": "isEntitled",
+            "args": ["something"]
         },
         "title": "appF"
     }

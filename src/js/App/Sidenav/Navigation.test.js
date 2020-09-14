@@ -17,7 +17,8 @@ describe('Navigation', () => {
         settings: settingsData,
         activeApp: 'someApp',
         activeLocation: 'openshift',
-        documentation: 'someDocs'
+        documentation: 'someDocs',
+        onNavigate: jest.fn()
     };
     let initialState;
     let mockStore;
@@ -69,10 +70,15 @@ describe('Navigation', () => {
         const mockClick = jest.fn();
         const mockNavigate = jest.fn();
         const mockClear = jest.fn();
-        const store = mockStore(initialState);
-        const wrapper = shallow(<Navigation onSelect= { mockSelect } onClick={ mockClick }
-            onNavigate={ mockNavigate } onClearActive = { mockClear } store={ store }{ ...props }/>);
-        expect(toJson(wrapper)).toMatchSnapshot();
+        const wrapper = shallow(
+            <Navigation
+                onSelect= { mockSelect }
+                onClick={ mockClick }
+                onNavigate={ mockNavigate }
+                onClearActive = { mockClear }
+                { ...props }
+            />);
+        expect(toJson(wrapper, { mode: 'deep' })).toMatchSnapshot();
         wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
 
     });

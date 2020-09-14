@@ -1,21 +1,9 @@
 import React from 'react';
-import ConnectedSideNav, { SideNav }  from './index';
+import ConnectedSideNav from './SideNav';
 import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { shallow } from 'enzyme';
-
-describe('SideNav', () => {
-    it('should render correctly', () =>{
-        const props = {
-            activeTechnology: 'someTechnology',
-            activeLocation: 'someLocation' };
-        const wrapper = shallow(
-            <SideNav {...props}/>
-        );
-        expect(toJson(wrapper)).toMatchSnapshot();
-    });
-});
 
 describe('ConnectedSideNav', () =>{
     let initialState;

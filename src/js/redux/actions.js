@@ -38,24 +38,6 @@ export function identifyApp (data, options) {
     return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id || firstLevel.title, activeApp: data } };
 }
 
-export function appNav (data) {
-    if (!Array.isArray(data)) {
-        throw new Error(`invalid parameter type: ${typeof data}`);
-    }
-
-    data.forEach(item => {
-        if (typeof item.id !== 'string') {
-            throw new Error(`missing id field`);
-        }
-
-        if (typeof item.title !== 'string') {
-            throw new Error(`missing title field`);
-        }
-    });
-
-    return { type: actionTypes.APP_NAV, data };
-}
-
 export function appNavClick(item, event) {
     return { type: actionTypes.APP_NAV_CLICK, payload: { ...item || {}, id: item && item.id, event } };
 }
