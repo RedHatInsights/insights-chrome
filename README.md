@@ -186,3 +186,21 @@ Sentry object spec:
         });
     });
 ```
+
+## Creating Support Cases
+
+You can access the ability to create support cases by calling `window.insights.chrome.createCase()`. You have the ability to add a few custom fields with the following API:
+
+``` js
+window.insights.chrome.createCase({
+    all: {
+        keyForBoth: 'value for both case management & sentry'
+    },
+    case: {
+        keyForCaseManagement: 'value for case management'
+    },
+    sentry: {
+        keyForSentry: 'value for sentry'
+    }
+})
+```

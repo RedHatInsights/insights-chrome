@@ -21,6 +21,7 @@ const log = require('./jwt/logger')('entry.js');
 const sourceOfTruth = require('./nav/sourceOfTruth');
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import { createSupportCase } from './createCase'
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
@@ -140,6 +141,9 @@ export function bootstrap(libjwt, initFunc) {
             },
             getApp: () => {
                 return getUrl('app');
+            },
+            createCase: (fields) => {
+                insights.chrome.auth.getUser().then(user => createSupportCase(user.identity, fields));
             },
             visibilityFunctions,
             init: initFunc
