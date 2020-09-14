@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
 import { PageHeaderTools } from '@patternfly/react-core/dist/js/components/Page/PageHeaderTools';
 import { PageHeaderToolsGroup } from '@patternfly/react-core/dist/js/components/Page/PageHeaderToolsGroup';
 import { PageHeaderToolsItem } from '@patternfly/react-core/dist/js/components/Page/PageHeaderToolsItem';
 import { Divider } from '@patternfly/react-core/dist/js/components/Divider/Divider';
-
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
-
 import UserToggle from './UserToggle';
-import UserIcon from './UserIcon';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 
@@ -135,9 +131,6 @@ const Tools = () => {
                     ))} />
                 </PageHeaderToolsItem>
             </PageHeaderToolsGroup>
-
-            {/* User icon always visible */}
-            <UserIcon/>
 
             {/* Render About Modal */}
             { isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} /> }

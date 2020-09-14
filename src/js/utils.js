@@ -3,7 +3,7 @@ import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
 import Cookies from 'js-cookie';
 
-function getWindow() {
+export function getWindow() {
     return window;
 }
 

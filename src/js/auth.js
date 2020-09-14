@@ -6,11 +6,10 @@ import consts from './consts';
 // Use lodash instead
 import flatten from 'lodash/flatten';
 
-const jwt       = require('./jwt/jwt');
-const cookie    = require('js-cookie');
+import * as jwt from './jwt/jwt';
+import cookie from 'js-cookie';
+import { options as defaultOptions } from './jwt/constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
-
-const { options: defaultOptions } = require('./jwt/constants');
 
 function getWindow() {
     return window;
@@ -54,7 +53,7 @@ export default () => {
     // on every page load
     if (token && token.length > 10) {
         options.token = token;
-        options.refreshToken = getWindow().localStorage.getItem(options.cookieName);
+        options.refreshToken = cookie.get('cs_jwt_refresh');
     }
 
     const promise = jwt.init(options).then(bouncer);

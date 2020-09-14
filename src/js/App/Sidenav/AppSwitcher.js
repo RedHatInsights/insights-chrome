@@ -39,7 +39,7 @@ const AppSwitcher = ({ currentApp }) => {
     };
 
     return (
-        <section className='ins-c-app-switcher'>
+        <section className="ins-c-app-switcher">
             <Dropdown
                 isPlain
                 className='ins-c-app-switcher__dropdown'

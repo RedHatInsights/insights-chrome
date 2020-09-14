@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Avatar } from '@patternfly/react-core/dist/js/components/Avatar/Avatar';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import './UserIcon.scss';
 export class UserIcon extends Component {
 
     constructor(props) {

@@ -1,4 +1,5 @@
 import * as actionTypes from './action-types';
+import { getAllTags } from '../App/GlobalFilter/tagsApi';
 
 export const onToggle = () => ({
     type: actionTypes.NAVIGATION_TOGGLE
@@ -37,24 +38,6 @@ export function identifyApp (data, options) {
     return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id || firstLevel.title, activeApp: data } };
 }
 
-export function appNav (data) {
-    if (!Array.isArray(data)) {
-        throw new Error(`invalid parameter type: ${typeof data}`);
-    }
-
-    data.forEach(item => {
-        if (typeof item.id !== 'string') {
-            throw new Error(`missing id field`);
-        }
-
-        if (typeof item.title !== 'string') {
-            throw new Error(`missing title field`);
-        }
-    });
-
-    return { type: actionTypes.APP_NAV, data };
-}
-
 export function appNavClick(item, event) {
     return { type: actionTypes.APP_NAV_CLICK, payload: { ...item || {}, id: item && item.id, event } };
 }
@@ -75,4 +58,32 @@ export function appAction(action) {
 
 export function appObjectId(objectId) {
     return { type: actionTypes.CHROME_PAGE_OBJECT, payload: objectId };
+}
+
+export function fetchAllTags(filters, pagination) {
+    return {
+        type: actionTypes.CHROME_GET_ALL_TAGS,
+        payload: getAllTags(filters, pagination)
+    };
+}
+
+export function globalFilterScope(scope) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_SCOPE,
+        payload: scope
+    };
+}
+
+export function globalFilterChange(selectedTags) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_UPDATE,
+        payload: selectedTags
+    };
+}
+
+export function toggleGlobalFilter(isHidden = true) {
+    return {
+        type: actionTypes.GLOBAL_FILTER_TOGGLE,
+        payload: { isHidden }
+    };
 }

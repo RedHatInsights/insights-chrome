@@ -11,4 +11,5 @@ import '@redhat-cloud-services/frontend-components-inventory-insights/index.css'
 import '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/index.css';
 import '@redhat-cloud-services/frontend-components/components/conditional-filter.scss';
 import '@redhat-cloud-services/frontend-components/components/TableToolbar.scss';
-import '../sass/inventory.scss';
+import '@redhat-cloud-services/frontend-components/components/FilterHooks.css';
+import '../../sass/inventory.scss';

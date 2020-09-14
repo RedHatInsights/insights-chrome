@@ -44,28 +44,6 @@ describe('Reducers', () => {
         it('throws error on unknown app', () => {
             expect(() => actions.identifyApp('foo', mockNav)).toThrowError('unknown app identifier: foo');
         });
-
-        it('defines app navigation with appNav()', () => {
-            const menu = [{
-                title: 'Map',
-                id: 'map',
-                active: false
-            }, {
-                title: 'Deployments',
-                id: 'deployments',
-                active: true
-            }];
-            const state = reducers.appNavReducer({}, actions.appNav(menu));
-            expect(state.appNav).toEqual(menu);
-        });
-
-        it('throws error on invalid data type', () => {
-            expect(() => actions.appNav('foo')).toThrowError('invalid parameter type: string');
-        });
-
-        it('throws error on invalid data type', () => {
-            expect(() => actions.appNav([{ title: 'Foo' }])).toThrowError('missing id field');
-        });
     });
 
     describe('onPageAction', () => {
@@ -129,6 +107,34 @@ describe('Reducers', () => {
                 someState: {},
                 pageObjectId: 'different-object-id'
             });
+        });
+    });
+});
+
+describe('onGlobalFilterToggle', () => {
+    it('should hide global filter', () => {
+        const state = reducers.onGlobalFilterToggle(
+            {
+                someState: {}
+            },
+            actions.toggleGlobalFilter()
+        );
+        expect(state).toEqual({
+            someState: {},
+            globalFilterHidden: true
+        });
+    });
+
+    it('should show global filter', () => {
+        const state = reducers.onGlobalFilterToggle(
+            {
+                someState: {}
+            },
+            actions.toggleGlobalFilter(false)
+        );
+        expect(state).toEqual({
+            someState: {},
+            globalFilterHidden: false
         });
     });
 });

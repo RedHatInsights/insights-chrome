@@ -4,66 +4,51 @@ exports[`AppSwitcher should render correctly 1`] = `
 <section
   className="ins-c-app-switcher"
 >
-  <Component
-    className="ins-c-app-switcher__dropdown"
-    dropdownItems={
-      Array [
-        <Unknown
-          className="ins-c-app-switcher__current"
-          component="a"
-          href="http://localhost/insights"
-        >
-          Red Hat Insights
-        </Unknown>,
-        <Unknown
-          className=""
-          component="a"
-          href="http://localhost/openshift"
-        >
-          Red Hat OpenShift Cluster Manager
-        </Unknown>,
-        <Unknown
-          className=""
-          component="a"
-          href="http://localhost/ansible"
-        >
-          Red Hat Ansible Automation Platform
-        </Unknown>,
-        <Unknown
-          className=""
-          component="a"
-          href="http://localhost/cost-management"
-        >
-          Cost Management
-        </Unknown>,
-        <Unknown
-          className=""
-          component="a"
-          href="http://localhost/migrations"
-        >
-          Migration Services
-        </Unknown>,
-        <Unknown
-          className=""
-          component="a"
-          href="http://localhost/subscriptions"
-        >
-          Subscription Watch
-        </Unknown>,
-      ]
-    }
-    isOpen={false}
-    isPlain={true}
-    onSelect={[Function]}
-    toggle={
-      <Unknown
-        id="toggle-id"
-        onToggle={[Function]}
-        toggleIndicator={[Function]}
+  <div
+    className="pf-c-dropdown ins-c-app-switcher__dropdown"
+    data-ouia-component-id={0}
+    data-ouia-component-type="PF4/Dropdown"
+    data-ouia-safe={true}
+  >
+    <button
+      aria-expanded={false}
+      aria-haspopup={true}
+      className="pf-c-dropdown__toggle pf-m-plain"
+      disabled={false}
+      id="toggle-id"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      type="button"
+    >
+      <span
+        className="pf-c-dropdown__toggle-text"
       >
         Red Hat Insights
-      </Unknown>
-    }
-  />
+      </span>
+      <span
+        className="pf-c-dropdown__toggle-icon"
+      >
+        <svg
+          aria-hidden={true}
+          aria-labelledby={null}
+          fill="currentColor"
+          height="1em"
+          role="img"
+          style={
+            Object {
+              "verticalAlign": "-0.125em",
+            }
+          }
+          viewBox="0 0 320 512"
+          width="1em"
+        >
+          <path
+            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+            transform=""
+          />
+        </svg>
+      </span>
+    </button>
+  </div>
 </section>
 `;
