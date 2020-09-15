@@ -300,7 +300,12 @@ function updateToken() {
         } else {
             log('Token is still valid, not updating');
         }
-    }).catch(err => log(err) && Sentry.captureException(new Error('Update token failed')));
+    }).catch(err => {
+        log(err);
+        Sentry.captureException(new Error('Update token failed'));
+        log('Token updated failed, trying to reauth');
+        login();
+    });
 }
 
 function getCookieExpires(exp) {
