@@ -170,7 +170,7 @@
     "jwt-redhat": "git+https://github.com/RedHatInsights/jwt-redhat.git#b7b00d8c4e400db9aeb7ceb18d263972e0cec66e",
     "lodash": "^4.17.15",
     "md5-file": "^5.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
