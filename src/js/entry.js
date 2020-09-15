@@ -60,7 +60,10 @@ export function chromeInit(libjwt) {
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        chromeCache = new CacheAdapter('chrome', `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome`);
+        chromeCache = new CacheAdapter(
+            'chrome-store',
+            `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`
+        );
         headerLoader();
     })
     .catch(() => {
