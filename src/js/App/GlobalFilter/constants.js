@@ -1,4 +1,5 @@
 import { deleteLocalStorageItems } from '../../utils';
+import omit from 'lodash/omit';
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 
 export const workloads = [
@@ -14,6 +15,14 @@ export const workloads = [
         type: 'radio'
     }
 ];
+
+export const selectWorkloads = () => ({
+    [workloads?.[0]?.tags?.[0]?.tag?.key]: {
+        group: omit(workloads[0], 'tags'),
+        isSelected: true,
+        item: {}
+    }
+});
 
 export const updateSelected = (original, namespace, key, value, isSelected) => ({
     ...original,

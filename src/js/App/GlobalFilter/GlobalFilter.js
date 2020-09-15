@@ -8,7 +8,7 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup';
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, storeFilter, GLOBAL_FILTER_KEY } from './constants';
+import { workloads, updateSelected, storeFilter, GLOBAL_FILTER_KEY, selectWorkloads } from './constants';
 import { decodeToken } from '../../jwt/jwt';
 
 const GlobalFilter = () => {
@@ -60,7 +60,17 @@ const GlobalFilter = () => {
 
     useEffect(() => {
         if (userLoaded && token) {
-            dispatch(globalFilterChange(selectedTags));
+            if (!Object.values(selectedTags?.[workloads?.[0]?.name] || {})?.some(({ isSelected } = {}) => isSelected)) {
+                setValue({
+                    ...selectedTags || {},
+                    [workloads?.[0]?.name]: {
+                        ...selectedTags?.[workloads?.[0]?.name],
+                        ...selectWorkloads()
+                    }
+                });
+            } else {
+                dispatch(globalFilterChange(selectedTags));
+            }
         }
     }, [selectedTags]);
 
@@ -89,6 +99,7 @@ const GlobalFilter = () => {
                                 {chips?.map(({ key: tagKey, value }, chipKey) => (
                                     <Chip
                                         key={chipKey}
+                                        className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
                                         onClick={() => setValue(() => updateSelected(
                                             selectedTags,
                                             category,

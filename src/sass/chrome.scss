@@ -166,6 +166,7 @@ section.ins-c-app-switcher--loading {
     border-bottom: 1px solid var(--pf-global--palette--black-500);
     .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
     .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+    .ins-m-permanent button { display: none; }
     .pf-l-split__item:first-of-type { min-width: 150px;}
 
     .ins-c-tagfilter {
