@@ -127,28 +127,30 @@ export function chromeInit(libjwt) {
     };
 }
 
+const getUser = (libjwt) => {
+    // here we need to init the qe plugin
+    // the "contract" is we will do this before anyone
+    // calls/finishes getUser
+    // this only does something if the correct localstorage
+    // vars are set
+
+    qe.init();
+
+    return libjwt.initPromise
+    .then(libjwt.jwt.getUserInfo)
+    .catch(() => {
+        libjwt.jwt.logoutAllTabs();
+    });
+};
+
 export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
                 getOfflineToken: () => libjwt.getOfflineToken(),
                 doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
-                getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
-                getUser: () => {
-                    // here we need to init the qe plugin
-                    // the "contract" is we will do this before anyone
-                    // calls/finishes getUser
-                    // this only does something if the correct localstorage
-                    // vars are set
-
-                    qe.init();
-
-                    return libjwt.initPromise
-                    .then(libjwt.jwt.getUserInfo)
-                    .catch(() => {
-                        libjwt.jwt.logoutAllTabs();
-                    });
-                },
+                getToken: () => getUser(libjwt).then(libjwt.jwt.getEncodedToken),
+                getUser: () => getUser(libjwt),
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login()
