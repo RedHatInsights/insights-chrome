@@ -21,6 +21,8 @@ import { getUrl } from './utils';
 import { createSupportCase } from './createCase';
 import flatMap from 'lodash/flatMap';
 import { headerLoader } from './App/Header';
+import { decodeToken } from './jwt/jwt';
+import { CacheAdapter } from './utils/cache';
 
 const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ './App/NoAccess'));
 
@@ -52,11 +54,17 @@ export function chromeInit(libjwt) {
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
+    let chromeCache;
+
     // Init JWT first.
     const jwtResolver = libjwt.initPromise
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
+        chromeCache = new CacheAdapter(
+            'chrome-store',
+            `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`
+        );
         headerLoader();
     })
     .catch(() => {
@@ -69,7 +77,7 @@ export function chromeInit(libjwt) {
     // Load navigation after login
     const navResolver = jwtResolver.then(async () => {
         const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-        const navigationData = await loadNav(navigationYml);
+        const navigationData = await loadNav(navigationYml, chromeCache);
         chromeNavUpdate(navigationData);
     });
 

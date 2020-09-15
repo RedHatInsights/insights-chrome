@@ -30,9 +30,7 @@ export const SideNav = ({ activeTechnology, globalNav }) => {
 
 SideNav.propTypes = {
     activeTechnology: PropTypes.string,
-    globalNav: PropTypes.arrayOf(PropTypes.shape({
-        [PropTypes.string]: PropTypes.any
-    }))
+    globalNav: PropTypes.arrayOf(PropTypes.object)
 };
 
 SideNav.defaultProps = {
