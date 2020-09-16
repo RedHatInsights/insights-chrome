@@ -2,6 +2,7 @@ import auth from './auth';
 import analytics from './analytics';
 import sentry from './sentry';
 import { bootstrap, chromeInit, rootApp, noAccess }   from './entry';
+import { navLoader } from './App/Sidenav';
 
 //Add redhat font to body
 document.querySelector('body').classList.add('pf-m-redhat-font');
@@ -11,7 +12,11 @@ const libjwt = auth();
 
 function noop () {}
 
+// render root app
 rootApp();
+
+// render navigation
+navLoader();
 
 libjwt.initPromise.then(() => {
     libjwt.jwt.getUserInfo().then((...data) => {

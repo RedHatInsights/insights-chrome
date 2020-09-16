@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { appNavClick, globalFilterScope, toggleGlobalFilter } from './redux/actions';
+import { globalFilterScope, toggleGlobalFilter } from './redux/actions';
 import { spinUpStore } from './redux-config';
 import * as actionTypes from './redux/action-types';
 import loadInventory from './inventory/index';
@@ -9,11 +9,9 @@ import loadRemediations from './remediations';
 import qe from './iqeEnablement';
 import consts from './consts';
 import allowUnauthed from './auth';
-import { safeLoad } from 'js-yaml';
-import { getNavFromConfig } from './nav/globalNav.js';
+import { loadNav } from './nav/globalNav.js';
 import RootApp from './App/RootApp';
 import debugFunctions from './debugFunctions';
-import NoAccess from './App/NoAccess';
 import { visibilityFunctions } from './consts';
 import Cookies from 'js-cookie';
 import logger from './jwt/logger';
@@ -21,10 +19,11 @@ import sourceOfTruth from './nav/sourceOfTruth';
 import { fetchPermissions } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
 import flatMap from 'lodash/flatMap';
+import { headerLoader } from './App/Header';
+import { decodeToken } from './jwt/jwt';
+import { CacheAdapter } from './utils/cache';
 
-const UnauthedHeader = lazy(() => import(/* webpackChunkName: "UnAuthtedHeader" */ './App/Header/UnAuthtedHeader'));
-const Header = lazy(() => import(/* webpackChunkName: "Header" */ './App/Header'));
-const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './App/Sidenav'));
+const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ './App/NoAccess'));
 
 const log = logger('entry.js');
 
@@ -54,22 +53,37 @@ export function chromeInit(libjwt) {
     // public API actions
     const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
+    let chromeCache;
+
     // Init JWT first.
-    const jwtAndNavResolver = libjwt.initPromise
+    const jwtResolver = libjwt.initPromise
     .then(async () => {
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-        const navigationData = await loadNav(navigationYml);
-        chromeNavUpdate(navigationData);
-        loadChrome(user);
+        chromeCache = new CacheAdapter(
+            'chrome-store',
+            `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`
+        );
+        headerLoader();
     })
-    .catch(() => allowUnauthed() && loadChrome(false));
+    .catch(() => {
+        if (allowUnauthed()) {
+            actions.userLogIn(false);
+            headerLoader();
+        }
+    });
+
+    // Load navigation after login
+    const navResolver = jwtResolver.then(async () => {
+        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+        const navigationData = await loadNav(navigationYml, chromeCache);
+        chromeNavUpdate(navigationData);
+    });
 
     return {
-        identifyApp: (data) => {
-            return jwtAndNavResolver.then(() => identifyApp(data, store.getState().chrome.globalNav));
-        },
+        identifyApp: (data) => Promise.all([jwtResolver, navResolver]).then(
+            () => identifyApp(data, store.getState().chrome.globalNav)
+        ),
         navigation: appNav,
         appAction,
         appObjectId,
@@ -117,19 +131,9 @@ export function bootstrap(libjwt, initFunc) {
     return {
         chrome: {
             auth: {
-                getOfflineToken: () => {
-                    return libjwt.getOfflineToken();
-                },
-                doOffline: () => {
-                    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken);
-                },
-                getToken: () => {
-                    return new Promise((res) => {
-                        libjwt.jwt.getUserInfo().then(() => {
-                            res(libjwt.jwt.getEncodedToken());
-                        });
-                    });
-                },
+                getOfflineToken: () => libjwt.getOfflineToken(),
+                doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
+                getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
                 getUser: () => {
                     // here we need to init the qe plugin
                     // the "contract" is we will do this before anyone
@@ -150,21 +154,11 @@ export function bootstrap(libjwt, initFunc) {
                 login: () => libjwt.jwt.login()
             },
             isProd: window.location.host === 'cloud.redhat.com',
-            isBeta: () => {
-                return (window.location.pathname.split('/')[1] === 'beta' ? true : false);
-            },
-            getUserPermissions: (app = '') => {
-                return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
-            },
-            isPenTest: () => {
-                return Cookies.get('x-rh-insights-pentest') ? true : false;
-            },
-            getBundle: () => {
-                return getUrl('bundle');
-            },
-            getApp: () => {
-                return getUrl('app');
-            },
+            isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
+            getUserPermissions: (app = '') => fetchPermissions(libjwt.jwt.getEncodedToken(), app),
+            isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
+            getBundle: () => getUrl('bundle'),
+            getApp: () => getUrl('app'),
             visibilityFunctions,
             init: initFunc
         },
@@ -173,72 +167,6 @@ export function bootstrap(libjwt, initFunc) {
             loadRemediations
         }
     };
-}
-
-// Loads the navigation for the current bundle.
-async function loadNav(yamlConfig) {
-    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
-
-    const splitted = location.pathname.split('/') ;
-    const [active, section] = splitted[1] === 'beta' ? [splitted[2], splitted[3]] : [splitted[1], splitted[2]];
-    const globalNav = (groupedNav[active] || groupedNav.insights).routes;
-    let activeSection = globalNav.find(({ id }) => id === section);
-    return groupedNav[active] ? {
-        globalNav,
-        activeTechnology: groupedNav[active].title,
-        activeLocation: active,
-        activeSection
-    } : {
-        globalNav,
-        activeTechnology: 'Applications'
-    };
-}
-
-function loadChrome(user) {
-    const { store } = spinUpStore();
-    const chromeState = store.getState().chrome;
-    let defaultActive = {};
-
-    if (chromeState && !chromeState.appNav && chromeState.globalNav) {
-        const activeApp = chromeState.globalNav.find(item => item.active);
-        if (activeApp && Object.prototype.hasOwnProperty.call(activeApp, 'subItems')) {
-            defaultActive = activeApp.subItems.find(
-                subItem => location.pathname.split('/').find(item => item === subItem.id)
-            ) || activeApp.subItems.find(subItem => subItem.default)
-                    || activeApp.subItems[0];
-        }
-    }
-
-    store.dispatch(appNavClick(defaultActive));
-    render(
-        <Provider store={store}>
-            <Suspense fallback={Fragment}>
-                { user ? <Header /> : <UnauthedHeader /> }
-            </Suspense>
-        </Provider>,
-        document.querySelector('header')
-    );
-
-    // Conditionally add classes if it's the pen testing environment
-    if (window.insights.chrome.isPenTest()) {
-        document.querySelector('header').classList.add('ins-c-pen-test');
-    }
-
-    if (document.querySelector('aside')) {
-        render(
-            <Provider store={store}>
-                <Suspense fallback={Fragment}>
-                    <Sidenav />
-                </Suspense>
-            </Provider>,
-            document.querySelector('aside')
-        );
-    }
-
-    const tempContent = document.querySelector('#temp');
-    if (tempContent) {
-        tempContent.remove();
-    }
 }
 
 export function rootApp() {
@@ -275,7 +203,9 @@ export function noAccess() {
                 document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
                 render(
                     <Provider store={ store }>
-                        <NoAccess />
+                        <Suspense fallback={Fragment}>
+                            <NoAccess />
+                        </Suspense>
                     </Provider>,
                     document.querySelector('#no-access')
                 );

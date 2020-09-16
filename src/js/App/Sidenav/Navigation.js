@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import  { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
@@ -12,174 +12,127 @@ import './Navigation.scss';
 
 const basepath = document.baseURI;
 
-const openshiftLinks = {
-    supportcases: {
-        title: 'Support Cases',
-        link: 'https://access.redhat.com/support/cases'
-    },
-    feedback: {
-        title: 'Cluster Manager Feedback',
-        link: 'mailto:ocm-feedback@redhat.com'
-    },
-    marketplace: {
-        title: 'Red Hat Marketplace',
-        link: 'https://marketplace.redhat.com'
-    }
-};
-
-const insightsLinks = {
-    subscriptionWatch: {
+const extraLinks = {
+    insights: [{
         title: 'Subscription Watch',
         link: './subscriptions/'
-    }
+    }, {
+        url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
+        title: 'Documentation'
+    }],
+    subscriptions: [{
+        url: 'https://access.redhat.com/products/subscription-central',
+        title: 'Documentation'
+    }],
+    'cost-management': [{
+        url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
+        title: 'Documentation'
+    }],
+    ansible: [{
+        url: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
+        title: 'Documentation'
+    }],
+    openshift: [{
+        title: 'Support Cases',
+        link: 'https://access.redhat.com/support/cases'
+    }, {
+        title: 'Cluster Manager Feedback',
+        link: 'mailto:ocm-feedback@redhat.com'
+    }, {
+        title: 'Red Hat Marketplace',
+        link: 'https://marketplace.redhat.com'
+    }, {
+        url: 'https://docs.openshift.com/dedicated/4/',
+        title: 'Documentation'
+    }]
 };
 
-export class Navigation extends Component {
-    constructor(props) {
-        super(props);
-        this.onSelect = this.onSelect.bind(this);
-        this.onClick = this.onClick.bind(this);
-    }
-
-    onSelect({ groupId, itemID }) {
-        this.setState({
-            activeGroup: groupId,
-            activeItem: itemID
-        });
-    };
-
-    onClick(event, item, parent) {
-        event.persist();
-        const { onNavigate, onClearActive, activeGroup, activeLocation, settings, appId } = this.props;
-
+export const Navigation = ({
+    settings,
+    activeApp,
+    activeLocation,
+    onNavigate,
+    onClearActive,
+    activeGroup,
+    appId
+}) => {
+    const onClick = (event, item, parent) => {
         const isMetaKey = (event.ctrlKey || event.metaKey || event.which === 2);
-        let url;
+        let url = `${basepath}${activeLocation || ''}`;
 
-        if (parent && parent.active) {
-            const activeLevel = settings.find(navItem => navItem.id === appId);
-            if (activeLevel) {
-                const activeItem = activeLevel.subItems.find(navItem => navItem.id === activeGroup);
-                if (activeItem && activeItem.reload && !item.reload) {
-                    url = `${basepath}${activeLocation}/${appId}/${item.id}`;
-                    isMetaKey ? window.open(url) : window.location.href = url;
-                }
-            }
-
-            if (!item.reload) {
-                isMetaKey ?  window.open(`${basepath}${activeLocation}/${item.reload}`) :  onNavigate && onNavigate(item, event);
-            } else {
-                url = `${basepath}${activeLocation}/${item.reload}`;
-                isMetaKey ? window.open(url) : window.location.href = url;
-            }
-        } else {
-            if (item.group && activeGroup === item.group) {
-                if (isMetaKey) {
-                    window.open(`${basepath}${activeLocation}/${item.id}`);
-                } else {
-                    onClearActive && onClearActive();
-                    onNavigate && onNavigate(item, event);
-                }
-            } else {
-                const prefix = (parent && parent.id && !item.reload) ? `/${parent.id}/` : '/';
-                url = `${basepath}${activeLocation}${prefix}${item.reload || item.id}`;
+        // always redirect if in subNav and current or new navigation has reload
+        if (parent?.active) {
+            const activeLevel = settings.find(({ id }) => id === appId);
+            const activeItem = activeLevel?.subItems?.find?.(({ id }) => id === activeGroup);
+            if (item.reload || activeItem?.reload) {
+                url = `${url}/${item.reload || `${appId}/${item.id}`}`;
                 isMetaKey ? window.open(url) : window.location.href = url;
             }
         }
-    }
 
-    render() {
-        const { settings, activeApp, /*navHidden,*/ activeLocation, documentation } = this.props;
-        // if (navHidden) {
-        //     //document.querySelector('aside').setAttribute('hidden', true);
-        // }
-        return (
-            <Nav onSelect={this.onSelect} aria-label="Insights Global Navigation" data-ouia-safe="true">
-                <NavList>
-                    {
-                        settings.map((item, key) => {
-                            if (!(item.disabled_on_stable && window.location.pathname.indexOf('/beta') === -1)) {
-                                if (item.subItems) {
-                                    return <NavExpandable
-                                        title={item.title}
-                                        ouia-nav-group={item.id}
-                                        itemID={item.id}
-                                        key={key}
-                                        isActive={item.active}
-                                        isExpanded={item.active}>
-                                        {
-                                            item.subItems.map((subItem, subKey) => {
-                                                if (!(subItem.disabled_on_stable
-                                                    && window.location.pathname.indexOf('/beta') === -1)) {
-                                                    return <NavigationItem
-                                                        ignoreCase={subItem.ignoreCase}
-                                                        itemID={subItem.reload || subItem.id}
-                                                        ouia-nav-item={subItem.reload || subItem.id}
-                                                        key={subKey}
-                                                        title={subItem.title}
-                                                        parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
-                                                        isActive={item.active && subItem.id === activeApp}
-                                                        onClick={event => this.onClick(event, subItem, item)}
-                                                    />;
-                                                }
-                                            })
-                                        }
-                                    </NavExpandable>;
-                                } else {
-                                    return <NavigationItem
-                                        ignoreCase={item.ignoreCase}
-                                        itemID={item.id}
-                                        ouia-nav-item={item.id}
-                                        key={key}
-                                        title={item.title}
-                                        parent={activeLocation}
-                                        isActive={item.active || item.id === activeApp}
-                                        onClick={event => this.onClick(event, item)}
-                                    />;
-                                }
-                            }
-                        })
-                    }
-                    { activeLocation === 'insights' &&
-                        Object.entries(insightsLinks).map(
-                            ([key, value]) => {
-                                return <NavItem
-                                    key={key}
-                                    to={value.link}
-                                    target='_blank'
-                                    rel='noopener noreferrer'>
-                                    {value.title}
-                                </NavItem>;
-                            }
-                        )
-                    }
-                    { activeLocation === 'openshift' &&
-                        Object.entries(openshiftLinks).map(
-                            ([key, value]) => {
-                                return <NavItem
-                                    key={key}
-                                    to={value.link}
-                                    target='_blank'
-                                    rel='noopener noreferrer'>
-                                    {value.title}
-                                </NavItem>;
-                            }
-                        )
-                    }
-                    { documentation &&
-                        <React.Fragment>
-                            <NavItem
-                                className="ins-c-page__documentation"
-                                to={documentation}
-                                rel='noopener noreferrer'
-                                target='_blank'>Documentation
-                            </NavItem>
-                        </React.Fragment>
-                    }
-                </NavList>
-            </Nav>
-        );
-    }
-}
+        // If in SPA do not perform redirect
+        if ((item.group && activeGroup === item.group) || parent?.active) {
+            if (isMetaKey) {
+                window.open(`${url}/${item.id}`);
+            } else {
+                !parent?.active && onClearActive();
+                onNavigate(item, event);
+            }
+        } else {
+            const itemUrl = `${parent?.id ? `/${parent.id}` : ''}/${item.id}`;
+            url = `${url}${item.reload || itemUrl}`;
+            isMetaKey ? window.open(url) : window.location.href = url;
+        }
+    };
+
+    return (
+        <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
+            <NavList>
+                {settings?.map((item, key) => (
+                    item.subItems ? <NavExpandable
+                        className="ins-m-navigation-align"
+                        title={item.title}
+                        ouia-nav-group={item.id}
+                        itemID={item.id}
+                        key={key}
+                        isActive={item.active}
+                        isExpanded={item.active}>
+                        {
+                            item.subItems.map((subItem, subKey) => <NavigationItem
+                                ignoreCase={subItem.ignoreCase}
+                                itemID={subItem.reload || subItem.id}
+                                ouia-nav-item={subItem.reload || subItem.id}
+                                key={subKey}
+                                title={subItem.title}
+                                parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
+                                isActive={item.active && subItem.id === activeApp}
+                                onClick={event => onClick(event, subItem, item)}
+                            />)
+                        }
+                    </NavExpandable> : <NavigationItem
+                        ignoreCase={item.ignoreCase}
+                        itemID={item.id}
+                        ouia-nav-item={item.id}
+                        key={key}
+                        title={item.title}
+                        parent={activeLocation}
+                        isActive={item.active || item.id === activeApp}
+                        onClick={event => onClick(event, item)}
+                    />
+                ))}
+                {extraLinks[activeLocation]?.map?.((item, key) => (
+                    <NavItem
+                        key={key}
+                        to={item.url}
+                        target='_blank'
+                        rel='noopener noreferrer'>
+                        {item.title}
+                    </NavItem>
+                ))}
+            </NavList>
+        </Nav>
+    );
+};
 
 Navigation.propTypes = {
     appId: PropTypes.string,
@@ -194,7 +147,6 @@ Navigation.propTypes = {
     activeApp: PropTypes.string,
     navHidden: PropTypes.bool,
     activeLocation: PropTypes.string,
-    documentation: PropTypes.string,
     onNavigate: PropTypes.func,
     onClearActive: PropTypes.func,
     activeGroup: PropTypes.string
