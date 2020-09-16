@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NavigationItem parent and itemID with value 1`] = `
-<Component
+<NavItem
   className=""
   itemId="someID"
   preventDefault={true}
@@ -10,7 +10,7 @@ exports[`NavigationItem parent and itemID with value 1`] = `
 `;
 
 exports[`NavigationItem parent undefined and itemID with value 1`] = `
-<Component
+<NavItem
   className=""
   itemId="someID"
   preventDefault={true}
@@ -19,7 +19,7 @@ exports[`NavigationItem parent undefined and itemID with value 1`] = `
 `;
 
 exports[`NavigationItem parent with value and itemID undefined 1`] = `
-<Component
+<NavItem
   className=""
   preventDefault={true}
   to="http://localhost/someValue/undefined"
@@ -27,7 +27,7 @@ exports[`NavigationItem parent with value and itemID undefined 1`] = `
 `;
 
 exports[`NavigationItem should render coorectly 1`] = `
-<Component
+<NavItem
   className=""
   preventDefault={true}
   to="http://localhost//undefined"
@@ -35,7 +35,7 @@ exports[`NavigationItem should render coorectly 1`] = `
 `;
 
 exports[`NavigationItem with some navigate value set 1`] = `
-<Component
+<NavItem
   className=""
   preventDefault={true}
   to={Object {}}

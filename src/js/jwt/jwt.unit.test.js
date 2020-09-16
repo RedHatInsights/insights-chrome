@@ -271,6 +271,7 @@ describe('JWT', () => {
             });
 
             describe('token update fails', () => {
+                const loginSpy = jest.spyOn(jwt, 'login');
                 function doTest(url, expectedToWork) {
                     isExistingValidMock.mockReturnValueOnce(false);
                     doMockWindow(url);
@@ -281,10 +282,12 @@ describe('JWT', () => {
 
                     return jwt.getUserInfo().then(() => {
                         if (expectedToWork) {
-                            expect(jwt.login).toBeCalled();
+                            expect(loginSpy).toBeCalled();
                         } else {
-                            expect(jwt.login).not.toBeCalled();
+                            expect(loginSpy).not.toBeCalled();
                         }
+
+                        loginSpy.mockReset();
                     });
                 }
 
@@ -298,16 +301,16 @@ describe('JWT', () => {
             });
 
             describe('token update passes', () => {
+                const loginSpy = jest.spyOn(jwt, 'login');
                 test('should *not* call login', () => {
                     cookie.remove('cs_jwt');
                     doMockWindow('/insights/foobar');
-                    jwt.login = jest.fn();
                     updateTokenMock.mockReturnValue(new Promise((res) => {
                         res();
                     }));
 
                     return jwt.getUserInfo().then(() => {
-                        expect(jwt.login).not.toBeCalled();
+                        expect(loginSpy).not.toBeCalled();
                     });
                 });
             });

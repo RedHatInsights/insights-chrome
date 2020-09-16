@@ -68,6 +68,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
       data-ouia-safe="true"
       onSelect={[Function]}
       onToggle={[Function]}
+      ouiaSafe={true}
       theme="dark"
     >
       <nav
@@ -91,7 +92,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
               onClick={[Function]}
               parent="someLocation"
             >
-              <Component
+              <NavItem
                 className=""
                 isActive={false}
                 onClick={[Function]}
@@ -108,7 +109,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
                     onClick={[Function]}
                   />
                 </li>
-              </Component>
+              </NavItem>
             </NavigationItem>
           </ul>
         </NavList>
@@ -177,6 +178,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
         data-ouia-safe="true"
         onSelect={[Function]}
         onToggle={[Function]}
+        ouiaSafe={true}
         theme="dark"
       >
         <nav
@@ -200,7 +202,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
                 onClick={[Function]}
                 parent="someLocation"
               >
-                <Component
+                <NavItem
                   className=""
                   isActive={false}
                   onClick={[Function]}
@@ -217,7 +219,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
                       onClick={[Function]}
                     />
                   </li>
-                </Component>
+                </NavItem>
               </NavigationItem>
             </ul>
           </NavList>
@@ -234,6 +236,7 @@ exports[`Navigation should render corectly 1`] = `
   data-ouia-safe="true"
   onSelect={[Function]}
   onToggle={[Function]}
+  ouiaSafe={true}
   theme="dark"
 >
   <NavList
@@ -241,7 +244,7 @@ exports[`Navigation should render corectly 1`] = `
     ariaRightScroll="Scroll right"
   >
     <NavExpandable
-      className=""
+      className="ins-m-navigation-align"
       groupId={null}
       id=""
       isActive={true}
@@ -298,38 +301,38 @@ exports[`Navigation should render corectly 1`] = `
       parent="openshift"
       title="Remediations"
     />
-    <Component
+    <NavItem
       className="ins-c-page__documentation"
       rel="noopener noreferrer"
       target="_blank"
       to="someDocs"
     >
       Documentation
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
       to="https://access.redhat.com/support/cases"
     >
       Support Cases
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="feedback"
       rel="noopener noreferrer"
       target="_blank"
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="marketplace"
       rel="noopener noreferrer"
       target="_blank"
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
-    </Component>
+    </NavItem>
   </NavList>
 </Nav>
 `;
@@ -340,6 +343,7 @@ exports[`Navigation should render correctly 2 1`] = `
   data-ouia-safe="true"
   onSelect={[Function]}
   onToggle={[Function]}
+  ouiaSafe={true}
   theme="dark"
 >
   <NavList
@@ -347,7 +351,7 @@ exports[`Navigation should render correctly 2 1`] = `
     ariaRightScroll="Scroll right"
   >
     <NavExpandable
-      className=""
+      className="ins-m-navigation-align"
       groupId={null}
       id=""
       isActive={true}
@@ -404,38 +408,38 @@ exports[`Navigation should render correctly 2 1`] = `
       parent="openshift"
       title="Remediations"
     />
-    <Component
+    <NavItem
       className="ins-c-page__documentation"
       rel="noopener noreferrer"
       target="_blank"
       to="someDocs"
     >
       Documentation
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="supportcases"
       rel="noopener noreferrer"
       target="_blank"
       to="https://access.redhat.com/support/cases"
     >
       Support Cases
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="feedback"
       rel="noopener noreferrer"
       target="_blank"
       to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
-    </Component>
-    <Component
+    </NavItem>
+    <NavItem
       key="marketplace"
       rel="noopener noreferrer"
       target="_blank"
       to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
-    </Component>
+    </NavItem>
   </NavList>
 </Nav>
 `;

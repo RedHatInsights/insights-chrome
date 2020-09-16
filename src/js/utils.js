@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
 
-function getWindow() {
+export function getWindow() {
     return window;
 }
 
