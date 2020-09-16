@@ -80,7 +80,7 @@ export const Navigation = ({
             }
         } else {
             const itemUrl = `${parent?.id ? `/${parent.id}` : ''}/${item.id}`;
-            url = `${url}${item.reload || itemUrl}`;
+            url = `${url}/${item.reload || itemUrl}`;
             isMetaKey ? window.open(url) : window.location.href = url;
         }
     };
