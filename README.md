@@ -209,13 +209,13 @@ You can access the ability to create support cases by calling `window.insights.c
 
 ``` js
 window.insights.chrome.createCase({
-    all: {
+    additionalFields: {
         keyForBoth: 'value for both case management & sentry'
     },
-    case: {
+    additionalCaseFields: {
         keyForCaseManagement: 'value for case management'
     },
-    sentry: {
+    additionalSentryFields: {
         keyForSentry: 'value for sentry'
     }
 })

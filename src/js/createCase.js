@@ -56,8 +56,8 @@ export function createSupportCase(userInfo, fields) {
                 createdBy: `${userInfo.user.username}`,
                 environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}`,
                 product: product || '',
-                ...fields?.all,
-                ...fields?.case
+                ...fields?.additionalFields,
+                ...fields?.additionalCaseFields
             }
         })
     })
@@ -75,8 +75,8 @@ function createSupportSentry(session, fields) {
         Sentry.captureException(new Error('Support case created'), {
             tags: {
                 caseId: session,
-                ...fields?.all,
-                ...fields?.sentry
+                ...fields?.additionalFields,
+                ...fields?.additionalSentryFields
             }
         });
     } else {
