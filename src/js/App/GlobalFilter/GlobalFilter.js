@@ -63,7 +63,7 @@ const GlobalFilter = () => {
             if (!Object.values(selectedTags?.[workloads?.[0]?.name] || {})?.some(({ isSelected } = {}) => isSelected)) {
                 setValue({
                     ...selectedTags || {},
-                    [workloads?.[0]?.name]: {
+                    [workloads?.[0]?.name || 'Workloads']: {
                         ...selectedTags?.[workloads?.[0]?.name],
                         ...selectWorkloads()
                     }

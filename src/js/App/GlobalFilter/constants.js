@@ -17,7 +17,7 @@ export const workloads = [
 ];
 
 export const selectWorkloads = () => ({
-    [workloads?.[0]?.tags?.[0]?.tag?.key]: {
+    [workloads?.[0]?.tags?.[0]?.tag?.key || 'All workloads']: {
         group: omit(workloads[0], 'tags'),
         isSelected: true,
         item: {}
