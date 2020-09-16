@@ -47,10 +47,6 @@ export default async (dependencies) => {
         ))?.SystemCvesStore;
     }
 
-    console.log(SystemCvesStore, isDetailsEnabled, await import(/* webpackChunkName: "inventory-vuln-store" */
-        '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
-    ), 'ffff');
-
     return {
         ...invData,
         inventoryConnector: (store) => invData.inventoryConnector(store, isDetailsEnabled ? {
