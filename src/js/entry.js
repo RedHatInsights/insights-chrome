@@ -84,7 +84,7 @@ export function chromeInit(libjwt) {
         identifyApp: (data) => Promise.all([jwtResolver, navResolver]).then(
             () => identifyApp(data, store.getState().chrome.globalNav)
         ),
-        navigation: () => console.error('Don\'t use this function, it has been deprecated!'),
+        navigation: () => console.error('Don\'t use insights.chrome.navigation, it has been deprecated!'),
         appAction,
         appObjectId,
         hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
