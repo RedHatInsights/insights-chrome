@@ -77,8 +77,12 @@ async function getAppData(appId, propName, masterConfig) {
     }
 }
 
-export async function loadNav(yamlConfig) {
-    const groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
+export async function loadNav(yamlConfig, cache) {
+    let groupedNav = await cache.getItem('navigation');
+    if (!groupedNav) {
+        groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
+        cache.setItem('navigation', groupedNav);
+    }
 
     const [active, section] = [getUrl('bundle'), getUrl('app')];
     const globalNav = (groupedNav[active] || groupedNav.insights)?.routes;

@@ -218,6 +218,7 @@ function logout(bounce) {
     const keys = Object.keys(localStorage).filter(key => (
         key.endsWith('/api/entitlements/v1/services') ||
         key.endsWith('/config/main.yml') ||
+        key.endsWith('/chrome') ||
         key.startsWith('kc-callback') ||
         key.startsWith(GLOBAL_FILTER_KEY)
     ));
