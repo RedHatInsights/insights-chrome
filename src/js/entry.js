@@ -52,7 +52,7 @@ export function chromeInit(libjwt) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNav, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
+    const { identifyApp, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
     let chromeCache;
 
@@ -85,7 +85,7 @@ export function chromeInit(libjwt) {
         identifyApp: (data) => Promise.all([jwtResolver, navResolver]).then(
             () => identifyApp(data, store.getState().chrome.globalNav)
         ),
-        navigation: appNav,
+        navigation: () => console.error('Don\'t use insights.chrome.navigation, it has been deprecated!'),
         appAction,
         appObjectId,
         hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
