@@ -55,7 +55,7 @@ export function createSupportCase(userInfo, fields) {
             sessionDetails: {
                 createdBy: `${userInfo.user.username}`,
                 environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}`,
-                ...(currentProduct && { product: currentProduct }), 
+                ...(currentProduct && { product: currentProduct }),
                 ...fields?.caseFields
             }
         })
