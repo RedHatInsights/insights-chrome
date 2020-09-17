@@ -53,9 +53,9 @@ export function createSupportCase(userInfo, fields) {
                 userAgent: 'cloud.redhat.com'
             },
             sessionDetails: {
-                createdBy: `${userInfo.user.username}`,
+                createdBy: `${userInfo.user.username}`, // TODO allow people to overwrite below this
                 environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}`,
-                product: product || '',
+                product: product || '', 
                 ...fields?.additionalFields,
                 ...fields?.additionalCaseFields
             }
@@ -75,8 +75,7 @@ function createSupportSentry(session, fields) {
         Sentry.captureException(new Error('Support case created'), {
             tags: {
                 caseId: session,
-                ...fields?.additionalFields,
-                ...fields?.additionalSentryFields
+                additionalFields: fields // TODO spread this
             }
         });
     } else {
