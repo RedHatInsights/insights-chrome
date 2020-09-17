@@ -90,16 +90,16 @@ export function chromeInit(libjwt) {
         appObjectId,
         hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
         globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-        mapGlobalFilter: (filter) => flatMap(
+        mapGlobalFilter: (filter, encode = false) => flatMap(
             Object.entries(filter),
             ([namespace, item]) => Object.entries(item)
             .filter(([, { isSelected }]) => isSelected)
             .map(([groupKey, { item, value: tagValue }]) => `${
-                namespace ? `${namespace}/` : ''
+                namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''
             }${
-                groupKey
+                encode ? encodeURIComponent(groupKey) : groupKey
             }${
-                (item?.tagValue || tagValue) ? `=${item?.tagValue || tagValue}` : ''
+                (item?.tagValue || tagValue) ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''
             }`)
         ),
         appNavClick: ({ secondaryNav, ...payload }) => {
