@@ -3,12 +3,9 @@ import logger from '../jwt/logger';
 
 const log = logger('fetchPermissions.js');
 
-const perPage = 25;
+const perPage = 100;
 
-export const fetchPermissions = (userToken, app = '') => {
-    if (insights.chrome.getBundle() === 'openshift') {
-        return Promise.resolve([]);
-    }
+const fetchPermissions = (userToken, app = '') => {
     const rbacApi = createRbacAPI(userToken);
     return rbacApi.getPrincipalAccess(app, undefined, perPage).then(({ data, meta }) => {
         if (meta.count > perPage) {
@@ -22,4 +19,25 @@ export const fetchPermissions = (userToken, app = '') => {
             return data;
         }})
     .catch(error => log(error));
+};
+
+export const createFetchPermissionsWatcher = (cache) => {
+    let currentCall = undefined;
+    return async (userToken, app = '') => {
+        if (insights.chrome.getBundle() === 'openshift') {
+            return Promise.resolve([]);
+        }
+        const permissions = await cache.getItem('permissions');
+        if (permissions) {
+            return permissions;
+        }
+        if (typeof currentCall === 'undefined') {
+            currentCall = fetchPermissions(userToken, app).then((data) => {
+                currentCall = undefined;
+                cache.setItem('permissions', data);
+                return data;
+            });
+        }
+        return currentCall;
+    };
 };
