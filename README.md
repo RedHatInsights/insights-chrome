@@ -219,14 +219,11 @@ You have the ability to add a few custom fields with the following API:
 
 ``` js
 window.insights.chrome.createCase({
-    additionalFields: {
-        keyForBoth: 'value for both case management & sentry'
+    caseFields: {
+        keyForBoth: 'value for case specific items'
     },
-    additionalCaseFields: {
-        keyForCaseManagement: 'value for case management'
-    },
-    additionalSentryFields: {
-        keyForSentry: 'value for sentry'
+    sentryFields: {
+        keyForSentry: 'value for sentry specific items'
     }
 })
 ```

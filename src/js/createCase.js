@@ -31,12 +31,12 @@ function registerProduct() {
 
     // if not, check to see if the app is a product
     const product = APP_PRODUCTS.find(app => app.id === currentApp);
-    return product.name;
+    return product?.name;
 }
 
 export function createSupportCase(userInfo, fields) {
 
-    const product = registerProduct();
+    const currentProduct = registerProduct();
 
     log('Creating a support case');
 
@@ -53,11 +53,10 @@ export function createSupportCase(userInfo, fields) {
                 userAgent: 'cloud.redhat.com'
             },
             sessionDetails: {
-                createdBy: `${userInfo.user.username}`, // TODO allow people to overwrite below this
+                createdBy: `${userInfo.user.username}`,
                 environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}`,
-                product: product || '', 
-                ...fields?.additionalFields,
-                ...fields?.additionalCaseFields
+                ...(currentProduct && { product: currentProduct }), 
+                ...fields?.caseFields
             }
         })
     })
@@ -75,7 +74,7 @@ function createSupportSentry(session, fields) {
         Sentry.captureException(new Error('Support case created'), {
             tags: {
                 caseId: session,
-                additionalFields: fields // TODO spread this
+                ...(fields && { additionalFields: fields })
             }
         });
     } else {
