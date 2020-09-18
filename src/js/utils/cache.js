@@ -62,7 +62,7 @@ export class CacheAdapter {
         await this.invalidateStore();
         const cachedData = await store.getItem(this.endpoint);
         cachedData.data = {
-            ...cachedData.data,
+            ...cachedData?.data,
             [key]: data
         };
         await store.setItem(this.endpoint, cachedData);
