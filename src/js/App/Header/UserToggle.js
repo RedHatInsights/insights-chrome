@@ -38,6 +38,15 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
             rel='noopener noreferrer'>
                 My profile
         </DropdownItem>,
+        <React.Fragment key="My user access wrapper">
+            { accountNumber > -1 &&
+                <DropdownItem
+                    key="My user access"
+                    href="./settings/my-user-access">
+                    My User Access
+                </DropdownItem>
+            }
+        </React.Fragment>,
         <React.Fragment key="user prefs wrapper">
             { accountNumber > -1 &&
                 <DropdownItem
