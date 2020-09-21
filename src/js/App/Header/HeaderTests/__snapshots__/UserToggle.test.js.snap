@@ -59,6 +59,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               My profile
             </DropdownItem>,
             <React.Fragment />,
+            <React.Fragment />,
             <DropdownItem
               component="button"
               onClick={[Function]}
@@ -119,6 +120,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
                 component="button"
@@ -438,6 +440,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               My profile
             </DropdownItem>,
             <React.Fragment />,
+            <React.Fragment />,
             <DropdownItem
               component="button"
               onClick={[Function]}
@@ -503,6 +506,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
                 component="button"
@@ -789,6 +793,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
         My profile
       </DropdownItem>,
       <React.Fragment />,
+      <React.Fragment />,
       <DropdownItem
         component="button"
         onClick={[Function]}
@@ -847,6 +852,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       >
         My profile
       </DropdownItem>,
+      <React.Fragment />,
       <React.Fragment />,
       <DropdownItem
         component="button"
