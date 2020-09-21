@@ -45,6 +45,7 @@ export function createSupportCase(userInfo, fields) {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+            Credentials: 'same-origin',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
