@@ -62,6 +62,7 @@ export function createSupportCase(userInfo, fields) {
     })
     .then(response => response.json())
     .then(data => data
+        // eslint-disable-next-line max-len
         && window.open(`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/support/cases/#/case/new/open-case/describe-issue?seSessionId=${data.session.id}`)
         && createSupportSentry(data.session.id, fields))
     .catch(err => Sentry.captureException(err));
