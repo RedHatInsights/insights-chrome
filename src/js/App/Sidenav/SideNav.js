@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
 import { connect, useDispatch } from 'react-redux';
@@ -9,8 +9,9 @@ import NavLoader from './Loader';
 
 export const SideNav = ({ activeTechnology, globalNav }) => {
     const dispatch = useDispatch();
+    const [isFirst, setIsFirst] = useState(true);
     useEffect(() => {
-        if (globalNav) {
+        if (globalNav && isFirst) {
             const { subItems } = globalNav?.find?.(({ active }) => active) || {};
             const defaultActive = subItems?.find?.(
                 ({ id }) => location.pathname.split('/').find(item => item === id)
@@ -19,6 +20,7 @@ export const SideNav = ({ activeTechnology, globalNav }) => {
             subItems?.[0];
 
             dispatch(appNavClick(defaultActive || {}));
+            setIsFirst(() => false);
         }
     }, [globalNav]);
 
