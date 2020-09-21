@@ -45,7 +45,6 @@ export function createSupportCase(userInfo, fields) {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
-            Credentials: 'same-origin',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -63,7 +62,7 @@ export function createSupportCase(userInfo, fields) {
     })
     .then(response => response.json())
     .then(data => data
-        && window.open(`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/support/cases/${data.session.id}`)
+        && window.open(`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/support/cases/#/case/new/open-case/describe-issue?seSessionId=${data.session.id}`)
         && createSupportSentry(data.session.id, fields))
     .catch(err => Sentry.captureException(err));
 }
