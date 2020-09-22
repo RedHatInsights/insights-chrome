@@ -39,8 +39,11 @@ const Tools = () => {
     {/* list out the items for the about menu */}
     const aboutMenuDropdownItems = [
         {
-            title: 'Customer support',
+            title: 'Get support',
             url: 'https://access.redhat.com/support'
+        }, {
+            title: 'Open support case',
+            onClick: () => window.insights.chrome.createCase()
         }, {
             title: 'Training',
             url: 'https://www.redhat.com/en/services/training-and-certification'

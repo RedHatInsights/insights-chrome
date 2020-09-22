@@ -204,3 +204,29 @@ Sentry object spec:
         });
     });
 ```
+
+## Creating Support Cases
+
+You can access the ability to create support cases by calling `window.insights.chrome.createCase()`.
+
+By default, the fields that are sent are:
+
+```js
+    createdBy: 'foo-username',
+    environment: 'Production',
+    product: 'Red Hat Insights',
+```
+
+You have the ability to add a few custom fields with the following API:
+
+``` js
+window.insights.chrome.createCase({
+    caseFields: {
+        key: 'any case specific values'
+    },
+    // anything not inside of "caseFields" will be sent to sentry
+    foo: {
+        key: 'additional value'
+    }
+})
+```

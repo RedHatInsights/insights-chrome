@@ -18,6 +18,7 @@ import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
 import { createFetchPermissionsWatcher } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import { createSupportCase } from './createCase';
 import flatMap from 'lodash/flatMap';
 import { headerLoader } from './App/Header';
 import { decodeToken } from './jwt/jwt';
@@ -168,6 +169,7 @@ export function bootstrap(libjwt, initFunc) {
             isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
             getBundle: () => getUrl('bundle'),
             getApp: () => getUrl('app'),
+            createCase: (fields) => insights.chrome.auth.getUser().then(user => createSupportCase(user.identity, fields)),
             visibilityFunctions,
             init: initFunc
         },
