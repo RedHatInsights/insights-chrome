@@ -6,25 +6,35 @@ jest.mock('./rbac', () => () => {
     });
 });
 
-import { fetchPermissions } from './fetchPermissions';
-import './rbac';
+import { createFetchPermissionsWatcher } from './fetchPermissions';
 
-it('should send all the paginated data as array', async () => {
-    const data = fetchPermissions('uSeRtOkEn');
-    expect.assertions(1);
-    return data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
+jest.mock('../jwt/jwt');
+
+describe('fetchPermissions', () => {
+    let fetchPermissions;
+    beforeEach(() => {
+        const cache = { getItem: () => undefined, setItem: () => undefined };
+        fetchPermissions = createFetchPermissionsWatcher(cache);
+    });
+
+    it('should send all the paginated data as array', async () => {
+        const data = fetchPermissions('uSeRtOkEn');
+        expect.assertions(1);
+        return data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
+    });
+
+    it('should send the data as array', async () => {
+        const data = fetchPermissions('uSeRtOkEn');
+        expect.assertions(1);
+        return data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
+    });
+
+    it('should not call any rbac', async () => {
+        const previousGetBundle = global.insights.chrome.getBundle;
+        global.window.insights.chrome.getBundle = () => 'openshift';
+        const data = await fetchPermissions('uSeRtOkEn');
+        expect(data).not.toEqual(mockedRbac.data);
+        global.window.insights.chrome.getBundle = previousGetBundle;
+    });
 });
 
-it('should send the data as array', async () => {
-    const data = fetchPermissions('uSeRtOkEn');
-    expect.assertions(1);
-    return data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
-});
-
-it('should not call any rbac', async () => {
-    const previousGetBundle = global.insights.chrome.getBundle;
-    global.window.insights.chrome.getBundle = () => 'openshift';
-    const data = await fetchPermissions('uSeRtOkEn');
-    expect(data).not.toEqual(mockedRbac.data);
-    global.window.insights.chrome.getBundle = previousGetBundle;
-});
