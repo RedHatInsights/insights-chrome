@@ -16,7 +16,7 @@ import { visibilityFunctions } from './consts';
 import Cookies from 'js-cookie';
 import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
-import { fetchPermissions } from './rbac/fetchPermissions';
+import { createFetchPermissionsWatcher } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
 import { createSupportCase } from './createCase';
 import flatMap from 'lodash/flatMap';
@@ -55,7 +55,6 @@ export function chromeInit(libjwt) {
     const { identifyApp, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
 
     let chromeCache;
-
     // Init JWT first.
     const jwtResolver = libjwt.initPromise
     .then(async () => {
@@ -129,34 +128,40 @@ export function chromeInit(libjwt) {
 }
 
 export function bootstrap(libjwt, initFunc) {
+    const getUser = () => {
+        // here we need to init the qe plugin
+        // the "contract" is we will do this before anyone
+        // calls/finishes getUser
+        // this only does something if the correct localstorage
+        // vars are set
+
+        qe.init();
+
+        return libjwt.initPromise
+        .then(libjwt.jwt.getUserInfo)
+        .catch(() => {
+            libjwt.jwt.logoutAllTabs();
+        });
+    };
+    const permissionCache = new CacheAdapter(
+        'permission-store',
+        `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
+    );
+    const fetchPermissions = createFetchPermissionsWatcher(permissionCache);
     return {
         chrome: {
             auth: {
                 getOfflineToken: () => libjwt.getOfflineToken(),
                 doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
                 getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
-                getUser: () => {
-                    // here we need to init the qe plugin
-                    // the "contract" is we will do this before anyone
-                    // calls/finishes getUser
-                    // this only does something if the correct localstorage
-                    // vars are set
-
-                    qe.init();
-
-                    return libjwt.initPromise
-                    .then(libjwt.jwt.getUserInfo)
-                    .catch(() => {
-                        libjwt.jwt.logoutAllTabs();
-                    });
-                },
+                getUser,
                 qe: qe,
                 logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
                 login: () => libjwt.jwt.login()
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
-            getUserPermissions: (app = '') => fetchPermissions(libjwt.jwt.getEncodedToken(), app),
+            getUserPermissions: (app = '') => getUser().then(() => fetchPermissions(libjwt.jwt.getEncodedToken(), app)),
             isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
             getBundle: () => getUrl('bundle'),
             getApp: () => getUrl('app'),
