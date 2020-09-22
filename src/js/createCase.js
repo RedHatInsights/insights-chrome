@@ -6,31 +6,26 @@ import { spinUpStore } from './redux-config';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
-    'Red Hat OpenShift Cluster Manager',
-    'Red Hat Insights',
-    'Subscription Watch'
+    { id: 'openshift', name: 'Red Hat OpenShift Cluster Manager' },
+    { id: 'insights', name: 'Red Hat Insights' },
+    { id: 'subscriptions', name: 'Subscription Watch' },
+    { id: 'migrations', name: 'Migration Analytics' },
+    { id: 'cost-management', name: 'Red Hat Cost Management' }
 ];
 
 // List of products that are individual apps
 const APP_PRODUCTS = [
     { id: 'automation-hub', name: 'Ansible Automation Hub' },
-    { id: 'automation-analytics', name: 'Ansible Automation Analytics' },
-    { id: 'migrations', name: 'Migration Analytics' },
-    { id: 'cost-management', name: 'Red Hat Cost Management' }
+    { id: 'automation-analytics', name: 'Ansible Automation Analytics' }
 ];
 
 function registerProduct() {
     const { store } = spinUpStore();
-    const currentBundle = store.getState().chrome.activeTechnology;
+    const currentBundle = store.getState().chrome.activeLocation;
     const currentApp = store.getState().chrome.appId;
 
-    // check to see if the bundle is a product
-    if (BUNDLE_PRODUCTS.find(bundle => bundle === currentBundle)) {
-        return currentBundle;
-    };
+    const product = BUNDLE_PRODUCTS.find(bundle => bundle.id === currentBundle) || APP_PRODUCTS.find(app => app.id === currentApp);
 
-    // if not, check to see if the app is a product
-    const product = APP_PRODUCTS.find(app => app.id === currentApp || app.id === currentBundle);
     return product?.name;
 }
 
