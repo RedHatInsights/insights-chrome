@@ -127,6 +127,7 @@ export function chromeInit(libjwt) {
 }
 
 export function bootstrap(libjwt, initFunc) {
+    let permissionCache;
     const getUser = () => {
         // here we need to init the qe plugin
         // the "contract" is we will do this before anyone
@@ -138,14 +139,17 @@ export function bootstrap(libjwt, initFunc) {
 
         return libjwt.initPromise
         .then(libjwt.jwt.getUserInfo)
+        .then((data) => {
+            permissionCache = new CacheAdapter(
+                'permission-store',
+                `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
+            );
+            return data;
+        })
         .catch(() => {
             libjwt.jwt.logoutAllTabs();
         });
     };
-    const permissionCache = new CacheAdapter(
-        'permission-store',
-        `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
-    );
     const fetchPermissions = createFetchPermissionsWatcher(permissionCache);
     return {
         chrome: {
