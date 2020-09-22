@@ -27,14 +27,23 @@ export const createFetchPermissionsWatcher = (cache) => {
         if (insights.chrome.getBundle() === 'openshift') {
             return Promise.resolve([]);
         }
-        const permissions = await cache.getItem('permissions');
-        if (permissions) {
-            return permissions;
+        let permissions;
+        try {
+            permissions = await cache.getItem('permissions');
+            if (permissions) {
+                return permissions;
+            }
+        } catch (_error) {
+            // ignore error and get permissions from promise
         }
         if (typeof currentCall === 'undefined') {
             currentCall = fetchPermissions(userToken, app).then((data) => {
                 currentCall = undefined;
-                cache.setItem('permissions', data);
+                try {
+                    cache.setItem('permissions', data);
+                } catch (_error) {
+                    // ignore error and do not set cache
+                }
                 return data;
             });
         }
