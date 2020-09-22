@@ -15,7 +15,7 @@ const BUNDLE_PRODUCTS = [
 const APP_PRODUCTS = [
     { id: 'automation-hub', name: 'Ansible Automation Hub' },
     { id: 'automation-analytics', name: 'Ansible Automation Analytics' },
-    { id: 'migrations', name: 'Red Hat Migration Analytics' },
+    { id: 'migrations', name: 'Migration Analytics' },
     { id: 'cost-management', name: 'Red Hat Cost Management' }
 ];
 
@@ -30,7 +30,7 @@ function registerProduct() {
     };
 
     // if not, check to see if the app is a product
-    const product = APP_PRODUCTS.find(app => app.id === currentApp);
+    const product = APP_PRODUCTS.find(app => app.id === currentApp || app.id === currentBundle);
     return product?.name;
 }
 
