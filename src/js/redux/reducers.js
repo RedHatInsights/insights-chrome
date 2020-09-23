@@ -49,15 +49,17 @@ export function appNavReducer(state, action) {
 }
 
 export function appNavClick(state, { payload }) {
+    const activeId = payload.id !== undefined ? payload.id : state.activeApp;
+    const activeTitle = payload.title || state.activeAppTitle;
     return {
         ...state,
-        activeApp: payload.id,
-        activeAppTitle: payload.title,
-        globalNav: payload.custom ? state.globalNav && state.globalNav.map(item => ({
+        activeApp: activeId,
+        activeAppTitle: activeTitle,
+        globalNav: payload.custom ? state?.globalNav?.map(item => ({
             ...item,
-            active: payload && (item.id === payload.id || item.title === payload.id)
+            active: payload && (item.id === activeId || item.title === activeId)
                 || (item.subItems && item.subItems.some(
-                    ({ id }) => id === payload.id) && (item.id === state.appId || item.id === payload.parentId)
+                    ({ id }) => id === activeId) && (item.id === state.appId || item.id === payload.parentId)
                 )
         })) : state.globalNav
     };

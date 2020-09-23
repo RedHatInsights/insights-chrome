@@ -104,7 +104,7 @@ export const Navigation = ({
                                 ouia-nav-item={subItem.reload || subItem.id}
                                 key={subKey}
                                 title={subItem.title}
-                                parent={`${activeLocation}${item.id ? `/${item.id}` : ''}`}
+                                parent={subItem.reload ? activeLocation : `${activeLocation}${item.id ? `/${item.id}` : ''}`}
                                 isActive={item.active && subItem.id === activeApp}
                                 onClick={event => onClick(event, subItem, item)}
                             />)
