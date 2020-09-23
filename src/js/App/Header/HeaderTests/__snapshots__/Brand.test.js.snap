@@ -44,7 +44,7 @@ exports[`Brand mapDispatchToProps function fires 1`] = `
             aria-disabled={false}
             aria-label="Toggle primary navigation"
             className="pf-c-button pf-m-plain"
-            data-ouia-component-id={2}
+            data-ouia-component-id="OUIA-Generated-Button-plain-3"
             data-ouia-component-type="PF4/Button"
             data-ouia-safe={true}
             disabled={false}
@@ -73,7 +73,6 @@ exports[`Brand mapDispatchToProps function fires 1`] = `
               >
                 <path
                   d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                  transform=""
                 />
               </svg>
             </BarsIcon>
@@ -190,7 +189,7 @@ exports[`Brand should render correctly with initial state 1`] = `
               aria-disabled={false}
               aria-label="Toggle primary navigation"
               className="pf-c-button pf-m-plain"
-              data-ouia-component-id={0}
+              data-ouia-component-id="OUIA-Generated-Button-plain-1"
               data-ouia-component-type="PF4/Button"
               data-ouia-safe={true}
               disabled={false}
@@ -219,7 +218,6 @@ exports[`Brand should render correctly with initial state 1`] = `
                 >
                   <path
                     d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                    transform=""
                   />
                 </svg>
               </BarsIcon>
@@ -278,7 +276,7 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
               aria-disabled={false}
               aria-label="Toggle primary navigation"
               className="pf-c-button pf-m-plain"
-              data-ouia-component-id={1}
+              data-ouia-component-id="OUIA-Generated-Button-plain-2"
               data-ouia-component-type="PF4/Button"
               data-ouia-safe={true}
               disabled={false}
@@ -307,7 +305,6 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
                 >
                   <path
                     d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                    transform=""
                   />
                 </svg>
               </BarsIcon>
