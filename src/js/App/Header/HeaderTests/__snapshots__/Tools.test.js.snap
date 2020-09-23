@@ -68,7 +68,15 @@ exports[`Tools should render correctly 1`] = `
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Customer support
+                Get support
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Open support case
               </DropdownItem>
             </React.Fragment>,
             <React.Fragment>

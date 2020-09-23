@@ -18,6 +18,7 @@ import logger from './jwt/logger';
 import sourceOfTruth from './nav/sourceOfTruth';
 import { createFetchPermissionsWatcher } from './rbac/fetchPermissions';
 import { getUrl } from './utils';
+import { createSupportCase } from './createCase';
 import flatMap from 'lodash/flatMap';
 import { headerLoader } from './App/Header';
 import { decodeToken } from './jwt/jwt';
@@ -127,6 +128,7 @@ export function chromeInit(libjwt) {
 }
 
 export function bootstrap(libjwt, initFunc) {
+    let permissionCache;
     const getUser = () => {
         // here we need to init the qe plugin
         // the "contract" is we will do this before anyone
@@ -138,14 +140,17 @@ export function bootstrap(libjwt, initFunc) {
 
         return libjwt.initPromise
         .then(libjwt.jwt.getUserInfo)
+        .then((data) => {
+            permissionCache = new CacheAdapter(
+                'permission-store',
+                `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
+            );
+            return data;
+        })
         .catch(() => {
             libjwt.jwt.logoutAllTabs();
         });
     };
-    const permissionCache = new CacheAdapter(
-        'permission-store',
-        `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
-    );
     const fetchPermissions = createFetchPermissionsWatcher(permissionCache);
     return {
         chrome: {
@@ -164,6 +169,7 @@ export function bootstrap(libjwt, initFunc) {
             isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
             getBundle: () => getUrl('bundle'),
             getApp: () => getUrl('app'),
+            createCase: (fields) => insights.chrome.auth.getUser().then(user => createSupportCase(user.identity, fields)),
             visibilityFunctions,
             init: initFunc
         },
