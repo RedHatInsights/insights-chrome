@@ -24,8 +24,7 @@ const initializeJWT = (libjwt, chromeInstance) => {
         headerLoader();
         chromeInstance.cache = chromeCache;
     })
-    .catch((err) => {
-        console.log(err);
+    .catch(() => {
         if (allowUnauthed()) {
             actions.userLogIn(false);
             headerLoader();

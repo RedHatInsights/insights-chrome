@@ -13,8 +13,8 @@ jest.mock('../jwt/jwt');
 describe('fetchPermissions', () => {
     let fetchPermissions;
     beforeEach(() => {
-        const cache = { getItem: () => undefined, setItem: () => undefined };
-        fetchPermissions = createFetchPermissionsWatcher(cache);
+        const chromeInstance = { cache: { getItem: () => undefined, setItem: () => undefined } };
+        fetchPermissions = createFetchPermissionsWatcher(chromeInstance);
     });
 
     it('should send all the paginated data as array', async () => {
