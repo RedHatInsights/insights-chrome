@@ -150,6 +150,50 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
 > npm run start
 ```
 
+# Running chrome locally
+First install all dependencies
+
+```
+> npm install
+```
+
+Run build command in watch mode
+
+```
+> npm run watch
+```
+
+Open new terminal, navigate to build directory and run proxy
+```
+SPANDX_CONFIG=../../insights-frontend-starter-app/profiles/local-frontend.js \
+LOCAL_CHROME=true \
+bash ../../insights-proxy/scripts/run.sh
+```
+
+Where `SPANDX_CONFIG` can be any config for your application (here is an example for [insights-frontend-starter-app](https://github.com/RedHatInsights/insights-frontend-starter-app)), just make sure your application is running `npm start` in said application.
+
+After permorming these tasks you can access `ci.foo.redhat.com:1337/insights/starter` and observe changes as you save them.
+
+### Shape of SPANDX_CONFIG
+
+You can have custom spandx config with all frontend apps specified if you want to, the `.js` file just have to export `routes` object with at least 2 paths: 
+
+```
+module.exports = {
+    routes: {
+        // you will access the UI on this URL /$BUNDLE/$APP
+        '/$BUNDLE/$APP': { host: `https://localhost:8002` },
+
+
+        // here are your files stored, if you used frontend starter app it will automatically build them
+        // in apps/$APP folder
+        '/apps/$APP': { host: `https://localhost:8002` },
+    }
+}
+```
+
+
+
 ## LocalStorage Debugging
 
 There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
