@@ -11,7 +11,7 @@ import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
  * @param {object} jwt JWT auth functions
  * @param {object} insights existing insights instance
  */
-const createChromeIntance = (jwt, insights) => {
+const createChromeInstance = (jwt, insights) => {
     const { actions: { chromeNavUpdate } } = spinUpStore();
     const libjwt = jwt;
     const chromeInstance = {
@@ -78,4 +78,4 @@ const createChromeIntance = (jwt, insights) => {
     };
 };
 
-export default createChromeIntance;
+export default createChromeInstance;

@@ -1,4 +1,4 @@
-import createChromeIntance from './create-chrome';
+import createChromeInstance from './create-chrome';
 
 jest.mock('../jwt/jwt');
 jest.mock('../nav/sourceOfTruth');
@@ -19,14 +19,14 @@ describe('create chrome', () => {
     });
 
     it('should create chrome instance', () => {
-        const { chrome } = createChromeIntance(jwt, insights);
+        const { chrome } = createChromeInstance(jwt, insights);
         expect(chrome).toEqual(expect.any(Object));
     });
 
     it('should postpone getUserPermissions resolve, after chrome cache is initialized', () => {
         const promiseSpy = jest.fn();
         expect.assertions(1);
-        const { chrome: { getUserPermissions } } = createChromeIntance(jwt, insights);
+        const { chrome: { getUserPermissions } } = createChromeInstance(jwt, insights);
         return getUserPermissions(promiseSpy).then(() => {
             expect(promiseSpy).toHaveBeenCalledWith('mocked-user-permissions');
         });

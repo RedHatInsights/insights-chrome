@@ -3,7 +3,7 @@ import analytics from './analytics';
 import sentry from './sentry';
 import { rootApp, noAccess }   from './chrome/entry';
 import { navLoader } from './App/Sidenav';
-import createChromeIntance from './chrome/create-chrome';
+import createChromeInstance from './chrome/create-chrome';
 
 //Add redhat font to body
 document.querySelector('body').classList.add('pf-m-redhat-font');
@@ -29,4 +29,4 @@ libjwt.initPromise.then(() => {
 
 window.insights = window.insights || {};
 
-window.insights = createChromeIntance(libjwt, window.insights);
+window.insights = createChromeInstance(libjwt, window.insights);
