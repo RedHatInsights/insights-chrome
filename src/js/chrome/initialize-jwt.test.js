@@ -18,6 +18,5 @@ describe('initializeJWT', () => {
         expect(Object.prototype.hasOwnProperty.call(instance, 'cache')).toEqual(false);
         await initializeJWT(libJWT, instance);
         expect(Object.prototype.hasOwnProperty.call(instance, 'cache')).toEqual(true);
-        console.log(instance);
     });
 });

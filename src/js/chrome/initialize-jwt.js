@@ -10,27 +10,19 @@ import { CacheAdapter } from '../utils/cache';
  * @param {object} chromeInstance persistent chrome object
  * @returns {Promise}
  */
-const initializeJWT = (libjwt, chromeInstance) => {
+const initializeJWT = async (libjwt, chromeInstance) => {
     const { actions } = spinUpStore();
-    let chromeCache;
-    return libjwt.initPromise
-    .then(async () => {
+    try {
+        await libjwt.initPromise;
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
-        chromeCache = new CacheAdapter(
-            'chrome-store',
-        `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`
-        );
-        headerLoader();
-        chromeInstance.cache = chromeCache;
-    })
-    .catch(() => {
+    } catch (_e) {
         if (allowUnauthed()) {
             actions.userLogIn(false);
-            headerLoader();
         }
-        chromeInstance.cache = chromeCache;
-    });
+    }
+    chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`);
+    headerLoader();
 };
 
 export default initializeJWT;

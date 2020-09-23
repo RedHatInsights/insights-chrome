@@ -67,11 +67,15 @@ const createChromeInstance = (jwt, insights) => {
         return (...args) => jwtResolver.then(() => fn(...args));
     };
 
-    const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
+    const fetchPermissions =  bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
 
     const chromeFunctions = bootstrap(libjwt, init, getUser);
 
-    chromeFunctions.chrome.getUserPermissions = (app = '') => getUser().then(() => fetchPermissions(libjwt.jwt.getEncodedToken(), app));
+    chromeFunctions.chrome.getUserPermissions = async (app = '') => {
+        await getUser();
+        return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
+    };
+
     return {
         ...insights,
         ...chromeFunctions
