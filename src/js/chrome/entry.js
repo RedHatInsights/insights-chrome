@@ -1,30 +1,23 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { globalFilterScope, toggleGlobalFilter } from './redux/actions';
-import { spinUpStore } from './redux-config';
-import * as actionTypes from './redux/action-types';
-import loadInventory from './inventory/index';
-import loadRemediations from './remediations';
+import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
+import { spinUpStore } from '../redux-config';
+import * as actionTypes from '../redux/action-types';
+import loadInventory from '../inventory/index';
+import loadRemediations from '../remediations';
 import qe from './iqeEnablement';
-import consts from './consts';
-import allowUnauthed from './auth';
-import { loadNav } from './nav/globalNav.js';
-import RootApp from './App/RootApp';
-import debugFunctions from './debugFunctions';
-import { visibilityFunctions } from './consts';
+import consts from '../consts';
+import RootApp from '../App/RootApp';
+import debugFunctions from '../debugFunctions';
+import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import logger from './jwt/logger';
-import sourceOfTruth from './nav/sourceOfTruth';
-import { createFetchPermissionsWatcher } from './rbac/fetchPermissions';
-import { getUrl } from './utils';
-import { createSupportCase } from './createCase';
+import logger from '../jwt/logger';
+import { getUrl } from '../utils';
+import { createSupportCase } from '../createCase';
 import flatMap from 'lodash/flatMap';
-import { headerLoader } from './App/Header';
-import { decodeToken } from './jwt/jwt';
-import { CacheAdapter } from './utils/cache';
 
-const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ './App/NoAccess'));
+const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ '../App/NoAccess'));
 
 const log = logger('entry.js');
 
@@ -48,40 +41,14 @@ const PUBLIC_EVENTS = {
     })
 };
 
-export function chromeInit(libjwt) {
+export function chromeInit(navResolver) {
     const { store, middlewareListener, actions } = spinUpStore();
 
     // public API actions
-    const { identifyApp, appNavClick, clearActive, appAction, appObjectId, chromeNavUpdate } = actions;
-
-    let chromeCache;
-    // Init JWT first.
-    const jwtResolver = libjwt.initPromise
-    .then(async () => {
-        const user = await libjwt.jwt.getUserInfo();
-        actions.userLogIn(user);
-        chromeCache = new CacheAdapter(
-            'chrome-store',
-            `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`
-        );
-        headerLoader();
-    })
-    .catch(() => {
-        if (allowUnauthed()) {
-            actions.userLogIn(false);
-            headerLoader();
-        }
-    });
-
-    // Load navigation after login
-    const navResolver = jwtResolver.then(async () => {
-        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-        const navigationData = await loadNav(navigationYml, chromeCache);
-        chromeNavUpdate(navigationData);
-    });
+    const { identifyApp, appNavClick, clearActive, appAction, appObjectId } = actions;
 
     return {
-        identifyApp: (data) => Promise.all([jwtResolver, navResolver]).then(
+        identifyApp: (data) => navResolver.then(
             () => identifyApp(data, store.getState().chrome.globalNav)
         ),
         navigation: () => console.error('Don\'t use insights.chrome.navigation, it has been deprecated!'),
@@ -127,31 +94,7 @@ export function chromeInit(libjwt) {
     };
 }
 
-export function bootstrap(libjwt, initFunc) {
-    let permissionCache;
-    const getUser = () => {
-        // here we need to init the qe plugin
-        // the "contract" is we will do this before anyone
-        // calls/finishes getUser
-        // this only does something if the correct localstorage
-        // vars are set
-
-        qe.init();
-
-        return libjwt.initPromise
-        .then(libjwt.jwt.getUserInfo)
-        .then((data) => {
-            permissionCache = new CacheAdapter(
-                'permission-store',
-                `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-permission-store`
-            );
-            return data;
-        })
-        .catch(() => {
-            libjwt.jwt.logoutAllTabs();
-        });
-    };
-    const fetchPermissions = createFetchPermissionsWatcher(permissionCache);
+export function bootstrap(libjwt, initFunc, getUser) {
     return {
         chrome: {
             auth: {
@@ -165,7 +108,6 @@ export function bootstrap(libjwt, initFunc) {
             },
             isProd: window.location.host === 'cloud.redhat.com',
             isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
-            getUserPermissions: (app = '') => getUser().then(() => fetchPermissions(libjwt.jwt.getEncodedToken(), app)),
             isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
             getBundle: () => getUrl('bundle'),
             getApp: () => getUrl('app'),
