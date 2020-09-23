@@ -4,6 +4,7 @@ import sentry from './sentry';
 import { rootApp, noAccess }   from './chrome/entry';
 import { navLoader } from './App/Sidenav';
 import createChromeInstance from './chrome/create-chrome';
+import registerUrlObserver from './url-observer';
 
 //Add redhat font to body
 document.querySelector('body').classList.add('pf-m-redhat-font');
@@ -30,3 +31,8 @@ libjwt.initPromise.then(() => {
 window.insights = window.insights || {};
 
 window.insights = createChromeInstance(libjwt, window.insights);
+
+if ((typeof _satellite !== 'undefined') && (typeof window._satellite.pageBottom === 'function')) {
+    window._satellite.pageBottom();
+    registerUrlObserver(window._satellite.pageBottom);
+}
