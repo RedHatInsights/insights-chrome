@@ -21,29 +21,21 @@ const fetchPermissions = (userToken, app = '') => {
     .catch(error => log(error));
 };
 
-export const createFetchPermissionsWatcher = (cache) => {
+export const createFetchPermissionsWatcher = (chromeInstance) => {
     let currentCall = undefined;
     return async (userToken, app = '') => {
         if (insights.chrome.getBundle() === 'openshift') {
             return Promise.resolve([]);
         }
         let permissions;
-        try {
-            permissions = await cache.getItem('permissions');
-            if (permissions) {
-                return permissions;
-            }
-        } catch (_error) {
-            // ignore error and get permissions from promise
+        permissions = await chromeInstance.cache.getItem('permissions');
+        if (permissions) {
+            return permissions;
         }
         if (typeof currentCall === 'undefined') {
             currentCall = fetchPermissions(userToken, app).then((data) => {
                 currentCall = undefined;
-                try {
-                    cache.setItem('permissions', data);
-                } catch (_error) {
-                    // ignore error and do not set cache
-                }
+                chromeInstance.cache.setItem('permissions', data);
                 return data;
             });
         }
