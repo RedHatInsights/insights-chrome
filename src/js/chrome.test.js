@@ -1,5 +1,5 @@
 import './test';
-import { chromeInit } from './entry';
+import { chromeInit } from './chrome/entry';
 import * as actions from './redux/actions.js';
 
 const mockedPromis = new Promise(() => {});
