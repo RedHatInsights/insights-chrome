@@ -11,10 +11,7 @@ export default async function loadRemediation (dependencies) {
     const deferred = new Deferred();
     return {
         ...remediationsData,
-        openWizard: async (data, basePath) => {
-            const wizardRef = await deferred.promise;
-            remediationsData.openWizard(data, basePath, wizardRef);
-        },
+        openWizard: async (data, basePath) => remediationsData.openWizard(data, basePath, wizardRef),
         // eslint-disable-next-line react/display-name
         RemediationWizard: () => {
             return <RenderWrapper.default
