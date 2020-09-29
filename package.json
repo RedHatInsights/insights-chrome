@@ -133,7 +133,7 @@
     "@babel/polyfill": "^7.10.1",
     "@babel/runtime": "^7.10.2",
     "@patternfly/patternfly": "^4.42.2",
-    "@patternfly/react-core": "^4.50.2",
+    "@patternfly/react-core": "4.47.0",
     "@patternfly/react-icons": "^4.7.6",
     "@patternfly/react-table": "^4.16.20",
     "@redhat-cloud-services/entitlements-client": "^1.0.74",
