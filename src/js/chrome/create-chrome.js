@@ -71,9 +71,9 @@ const createChromeInstance = (jwt, insights) => {
 
     const chromeFunctions = bootstrap(libjwt, init, getUser);
 
-    chromeFunctions.chrome.getUserPermissions = async (app = '') => {
+    chromeFunctions.chrome.getUserPermissions = async (app = '', bypassCache) => {
         await getUser();
-        return fetchPermissions(libjwt.jwt.getEncodedToken(), app);
+        return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
     };
 
     return {

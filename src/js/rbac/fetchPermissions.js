@@ -23,9 +23,15 @@ const fetchPermissions = (userToken, app = '') => {
 
 export const createFetchPermissionsWatcher = (chromeInstance) => {
     let currentCall = undefined;
-    return async (userToken, app = '') => {
+    return async (userToken, app = '', bypassCache = false) => {
         if (insights.chrome.getBundle() === 'openshift') {
             return Promise.resolve([]);
+        }
+        if (bypassCache) {
+            return fetchPermissions(userToken, app).then(data => {
+                chromeInstance.cache.setItem('permissions', undefined);
+                return data;
+            });
         }
         let permissions;
         permissions = await chromeInstance.cache.getItem('permissions');
