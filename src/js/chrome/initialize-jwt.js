@@ -16,12 +16,12 @@ const initializeJWT = async (libjwt, chromeInstance) => {
         await libjwt.initPromise;
         const user = await libjwt.jwt.getUserInfo();
         actions.userLogIn(user);
+        chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`);
     } catch (_e) {
         if (allowUnauthed()) {
             actions.userLogIn(false);
         }
     }
-    chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`);
     headerLoader();
 };
 
