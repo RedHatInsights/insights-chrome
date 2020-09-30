@@ -2,3 +2,7 @@
     text-transform: capitalize; // All nav links should be in title case, remove CSC as a dependent for this
     &.ins-m-ignore-case { text-transform: none; }
 }
+
+.ins-c-navigation__additional-links {
+    svg { margin-left: var(--pf-global--spacer--sm); }
+}

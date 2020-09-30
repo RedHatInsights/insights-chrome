@@ -74,7 +74,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
       <nav
         aria-label="Local"
         className="pf-c-nav"
-        data-ouia-component-id={3}
+        data-ouia-component-id="OUIA-Generated-Nav-2"
         data-ouia-component-type="PF4/Nav"
         data-ouia-safe="true"
       >
@@ -184,7 +184,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
         <nav
           aria-label="Local"
           className="pf-c-nav"
-          data-ouia-component-id={1}
+          data-ouia-component-id="OUIA-Generated-Nav-1"
           data-ouia-component-type="PF4/Nav"
           data-ouia-safe="true"
         >
@@ -302,33 +302,46 @@ exports[`Navigation should render corectly 1`] = `
       title="Remediations"
     />
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="0"
       rel="noopener noreferrer"
       target="_blank"
     >
       Support Cases
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="1"
       rel="noopener noreferrer"
       target="_blank"
     >
       Cluster Manager Feedback
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="2"
       rel="noopener noreferrer"
       target="_blank"
     >
       Red Hat Marketplace
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="3"
       rel="noopener noreferrer"
       target="_blank"
       to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
+       
+      <ExternalLinkAltIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
     </NavItem>
   </NavList>
 </Nav>
@@ -406,33 +419,46 @@ exports[`Navigation should render correctly 2 1`] = `
       title="Remediations"
     />
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="0"
       rel="noopener noreferrer"
       target="_blank"
     >
       Support Cases
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="1"
       rel="noopener noreferrer"
       target="_blank"
     >
       Cluster Manager Feedback
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="2"
       rel="noopener noreferrer"
       target="_blank"
     >
       Red Hat Marketplace
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="3"
       rel="noopener noreferrer"
       target="_blank"
       to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
+       
+      <ExternalLinkAltIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
     </NavItem>
   </NavList>
 </Nav>

@@ -6,7 +6,7 @@ exports[`AppSwitcher should render correctly 1`] = `
 >
   <div
     className="pf-c-dropdown ins-c-app-switcher__dropdown"
-    data-ouia-component-id={0}
+    data-ouia-component-id="OUIA-Generated-Dropdown-1"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe={true}
   >

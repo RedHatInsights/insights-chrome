@@ -153,7 +153,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
           <div
             aria-label="Overflow actions"
             className="pf-c-dropdown pf-m-align-right"
-            data-ouia-component-id={0}
+            data-ouia-component-id="OUIA-Generated-Dropdown-1"
             data-ouia-component-type="PF4/Dropdown"
             data-ouia-safe={true}
             widget-type="InsightsOverflowActions"
@@ -174,7 +174,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   "current": <div
                     aria-label="Overflow actions"
                     class="pf-c-dropdown pf-m-align-right"
-                    data-ouia-component-id="0"
+                    data-ouia-component-id="OUIA-Generated-Dropdown-1"
                     data-ouia-component-type="PF4/Dropdown"
                     data-ouia-safe="true"
                     widget-type="InsightsOverflowActions"
@@ -243,7 +243,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                     "current": <div
                       aria-label="Overflow actions"
                       class="pf-c-dropdown pf-m-align-right"
-                      data-ouia-component-id="0"
+                      data-ouia-component-id="OUIA-Generated-Dropdown-1"
                       data-ouia-component-type="PF4/Dropdown"
                       data-ouia-safe="true"
                       widget-type="InsightsOverflowActions"
@@ -536,7 +536,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
           <div
             aria-label="Overflow actions"
             className="pf-c-dropdown pf-m-align-right"
-            data-ouia-component-id={1}
+            data-ouia-component-id="OUIA-Generated-Dropdown-2"
             data-ouia-component-type="PF4/Dropdown"
             data-ouia-safe={true}
             widget-type="InsightsOverflowActions"
@@ -557,7 +557,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   "current": <div
                     aria-label="Overflow actions"
                     class="pf-c-dropdown pf-m-align-right"
-                    data-ouia-component-id="1"
+                    data-ouia-component-id="OUIA-Generated-Dropdown-2"
                     data-ouia-component-type="PF4/Dropdown"
                     data-ouia-safe="true"
                     widget-type="InsightsOverflowActions"
@@ -626,7 +626,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     "current": <div
                       aria-label="Overflow actions"
                       class="pf-c-dropdown pf-m-align-right"
-                      data-ouia-component-id="1"
+                      data-ouia-component-id="OUIA-Generated-Dropdown-2"
                       data-ouia-component-type="PF4/Dropdown"
                       data-ouia-safe="true"
                       widget-type="InsightsOverflowActions"

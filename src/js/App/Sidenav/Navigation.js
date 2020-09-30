@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
 import NavigationItem from './NavigationItem';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
 
@@ -18,19 +19,23 @@ const extraLinks = {
         link: './subscriptions/'
     }, {
         url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
-        title: 'Documentation'
+        title: 'Documentation',
+        external: true
     }],
     subscriptions: [{
         url: 'https://access.redhat.com/products/subscription-central',
-        title: 'Documentation'
+        title: 'Documentation',
+        external: true
     }],
     'cost-management': [{
         url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
-        title: 'Documentation'
+        title: 'Documentation',
+        external: true
     }],
     ansible: [{
         url: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
-        title: 'Documentation'
+        title: 'Documentation',
+        external: true
     }],
     openshift: [{
         title: 'Support Cases',
@@ -43,7 +48,8 @@ const extraLinks = {
         link: 'https://marketplace.redhat.com'
     }, {
         url: 'https://docs.openshift.com/dedicated/4/',
-        title: 'Documentation'
+        title: 'Documentation',
+        external: true
     }]
 };
 
@@ -122,11 +128,12 @@ export const Navigation = ({
                 ))}
                 {extraLinks[activeLocation]?.map?.((item, key) => (
                     <NavItem
+                        className='ins-c-navigation__additional-links'
                         key={key}
                         to={item.url}
                         target='_blank'
                         rel='noopener noreferrer'>
-                        {item.title}
+                        {item.title} {item.external && <ExternalLinkAltIcon/>}
                     </NavItem>
                 ))}
             </NavList>
