@@ -38,13 +38,13 @@ export default async (dependencies) => {
     }
 
     if (isDetailsEnabled) {
-        SystemAdvisoryListStore = await import(/* webpackChunkName: "inventory-patch-store" */
+        SystemAdvisoryListStore = (await import(/* webpackChunkName: "inventory-patch-store" */
             '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
-        )?.SystemAdvisoryListStore;
+        ))?.SystemAdvisoryListStore;
 
-        SystemCvesStore = await import(/* webpackChunkName: "inventory-vuln-store" */
+        SystemCvesStore = (await import(/* webpackChunkName: "inventory-vuln-store" */
             '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
-        )?.SystemCvesStore;
+        ))?.SystemCvesStore;
     }
 
     return {
