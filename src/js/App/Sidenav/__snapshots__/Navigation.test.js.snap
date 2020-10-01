@@ -302,33 +302,46 @@ exports[`Navigation should render corectly 1`] = `
       title="Remediations"
     />
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="0"
       rel="noopener noreferrer"
       target="_blank"
     >
       Support Cases
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="1"
       rel="noopener noreferrer"
       target="_blank"
     >
       Cluster Manager Feedback
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="2"
       rel="noopener noreferrer"
       target="_blank"
     >
       Red Hat Marketplace
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="3"
       rel="noopener noreferrer"
       target="_blank"
       to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
+       
+      <ExternalLinkAltIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
     </NavItem>
   </NavList>
 </Nav>
@@ -406,33 +419,46 @@ exports[`Navigation should render correctly 2 1`] = `
       title="Remediations"
     />
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="0"
       rel="noopener noreferrer"
       target="_blank"
     >
       Support Cases
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="1"
       rel="noopener noreferrer"
       target="_blank"
     >
       Cluster Manager Feedback
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="2"
       rel="noopener noreferrer"
       target="_blank"
     >
       Red Hat Marketplace
+       
     </NavItem>
     <NavItem
+      className="ins-c-navigation__additional-links"
       key="3"
       rel="noopener noreferrer"
       target="_blank"
       to="https://docs.openshift.com/dedicated/4/"
     >
       Documentation
+       
+      <ExternalLinkAltIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
     </NavItem>
   </NavList>
 </Nav>
