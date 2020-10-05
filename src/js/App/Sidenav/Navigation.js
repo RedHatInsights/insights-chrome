@@ -98,8 +98,8 @@ export const Navigation = ({
                     item.subItems ? <NavExpandable
                         className="ins-m-navigation-align"
                         title={item.title}
-                        ouia-nav-group={item.id}
                         itemID={item.id}
+                        ouiaId={item.id}
                         key={key}
                         isActive={item.active}
                         isExpanded={item.active}>
@@ -107,7 +107,7 @@ export const Navigation = ({
                             item.subItems.map((subItem, subKey) => <NavigationItem
                                 ignoreCase={subItem.ignoreCase}
                                 itemID={subItem.reload || subItem.id}
-                                ouia-nav-item={subItem.reload || subItem.id}
+                                ouiaId={subItem.reload || subItem.id}
                                 key={subKey}
                                 title={subItem.title}
                                 parent={subItem.reload ? activeLocation : `${activeLocation}${item.id ? `/${item.id}` : ''}`}
@@ -118,7 +118,7 @@ export const Navigation = ({
                     </NavExpandable> : <NavigationItem
                         ignoreCase={item.ignoreCase}
                         itemID={item.id}
-                        ouia-nav-item={item.id}
+                        ouiaId={item.id}
                         key={key}
                         title={item.title}
                         parent={activeLocation}
@@ -131,6 +131,7 @@ export const Navigation = ({
                         className='ins-c-navigation__additional-links'
                         key={key}
                         to={item.url}
+                        ouiaId={item.id}
                         target='_blank'
                         rel='noopener noreferrer'>
                         {item.title} {item.external && <ExternalLinkAltIcon/>}

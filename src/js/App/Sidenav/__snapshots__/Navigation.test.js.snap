@@ -251,7 +251,7 @@ exports[`Navigation should render corectly 1`] = `
       isExpanded={true}
       itemID="overview"
       key="0"
-      ouia-nav-group="overview"
+      ouiaId="overview"
       srText=""
       title="Overview"
     >
@@ -260,7 +260,7 @@ exports[`Navigation should render corectly 1`] = `
         itemID="someID"
         key="0"
         onClick={[Function]}
-        ouia-nav-item="someID"
+        ouiaId="someID"
         parent="openshift/overview"
         title="Clusters"
       />
@@ -270,7 +270,7 @@ exports[`Navigation should render corectly 1`] = `
       itemID="rules"
       key="1"
       onClick={[Function]}
-      ouia-nav-item="rules"
+      ouiaId="rules"
       parent="openshift"
       title="Rules"
     />
@@ -279,7 +279,7 @@ exports[`Navigation should render corectly 1`] = `
       itemID="topics"
       key="2"
       onClick={[Function]}
-      ouia-nav-item="topics"
+      ouiaId="topics"
       parent="openshift"
       title="Topics"
     />
@@ -288,7 +288,7 @@ exports[`Navigation should render corectly 1`] = `
       itemID="inventory"
       key="3"
       onClick={[Function]}
-      ouia-nav-item="inventory"
+      ouiaId="inventory"
       parent="openshift"
       title="Inventory"
     />
@@ -297,7 +297,7 @@ exports[`Navigation should render corectly 1`] = `
       itemID="remediations"
       key="4"
       onClick={[Function]}
-      ouia-nav-item="remediations"
+      ouiaId="remediations"
       parent="openshift"
       title="Remediations"
     />
@@ -368,7 +368,7 @@ exports[`Navigation should render correctly 2 1`] = `
       isExpanded={true}
       itemID="overview"
       key="0"
-      ouia-nav-group="overview"
+      ouiaId="overview"
       srText=""
       title="Overview"
     >
@@ -377,7 +377,7 @@ exports[`Navigation should render correctly 2 1`] = `
         itemID="someID"
         key="0"
         onClick={[Function]}
-        ouia-nav-item="someID"
+        ouiaId="someID"
         parent="openshift/overview"
         title="Clusters"
       />
@@ -387,7 +387,7 @@ exports[`Navigation should render correctly 2 1`] = `
       itemID="rules"
       key="1"
       onClick={[Function]}
-      ouia-nav-item="rules"
+      ouiaId="rules"
       parent="openshift"
       title="Rules"
     />
@@ -396,7 +396,7 @@ exports[`Navigation should render correctly 2 1`] = `
       itemID="topics"
       key="2"
       onClick={[Function]}
-      ouia-nav-item="topics"
+      ouiaId="topics"
       parent="openshift"
       title="Topics"
     />
@@ -405,7 +405,7 @@ exports[`Navigation should render correctly 2 1`] = `
       itemID="inventory"
       key="3"
       onClick={[Function]}
-      ouia-nav-item="inventory"
+      ouiaId="inventory"
       parent="openshift"
       title="Inventory"
     />
@@ -414,7 +414,7 @@ exports[`Navigation should render correctly 2 1`] = `
       itemID="remediations"
       key="4"
       onClick={[Function]}
-      ouia-nav-item="remediations"
+      ouiaId="remediations"
       parent="openshift"
       title="Remediations"
     />
