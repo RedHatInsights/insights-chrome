@@ -29,7 +29,8 @@ const AppSwitcher = ({ currentApp }) => {
                 component='a'
                 href={`${document.baseURI}${app.id}`}
                 className={classNames({ 'ins-c-app-switcher__current': app.title === activeApp })}
-                key={app.id}>
+                key={app.id}
+                ouiaId={app.id}>
                 {app.title}
             </DropdownItem>
         );
@@ -51,6 +52,7 @@ const AppSwitcher = ({ currentApp }) => {
                 }
                 isOpen={isOpen}
                 dropdownItems={dropdownItems(currentApp)}
+                ouiaId='App Switcher'
             />
         </section>
     );
