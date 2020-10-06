@@ -306,6 +306,7 @@ exports[`Navigation should render corectly 1`] = `
       key="0"
       rel="noopener noreferrer"
       target="_blank"
+      to="https://access.redhat.com/support/cases"
     >
       Support Cases
        
@@ -315,6 +316,7 @@ exports[`Navigation should render corectly 1`] = `
       key="1"
       rel="noopener noreferrer"
       target="_blank"
+      to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
        
@@ -324,6 +326,7 @@ exports[`Navigation should render corectly 1`] = `
       key="2"
       rel="noopener noreferrer"
       target="_blank"
+      to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
        
@@ -423,6 +426,7 @@ exports[`Navigation should render correctly 2 1`] = `
       key="0"
       rel="noopener noreferrer"
       target="_blank"
+      to="https://access.redhat.com/support/cases"
     >
       Support Cases
        
@@ -432,6 +436,7 @@ exports[`Navigation should render correctly 2 1`] = `
       key="1"
       rel="noopener noreferrer"
       target="_blank"
+      to="mailto:ocm-feedback@redhat.com"
     >
       Cluster Manager Feedback
        
@@ -441,6 +446,7 @@ exports[`Navigation should render correctly 2 1`] = `
       key="2"
       rel="noopener noreferrer"
       target="_blank"
+      to="https://marketplace.redhat.com"
     >
       Red Hat Marketplace
        
