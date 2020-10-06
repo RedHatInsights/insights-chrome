@@ -21,28 +21,14 @@ const fetchPermissions = (userToken, app = '') => {
     .catch(error => log(error));
 };
 
-export const createFetchPermissionsWatcher = (chromeInstance) => {
+export const createFetchPermissionsWatcher = () => {
     let currentCall = {};
-    return async (userToken, app = '', bypassCache = false) => {
+    return async (userToken, app = '') => {
         if (insights.chrome.getBundle() === 'openshift') {
             return Promise.resolve([]);
         }
-        if (bypassCache) {
-            const data = await fetchPermissions(userToken, app);
-            chromeInstance.cache.setItem('permissions', undefined);
-            return data;
-        }
-        let permissions;
-        permissions = await chromeInstance.cache.getItem('permissions');
-        if (permissions?.[app]) {
-            return permissions?.[app];
-        }
         if (typeof currentCall?.[app] === 'undefined') {
             currentCall[app] = await fetchPermissions(userToken, app);
-            chromeInstance.cache.setItem('permissions', {
-                ...permissions || {},
-                [app]: currentCall[app]
-            });
         }
         return currentCall?.[app];
     };
