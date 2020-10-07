@@ -130,7 +130,7 @@ export const Navigation = ({
                     <NavItem
                         className='ins-c-navigation__additional-links'
                         key={key}
-                        to={item.url}
+                        to={item.url || item.link}
                         ouiaId={item.id}
                         target='_blank'
                         rel='noopener noreferrer'>
