@@ -16,6 +16,7 @@ import logger from '../jwt/logger';
 import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
 import flatMap from 'lodash/flatMap';
+import get from 'lodash/get';
 
 const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ '../App/NoAccess'));
 
@@ -23,22 +24,22 @@ const log = logger('entry.js');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
-    APP_NAVIGATION: fn => ({
+    APP_NAVIGATION: [fn => ({
         on: actionTypes.APP_NAV_CLICK,
         callback: ({ data }) => {
             if (data.id !== undefined || data.event) {
                 fn({ navId: data.id, domEvent: data.event });
             }
         }
-    }),
-    NAVIGATION_TOGGLE: callback => ({
+    })],
+    NAVIGATION_TOGGLE: [callback => ({
         on: actionTypes.NAVIGATION_TOGGLE,
         callback
-    }),
-    GLOBAL_FILTER_UPDATE: callback => ({
+    })],
+    GLOBAL_FILTER_UPDATE: [callback => ({
         on: actionTypes.GLOBAL_FILTER_UPDATE,
         callback
-    })
+    }), 'chrome.selectedTags']
 };
 
 export function chromeInit(navResolver) {
@@ -83,7 +84,13 @@ export function chromeInit(navResolver) {
                 throw new Error(`Unknown event type: ${type}`);
             }
 
-            return middlewareListener.addNew(PUBLIC_EVENTS[type](callback));
+            const [listener, selector] = PUBLIC_EVENTS[type];
+            if (selector) {
+                callback({
+                    data: get(store.getState(), selector)
+                });
+            }
+            return middlewareListener.addNew(listener(callback));
         },
         $internal: { store },
         loadInventory,
@@ -140,10 +147,10 @@ export function noAccess() {
     window.insights.chrome.auth.getUser().then(({ entitlements }) => {
         if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
             const path = location.pathname.split('/');
-            const apps = Object.keys(entitlements);
+            const apps = Object.keys(entitlements || {});
 
             /* eslint-disable camelcase */
-            const grantAccess = Object.entries(entitlements).filter(([app, { is_entitled }]) => {
+            const grantAccess = Object.entries(entitlements || {}).filter(([app, { is_entitled }]) => {
             // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
                 return path.includes(app) && is_entitled;
             });
