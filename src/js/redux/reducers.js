@@ -154,3 +154,10 @@ export function onGlobalFilterToggle(state, { payload }) {
         globalFilterHidden: payload.isHidden
     };
 }
+
+export function onTagSelect(state, { payload }) {
+    return {
+        ...state,
+        selectedTags: payload
+    };
+}
