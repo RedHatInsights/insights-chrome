@@ -57,7 +57,7 @@ export function chromeInit(navResolver) {
         hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
         globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
         mapGlobalFilter: (filter, encode = false) => flatMap(
-            Object.entries(filter),
+            Object.entries(filter || {}),
             ([namespace, item]) => Object.entries(item)
             .filter(([, { isSelected }]) => isSelected)
             .map(([groupKey, { item, value: tagValue }]) => `${
