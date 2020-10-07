@@ -34,7 +34,7 @@ const GlobalFilter = () => {
         },
         undefined,
         'system',
-        'Manage tags'
+        'View more'
     );
     useEffect(() => {
         if (!token && userLoaded) {
