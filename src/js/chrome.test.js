@@ -91,6 +91,16 @@ describe('Chrome API', () => {
             actions.globalFilterChange()
         );
         expect(callback).toHaveBeenCalled();
+        expect(callback.mock.calls.length).toBe(2);
+    });
+
+    test('should call callback without action triggered', () => {
+        const callback = jest.fn();
+        const chrome = chromeInit(getMockLibJwt());
+        chrome.on('GLOBAL_FILTER_UPDATE', callback);
+
+        expect(callback).toHaveBeenCalled();
+        expect(callback.mock.calls.length).toBe(1);
     });
 
     test('allows for an event GLOBAL_FILTER_UPDATE to be unregistered', () => {
@@ -101,7 +111,7 @@ describe('Chrome API', () => {
         chrome.$internal.store.dispatch(
             actions.globalFilterChange()
         );
-        expect(callback).not.toHaveBeenCalled();
+        expect(callback.mock.calls.length).toBe(1);
     });
 
     test('hides global filter', () => {
