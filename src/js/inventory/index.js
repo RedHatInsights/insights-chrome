@@ -49,16 +49,21 @@ export default async (dependencies) => {
 
     return {
         ...invData,
-        inventoryConnector: (store) => invData.inventoryConnector(store, isDetailsEnabled ? {
-            componentMapper: RenderWrapper.default,
-            appList: [
-                { title: 'General information', name: 'general_information', pageId: 'inventory' },
-                { title: 'Advisor', name: 'advisor', pageId: 'insights' },
-                { title: 'Vulnerability', name: 'vulnerabilities', pageId: 'vulnerability' },
-                { title: 'Compliance', name: 'compliance' },
-                { title: 'Patch', name: 'patch' }
-            ]
-        } : undefined, drawerEnabled ? RenderWrapper.default : undefined),
+        inventoryConnector: (store) => invData.inventoryConnector(
+            store,
+            isDetailsEnabled ? {
+                componentMapper: RenderWrapper.default,
+                appList: [
+                    { title: 'General information', name: 'general_information', pageId: 'inventory' },
+                    { title: 'Advisor', name: 'advisor', pageId: 'insights' },
+                    { title: 'Vulnerability', name: 'vulnerabilities', pageId: 'vulnerability' },
+                    { title: 'Compliance', name: 'compliance' },
+                    { title: 'Patch', name: 'patch' }
+                ]
+            } : undefined,
+            drawerEnabled ? RenderWrapper.default : undefined,
+            !insights.chrome.isProd // TODO: remove once RBAC inventory in prod!
+        ),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
             ...(isDetailsEnabled || drawerEnabled) && { systemProfileStore: systemProfileStore.default },

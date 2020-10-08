@@ -7,11 +7,17 @@ import { fetchAllTags, globalFilterChange } from '../../redux/actions';
 import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup';
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
+import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, GLOBAL_FILTER_KEY, selectWorkloads } from './constants';
 import { decodeToken } from '../../jwt/jwt';
 
 const GlobalFilter = () => {
+    const [hasAccess, setHasAccess] = useState(undefined);
+
+    // TODO: remove once RBAC inventory in prod!
+    const isAllowed = () => window.insights?.chrome?.isProd || hasAccess;
+
     const [isOpen, setIsOpen] = useState(false);
     const [token, setToken] = useState();
     const dispatch = useDispatch();
@@ -37,6 +43,16 @@ const GlobalFilter = () => {
         'View more'
     );
     useEffect(() => {
+        (async () => {
+            const permissions = await window.insights?.chrome?.getUserPermissions('inventory');
+            setHasAccess(permissions?.some(item => [
+                'inventory:*:*',
+                'inventory:*:read',
+                'inventory:hosts:read'
+            ].includes(item?.permission || item)));
+        })();
+    }, [userLoaded]);
+    useEffect(() => {
         if (!token && userLoaded) {
             (async () => {
                 // eslint-disable-next-line camelcase
@@ -48,7 +64,7 @@ const GlobalFilter = () => {
                 }
                 setToken(() => currToken);
             })();
-        } else if (userLoaded && token) {
+        } else if (userLoaded && token && isAllowed()) {
             storeFilter(selectedTags, token);
             dispatch(fetchAllTags({
                 registeredWith: filterScope,
@@ -56,10 +72,10 @@ const GlobalFilter = () => {
                 search: filterTagsBy
             }));
         }
-    }, [selectedTags, filterScope, filterTagsBy, userLoaded]);
+    }, [selectedTags, filterScope, filterTagsBy, userLoaded, isAllowed()]);
 
     useEffect(() => {
-        if (userLoaded && token) {
+        if (userLoaded && token && isAllowed()) {
             if (!Object.values(selectedTags?.[workloads?.[0]?.name] || {})?.some(({ isSelected } = {}) => isSelected)) {
                 setValue({
                     ...selectedTags || {},
@@ -72,52 +88,62 @@ const GlobalFilter = () => {
                 dispatch(globalFilterChange(selectedTags));
             }
         }
-    }, [selectedTags]);
+    }, [selectedTags, isAllowed()]);
 
     const workloadsChip = chips?.splice(chips?.findIndex(({ key }) => key === 'Workloads'), 1);
     chips?.splice(0, 0, ...workloadsChip || []);
+    const GroupFilterWrapper = isAllowed() ? Fragment : Tooltip;
     return <Fragment>
         <Split hasGutter className="ins-c-chrome__global-filter">
             <SplitItem>
-                {userLoaded ?
-                    <GroupFilter
-                        {...filter}
-                        placeholder="Search tags"
-                    /> :
+                {(userLoaded && isAllowed() !== undefined) ?
+                    <GroupFilterWrapper
+                        position="right"
+                        content="You do not have the required inventory permissions to perform this action"
+                    >
+                        <GroupFilter
+                            {...filter}
+                            isDisabled={!isAllowed()}
+                            placeholder="Search tags"
+                        />
+                    </GroupFilterWrapper>
+                    :
                     <Skeleton size={SkeletonSize.xl}/>
                 }
             </SplitItem>
-            <SplitItem isFilled>
-                {chips?.length > 0 && (
-                    <Fragment>
-                        {chips.map(({ category, chips }, key) => (
-                            <ChipGroup
-                                key={key}
-                                categoryName={category}
-                                className={category === 'Workloads' ? 'ins-m-sticky' : ''}
-                            >
-                                {chips?.map(({ key: tagKey, value }, chipKey) => (
-                                    <Chip
-                                        key={chipKey}
-                                        className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
-                                        onClick={() => setValue(() => updateSelected(
-                                            selectedTags,
-                                            category,
-                                            tagKey,
-                                            value,
-                                            false
-                                        ))}
-                                    >
-                                        {tagKey}
-                                        {value ? `=${value}` : ''}
-                                    </Chip>
-                                ))}
-                            </ChipGroup>
-                        ))}
-                        <Button variant="link" onClick={() => setValue(() => ({}))}>Clear filters</Button>
-                    </Fragment>
-                )}
-            </SplitItem>
+            {isAllowed() && (
+                <SplitItem isFilled>
+                    {chips?.length > 0 && (
+                        <Fragment>
+                            {chips.map(({ category, chips }, key) => (
+                                <ChipGroup
+                                    key={key}
+                                    categoryName={category}
+                                    className={category === 'Workloads' ? 'ins-m-sticky' : ''}
+                                >
+                                    {chips?.map(({ key: tagKey, value }, chipKey) => (
+                                        <Chip
+                                            key={chipKey}
+                                            className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
+                                            onClick={() => setValue(() => updateSelected(
+                                                selectedTags,
+                                                category,
+                                                tagKey,
+                                                value,
+                                                false
+                                            ))}
+                                        >
+                                            {tagKey}
+                                            {value ? `=${value}` : ''}
+                                        </Chip>
+                                    ))}
+                                </ChipGroup>
+                            ))}
+                            <Button variant="link" onClick={() => setValue(() => ({}))}>Clear filters</Button>
+                        </Fragment>
+                    )}
+                </SplitItem>
+            )}
         </Split>
         {
             isOpen &&
