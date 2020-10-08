@@ -87,7 +87,7 @@ export function chromeInit(navResolver) {
             const [listener, selector] = PUBLIC_EVENTS[type];
             if (selector) {
                 callback({
-                    data: get(store.getState(), selector)
+                    data: get(store.getState(), selector) || {}
                 });
             }
             return middlewareListener.addNew(listener(callback));
