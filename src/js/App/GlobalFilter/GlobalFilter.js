@@ -39,7 +39,7 @@ const GlobalFilter = () => {
         },
         undefined,
         'system',
-        'Manage tags'
+        'View more'
     );
     useEffect(() => {
         (async () => {
