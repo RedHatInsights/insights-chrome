@@ -9,8 +9,7 @@ import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipG
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, storeFilter, GLOBAL_FILTER_KEY, selectWorkloads } from './constants';
-import { decodeToken } from '../../jwt/jwt';
+import { workloads, updateSelected, storeFilter, generateFilter, selectWorkloads } from './constants';
 
 const GlobalFilter = () => {
     const [hasAccess, setHasAccess] = useState(undefined);
@@ -40,7 +39,7 @@ const GlobalFilter = () => {
         },
         undefined,
         'system',
-        'Manage tags'
+        'View more'
     );
     useEffect(() => {
         (async () => {
@@ -55,13 +54,8 @@ const GlobalFilter = () => {
     useEffect(() => {
         if (!token && userLoaded) {
             (async () => {
-                // eslint-disable-next-line camelcase
-                const currToken = decodeToken(await insights.chrome.auth.getToken())?.session_state;
-                try {
-                    setValue(() => JSON.parse(localStorage.getItem(`${GLOBAL_FILTER_KEY}/${currToken}`) || '{}'));
-                } catch (e) {
-                    setValue(() => {});
-                }
+                const [data, currToken] = await generateFilter();
+                setValue(() => data);
                 setToken(() => currToken);
             })();
         } else if (userLoaded && token && isAllowed()) {
