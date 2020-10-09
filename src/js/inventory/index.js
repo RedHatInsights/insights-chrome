@@ -62,7 +62,7 @@ export default async (dependencies) => {
                 ]
             } : undefined,
             drawerEnabled ? RenderWrapper.default : undefined,
-            !insights.chrome.isProd // TODO: remove once RBAC inventory in prod!
+            !insights.chrome.isProd && !location.hostname.includes('stage') // TODO: remove once RBAC inventory in prod!
         ),
         mergeWithDetail: (redux) => ({
             ...invData.mergeWithDetail(redux),
