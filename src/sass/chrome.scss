@@ -1,36 +1,36 @@
 $pf-global--enable-reset: 'true';
 $pf-global--image-path: './assets/images/';
 
-@import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
+@import '~@patternfly/patternfly/patternfly-base.scss';
 
 // Components
-@import 'node_modules/@patternfly/patternfly/components/Toolbar/toolbar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Page/page.scss';
-@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
-@import 'node_modules/@patternfly/patternfly/components/Nav/nav.scss';
-@import 'node_modules/@patternfly/patternfly/components/Button/button.scss';
-@import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
-@import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
-@import 'node_modules/@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
-@import 'node_modules/@patternfly/patternfly/components/ModalBox/modal-box.scss';
-@import 'node_modules/@patternfly/patternfly/components/Backdrop/backdrop.scss';
-@import 'node_modules/@patternfly/patternfly/components/Switch/switch.scss';
-@import 'node_modules/@patternfly/patternfly/components/Alert/alert.scss';
+@import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
+@import '~@patternfly/patternfly/components/Page/page.scss';
+@import '~@patternfly/patternfly/components/BackgroundImage/background-image.scss';
+@import '~@patternfly/patternfly/components/Nav/nav.scss';
+@import '~@patternfly/patternfly/components/Button/button.scss';
+@import '~@patternfly/patternfly/components/Dropdown/dropdown.scss';
+@import '~@patternfly/patternfly/components/Avatar/avatar.scss';
+@import '~@patternfly/patternfly/components/Title/title.scss';
+@import '~@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
+@import '~@patternfly/patternfly/components/ModalBox/modal-box.scss';
+@import '~@patternfly/patternfly/components/Backdrop/backdrop.scss';
+@import '~@patternfly/patternfly/components/Switch/switch.scss';
+@import '~@patternfly/patternfly/components/Alert/alert.scss';
 
 // Layouts
-@import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
-@import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
-@import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
+@import '~@patternfly/patternfly/layouts/Split/split.scss';
+@import '~@patternfly/patternfly/layouts/Flex/flex.scss';
+@import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/Spinner.css';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/Skeleton.css';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/conditional-filter.css';
+@import '~@redhat-cloud-services/frontend-components/components/Spinner.css';
+@import '~@redhat-cloud-services/frontend-components/components/Skeleton.css';
+@import '~@redhat-cloud-services/frontend-components/components/ConditionalFilter.css';
 
 // Accessibility
-@import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
-@import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
+@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
+@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@import '~@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
 
 @import 'helpers.scss';
 
