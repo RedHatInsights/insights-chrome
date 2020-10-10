@@ -2,7 +2,7 @@ import { deleteLocalStorageItems } from '../../utils';
 import { decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
-
+export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
     {
         name: 'Workloads',

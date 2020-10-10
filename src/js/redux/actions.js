@@ -1,5 +1,5 @@
 import * as actionTypes from './action-types';
-import { getAllTags } from '../App/GlobalFilter/tagsApi';
+import { getAllTags, getAllSIDs, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 
 export const onToggle = () => ({
     type: actionTypes.NAVIGATION_TOGGLE
@@ -64,6 +64,20 @@ export function fetchAllTags(filters, pagination) {
     return {
         type: actionTypes.CHROME_GET_ALL_TAGS,
         payload: getAllTags(filters, pagination)
+    };
+}
+
+export function fetchAllSIDs(filters, pagination) {
+    return {
+        type: actionTypes.CHROME_GET_ALL_SIDS,
+        payload: getAllSIDs(filters, pagination)
+    };
+}
+
+export function fetchAllWorkloads(filters, pagination) {
+    return {
+        type: actionTypes.CHROME_GET_ALL_WORKLOADS,
+        payload: getAllWorkloads(filters, pagination)
     };
 }
 

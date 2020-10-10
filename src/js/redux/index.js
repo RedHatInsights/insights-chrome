@@ -9,13 +9,19 @@ import {
     clearActive,
     navUpdateReducer,
     onPageAction,
-    onPageObjectId,
+    onPageObjectId
+} from './reducers';
+import {
     onGetAllTags,
     onGetAllTagsPending,
     onSetGlobalFilterScope,
     onGlobalFilterToggle,
-    onTagSelect
-} from './reducers';
+    onTagSelect,
+    onGetAllSIDs,
+    onGetAllSIDsPending,
+    onGetAllWorkloads,
+    onGetAllWorkloadsPending
+} from './globalFilterReducers';
 import {
     CLICK_ACTION,
     GLOBAL_NAV_IDENT,
@@ -27,6 +33,8 @@ import {
     CHROME_PAGE_ACTION,
     CHROME_PAGE_OBJECT,
     CHROME_GET_ALL_TAGS,
+    CHROME_GET_ALL_SIDS,
+    CHROME_GET_ALL_WORKLOADS,
     GLOBAL_FILTER_SCOPE,
     GLOBAL_FILTER_TOGGLE,
     GLOBAL_FILTER_UPDATE
@@ -41,9 +49,16 @@ const reducers = {
     [USER_LOGIN]: loginReducer,
     [CHROME_NAV_UPDATE]: navUpdateReducer,
     [CHROME_PAGE_ACTION]: onPageAction,
-    [CHROME_PAGE_OBJECT]: onPageObjectId,
+    [CHROME_PAGE_OBJECT]: onPageObjectId
+};
+
+const globalFilter = {
     [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
     [`${CHROME_GET_ALL_TAGS}_PENDING`]: onGetAllTagsPending,
+    [`${CHROME_GET_ALL_SIDS}_FULFILLED`]: onGetAllSIDs,
+    [`${CHROME_GET_ALL_SIDS}_PENDING`]: onGetAllSIDsPending,
+    [`${CHROME_GET_ALL_WORKLOADS}_FULFILLED`]: onGetAllWorkloads,
+    [`${CHROME_GET_ALL_WORKLOADS}_PENDING`]: onGetAllWorkloadsPending,
     [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope,
     [GLOBAL_FILTER_TOGGLE]: onGlobalFilterToggle,
     [GLOBAL_FILTER_UPDATE]: onTagSelect
@@ -52,5 +67,8 @@ const reducers = {
 export default function() {
     // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
-    return { chrome: (state = {}, action) => applyReducerHash(reducers)(state, action) };
+    return {
+        chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
+        globalFilter: (state = {}, action) => applyReducerHash(globalFilter)(state, action)
+    };
 }

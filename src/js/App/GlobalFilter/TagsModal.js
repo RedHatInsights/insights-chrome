@@ -10,12 +10,12 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
     const [selected, setSelected] = useState([]);
     const [filterBy, setFilterBy] = useState('');
     const dispatch = useDispatch();
-    const loaded = useSelector(({ chrome: { tags } }) => tags?.isLoaded);
-    const tags = useSelector(({ chrome: { tags } }) => tags?.items || []);
-    const tagsCount = useSelector(({ chrome: { tags } }) => tags?.total || 0);
-    const page = useSelector(({ chrome: { tags } }) => tags?.page || 1);
-    const perPage = useSelector(({ chrome: { tags } }) => tags?.perPage || 10);
-    const filterScope = useSelector(({ chrome: { globalFilterScope } }) => globalFilterScope || undefined);
+    const loaded = useSelector(({ globalFilter: { tags } }) => tags?.isLoaded);
+    const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
+    const tagsCount = useSelector(({ globalFilter: { tags } }) => tags?.total || 0);
+    const page = useSelector(({ globalFilter: { tags } }) => tags?.page || 1);
+    const perPage = useSelector(({ globalFilter: { tags } }) => tags?.perPage || 10);
+    const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
     const debounceGeTags = useCallback(debounce((search) => {
         dispatch(fetchAllTags({
             registeredWith: filterScope,
@@ -52,7 +52,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             )
         }}
         loaded={ loaded }
-        width="auto"
+        width="50%"
         isOpen={ isOpen }
         toggleModal={(_e, isSubmit) => {
             setSelected([]);

@@ -39,7 +39,7 @@ const PUBLIC_EVENTS = {
     GLOBAL_FILTER_UPDATE: [callback => ({
         on: actionTypes.GLOBAL_FILTER_UPDATE,
         callback
-    }), 'chrome.selectedTags']
+    }), 'globalFilter.selectedTags']
 };
 
 export function chromeInit(navResolver) {
