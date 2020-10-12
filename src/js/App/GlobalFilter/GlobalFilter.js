@@ -109,7 +109,7 @@ const GlobalFilter = () => {
 
     useEffect(() => {
         const sapTag = workloads?.[0]?.tags?.[1];
-        if (sapCount && sapTag) {
+        if (sapCount !== undefined && sapTag) {
             sapTag.count = sapCount;
         }
     }, [sapCount]);

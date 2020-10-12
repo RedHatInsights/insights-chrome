@@ -1,6 +1,8 @@
 import { deleteLocalStorageItems } from '../../utils';
 import { decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
+import flatMap from 'lodash/flatMap';
+
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -83,4 +85,28 @@ export const generateFilter = async () => {
     }
 
     return [data, currToken];
+};
+
+export const flatTags = (filter, encode = false, format = false) => {
+    const { Workloads, SID, ...tags } = filter;
+    const mappedTags = flatMap(
+        Object.entries({ ...tags, ...!format && { Workloads, SID } } || {}),
+        ([namespace, item]) => Object.entries(item || {})
+        .filter(([, { isSelected }]) => isSelected)
+        .map(([groupKey, { item, value: tagValue }]) => `${
+                namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''
+            }${
+                encode ? encodeURIComponent(groupKey) : groupKey
+            }${
+                (item?.tagValue || tagValue) ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''
+            }`)
+    );
+    return format ? [
+        Workloads,
+        Object.entries(SID || {}).filter(([, { isSelected }]) => isSelected).reduce((acc, [key]) => ([
+            ...acc,
+            key
+        ]), []),
+        mappedTags
+    ] : mappedTags;
 };
