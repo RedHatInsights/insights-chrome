@@ -117,12 +117,12 @@ describe('Chrome API', () => {
     test('hides global filter', () => {
         const chrome = chromeInit(getMockLibJwt());
         chrome.hideGlobalFilter();
-        expect(chrome.$internal.store.getState().chrome.globalFilterHidden).toBe(true);
+        expect(chrome.$internal.store.getState().globalFilter.globalFilterHidden).toBe(true);
     });
 
     test('shows global filter', () => {
         const chrome = chromeInit(getMockLibJwt());
         chrome.hideGlobalFilter(false);
-        expect(chrome.$internal.store.getState().chrome.globalFilterHidden).toBe(false);
+        expect(chrome.$internal.store.getState().globalFilter.globalFilterHidden).toBe(false);
     });
 });

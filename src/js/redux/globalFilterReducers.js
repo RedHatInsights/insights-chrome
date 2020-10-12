@@ -12,7 +12,7 @@ export function onGetAllTags(state, { payload }) {
         ...state,
         tags: {
             isLoaded: true,
-            items: Object.entries(groupBy(payload?.results, ({ tag: { namespace } }) => namespace)).map(([key, value]) => ({
+            items: Object.entries(groupBy(payload?.results || [], ({ tag: { namespace } }) => namespace)).map(([key, value]) => ({
                 name: key,
                 tags: value
             })),
@@ -56,14 +56,13 @@ export function onTagSelect(state, { payload }) {
 }
 
 export function onGetAllSIDs(state, { payload }) {
-    console.log(payload, 'SIDs');
     return {
         ...state,
         sid: {
             isLoaded: true,
             items: [{
                 name: 'SID',
-                tags: payload?.results?.map(({ value, count } = {}) => ({
+                tags: (payload?.results || []).map(({ value, count } = {}) => ({
                     tag: { key: value },
                     count
                 }))
@@ -87,7 +86,6 @@ export function onGetAllSIDsPending(state) {
 }
 
 export function onGetAllWorkloads(state, { payload }) {
-    console.log(payload);
     return {
         ...state,
         workloads: {
