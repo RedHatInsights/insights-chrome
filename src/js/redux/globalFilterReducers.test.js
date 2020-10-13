@@ -134,7 +134,7 @@ describe('onGetAllSIDs', () => {
             }
         });
         expect(items).toMatchObject([{
-            name: 'SID',
+            name: 'SAP ID (SID)',
             tags: [
                 {
                     tag: { key: 'something' },

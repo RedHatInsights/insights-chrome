@@ -11,7 +11,7 @@ describe('flatTags', () => {
         Workloads: {
             SAP: { isSelected: true }
         },
-        SID: {
+        'SAP ID (SID)': {
             SOMEVAL: { isSelected: true }
         },
         someTag: {
@@ -30,11 +30,10 @@ describe('flatTags', () => {
 
     it('should create flat array of global filter', () => {
         const data = flatTags(globalFilter);
-        expect(data.length).toBe(3);
+        expect(data.length).toBe(2);
         expect(data).toMatchObject([
             'someTag/someKey=[someValue]',
-            'Workloads/SAP',
-            'SID/SOMEVAL'
+            'Workloads/SAP'
         ]);
     });
 
@@ -46,11 +45,10 @@ describe('flatTags', () => {
 
     it('with encode enabled', () => {
         const data = flatTags(globalFilter, true);
-        expect(data.length).toBe(3);
+        expect(data.length).toBe(2);
         expect(data).toMatchObject([
             'someTag/someKey=%5BsomeValue%5D',
-            'Workloads/SAP',
-            'SID/SOMEVAL'
+            'Workloads/SAP'
         ]);
     });
 
