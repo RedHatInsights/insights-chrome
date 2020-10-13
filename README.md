@@ -93,10 +93,22 @@ If you simply want to filter systems based on these values we provide a helper f
 
 If you want to encode tag partials (namespace, key or value) you can pass `true` as second parameter to this function to enable `uriEncoding`.
 
+If you want to consume each partial (workoads, SID and tags) as seperate entities instead of filtering them out you can pass 3rd argument as true and this function will return array with these items.
+
 ```JS
 insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     const selectedTags = insights.chrome?.mapGlobalFilter?.(data);
     // selectedTags is now array with selected tags and workspaces
+});
+```
+
+Usage with preformatted filter
+```JS
+insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const [ workloads, SID, selectedTags ] = insights.chrome?.mapGlobalFilter?.(data, false, true);
+    // workloads has shape about selected workloads
+    // SID is array of selected SAP_SIDs
+    // selectedTags is now array with selected tags
 });
 ```
 
