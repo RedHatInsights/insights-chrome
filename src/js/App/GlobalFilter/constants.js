@@ -91,9 +91,9 @@ export const generateFilter = async () => {
 };
 
 export const flatTags = memoize((filter, encode = false, format = false) => {
-    const { Workloads, SID, ...tags } = filter;
+    const { Workloads, 'SAP ID (SID)': SID, ...tags } = filter;
     const mappedTags = flatMap(
-        Object.entries({ ...tags, ...!format && { Workloads, SID } } || {}),
+        Object.entries({ ...tags, ...!format && { Workloads } } || {}),
         ([namespace, item]) => Object.entries(item || {})
         .filter(([, { isSelected }]) => isSelected)
         .map(([groupKey, { item, value: tagValue }]) => `${

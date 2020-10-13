@@ -61,7 +61,7 @@ export function onGetAllSIDs(state, { payload }) {
         sid: {
             isLoaded: true,
             ...payload?.total > 0 && { items: [{
-                name: 'SID',
+                name: 'SAP ID (SID)',
                 tags: (payload?.results || []).map(({ value, count } = {}) => ({
                     tag: { key: value },
                     count
