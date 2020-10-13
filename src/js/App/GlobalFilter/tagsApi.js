@@ -6,14 +6,15 @@ import { generateFilter } from '@redhat-cloud-services/frontend-components-utili
 export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance);
 export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance);
 
+const buildFilter = (workloads, SID) => ({
+    system_profile: {
+        ...workloads?.SAP?.isSelected && { sap_system: true },
+        sap_sids: SID
+    }
+});
+
 export function getAllTags({ search, activeTags, registeredWith } = {}, pagination = {}) {
     const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
-    const filter = {
-        system_profile: {
-            ...workloads?.SAP?.isSelected && { sap_system: true },
-            sap_sids: SID
-        }
-    };
     return tags.apiTagGetTags(
         selectedTags, // tag filer
         'tag',
@@ -25,19 +26,14 @@ export function getAllTags({ search, activeTags, registeredWith } = {}, paginati
         registeredWith,
         undefined,
         {
-            query: generateFilter(filter)
+            query: generateFilter(buildFilter(workloads, SID))
         }
     );
 }
 
 export function getAllSIDs({ activeTags, registeredWith } = {}, pagination = {}) {
     const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
-    const filter = {
-        system_profile: {
-            ...workloads?.SAP?.isSelected && { sap_system: true },
-            sap_sids: SID
-        }
-    };
+
     return sap.apiSystemProfileGetSapSids(
         selectedTags, // tags
         (pagination && pagination.perPage) || 10,
@@ -46,7 +42,7 @@ export function getAllSIDs({ activeTags, registeredWith } = {}, pagination = {})
         registeredWith,
         undefined,
         {
-            query: generateFilter(filter)
+            query: generateFilter(buildFilter(workloads, SID))
         }
     );
 }
@@ -54,13 +50,6 @@ export function getAllSIDs({ activeTags, registeredWith } = {}, pagination = {})
 export function getAllWorkloads({ activeTags, registeredWith } = {}, pagination = {}) {
     const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
-    const filter = {
-        system_profile: {
-            ...workloads?.SAP?.isSelected && { sap_system: true },
-            sap_sids: SID
-        }
-    };
-    console.log(filter, generateFilter(filter), 'ffffmmm');
     return sap.apiSystemProfileGetSapSystem(
         selectedTags, // tags
         (pagination && pagination.perPage) || 10,
@@ -69,7 +58,7 @@ export function getAllWorkloads({ activeTags, registeredWith } = {}, pagination 
         registeredWith,
         undefined,
         {
-            query: generateFilter(filter)
+            query: generateFilter(buildFilter(workloads, SID))
         }
     );
 }

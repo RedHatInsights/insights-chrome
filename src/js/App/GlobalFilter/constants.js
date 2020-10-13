@@ -2,6 +2,7 @@ import { deleteLocalStorageItems } from '../../utils';
 import { decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
+import memoize from 'lodash/memoize';
 
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
@@ -89,7 +90,7 @@ export const generateFilter = async () => {
     return [data, currToken];
 };
 
-export const flatTags = (filter, encode = false, format = false) => {
+export const flatTags = memoize((filter, encode = false, format = false) => {
     const { Workloads, SID, ...tags } = filter;
     const mappedTags = flatMap(
         Object.entries({ ...tags, ...!format && { Workloads, SID } } || {}),
@@ -111,4 +112,8 @@ export const flatTags = (filter, encode = false, format = false) => {
         ]), []),
         mappedTags
     ] : mappedTags;
-};
+}, (filter = {}, encode, format) => `${
+    Object.entries(filter).map(([namespace, val]) => `${namespace}.${
+        Object.entries(val).filter(([, { isSelected }]) => isSelected).map(([key]) => key).join('')
+    }`).join(',')
+}${encode ? '_encode' : ''}${format ? '_format' : ''}`);

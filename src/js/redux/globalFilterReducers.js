@@ -60,13 +60,13 @@ export function onGetAllSIDs(state, { payload }) {
         ...state,
         sid: {
             isLoaded: true,
-            items: [{
+            ...payload?.total > 0 && { items: [{
                 name: 'SID',
                 tags: (payload?.results || []).map(({ value, count } = {}) => ({
                     tag: { key: value },
                     count
                 }))
-            }],
+            }] },
             total: payload?.total,
             count: payload?.count,
             page: payload?.page,

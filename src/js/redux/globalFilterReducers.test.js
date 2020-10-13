@@ -129,7 +129,8 @@ describe('onGetAllSIDs', () => {
                 results: [{
                     value: 'something',
                     count: 10
-                }]
+                }],
+                total: 1
             }
         });
         expect(items).toMatchObject([{
@@ -145,18 +146,12 @@ describe('onGetAllSIDs', () => {
 
     it('should not fail with no payload', () => {
         const { sid: { items } } = onGetAllSIDs({}, {});
-        expect(items).toMatchObject([{
-            name: 'SID',
-            tags: []
-        }]);
+        expect(items).toBe(undefined);
     });
 
     it('should not fail with no results', () => {
         const { sid: { items } } = onGetAllSIDs({}, { payload: {} });
-        expect(items).toMatchObject([{
-            name: 'SID',
-            tags: []
-        }]);
+        expect(items).toBe(undefined);
     });
 
     it('should set all meta data', () => {
