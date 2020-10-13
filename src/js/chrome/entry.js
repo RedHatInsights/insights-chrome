@@ -15,8 +15,8 @@ import Cookies from 'js-cookie';
 import logger from '../jwt/logger';
 import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
-import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
+import { flatTags } from '../App/GlobalFilter/constants';
 
 const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ '../App/NoAccess'));
 
@@ -39,7 +39,7 @@ const PUBLIC_EVENTS = {
     GLOBAL_FILTER_UPDATE: [callback => ({
         on: actionTypes.GLOBAL_FILTER_UPDATE,
         callback
-    }), 'chrome.selectedTags']
+    }), 'globalFilter.selectedTags']
 };
 
 export function chromeInit(navResolver) {
@@ -57,18 +57,7 @@ export function chromeInit(navResolver) {
         appObjectId,
         hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
         globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-        mapGlobalFilter: (filter, encode = false) => flatMap(
-            Object.entries(filter || {}),
-            ([namespace, item]) => Object.entries(item)
-            .filter(([, { isSelected }]) => isSelected)
-            .map(([groupKey, { item, value: tagValue }]) => `${
-                namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''
-            }${
-                encode ? encodeURIComponent(groupKey) : groupKey
-            }${
-                (item?.tagValue || tagValue) ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''
-            }`)
-        ),
+        mapGlobalFilter: flatTags,
         appNavClick: ({ secondaryNav, ...payload }) => {
             if (!secondaryNav) {
                 clearActive();

@@ -1,9 +1,9 @@
 import React, { useEffect, Fragment, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/components/cjs/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/components/cjs/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
-import { fetchAllTags, globalFilterChange } from '../../redux/actions';
+import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup';
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
@@ -20,15 +20,26 @@ const GlobalFilter = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [token, setToken] = useState();
     const dispatch = useDispatch();
-    const isLoaded = useSelector(({ chrome: { tags } }) => tags?.isLoaded);
-    const tags = useSelector(({ chrome: { tags } }) => tags?.items || []);
-    const count = useSelector(({ chrome: { tags } }) => tags?.count || 0);
-    const total = useSelector(({ chrome: { tags } }) => tags?.total || 0);
+    const { isLoaded, count, total, sapCount } = useSelector(({
+        globalFilter: {
+            tags,
+            sid,
+            workloads
+        }
+    }) => ({
+        isLoaded: tags?.isLoaded && sid?.isLoaded && workloads?.isLoaded,
+        count: tags?.count || 0 + sid?.count || 0 + workloads?.count || 0,
+        total: tags?.total || 0 + sid?.total || 0 + workloads?.total || 0,
+        sapCount: workloads?.hasSap
+    }), shallowEqual);
+    const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
+    const sid = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
     const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
-    const filterScope = useSelector(({ chrome: { globalFilterScope } }) => globalFilterScope || undefined);
+    const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
     const { filter, chips, selectedTags, setValue, filterTagsBy } = useTagsFilter(
         [
             ...workloads,
+            ...sid,
             ...tags
         ],
         isLoaded && Boolean(token),
@@ -60,11 +71,23 @@ const GlobalFilter = () => {
             })();
         } else if (userLoaded && token && isAllowed()) {
             storeFilter(selectedTags, token);
-            dispatch(fetchAllTags({
-                registeredWith: filterScope,
-                activeTags: selectedTags,
-                search: filterTagsBy
-            }));
+            batch(() => {
+                dispatch(fetchAllTags({
+                    registeredWith: filterScope,
+                    activeTags: selectedTags,
+                    search: filterTagsBy
+                }));
+                dispatch(fetchAllSIDs({
+                    registeredWith: filterScope,
+                    activeTags: selectedTags,
+                    search: filterTagsBy
+                }));
+                dispatch(fetchAllWorkloads({
+                    registeredWith: filterScope,
+                    activeTags: selectedTags,
+                    search: filterTagsBy
+                }));
+            });
         }
     }, [selectedTags, filterScope, filterTagsBy, userLoaded, isAllowed()]);
 
@@ -83,6 +106,13 @@ const GlobalFilter = () => {
             }
         }
     }, [selectedTags, isAllowed()]);
+
+    useEffect(() => {
+        const sapTag = workloads?.[0]?.tags?.[1];
+        if (typeof sapCount === 'number' && sapTag) {
+            sapTag.count = sapCount;
+        }
+    }, [sapCount]);
 
     const workloadsChip = chips?.splice(chips?.findIndex(({ key }) => key === 'Workloads'), 1);
     chips?.splice(0, 0, ...workloadsChip || []);

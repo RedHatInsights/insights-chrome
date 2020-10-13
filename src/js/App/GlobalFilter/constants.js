@@ -1,8 +1,11 @@
 import { deleteLocalStorageItems } from '../../utils';
 import { decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
-export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
+import flatMap from 'lodash/flatMap';
+import memoize from 'lodash/memoize';
 
+export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
+export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
     {
         name: 'Workloads',
@@ -39,9 +42,11 @@ export const updateSelected = (original, namespace, key, value, isSelected) => (
 
 export const storeFilter = (tags, token) => {
     deleteLocalStorageItems(Object.keys(localStorage).filter(key => key.startsWith(GLOBAL_FILTER_KEY)));
-    const searchParams = new URLSearchParams();
-    searchParams.append('workloads', Object.keys(tags?.Workloads || {})?.[0]);
-    location.hash = searchParams.toString();
+    if (tags?.Workloads) {
+        const searchParams = new URLSearchParams();
+        searchParams.append('workloads', Object.keys(tags?.Workloads || {})?.[0]);
+        location.hash = searchParams.toString();
+    }
     localStorage.setItem(
         `${GLOBAL_FILTER_KEY}/${token}`,
         JSON.stringify(Object.entries(tags).reduce((acc, [key, value]) => ({
@@ -84,3 +89,31 @@ export const generateFilter = async () => {
 
     return [data, currToken];
 };
+
+export const flatTags = memoize((filter, encode = false, format = false) => {
+    const { Workloads, SID, ...tags } = filter;
+    const mappedTags = flatMap(
+        Object.entries({ ...tags, ...!format && { Workloads, SID } } || {}),
+        ([namespace, item]) => Object.entries(item || {})
+        .filter(([, { isSelected }]) => isSelected)
+        .map(([groupKey, { item, value: tagValue }]) => `${
+                namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''
+            }${
+                encode ? encodeURIComponent(groupKey) : groupKey
+            }${
+                (item?.tagValue || tagValue) ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''
+            }`)
+    );
+    return format ? [
+        Workloads,
+        Object.entries(SID || {}).filter(([, { isSelected }]) => isSelected).reduce((acc, [key]) => ([
+            ...acc,
+            key
+        ]), []),
+        mappedTags
+    ] : mappedTags;
+}, (filter = {}, encode, format) => `${
+    Object.entries(filter).map(([namespace, val]) => `${namespace}.${
+        Object.entries(val).filter(([, { isSelected }]) => isSelected).map(([key]) => key).join('')
+    }`).join(',')
+}${encode ? '_encode' : ''}${format ? '_format' : ''}`);
