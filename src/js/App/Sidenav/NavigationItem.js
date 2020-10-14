@@ -6,28 +6,28 @@ import PropTypes from 'prop-types';
 const basepath = document.baseURI;
 
 const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className, ...props }) => (
-    <NavItem
-        {...props}
-        itemId={itemID}
-        className={classNames({ 'ins-m-ignore-case': ignoreCase }, className)}
-        preventDefault
-        to={navigate || `${basepath}${parent}/${itemID}`}
-    >
-        {title}
-    </NavItem>
+  <NavItem
+    {...props}
+    itemId={itemID}
+    className={classNames({ 'ins-m-ignore-case': ignoreCase }, className)}
+    preventDefault
+    to={navigate || `${basepath}${parent}/${itemID}`}
+  >
+    {title}
+  </NavItem>
 );
 
 NavigationItem.propTypes = {
-    itemID: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    title: PropTypes.node,
-    navigate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    parent: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    ignoreCase: PropTypes.bool,
-    className: PropTypes.string
+  itemID: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  title: PropTypes.node,
+  navigate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  parent: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ignoreCase: PropTypes.bool,
+  className: PropTypes.string,
 };
 
 NavigationItem.defaultProps = {
-    parent: ''
+  parent: '',
 };
 
 export default NavigationItem;

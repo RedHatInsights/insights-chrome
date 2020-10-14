@@ -2,144 +2,151 @@
 const { visibilityFunctions, isVisible } = require('./consts');
 
 describe.only('visibilityFunctions', () => {
-    const originalUser = insights.chrome.auth.getUser;
-    const originalProd = insights.chrome.isProd;
-    const originalBeta = insights.chrome.isBeta;
+  const originalUser = insights.chrome.auth.getUser;
+  const originalProd = insights.chrome.isProd;
+  const originalBeta = insights.chrome.isBeta;
 
-    test('isOrgAdmin', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {
-                user: {
-                    is_org_admin: true
-                }
-            }
-        });
+  test('isOrgAdmin', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {
+          user: {
+            is_org_admin: true,
+          },
+        },
+      });
 
-        expect((await visibilityFunctions.isOrgAdmin())).toBe(true);
-    });
+    expect(await visibilityFunctions.isOrgAdmin()).toBe(true);
+  });
 
-    test('isOrgAdmin - missing', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {}
-        });
+  test('isOrgAdmin - missing', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {},
+      });
 
-        expect((await visibilityFunctions.isOrgAdmin())).toBe(false);
-    });
+    expect(await visibilityFunctions.isOrgAdmin()).toBe(false);
+  });
 
-    test('isActive', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {
-                user: {
-                    is_active: true
-                }
-            }
-        });
+  test('isActive', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {
+          user: {
+            is_active: true,
+          },
+        },
+      });
 
-        expect((await visibilityFunctions.isActive())).toBe(true);
-    });
+    expect(await visibilityFunctions.isActive()).toBe(true);
+  });
 
-    test('isActive - missing', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {}
-        });
+  test('isActive - missing', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {},
+      });
 
-        expect((await visibilityFunctions.isActive())).toBe(false);
-    });
+    expect(await visibilityFunctions.isActive()).toBe(false);
+  });
 
-    test('isInternal', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {
-                user: {
-                    is_internal: true
-                }
-            }
-        });
+  test('isInternal', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {
+          user: {
+            is_internal: true,
+          },
+        },
+      });
 
-        expect((await visibilityFunctions.isInternal())).toBe(true);
-    });
+    expect(await visibilityFunctions.isInternal()).toBe(true);
+  });
 
-    test('isInternal - missing', async () => {
-        global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-            identity: {}
-        });
+  test('isInternal - missing', async () => {
+    global.window.insights.chrome.auth.getUser = () =>
+      Promise.resolve({
+        identity: {},
+      });
 
-        expect((await visibilityFunctions.isInternal())).toBe(false);
-    });
+    expect(await visibilityFunctions.isInternal()).toBe(false);
+  });
 
-    test('isProd', async () => {
-        global.window.insights.chrome.isProd = true;
+  test('isProd', async () => {
+    global.window.insights.chrome.isProd = true;
 
-        expect(visibilityFunctions.isProd()).toBe(true);
-    });
+    expect(visibilityFunctions.isProd()).toBe(true);
+  });
 
-    test('isProd - false', async () => {
-        global.window.insights.chrome.isProd = false;
+  test('isProd - false', async () => {
+    global.window.insights.chrome.isProd = false;
 
-        expect(visibilityFunctions.isProd()).toBe(false);
-    });
+    expect(visibilityFunctions.isProd()).toBe(false);
+  });
 
-    test('isBeta', async () => {
-        global.window.insights.chrome.isBeta = () => true;
+  test('isBeta', async () => {
+    global.window.insights.chrome.isBeta = () => true;
 
-        expect(visibilityFunctions.isBeta()).toBe(true);
-    });
+    expect(visibilityFunctions.isBeta()).toBe(true);
+  });
 
-    test('isProd - false', async () => {
-        global.window.insights.chrome.isBeta = () => false;
+  test('isProd - false', async () => {
+    global.window.insights.chrome.isBeta = () => false;
 
-        expect(visibilityFunctions.isBeta()).toBe(false);
-    });
+    expect(visibilityFunctions.isBeta()).toBe(false);
+  });
 
-    describe('entitlements', () => {
-        beforeAll(() => {
-            global.window.insights.chrome.auth.getUser = () => Promise.resolve({
-                entitlements: {
-                    some: {
-                        is_entitled: true
-                    },
-                    another: {
-                        is_entitled: false
-                    }
-                }
-            });
-        });
-
-        test('isEntitled - with app', async () => {
-            expect((await visibilityFunctions.isEntitled('some'))).toBe(true);
-            expect((await visibilityFunctions.isEntitled('another'))).toBe(false);
-            expect((await visibilityFunctions.isEntitled('missing'))).toBe(false);
-        });
-
-        test('isEntitled - no app', async () => {
-            expect((await visibilityFunctions.isEntitled()).some).toBe(true);
-            expect((await visibilityFunctions.isEntitled()).another).toBe(false);
+  describe('entitlements', () => {
+    beforeAll(() => {
+      global.window.insights.chrome.auth.getUser = () =>
+        Promise.resolve({
+          entitlements: {
+            some: {
+              is_entitled: true,
+            },
+            another: {
+              is_entitled: false,
+            },
+          },
         });
     });
 
-    afterAll(() => {
-        global.window.insights.chrome.auth.getUser = originalUser;
-        global.window.insights.chrome.isBeta = originalBeta;
-        global.window.insights.chrome.isProd = originalProd;
+    test('isEntitled - with app', async () => {
+      expect(await visibilityFunctions.isEntitled('some')).toBe(true);
+      expect(await visibilityFunctions.isEntitled('another')).toBe(false);
+      expect(await visibilityFunctions.isEntitled('missing')).toBe(false);
     });
+
+    test('isEntitled - no app', async () => {
+      expect((await visibilityFunctions.isEntitled()).some).toBe(true);
+      expect((await visibilityFunctions.isEntitled()).another).toBe(false);
+    });
+  });
+
+  afterAll(() => {
+    global.window.insights.chrome.auth.getUser = originalUser;
+    global.window.insights.chrome.isBeta = originalBeta;
+    global.window.insights.chrome.isProd = originalProd;
+  });
 });
 
 describe('isVisible', () => {
-    test('no apps', () => {
-        expect(isVisible(undefined, 'something', true)).toBe(true);
-    });
+  test('no apps', () => {
+    expect(isVisible(undefined, 'something', true)).toBe(true);
+  });
 
-    test('app not included', () => {
-        expect(isVisible([], 'something', true)).toBe(true);
-    });
+  test('app not included', () => {
+    expect(isVisible([], 'something', true)).toBe(true);
+  });
 
-    test('visibility object', () => {
-        expect(isVisible(['something'], 'something', { something: false })).toBe(false);
-        expect(isVisible(['something'], 'something', { something: true })).toBe(true);
-    });
+  test('visibility object', () => {
+    expect(isVisible(['something'], 'something', { something: false })).toBe(false);
+    expect(isVisible(['something'], 'something', { something: true })).toBe(true);
+  });
 
-    [true, false].map((visibility) => {
-        test(`visibility - ${visibility}`, () => {
-            expect(isVisible(['something'], 'something', visibility)).toBe(visibility);
-        });
+  [true, false].map((visibility) => {
+    test(`visibility - ${visibility}`, () => {
+      expect(isVisible(['something'], 'something', visibility)).toBe(visibility);
     });
+  });
 });
