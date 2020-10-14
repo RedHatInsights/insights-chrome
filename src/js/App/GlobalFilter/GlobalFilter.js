@@ -170,8 +170,13 @@ const GlobalFilter = () => {
             }
             setIsOpen(false);
           }}
-          onApplyTags={(selected) => {
-            setValue(() => selected.reduce((acc, { namespace, key, value }) => updateSelected(acc, namespace, key, value, true), selectedTags));
+          onApplyTags={(selected, sidSelected) => {
+            setValue(() =>
+              [...selected, ...sidSelected]?.reduce(
+                (acc, { namespace, key, value }) => updateSelected(acc, namespace, key, value, true),
+                selectedTags
+              )
+            );
           }}
         />
       )}

@@ -1,20 +1,37 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/components/cjs/TagModal';
 import { fetchAllTags } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
+import { getAllSIDs } from './tagsApi';
 
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
-  const [selected, setSelected] = useState([]);
+  const [tagsSelected, setTagsSelected] = useState([]);
+  const [sidsSelected, setSidsSelected] = useState([]);
   const [filterBy, setFilterBy] = useState('');
   const dispatch = useDispatch();
-  const loaded = useSelector(({ globalFilter: { tags } }) => tags?.isLoaded);
+  const { tagsLoaded, tagsCount, tagsPage, tagsPerPage } = useSelector(
+    ({ globalFilter: { tags } }) => ({
+      tagsLoaded: tags?.isLoaded,
+      tagsCount: tags?.total || 0,
+      tagsPage: tags?.page || 1,
+      tagsPerPage: tags?.perPage || 10,
+    }),
+    shallowEqual
+  );
+  const { sidLoaded, sidCount, sidPage, sidPerPage } = useSelector(
+    ({ globalFilter: { sid } }) => ({
+      sidLoaded: sid?.isLoaded,
+      sidCount: sid?.total || 0,
+      sidPage: sid?.page || 1,
+      sidPerPage: sid?.perPage || 10,
+    }),
+    shallowEqual
+  );
   const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
-  const tagsCount = useSelector(({ globalFilter: { tags } }) => tags?.total || 0);
-  const page = useSelector(({ globalFilter: { tags } }) => tags?.page || 1);
-  const perPage = useSelector(({ globalFilter: { tags } }) => tags?.perPage || 10);
+  const sids = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
   const debounceGeTags = useCallback(
     debounce((search) => {
@@ -25,7 +42,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             activeTags: selectedTags,
             search,
           },
-          { page, perPage }
+          { tagsPage, tagsPerPage }
         )
       );
     }, 800),
@@ -36,66 +53,113 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
   }, [filterTagsBy]);
   return (
     <TagModal
+      tabNames={['tags', 'SAP IDs (SID)']}
       tableProps={{
         canSelectAll: false,
       }}
-      {...(loaded && {
-        loaded,
-        pagination: {
-          perPage,
-          page,
-          count: tagsCount,
-        },
-        rows: flatMap(tags, ({ tags }) =>
-          tags?.map(({ tag: { key, value, namespace } } = { tag: {} }) => ({
-            id: `${namespace}/${key}=${value}`,
-            namespace,
-            key,
-            value,
-            selected: selected?.find?.(({ id } = {}) => id === `${namespace}/${key}=${value}`),
-            cells: [key, value, namespace],
-          }))
-        ),
-      })}
-      loaded={loaded}
+      pagination={[
+        ...(tagsLoaded
+          ? [
+              {
+                perPage: tagsPerPage,
+                page: tagsPage,
+                count: tagsCount,
+              },
+            ]
+          : [{}]),
+        ...(sidLoaded
+          ? [
+              {
+                perPage: sidPerPage,
+                page: sidPage,
+                count: sidCount,
+              },
+            ]
+          : [{}]),
+      ]}
+      rows={[
+        ...(tagsLoaded
+          ? [
+              flatMap(tags, ({ tags }) =>
+                tags?.map(({ tag: { key, value, namespace } } = { tag: {} }) => ({
+                  id: `${namespace}/${key}=${value}`,
+                  namespace,
+                  key,
+                  value,
+                  selected: tagsSelected?.find?.(({ id } = {}) => id === `${namespace}/${key}=${value}`),
+                  cells: [key, value, namespace],
+                }))
+              ),
+            ]
+          : [[]]),
+        ...(sidLoaded
+          ? [
+              flatMap(sids, ({ tags }) =>
+                tags?.map(({ tag: { key, namespace } } = { tag: {} }) => ({
+                  namespace,
+                  id: key,
+                  key,
+                  selected: sidsSelected?.find?.(({ id } = {}) => id === key),
+                  cells: [key],
+                }))
+              ),
+            ]
+          : [[]]),
+      ]}
+      loaded={[tagsLoaded, sidLoaded]}
       width="50%"
       isOpen={isOpen}
       toggleModal={(_e, isSubmit) => {
-        setSelected([]);
+        setSidsSelected([]);
+        setTagsSelected([]);
         setFilterBy('');
         toggleModal(isSubmit);
       }}
       filters={[
-        {
-          label: 'Tags filter',
-          placeholder: 'Filter tags',
-          value: 'tags-filter',
-          filterValues: {
-            value: filterBy,
-            onChange: (_e, value) => {
-              setFilterBy(() => value);
-              debounceGeTags(value);
+        [
+          {
+            label: 'Tags filter',
+            placeholder: 'Filter tags',
+            value: 'tags-filter',
+            filterValues: {
+              value: filterBy,
+              onChange: (_e, value) => {
+                setFilterBy(() => value);
+                debounceGeTags(value);
+              },
             },
           },
-        },
+        ],
       ]}
-      onUpdateData={(pagination) =>
-        dispatch(
-          fetchAllTags(
-            {
-              registeredWith: filterScope,
-              activeTags: selectedTags,
-              search: filterBy,
-            },
-            pagination
-          )
-        )
-      }
-      columns={[{ title: 'Name' }, { title: 'Value' }, { title: 'Tag sources' }]}
-      onSelect={(selected) => setSelected(selected)}
-      selected={selected}
-      onApply={() => onApplyTags(selected)}
-      title="All tags"
+      onUpdateData={[
+        (pagination) =>
+          dispatch(
+            fetchAllTags(
+              {
+                registeredWith: filterScope,
+                activeTags: selectedTags,
+                search: filterBy,
+              },
+              pagination
+            )
+          ),
+        (pagination) =>
+          dispatch(
+            getAllSIDs(
+              {
+                registeredWith: filterScope,
+                activeTags: selectedTags,
+                search: filterBy,
+              },
+              pagination
+            )
+          ),
+      ]}
+      columns={[[{ title: 'Name' }, { title: 'Value' }, { title: 'Tag sources' }], [{ title: 'Value' }]]}
+      onSelect={[setTagsSelected, setSidsSelected]}
+      selected={[tagsSelected, sidsSelected]}
+      onApply={() => onApplyTags(tagsSelected, sidsSelected)}
+      title="Select one or more tags/SAP IDs (SID)"
     />
   );
 };

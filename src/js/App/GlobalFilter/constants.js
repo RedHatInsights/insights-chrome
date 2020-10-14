@@ -3,6 +3,7 @@ import { decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
+import { SID_KEY } from '../../redux/globalFilterReducers';
 
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
@@ -103,7 +104,7 @@ export const generateFilter = async () => {
 
 export const flatTags = memoize(
   (filter, encode = false, format = false) => {
-    const { Workloads, 'SAP ID (SID)': SID, ...tags } = filter;
+    const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries(item || {})
         .filter(([, { isSelected }]) => isSelected)
