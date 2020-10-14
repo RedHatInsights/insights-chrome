@@ -147,7 +147,7 @@
     "@redhat-cloud-services/frontend-components-inventory-patchman": "^0.24.1",
     "@redhat-cloud-services/frontend-components-inventory-vulnerabilities": "^1.47.0",
     "@redhat-cloud-services/frontend-components-notifications": "^2.2.2",
-    "@redhat-cloud-services/frontend-components-remediations": "^2.2.3",
+    "@redhat-cloud-services/frontend-components-remediations": "^2.3.0",
     "@redhat-cloud-services/frontend-components-utilities": "^2.2.6",
     "@redhat-cloud-services/host-inventory-client": "^1.0.79",
     "@redhat-cloud-services/keycloak-js": "0.0.3",
