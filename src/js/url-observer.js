@@ -5,32 +5,29 @@
  * @param {Function} observeCallback callback that will be triggered after URL change
  */
 const registerUrlObserver = (observeCallback) => {
-    /**
+  /**
    * We ignore hash changes
    * Hashes only have frontend effect
    */
-    let oldHref = document.location.href.replace(/#.*$/, '');
+  let oldHref = document.location.href.replace(/#.*$/, '');
 
-    window.onload = function() {
-        const bodyList = document.querySelector('body');
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function() {
-                const newLocation = document.location.href.replace(/#.*$/, '');
-                if (oldHref !== newLocation) {
-                    oldHref = newLocation;
-                    observeCallback();
-                }
-
-            });
-
-        });
-        const config = {
-            childList: true,
-            subtree: true
-        };
-        observer.observe(bodyList, config);
+  window.onload = function () {
+    const bodyList = document.querySelector('body');
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function () {
+        const newLocation = document.location.href.replace(/#.*$/, '');
+        if (oldHref !== newLocation) {
+          oldHref = newLocation;
+          observeCallback();
+        }
+      });
+    });
+    const config = {
+      childList: true,
+      subtree: true,
     };
-
+    observer.observe(bodyList, config);
+  };
 };
 
 export default registerUrlObserver;

@@ -1,4 +1,5 @@
-export const loadNav = () => Promise.resolve({
+export const loadNav = () =>
+  Promise.resolve({
     globalNav: [],
-    activeTechnology: 'Applications'
-});
+    activeTechnology: 'Applications',
+  });

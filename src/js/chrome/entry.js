@@ -24,142 +24,149 @@ const log = logger('entry.js');
 
 // used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
-    APP_NAVIGATION: [fn => ({
-        on: actionTypes.APP_NAV_CLICK,
-        callback: ({ data }) => {
-            if (data.id !== undefined || data.event) {
-                fn({ navId: data.id, domEvent: data.event });
-            }
+  APP_NAVIGATION: [
+    (fn) => ({
+      on: actionTypes.APP_NAV_CLICK,
+      callback: ({ data }) => {
+        if (data.id !== undefined || data.event) {
+          fn({ navId: data.id, domEvent: data.event });
         }
-    })],
-    NAVIGATION_TOGGLE: [callback => ({
-        on: actionTypes.NAVIGATION_TOGGLE,
-        callback
-    })],
-    GLOBAL_FILTER_UPDATE: [callback => ({
-        on: actionTypes.GLOBAL_FILTER_UPDATE,
-        callback
-    }), 'globalFilter.selectedTags']
+      },
+    }),
+  ],
+  NAVIGATION_TOGGLE: [
+    (callback) => ({
+      on: actionTypes.NAVIGATION_TOGGLE,
+      callback,
+    }),
+  ],
+  GLOBAL_FILTER_UPDATE: [
+    (callback) => ({
+      on: actionTypes.GLOBAL_FILTER_UPDATE,
+      callback,
+    }),
+    'globalFilter.selectedTags',
+  ],
 };
 
 export function chromeInit(navResolver) {
-    const { store, middlewareListener, actions } = spinUpStore();
+  const { store, middlewareListener, actions } = spinUpStore();
 
-    // public API actions
-    const { identifyApp, appNavClick, clearActive, appAction, appObjectId } = actions;
+  // public API actions
+  const { identifyApp, appNavClick, clearActive, appAction, appObjectId } = actions;
 
-    return {
-        identifyApp: (data) => navResolver.then(
-            () => identifyApp(data, store.getState().chrome.globalNav)
-        ),
-        navigation: () => console.error('Don\'t use insights.chrome.navigation, it has been deprecated!'),
-        appAction,
-        appObjectId,
-        hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
-        globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-        mapGlobalFilter: flatTags,
-        appNavClick: ({ secondaryNav, ...payload }) => {
-            if (!secondaryNav) {
-                clearActive();
-            }
+  return {
+    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
+    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
+    appAction,
+    appObjectId,
+    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+    mapGlobalFilter: flatTags,
+    appNavClick: ({ secondaryNav, ...payload }) => {
+      if (!secondaryNav) {
+        clearActive();
+      }
 
-            appNavClick({
-                ...payload,
-                custom: true
-            });
-        },
-        on: (type, callback) => {
-            if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
-                throw new Error(`Unknown event type: ${type}`);
-            }
+      appNavClick({
+        ...payload,
+        custom: true,
+      });
+    },
+    on: (type, callback) => {
+      if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
+        throw new Error(`Unknown event type: ${type}`);
+      }
 
-            const [listener, selector] = PUBLIC_EVENTS[type];
-            if (selector) {
-                callback({
-                    data: get(store.getState(), selector) || {}
-                });
-            }
-            return middlewareListener.addNew(listener(callback));
-        },
-        $internal: { store },
-        loadInventory,
-        experimental: {
-            loadRemediations
-        },
-        enable: debugFunctions
-    };
+      const [listener, selector] = PUBLIC_EVENTS[type];
+      if (selector) {
+        callback({
+          data: get(store.getState(), selector) || {},
+        });
+      }
+      return middlewareListener.addNew(listener(callback));
+    },
+    $internal: { store },
+    loadInventory,
+    experimental: {
+      loadRemediations,
+    },
+    enable: debugFunctions,
+  };
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
-    return {
-        chrome: {
-            auth: {
-                getOfflineToken: () => libjwt.getOfflineToken(),
-                doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
-                getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
-                getUser,
-                qe: qe,
-                logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
-                login: () => libjwt.jwt.login()
-            },
-            isProd: window.location.host === 'cloud.redhat.com',
-            isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
-            isPenTest: () => Cookies.get('x-rh-insights-pentest') ? true : false,
-            getBundle: () => getUrl('bundle'),
-            getApp: () => getUrl('app'),
-            createCase: (fields) => insights.chrome.auth.getUser().then(user => createSupportCase(user.identity, fields)),
-            visibilityFunctions,
-            init: initFunc
-        },
-        loadInventory,
-        experimental: {
-            loadRemediations
-        }
-    };
+  return {
+    chrome: {
+      auth: {
+        getOfflineToken: () => libjwt.getOfflineToken(),
+        doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
+        getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
+        getUser,
+        qe: qe,
+        logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
+        login: () => libjwt.jwt.login(),
+      },
+      isProd: window.location.host === 'cloud.redhat.com',
+      isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
+      isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+      getBundle: () => getUrl('bundle'),
+      getApp: () => getUrl('app'),
+      createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
+      visibilityFunctions,
+      init: initFunc,
+    },
+    loadInventory,
+    experimental: {
+      loadRemediations,
+    },
+  };
 }
 
 export function rootApp() {
-    const { store } = spinUpStore();
-    const pageRoot = document.querySelector('.pf-c-page__drawer');
-    if (pageRoot) {
-        render(
-            <Provider store={store}>
-                <RootApp />
-            </Provider>,
-            pageRoot
-        );
-    }
+  const { store } = spinUpStore();
+  const pageRoot = document.querySelector('.pf-c-page__drawer');
+  if (pageRoot) {
+    render(
+      <Provider store={store}>
+        <RootApp />
+      </Provider>,
+      pageRoot
+    );
+  }
 }
 
 export function noAccess() {
-    const { store } = spinUpStore();
-    window.insights.chrome.auth.getUser().then(({ entitlements }) => {
-        if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
-            const path = location.pathname.split('/');
-            const apps = Object.keys(entitlements || {});
+  const { store } = spinUpStore();
+  window.insights.chrome.auth
+    .getUser()
+    .then(({ entitlements }) => {
+      if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
+        const path = location.pathname.split('/');
+        const apps = Object.keys(entitlements || {});
 
-            /* eslint-disable camelcase */
-            const grantAccess = Object.entries(entitlements || {}).filter(([app, { is_entitled }]) => {
-            // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
-                return path.includes(app) && is_entitled;
-            });
-            /* eslint-enable camelcase */
+        /* eslint-disable camelcase */
+        const grantAccess = Object.entries(entitlements || {}).filter(([app, { is_entitled }]) => {
+          // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
+          return path.includes(app) && is_entitled;
+        });
+        /* eslint-enable camelcase */
 
-            // also grant access to other pages like settings/general
-            const isTrackedApp = path.some(value => apps.includes(value));
-            if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
-                document.getElementById('root').style.display = 'none';
-                document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
-                render(
-                    <Provider store={ store }>
-                        <Suspense fallback={Fragment}>
-                            <NoAccess />
-                        </Suspense>
-                    </Provider>,
-                    document.querySelector('#no-access')
-                );
-            }
+        // also grant access to other pages like settings/general
+        const isTrackedApp = path.some((value) => apps.includes(value));
+        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
+          document.getElementById('root').style.display = 'none';
+          document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
+          render(
+            <Provider store={store}>
+              <Suspense fallback={Fragment}>
+                <NoAccess />
+              </Suspense>
+            </Provider>,
+            document.querySelector('#no-access')
+          );
         }
+      }
     })
     .catch(log('Error fetching user entitlements!'));
 }

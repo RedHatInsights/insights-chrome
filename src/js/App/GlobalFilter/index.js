@@ -1,1 +1,1 @@
-export { default as default } from './GlobalFilter';
+export { default } from './GlobalFilter';

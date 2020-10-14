@@ -12,74 +12,74 @@ import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
  * @param {object} insights existing insights instance
  */
 const createChromeInstance = (jwt, insights) => {
-    const { actions: { chromeNavUpdate } } = spinUpStore();
-    const libjwt = jwt;
-    const chromeInstance = {
-        cache: undefined
+  const {
+    actions: { chromeNavUpdate },
+  } = spinUpStore();
+  const libjwt = jwt;
+  const chromeInstance = {
+    cache: undefined,
+  };
+
+  const jwtResolver = initializeJWT(libjwt, chromeInstance);
+
+  /**
+   * Load navigation after login
+   */
+  const navResolver = jwtResolver.then(async () => {
+    const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
+    const navigationData = await loadNav(navigationYml, chromeInstance.cache);
+    chromeNavUpdate(navigationData);
+  });
+
+  const init = () => {
+    window.insights.chrome = {
+      ...window.insights.chrome,
+      ...chromeInit(navResolver),
     };
+  };
 
-    const jwtResolver = initializeJWT(libjwt, chromeInstance);
-
-    /**
-     * Load navigation after login
-    */
-    const navResolver = jwtResolver.then(async () => {
-        const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-        const navigationData = await loadNav(navigationYml, chromeInstance.cache);
-        chromeNavUpdate(navigationData);
+  /**
+   * here we need to init the qe plugin
+   * the "contract" is we will do this before anyone
+   * calls/finishes getUser
+   * this only does something if the correct localstorage
+   * vars are set
+   */
+  const getUser = () => {
+    qe.init();
+    return libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
+      libjwt.jwt.logoutAllTabs();
     });
+  };
 
-    const init = () => {
-        window.insights.chrome = {
-            ...window.insights.chrome,
-            ...chromeInit(navResolver)
-        };
-    };
-
+  /**
+   * Guard async cache dependent functions until cache is created
+   * @param {function} fn function that requires global chrome cache
+   * @returns {Promise}
+   */
+  const bufferAsyncFunction = (fn) => {
+    if (chromeInstance.cache) {
+      return fn;
+    }
     /**
-     * here we need to init the qe plugin
-     * the "contract" is we will do this before anyone
-     * calls/finishes getUser
-     * this only does something if the correct localstorage
-     * vars are set
+     * Wait for JWT initialization to happen and cache initialization in chrome instance
      */
-    const getUser = () => {
-        qe.init();
-        return libjwt.initPromise
-        .then(libjwt.jwt.getUserInfo)
-        .catch(() => {
-            libjwt.jwt.logoutAllTabs();
-        });
-    };
+    return (...args) => jwtResolver.then(() => fn(...args));
+  };
 
-    /**
-     * Guard async cache dependent functions until cache is created
-     * @param {function} fn function that requires global chrome cache
-     * @returns {Promise}
-     */
-    const bufferAsyncFunction = (fn) => {
-        if (chromeInstance.cache) {
-            return fn;
-        }
-        /**
-         * Wait for JWT initialization to happen and cache initialization in chrome instance
-         */
-        return (...args) => jwtResolver.then(() => fn(...args));
-    };
+  const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
 
-    const fetchPermissions =  bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
+  const chromeFunctions = bootstrap(libjwt, init, getUser);
 
-    const chromeFunctions = bootstrap(libjwt, init, getUser);
+  chromeFunctions.chrome.getUserPermissions = async (app = '', bypassCache) => {
+    await getUser();
+    return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
+  };
 
-    chromeFunctions.chrome.getUserPermissions = async (app = '', bypassCache) => {
-        await getUser();
-        return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
-    };
-
-    return {
-        ...insights,
-        ...chromeFunctions
-    };
+  return {
+    ...insights,
+    ...chromeFunctions,
+  };
 };
 
 export default createChromeInstance;
