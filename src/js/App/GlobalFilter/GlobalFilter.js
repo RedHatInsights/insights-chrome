@@ -172,7 +172,7 @@ const GlobalFilter = () => {
           }}
           onApplyTags={(selected, sidSelected) => {
             setValue(() =>
-              [...selected, ...sidSelected]?.reduce(
+              [...(selected || []), ...(sidSelected || [])]?.reduce(
                 (acc, { namespace, key, value }) => updateSelected(acc, namespace, key, value, true),
                 selectedTags
               )

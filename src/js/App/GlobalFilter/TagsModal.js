@@ -7,29 +7,19 @@ import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { getAllSIDs } from './tagsApi';
 
+const useMetaSelector = (key) =>
+  useSelector(
+    ({ globalFilter: { [key]: selected } }) => [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10],
+    shallowEqual
+  );
+
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
   const [tagsSelected, setTagsSelected] = useState([]);
   const [sidsSelected, setSidsSelected] = useState([]);
   const [filterBy, setFilterBy] = useState('');
   const dispatch = useDispatch();
-  const { tagsLoaded, tagsCount, tagsPage, tagsPerPage } = useSelector(
-    ({ globalFilter: { tags } }) => ({
-      tagsLoaded: tags?.isLoaded,
-      tagsCount: tags?.total || 0,
-      tagsPage: tags?.page || 1,
-      tagsPerPage: tags?.perPage || 10,
-    }),
-    shallowEqual
-  );
-  const { sidLoaded, sidCount, sidPage, sidPerPage } = useSelector(
-    ({ globalFilter: { sid } }) => ({
-      sidLoaded: sid?.isLoaded,
-      sidCount: sid?.total || 0,
-      sidPage: sid?.page || 1,
-      sidPerPage: sid?.perPage || 10,
-    }),
-    shallowEqual
-  );
+  const [tagsLoaded, tagsCount, tagsPage, tagsPerPage] = useMetaSelector('tags');
+  const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
   const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
   const sids = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
