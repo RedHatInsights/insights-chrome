@@ -162,7 +162,7 @@ describe('onGetAllSIDs', () => {
         name: 'SAP ID (SID)',
         tags: [
           {
-            tag: { key: 'something' },
+            tag: { key: 'something', namespace: 'SAP ID (SID)' },
             count: 10,
           },
         ],

@@ -1,4 +1,5 @@
 import groupBy from 'lodash/groupBy';
+export const SID_KEY = 'SAP ID (SID)';
 
 export const defaultState = {
   tags: { isLoaded: false, items: [] },
@@ -62,9 +63,9 @@ export function onGetAllSIDs(state, { payload }) {
       ...(payload?.total > 0 && {
         items: [
           {
-            name: 'SAP ID (SID)',
+            name: SID_KEY,
             tags: (payload?.results || []).map(({ value, count } = {}) => ({
-              tag: { key: value },
+              tag: { key: value, namespace: SID_KEY },
               count,
             })),
           },
