@@ -7,7 +7,7 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
   const isGlobalFilterEnabled =
     !globalFilterHidden &&
     (window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))) &&
-    location.pathname.includes('insights');
+    activeLocation === 'insights';
   return (
     <Fragment>
       <div
@@ -53,7 +53,7 @@ RootApp.propTypes = {
   globalFilterHidden: PropTypes.bool,
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden } }) {
+function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } = {} }) {
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden };
 }
 
