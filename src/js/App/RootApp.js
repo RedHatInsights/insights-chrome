@@ -53,7 +53,7 @@ RootApp.propTypes = {
   globalFilterHidden: PropTypes.bool,
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } }) {
+function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } = {} }) {
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden };
 }
 
