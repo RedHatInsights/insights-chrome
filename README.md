@@ -83,32 +83,61 @@ On all insights application users expect to see global filter with predefined op
 
 By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with namespace and key as object keys. This is for more complex behaviors, when you want to filter our certain items or to do something else with this complex object.
 
+#### Plain object descrition
+
+Usefull if you know the partials and want to deal with the RAW data.
+
 ```JS
 insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    // do something with data object
+    /*
+    do something with data object, the shape of this object is
+    { 'namespace with spaces': { val: { isSelected: true, value: 'something' } } }
+    if uses selects SAP the object will contain
+    { Workloads: { SAP: { isSelected } } }
+    is user selects SID the object will contain
+    { 'SAP ID (SID)': { AAA: { isSelected: true } } }
+    */
+   // if you want to break the data object to its parts you can do that with desctrucor
+   const { 'SAP ID (SID)': SID, Workloads, ...tags } = data;
 });
 ```
 
-If you simply want to filter systems based on these values we provide a helper function `insights.chromemapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
+#### Basic usage of `mapGlobalFilter` function
 
-If you want to encode tag partials (namespace, key or value) you can pass `true` as second parameter to this function to enable `uriEncoding`.
+If you simply want to filter systems based on these values we provide a helper function `insights.chrome.mapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
 
-If you want to consume each partial (workoads, SID and tags) as seperate entities instead of filtering them out you can pass 3rd argument as true and this function will return array with these items.
 
 ```JS
 insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     const selectedTags = insights.chrome?.mapGlobalFilter?.(data);
-    // selectedTags is now array with selected tags and workspaces
+    // [namespace with spaces/val=something] if you are using axios, this is the correct shape
 });
 ```
+
+#### Usage of `mapGlobalFilter` function with encoded data
+
+If you want to encode tag partials (namespace, key or value) you can pass `true` as second parameter to this function to enable `uriEncoding`.
+
+
+```JS
+insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const selectedTags = insights.chrome?.mapGlobalFilter?.(data, true);
+    // [namespace%20with%20spaces/val=something] if you are not using axios, this is the correct way
+    // be careful when using this approach as it can escape twice (once manually and second time when sending data)
+});
+```
+
+#### Prefered way of consuming data in structured format
+
+If you want to consume each partial (workoads, SID and tags) as seperate entities instead of filtering them out you can pass 3rd argument as true and this function will return array with these items.
 
 Usage with preformatted filter
 ```JS
 insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     const [ workloads, SID, selectedTags ] = insights.chrome?.mapGlobalFilter?.(data, false, true);
-    // workloads has shape about selected workloads
-    // SID is array of selected SAP_SIDs
-    // selectedTags is now array with selected tags
+    // workloads = { SAP: { isSelected: true } }
+    // SID = [1543, 48723, 'AAA'] (only selected SIDs)
+    // selectedTags = [namespace with spaces/val=something]
 });
 ```
 
