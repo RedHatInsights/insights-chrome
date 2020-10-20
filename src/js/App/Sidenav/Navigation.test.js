@@ -55,9 +55,7 @@ describe('Navigation', () => {
     const mockClick = jest.fn();
     const store = mockStore(initialState);
     const wrapper = mount(<Navigation onSelect={mockSelect} onClick={mockClick} store={store} {...props} />);
-    Date.now = jest.fn(() => 1482363367071);
     expect(toJson(wrapper)).toMatchSnapshot();
-    console.log(wrapper.debug());
     wrapper.find(`[itemID='someID']`).simulate('click', { persist: jest.fn() });
     wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
     wrapper.find(`[aria-label='Insights Global Navigation']`).simulate('select', { groupId: 'someID1', itemID: 'someID2' });

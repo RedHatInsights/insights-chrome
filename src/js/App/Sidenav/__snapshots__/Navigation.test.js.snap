@@ -689,7 +689,8 @@ exports[`Navigation should render corectly 1`] = `
           </NavigationApplication>
           <NavItem
             className="ins-c-navigation__additional-links"
-            key="0"
+            key="extra-openshift-support"
+            ouiaId="extra-openshift-support"
             rel="noopener noreferrer"
             target="_blank"
             to="https://access.redhat.com/support/cases"
@@ -702,6 +703,7 @@ exports[`Navigation should render corectly 1`] = `
                 className="pf-c-nav__link ins-c-navigation__additional-links"
                 href="https://access.redhat.com/support/cases"
                 onClick={[Function]}
+                ouiaId="extra-openshift-support"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -712,7 +714,8 @@ exports[`Navigation should render corectly 1`] = `
           </NavItem>
           <NavItem
             className="ins-c-navigation__additional-links"
-            key="1"
+            key="extra-openshift-cm"
+            ouiaId="extra-openshift-cm"
             rel="noopener noreferrer"
             target="_blank"
             to="mailto:ocm-feedback@redhat.com"
@@ -725,6 +728,7 @@ exports[`Navigation should render corectly 1`] = `
                 className="pf-c-nav__link ins-c-navigation__additional-links"
                 href="mailto:ocm-feedback@redhat.com"
                 onClick={[Function]}
+                ouiaId="extra-openshift-cm"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -735,7 +739,8 @@ exports[`Navigation should render corectly 1`] = `
           </NavItem>
           <NavItem
             className="ins-c-navigation__additional-links"
-            key="2"
+            key="extra-openshift-marketplace"
+            ouiaId="extra-openshift-marketplace"
             rel="noopener noreferrer"
             target="_blank"
             to="https://marketplace.redhat.com"
@@ -748,6 +753,7 @@ exports[`Navigation should render corectly 1`] = `
                 className="pf-c-nav__link ins-c-navigation__additional-links"
                 href="https://marketplace.redhat.com"
                 onClick={[Function]}
+                ouiaId="extra-openshift-marketplace"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -758,7 +764,8 @@ exports[`Navigation should render corectly 1`] = `
           </NavItem>
           <NavItem
             className="ins-c-navigation__additional-links"
-            key="3"
+            key="extra-openshift-docs"
+            ouiaId="extra-openshift-docs"
             rel="noopener noreferrer"
             target="_blank"
             to="https://docs.openshift.com/dedicated/4/"
@@ -771,6 +778,7 @@ exports[`Navigation should render corectly 1`] = `
                 className="pf-c-nav__link ins-c-navigation__additional-links"
                 href="https://docs.openshift.com/dedicated/4/"
                 onClick={[Function]}
+                ouiaId="extra-openshift-docs"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -882,7 +890,8 @@ exports[`Navigation should render correctly 2 1`] = `
     />
     <NavItem
       className="ins-c-navigation__additional-links"
-      key="0"
+      key="extra-openshift-support"
+      ouiaId="extra-openshift-support"
       rel="noopener noreferrer"
       target="_blank"
       to="https://access.redhat.com/support/cases"
@@ -892,7 +901,8 @@ exports[`Navigation should render correctly 2 1`] = `
     </NavItem>
     <NavItem
       className="ins-c-navigation__additional-links"
-      key="1"
+      key="extra-openshift-cm"
+      ouiaId="extra-openshift-cm"
       rel="noopener noreferrer"
       target="_blank"
       to="mailto:ocm-feedback@redhat.com"
@@ -902,7 +912,8 @@ exports[`Navigation should render correctly 2 1`] = `
     </NavItem>
     <NavItem
       className="ins-c-navigation__additional-links"
-      key="2"
+      key="extra-openshift-marketplace"
+      ouiaId="extra-openshift-marketplace"
       rel="noopener noreferrer"
       target="_blank"
       to="https://marketplace.redhat.com"
@@ -912,7 +923,8 @@ exports[`Navigation should render correctly 2 1`] = `
     </NavItem>
     <NavItem
       className="ins-c-navigation__additional-links"
-      key="3"
+      key="extra-openshift-docs"
+      ouiaId="extra-openshift-docs"
       rel="noopener noreferrer"
       target="_blank"
       to="https://docs.openshift.com/dedicated/4/"

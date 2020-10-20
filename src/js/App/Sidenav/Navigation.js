@@ -15,10 +15,12 @@ const basepath = document.baseURI;
 const extraLinks = {
   insights: [
     {
+      id: 'extra-inssubs',
       title: 'Subscription Watch',
       link: './subscriptions/',
     },
     {
+      id: 'extra-docs',
       url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
       title: 'Documentation',
       external: true,
@@ -26,6 +28,7 @@ const extraLinks = {
   ],
   subscriptions: [
     {
+      id: 'extra-subs',
       url: 'https://access.redhat.com/products/subscription-central',
       title: 'Documentation',
       external: true,
@@ -33,6 +36,7 @@ const extraLinks = {
   ],
   'cost-management': [
     {
+      id: 'extra-cost-management',
       url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
       title: 'Documentation',
       external: true,
@@ -40,6 +44,7 @@ const extraLinks = {
   ],
   ansible: [
     {
+      id: 'extra-ansible',
       url: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
       title: 'Documentation',
       external: true,
@@ -47,18 +52,22 @@ const extraLinks = {
   ],
   openshift: [
     {
+      id: 'extra-openshift-support',
       title: 'Support Cases',
       link: 'https://access.redhat.com/support/cases',
     },
     {
+      id: 'extra-openshift-cm',
       title: 'Cluster Manager Feedback',
       link: 'mailto:ocm-feedback@redhat.com',
     },
     {
+      id: 'extra-openshift-marketplace',
       title: 'Red Hat Marketplace',
       link: 'https://marketplace.redhat.com',
     },
     {
+      id: 'extra-openshift-docs',
       url: 'https://docs.openshift.com/dedicated/4/',
       title: 'Documentation',
       external: true,
