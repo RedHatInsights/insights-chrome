@@ -77,6 +77,30 @@ List of available permissions methods:
  * `isProd` - test if current environment is production (prod-beta and prod-stable)
  * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
  * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission']
+ * `apiRequest` - call custom API endpoint to test if the item should be displayed
+
+ ### apiRequest example
+ ```yml
+ app:
+  title: App title
+  api:
+    versions:
+      - v1
+  frontend:
+    paths:
+      - /foo/bar
+    sub_apps:
+      - id: sub-app-one
+        title: sub-app-one
+      - id: dynamic-sub-app
+        title: dynamic-sub-app
+        permissions:
+        method: apiRequest
+        args: # acceps all axios request config options https://github.com/axios/axios#request-config
+        - url: "/request/url"
+          foo: bar
+
+ ```
 
 ## Global filter
 
