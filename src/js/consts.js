@@ -44,14 +44,12 @@ export const visibilityFunctions = {
     const userPermissions = await insights.chrome.getUserPermissions();
     return userPermissions && permissions.every((item) => userPermissions.find(({ permission }) => permission === item));
   },
-  apiRequest: async ({ url, method, ...options }) => {
-    // TODO: add caching
-    return instance.axios({
+  apiRequest: async ({ url, method, ...options }) =>
+    instance({
       url,
       method: method || 'GET',
       ...options,
-    });
-  },
+    }),
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
