@@ -7,6 +7,7 @@ import { PageHeaderToolsItem } from '@patternfly/react-core/dist/js/components/P
 import { Divider } from '@patternfly/react-core/dist/js/components/Divider/Divider';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
+import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
@@ -17,12 +18,16 @@ const Tools = () => {
   }
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInternal, setIsInternal] = useState(false);
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
   }
   useEffect(() => {
-    window.insights.chrome.auth.getUser().then((user) => user.identity.account_number && setIsSettingsDisabled(false));
+    window.insights.chrome.auth.getUser().then((user) => {
+      user.identity.account_number && setIsSettingsDisabled(false);
+      user.identity.user.is_internal && setIsInternal(true);
+    });
   }, []);
 
   {
@@ -38,6 +43,22 @@ const Tools = () => {
       component="a"
     >
       <CogIcon />
+    </Button>
+  );
+
+  {
+    /* button that should redirect a user to internal bundle if internal employee*/
+  }
+  const InternalButton = () => (
+    <Button
+      variant="plain"
+      aria-label="Go to internal tools"
+      widget-type="InternalButton"
+      className="ins-c-toolbar__button-internal"
+      href={`${document.baseURI}internal`}
+      component="a"
+    >
+      <RedhatIcon />
     </Button>
   );
 
@@ -99,6 +120,7 @@ const Tools = () => {
     <PageHeaderTools widget-type="InsightsToolbar">
       {/* Show tools on medium and above screens */}
       <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+        {isInternal && <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>}
         {!isSettingsDisabled && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'settings'}>{<SettingsButton />}</PageHeaderToolsItem>
         )}

@@ -9,7 +9,7 @@ import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
+function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
@@ -24,6 +24,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
           <dl className="ins-c-dropdown-item__stack">
             <dt className="ins-c-dropdown-item__stack--header">Account number:</dt>
             <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
+            {isInternal && <dd className="ins-c-dropdown-item__stack--subValue">Internal user</dd>}
           </dl>
         </DropdownItem>
       )}
@@ -48,6 +49,13 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
       {accountNumber > -1 && (
         <DropdownItem key="User preferences" href="./user-preferences/email">
           User Preferences
+        </DropdownItem>
+      )}
+    </React.Fragment>,
+    <React.Fragment key="internal wrapper">
+      {isInternal && (
+        <DropdownItem key="Internal" href="./internal">
+          Internal
         </DropdownItem>
       )}
     </React.Fragment>,
@@ -97,7 +105,7 @@ export class UserToggle extends Component {
         toggle={toggle}
         isPlain
         isOpen={isOpen}
-        dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, extraItems)}
+        dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
       />
     );
   }
@@ -109,6 +117,7 @@ UserToggle.propTypes = {
     name: PropTypes.string,
     username: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     isOrgAdmin: PropTypes.bool,
+    isInternal: PropTypes.bool,
   }),
   isSmall: PropTypes.bool,
   extraItems: PropTypes.arrayOf(PropTypes.node),
@@ -131,7 +140,7 @@ export default connect(
       user: {
         identity: {
           account_number: accountNumber,
-          user: { username, first_name, last_name, is_org_admin },
+          user: { username, first_name, last_name, is_org_admin, is_internal },
         },
       },
     },
@@ -140,6 +149,7 @@ export default connect(
       number: accountNumber,
       username: username,
       isOrgAdmin: is_org_admin,
+      isInternal: is_internal,
       name: `${first_name} ${last_name}`,
     },
   })
