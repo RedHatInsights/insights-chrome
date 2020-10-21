@@ -14,19 +14,29 @@ const AppSwitcher = ({ currentApp }) => {
 
   const dropdownItems = (activeApp) => {
     const appList = [
-      { title: 'Red Hat Insights', id: 'insights' },
-      { title: 'Red Hat OpenShift Cluster Manager', id: 'openshift' },
-      { title: 'Red Hat Ansible Automation Platform', id: 'ansible' },
-      { title: 'Cost Management', id: 'cost-management' },
-      { title: 'Migration Services', id: 'migrations' },
-      { title: 'Subscription Watch', id: 'subscriptions' },
+      { title: 'Red Hat Insights', id: 'insights', type: 'link' },
+      { title: 'Red Hat OpenShift Cluster Manager', id: 'openshift', type: 'link' },
+      { title: 'Red Hat Ansible Automation Platform', id: 'ansible', type: 'link' },
+      { title: 'Cost Management', id: 'cost-management', type: 'link' },
+      { title: 'Migration Services', id: 'migrations', type: 'link' },
+      { title: 'Subscription Watch', id: 'subscriptions', type: 'link' },
+      { type: 'separator', id: 'separator' },
+      { title: 'Settings', id: 'settings', type: 'link' },
+      { title: 'User Preferences', id: 'user-preferences', type: 'link' },
     ];
 
     const renderNavItems = appList.map((app) => (
       <DropdownItem
-        component="a"
-        href={`${document.baseURI}${app.id}`}
-        className={classNames({ 'ins-c-app-switcher__current': app.title === activeApp })}
+        {...(app.type === 'link'
+          ? {
+              component: 'a',
+              href: `${document.baseURI}${app.id}`,
+              className: classNames({ 'ins-c-app-switcher__current': app.title === activeApp }),
+            }
+          : {
+              component: 'div',
+              className: 'pf-c-divider',
+            })}
         key={app.id}
         ouiaId={app.id}
       >
