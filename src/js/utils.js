@@ -31,7 +31,9 @@ export function pageAllowsUnentitled() {
     pathname === '/beta' ||
     pathname === '/beta/' ||
     pathname.indexOf('/openshift') === 0 ||
-    pathname.indexOf('/beta/openshift') === 0
+    pathname.indexOf('/beta/openshift') === 0 ||
+    pathname.indexOf('/security') === 0 ||
+    pathname.indexOf('/beta/security') === 0
   ) {
     return true;
   }
