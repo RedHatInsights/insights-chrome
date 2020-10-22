@@ -5,9 +5,7 @@ import GlobalFilter from './GlobalFilter';
 
 const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
-    !globalFilterHidden &&
-    (window?.insights?.chrome?.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'))) &&
-    activeLocation === 'insights';
+    (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   return (
     <Fragment>
       <div
