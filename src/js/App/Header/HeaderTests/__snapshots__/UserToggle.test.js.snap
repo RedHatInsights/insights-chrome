@@ -17,6 +17,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
     <UserToggle
       account={
         Object {
+          "isInternal": undefined,
           "isOrgAdmin": false,
           "name": "someFirstName someLastName",
           "number": "some accountNumber",
@@ -58,6 +59,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             >
               My profile
             </DropdownItem>,
+            <React.Fragment />,
             <React.Fragment />,
             <React.Fragment />,
             <DropdownItem
@@ -120,6 +122,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
               <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
@@ -390,6 +393,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
     <UserToggle
       account={
         Object {
+          "isInternal": undefined,
           "isOrgAdmin": true,
           "name": "someFirstName someLastName",
           "number": "some accountNumber",
@@ -436,6 +440,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             >
               My profile
             </DropdownItem>,
+            <React.Fragment />,
             <React.Fragment />,
             <React.Fragment />,
             <DropdownItem
@@ -503,6 +508,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
               <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
@@ -788,6 +794,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       </DropdownItem>,
       <React.Fragment />,
       <React.Fragment />,
+      <React.Fragment />,
       <DropdownItem
         component="button"
         onClick={[Function]}
@@ -846,6 +853,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       >
         My profile
       </DropdownItem>,
+      <React.Fragment />,
       <React.Fragment />,
       <React.Fragment />,
       <DropdownItem
