@@ -39,7 +39,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, extraItems) {
                 My profile
         </DropdownItem>,
         <React.Fragment key="My user access wrapper">
-            { accountNumber > -1 &&
+            { accountNumber > -1 && window.insights.chrome.isBeta() &&
                 <DropdownItem
                     key="My user access"
                     href="./settings/my-user-access">
