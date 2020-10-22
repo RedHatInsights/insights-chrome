@@ -11,6 +11,7 @@ const pathMapper = {
   subscriptions: 'subscriptions',
   settings: 'settings',
   'user-preferences': 'user_preferences',
+  internal: 'internal',
 };
 
 function getWindow() {
@@ -57,7 +58,8 @@ function tryBounceIfUnentitled(data, section) {
     section !== 'ansible' &&
     section !== 'subscriptions' &&
     section !== 'settings' &&
-    section !== 'user-preferences'
+    section !== 'user-preferences' &&
+    section !== 'internal'
   ) {
     return;
   }
