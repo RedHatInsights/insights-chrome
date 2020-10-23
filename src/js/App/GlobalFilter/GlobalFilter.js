@@ -14,8 +14,7 @@ import { workloads, updateSelected, storeFilter, generateFilter, selectWorkloads
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
 
-  // TODO: remove once RBAC inventory in prod!
-  const isAllowed = () => window.insights?.chrome?.isProd || hasAccess;
+  const isAllowed = () => hasAccess;
 
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();

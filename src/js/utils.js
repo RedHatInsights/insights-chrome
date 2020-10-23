@@ -50,7 +50,8 @@ export function pageRequiresAuthentication() {
     section === 'subscriptions' ||
     section === 'openshift' ||
     section === 'settings' ||
-    section === 'user-preferences'
+    section === 'user-preferences' ||
+    section === 'internal'
   ) {
     return true;
   }
