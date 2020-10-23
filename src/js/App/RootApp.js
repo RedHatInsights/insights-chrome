@@ -16,24 +16,22 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
         {...(pageAction && { 'data-ouia-page-action': pageAction })}
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
-        <div>
-          {isGlobalFilterEnabled && <GlobalFilter />}
-          <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
-              <div className="pf-c-content">
-                <h1 className="pf-c-title pf-m-2xl ins-l-page__header--loading" widget-type="InsightsPageHeaderTitle">
-                  <div className="ins-c-skeleton ins-c-skeleton__sm">&nbsp;</div>
-                </h1>
-              </div>
-            </section>
-            <section className="pf-c-page__main-section pf-l-page__main-section--loading">
-              <div className="ins-c-spinner ins-m-center" role="status">
-                <span className="pf-u-screen-reader">Loading...</span>
-              </div>
-            </section>
-          </main>
-          <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+        {isGlobalFilterEnabled && <GlobalFilter />}
+        <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
+        <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
+            <div className="pf-c-content">
+            <h1 className="pf-c-title pf-m-2xl ins-l-page__header--loading" widget-type="InsightsPageHeaderTitle">
+                <div className="ins-c-skeleton ins-c-skeleton__sm">&nbsp;</div>
+            </h1>
+            </div>
+        </section>
+        <section className="pf-c-page__main-section pf-l-page__main-section--loading">
+            <div className="ins-c-spinner ins-m-center" role="status">
+            <span className="pf-u-screen-reader">Loading...</span>
+            </div>
+        </section>
+        </main>
+        <main className="pf-c-page__main" id="no-access"></main>
       </div>
       <aside className="pf-c-drawer__panel">
         <div className="pf-c-drawer__panel-body" />
