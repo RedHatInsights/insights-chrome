@@ -47,8 +47,11 @@ export const storeFilter = (tags, token) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
   if (tags?.Workloads) {
     const searchParams = new URLSearchParams();
-    searchParams.append('workloads', Object.keys(tags?.Workloads || {})?.[0]);
-    location.hash = searchParams.toString();
+    const currWorkloads = Object.entries(tags?.Workloads || {})?.find(([, { isSelected }]) => isSelected)?.[0];
+    if (currWorkloads) {
+      searchParams.append('workloads', currWorkloads);
+      location.hash = searchParams.toString();
+    }
   }
   localStorage.setItem(
     `${GLOBAL_FILTER_KEY}/${token}`,
