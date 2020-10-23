@@ -86,7 +86,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
             className="pf-c-nav__list"
             onScroll={[Function]}
           >
-            <NavigationApplication
+            <ExpandableNav
               activeApp="someApp"
               activeLocation="someLocation"
               ansible={
@@ -150,7 +150,7 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
                   </li>
                 </NavItem>
               </NavigationItem>
-            </NavigationApplication>
+            </ExpandableNav>
           </ul>
         </NavList>
       </nav>
@@ -236,7 +236,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
               className="pf-c-nav__list"
               onScroll={[Function]}
             >
-              <NavigationApplication
+              <ExpandableNav
                 activeApp="someApp"
                 activeLocation="someLocation"
                 ansible={
@@ -300,7 +300,7 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
                     </li>
                   </NavItem>
                 </NavigationItem>
-              </NavigationApplication>
+              </ExpandableNav>
             </ul>
           </NavList>
         </nav>
@@ -393,7 +393,7 @@ exports[`Navigation should render corectly 1`] = `
           className="pf-c-nav__list"
           onScroll={[Function]}
         >
-          <NavigationApplication
+          <ExpandableNav
             active={true}
             activeApp="someApp"
             activeLocation="openshift"
@@ -516,8 +516,8 @@ exports[`Navigation should render corectly 1`] = `
                 </section>
               </li>
             </NavExpandable>
-          </NavigationApplication>
-          <NavigationApplication
+          </ExpandableNav>
+          <ExpandableNav
             active={false}
             activeApp="someApp"
             activeLocation="openshift"
@@ -559,8 +559,8 @@ exports[`Navigation should render corectly 1`] = `
                 </li>
               </NavItem>
             </NavigationItem>
-          </NavigationApplication>
-          <NavigationApplication
+          </ExpandableNav>
+          <ExpandableNav
             active={false}
             activeApp="someApp"
             activeLocation="openshift"
@@ -602,8 +602,8 @@ exports[`Navigation should render corectly 1`] = `
                 </li>
               </NavItem>
             </NavigationItem>
-          </NavigationApplication>
-          <NavigationApplication
+          </ExpandableNav>
+          <ExpandableNav
             active={false}
             activeApp="someApp"
             activeLocation="openshift"
@@ -644,8 +644,8 @@ exports[`Navigation should render corectly 1`] = `
                 </li>
               </NavItem>
             </NavigationItem>
-          </NavigationApplication>
-          <NavigationApplication
+          </ExpandableNav>
+          <ExpandableNav
             active={false}
             activeApp="someApp"
             activeLocation="openshift"
@@ -686,7 +686,7 @@ exports[`Navigation should render corectly 1`] = `
                 </li>
               </NavItem>
             </NavigationItem>
-          </NavigationApplication>
+          </ExpandableNav>
           <NavItem
             className="ins-c-navigation__additional-links"
             key="extra-openshift-support"
@@ -831,7 +831,7 @@ exports[`Navigation should render correctly 2 1`] = `
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
   >
-    <NavigationApplication
+    <ExpandableNav
       active={true}
       activeApp="someApp"
       activeLocation="openshift"
@@ -850,7 +850,7 @@ exports[`Navigation should render correctly 2 1`] = `
       }
       title="Overview"
     />
-    <NavigationApplication
+    <ExpandableNav
       active={false}
       activeApp="someApp"
       activeLocation="openshift"
@@ -860,7 +860,7 @@ exports[`Navigation should render correctly 2 1`] = `
       onClick={[Function]}
       title="Rules"
     />
-    <NavigationApplication
+    <ExpandableNav
       active={false}
       activeApp="someApp"
       activeLocation="openshift"
@@ -870,7 +870,7 @@ exports[`Navigation should render correctly 2 1`] = `
       onClick={[Function]}
       title="Topics"
     />
-    <NavigationApplication
+    <ExpandableNav
       active={false}
       activeApp="someApp"
       activeLocation="openshift"
@@ -879,7 +879,7 @@ exports[`Navigation should render correctly 2 1`] = `
       onClick={[Function]}
       title="Inventory"
     />
-    <NavigationApplication
+    <ExpandableNav
       active={false}
       activeApp="someApp"
       activeLocation="openshift"

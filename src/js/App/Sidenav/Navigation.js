@@ -8,7 +8,7 @@ import { appNavClick, clearActive } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
-import NavigationApplication from './NavigationApplication';
+import ExpandableNav from './ExpandableNav';
 
 const basepath = document.baseURI;
 
@@ -109,7 +109,7 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
       <NavList>
         {settings?.map((item) => (
-          <NavigationApplication
+          <ExpandableNav
             activeLocation={activeLocation}
             activeApp={activeApp}
             key={item.id}
