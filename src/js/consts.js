@@ -3,7 +3,7 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/files
 const obj = {
   noAuthParam: 'noauth',
   offlineToken: '2402500adeacc30eb5c5a8a5e2e0ec1f',
-  allowedUnauthedPaths: ['/', '/logout', '/beta'],
+  allowedUnauthedPaths: ['/', '/logout', '/beta', '/security/insights', '/beta/security/insights'],
 };
 
 export const visibilityFunctions = {
