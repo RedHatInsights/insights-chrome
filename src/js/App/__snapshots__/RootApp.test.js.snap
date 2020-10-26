@@ -65,9 +65,9 @@ Array [
   <div
     class="pf-c-drawer__content"
     data-ouia-app-id="app-id"
-    data-ouia-page-group="some-location"
-    data-ouia-page-type="some-app"
+    data-ouia-bundle="some-location"
     data-ouia-safe="true"
+    data-ouia-subnav="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -128,10 +128,10 @@ Array [
   <div
     class="pf-c-drawer__content"
     data-ouia-app-id="app-id"
-    data-ouia-page-action="some-action"
-    data-ouia-page-group="some-location"
-    data-ouia-page-type="some-app"
+    data-ouia-bundle="some-location"
+    data-ouia-page-type="some-action"
     data-ouia-safe="true"
+    data-ouia-subnav="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -192,10 +192,10 @@ Array [
   <div
     class="pf-c-drawer__content"
     data-ouia-app-id="app-id"
-    data-ouia-page-group="some-location"
+    data-ouia-bundle="some-location"
     data-ouia-page-object-id="some-object-id"
-    data-ouia-page-type="some-app"
     data-ouia-safe="true"
+    data-ouia-subnav="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
@@ -256,11 +256,11 @@ Array [
   <div
     class="pf-c-drawer__content"
     data-ouia-app-id="app-id"
-    data-ouia-page-action="some-action"
-    data-ouia-page-group="some-location"
+    data-ouia-bundle="some-location"
     data-ouia-page-object-id="some-object-id"
-    data-ouia-page-type="some-app"
+    data-ouia-page-type="some-action"
     data-ouia-safe="true"
+    data-ouia-subnav="some-app"
   >
     <main
       class="pf-c-page__main pf-l-page__main"
