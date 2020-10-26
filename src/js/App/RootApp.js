@@ -3,6 +3,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalFilter from './GlobalFilter';
 
+const Wrapper = ({ isGlobalFilterEnabled, children }) =>
+  isGlobalFilterEnabled ? (
+    <div>
+      <GlobalFilter />
+      {children}
+    </div>
+  ) : (
+    children
+  );
+Wrapper.propTypes = {
+  isGlobalFilterEnabled: PropTypes.bool,
+  children: PropTypes.node,
+};
+
 const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
@@ -16,8 +30,7 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
         {...(pageAction && { 'data-ouia-page-action': pageAction })}
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
-        <div>
-          {isGlobalFilterEnabled && <GlobalFilter />}
+        <Wrapper isGlobalFilterEnabled={isGlobalFilterEnabled}>
           <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
             <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
               <div className="pf-c-content">
@@ -33,7 +46,7 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
             </section>
           </main>
           <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+        </Wrapper>
       </div>
       <aside className="pf-c-drawer__panel">
         <div className="pf-c-drawer__panel-body" />
