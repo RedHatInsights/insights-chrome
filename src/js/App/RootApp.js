@@ -24,10 +24,11 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
     <Fragment>
       <div
         className="pf-c-drawer__content"
-        data-ouia-page-type={activeApp || appId}
-        data-ouia-page-group={activeLocation}
+        data-ouia-subnav={activeApp}
+        data-ouia-bundle={activeLocation}
+        data-ouia-app-id={appId}
         data-ouia-safe="true"
-        {...(pageAction && { 'data-ouia-page-action': pageAction })}
+        {...(pageAction && { 'data-ouia-page-type': pageAction })}
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
         <Wrapper isGlobalFilterEnabled={isGlobalFilterEnabled}>
