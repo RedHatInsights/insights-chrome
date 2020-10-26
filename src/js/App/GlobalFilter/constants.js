@@ -80,7 +80,7 @@ export const storeFilter = (tags, token) => {
 };
 
 export const generateFilter = async () => {
-  const searchParams = new URLSearchParams(location.hash.substring(1));
+  const searchParams = new URLSearchParams(location.hash?.substring(1));
   const currToken = decodeToken(await insights.chrome.auth.getToken())?.session_state;
   let data;
   try {
