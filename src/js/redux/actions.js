@@ -25,7 +25,7 @@ function isCurrApp(item, app) {
 }
 
 export function identifyApp(data, options) {
-  if (data === 'landing') {
+  if (data === 'landing' || data === 'trust') {
     return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
   }
 
