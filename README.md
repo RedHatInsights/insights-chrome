@@ -48,6 +48,9 @@ Insights Chrome comes with a Javacript API that allows applications to control n
     insights.chrome.identifyApp('advisor');
 ```
 
+### Deprecated functions
+- `insights.chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
+
 #### Global events
 
 The following events can be observed:
