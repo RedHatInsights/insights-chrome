@@ -87,7 +87,7 @@ describe('global nav with API restricted sub items', () => {
       { id: 'sub-app-two', title: 'sub-app-two' },
     ];
     axiosSpy.mockImplementationOnce(() => Promise.resolve(true));
-    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition);
+    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition, 'asyncApp');
     expect(nav.asyncApp.routes).toEqual(expectedRoutes);
     expect(axiosSpy).toHaveBeenCalledWith({ foo: 'bar', method: 'GET', url: '/request/url' });
   });
@@ -95,7 +95,7 @@ describe('global nav with API restricted sub items', () => {
   test('should not display sub item with negative API response', async () => {
     const expectedRoutes = [{ id: 'sub-app-two', title: 'sub-app-two' }];
     axiosSpy.mockImplementationOnce(() => Promise.resolve(false));
-    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition);
+    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition, 'asyncApp');
     expect(nav.asyncApp.routes).toEqual(expectedRoutes);
     expect(axiosSpy).toHaveBeenCalledWith({ foo: 'bar', method: 'GET', url: '/request/url' });
   });
