@@ -104,4 +104,15 @@ RootApp.propTypes = {
 function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
 }
+<<<<<<< HEAD
 export default connect(stateToProps, null)(RootApp);
+=======
+
+const RootRouterWrapper = (props) => (
+  <BrowserRouter basename="/insights/advisor">
+    <RootApp {...props} />
+  </BrowserRouter>
+);
+
+export default connect(stateToProps, null)(RootRouterWrapper);
+>>>>>>> 23d5130... Testing chrome scalprum migration.

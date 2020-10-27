@@ -43,7 +43,7 @@ export function chromeInit(navResolver) {
   const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
 
   return {
-    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
+    identifyApp: () => {},
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     appAction,
     appObjectId,
