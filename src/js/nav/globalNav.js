@@ -3,9 +3,9 @@ import { safeLoad } from 'js-yaml';
 import flatMap from 'lodash/flatMap';
 import { getUrl } from '../utils';
 
-export let getNavFromConfig = async (masterConfig) => {
+export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
-    .filter((appId) => masterConfig[appId].top_level)
+    .filter((appId) => masterConfig[appId].top_level && appId === active)
     .reduce(async (acc, appId) => {
       const routes = await getAppData(appId, 'routes', masterConfig);
       return {
@@ -18,7 +18,7 @@ export let getNavFromConfig = async (masterConfig) => {
 const isCurrVisible = (permissions) =>
   Promise.all(
     flatMap(
-      [permissions],
+      Array.isArray(permissions) ? permissions : [permissions],
       async ({ method, args } = {}) =>
         // (null, undefined, true) !== false
         (await visibilityFunctions?.[method]?.(...(args || []))) !== false
@@ -86,18 +86,18 @@ async function getAppData(appId, propName, masterConfig) {
 }
 
 export async function loadNav(yamlConfig, cache) {
-  let groupedNav = await cache.getItem('navigation');
-  if (!groupedNav) {
-    groupedNav = await getNavFromConfig(safeLoad(yamlConfig));
-    cache.setItem('navigation', groupedNav);
+  const [active, section] = [getUrl('bundle') || 'insights', getUrl('app')];
+  let activeBundle = await cache.getItem(`navigation-${active}`);
+  if (!activeBundle) {
+    activeBundle = await getNavFromConfig(safeLoad(yamlConfig), active);
+    cache.setItem(`navigation-${active}`, activeBundle);
   }
 
-  const [active, section] = [getUrl('bundle'), getUrl('app')];
-  const globalNav = (groupedNav[active] || groupedNav.insights)?.routes;
-  return groupedNav[active]
+  const globalNav = (activeBundle[active] || activeBundle.insights)?.routes;
+  return activeBundle[active]
     ? {
         globalNav,
-        activeTechnology: groupedNav[active].title,
+        activeTechnology: activeBundle[active].title,
         activeLocation: active,
         activeSection: globalNav?.find?.(({ id }) => id === section),
       }
