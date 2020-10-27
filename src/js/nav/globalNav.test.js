@@ -1,6 +1,8 @@
 const masterConfig = require('../../../testdata/masterConfig.json');
 const masterConfigPermissions = require('../../../testdata/masterConfigPermissions.json');
 const navFunctions = require('./globalNav');
+
+import * as instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
 // eslint-disable-next-line max-len
 const globalNav = {
   appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] },
@@ -46,5 +48,55 @@ describe('globalNav with permissions', () => {
   test('appG, should have empty navigation', async () => {
     const calculatedNav = await navFunctions.getNavFromConfig(masterConfigPermissions, 'appG');
     expect(calculatedNav.appG).not.toBeDefined();
+  });
+});
+
+describe('global nav with API restricted sub items', () => {
+  const axiosSpy = jest.spyOn(instance, 'default');
+  const mockAsyncNavDefinition = {
+    asyncApp: {
+      top_level: 'top-level',
+      frontend: {
+        title: 'async-app',
+        sub_apps: [
+          {
+            id: 'sub-app-one',
+            title: 'sub-app-one',
+            permissions: {
+              method: 'apiRequest',
+              args: [{ url: '/request/url', foo: 'bar' }],
+            },
+          },
+          {
+            id: 'sub-app-two',
+            title: 'sub-app-two',
+          },
+        ],
+      },
+      title: 'appF',
+    },
+  };
+
+  afterEach(() => {
+    axiosSpy.mockReset();
+  });
+
+  test('should display sub item with positive API response', async () => {
+    const expectedRoutes = [
+      { id: 'sub-app-one', title: 'sub-app-one' },
+      { id: 'sub-app-two', title: 'sub-app-two' },
+    ];
+    axiosSpy.mockImplementationOnce(() => Promise.resolve(true));
+    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ foo: 'bar', method: 'GET', url: '/request/url' });
+  });
+
+  test('should not display sub item with negative API response', async () => {
+    const expectedRoutes = [{ id: 'sub-app-two', title: 'sub-app-two' }];
+    axiosSpy.mockImplementationOnce(() => Promise.resolve(false));
+    const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ foo: 'bar', method: 'GET', url: '/request/url' });
   });
 });

@@ -1,4 +1,5 @@
 import instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import get from 'lodash/get';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -44,14 +45,12 @@ export const visibilityFunctions = {
     const userPermissions = await insights.chrome.getUserPermissions();
     return userPermissions && permissions.every((item) => userPermissions.find(({ permission }) => permission === item));
   },
-  apiRequest: async ({ url, method, ...options }) => {
-    // TODO: add caching
-    return instance.axios({
+  apiRequest: async ({ url, method, accessor, ...options }) =>
+    instance({
       url,
       method: method || 'GET',
       ...options,
-    });
-  },
+    }).then((response) => (accessor ? get(response?.data || response || {}, accessor) : response?.data || response)),
 };
 
 export const isVisible = (limitedApps, app, visibility) => {

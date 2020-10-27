@@ -1,25 +1,26 @@
 import React from 'react';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
-import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { appNavClick, clearActive } from '../../redux/actions';
-import NavigationItem from './NavigationItem';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
+import ExpandableNav from './ExpandableNav';
 
 const basepath = document.baseURI;
 
 const extraLinks = {
   insights: [
     {
+      id: 'extra-inssubs',
       title: 'Subscription Watch',
       link: './subscriptions/',
     },
     {
+      id: 'extra-docs',
       url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
       title: 'Documentation',
       external: true,
@@ -27,6 +28,7 @@ const extraLinks = {
   ],
   subscriptions: [
     {
+      id: 'extra-subs',
       url: 'https://access.redhat.com/products/subscription-central',
       title: 'Documentation',
       external: true,
@@ -34,6 +36,7 @@ const extraLinks = {
   ],
   'cost-management': [
     {
+      id: 'extra-cost-management',
       url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
       title: 'Documentation',
       external: true,
@@ -41,6 +44,7 @@ const extraLinks = {
   ],
   ansible: [
     {
+      id: 'extra-ansible',
       url: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
       title: 'Documentation',
       external: true,
@@ -48,18 +52,22 @@ const extraLinks = {
   ],
   openshift: [
     {
+      id: 'extra-openshift-support',
       title: 'Support Cases',
       link: 'https://access.redhat.com/support/cases',
     },
     {
+      id: 'extra-openshift-cm',
       title: 'Cluster Manager Feedback',
       link: 'mailto:ocm-feedback@redhat.com',
     },
     {
+      id: 'extra-openshift-marketplace',
       title: 'Red Hat Marketplace',
       link: 'https://marketplace.redhat.com',
     },
     {
+      id: 'extra-openshift-docs',
       url: 'https://docs.openshift.com/dedicated/4/',
       title: 'Documentation',
       external: true,
@@ -100,47 +108,19 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
   return (
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
       <NavList>
-        {settings?.map((item, key) =>
-          item.subItems ? (
-            <NavExpandable
-              className="ins-m-navigation-align"
-              title={item.title}
-              itemID={item.id}
-              ouiaId={item.id}
-              key={key}
-              isActive={item.active}
-              isExpanded={item.active}
-            >
-              {item.subItems.map((subItem, subKey) => (
-                <NavigationItem
-                  ignoreCase={subItem.ignoreCase}
-                  itemID={subItem.reload || subItem.id}
-                  ouiaId={subItem.reload || subItem.id}
-                  key={subKey}
-                  title={subItem.title}
-                  parent={subItem.reload ? activeLocation : `${activeLocation}${item.id ? `/${item.id}` : ''}`}
-                  isActive={item.active && subItem.id === activeApp}
-                  onClick={(event) => onClick(event, subItem, item)}
-                />
-              ))}
-            </NavExpandable>
-          ) : (
-            <NavigationItem
-              ignoreCase={item.ignoreCase}
-              itemID={item.id}
-              ouiaId={item.id}
-              key={key}
-              title={item.title}
-              parent={activeLocation}
-              isActive={item.active || item.id === activeApp}
-              onClick={(event) => onClick(event, item)}
-            />
-          )
-        )}
-        {extraLinks[activeLocation]?.map?.((item, key) => (
+        {settings?.map((item) => (
+          <ExpandableNav
+            activeLocation={activeLocation}
+            activeApp={activeApp}
+            key={item.id}
+            {...item}
+            onClick={(event, subItem) => (item.subItems ? onClick(event, subItem, item) : onClick(event, item))}
+          />
+        ))}
+        {extraLinks[activeLocation]?.map?.((item) => (
           <NavItem
             className="ins-c-navigation__additional-links"
-            key={key}
+            key={item.id}
             to={item.url || item.link}
             ouiaId={item.id}
             target="_blank"
