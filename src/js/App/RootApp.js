@@ -1,45 +1,152 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GlobalFilter from './GlobalFilter';
+import { useScalprum } from '@scalprum/react-core';
+import { BrowserRouter, Link, Route, Switch } from 'nice-router'; // need some alias because of inventory
+import auth from '../auth';
+import analytics from '../analytics';
+import sentry from '../sentry';
+import createChromeInstance from '../chrome/create-chrome';
+import registerUrlObserver from '../url-observer';
+import { getApp, getAppsByRootLocation, injectScript } from '@scalprum/core';
 
-const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved }) => {
-  const isGlobalFilterEnabled =
-    (!globalFilterRemoved && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+/**
+ * Scalplet route mock. This is required because of inventory router external dependency name.
+ * That is not renamed and causes router to be undefined in scalplet route.
+ */
+
+// eslint-disable-next-line react/prop-types
+const ScalpletRoute = ({ setCurrentApp, Placeholder = Fragment, elementId, appName, path, ...props }) => {
+  const { scriptLocation } = getAppsByRootLocation(path)?.[0];
+  useEffect(() => {
+    const app = getApp(appName);
+
+    if (!app) {
+      injectScript(appName, scriptLocation).then((...args) => {
+        const app = getApp(appName);
+        console.log({ args, appName, app });
+        app.mount();
+        setCurrentApp(app);
+      });
+    } else {
+      app.mount();
+      setCurrentApp(app);
+    }
+  }, [path]);
+
   return (
-    <Fragment>
-      <div
-        className="pf-c-drawer__content"
-        data-ouia-subnav={activeApp}
-        data-ouia-bundle={activeLocation}
-        data-ouia-app-id={appId}
-        data-ouia-safe="true"
-        {...(pageAction && { 'data-ouia-page-type': pageAction })}
-        {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
-      >
-        <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
-          {isGlobalFilterEnabled && <GlobalFilter />}
-          <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
-              <div className="pf-c-content">
-                <h1 className="pf-c-title pf-m-2xl ins-l-page__header--loading" widget-type="InsightsPageHeaderTitle">
-                  <div className="ins-c-skeleton ins-c-skeleton__sm">&nbsp;</div>
-                </h1>
-              </div>
-            </section>
-            <section className="pf-c-page__main-section pf-l-page__main-section--loading">
-              <div className="ins-c-spinner ins-m-center" role="status">
-                <span className="pf-u-screen-reader">Loading...</span>
-              </div>
-            </section>
-          </main>
-          <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+    <Route {...props} path={path}>
+      <div id={elementId}>
+        <Placeholder />
       </div>
-      <aside className="pf-c-drawer__panel">
-        <div className="pf-c-drawer__panel-body" />
-      </aside>
-    </Fragment>
+    </Route>
+  );
+};
+
+const config = {
+  advisor: {
+    appId: 'advisor',
+    elementId: 'advisor-root',
+    name: 'advisor',
+    rootLocation: '/foo',
+    scriptLocation: `${window.location.origin}/apps/advisor/js/advisor.js`,
+  },
+  catalog: {
+    appId: 'catalog',
+    elementId: 'catalog-root',
+    name: 'catalog',
+    rootLocation: '/bar',
+    scriptLocation: `${window.location.origin}/apps/catalog/js/catalog.js`,
+  },
+};
+
+console.log(window.location.origin);
+
+// eslint-disable-next-line react/prop-types
+const SmartLink = ({ setCurrentApp, unmount, ...props }) => {
+  return (
+    <Link
+      onClick={() => {
+        if (unmount) {
+          unmount();
+          setCurrentApp();
+        }
+      }}
+      {...props}
+    />
+  );
+};
+
+const RootApp = () => {
+  const scalprum = useScalprum(config);
+  const [insights, setInsights] = useState();
+  /**
+   * We will need to add this routine to the scalprum core.
+   * React 17 async rendering will destroy app root before the clean up phase of scalprum route gest invoked and app is not unmounted
+   * We will prbably need different mechanism that the scalplet route.
+   * we might need to handle the mount/unmount/update logic outside of the scalplet and inside of the scaffolding instead
+   */
+  const [currentApp, setCurrentApp] = useState();
+  useEffect(() => {
+    const libjwt = auth();
+    function noop() {}
+    libjwt.initPromise.then(() => {
+      libjwt.jwt
+        .getUserInfo()
+        .then((...data) => {
+          analytics(...data);
+          sentry(...data);
+        })
+        .catch(noop);
+    });
+
+    window.insights = window.insights || {};
+
+    window.insights = createChromeInstance(libjwt, window.insights);
+    const insights = window.insights;
+    setInsights(insights);
+
+    if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+      window._satellite.pageBottom();
+      registerUrlObserver(window._satellite.pageBottom);
+    }
+  }, []);
+  if (!scalprum.initialized || !insights) {
+    return (
+      <div>
+        <h1>Loading</h1>
+      </div>
+    );
+  }
+  return (
+    <div style={{ display: 'flex' }}>
+      <div style={{ width: 240, padding: 16 }}>
+        <ul>
+          <li>
+            <SmartLink setCurrentApp={setCurrentApp} unmount={currentApp?.unmount} to="/">
+              Home
+            </SmartLink>
+          </li>
+          {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
+            <li key={appId}>
+              <SmartLink setCurrentApp={setCurrentApp} unmount={currentApp?.unmount} to={rootLocation}>
+                {appId}
+              </SmartLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div style={{ flexGrow: 1, padding: 16 }}>
+        <Switch>
+          {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
+            <ScalpletRoute setCurrentApp={setCurrentApp} key={rootLocation} {...item} appName={name} path={rootLocation} />
+          ))}
+          <Route>
+            <h1>Chrome home</h1>
+          </Route>
+        </Switch>
+      </div>
+    </div>
   );
 };
 
@@ -56,4 +163,10 @@ function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, 
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
 }
 
-export default connect(stateToProps, null)(RootApp);
+const RootRouterWrapper = (props) => (
+  <BrowserRouter basename="/insights/advisor">
+    <RootApp {...props} />
+  </BrowserRouter>
+);
+
+export default connect(stateToProps, null)(RootRouterWrapper);

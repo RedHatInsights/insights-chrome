@@ -1,5 +1,5 @@
-import React, { lazy, Suspense, Fragment } from 'react';
-import { render } from 'react-dom';
+import React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
@@ -12,17 +12,14 @@ import RootApp from '../App/RootApp';
 import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import logger from '../jwt/logger';
-import { getUrl, getEnv, isBeta } from '../utils';
+import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
 import { flatTags } from '../App/GlobalFilter/constants';
 
-const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ '../App/NoAccess'));
+window.React = React;
+window.ReactDOM = ReactDOM;
 
-const log = logger('entry.js');
-
-// used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
   APP_NAVIGATION: [
     (fn) => ({
@@ -49,14 +46,14 @@ const PUBLIC_EVENTS = {
   ],
 };
 
-export function chromeInit(navResolver) {
-  const { store, middlewareListener, actions } = spinUpStore();
+export function chromeInit() {
+  const { store, actions } = spinUpStore();
 
   // public API actions
-  const { identifyApp, appNavClick, clearActive, appAction, appObjectId } = actions;
+  const { appAction, appObjectId } = actions;
 
   return {
-    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
+    identifyApp: () => {},
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     appAction,
     appObjectId,
@@ -64,35 +61,8 @@ export function chromeInit(navResolver) {
     removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
-    appNavClick: ({ secondaryNav, ...payload }) => {
-      if (!secondaryNav) {
-        clearActive();
-      }
-
-      appNavClick({
-        ...payload,
-        custom: true,
-      });
-    },
-    on: (type, callback) => {
-      if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
-        throw new Error(`Unknown event type: ${type}`);
-      }
-
-      const [listener, selector] = PUBLIC_EVENTS[type];
-      if (selector) {
-        callback({
-          data: get(store.getState(), selector) || {},
-        });
-      }
-      return middlewareListener.addNew(listener(callback));
-    },
-    $internal: { store },
-    loadInventory,
-    experimental: {
-      loadRemediations,
-    },
-    enable: debugFunctions,
+    appNavClick: () => {},
+    on: () => {},
   };
 }
 
@@ -129,47 +99,11 @@ export function rootApp() {
   const { store } = spinUpStore();
   const pageRoot = document.querySelector('.pf-c-page__drawer');
   if (pageRoot) {
-    render(
+    ReactDOM.render(
       <Provider store={store}>
         <RootApp />
       </Provider>,
       pageRoot
     );
   }
-}
-
-export function noAccess() {
-  const { store } = spinUpStore();
-  window.insights.chrome.auth
-    .getUser()
-    .then((data) => {
-      if (data && !consts.allowedUnauthedPaths.includes(location.pathname)) {
-        const { entitlements } = data;
-        const path = location.pathname.split('/');
-        const apps = Object.keys(entitlements || {});
-
-        /* eslint-disable camelcase */
-        const grantAccess = Object.entries(entitlements || {}).filter(([app, { is_entitled }]) => {
-          // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
-          return path.includes(app) && is_entitled;
-        });
-        /* eslint-enable camelcase */
-
-        // also grant access to other pages like settings/general
-        const isTrackedApp = path.some((value) => apps.includes(value));
-        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
-          document.getElementById('root').style.display = 'none';
-          document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
-          render(
-            <Provider store={store}>
-              <Suspense fallback={Fragment}>
-                <NoAccess />
-              </Suspense>
-            </Provider>,
-            document.querySelector('#no-access')
-          );
-        }
-      }
-    })
-    .catch(log('Error fetching user entitlements!'));
 }
