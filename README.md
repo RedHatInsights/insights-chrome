@@ -77,9 +77,14 @@ List of available permissions methods:
  * `isProd` - test if current environment is production (prod-beta and prod-stable)
  * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
  * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission']
- * `apiRequest` - call custom API endpoint to test if the item should be displayed
+ * `apiRequest` - call custom API endpoint to test if the item should be displayed.
+
+    * Expects `true`/`false` response.
+    * `accessor` attribute can be specified. If the boolean value is in nested object. The accessor is a string path of [lodash get](https://lodash.com/docs/4.17.15#get) function.
+    * If the promise receives an error, the item won't be displayed.
 
  ### apiRequest example
+
  ```yml
  app:
   title: App title
@@ -95,12 +100,38 @@ List of available permissions methods:
       - id: dynamic-sub-app
         title: dynamic-sub-app
         permissions:
-        method: apiRequest
-        args: # acceps all axios request config options https://github.com/axios/axios#request-config
-        - url: "/request/url"
-          foo: bar
+          method: apiRequest
+          args: # acceps all axios request config options https://github.com/axios/axios#request-config
+            - url: "/request/url"
+              foo: bar
 
  ```
+
+### multiple permissions example
+
+Each nav item can have multiple required permissions. If **all checks are successful** the item will display.
+
+```yml
+app:
+  title: App title
+  api:
+    versions:
+      - v1
+  frontend:
+    paths:
+      - /foo/bar
+    sub_apps:
+      - id: 'sub-app-one'
+        title: 'Sub app one'
+    permissions:
+        - method: apiRequest
+          args:
+            - url: '/foo/bar'
+              show: true
+        - method: hasPermissions
+          args:
+            - [catalog:portfolios:create]
+```
 
 ## Global filter
 

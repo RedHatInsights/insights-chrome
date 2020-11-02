@@ -50,7 +50,12 @@ export const visibilityFunctions = {
       url,
       method: method || 'GET',
       ...options,
-    }).then((response) => (accessor ? get(response?.data || response || {}, accessor) : response?.data || response)),
+    })
+      .then((response) => (accessor ? get(response?.data || response || {}, accessor) : response?.data || response))
+      .catch((err) => {
+        console.log(err);
+        return false;
+      }),
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
