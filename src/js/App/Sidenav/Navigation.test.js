@@ -58,7 +58,7 @@ describe('Navigation', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
     wrapper.find(`[itemID='someID']`).simulate('click', { persist: jest.fn() });
     wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
-    wrapper.find(`[aria-label='Insights Global Navigation']`).simulate('select', { groupId: 'someID1', itemID: 'someID2' });
+    wrapper.find(`[aria-label='Insights Global Navigation']`).first().simulate('select', { groupId: 'someID1', itemID: 'someID2' });
   });
   it('should render correctly 2', () => {
     let props = {
