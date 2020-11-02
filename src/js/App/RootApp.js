@@ -1,47 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { useScalprum } from '@scalprum/react-core';
-import { BrowserRouter, Link, Route, Switch } from 'nice-router'; // need some alias because of inventory
+import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import auth from '../auth';
 import analytics from '../analytics';
 import sentry from '../sentry';
 import createChromeInstance from '../chrome/create-chrome';
 import registerUrlObserver from '../url-observer';
-import { getApp, getAppsByRootLocation, injectScript } from '@scalprum/core';
-
-/**
- * Scalplet route mock. This is required because of inventory router external dependency name.
- * That is not renamed and causes router to be undefined in scalplet route.
- */
-
-// eslint-disable-next-line react/prop-types
-const ScalpletRoute = ({ setCurrentApp, Placeholder = Fragment, elementId, appName, path, ...props }) => {
-  const { scriptLocation } = getAppsByRootLocation(path)?.[0];
-  useEffect(() => {
-    const app = getApp(appName);
-
-    if (!app) {
-      injectScript(appName, scriptLocation).then((...args) => {
-        const app = getApp(appName);
-        console.log({ args, appName, app });
-        app.mount();
-        setCurrentApp(app);
-      });
-    } else {
-      app.mount();
-      setCurrentApp(app);
-    }
-  }, [path]);
-
-  return (
-    <Route {...props} path={path}>
-      <div id={elementId}>
-        <Placeholder />
-      </div>
-    </Route>
-  );
-};
 
 const config = {
   advisor: {
@@ -60,33 +26,9 @@ const config = {
   },
 };
 
-console.log(window.location.origin);
-
-// eslint-disable-next-line react/prop-types
-const SmartLink = ({ setCurrentApp, unmount, ...props }) => {
-  return (
-    <Link
-      onClick={() => {
-        if (unmount) {
-          unmount();
-          setCurrentApp();
-        }
-      }}
-      {...props}
-    />
-  );
-};
-
 const RootApp = () => {
   const scalprum = useScalprum(config);
   const [insights, setInsights] = useState();
-  /**
-   * We will need to add this routine to the scalprum core.
-   * React 17 async rendering will destroy app root before the clean up phase of scalprum route gest invoked and app is not unmounted
-   * We will prbably need different mechanism that the scalplet route.
-   * we might need to handle the mount/unmount/update logic outside of the scalplet and inside of the scaffolding instead
-   */
-  const [currentApp, setCurrentApp] = useState();
   useEffect(() => {
     const libjwt = auth();
     function noop() {}
@@ -123,15 +65,11 @@ const RootApp = () => {
       <div style={{ width: 240, padding: 16 }}>
         <ul>
           <li>
-            <SmartLink setCurrentApp={setCurrentApp} unmount={currentApp?.unmount} to="/">
-              Home
-            </SmartLink>
+            <ScalprumLink to="/">Home</ScalprumLink>
           </li>
           {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
             <li key={appId}>
-              <SmartLink setCurrentApp={setCurrentApp} unmount={currentApp?.unmount} to={rootLocation}>
-                {appId}
-              </SmartLink>
+              <ScalprumLink to={rootLocation}>{appId}</ScalprumLink>
             </li>
           ))}
         </ul>
@@ -139,7 +77,7 @@ const RootApp = () => {
       <div style={{ flexGrow: 1, padding: 16 }}>
         <Switch>
           {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
-            <ScalpletRoute setCurrentApp={setCurrentApp} key={rootLocation} {...item} appName={name} path={rootLocation} />
+            <ScalprumRoute key={rootLocation} {...item} appName={name} path={rootLocation} />
           ))}
           <Route>
             <h1>Chrome home</h1>
