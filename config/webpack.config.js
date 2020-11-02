@@ -17,9 +17,8 @@ const commonConfig = ({ publicPath, noHash }) => ({
       PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
       customReact: path.resolve(__dirname, './react-external.js'),
       reactRedux: path.resolve(__dirname, './react-redux-external.js'),
-      'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'),
+      // 'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'), we will require different router alias
       PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js'),
-      'nice-router': path.resolve(__dirname, '../node_modules/react-router-dom'),
     },
   },
   optimization: {
