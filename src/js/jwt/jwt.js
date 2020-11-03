@@ -219,6 +219,7 @@ function logout(bounce) {
       key.endsWith('/api/entitlements/v1/services') ||
       key.endsWith('/config/main.yml') ||
       key.endsWith('/chrome') ||
+      key.endsWith('/chrome-store') ||
       key.startsWith('kc-callback') ||
       key.startsWith(GLOBAL_FILTER_KEY)
   );
