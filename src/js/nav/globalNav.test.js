@@ -53,6 +53,54 @@ describe('globalNav with permissions', () => {
 
 describe('global nav with API restricted sub items', () => {
   const axiosSpy = jest.spyOn(instance, 'default');
+  const mockEmptyMatcherAsyncNavDefinition = {
+    asyncApp: {
+      top_level: 'top-level',
+      frontend: {
+        title: 'async-app',
+        sub_apps: [
+          {
+            id: 'sub-app-one',
+            title: 'sub-app-one',
+            permissions: {
+              method: 'apiRequest',
+              args: [{ url: '/request/url', matcher: 'isEmpty', accessor: 'data' }],
+            },
+          },
+          {
+            id: 'sub-app-two',
+            title: 'sub-app-two',
+          },
+        ],
+      },
+      title: 'appF',
+    },
+  };
+
+  const mockNotEmptyMatcherAsyncNavDefinition = {
+    asyncApp: {
+      top_level: 'top-level',
+      frontend: {
+        title: 'async-app',
+        sub_apps: [
+          {
+            id: 'sub-app-one',
+            title: 'sub-app-one',
+            permissions: {
+              method: 'apiRequest',
+              args: [{ url: '/request/url', matcher: 'isNotEmpty', accessor: 'data' }],
+            },
+          },
+          {
+            id: 'sub-app-two',
+            title: 'sub-app-two',
+          },
+        ],
+      },
+      title: 'appF',
+    },
+  };
+
   const mockAsyncNavDefinition = {
     asyncApp: {
       top_level: 'top-level',
@@ -98,5 +146,43 @@ describe('global nav with API restricted sub items', () => {
     const nav = await navFunctions.getNavFromConfig(mockAsyncNavDefinition, 'asyncApp');
     expect(nav.asyncApp.routes).toEqual(expectedRoutes);
     expect(axiosSpy).toHaveBeenCalledWith({ foo: 'bar', method: 'GET', url: '/request/url' });
+  });
+
+  test('should not display sub item using API response with data accessor and isEmpty matcher', async () => {
+    axiosSpy.mockImplementationOnce(() => Promise.resolve({ data: [1] }));
+    const expectedRoutes = [{ id: 'sub-app-two', title: 'sub-app-two' }];
+    const nav = await navFunctions.getNavFromConfig(mockEmptyMatcherAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ method: 'GET', url: '/request/url' });
+  });
+
+  test('should display sub item using API response with data accessor and isEmpty matcher', async () => {
+    axiosSpy.mockImplementationOnce(() => Promise.resolve({ data: [] }));
+    const expectedRoutes = [
+      { id: 'sub-app-one', title: 'sub-app-one' },
+      { id: 'sub-app-two', title: 'sub-app-two' },
+    ];
+    const nav = await navFunctions.getNavFromConfig(mockEmptyMatcherAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ method: 'GET', url: '/request/url' });
+  });
+
+  test('should display sub item using API response with data accessor and isNotEmpty matcher', async () => {
+    axiosSpy.mockImplementationOnce(() => Promise.resolve({ data: [1] }));
+    const expectedRoutes = [
+      { id: 'sub-app-one', title: 'sub-app-one' },
+      { id: 'sub-app-two', title: 'sub-app-two' },
+    ];
+    const nav = await navFunctions.getNavFromConfig(mockNotEmptyMatcherAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ method: 'GET', url: '/request/url' });
+  });
+
+  test('should not display sub item using API response with data accessor and isNotEmpty matcher', async () => {
+    axiosSpy.mockImplementationOnce(() => Promise.resolve({ data: [] }));
+    const expectedRoutes = [{ id: 'sub-app-two', title: 'sub-app-two' }];
+    const nav = await navFunctions.getNavFromConfig(mockNotEmptyMatcherAsyncNavDefinition, 'asyncApp');
+    expect(nav.asyncApp.routes).toEqual(expectedRoutes);
+    expect(axiosSpy).toHaveBeenCalledWith({ method: 'GET', url: '/request/url' });
   });
 });
