@@ -120,7 +120,7 @@ const Tools = () => {
     <PageHeaderTools widget-type="InsightsToolbar">
       {/* Show tools on medium and above screens */}
       <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
-        {isInternal && <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>}
+        {isInternal && !window.insights.chrome.isProd && <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>}
         {!isSettingsDisabled && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'settings'}>{<SettingsButton />}</PageHeaderToolsItem>
         )}
