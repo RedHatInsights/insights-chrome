@@ -13,7 +13,7 @@ import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import logger from '../jwt/logger';
-import { getUrl , getEnv } from '../utils';
+import { getUrl, getEnv } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
 import { flatTags } from '../App/GlobalFilter/constants';

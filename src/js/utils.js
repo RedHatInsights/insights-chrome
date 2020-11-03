@@ -130,10 +130,9 @@ export function getUrl(type) {
 }
 
 export function getEnv() {
-
   let currentEnv = 'qa'; // Fallback in case env is not listed
 
-  Object.entries(DEFAULT_ROUTES).map(([env, values]) => values.url.map(url => url === location.hostname && (currentEnv = env)));
+  Object.entries(DEFAULT_ROUTES).map(([env, values]) => values.url.map((url) => url === location.hostname && (currentEnv = env)));
 
   return currentEnv;
-};
+}
