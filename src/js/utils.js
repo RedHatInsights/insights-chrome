@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import { createCacheStore } from './utils/cache';
+import { DEFAULT_ROUTES } from './jwt/constants';
 
 export function getWindow() {
   return window;
@@ -127,3 +128,12 @@ export function getUrl(type) {
 
   return type === 'bundle' ? sections[1] : sections[2];
 }
+
+export function getEnv() {
+
+  let currentEnv = 'qa'; // Fallback in case env is not listed
+
+  Object.entries(DEFAULT_ROUTES).map(([env, values]) => values.url.map(url => url === location.hostname && (currentEnv = env)));
+
+  return currentEnv;
+};

@@ -13,7 +13,7 @@ import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import logger from '../jwt/logger';
-import { getUrl } from '../utils';
+import { getUrl , getEnv } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
 import { flatTags } from '../App/GlobalFilter/constants';
@@ -112,6 +112,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
+      getEnvironment: () => getEnv(),
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,
