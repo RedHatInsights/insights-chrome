@@ -82,6 +82,9 @@ List of available permissions methods:
     * Expects `true`/`false` response.
     * `accessor` attribute can be specified. If the boolean value is in nested object. The accessor is a string path of [lodash get](https://lodash.com/docs/4.17.15#get) function.
     * If the promise receives an error, the item won't be displayed.
+    * `matcher`: `['isEmpty' | 'isNotEmpty']`.
+      * `isEmpty` uses [lodash isEmpty](https://lodash.com/docs/4.17.15#isEmpty) to evaluate api response.
+      * `isNotEmpty` is a negation of `isEmpty`
 
  ### apiRequest example
 

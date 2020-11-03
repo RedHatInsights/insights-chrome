@@ -1,10 +1,25 @@
 import instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 
 const obj = {
   noAuthParam: 'noauth',
   offlineToken: '2402500adeacc30eb5c5a8a5e2e0ec1f',
   allowedUnauthedPaths: ['/', '/logout', '/beta', '/security/insights', '/beta/security/insights'],
+};
+
+const matcherMapper = {
+  isEmpty,
+  isNotEmpty: (value) => !isEmpty(value),
+};
+/**
+ * returns true/false if value matches required criteria. If invalid or no matcher is provided it returns the original value.
+ * @param {any} value variable to be matched with matcher function
+ * @param {string} matcher id of matcher
+ */
+const matchValue = (value, matcher) => {
+  const match = matcherMapper[matcher];
+  return typeof match === 'function' ? match(value) : value;
 };
 
 export const visibilityFunctions = {
@@ -45,17 +60,18 @@ export const visibilityFunctions = {
     const userPermissions = await insights.chrome.getUserPermissions();
     return userPermissions && permissions.every((item) => userPermissions.find(({ permission }) => permission === item));
   },
-  apiRequest: async ({ url, method, accessor, ...options }) =>
-    instance({
+  apiRequest: async ({ url, method, accessor, matcher, ...options }) => {
+    return instance({
       url,
       method: method || 'GET',
       ...options,
     })
-      .then((response) => (accessor ? get(response?.data || response || {}, accessor) : response?.data || response))
+      .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
       .catch((err) => {
         console.log(err);
         return false;
-      }),
+      });
+  },
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
