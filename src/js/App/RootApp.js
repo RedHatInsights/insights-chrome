@@ -1,45 +1,90 @@
-import React, { Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GlobalFilter from './GlobalFilter';
+import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import auth from '../auth';
+import analytics from '../analytics';
+import sentry from '../sentry';
+import createChromeInstance from '../chrome/create-chrome';
+import registerUrlObserver from '../url-observer';
 
-const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
-  const isGlobalFilterEnabled =
-    (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
-  return (
-    <Fragment>
-      <div
-        className="pf-c-drawer__content"
-        data-ouia-subnav={activeApp}
-        data-ouia-bundle={activeLocation}
-        data-ouia-app-id={appId}
-        data-ouia-safe="true"
-        {...(pageAction && { 'data-ouia-page-type': pageAction })}
-        {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
-      >
-        <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
-          {isGlobalFilterEnabled && <GlobalFilter />}
-          <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
-              <div className="pf-c-content">
-                <h1 className="pf-c-title pf-m-2xl ins-l-page__header--loading" widget-type="InsightsPageHeaderTitle">
-                  <div className="ins-c-skeleton ins-c-skeleton__sm">&nbsp;</div>
-                </h1>
-              </div>
-            </section>
-            <section className="pf-c-page__main-section pf-l-page__main-section--loading">
-              <div className="ins-c-spinner ins-m-center" role="status">
-                <span className="pf-u-screen-reader">Loading...</span>
-              </div>
-            </section>
-          </main>
-          <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+const config = {
+  advisor: {
+    appId: 'advisor',
+    elementId: 'advisor-root',
+    name: 'advisor',
+    rootLocation: '/foo',
+    scriptLocation: `${window.location.origin}/apps/advisor/js/advisor.js`,
+  },
+  catalog: {
+    appId: 'catalog',
+    elementId: 'catalog-root',
+    name: 'catalog',
+    rootLocation: '/bar',
+    scriptLocation: `${window.location.origin}/apps/catalog/js/catalog.js`,
+  },
+};
+
+const RootApp = () => {
+  const scalprum = useScalprum(config);
+  const [insights, setInsights] = useState();
+  useEffect(() => {
+    const libjwt = auth();
+    function noop() {}
+    libjwt.initPromise.then(() => {
+      libjwt.jwt
+        .getUserInfo()
+        .then((...data) => {
+          analytics(...data);
+          sentry(...data);
+        })
+        .catch(noop);
+    });
+
+    window.insights = window.insights || {};
+
+    window.insights = createChromeInstance(libjwt, window.insights);
+    const insights = window.insights;
+    setInsights(insights);
+
+    if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+      window._satellite.pageBottom();
+      registerUrlObserver(window._satellite.pageBottom);
+    }
+  }, []);
+  if (!scalprum.initialized || !insights) {
+    return (
+      <div>
+        <h1>Loading</h1>
       </div>
-      <aside className="pf-c-drawer__panel">
-        <div className="pf-c-drawer__panel-body" />
-      </aside>
-    </Fragment>
+    );
+  }
+  return (
+    <div style={{ display: 'flex' }}>
+      <div style={{ width: 240, padding: 16 }}>
+        <ul>
+          <li>
+            <ScalprumLink to="/">Home</ScalprumLink>
+          </li>
+          {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
+            <li key={appId}>
+              <ScalprumLink to={rootLocation}>{appId}</ScalprumLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div style={{ flexGrow: 1, padding: 16 }}>
+        <Switch>
+          {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
+            <ScalprumRoute key={rootLocation} {...item} appName={name} path={rootLocation} />
+          ))}
+          <Route>
+            <h1>Chrome home</h1>
+          </Route>
+        </Switch>
+      </div>
+    </div>
   );
 };
 
@@ -56,4 +101,10 @@ function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, 
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden };
 }
 
-export default connect(stateToProps, null)(RootApp);
+const RootRouterWrapper = (props) => (
+  <BrowserRouter basename="/insights/advisor">
+    <RootApp {...props} />
+  </BrowserRouter>
+);
+
+export default connect(stateToProps, null)(RootRouterWrapper);
