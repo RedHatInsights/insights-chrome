@@ -22,7 +22,10 @@
             width: 100%;
             justify-content: space-between;
             .pf-c-dropdown__toggle-text {
+                text-transform: capitalize;
                 font-weight: var(--pf-global--FontWeight--semi-bold);
+                white-space: normal;
+                text-align: left;
             }
         }
         
@@ -32,6 +35,14 @@
             &.ins-c-app-switcher__current {
                 font-weight: var(--pf-global--FontWeight--semi-bold);
                 background: var(--pf-c-dropdown__menu-item--hover--BackgroundColor);
+            }
+            &.pf-c-divider {
+                padding-left: 0;
+                padding-right: 0;
+                margin-top: 0;
+                &:hover {
+                   background: none;
+                }
             }
         }
     }

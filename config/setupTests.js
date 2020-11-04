@@ -21,6 +21,7 @@ global.window.insights = {
         isBeta: () => {
             return null;
         },
+        isPenTest: () => false,
         isProd: false,
         auth: {
             ...(window.insights && window.insights.chrome && window.insights.chrome) || {},
@@ -38,6 +39,7 @@ global.window.insights = {
                 }
             }))
         },
-        getUserPermissions: () => Promise.resolve([])
+        getUserPermissions: () => Promise.resolve([]),
+        getBundle: () => ''
     }
 };

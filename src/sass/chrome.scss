@@ -1,34 +1,36 @@
 $pf-global--enable-reset: 'true';
 $pf-global--image-path: './assets/images/';
 
-@import 'node_modules/@patternfly/patternfly/patternfly-base.scss';
+@import '~@patternfly/patternfly/patternfly-base.scss';
 
 // Components
-@import 'node_modules/@patternfly/patternfly/components/Toolbar/toolbar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Page/page.scss';
-@import 'node_modules/@patternfly/patternfly/components/BackgroundImage/background-image.scss';
-@import 'node_modules/@patternfly/patternfly/components/Nav/nav.scss';
-@import 'node_modules/@patternfly/patternfly/components/Button/button.scss';
-@import 'node_modules/@patternfly/patternfly/components/Dropdown/dropdown.scss';
-@import 'node_modules/@patternfly/patternfly/components/Avatar/avatar.scss';
-@import 'node_modules/@patternfly/patternfly/components/Title/title.scss';
-@import 'node_modules/@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
-@import 'node_modules/@patternfly/patternfly/components/ModalBox/modal-box.scss';
-@import 'node_modules/@patternfly/patternfly/components/Backdrop/backdrop.scss';
-@import 'node_modules/@patternfly/patternfly/components/Switch/switch.scss';
-@import 'node_modules/@patternfly/patternfly/components/Alert/alert.scss';
+@import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
+@import '~@patternfly/patternfly/components/Page/page.scss';
+@import '~@patternfly/patternfly/components/BackgroundImage/background-image.scss';
+@import '~@patternfly/patternfly/components/Nav/nav.scss';
+@import '~@patternfly/patternfly/components/Button/button.scss';
+@import '~@patternfly/patternfly/components/Dropdown/dropdown.scss';
+@import '~@patternfly/patternfly/components/Avatar/avatar.scss';
+@import '~@patternfly/patternfly/components/Title/title.scss';
+@import '~@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
+@import '~@patternfly/patternfly/components/ModalBox/modal-box.scss';
+@import '~@patternfly/patternfly/components/Backdrop/backdrop.scss';
+@import '~@patternfly/patternfly/components/Switch/switch.scss';
+@import '~@patternfly/patternfly/components/Alert/alert.scss';
 
 // Layouts
-@import 'node_modules/@patternfly/patternfly/layouts/Split/split.scss';
-@import 'node_modules/@patternfly/patternfly/layouts/Flex/flex.scss';
-@import 'node_modules/@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
+@import '~@patternfly/patternfly/layouts/Split/split.scss';
+@import '~@patternfly/patternfly/layouts/Flex/flex.scss';
+@import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/spinner.css';
-@import 'node_modules/@redhat-cloud-services/frontend-components/components/skeleton.css';
+@import '~@redhat-cloud-services/frontend-components/components/Spinner.css';
+@import '~@redhat-cloud-services/frontend-components/components/Skeleton.css';
+@import '~@redhat-cloud-services/frontend-components/components/ConditionalFilter.css';
 
 // Accessibility
-@import 'node_modules/@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
-@import 'node_modules/@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
+@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@import '~@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
 
 @import 'helpers.scss';
 
@@ -156,4 +158,34 @@ section.ins-c-app-switcher--loading {
 // Pen testing
 .ins-c-pen-test {
     border-top: 3px solid #A18FFF;
+}
+
+.pf-c-page {
+    .ins-m-full--height { height: 100%; }
+    div.ins-c-chrome__global-filter {
+        padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+        background: var(--pf-global--BackgroundColor--100);
+        border-bottom: 1px solid var(--pf-global--palette--black-500);
+        .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
+        .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+        .ins-m-permanent button { display: none; }
+        .pf-l-split__item:first-of-type { min-width: 150px;}
+
+        .ins-c-tagfilter {
+        &.pf-m-expanded { width: 450px; }
+        .pf-c-select__menu {
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .ins-c-tagfilter__option-value { max-width: 360px; }
+        }
+    }
+}
+
+// PF navigation text alignment fix
+.ins-m-navigation-align {
+    .pf-c-nav__link {
+        text-align: inherit;
+    }
 }

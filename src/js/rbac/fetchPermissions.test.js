@@ -1,15 +1,39 @@
-import { fetchPermissions } from './fetchPermissions';
-import { mock } from '../../__mocks__/rbacApi';
 import mockedRbac from '../../../testdata/rbacAccess.json';
-
-it('should send all the paginated data as array', async () => {
-    mock.onGet('/api/rbac/v1/access/?application=&limit=25').reply(200, mockedRbac);
-    const data = fetchPermissions('uSeRtOkEn');
-    data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
+jest.mock('./rbac', () => () => {
+  const mockedRbac = require('../../../testdata/rbacAccess.json');
+  return {
+    getPrincipalAccess: () => Promise.resolve(mockedRbac),
+  };
 });
 
-it('should send the data as array', async () => {
-    mock.onGet('/api/rbac/v1/access/?application=&limit=50').reply(200, mockedRbac);
+import { createFetchPermissionsWatcher } from './fetchPermissions';
+
+jest.mock('../jwt/jwt');
+
+describe('fetchPermissions', () => {
+  let fetchPermissions;
+  beforeEach(() => {
+    const chromeInstance = { cache: { getItem: () => undefined, setItem: () => undefined } };
+    fetchPermissions = createFetchPermissionsWatcher(chromeInstance);
+  });
+
+  it('should send all the paginated data as array', async () => {
     const data = fetchPermissions('uSeRtOkEn');
-    data.then(permissions => expect(permissions).toEqual(mockedRbac.data));
+    expect.assertions(1);
+    return data.then((permissions) => expect(permissions).toEqual(mockedRbac.data));
+  });
+
+  it('should send the data as array', async () => {
+    const data = fetchPermissions('uSeRtOkEn');
+    expect.assertions(1);
+    return data.then((permissions) => expect(permissions).toEqual(mockedRbac.data));
+  });
+
+  it('should not call any rbac', async () => {
+    const previousGetBundle = global.insights.chrome.getBundle;
+    global.window.insights.chrome.getBundle = () => 'openshift';
+    const data = await fetchPermissions('uSeRtOkEn');
+    expect(data).not.toEqual(mockedRbac.data);
+    global.window.insights.chrome.getBundle = previousGetBundle;
+  });
 });

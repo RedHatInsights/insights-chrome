@@ -1,42 +1,21 @@
-import React, { Fragment, Component } from 'react';
-import PropTypes from 'prop-types';
-import Navigation from './Navigation';
-import { connect } from 'react-redux';
+import React, { lazy, Suspense } from 'react';
+import { Provider } from 'react-redux';
+import { render } from 'react-dom';
+import NavLoader from './Loader';
+import { spinUpStore } from '../../redux-config';
 
-import AppSwitcher from './AppSwitcher';
+const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './SideNav'));
 
-const documentationLink = {
-    insights: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
-    openshift: 'https://docs.openshift.com/dedicated/4/',
-    subscriptions: 'https://access.redhat.com/products/subscription-central',
-    'cost-management': 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
-    ansible: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
+export const navLoader = () => {
+  const { store } = spinUpStore();
+  if (document.querySelector('aside')) {
+    render(
+      <Provider store={store}>
+        <Suspense fallback={<NavLoader />}>
+          <Sidenav />
+        </Suspense>
+      </Provider>,
+      document.querySelector('aside')
+    );
+  }
 };
-
-export class SideNav extends Component {
-    render() {
-        const { activeTechnology, activeLocation } = this.props;
-        return (<Fragment>
-            <AppSwitcher currentApp={activeTechnology}/>
-            <Navigation documentation={documentationLink[activeLocation]} />
-        </Fragment>);
-    }
-}
-
-SideNav.propTypes = {
-    activeTechnology: PropTypes.string,
-    activeLocation: PropTypes.string
-};
-
-SideNav.defaultProps = {
-    activeTechnology: '',
-    activeLocation: ''
-};
-
-export default connect(({ chrome: {
-    activeTechnology,
-    activeLocation
-} }) => ({
-    activeTechnology,
-    activeLocation
-}))(SideNav);
