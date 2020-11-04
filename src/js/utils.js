@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import { createCacheStore } from './utils/cache';
+import { DEFAULT_ROUTES } from './jwt/constants';
 
 export function getWindow() {
   return window;
@@ -126,4 +127,8 @@ export function getUrl(type) {
   }
 
   return type === 'bundle' ? sections[1] : sections[2];
+}
+
+export function getEnv() {
+  return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
