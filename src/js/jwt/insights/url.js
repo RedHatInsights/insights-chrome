@@ -7,11 +7,11 @@ export default (env) => {
 
   if(ssoEnv) {
     log(`SSO Url: ${ssoEnv?.[1].sso}`);
-    log(`Current Env: ${ssoEnv?.[0]}`);
+    log(`Current env: ${ssoEnv?.[0]}`);
     return ssoEnv?.[1].sso
   } else {
-    log('SSO: url not found, defaulting to QA');
-    log('ENV: qa');
+    log('SSO url: not found, defaulting to qa');
+    log('Current env: not found, defaultint to qa');
     return 'https://sso.qa.redhat.com/auth'
   }
 };
