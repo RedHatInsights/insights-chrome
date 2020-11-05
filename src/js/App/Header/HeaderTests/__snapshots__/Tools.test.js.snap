@@ -49,7 +49,7 @@ exports[`Tools should render correctly 1`] = `
             <React.Fragment>
               <DropdownItem
                 component="a"
-                href="http://localhost/settings/my-user-access"
+                href="http://localhost/settings/rbac"
                 rel="noopener noreferrer"
                 target="_blank"
               >
