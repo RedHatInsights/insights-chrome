@@ -10,7 +10,6 @@ const commonConfig = ({ publicPath, noHash }) => ({
     filename: `chrome${noHash ? '' : '.[chunkhash]'}.js`,
     publicPath,
     chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
-    jsonpFunction: 'wpJsonpChromeInstance',
   },
   resolve: {
     alias: {
@@ -22,7 +21,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
     },
   },
   optimization: {
-    minimizer: [new TerserPlugin({ sourceMap: true })],
+    minimizer: [new TerserPlugin()],
   },
   module: {
     rules: [
@@ -46,11 +45,6 @@ const commonConfig = ({ publicPath, noHash }) => ({
             },
           },
         ],
-      },
-      {
-        parser: {
-          amd: false,
-        },
       },
     ],
   },

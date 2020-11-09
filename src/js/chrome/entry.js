@@ -3,13 +3,11 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
-import * as actionTypes from '../redux/action-types';
 import loadInventory from '../inventory/index';
 import loadRemediations from '../remediations';
 import qe from './iqeEnablement';
 import consts from '../consts';
 import RootApp from '../App/RootApp';
-import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl } from '../utils';
@@ -18,36 +16,6 @@ import get from 'lodash/get';
 import sourceOfTruth from '../nav/sourceOfTruth';
 import { flatTags } from '../App/GlobalFilter/constants';
 import { safeLoad } from 'js-yaml';
-
-
-window.React = React;
-window.ReactDOM = ReactDOM;
-
-const PUBLIC_EVENTS = {
-  APP_NAVIGATION: [
-    (fn) => ({
-      on: actionTypes.APP_NAV_CLICK,
-      callback: ({ data }) => {
-        if (data.id !== undefined || data.event) {
-          fn({ navId: data.id, domEvent: data.event });
-        }
-      },
-    }),
-  ],
-  NAVIGATION_TOGGLE: [
-    (callback) => ({
-      on: actionTypes.NAVIGATION_TOGGLE,
-      callback,
-    }),
-  ],
-  GLOBAL_FILTER_UPDATE: [
-    (callback) => ({
-      on: actionTypes.GLOBAL_FILTER_UPDATE,
-      callback,
-    }),
-    'globalFilter.selectedTags',
-  ],
-};
 
 export function chromeInit() {
   const { store, actions } = spinUpStore();
@@ -113,6 +81,28 @@ const App = () => {
         console.log('Setting config:');
         console.log(appConfig);
         setConfig(() => appConfig);
+      })
+      .catch(() => {
+        /**
+         * Fallback for testing and debugging don't delet this plis
+         */
+        const config = {
+          advisor: {
+            appId: 'advisor',
+            elementId: 'advisor-root',
+            name: 'advisor',
+            rootLocation: '/foo',
+            scriptLocation: `${window.location.origin}/apps/advisor/js/advisor.js`,
+          },
+          catalog: {
+            appId: 'catalog',
+            elementId: 'catalog-root',
+            name: 'catalog',
+            rootLocation: '/bar',
+            scriptLocation: `${window.location.origin}/apps/catalog/js/catalog.js`,
+          },
+        };
+        setConfig(config);
       });
   }, []);
 

@@ -1,24 +1,27 @@
 const webpack = require('webpack');
-const LodashWebpackPlugin = require('lodash-webpack-plugin');
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const path = require('path');
+
+const { ModuleFederationPlugin } = require('webpack').container;
 
 const plugins = [
-    new CleanWebpackPlugin(),
-    new HardSourceWebpackPlugin(),
-    new WriteFileWebpackPlugin(),
-    new webpack.SourceMapDevToolPlugin({
-        test: /\.js/i,
-        exclude: /node_modules/i,
-        filename: `sourcemaps/[name].js.map`
-    }),
-    new LodashWebpackPlugin({
-        currying: true,
-        flattening: true,
-        placeholders: true,
-        paths: true
-    })
+  new ModuleFederationPlugin({
+    name: 'chrome',
+    library: { type: 'var', name: 'chrome' },
+    filename: 'remoteEntry.js',
+    exposes: {
+      './foo': path.resolve(__dirname, '../src/js/chrome.js'),
+    },
+    shared: { react: { singleton: true }, 'react-dom': { singleton: true } },
+  }),
+  new CleanWebpackPlugin(),
+  new WriteFileWebpackPlugin(),
+  new webpack.SourceMapDevToolPlugin({
+    test: /\.js/i,
+    exclude: /node_modules/i,
+    filename: `sourcemaps/[name].js.map`,
+  }),
 ];
 
 module.exports = plugins;
