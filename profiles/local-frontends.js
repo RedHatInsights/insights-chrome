@@ -6,6 +6,8 @@ const routes = {};
 const CATALOG_APP_ID = 'catalog';
 const CATALOG_FRONTEND_PORT = 8003;
 
+routes[`/dev/config`] = { host: `https://cloud.redhat.com` };
+
 routes[`/apps/${SECTION}`] = { host: `http://${frontendHost}:8002` };
 routes[`/apps/${APP_ID}`] = { host: `http://${frontendHost}:8002` };
 routes[`/beta/apps/${APP_ID}`] = { host: `http://${frontendHost}:8002` };
