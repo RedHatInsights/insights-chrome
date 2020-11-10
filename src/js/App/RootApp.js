@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { safeLoad } from 'js-yaml';
 import { connect } from 'react-redux';
 import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -8,27 +9,18 @@ import analytics from '../analytics';
 import sentry from '../sentry';
 import createChromeInstance from '../chrome/create-chrome';
 import registerUrlObserver from '../url-observer';
-
-const config = {
-  advisor: {
-    appId: 'advisor',
-    elementId: 'advisor-root',
-    name: 'advisor',
-    rootLocation: '/foo',
-    scriptLocation: `${window.location.origin}/apps/advisor/js/advisor.js`,
-  },
-  catalog: {
-    appId: 'catalog',
-    elementId: 'catalog-root',
-    name: 'catalog',
-    rootLocation: '/bar',
-    scriptLocation: `${window.location.origin}/apps/catalog/js/catalog.js`,
-  },
-};
+import sourceOfTruth from '../nav/sourceOfTruth';
 
 const RootApp = () => {
-  const scalprum = useScalprum(config);
   const [insights, setInsights] = useState();
+  const [config, setConfig] = useState();
+
+  console.log('About to use Scalprum with this value:');
+  console.log(config);
+  let scalprum = useScalprum(config);
+  console.log('Scalprum initialized:');
+  console.log(scalprum);
+
   useEffect(() => {
     const libjwt = auth();
     function noop() {}
@@ -48,12 +40,28 @@ const RootApp = () => {
     const insights = window.insights;
     setInsights(insights);
 
+    sourceOfTruth('testPrefix')
+      .then((configYaml) => {
+        let appConfig = safeLoad(configYaml);
+        Object.entries(appConfig).forEach(([key, val]) => {
+          val['scriptLocation'] = `${window.location.origin}${val['scriptLocation']}`;
+        });
+        console.log('Config is done:');
+        console.log(appConfig);
+        return appConfig;
+      })
+      .then((appConfig) => {
+        console.log('Setting config:');
+        console.log(appConfig);
+        setConfig(appConfig);
+      });
+
     if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
       registerUrlObserver(window._satellite.pageBottom);
     }
   }, []);
-  if (!scalprum.initialized || !insights) {
+  if (!scalprum || !scalprum.initialized || !insights) {
     return (
       <div>
         <h1>Loading</h1>
