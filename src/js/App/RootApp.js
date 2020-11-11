@@ -9,17 +9,10 @@ import analytics from '../analytics';
 import sentry from '../sentry';
 import createChromeInstance from '../chrome/create-chrome';
 import registerUrlObserver from '../url-observer';
-import sourceOfTruth from '../nav/sourceOfTruth';
 
-const RootApp = () => {
+const RootApp = ({ config }) => {
+  const scalprum = useScalprum(config);
   const [insights, setInsights] = useState();
-  const [config, setConfig] = useState();
-
-  console.log('About to use Scalprum with this value:');
-  console.log(config);
-  let scalprum = useScalprum(config);
-  console.log('Scalprum initialized:');
-  console.log(scalprum);
 
   useEffect(() => {
     const libjwt = auth();
@@ -40,28 +33,12 @@ const RootApp = () => {
     const insights = window.insights;
     setInsights(insights);
 
-    sourceOfTruth('testPrefix')
-      .then((configYaml) => {
-        let appConfig = safeLoad(configYaml);
-        Object.entries(appConfig).forEach(([key, val]) => {
-          val['scriptLocation'] = `${window.location.origin}${val['scriptLocation']}`;
-        });
-        console.log('Config is done:');
-        console.log(appConfig);
-        return appConfig;
-      })
-      .then((appConfig) => {
-        console.log('Setting config:');
-        console.log(appConfig);
-        setConfig(appConfig);
-      });
-
     if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
       registerUrlObserver(window._satellite.pageBottom);
     }
   }, []);
-  if (!scalprum || !scalprum.initialized || !insights) {
+  if (!scalprum.initialized || !insights) {
     return (
       <div>
         <h1>Loading</h1>
@@ -103,6 +80,7 @@ RootApp.propTypes = {
   pageAction: PropTypes.string,
   pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   globalFilterHidden: PropTypes.bool,
+  config: PropTypes.any,
 };
 
 function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } = {} }) {
