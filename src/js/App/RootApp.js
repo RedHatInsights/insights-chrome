@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { safeLoad } from 'js-yaml';
 import { connect } from 'react-redux';
 import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -9,26 +10,10 @@ import sentry from '../sentry';
 import createChromeInstance from '../chrome/create-chrome';
 import registerUrlObserver from '../url-observer';
 
-const config = {
-  advisor: {
-    appId: 'advisor',
-    elementId: 'advisor-root',
-    name: 'advisor',
-    rootLocation: '/foo',
-    scriptLocation: `${window.location.origin}/apps/advisor/js/advisor.js`,
-  },
-  catalog: {
-    appId: 'catalog',
-    elementId: 'catalog-root',
-    name: 'catalog',
-    rootLocation: '/bar',
-    scriptLocation: `${window.location.origin}/apps/catalog/js/catalog.js`,
-  },
-};
-
-const RootApp = () => {
+const RootApp = ({ config }) => {
   const scalprum = useScalprum(config);
   const [insights, setInsights] = useState();
+
   useEffect(() => {
     const libjwt = auth();
     function noop() {}
@@ -95,6 +80,7 @@ RootApp.propTypes = {
   pageAction: PropTypes.string,
   pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   globalFilterHidden: PropTypes.bool,
+  config: PropTypes.any,
 };
 
 function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } = {} }) {
