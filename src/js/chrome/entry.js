@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
+=======
+import React, { useState, useEffect } from 'react';
+import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
+>>>>>>> 7076468... Fix dynamically-loaded config
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
@@ -6,9 +13,15 @@ import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl, getEnv, isBeta } from '../utils';
 import get from 'lodash/get';
+<<<<<<< HEAD
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
+=======
+import sourceOfTruth from '../nav/sourceOfTruth';
+>>>>>>> 7076468... Fix dynamically-loaded config
 import { flatTags } from '../App/GlobalFilter/constants';
+import { safeLoad } from 'js-yaml';
+
 
 const PUBLIC_EVENTS = {
   APP_NAVIGATION: [
