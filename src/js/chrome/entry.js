@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
@@ -15,7 +15,10 @@ import Cookies from 'js-cookie';
 import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
+import sourceOfTruth from '../nav/sourceOfTruth';
 import { flatTags } from '../App/GlobalFilter/constants';
+import { safeLoad } from 'js-yaml';
+
 
 window.React = React;
 window.ReactDOM = ReactDOM;
@@ -95,13 +98,36 @@ export function bootstrap(libjwt, initFunc, getUser) {
   };
 }
 
+const App = () => {
+  const [config, setConfig] = useState();
+  useEffect(() => {
+    sourceOfTruth('testPrefix')
+      .then((configYaml) => {
+        let appConfig = safeLoad(configYaml);
+        Object.entries(appConfig).forEach(([key, val]) => {
+          val['scriptLocation'] = `${window.location.origin}/apps/${key}/js/${key}.js`;
+        });
+        console.log('Config is done:');
+        console.log(appConfig);
+        return appConfig;
+      })
+      .then((appConfig) => {
+        console.log('Setting config:');
+        console.log(appConfig);
+        setConfig(() => appConfig);
+      });
+  }, []);
+
+  return config ? <RootApp config={config} /> : <div>loading...</div>;
+};
+
 export function rootApp() {
   const { store } = spinUpStore();
   const pageRoot = document.querySelector('.pf-c-page__drawer');
   if (pageRoot) {
     ReactDOM.render(
       <Provider store={store}>
-        <RootApp />
+        <App />
       </Provider>,
       pageRoot
     );
