@@ -64,7 +64,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
   };
 }
 
-const App = () => {
+const Chrome = () => {
   const [config, setConfig] = useState();
   useEffect(() => {
     sourceOfTruth('testPrefix')
@@ -106,16 +106,16 @@ const App = () => {
       });
   }, []);
 
-  return config ? <RootApp config={config} /> : <div>loading...</div>;
+  return config ? <RootApp config={config} /> : null;
 };
 
 export function rootApp() {
   const { store } = spinUpStore();
-  const pageRoot = document.querySelector('.pf-c-page__drawer');
+  const pageRoot = document.getElementById('chrome-root');
   if (pageRoot) {
     ReactDOM.render(
       <Provider store={store}>
-        <App />
+        <Chrome />
       </Provider>,
       pageRoot
     );

@@ -60,7 +60,6 @@ class ToolbarToggle extends Component {
         widget-type={this.props.widgetType}
         className={this.props.className}
         id={this.props.id}
-        iconComponent={null}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
       >

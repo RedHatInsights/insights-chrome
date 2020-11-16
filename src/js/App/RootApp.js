@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { safeLoad } from 'js-yaml';
 import { connect } from 'react-redux';
-import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { useScalprum, ScalprumRoute } from '@scalprum/react-core';
+import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 import auth from '../auth';
 import analytics from '../analytics';
 import sentry from '../sentry';
 import createChromeInstance from '../chrome/create-chrome';
 import registerUrlObserver from '../url-observer';
+import { HeaderLoader } from './Header';
+import { Nav, NavItem, NavList, Page, PageSidebar } from '@patternfly/react-core';
 
 const RootApp = ({ config }) => {
   const scalprum = useScalprum(config);
@@ -46,30 +47,43 @@ const RootApp = ({ config }) => {
     );
   }
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ width: 240, padding: 16 }}>
-        <ul>
-          <li>
-            <ScalprumLink to="/">Home</ScalprumLink>
-          </li>
-          {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
-            <li key={appId}>
-              <ScalprumLink to={rootLocation}>{appId}</ScalprumLink>
-            </li>
-          ))}
-        </ul>
+    <Page
+      className="pf-m-redhat-font ins-chrome-content"
+      header={<HeaderLoader />}
+      sidebar={
+        <PageSidebar
+          id="ins-c-sidebar"
+          className="ins-c-sidebar"
+          nav={
+            <Nav>
+              <NavList>
+                <NavItem to="/" component={({ href, ...props }) => <Link to={href} {...props} />}>
+                  Home
+                </NavItem>
+                {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
+                  <NavItem key={appId} to={rootLocation} component={({ href, ...props }) => <Link to={href} {...props} />}>
+                    {appId}
+                  </NavItem>
+                ))}
+              </NavList>
+            </Nav>
+          }
+        />
+      }
+    >
+      <div className="pf-c-page__drawer" style={{ flexGrow: 1, padding: 16 }}>
+        <div className="pf-c-drawer__content">
+          <Switch>
+            {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
+              <ScalprumRoute key={rootLocation} {...item} appName={name} path={rootLocation} />
+            ))}
+            <Route>
+              <h1>Chrome home</h1>
+            </Route>
+          </Switch>
+        </div>
       </div>
-      <div style={{ flexGrow: 1, padding: 16 }}>
-        <Switch>
-          {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
-            <ScalprumRoute key={rootLocation} {...item} appName={name} path={rootLocation} />
-          ))}
-          <Route>
-            <h1>Chrome home</h1>
-          </Route>
-        </Switch>
-      </div>
-    </div>
+    </Page>
   );
 };
 
