@@ -137,7 +137,7 @@ describe('storeFilter', () => {
     const [key, value] = setItem.mock.calls[0];
     expect(value).toBe(
       // eslint-disable-next-line max-len
-      '{"someTag":{"someKey":{"isSelected":true,"item":{},"group":{"groupValue":"something else"}},"key":{"isSelected":true,"item":{"tagValue":"some value"},"group":{"groupValue":"something else"}},"key2":{"isSelected":true,"item":{"tagValue":"some value"},"group":{"groupValue":"something else"}}}}'
+      '{"someTag":{"someKey":{"isSelected":true,"item":{"tagKey":"someKey"},"group":{"groupValue":"something else"}},"key":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key"},"group":{"groupValue":"something else"}},"key2":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key2"},"group":{"groupValue":"something else"}}}}'
     );
     expect(key).toBe('chrome:global-filter/undefined');
     expect(location.hash).toBe('');
