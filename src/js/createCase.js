@@ -33,13 +33,10 @@ async function getProductHash() {
   const { store } = spinUpStore();
 
   const currentApp = store.getState().chrome.appId;
-  const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/' }apps/${currentApp}/app.info.json`;
+  const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentApp}/app.info.json`;
 
-  const appData = await fetch(path)
-    .then((response) => response.json())
-    .then((data) => `Current app: ${currentApp}, Current app hash: ${data.src_hash}`);
-
-  return appData;
+  const appData = await (await fetch(path)).json();
+  return `Current app: ${currentApp}, Current app hash: ${appData.src_hash}`;
 }
 
 export async function createSupportCase(userInfo, fields) {
