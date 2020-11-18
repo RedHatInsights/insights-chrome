@@ -44,16 +44,40 @@ export const updateSelected = (original, namespace, key, value, isSelected, extr
   },
 });
 
+export const createTagsFilter = (tags = []) =>
+  tags.reduce((acc, curr) => {
+    const [namespace, tag] = curr.split('/');
+    const [tagKey, tagValue] = tag?.split('=') || [];
+    return {
+      ...acc,
+      [namespace]: {
+        ...(acc[namespace] || {}),
+        ...(tagKey?.length > 0 && {
+          [`${tagKey}${tagValue ? `=${tagValue}` : ''}`]: {
+            isSelected: true,
+            group: { value: namespace, label: namespace, type: 'checkbox' },
+            item: { tagValue, tagKey },
+          },
+        }),
+      },
+    };
+  }, {});
+
 export const storeFilter = (tags, token) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
+  const searchParams = new URLSearchParams();
+  const [, SIDs, mappedTags] = flatTags(tags, false, true);
   if (tags?.Workloads) {
-    const searchParams = new URLSearchParams();
     const currWorkloads = Object.entries(tags?.Workloads || {})?.find(([, { isSelected }]) => isSelected)?.[0];
     if (currWorkloads) {
       searchParams.append('workloads', currWorkloads);
-      location.hash = searchParams.toString();
     }
   }
+  searchParams.append('SIDs', SIDs);
+  searchParams.append('tags', mappedTags);
+
+  location.hash = searchParams.toString();
+
   localStorage.setItem(
     `${GLOBAL_FILTER_KEY}/${token}`,
     JSON.stringify(
@@ -94,9 +118,11 @@ export const generateFilter = async () => {
     data = {};
   }
 
+  let { Workloads, [SID_KEY]: SIDs, ...tags } = data;
+
   if (searchParams.get('workloads')) {
     const { tag } = workloads[0].tags.find(({ tag: { key } }) => key === searchParams.get('workloads')) || {};
-    data.Workloads = tag?.key
+    Workloads = tag?.key
       ? {
           [tag?.key]: {
             group: omit(workloads[0], 'tags'),
@@ -107,7 +133,27 @@ export const generateFilter = async () => {
       : data.Workloads;
   }
 
-  return [data, currToken];
+  if (typeof searchParams.get('tags') === 'string') {
+    tags = createTagsFilter(searchParams.get('tags')?.split(','));
+  }
+
+  if (typeof searchParams.get('SIDs') === 'string') {
+    SIDs = createTagsFilter(
+      searchParams
+        .get('SIDs')
+        ?.split(',')
+        .map((sid) => `${SID_KEY}/${sid}`)
+    )?.[SID_KEY];
+  }
+
+  return [
+    {
+      Workloads,
+      ...(SIDs && { [SID_KEY]: SIDs }),
+      ...tags,
+    },
+    currToken,
+  ];
 };
 
 export const flatTags = memoize(
@@ -137,7 +183,7 @@ export const flatTags = memoize(
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
-          `${namespace}.${Object.entries(val)
+          `${namespace}.${Object.entries(val || {})
             .filter(([, { isSelected }]) => isSelected)
             .map(([key]) => key)
             .join('')}`
