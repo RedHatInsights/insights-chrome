@@ -75,10 +75,6 @@ const Tools = () => {
       onClick: () => window.insights.chrome.createCase(),
     },
     {
-      title: 'Training',
-      url: 'https://www.redhat.com/en/services/training-and-certification',
-    },
-    {
       title: 'API documentation',
       url: `${document.baseURI}docs/api`,
     },

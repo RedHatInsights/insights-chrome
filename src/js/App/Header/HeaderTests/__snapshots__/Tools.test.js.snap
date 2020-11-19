@@ -82,16 +82,6 @@ exports[`Tools should render correctly 1`] = `
             <React.Fragment>
               <DropdownItem
                 component="a"
-                href="https://www.redhat.com/en/services/training-and-certification"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Training
-              </DropdownItem>
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="a"
                 href="http://localhost/docs/api"
                 rel="noopener noreferrer"
                 target="_blank"
