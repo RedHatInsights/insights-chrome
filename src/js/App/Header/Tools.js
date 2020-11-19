@@ -19,6 +19,7 @@ const Tools = () => {
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
+  const settingsPath = `${document.baseURI}settings/${window.insights.chrome.isBeta() ? 'my-user-access' : 'rbac'}`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
@@ -39,7 +40,7 @@ const Tools = () => {
       aria-label="Go to settings"
       widget-type="SettingsButton"
       className="ins-c-toolbar__button-settings"
-      href={`${document.baseURI}settings/my-user-access`}
+      href={settingsPath}
       component="a"
     >
       <CogIcon />
@@ -73,10 +74,6 @@ const Tools = () => {
     {
       title: 'Open support case',
       onClick: () => window.insights.chrome.createCase(),
-    },
-    {
-      title: 'Training',
-      url: 'https://www.redhat.com/en/services/training-and-certification',
     },
     {
       title: 'API documentation',
