@@ -132,11 +132,11 @@ const GlobalFilter = () => {
               <Fragment>
                 {chips.map(({ category, chips }, key) => (
                   <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'ins-m-sticky' : ''}>
-                    {chips?.map(({ key: tagKey, value }, chipKey) => (
+                    {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
                       <Chip
                         key={chipKey}
                         className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
-                        onClick={() => setValue(() => updateSelected(selectedTags, category, tagKey, value, false))}
+                        onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}
                       >
                         {tagKey}
                         {value ? `=${value}` : ''}
@@ -172,7 +172,8 @@ const GlobalFilter = () => {
           onApplyTags={(selected, sidSelected) => {
             setValue(() =>
               [...(selected || []), ...(sidSelected || [])].reduce(
-                (acc, { namespace, key, value }) => updateSelected(acc, namespace, key, value, true),
+                (acc, { namespace, key, value }) =>
+                  updateSelected(acc, namespace, `${key}${value ? `=${value}` : ''}`, value, true, { item: { tagKey: key } }),
                 selectedTags
               )
             );

@@ -31,7 +31,7 @@ export const selectWorkloads = () => ({
   },
 });
 
-export const updateSelected = (original, namespace, key, value, isSelected) => ({
+export const updateSelected = (original, namespace, key, value, isSelected, extra) => ({
   ...original,
   [namespace]: {
     ...original?.[namespace],
@@ -39,6 +39,7 @@ export const updateSelected = (original, namespace, key, value, isSelected) => (
       ...original?.[namespace]?.[key],
       isSelected,
       value,
+      ...extra,
     },
   },
 });
@@ -67,7 +68,11 @@ export const storeFilter = (tags, token) => {
                 [itemKey, { item, value: tagValue, group: { items, ...group } = {}, ...rest }]
               ) => ({
                 ...currValue,
-                [itemKey]: { ...rest, item: { tagValue: item?.tagValue || tagValue }, group },
+                [itemKey]: {
+                  ...rest,
+                  item: { tagValue: item?.tagValue || tagValue, tagKey: item?.tagKey || itemKey },
+                  group,
+                },
               }),
               {}
             ),
@@ -112,10 +117,10 @@ export const flatTags = memoize(
       Object.entries(item || {})
         .filter(([, { isSelected }]) => isSelected)
         .map(
-          ([groupKey, { item, value: tagValue }]) =>
-            `${namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''}${encode ? encodeURIComponent(groupKey) : groupKey}${
-              item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''
-            }`
+          ([tagKey, { item, value: tagValue }]) =>
+            `${namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''}${
+              encode ? encodeURIComponent(item?.tagKey || tagKey) : item?.tagKey || tagKey
+            }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''}`
         )
     );
     return format
