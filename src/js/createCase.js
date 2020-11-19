@@ -59,7 +59,7 @@ export async function createSupportCase(userInfo, fields) {
       },
       sessionDetails: {
         createdBy: `${userInfo.user.username}`,
-        environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}, ${currentHash}`,
+        environment: `Production ${window.insights.chrome.isBeta() ? 'Beta' : ''}, ${currentHash}`,
         ...(currentProduct && { product: currentProduct }),
         ...fields?.caseFields,
       },
