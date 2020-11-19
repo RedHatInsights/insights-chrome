@@ -29,8 +29,19 @@ function registerProduct() {
   return product?.name;
 }
 
-export function createSupportCase(userInfo, fields) {
+async function getProductHash() {
+  const { store } = spinUpStore();
+
+  const currentApp = store.getState().chrome.appId;
+  const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentApp}/app.info.json`;
+
+  const appData = await (await fetch(path)).json();
+  return `Current app: ${currentApp}, Current app hash: ${appData.src_hash}`;
+}
+
+export async function createSupportCase(userInfo, fields) {
   const currentProduct = registerProduct();
+  const currentHash = await getProductHash();
 
   log('Creating a support case');
 
@@ -49,6 +60,7 @@ export function createSupportCase(userInfo, fields) {
       sessionDetails: {
         createdBy: `${userInfo.user.username}`,
         environment: `${window.insights.chrome.isBeta() ? 'Production Beta' : 'Production'}`,
+        description: `${currentHash}`,
         ...(currentProduct && { product: currentProduct }),
         ...fields?.caseFields,
       },
