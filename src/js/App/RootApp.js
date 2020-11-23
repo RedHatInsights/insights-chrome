@@ -1,74 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { useScalprum, ScalprumRoute, ScalprumLink } from '@scalprum/react-core';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import auth from '../auth';
-import analytics from '../analytics';
-import sentry from '../sentry';
-import createChromeInstance from '../chrome/create-chrome';
-import registerUrlObserver from '../url-observer';
+import GlobalFilter from './GlobalFilter/GlobalFilter';
 
-const RootApp = ({ config }) => {
-  const scalprum = useScalprum(config);
-  const [insights, setInsights] = useState();
+const Advisor = lazy(() => import('advisor/RootApp'));
 
-  useEffect(() => {
-    const libjwt = auth();
-    function noop() {}
-    libjwt.initPromise.then(() => {
-      libjwt.jwt
-        .getUserInfo()
-        .then((...data) => {
-          analytics(...data);
-          sentry(...data);
-        })
-        .catch(noop);
-    });
-
-    window.insights = window.insights || {};
-
-    window.insights = createChromeInstance(libjwt, window.insights);
-    const insights = window.insights;
-    setInsights(insights);
-
-    if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
-      window._satellite.pageBottom();
-      registerUrlObserver(window._satellite.pageBottom);
-    }
-  }, []);
-  if (!scalprum.initialized || !insights) {
-    return (
-      <div>
-        <h1>Loading</h1>
-      </div>
-    );
-  }
+const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
+  const isGlobalFilterEnabled =
+    (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ width: 240, padding: 16 }}>
-        <ul>
-          <li>
-            <ScalprumLink to="/">Home</ScalprumLink>
-          </li>
-          {Object.values(scalprum.config).map(({ appId, rootLocation }) => (
-            <li key={appId}>
-              <ScalprumLink to={rootLocation}>{appId}</ScalprumLink>
-            </li>
-          ))}
-        </ul>
+    <Fragment>
+      <div
+        className="pf-c-drawer__content"
+        data-ouia-subnav={activeApp}
+        data-ouia-bundle={activeLocation}
+        data-ouia-app-id={appId}
+        data-ouia-safe="true"
+        {...(pageAction && { 'data-ouia-page-type': pageAction })}
+        {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
+      >
+        <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+          {isGlobalFilterEnabled && <GlobalFilter />}
+          <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
+            {/* Only render advisor for now, until full integration is finished */}
+            <Suspense fallback={<div>Loading advisor</div>}>
+              <Advisor />
+            </Suspense>
+          </main>
+          <main className="pf-c-page__main" id="no-access"></main>
+        </div>
       </div>
-      <div style={{ flexGrow: 1, padding: 16 }}>
-        <Switch>
-          {Object.values(scalprum.config).map(({ name, rootLocation, ...item }) => (
-            <ScalprumRoute key={rootLocation} {...item} appName={name} path={rootLocation} />
-          ))}
-          <Route>
-            <h1>Chrome home</h1>
-          </Route>
-        </Switch>
-      </div>
-    </div>
+    </Fragment>
   );
 };
 
@@ -85,11 +47,4 @@ RootApp.propTypes = {
 function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
 }
-
-const RootRouterWrapper = (props) => (
-  <BrowserRouter basename="/insights/advisor">
-    <RootApp {...props} />
-  </BrowserRouter>
-);
-
-export default connect(stateToProps, null)(RootRouterWrapper);
+export default connect(stateToProps, null)(RootApp);
