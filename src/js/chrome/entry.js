@@ -14,40 +14,9 @@ import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
-import get from 'lodash/get';
 import sourceOfTruth from '../nav/sourceOfTruth';
 import { flatTags } from '../App/GlobalFilter/constants';
 import { safeLoad } from 'js-yaml';
-
-
-window.React = React;
-window.ReactDOM = ReactDOM;
-
-const PUBLIC_EVENTS = {
-  APP_NAVIGATION: [
-    (fn) => ({
-      on: actionTypes.APP_NAV_CLICK,
-      callback: ({ data }) => {
-        if (data.id !== undefined || data.event) {
-          fn({ navId: data.id, domEvent: data.event });
-        }
-      },
-    }),
-  ],
-  NAVIGATION_TOGGLE: [
-    (callback) => ({
-      on: actionTypes.NAVIGATION_TOGGLE,
-      callback,
-    }),
-  ],
-  GLOBAL_FILTER_UPDATE: [
-    (callback) => ({
-      on: actionTypes.GLOBAL_FILTER_UPDATE,
-      callback,
-    }),
-    'globalFilter.selectedTags',
-  ],
-};
 
 export function chromeInit() {
   const { store, actions } = spinUpStore();
@@ -99,26 +68,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
 }
 
 const App = () => {
-  const [config, setConfig] = useState();
-  useEffect(() => {
-    sourceOfTruth('testPrefix')
-      .then((configYaml) => {
-        let appConfig = safeLoad(configYaml);
-        Object.entries(appConfig).forEach(([key, val]) => {
-          val['scriptLocation'] = `${window.location.origin}/apps/${key}/js/${key}.js`;
-        });
-        console.log('Config is done:');
-        console.log(appConfig);
-        return appConfig;
-      })
-      .then((appConfig) => {
-        console.log('Setting config:');
-        console.log(appConfig);
-        setConfig(() => appConfig);
-      });
-  }, []);
-
-  return config ? <RootApp config={config} /> : <div>loading...</div>;
+  return <RootApp />;
 };
 
 export function rootApp() {
