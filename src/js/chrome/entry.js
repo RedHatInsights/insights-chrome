@@ -67,7 +67,15 @@ export function bootstrap(libjwt, initFunc, getUser) {
 }
 
 const App = () => {
-  return <RootApp />;
+  const config = {
+    advisor: {
+      appId: 'advisor',
+      name: 'advisor',
+      rootLocation: '/foo',
+      manifestLocation: `${window.location.origin}/apps/advisor/fed-mods.json`,
+    },
+  };
+  return <RootApp config={config} />;
 };
 
 export function rootApp() {
