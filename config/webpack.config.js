@@ -10,19 +10,27 @@ const commonConfig = ({ publicPath, noHash }) => ({
     filename: `chrome${noHash ? '' : '.[chunkhash]'}.js`,
     publicPath,
     chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
-    jsonpFunction: 'wpJsonpChromeInstance',
   },
   resolve: {
     alias: {
       PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
       customReact: path.resolve(__dirname, './react-external.js'),
       reactRedux: path.resolve(__dirname, './react-redux-external.js'),
-      // 'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'), we will require different router alias
+      'react-router-dom': path.resolve(__dirname, './react-router-dom-externals.js'),
       PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js'),
+    },
+    fallback: {
+      path: require.resolve('path-browserify'),
+      stream: require.resolve('stream-browserify'),
+      zlib: require.resolve('browserify-zlib'),
+      assert: require.resolve('assert/'),
+      buffer: require.resolve('buffer/'),
+      url: require.resolve('url/'),
     },
   },
   optimization: {
-    minimizer: [new TerserPlugin({ sourceMap: true })],
+    minimizer: [new TerserPlugin()],
+    concatenateModules: false,
   },
   module: {
     rules: [
@@ -46,11 +54,6 @@ const commonConfig = ({ publicPath, noHash }) => ({
             },
           },
         ],
-      },
-      {
-        parser: {
-          amd: false,
-        },
       },
     ],
   },
