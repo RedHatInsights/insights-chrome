@@ -32,7 +32,6 @@ export default async (dependencies) => {
   const drawerEnabled = await isDrawerEnabled();
   const invData = await import(/* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory');
 
-  console.log(invData);
   return {
     ...invData,
     inventoryConnector: (store) =>
