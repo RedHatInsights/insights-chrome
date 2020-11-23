@@ -1,13 +1,14 @@
-import React, { Fragment, lazy, Suspense } from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
+import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 
-const Advisor = lazy(() => import('advisor/RootApp'));
-
-const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
+const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+  const scalprum = useScalprum(config);
+  console.log(scalprum, '<<< scalprum');
   return (
     <Fragment>
       <div
@@ -22,10 +23,16 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
         <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
           {isGlobalFilterEnabled && <GlobalFilter />}
           <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            {/* Only render advisor for now, until full integration is finished */}
-            <Suspense fallback={<div>Loading advisor</div>}>
-              <Advisor />
-            </Suspense>
+            {scalprum.initialized && (
+              <ScalprumComponent
+                rootLocation={config.advisor.rootLocation}
+                path="/foo"
+                manifestLocation={config.advisor.manifestLocation}
+                appName="advisor"
+                module="./RootApp"
+                scope="advisor"
+              />
+            )}
           </main>
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
