@@ -1,4 +1,4 @@
-import { flatTags, selectWorkloads, updateSelected, storeFilter } from './constants';
+import { flatTags, selectWorkloads, updateSelected, storeFilter, createTagsFilter } from './constants';
 const setItem = jest.fn();
 const getItem = jest.fn();
 Object.defineProperty(window, 'localStorage', {
@@ -102,7 +102,7 @@ describe('updateSelected', () => {
 });
 
 describe('storeFilter', () => {
-  it('should call correct localStorage and change location hash', () => {
+  it('should call correct localStorage', () => {
     storeFilter({
       someTag: {
         someKey: {
@@ -140,17 +140,118 @@ describe('storeFilter', () => {
       '{"someTag":{"someKey":{"isSelected":true,"item":{"tagKey":"someKey"},"group":{"groupValue":"something else"}},"key":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key"},"group":{"groupValue":"something else"}},"key2":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key2"},"group":{"groupValue":"something else"}}}}'
     );
     expect(key).toBe('chrome:global-filter/undefined');
-    expect(location.hash).toBe('');
   });
 
-  it('should update global hash', () => {
-    storeFilter({
-      Workloads: {
-        something: {
+  describe('global hash', () => {
+    it('should add workloads and empty SID', () => {
+      storeFilter({
+        Workloads: {
+          something: {
+            isSelected: true,
+          },
+        },
+      });
+      expect(location.hash).toBe('#workloads=something&SIDs=&tags=');
+    });
+
+    it('should add SIDs', () => {
+      storeFilter({
+        'SAP ID (SID)': {
+          something: {
+            isSelected: true,
+          },
+        },
+      });
+      expect(location.hash).toBe('#SIDs=something&tags=');
+    });
+
+    it('should add tags', () => {
+      storeFilter({
+        bridges: {
+          porter: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+        },
+        fragile: {
+          tag: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+          tag2: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+        },
+      });
+      expect(location.hash).toBe('#SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+    });
+
+    it('should build complex hash', () => {
+      storeFilter({
+        Workloads: {
+          something: {
+            isSelected: true,
+          },
+        },
+        'SAP ID (SID)': {
+          something: {
+            isSelected: true,
+          },
+        },
+        bridges: {
+          porter: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+        },
+        fragile: {
+          tag: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+          tag2: {
+            isSelected: true,
+            item: { tagValue: 'sam' },
+          },
+        },
+      });
+      expect(location.hash).toBe('#workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+    });
+  });
+
+  it('should create filter', () => {
+    const value = createTagsFilter(['some', 'namespace/key', 'namespace/tag=value', 'null/another=val']);
+    expect(value).toMatchObject({
+      some: {},
+      namespace: {
+        key: {
           isSelected: true,
+          group: {
+            type: 'checkbox',
+            value: 'namespace',
+            label: 'namespace',
+          },
+          item: {},
+        },
+        'tag=value': {
+          isSelected: true,
+          group: {},
+          item: {
+            tagValue: 'value',
+            tagKey: 'tag',
+          },
+        },
+      },
+      null: {
+        'another=val': {
+          isSelected: true,
+          item: {
+            tagKey: 'another',
+            tagValue: 'val',
+          },
         },
       },
     });
-    expect(location.hash).toBe('#workloads=something');
   });
 });
