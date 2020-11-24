@@ -117,6 +117,10 @@ const App = () => {
       name: 'advisor',
       manifestLocation: `${window.location.origin}/apps/advisor/fed-mods.json`,
     },
+    chrome: {
+      name: 'chrome',
+      manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json`,
+    },
   };
   return <RootApp config={config} />;
 };
