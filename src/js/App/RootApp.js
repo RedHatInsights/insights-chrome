@@ -23,16 +23,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
           {isGlobalFilterEnabled && <GlobalFilter />}
           <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            {scalprum.initialized && (
-              <ScalprumComponent
-                rootLocation={config.advisor.rootLocation}
-                path="/foo"
-                manifestLocation={config.advisor.manifestLocation}
-                appName="advisor"
-                module="./RootApp"
-                scope="advisor"
-              />
-            )}
+            {scalprum.initialized && <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />}
           </main>
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
