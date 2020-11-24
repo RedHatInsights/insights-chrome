@@ -6,6 +6,7 @@ import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
 import SideNav from './Sidenav/SideNav';
 import Header from './Header/Header';
+import ErrorBoundary from './ErrorBoundary';
 
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
@@ -27,7 +28,9 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
             {isGlobalFilterEnabled && <GlobalFilter />}
             <main id="root" role="main">
               {scalprum.initialized ? (
-                <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />
+                <ErrorBoundary>
+                  <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />
+                </ErrorBoundary>
               ) : (
                 <Bullseye>
                   <Spinner size="xl" />
