@@ -2,7 +2,6 @@ import auth from './auth';
 import analytics from './analytics';
 import sentry from './sentry';
 import { rootApp, noAccess } from './chrome/entry';
-import { navLoader } from './App/Sidenav';
 import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './url-observer';
 
@@ -13,9 +12,6 @@ function noop() {}
 
 // render root app
 rootApp();
-
-// render navigation
-navLoader();
 
 libjwt.initPromise.then(() => {
   libjwt.jwt

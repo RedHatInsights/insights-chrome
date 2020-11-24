@@ -11,17 +11,45 @@ import RootApp from '../App/RootApp';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl } from '../utils';
+import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
+import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../App/GlobalFilter/constants';
 
-export function chromeInit() {
-  const { store, actions } = spinUpStore();
+const PUBLIC_EVENTS = {
+  APP_NAVIGATION: [
+    (fn) => ({
+      on: actionTypes.APP_NAV_CLICK,
+      callback: ({ data }) => {
+        if (data.id !== undefined || data.event) {
+          fn({ navId: data.id, domEvent: data.event });
+        }
+      },
+    }),
+  ],
+  NAVIGATION_TOGGLE: [
+    (callback) => ({
+      on: actionTypes.NAVIGATION_TOGGLE,
+      callback,
+    }),
+  ],
+  GLOBAL_FILTER_UPDATE: [
+    (callback) => ({
+      on: actionTypes.GLOBAL_FILTER_UPDATE,
+      callback,
+    }),
+    'globalFilter.selectedTags',
+  ],
+};
+
+export function chromeInit(navResolver) {
+  const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
-  const { appAction, appObjectId } = actions;
+  const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
 
   return {
-    identifyApp: () => {},
+    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     appAction,
     appObjectId,
@@ -29,8 +57,29 @@ export function chromeInit() {
     removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
-    appNavClick: () => {},
-    on: () => {},
+    appNavClick: ({ secondaryNav, ...payload }) => {
+      if (!secondaryNav) {
+        clearActive();
+      }
+
+      appNavClick({
+        ...payload,
+        custom: true,
+      });
+    },
+    on: (type, callback) => {
+      if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
+        throw new Error(`Unknown event type: ${type}`);
+      }
+
+      const [listener, selector] = PUBLIC_EVENTS[type];
+      if (selector) {
+        callback({
+          data: get(store.getState(), selector) || {},
+        });
+      }
+      return middlewareListener.addNew(listener(callback));
+    },
   };
 }
 

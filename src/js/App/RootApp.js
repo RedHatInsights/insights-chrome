@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
+import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
+import SideNav from './Sidenav/SideNav';
+import Header from './Header/Header';
 
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   const scalprum = useScalprum(config);
-  console.log(scalprum, '<<< scalprum');
   return (
     <Fragment>
       <div
@@ -20,13 +22,21 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         {...(pageAction && { 'data-ouia-page-type': pageAction })}
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
-        <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
-          {isGlobalFilterEnabled && <GlobalFilter />}
-          <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
-            {scalprum.initialized && <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />}
-          </main>
-          <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+        <Page header={<PageHeader headerTools={<Header />} />} sidebar={<PageSidebar id="ins-c-sidebar" nav={<SideNav />} isNavOpen />}>
+          <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+            {isGlobalFilterEnabled && <GlobalFilter />}
+            <main id="root" role="main">
+              {scalprum.initialized ? (
+                <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />
+              ) : (
+                <Bullseye>
+                  <Spinner size="xl" />
+                </Bullseye>
+              )}
+            </main>
+            <main className="pf-c-page__main" id="no-access"></main>
+          </div>
+        </Page>
       </div>
     </Fragment>
   );
