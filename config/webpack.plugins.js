@@ -18,7 +18,12 @@ const plugins = [
     name: 'chrome',
     filename: 'chrome.[hash].js',
     exposes: {
-      './InventoryTable': resolve(__dirname, '../src/js/inventory/inventory-table.js'),
+      './InventoryTable': resolve(__dirname, '../src/js/inventory/modules/InventoryTable.js'),
+      './AppInfo': resolve(__dirname, '../src/js/inventory/modules/AppInfo.js'),
+      './InventoryDetailHead': resolve(__dirname, '../src/js/inventory/modules/InventoryDetailHead.js'),
+      './InventoryDetail': resolve(__dirname, '../src/js/inventory/modules/InventoryDetail.js'),
+      './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
+      './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
     },
     shared: [
       { react: { singleton: true, requiredVersion: deps.react } },
