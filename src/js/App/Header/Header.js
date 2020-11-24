@@ -2,10 +2,10 @@ import React, { Fragment } from 'react';
 import Brand from './Brand';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
-const Header = ({ user }) => {
+const Header = () => {
+  const user = useSelector(({ chrome: { user } }) => user);
   return user ? (
     <Fragment>
       <Brand />
@@ -16,13 +16,4 @@ const Header = ({ user }) => {
   );
 };
 
-Header.propTypes = {
-  user: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.shape({
-      [PropTypes.string]: PropTypes.any,
-    }),
-  ]),
-};
-
-export default connect(({ chrome: { user } }) => ({ user }))(Header);
+export default Header;
