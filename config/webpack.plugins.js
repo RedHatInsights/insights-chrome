@@ -16,7 +16,11 @@ const plugins = [
     remotes: {
       advisor: 'advisor@http://localhost:8002/advisor.js',
     },
-    shared: [{ react: { singleton: true, requiredVersion: deps.react } }, { 'react-dom': { singleton: true, requiredVersion: deps['react-dom'] } }],
+    shared: [
+      { react: { singleton: true, requiredVersion: deps.react } },
+      { 'react-dom': { singleton: true, requiredVersion: deps['react-dom'] } },
+      // { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
+    ],
   }),
 ];
 

@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
-import * as actionTypes from '../redux/action-types';
 import loadInventory from '../inventory/index';
 import loadRemediations from '../remediations';
 import qe from './iqeEnablement';
 import consts from '../consts';
 import RootApp from '../App/RootApp';
-import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl } from '../utils';
 import { createSupportCase } from '../createCase';
-import sourceOfTruth from '../nav/sourceOfTruth';
 import { flatTags } from '../App/GlobalFilter/constants';
-import { safeLoad } from 'js-yaml';
 
 export function chromeInit() {
   const { store, actions } = spinUpStore();
@@ -69,9 +65,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
 const App = () => {
   const config = {
     advisor: {
-      appId: 'advisor',
       name: 'advisor',
-      rootLocation: '/foo',
       manifestLocation: `${window.location.origin}/apps/advisor/fed-mods.json`,
     },
   };
