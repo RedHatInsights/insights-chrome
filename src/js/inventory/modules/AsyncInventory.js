@@ -1,15 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-=======
-import setDependencies from '../../externalDependencies';
-import * as pfReact from '@patternfly/react-core';
-import * as pfReactTable from '@patternfly/react-table';
-import * as ReactRedux from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
->>>>>>> 77b91e5... Use federated modules for each inventory component (#1081)
 import '../inventoryStyles';
 import { allDetails, drawer } from '../accountNumbers.json';
 
@@ -35,16 +27,6 @@ const isDrawerEnabled = async () => {
 
 const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => {
   const [Component, setComponent] = useState(Fragment);
-<<<<<<< HEAD
-=======
-  // TODO: remove this as dependencies will be handled by fed modules
-  setDependencies({
-    pfReact,
-    pfReactTable,
-    React,
-    ReactRedux,
-  });
->>>>>>> 77b91e5... Use federated modules for each inventory component (#1081)
   useEffect(() => {
     (async () => {
       let SystemAdvisoryListStore;
@@ -113,19 +95,11 @@ const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => 
   }, [componentName]);
 
   return (
-<<<<<<< HEAD
     <Provider store={store}>
       <Router history={history}>
         <Component {...props} />
       </Router>
     </Provider>
-=======
-    <ReactRedux.Provider store={store}>
-      <Router history={history}>
-        <Component {...props} />
-      </Router>
-    </ReactRedux.Provider>
->>>>>>> 77b91e5... Use federated modules for each inventory component (#1081)
   );
 };
 
