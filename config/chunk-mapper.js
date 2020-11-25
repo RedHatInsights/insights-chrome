@@ -19,7 +19,10 @@ class ChunkMapper {
             ...(id === runtime
               ? { entry: Array.from(files).map((item) => `${prefix}${item}`) }
               : {
-                  modules: [...(this.config[runtime].modules || []), ...Array.from(files).map((item) => `${prefix}${item}`)],
+                  modules: [
+                    ...((this.config[runtime] && this.config[runtime].modules) || []),
+                    ...Array.from(files).map((item) => `${prefix}${item}`),
+                  ],
                 }),
           };
         }
