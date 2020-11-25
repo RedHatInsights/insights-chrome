@@ -1,9 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import setDependencies from '../../externalDependencies';
-import * as pfReact from '@patternfly/react-core';
-import * as pfReactTable from '@patternfly/react-table';
-import * as ReactRedux from 'react-redux';
+import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import '../inventoryStyles';
 import { allDetails, drawer } from '../accountNumbers.json';
@@ -30,13 +27,6 @@ const isDrawerEnabled = async () => {
 
 const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => {
   const [Component, setComponent] = useState(Fragment);
-  // TODO: remove this as dependencies will be handled by fed modules
-  setDependencies({
-    pfReact,
-    pfReactTable,
-    React,
-    ReactRedux,
-  });
   useEffect(() => {
     (async () => {
       let SystemAdvisoryListStore;
@@ -69,7 +59,7 @@ const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => 
         )?.SystemCvesStore;
       }
       const { inventoryConnector, mergeWithDetail, ...rest } = await import(
-        /* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory'
+        /* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory/esm'
       );
       const { [componentName]: InvCmp } = inventoryConnector(
         store,
@@ -105,11 +95,11 @@ const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => 
   }, [componentName]);
 
   return (
-    <ReactRedux.Provider store={store}>
+    <Provider store={store}>
       <Router history={history}>
         <Component {...props} />
       </Router>
-    </ReactRedux.Provider>
+    </Provider>
   );
 };
 
