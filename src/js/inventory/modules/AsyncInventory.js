@@ -4,7 +4,7 @@ import setDependencies from '../../externalDependencies';
 import * as pfReact from '@patternfly/react-core';
 import * as pfReactTable from '@patternfly/react-table';
 import * as ReactRedux from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import '../inventoryStyles';
 import { allDetails, drawer } from '../accountNumbers.json';
 
