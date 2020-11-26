@@ -1,16 +1,10 @@
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
-import loadInventory from '../inventory/index';
-import loadRemediations from '../remediations';
 import qe from './iqeEnablement';
 import consts from '../consts';
-import RootApp from '../App/RootApp';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl } from '../utils';
+import { getUrl, getEnv, isBeta } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
@@ -105,36 +99,6 @@ export function bootstrap(libjwt, initFunc, getUser) {
       visibilityFunctions,
       init: initFunc,
     },
-    loadInventory,
-    experimental: {
-      loadRemediations,
-    },
+    experimental: {},
   };
-}
-
-const App = () => {
-  const config = {
-    advisor: {
-      name: 'advisor',
-      manifestLocation: `${window.location.origin}/apps/advisor/fed-mods.json`,
-    },
-    chrome: {
-      name: 'chrome',
-      manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json`,
-    },
-  };
-  return <RootApp config={config} />;
-};
-
-export function rootApp() {
-  const { store } = spinUpStore();
-  const pageRoot = document.querySelector('.pf-c-page__drawer');
-  if (pageRoot) {
-    ReactDOM.render(
-      <Provider store={store}>
-        <App />
-      </Provider>,
-      pageRoot
-    );
-  }
 }

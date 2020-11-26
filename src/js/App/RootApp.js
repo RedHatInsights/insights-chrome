@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
+import { BrowserRouter } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import Header from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
@@ -12,8 +13,26 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   const scalprum = useScalprum(config);
+  const remoteModule = useSelector(({ chrome }) => chrome?.activeSection?.module);
+  const insightsContentRef = useRef(null);
+  useEffect(() => {
+    const contentElement = document.getElementById('root');
+    if (!remoteModule) {
+      insightsContentRef.current.appendChild(contentElement);
+      contentElement.hidden = false;
+    } else {
+      contentElement.hidden = true;
+      try {
+        insightsContentRef.current.removeChild(contentElement);
+      } catch (error) {
+        /**
+         * legacy content element is not a child of chrome content
+         */
+      }
+    }
+  }, [remoteModule]);
   return (
-    <Fragment>
+    <BrowserRouter>
       <div
         className="pf-c-drawer__content"
         data-ouia-subnav={activeApp}
@@ -24,24 +43,26 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
         <Page header={<PageHeader headerTools={<Header />} />} sidebar={<PageSidebar id="ins-c-sidebar" nav={<SideNav />} isNavOpen />}>
-          <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+          <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
             {isGlobalFilterEnabled && <GlobalFilter />}
-            <main id="root" role="main">
-              {scalprum.initialized ? (
-                <ErrorBoundary>
-                  <ScalprumComponent appName="advisor" module="./RootApp" scope="advisor" />
-                </ErrorBoundary>
-              ) : (
-                <Bullseye>
-                  <Spinner size="xl" />
-                </Bullseye>
-              )}
-            </main>
+            {remoteModule && (
+              <main role="main">
+                {typeof remoteModule !== 'undefined' && scalprum.initialized ? (
+                  <ErrorBoundary>
+                    <ScalprumComponent {...remoteModule} />
+                  </ErrorBoundary>
+                ) : (
+                  <Bullseye className="pf-u-p-xl">
+                    <Spinner size="xl" />
+                  </Bullseye>
+                )}
+              </main>
+            )}
             <main className="pf-c-page__main" id="no-access"></main>
           </div>
         </Page>
       </div>
-    </Fragment>
+    </BrowserRouter>
   );
 };
 
