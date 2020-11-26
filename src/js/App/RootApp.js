@@ -20,6 +20,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
     if (!remoteModule) {
       insightsContentRef.current.appendChild(contentElement);
       contentElement.hidden = false;
+      contentElement.style.display = 'initial';
     } else {
       contentElement.hidden = true;
       try {
@@ -49,7 +50,8 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
               <main role="main">
                 {typeof remoteModule !== 'undefined' && scalprum.initialized ? (
                   <ErrorBoundary>
-                    <ScalprumComponent {...remoteModule} />
+                    {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
+                    <ScalprumComponent key={remoteModule.appName} {...remoteModule} />
                   </ErrorBoundary>
                 ) : (
                   <Bullseye className="pf-u-p-xl">
