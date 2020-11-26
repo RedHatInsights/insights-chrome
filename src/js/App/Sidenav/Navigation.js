@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { appNavClick, clearActive } from '../../redux/actions';
+import { connect, useDispatch } from 'react-redux';
+import { appNavClick, chromeNavSectionUpdate, clearActive } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
 import ExpandableNav from './ExpandableNav';
+import { useHistory } from 'react-router-dom';
 
 const basepath = document.baseURI;
 
@@ -75,10 +76,36 @@ const extraLinks = {
   ],
 };
 
-export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, onClearActive, activeGroup, appId }) => {
+export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, onClearActive, activeSection, activeGroup, appId }) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const prevLocation = useRef(window.location.pathname);
+  useEffect(() => {
+    const unregister = history.listen((location, action) => {
+      if (action === 'PUSH' && location.state) {
+        dispatch(chromeNavSectionUpdate(location.state));
+      }
+      /**
+       * Browser redo button
+       */
+      if (action === 'POP') {
+        const pathname = typeof location === 'string' ? location : location.pathname;
+        if (pathname !== prevLocation.current) {
+          /**
+           * The browser back button glitches insanely because of the app initial "nav click" in chrome.
+           * The back browser navigation between apps is not reliable so we will do it the old fashioned way until all apps are migrated and we can just use react router.
+           */
+          window.location.href = `${basepath}${pathname.replace(/^\//, '')}`;
+        }
+      }
+    });
+
+    return () => unregister();
+  }, []);
   const onClick = (event, item, parent) => {
     const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2;
     let url = `${basepath}${activeLocation || ''}`;
+    const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
@@ -101,7 +128,19 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
     } else {
       const itemUrl = `${parent?.id ? `${parent.id}/` : ''}${item.id}`;
       url = `${url}/${item.reload || itemUrl}`;
-      isMetaKey ? window.open(url) : (window.location.href = url);
+      /**
+       * Routing from legacy has to always trigger browser refresh
+       */
+      if (!activeSection.module || !newSection.module) {
+        isMetaKey ? window.open(url) : (window.location.href = url);
+      } else {
+        /**
+         * Between chrome 2.0 apps navigation
+         */
+        !parent?.active && onClearActive();
+        prevLocation.current = window.location.pathname;
+        history.push({ pathname: `/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
+      }
     }
   };
 
@@ -150,10 +189,11 @@ Navigation.propTypes = {
   onNavigate: PropTypes.func,
   onClearActive: PropTypes.func,
   activeGroup: PropTypes.string,
+  activeSection: PropTypes.object,
 };
 
-function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeGroup, appId } }) {
-  return { settings: globalNav, activeApp, navHidden, activeLocation, activeGroup, appId };
+function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeSection, activeGroup, appId } }) {
+  return { settings: globalNav, activeApp, navHidden, activeLocation, activeSection, activeGroup, appId };
 }
 
 export function dispatchToProps(dispatch) {
