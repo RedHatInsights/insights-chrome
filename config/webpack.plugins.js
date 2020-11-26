@@ -31,7 +31,6 @@ const plugins = [
       { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
       { '@patternfly/react-table': { singleton: true } },
       { '@patternfly/react-core': { singleton: true } },
-      { 'react-redux': { singleton: true } },
     ],
   }),
   ChunkMapper,
