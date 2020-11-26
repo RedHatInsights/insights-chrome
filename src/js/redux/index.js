@@ -10,6 +10,7 @@ import {
   navUpdateReducer,
   onPageAction,
   onPageObjectId,
+  navUpdateSection,
 } from './reducers';
 import {
   onGetAllTags,
@@ -38,6 +39,7 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
+  CHROME_NAV_SECTION_UPDATE,
 } from './action-types';
 
 const reducers = {
@@ -48,6 +50,7 @@ const reducers = {
   [NAVIGATION_TOGGLE]: navToggleReducer,
   [USER_LOGIN]: loginReducer,
   [CHROME_NAV_UPDATE]: navUpdateReducer,
+  [CHROME_NAV_SECTION_UPDATE]: navUpdateSection,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
 };
