@@ -19,6 +19,10 @@ const App = () => {
       name: 'advisor',
       manifestLocation: `${window.location.origin}/apps/advisor/fed-mods.json`,
     },
+    inventory: {
+      name: 'inventory',
+      manifestLocation: `${window.location.origin}/apps/inventory/fed-mods.json`,
+    },
     chrome: {
       name: 'chrome',
       manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json`,
