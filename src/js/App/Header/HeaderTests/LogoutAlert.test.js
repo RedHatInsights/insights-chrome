@@ -1,6 +1,5 @@
 import React from 'react';
-import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import LogoutAlert from '../LogoutAlert';
 
 describe('Login', () => {
@@ -9,8 +8,8 @@ describe('Login', () => {
       writable: true,
       value: `cs_loggedOut=false`,
     });
-    const wrapper = shallow(<LogoutAlert />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<LogoutAlert />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 
   it('should render correctly with content', () => {
@@ -19,7 +18,7 @@ describe('Login', () => {
       value: `cs_loggedOut=true`,
     });
     const mockClose = jest.fn();
-    const wrapper = shallow(<LogoutAlert onClose={mockClose} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<LogoutAlert onClose={mockClose} />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

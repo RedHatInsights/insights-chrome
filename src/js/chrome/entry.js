@@ -73,6 +73,7 @@ export function chromeInit(navResolver) {
       }
       return middlewareListener.addNew(listener(callback));
     },
+    $internal: { store },
   };
 }
 

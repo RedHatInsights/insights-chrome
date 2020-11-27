@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
-import PropTypes from 'prop-types';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { appNavClick, chromeNavSectionUpdate, clearActive } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
@@ -76,7 +75,18 @@ const extraLinks = {
   ],
 };
 
-export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, onClearActive, activeSection, activeGroup, appId }) => {
+export const Navigation = () => {
+  const { settings, activeApp, activeLocation, activeSection, activeGroup, appId } = useSelector(
+    ({ chrome: { globalNav, activeApp, activeLocation, activeSection, activeGroup, appId } }) => ({
+      settings: globalNav,
+      activeApp,
+      activeLocation,
+      activeSection,
+      activeGroup,
+      appId,
+    }),
+    shallowEqual
+  );
   const dispatch = useDispatch();
   const history = useHistory();
   const prevLocation = useRef(window.location.pathname);
@@ -122,8 +132,8 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
       if (isMetaKey) {
         window.open(`${url}/${item.id}`);
       } else {
-        !parent?.active && onClearActive();
-        onNavigate(item, event);
+        !parent?.active && dispatch(clearActive());
+        dispatch(appNavClick(item, event));
       }
     } else {
       const itemUrl = `${parent?.id ? `${parent.id}/` : ''}${item.id}`;
@@ -137,7 +147,7 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
         /**
          * Between chrome 2.0 apps navigation
          */
-        !parent?.active && onClearActive();
+        !parent?.active && dispatch(clearActive());
         prevLocation.current = window.location.pathname;
         history.push({ pathname: `/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
       }
@@ -147,11 +157,11 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
   return (
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
       <NavList>
-        {settings?.map((item) => (
+        {settings?.map((item, key) => (
           <ExpandableNav
             activeLocation={activeLocation}
             activeApp={activeApp}
-            key={item.id}
+            key={item.id || key}
             {...item}
             onClick={(event, subItem) => (item.subItems ? onClick(event, subItem, item) : onClick(event, item))}
           />
@@ -173,34 +183,4 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
   );
 };
 
-Navigation.propTypes = {
-  appId: PropTypes.string,
-  settings: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      ignoreCase: PropTypes.bool,
-      subItems: () => Navigation.propTypes.settings,
-    })
-  ),
-  activeApp: PropTypes.string,
-  navHidden: PropTypes.bool,
-  activeLocation: PropTypes.string,
-  onNavigate: PropTypes.func,
-  onClearActive: PropTypes.func,
-  activeGroup: PropTypes.string,
-  activeSection: PropTypes.object,
-};
-
-function stateToProps({ chrome: { globalNav, activeApp, navHidden, activeLocation, activeSection, activeGroup, appId } }) {
-  return { settings: globalNav, activeApp, navHidden, activeLocation, activeSection, activeGroup, appId };
-}
-
-export function dispatchToProps(dispatch) {
-  return {
-    onNavigate: (item, event) => dispatch(appNavClick(item, event)),
-    onClearActive: () => dispatch(clearActive()),
-  };
-}
-
-export default connect(stateToProps, dispatchToProps)(Navigation);
+export default Navigation;

@@ -1,43 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NavigationItem parent and itemID with value 1`] = `
-<NavItem
-  className=""
-  itemId="someID"
-  preventDefault={true}
-  to="http://localhost/someValue/someID"
-/>
+<div>
+  <li
+    class="pf-c-nav__item"
+  >
+    <a
+      class="pf-c-nav__link"
+      href="http://localhost/someValue/someID"
+    />
+  </li>
+</div>
 `;
 
 exports[`NavigationItem parent undefined and itemID with value 1`] = `
-<NavItem
-  className=""
-  itemId="someID"
-  preventDefault={true}
-  to="http://localhost//someID"
-/>
+<div>
+  <li
+    class="pf-c-nav__item"
+  >
+    <a
+      class="pf-c-nav__link"
+      href="http://localhost//someID"
+    />
+  </li>
+</div>
 `;
 
 exports[`NavigationItem parent with value and itemID undefined 1`] = `
-<NavItem
-  className=""
-  preventDefault={true}
-  to="http://localhost/someValue/undefined"
-/>
+<div>
+  <li
+    class="pf-c-nav__item"
+  >
+    <a
+      class="pf-c-nav__link"
+      href="http://localhost/someValue/undefined"
+    />
+  </li>
+</div>
 `;
 
 exports[`NavigationItem should render coorectly 1`] = `
-<NavItem
-  className=""
-  preventDefault={true}
-  to="http://localhost//undefined"
-/>
+<div>
+  <li
+    class="pf-c-nav__item"
+  >
+    <a
+      class="pf-c-nav__link"
+      href="http://localhost//undefined"
+    />
+  </li>
+</div>
 `;
 
 exports[`NavigationItem with some navigate value set 1`] = `
-<NavItem
-  className=""
-  preventDefault={true}
-  to={Object {}}
-/>
+<div>
+  <li
+    class="pf-c-nav__item"
+  >
+    <a
+      class="pf-c-nav__link"
+      href="[object Object]"
+    />
+  </li>
+</div>
 `;
