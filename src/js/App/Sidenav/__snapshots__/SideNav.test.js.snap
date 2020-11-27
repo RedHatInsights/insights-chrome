@@ -32,7 +32,10 @@ exports[`ConnectedSideNav should render correctly 1`] = `
     }
   }
 >
-  <Connect(SideNav) />
+  <SideNav
+    activeLocation=""
+    activeTechnology=""
+  />
 </ContextProvider>
 `;
 
@@ -68,6 +71,9 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
     }
   }
 >
-  <Connect(SideNav) />
+  <SideNav
+    activeLocation=""
+    activeTechnology=""
+  />
 </ContextProvider>
 `;
