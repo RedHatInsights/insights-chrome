@@ -1,326 +1,219 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Brand mapDispatchToProps function fires 1`] = `
-<Connect(Brand)
-  store={
-    Object {
-      "clearActions": [Function],
-      "dispatch": [Function],
-      "getActions": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
-  }
+<div
+  class="pf-c-page__header-brand"
 >
-  <Brand
-    navHidden={true}
-    store={
-      Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      }
-    }
-    toggleNav={[Function]}
+  <div
+    class="pf-c-page__header-brand-toggle"
+    hidden=""
   >
-    <div
-      className="pf-c-page__header-brand"
+    <button
+      aria-disabled="false"
+      aria-label="Toggle primary navigation"
+      class="pf-c-button pf-m-plain"
+      data-ouia-component-id="chrome-nav-toggle"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      type="button"
     >
-      <div
-        className="pf-c-page__header-brand-toggle"
-        hidden={true}
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1.5em"
+        role="img"
+        style="vertical-align: -0.1875em;"
+        viewBox="0 0 448 512"
+        width="1.5em"
       >
-        <Button
-          aria-label="Toggle primary navigation"
-          onClick={[Function]}
-          ouiaId="chrome-nav-toggle"
-          variant="plain"
-        >
-          <button
-            aria-disabled={false}
-            aria-label="Toggle primary navigation"
-            className="pf-c-button pf-m-plain"
-            data-ouia-component-id="chrome-nav-toggle"
-            data-ouia-component-type="PF4/Button"
-            data-ouia-safe={true}
-            disabled={false}
-            onClick={[Function]}
-            type="button"
-          >
-            <BarsIcon
-              color="currentColor"
-              noVerticalAlign={false}
-              size="md"
-            >
-              <svg
-                aria-hidden={true}
-                aria-labelledby={null}
-                fill="currentColor"
-                height="1.5em"
-                role="img"
-                style={
-                  Object {
-                    "verticalAlign": "-0.1875em",
-                  }
-                }
-                viewBox="0 0 448 512"
-                width="1.5em"
-              >
-                <path
-                  d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                />
-              </svg>
-            </BarsIcon>
-          </button>
-        </Button>
-      </div>
-      <a
-        className="pf-c-page__header-brand-link"
-        href="./"
-      >
-        <Logo>
-          <img
-            alt="Red Hat Logo"
-            src="test-file-stub"
-          />
-        </Logo>
-      </a>
-    </div>
-  </Brand>
-</Connect(Brand)>
+        <path
+          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+        />
+      </svg>
+    </button>
+  </div>
+  <a
+    class="pf-c-page__header-brand-link"
+    href="./"
+  >
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
+  </a>
+</div>
 `;
 
 exports[`Brand onClick should fire 1`] = `
 <div
-  className="pf-c-page__header-brand"
+  class="pf-c-page__header-brand"
 >
   <div
-    className="pf-c-page__header-brand-toggle"
-    hidden={true}
+    class="pf-c-page__header-brand-toggle"
+    hidden=""
   >
-    <Button
+    <button
+      aria-disabled="false"
       aria-label="Toggle primary navigation"
-      onClick={[Function]}
-      ouiaId="chrome-nav-toggle"
-      variant="plain"
+      class="pf-c-button pf-m-plain"
+      data-ouia-component-id="chrome-nav-toggle"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      type="button"
     >
-      <BarsIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="md"
-      />
-    </Button>
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1.5em"
+        role="img"
+        style="vertical-align: -0.1875em;"
+        viewBox="0 0 448 512"
+        width="1.5em"
+      >
+        <path
+          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+        />
+      </svg>
+    </button>
   </div>
   <a
-    className="pf-c-page__header-brand-link"
+    class="pf-c-page__header-brand-link"
     href="./"
   >
-    <Logo />
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
   </a>
 </div>
 `;
 
 exports[`Brand should render correctly with button 1`] = `
 <div
-  className="pf-c-page__header-brand"
+  class="pf-c-page__header-brand"
 >
   <div
-    className="pf-c-page__header-brand-toggle"
+    class="pf-c-page__header-brand-toggle"
   >
-    <Button
+    <button
+      aria-disabled="false"
       aria-label="Toggle primary navigation"
-      onClick={[Function]}
-      ouiaId="chrome-nav-toggle"
-      variant="plain"
+      class="pf-c-button pf-m-plain"
+      data-ouia-component-id="chrome-nav-toggle"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      type="button"
     >
-      <BarsIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="md"
-      />
-    </Button>
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1.5em"
+        role="img"
+        style="vertical-align: -0.1875em;"
+        viewBox="0 0 448 512"
+        width="1.5em"
+      >
+        <path
+          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+        />
+      </svg>
+    </button>
   </div>
   <a
-    className="pf-c-page__header-brand-link"
+    class="pf-c-page__header-brand-link"
     href="./"
   >
-    <Logo />
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
   </a>
 </div>
 `;
 
 exports[`Brand should render correctly with initial state 1`] = `
-<Provider
-  store={
-    Object {
-      "clearActions": [Function],
-      "dispatch": [Function],
-      "getActions": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
-  }
+<div
+  class="pf-c-page__header-brand"
 >
-  <Connect(Brand)>
-    <Brand
-      navHidden={true}
-      toggleNav={[Function]}
+  <div
+    class="pf-c-page__header-brand-toggle"
+    hidden=""
+  >
+    <button
+      aria-disabled="false"
+      aria-label="Toggle primary navigation"
+      class="pf-c-button pf-m-plain"
+      data-ouia-component-id="chrome-nav-toggle"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      type="button"
     >
-      <div
-        className="pf-c-page__header-brand"
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1.5em"
+        role="img"
+        style="vertical-align: -0.1875em;"
+        viewBox="0 0 448 512"
+        width="1.5em"
       >
-        <div
-          className="pf-c-page__header-brand-toggle"
-          hidden={true}
-        >
-          <Button
-            aria-label="Toggle primary navigation"
-            onClick={[Function]}
-            ouiaId="chrome-nav-toggle"
-            variant="plain"
-          >
-            <button
-              aria-disabled={false}
-              aria-label="Toggle primary navigation"
-              className="pf-c-button pf-m-plain"
-              data-ouia-component-id="chrome-nav-toggle"
-              data-ouia-component-type="PF4/Button"
-              data-ouia-safe={true}
-              disabled={false}
-              onClick={[Function]}
-              type="button"
-            >
-              <BarsIcon
-                color="currentColor"
-                noVerticalAlign={false}
-                size="md"
-              >
-                <svg
-                  aria-hidden={true}
-                  aria-labelledby={null}
-                  fill="currentColor"
-                  height="1.5em"
-                  role="img"
-                  style={
-                    Object {
-                      "verticalAlign": "-0.1875em",
-                    }
-                  }
-                  viewBox="0 0 448 512"
-                  width="1.5em"
-                >
-                  <path
-                    d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                  />
-                </svg>
-              </BarsIcon>
-            </button>
-          </Button>
-        </div>
-        <a
-          className="pf-c-page__header-brand-link"
-          href="./"
-        >
-          <Logo>
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </Logo>
-        </a>
-      </div>
-    </Brand>
-  </Connect(Brand)>
-</Provider>
+        <path
+          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+        />
+      </svg>
+    </button>
+  </div>
+  <a
+    class="pf-c-page__header-brand-link"
+    href="./"
+  >
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
+  </a>
+</div>
 `;
 
 exports[`Brand should render correctly with state navHidden: false 1`] = `
-<Provider
-  store={
-    Object {
-      "clearActions": [Function],
-      "dispatch": [Function],
-      "getActions": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
-  }
+<div
+  class="pf-c-page__header-brand"
 >
-  <Connect(Brand)>
-    <Brand
-      navHidden={false}
-      toggleNav={[Function]}
+  <div
+    class="pf-c-page__header-brand-toggle"
+  >
+    <button
+      aria-disabled="false"
+      aria-label="Toggle primary navigation"
+      class="pf-c-button pf-m-plain"
+      data-ouia-component-id="chrome-nav-toggle"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      type="button"
     >
-      <div
-        className="pf-c-page__header-brand"
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1.5em"
+        role="img"
+        style="vertical-align: -0.1875em;"
+        viewBox="0 0 448 512"
+        width="1.5em"
       >
-        <div
-          className="pf-c-page__header-brand-toggle"
-          hidden={false}
-        >
-          <Button
-            aria-label="Toggle primary navigation"
-            onClick={[Function]}
-            ouiaId="chrome-nav-toggle"
-            variant="plain"
-          >
-            <button
-              aria-disabled={false}
-              aria-label="Toggle primary navigation"
-              className="pf-c-button pf-m-plain"
-              data-ouia-component-id="chrome-nav-toggle"
-              data-ouia-component-type="PF4/Button"
-              data-ouia-safe={true}
-              disabled={false}
-              onClick={[Function]}
-              type="button"
-            >
-              <BarsIcon
-                color="currentColor"
-                noVerticalAlign={false}
-                size="md"
-              >
-                <svg
-                  aria-hidden={true}
-                  aria-labelledby={null}
-                  fill="currentColor"
-                  height="1.5em"
-                  role="img"
-                  style={
-                    Object {
-                      "verticalAlign": "-0.1875em",
-                    }
-                  }
-                  viewBox="0 0 448 512"
-                  width="1.5em"
-                >
-                  <path
-                    d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                  />
-                </svg>
-              </BarsIcon>
-            </button>
-          </Button>
-        </div>
-        <a
-          className="pf-c-page__header-brand-link"
-          href="./"
-        >
-          <Logo>
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </Logo>
-        </a>
-      </div>
-    </Brand>
-  </Connect(Brand)>
-</Provider>
+        <path
+          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+        />
+      </svg>
+    </button>
+  </div>
+  <a
+    class="pf-c-page__header-brand-link"
+    href="./"
+  >
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
+  </a>
+</div>
 `;

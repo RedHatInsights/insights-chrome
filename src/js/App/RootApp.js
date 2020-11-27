@@ -24,9 +24,11 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   useEffect(() => {
     const contentElement = document.getElementById('root');
     if (!remoteModule) {
-      insightsContentRef.current.appendChild(contentElement);
-      contentElement.hidden = false;
-      contentElement.style.display = 'initial';
+      if (contentElement) {
+        insightsContentRef.current.appendChild(contentElement);
+        contentElement.hidden = false;
+        contentElement.style.display = 'initial';
+      }
     } else {
       contentElement.hidden = true;
       try {
