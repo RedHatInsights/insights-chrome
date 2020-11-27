@@ -9,6 +9,12 @@ import SideNav from './Sidenav/SideNav';
 import Header from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
 
+const LoadingComponent = () => (
+  <Bullseye className="pf-u-p-xl">
+    <Spinner size="xl" />
+  </Bullseye>
+);
+
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
@@ -51,7 +57,12 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
                 {typeof remoteModule !== 'undefined' && scalprum.initialized ? (
                   <ErrorBoundary>
                     {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
-                    <ScalprumComponent key={remoteModule.appName} {...remoteModule} />
+                    <ScalprumComponent
+                      fallback={<LoadingComponent />}
+                      LoadingComponent={LoadingComponent}
+                      key={remoteModule.appName}
+                      {...remoteModule}
+                    />
                   </ErrorBoundary>
                 ) : (
                   <Bullseye className="pf-u-p-xl">
