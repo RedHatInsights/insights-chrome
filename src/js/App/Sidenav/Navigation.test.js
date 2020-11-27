@@ -1,7 +1,6 @@
 import React from 'react';
-import ConnectedNavigation, { Navigation, dispatchToProps } from './Navigation';
-import toJson from 'enzyme-to-json';
-import { shallow, mount } from 'enzyme';
+import ConnectedNavigation, { Navigation } from './Navigation';
+import { render, act } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
@@ -12,6 +11,19 @@ let settingsData = [
   { title: 'Inventory', id: 'inventory', active: false },
   { title: 'Remediations', id: 'remediations', active: false },
 ];
+
+jest.mock('./ExpandableNav', () => () => '<ExpandableNav />');
+
+jest.mock('react-router-dom', () => ({
+  useHistory: () => ({
+    listen: jest.fn(() => () => {}),
+    push: jest.fn(),
+  }),
+}));
+
+jest.mock('@patternfly/react-core/dist/js/helpers/util', () => ({
+  isElementInView: jest.fn(),
+}));
 
 describe('Navigation', () => {
   const initialProps = {
@@ -54,11 +66,12 @@ describe('Navigation', () => {
     const mockSelect = jest.fn();
     const mockClick = jest.fn();
     const store = mockStore(initialState);
-    const wrapper = mount(<Navigation onSelect={mockSelect} onClick={mockClick} store={store} {...props} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
-    wrapper.find(`[itemID='someID']`).simulate('click', { persist: jest.fn() });
-    wrapper.find(`[itemID='rules']`).simulate('click', { persist: jest.fn() });
-    wrapper.find(`[aria-label='Insights Global Navigation']`).simulate('select', { groupId: 'someID1', itemID: 'someID2' });
+    const { container } = render(
+      <Provider store={store}>
+        <Navigation onSelect={mockSelect} onClick={mockClick} store={store} {...props} />
+      </Provider>
+    );
+    expect(container).toMatchSnapshot();
   });
   it('should render correctly 2', () => {
     let props = {
@@ -70,9 +83,13 @@ describe('Navigation', () => {
     const mockClick = jest.fn();
     const mockNavigate = jest.fn();
     const mockClear = jest.fn();
-    const wrapper = shallow(<Navigation onSelect={mockSelect} onClick={mockClick} onNavigate={mockNavigate} onClearActive={mockClear} {...props} />);
-    expect(toJson(wrapper, { mode: 'deep' })).toMatchSnapshot();
-    wrapper.find('#rules').simulate('click', { persist: jest.fn() });
+    const store = mockStore(initialState);
+    const { container } = render(
+      <Provider store={store}>
+        <Navigation onSelect={mockSelect} onClick={mockClick} onNavigate={mockNavigate} onClearActive={mockClear} {...props} />
+      </Provider>
+    );
+    expect(container).toMatchSnapshot();
   });
 });
 
@@ -97,21 +114,23 @@ describe('ConnectedNavigation', () => {
 
   it('should render correctly with initial state', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedNavigation />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
-  it('mapDispatchToProps function fires', () => {
+  it('mapDispatchToProps function fires', async () => {
     const store = mockStore(initialState);
-    const wrapper = mount(<ConnectedNavigation store={store} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
-    const mockDispatch = jest.fn();
-    const actionProps = dispatchToProps(mockDispatch);
-    actionProps.onNavigate(jest.fn(), jest.fn());
-    actionProps.onClearActive();
-    expect(mockDispatch.mock.calls.length).toBe(2);
+    let container;
+    await act(async () => {
+      container = render(
+        <Provider store={store}>
+          <ConnectedNavigation />
+        </Provider>
+      ).container;
+    });
+    expect(container).toMatchSnapshot();
   });
 });

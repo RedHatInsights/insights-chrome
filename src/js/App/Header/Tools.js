@@ -26,8 +26,8 @@ const Tools = () => {
   }
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
-      user.identity.account_number && setIsSettingsDisabled(false);
-      user.identity.user.is_internal && setIsInternal(true);
+      user?.identity?.account_number && setIsSettingsDisabled(false);
+      user?.identity?.user?.is_internal && setIsInternal(true);
     });
   }, []);
 

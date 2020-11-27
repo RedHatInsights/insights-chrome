@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import toJson from 'enzyme-to-json';
+import { render, waitFor, act } from '@testing-library/react';
 import ConnectedInsightsAbout, { InsightsAbout, Copyright } from '../InsightsAbout';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -29,22 +28,31 @@ describe('InsightsAbout', () => {
     appId: 'someID',
     dispatch: jest.fn(),
     onClose: jest.fn(),
-    user: 'someUser',
+    user: {
+      username: 'someUser',
+    },
     globalNav: [globalNavData],
   };
-  it('should render correctly with modal closed', () => {
+  it('should render correctly with modal closed', async () => {
     let props = {
       ...initialProps,
       isModalOpen: false,
     };
-    shallow(<InsightsAbout {...props} />);
+    await act(async () => {
+      render(<InsightsAbout {...props} />);
+    });
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
   });
-  it('should render correctly with modal open', () => {
+
+  it('should render correctly with modal open', async () => {
     let props = {
       ...initialProps,
       isModalOpen: true,
     };
-    shallow(<InsightsAbout {...props} />);
+    await act(async () => {
+      render(<InsightsAbout {...props} />);
+    });
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
   });
 });
 
@@ -68,21 +76,33 @@ describe('ConnectedInsightsAbout', () => {
     };
   });
 
-  it('should render correctly with just username', () => {
+  it('should render correctly with just username', async () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
-      <Provider store={store}>
-        <ConnectedInsightsAbout />
-      </Provider>
-    );
-    //wrapper.setState({ isOpen: true });
-    expect(toJson(wrapper)).toMatchSnapshot();
+    let container;
+    let unmount;
+    let console;
+    await act(async () => {
+      console = global.console;
+      global.console = { error: jest.fn() };
+      let wrapper = render(
+        <Provider store={store}>
+          <ConnectedInsightsAbout isModalOpen />
+        </Provider>,
+        { container: document.body }
+      );
+      container = wrapper.container;
+      unmount = wrapper.unmount;
+    });
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    expect(container).toMatchSnapshot();
+    unmount();
+    global.console = console;
   });
 });
 
 describe('Copyright', () => {
   it('should render', () => {
-    const wrapper = shallow(<Copyright />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<Copyright />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });
