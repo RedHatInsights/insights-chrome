@@ -1,7 +1,6 @@
 import React from 'react';
-import { render } from 'enzyme';
-import toJson from 'enzyme-to-json';
 import RootApp from './RootApp';
+import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
@@ -22,22 +21,22 @@ describe('RootApp', () => {
 
   it('should render correctly - no data', () => {
     const store = mockStore({ chrome: {} });
-    const wrapper = render(
+    const { container } = render(
       <Provider store={store}>
         <RootApp />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
   });
 
   it('should render correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = render(
+    const { container } = render(
       <Provider store={store}>
         <RootApp />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
   });
 
   it('should render correctly with pageAction', () => {
@@ -47,12 +46,12 @@ describe('RootApp', () => {
         pageAction: 'some-action',
       },
     });
-    const wrapper = render(
+    const { container } = render(
       <Provider store={store}>
         <RootApp />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
   });
 
   it('should render correctly with pageObjectId', () => {
@@ -62,12 +61,12 @@ describe('RootApp', () => {
         pageObjectId: 'some-object-id',
       },
     });
-    const wrapper = render(
+    const { container } = render(
       <Provider store={store}>
         <RootApp />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
   });
 
   it('should render correctly with pageObjectId and pageAction', () => {
@@ -78,11 +77,11 @@ describe('RootApp', () => {
         pageObjectId: 'some-object-id',
       },
     });
-    const wrapper = render(
+    const { container } = render(
       <Provider store={store}>
         <RootApp />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
   });
 });

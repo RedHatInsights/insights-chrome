@@ -1,10 +1,11 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import toJson from 'enzyme-to-json';
-import { shallow, mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import ConnectedUserToggle, { UserToggle } from '../UserToggle';
 import { Provider } from 'react-redux';
+
+jest.mock('../UserIcon', () => () => '<UserIcon />');
 
 describe('UserToggle', () => {
   it('should render correctly with isSmall false', () => {
@@ -18,9 +19,9 @@ describe('UserToggle', () => {
       extraItems: [],
     };
     const mockSelect = jest.fn();
-    const wrapper = shallow(<UserToggle {...props} onSelect={mockSelect} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
-    wrapper.find(`[widget-type='InsightsOverflowActions']`).simulate('select');
+    const { container } = render(<UserToggle {...props} onSelect={mockSelect} />);
+    container.querySelector(`[widget-type='InsightsOverflowActions']`).click();
+    expect(container).toMatchSnapshot();
   });
   it('should render correctly with isSmall true', () => {
     const props = {
@@ -33,8 +34,8 @@ describe('UserToggle', () => {
       extraItems: [],
     };
     const mockSelect = jest.fn();
-    const wrapper = shallow(<UserToggle {...props} onSelect={mockSelect} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<UserToggle {...props} onSelect={mockSelect} />);
+    expect(container).toMatchSnapshot();
   });
 });
 
@@ -63,12 +64,12 @@ describe('ConnectedUserToggle -- not org admin', () => {
 
   it('should render correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedUserToggle />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });
 
@@ -97,11 +98,11 @@ describe('ConnectedUserToggle -- org admin', () => {
 
   it('should render correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedUserToggle />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });
