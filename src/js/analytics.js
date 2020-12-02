@@ -52,6 +52,12 @@ function getPendoConf(data) {
   return {
     visitor: {
       id: accountID,
+
+      // Here we want to store this separately
+      // even if its duplicative... just to be extra sure
+      // in case another we property overrides account_num account_id
+      cloud_user_id: accountID,
+
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
       isOrgAdmin: data.identity.user.is_org_admin,
