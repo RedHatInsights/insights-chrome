@@ -36,7 +36,7 @@ function getUrl(type) {
 }
 
 function getPendoConf(data) {
-  const accountID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
+  const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements = {};
 
@@ -51,7 +51,7 @@ function getPendoConf(data) {
 
   return {
     visitor: {
-      id: accountID,
+      id: userID,
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
       isOrgAdmin: data.identity.user.is_org_admin,
