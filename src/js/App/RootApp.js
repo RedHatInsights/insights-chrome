@@ -19,7 +19,18 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   const scalprum = useScalprum(config);
-  const remoteModule = useSelector(({ chrome }) => chrome?.activeSection?.module);
+  const remoteModule = useSelector(({ chrome }) => {
+    if (chrome?.activeSection?.module) {
+      console.log(chrome?.activeSection?.module, 'this is module!');
+      const appName = chrome?.activeSection?.module?.appName || chrome?.activeSection?.id;
+      const [scope, module] = chrome?.activeSection?.module?.split('#');
+      return {
+        module: module || chrome?.activeSection?.module?.module,
+        scope: scope || chrome?.activeSection?.module?.scope,
+        appName,
+      };
+    }
+  });
   const insightsContentRef = useRef(null);
   useEffect(() => {
     const contentElement = document.getElementById('root');
