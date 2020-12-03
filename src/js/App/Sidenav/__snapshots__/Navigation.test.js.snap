@@ -687,130 +687,143 @@ exports[`Navigation should render corectly 1`] = `
               </NavItem>
             </NavigationItem>
           </ExpandableNav>
-          <NavItem
-            className="ins-c-navigation__additional-links"
+          <NavItemLink
+            id="extra-openshift-support"
             key="extra-openshift-support"
-            ouiaId="extra-openshift-support"
-            rel="noopener noreferrer"
-            target="_blank"
-            to="https://access.redhat.com/support/cases"
+            link="https://access.redhat.com/support/cases"
+            title="Support Cases"
           >
-            <li
-              className="pf-c-nav__item ins-c-navigation__additional-links"
+            <NavItem
+              className="ins-c-navigation__additional-links"
+              key="extra-openshift-support"
+              ouiaId="extra-openshift-support"
+              to="https://access.redhat.com/support/cases"
             >
-              <a
-                aria-current={null}
-                className="pf-c-nav__link ins-c-navigation__additional-links"
-                href="https://access.redhat.com/support/cases"
-                onClick={[Function]}
-                ouiaId="extra-openshift-support"
-                rel="noopener noreferrer"
-                target="_blank"
+              <li
+                className="pf-c-nav__item ins-c-navigation__additional-links"
               >
-                Support Cases
-                 
-              </a>
-            </li>
-          </NavItem>
-          <NavItem
-            className="ins-c-navigation__additional-links"
-            key="extra-openshift-cm"
-            ouiaId="extra-openshift-cm"
-            rel="noopener noreferrer"
-            target="_blank"
-            to="mailto:ocm-feedback@redhat.com"
-          >
-            <li
-              className="pf-c-nav__item ins-c-navigation__additional-links"
-            >
-              <a
-                aria-current={null}
-                className="pf-c-nav__link ins-c-navigation__additional-links"
-                href="mailto:ocm-feedback@redhat.com"
-                onClick={[Function]}
-                ouiaId="extra-openshift-cm"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Cluster Manager Feedback
-                 
-              </a>
-            </li>
-          </NavItem>
-          <NavItem
-            className="ins-c-navigation__additional-links"
-            key="extra-openshift-marketplace"
-            ouiaId="extra-openshift-marketplace"
-            rel="noopener noreferrer"
-            target="_blank"
-            to="https://marketplace.redhat.com"
-          >
-            <li
-              className="pf-c-nav__item ins-c-navigation__additional-links"
-            >
-              <a
-                aria-current={null}
-                className="pf-c-nav__link ins-c-navigation__additional-links"
-                href="https://marketplace.redhat.com"
-                onClick={[Function]}
-                ouiaId="extra-openshift-marketplace"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Red Hat Marketplace
-                 
-              </a>
-            </li>
-          </NavItem>
-          <NavItem
-            className="ins-c-navigation__additional-links"
-            key="extra-openshift-docs"
-            ouiaId="extra-openshift-docs"
-            rel="noopener noreferrer"
-            target="_blank"
-            to="https://docs.openshift.com/dedicated/4/"
-          >
-            <li
-              className="pf-c-nav__item ins-c-navigation__additional-links"
-            >
-              <a
-                aria-current={null}
-                className="pf-c-nav__link ins-c-navigation__additional-links"
-                href="https://docs.openshift.com/dedicated/4/"
-                onClick={[Function]}
-                ouiaId="extra-openshift-docs"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Documentation
-                 
-                <ExternalLinkAltIcon
-                  color="currentColor"
-                  noVerticalAlign={false}
-                  size="sm"
+                <a
+                  aria-current={null}
+                  className="pf-c-nav__link ins-c-navigation__additional-links"
+                  href="https://access.redhat.com/support/cases"
+                  onClick={[Function]}
+                  ouiaId="extra-openshift-support"
                 >
-                  <svg
-                    aria-hidden={true}
-                    aria-labelledby={null}
-                    fill="currentColor"
-                    height="1em"
-                    role="img"
-                    style={
-                      Object {
-                        "verticalAlign": "-0.125em",
-                      }
-                    }
-                    viewBox="0 0 512 512"
-                    width="1em"
+                  Support Cases
+                   
+                </a>
+              </li>
+            </NavItem>
+          </NavItemLink>
+          <NavItemLink
+            id="extra-openshift-cm"
+            key="extra-openshift-cm"
+            link="mailto:ocm-feedback@redhat.com"
+            title="Cluster Manager Feedback"
+          >
+            <NavItem
+              className="ins-c-navigation__additional-links"
+              key="extra-openshift-cm"
+              ouiaId="extra-openshift-cm"
+              to="mailto:ocm-feedback@redhat.com"
+            >
+              <li
+                className="pf-c-nav__item ins-c-navigation__additional-links"
+              >
+                <a
+                  aria-current={null}
+                  className="pf-c-nav__link ins-c-navigation__additional-links"
+                  href="mailto:ocm-feedback@redhat.com"
+                  onClick={[Function]}
+                  ouiaId="extra-openshift-cm"
+                >
+                  Cluster Manager Feedback
+                   
+                </a>
+              </li>
+            </NavItem>
+          </NavItemLink>
+          <NavItemLink
+            id="extra-openshift-marketplace"
+            key="extra-openshift-marketplace"
+            link="https://marketplace.redhat.com"
+            title="Red Hat Marketplace"
+          >
+            <NavItem
+              className="ins-c-navigation__additional-links"
+              key="extra-openshift-marketplace"
+              ouiaId="extra-openshift-marketplace"
+              to="https://marketplace.redhat.com"
+            >
+              <li
+                className="pf-c-nav__item ins-c-navigation__additional-links"
+              >
+                <a
+                  aria-current={null}
+                  className="pf-c-nav__link ins-c-navigation__additional-links"
+                  href="https://marketplace.redhat.com"
+                  onClick={[Function]}
+                  ouiaId="extra-openshift-marketplace"
+                >
+                  Red Hat Marketplace
+                   
+                </a>
+              </li>
+            </NavItem>
+          </NavItemLink>
+          <NavItemLink
+            external={true}
+            id="extra-openshift-docs"
+            key="extra-openshift-docs"
+            title="Documentation"
+            url="https://docs.openshift.com/dedicated/4/"
+          >
+            <NavItem
+              className="ins-c-navigation__additional-links"
+              key="extra-openshift-docs"
+              ouiaId="extra-openshift-docs"
+              to="https://docs.openshift.com/dedicated/4/"
+            >
+              <li
+                className="pf-c-nav__item ins-c-navigation__additional-links"
+              >
+                <a
+                  aria-current={null}
+                  className="pf-c-nav__link ins-c-navigation__additional-links"
+                  href="https://docs.openshift.com/dedicated/4/"
+                  onClick={[Function]}
+                  ouiaId="extra-openshift-docs"
+                >
+                  Documentation
+                   
+                  <ExternalLinkAltIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
                   >
-                    <path
-                      d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z"
-                    />
-                  </svg>
-                </ExternalLinkAltIcon>
-              </a>
-            </li>
-          </NavItem>
+                    <svg
+                      aria-hidden={true}
+                      aria-labelledby={null}
+                      fill="currentColor"
+                      height="1em"
+                      role="img"
+                      style={
+                        Object {
+                          "verticalAlign": "-0.125em",
+                        }
+                      }
+                      viewBox="0 0 512 512"
+                      width="1em"
+                    >
+                      <path
+                        d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z"
+                      />
+                    </svg>
+                  </ExternalLinkAltIcon>
+                </a>
+              </li>
+            </NavItem>
+          </NavItemLink>
         </ul>
       </NavList>
     </nav>
@@ -888,55 +901,31 @@ exports[`Navigation should render correctly 2 1`] = `
       onClick={[Function]}
       title="Remediations"
     />
-    <NavItem
-      className="ins-c-navigation__additional-links"
+    <NavItemLink
+      id="extra-openshift-support"
       key="extra-openshift-support"
-      ouiaId="extra-openshift-support"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="https://access.redhat.com/support/cases"
-    >
-      Support Cases
-       
-    </NavItem>
-    <NavItem
-      className="ins-c-navigation__additional-links"
+      link="https://access.redhat.com/support/cases"
+      title="Support Cases"
+    />
+    <NavItemLink
+      id="extra-openshift-cm"
       key="extra-openshift-cm"
-      ouiaId="extra-openshift-cm"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="mailto:ocm-feedback@redhat.com"
-    >
-      Cluster Manager Feedback
-       
-    </NavItem>
-    <NavItem
-      className="ins-c-navigation__additional-links"
+      link="mailto:ocm-feedback@redhat.com"
+      title="Cluster Manager Feedback"
+    />
+    <NavItemLink
+      id="extra-openshift-marketplace"
       key="extra-openshift-marketplace"
-      ouiaId="extra-openshift-marketplace"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="https://marketplace.redhat.com"
-    >
-      Red Hat Marketplace
-       
-    </NavItem>
-    <NavItem
-      className="ins-c-navigation__additional-links"
+      link="https://marketplace.redhat.com"
+      title="Red Hat Marketplace"
+    />
+    <NavItemLink
+      external={true}
+      id="extra-openshift-docs"
       key="extra-openshift-docs"
-      ouiaId="extra-openshift-docs"
-      rel="noopener noreferrer"
-      target="_blank"
-      to="https://docs.openshift.com/dedicated/4/"
-    >
-      Documentation
-       
-      <ExternalLinkAltIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-      />
-    </NavItem>
+      title="Documentation"
+      url="https://docs.openshift.com/dedicated/4/"
+    />
   </NavList>
 </Nav>
 `;
