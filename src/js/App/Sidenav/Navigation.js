@@ -1,14 +1,15 @@
-import React from 'react';
-import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
+import './Navigation.scss';
+
+import { Nav, NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/index';
+import { appNavClick, clearActive } from '../../redux/actions';
+
+import ExpandableNav from './ExpandableNav';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { appNavClick, clearActive } from '../../redux/actions';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-
-import './Navigation.scss';
-import ExpandableNav from './ExpandableNav';
 
 const basepath = document.baseURI;
 
@@ -20,10 +21,14 @@ const extraLinks = {
       link: './subscriptions/',
     },
     {
-      id: 'extra-docs',
-      url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/',
+      expandable: true,
+      id: 'extra-expandable-docs',
       title: 'Documentation',
-      external: true,
+      subItems: [
+        { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Product Documentation', external: true },
+        { id: 'extra-security', url: './security/insights', title: 'Security' },
+        { id: 'extra-docs', url: './docs/api', title: 'APIs' },
+      ],
     },
   ],
   subscriptions: [
@@ -75,6 +80,20 @@ const extraLinks = {
   ],
 };
 
+const NavItemLink = ({ id, title, external, url, link }) => (
+  <NavItem className="ins-c-navigation__additional-links" key={id} to={url || link} ouiaId={id}>
+    {title} {external && <ExternalLinkAltIcon />}
+  </NavItem>
+);
+
+NavItemLink.propTypes = {
+  id: PropTypes.string,
+  title: PropTypes.string,
+  url: PropTypes.string,
+  external: PropTypes.bool,
+  link: PropTypes.string,
+};
+
 export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, onClearActive, activeGroup, appId }) => {
   const onClick = (event, item, parent) => {
     const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2;
@@ -117,18 +136,17 @@ export const Navigation = ({ settings, activeApp, activeLocation, onNavigate, on
             onClick={(event, subItem) => (item.subItems ? onClick(event, subItem, item) : onClick(event, item))}
           />
         ))}
-        {extraLinks[activeLocation]?.map?.((item) => (
-          <NavItem
-            className="ins-c-navigation__additional-links"
-            key={item.id}
-            to={item.url || item.link}
-            ouiaId={item.id}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item.title} {item.external && <ExternalLinkAltIcon />}
-          </NavItem>
-        ))}
+        {extraLinks[activeLocation]?.map?.((item) =>
+          item?.expandable && activeLocation === 'insights' ? (
+            <NavExpandable title={item.title}>
+              {item?.subItems?.map((item) => (
+                <NavItemLink key={item.id} {...item} />
+              ))}
+            </NavExpandable>
+          ) : (
+            <NavItemLink key={item.id} {...item} />
+          )
+        )}
       </NavList>
     </Nav>
   );
