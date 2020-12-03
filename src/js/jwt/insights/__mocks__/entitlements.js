@@ -5,9 +5,9 @@ const servicesGet = jest.fn();
 
 base.mockReturnValue({ servicesGet });
 servicesGet.mockReturnValue({
-    then: fn => {
-        return fn({ foo: 'bar' });
-    }
+  then: (fn) => {
+    return fn({ foo: 'bar' });
+  },
 });
 
 export default base;

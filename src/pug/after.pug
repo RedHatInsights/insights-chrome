@@ -1,7 +1,1 @@
 script(src=`./apps/chrome/${ chromeJS }`)
-script(type='text/javascript').
-  if(window.location.hostname.split('.')[1] !== 'foo') {
-    if (("undefined" !== typeof _satellite) && ("function" === typeof _satellite.pageBottom)) {
-    _satellite.pageBottom();
-    }
-  }

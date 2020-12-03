@@ -49,7 +49,7 @@ exports[`Tools should render correctly 1`] = `
             <React.Fragment>
               <DropdownItem
                 component="a"
-                href="http://localhost/settings/rbac/"
+                href="http://localhost/settings/my-user-access"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -68,17 +68,15 @@ exports[`Tools should render correctly 1`] = `
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Customer support
+                Get support
               </DropdownItem>
             </React.Fragment>,
             <React.Fragment>
               <DropdownItem
-                component="a"
-                href="https://www.redhat.com/en/services/training-and-certification"
-                rel="noopener noreferrer"
-                target="_blank"
+                component="button"
+                onClick={[Function]}
               >
-                Training
+                Open support case
               </DropdownItem>
             </React.Fragment>,
             <React.Fragment>

@@ -6,21 +6,23 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const Header = ({ user }) => {
-    return user ? (
-        <Fragment>
-            <Brand />
-            <Tools />
-        </Fragment>
-    ) : <UnAuthtedHeader />;
+  return user ? (
+    <Fragment>
+      <Brand />
+      <Tools />
+    </Fragment>
+  ) : (
+    <UnAuthtedHeader />
+  );
 };
 
 Header.propTypes = {
-    user: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.shape({
-            [PropTypes.string]: PropTypes.any
-        })
-    ])
+  user: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      [PropTypes.string]: PropTypes.any,
+    }),
+  ]),
 };
 
 export default connect(({ chrome: { user } }) => ({ user }))(Header);

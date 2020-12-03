@@ -13,7 +13,7 @@ const commonConfig = ({
         path: path.resolve(__dirname, '../build/js'),
         filename: `chrome${noHash ? '' : '.[chunkhash]'}.js`,
         publicPath,
-        chunkFilename: '[name].[chunkhash].js',
+        chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
         jsonpFunction: 'wpJsonpChromeInstance'
     },
     resolve: {

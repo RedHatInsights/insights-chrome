@@ -3,23 +3,37 @@ import logger from '../jwt/logger';
 
 const log = logger('fetchPermissions.js');
 
-const perPage = 25;
+const perPage = 100;
 
-export const fetchPermissions = (userToken, app = '') => {
+const fetchPermissions = (userToken, app = '') => {
+  const rbacApi = createRbacAPI(userToken);
+  return rbacApi
+    .getPrincipalAccess(app, undefined, perPage)
+    .then(({ data, meta }) => {
+      if (meta.count > perPage) {
+        return Promise.all(
+          [...new Array(Math.ceil(meta.count / perPage))].map((_empty, key) =>
+            rbacApi.getPrincipalAccess(app, undefined, perPage, (key + 1) * perPage).then(({ data }) => data)
+          )
+        )
+          .then((allAccess) => allAccess.reduce((acc, curr) => [...acc, ...curr], data))
+          .catch((error) => log(error));
+      } else {
+        return data;
+      }
+    })
+    .catch((error) => log(error));
+};
+
+export const createFetchPermissionsWatcher = () => {
+  let currentCall = {};
+  return async (userToken, app = '') => {
     if (insights.chrome.getBundle() === 'openshift') {
-        return Promise.resolve([]);
+      return Promise.resolve([]);
     }
-    const rbacApi = createRbacAPI(userToken);
-    return rbacApi.getPrincipalAccess(app, undefined, perPage).then(({ data, meta }) => {
-        if (meta.count > perPage) {
-            return Promise.all(
-                [...new Array(Math.ceil(meta.count / perPage))]
-                .map((_empty, key) => rbacApi.getPrincipalAccess(app, undefined, perPage, (key + 1) * perPage)
-                .then(({ data }) => data))
-            ).then(allAccess => allAccess.reduce((acc, curr) => ([...acc, ...curr]), data))
-            .catch(error => log(error));
-        } else {
-            return data;
-        }})
-    .catch(error => log(error));
+    if (typeof currentCall?.[app] === 'undefined') {
+      currentCall[app] = await fetchPermissions(userToken, app);
+    }
+    return currentCall?.[app];
+  };
 };

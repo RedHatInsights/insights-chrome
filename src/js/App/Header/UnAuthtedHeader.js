@@ -4,13 +4,13 @@ import LogoutAlert from './LogoutAlert';
 import Brand from './Brand';
 
 function Unauthed() {
-    return (
-        <Fragment>
-            <Brand />
-            <Login />
-            <LogoutAlert/>
-        </Fragment>
-    );
+  return (
+    <Fragment>
+      <Brand />
+      <Login />
+      <LogoutAlert />
+    </Fragment>
+  );
 }
 
 export default Unauthed;

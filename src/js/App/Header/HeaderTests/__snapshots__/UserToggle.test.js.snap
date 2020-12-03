@@ -17,6 +17,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
     <UserToggle
       account={
         Object {
+          "isInternal": undefined,
           "isOrgAdmin": false,
           "name": "someFirstName someLastName",
           "number": "some accountNumber",
@@ -58,6 +59,8 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             >
               My profile
             </DropdownItem>,
+            <React.Fragment />,
+            <React.Fragment />,
             <React.Fragment />,
             <DropdownItem
               component="button"
@@ -119,6 +122,8 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
+              <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
                 component="button"
@@ -213,7 +218,6 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                         >
                           <path
                             d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                            transform=""
                           />
                         </svg>
                       </span>
@@ -283,7 +287,6 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                           >
                             <path
                               d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                              transform=""
                             />
                           </svg>
                         </span>
@@ -358,7 +361,6 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                       >
                         <path
                           d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                          transform=""
                         />
                       </svg>
                     </CaretDownIcon>
@@ -391,6 +393,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
     <UserToggle
       account={
         Object {
+          "isInternal": undefined,
           "isOrgAdmin": true,
           "name": "someFirstName someLastName",
           "number": "some accountNumber",
@@ -437,6 +440,8 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             >
               My profile
             </DropdownItem>,
+            <React.Fragment />,
+            <React.Fragment />,
             <React.Fragment />,
             <DropdownItem
               component="button"
@@ -503,6 +508,8 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               >
                 My profile
               </DropdownItem>,
+              <React.Fragment />,
+              <React.Fragment />,
               <React.Fragment />,
               <DropdownItem
                 component="button"
@@ -597,7 +604,6 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                         >
                           <path
                             d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                            transform=""
                           />
                         </svg>
                       </span>
@@ -667,7 +673,6 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                           >
                             <path
                               d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                              transform=""
                             />
                           </svg>
                         </span>
@@ -742,7 +747,6 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                       >
                         <path
                           d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                          transform=""
                         />
                       </svg>
                     </CaretDownIcon>
@@ -788,6 +792,8 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       >
         My profile
       </DropdownItem>,
+      <React.Fragment />,
+      <React.Fragment />,
       <React.Fragment />,
       <DropdownItem
         component="button"
@@ -847,6 +853,8 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       >
         My profile
       </DropdownItem>,
+      <React.Fragment />,
+      <React.Fragment />,
       <React.Fragment />,
       <DropdownItem
         component="button"
