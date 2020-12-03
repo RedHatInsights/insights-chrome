@@ -288,25 +288,28 @@ function refreshTokens() {
 
 // Actually update the token
 function updateToken() {
-    return priv.keycloak.updateToken().then(refreshed => {
-        // Important! after we update the token
-        // we have to again populate the Cookie!
-        // Otherwise we just update and dont send
-        // the updated token down stream... and things 401
-        setCookie(priv.keycloak.token);
+  return priv.keycloak
+    .updateToken()
+    .then((refreshed) => {
+      // Important! after we update the token
+      // we have to again populate the Cookie!
+      // Otherwise we just update and dont send
+      // the updated token down stream... and things 401
+      setCookie(priv.keycloak.token);
 
-        log('Attempting to update token');
+      log('Attempting to update token');
 
-        if (refreshed) {
-            log('Token was successfully refreshed');
-        } else {
-            log('Token is still valid, not updating');
-        }
-    }).catch(err => {
-        log(err);
-        Sentry.captureException(new Error('Update token failed'));
-        log('Token updated failed, trying to reauth');
-        login();
+      if (refreshed) {
+        log('Token was successfully refreshed');
+      } else {
+        log('Token is still valid, not updating');
+      }
+    })
+    .catch((err) => {
+      log(err);
+      Sentry.captureException(new Error('Update token failed'));
+      log('Token updated failed, trying to reauth');
+      login();
     });
 }
 
@@ -340,10 +343,10 @@ function setCookieWrapper(str) {
 export const getEncodedToken = () => {
   log('Trying to get the encoded token');
 
-    if (!isExistingValid(priv.keycloak.token)) {
-        log('Failed to get encoded token, trying to update');
-        updateToken();
-    }
+  if (!isExistingValid(priv.keycloak.token)) {
+    log('Failed to get encoded token, trying to update');
+    updateToken();
+  }
 
   return priv.keycloak.token;
 };
