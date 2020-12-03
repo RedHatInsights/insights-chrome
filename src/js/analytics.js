@@ -36,7 +36,7 @@ function getUrl(type) {
 }
 
 function getPendoConf(data) {
-  const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
+  const accountID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements = {};
 
@@ -51,13 +51,7 @@ function getPendoConf(data) {
 
   return {
     visitor: {
-      id: userID,
-
-      // Here we want to store this separately
-      // even if its duplicative... just to be extra sure
-      // in case another we property overrides account_num account_id
-      cloud_user_id: userID,
-
+      id: accountID,
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
       isOrgAdmin: data.identity.user.is_org_admin,
@@ -69,15 +63,6 @@ function getPendoConf(data) {
       // TODO add in customer name as name:
       // here if/when we get that in the JWT
       id: data.identity.account_number,
-
-      account_number: data.identity.account_number, // The EBS id
-      account_id: data.identity.internal.org_id, // The internal RH org id
-
-      // Here we want to store this separately
-      // even if its duplicative... just to be extra sure
-      // in case another we property overrides account_num account_id
-      cloud_org_id: data.identity.internal.org_id,
-      cloud_ebs_id: data.identity.account_number,
     },
   };
 }
