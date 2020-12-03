@@ -33,9 +33,12 @@ plugins.push(
     // exposes: {}, - uncomment and fill in if you want to control what is exposed
     // shared : [], - uncomment and add your shared modules
     // debug: true, - uncomment if you want to see what is used
+    // moduleName,  - uncomment if you want to name your module differently 
   })
 );
 ```
+
+If you change `exposes` or `moduleName` prop you have to update config accordingly. 
 
 (If you are using shared config you can skip to [Change exporting of your app](/RedHatInsights/insights-chrome/blob/master/docs/migrationGuide.md#Change-exporting-of-your-app))
 If you want to have full control over what is used you can define your own federated module
@@ -108,7 +111,7 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 In order for chrome to know how to bootstrap your app you have to indicate what module is used to this action. You have 2 options how to register new chrome 2.0 usage
 
-1) magic link - add new key `module: YOUR_APP_NAME#./RootApp` under frontend object. If you used custom federated module plugin your magic link will be `module ref1#ref2` (replace `ref1` and `ref2` with actual value).
+1) magic link - add new key `module: YOUR_MODULE_NAME#./RootApp` under frontend object. If you used predefined config the magic link should be same as what is under `insights.appname` in your package.json. If you changed `moduleName` or `exposes` please reflect that in here as well (`module: $moduleName#./$exposes` - replace with your values). If you used custom federated module plugin your magic link will be `module ref1#ref2` (replace `ref1` and `ref2` with actual value).
 2) complex value - if you want to have full control over what is used you can specify complex value for `module`
 ```
 module:

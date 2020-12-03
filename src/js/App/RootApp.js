@@ -21,9 +21,8 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const scalprum = useScalprum(config);
   const remoteModule = useSelector(({ chrome }) => {
     if (chrome?.activeSection?.module) {
-      console.log(chrome?.activeSection?.module, 'this is module!');
       const appName = chrome?.activeSection?.module?.appName || chrome?.activeSection?.id;
-      const [scope, module] = chrome?.activeSection?.module?.split('#');
+      const [scope, module] = chrome?.activeSection?.module?.split?.('#') || [];
       return {
         module: module || chrome?.activeSection?.module?.module,
         scope: scope || chrome?.activeSection?.module?.scope,
