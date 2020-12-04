@@ -37,5 +37,5 @@ window.insights = createChromeInstance(libjwt, window.insights);
 
 if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
   window._satellite.pageBottom();
-  registerUrlObserver(window._satellite.pageBottom);
+  registerUrlObserver();
 }
