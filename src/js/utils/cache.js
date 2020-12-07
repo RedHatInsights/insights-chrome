@@ -13,10 +13,25 @@ export const createCacheStore = (endpoint, cacheKey) => {
 
 let store;
 
+/**
+ * Check if the app has switched between beta/non-beta envs.
+ * If it did, we clean the existing chrome cache to prevent stale cache entry.
+ * This issue may occur when the user switches between envs without logging out and in.
+ */
+const envSwap = () => {
+  const currentEnv = window.insights.chrome.isBeta() ? 'beta' : 'non-beta';
+  const prevEnv = localStorage.getItem('chrome:prevEnv');
+  if (prevEnv && currentEnv !== prevEnv) {
+    deleteLocalStorageItems(Object.keys(localStorage).filter((item) => item.endsWith('/chrome-store')));
+  }
+  localStorage.setItem('chrome:prevEnv', currentEnv);
+};
+
 export class CacheAdapter {
   constructor(endpoint, cacheKey, maxAge = 10 * 60 * 1000) {
     this.maxAge = maxAge;
     this.expires = new Date().getTime() + this.maxAge;
+    envSwap();
     if (!store) {
       const name = lastActive(endpoint, cacheKey);
       let cached;
