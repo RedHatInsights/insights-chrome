@@ -307,7 +307,7 @@ function updateToken() {
     })
     .catch((err) => {
       log(err);
-      Sentry.captureException(new Error('Update token failed'));
+      Sentry.captureException(err);
       log('Token updated failed, trying to reauth');
       login();
     });
