@@ -45,8 +45,6 @@ export async function createSupportCase(userInfo, fields) {
 
   log('Creating a support case');
 
-  console.debug(currentProduct);
-
   fetch(`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/hydra/rest/se/sessions`, {
     method: 'POST',
     headers: {
