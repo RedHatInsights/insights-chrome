@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/components/cjs/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/components/cjs/FilterHooks';
@@ -10,6 +10,7 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, generateFilter, selectWorkloads } from './constants';
+import debounce from 'lodash/debounce';
 
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
@@ -32,6 +33,33 @@ const GlobalFilter = () => {
   const sid = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
+  const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
+    storeFilter(selectedTags, token);
+    batch(() => {
+      dispatch(
+        fetchAllTags({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+      dispatch(
+        fetchAllSIDs({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+      dispatch(
+        fetchAllWorkloads({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+    });
+  };
+  const debouncedLoadTags = useCallback(debounce(loadTags, 800), []);
   const { filter, chips, selectedTags, setValue, filterTagsBy } = useTagsFilter(
     [...workloads, ...sid, ...tags],
     isLoaded && Boolean(token),
@@ -50,6 +78,7 @@ const GlobalFilter = () => {
       setHasAccess(permissions?.some((item) => ['inventory:*:*', 'inventory:*:read', 'inventory:hosts:read'].includes(item?.permission || item)));
     })();
   }, [userLoaded]);
+
   useEffect(() => {
     if (!token && userLoaded) {
       (async () => {
@@ -58,32 +87,15 @@ const GlobalFilter = () => {
         setToken(() => currToken);
       })();
     } else if (userLoaded && token && isAllowed()) {
-      storeFilter(selectedTags, token);
-      batch(() => {
-        dispatch(
-          fetchAllTags({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-        dispatch(
-          fetchAllSIDs({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-        dispatch(
-          fetchAllWorkloads({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-      });
+      loadTags(selectedTags, filterScope, filterTagsBy, token);
     }
-  }, [selectedTags, filterScope, filterTagsBy, userLoaded, isAllowed()]);
+  }, [selectedTags, filterScope, userLoaded, isAllowed()]);
+
+  useEffect(() => {
+    if (userLoaded && isAllowed()) {
+      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token);
+    }
+  }, [filterTagsBy]);
 
   useEffect(() => {
     if (userLoaded && token && isAllowed()) {
