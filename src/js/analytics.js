@@ -1,6 +1,7 @@
 'use strict';
 
 import logger from './jwt/logger';
+import get from 'lodash/get';
 
 const log = logger('Analytics.js');
 
@@ -35,6 +36,15 @@ function getUrl(type) {
   return type === 'bundle' ? sections[1] : sections[2];
 }
 
+function getAdobeVisitorId() {
+  const visitor = get('window.s.visitor', false);
+  if (visitor) {
+    return visitor.getMarketingCloudVisitorID();
+  }
+
+  return -1;
+}
+
 function getPendoConf(data) {
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
@@ -57,6 +67,8 @@ function getPendoConf(data) {
       // even if its duplicative... just to be extra sure
       // in case another we property overrides account_num account_id
       cloud_user_id: userID,
+
+      adobe_cloud_visitor_id:  getAdobeVisitorId();
 
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
