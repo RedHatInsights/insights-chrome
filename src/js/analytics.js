@@ -68,7 +68,7 @@ function getPendoConf(data) {
       // in case another we property overrides account_num account_id
       cloud_user_id: userID,
 
-      adobe_cloud_visitor_id:  getAdobeVisitorId(),
+      adobe_cloud_visitor_id: getAdobeVisitorId(),
 
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
