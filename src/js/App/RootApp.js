@@ -40,8 +40,8 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         contentElement.style.display = 'initial';
       }
     } else {
-      contentElement.hidden = true;
       try {
+        contentElement.hidden = true;
         insightsContentRef.current.removeChild(contentElement);
       } catch (error) {
         /**
