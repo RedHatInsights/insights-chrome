@@ -7,7 +7,7 @@ import { spinUpStore } from './redux-config';
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
   { id: 'openshift', name: 'Red Hat OpenShift Cluster Manager' },
-  { id: 'insights', name: 'Red Hat Insights' },
+  { id: 'insights', name: 'Insights' },
   { id: 'subscriptions', name: 'Subscription Watch' },
   { id: 'migrations', name: 'Migration Analytics' },
   { id: 'cost-management', name: 'Red Hat Cost Management' },
