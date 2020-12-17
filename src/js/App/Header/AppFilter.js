@@ -13,8 +13,6 @@ import ansible from '../../../../static/images/platform-icons/ansible.svg';
 import openshift from '../../../../static/images/platform-icons/openshift.svg';
 import costManagement from '../../../../static/images/platform-icons/cost-management.svg';
 import migrationsNamespace from '../../../../static/images/platform-icons/migrations-namespace.svg';
-import SAP from '../../../../static/images/platform-icons/SAP.svg';
-import insights from '../../../../static/images/platform-icons/Insights.svg';
 
 import './AppFilter.scss';
 
@@ -27,7 +25,7 @@ const AppFilter = () => {
       title: 'Red Hat Insights',
       id: 'insights',
       link: '/',
-      icon: <img className="ins-c-app-filter-app-icon" src={insights} alt="Insights Logo" />,
+      icon: <img className="ins-c-app-filter-app-icon" src="/apps/landing/fonts/Insights.svg" alt="Insights Logo" />,
       subApps: [
         { title: 'Dashboard', link: '/insights/dashboard' },
         { title: 'Advisor', link: '/insights/advisor' },
@@ -50,7 +48,7 @@ const AppFilter = () => {
       title: 'Insight for SAP',
       id: 'openshift',
       link: '/',
-      icon: <img className="ins-c-app-filter-app-icon" src={SAP} alt="SAP Logo" />,
+      icon: <img className="ins-c-app-filter-app-icon" src="/apps/landing/fonts/SAP.svg" alt="SAP Logo" />,
       subApps: [{ title: 'Dashboard', id: 'dashboard', link: '/' }],
     },
     {
