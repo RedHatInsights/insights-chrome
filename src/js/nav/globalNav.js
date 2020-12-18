@@ -5,7 +5,7 @@ import { getUrl } from '../utils';
 
 export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
-    .filter((appId) => masterConfig[appId].top_level && appId === active)
+    .filter((appId) => (masterConfig[appId].top_level && appId === active) || !active)
     .reduce(async (acc, appId) => {
       const routes = await getAppData(appId, 'routes', masterConfig);
       return {
