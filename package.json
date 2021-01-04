@@ -153,7 +153,7 @@
     "@redhat-cloud-services/keycloak-js": "0.0.3",
     "@redhat-cloud-services/rbac-client": "^1.0.75",
     "@sentry/browser": "^5.17.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-cache-adapter": "^2.5.0",
     "axios-mock-adapter": "^1.18.1",
     "babel-plugin-rewire": "^1.2.0",
