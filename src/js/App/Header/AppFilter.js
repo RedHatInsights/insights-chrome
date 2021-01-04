@@ -39,14 +39,11 @@ const AppFilter = () => {
   const [apps, setApps] = useState([]);
 
   useEffect(() => {
-    const loadApps = async () => {
+    (async () => {
       const navigationYml = await sourceOfTruth();
       const appData = await getNavFromConfig(safeLoad(navigationYml), undefined);
-
       setApps(appIds.map((id) => appData[id]));
-    };
-
-    loadApps();
+    })();
   }, []);
 
   const renderApp = (app) =>
@@ -70,6 +67,7 @@ const AppFilter = () => {
       </TextContent>
     ) : null;
 
+  // TODO: if this is here to stay, change to more generic dynamic layout!!!
   return (
     <Dropdown
       isPlain
