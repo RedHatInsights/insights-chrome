@@ -156,7 +156,7 @@
     "@redhat-cloud-services/keycloak-js": "0.0.3",
     "@redhat-cloud-services/rbac-client": "^1.0.75",
     "@scalprum/core": "0.0.9",
-    "@scalprum/react-core": "0.0.8",
+    "@scalprum/react-core": "0.0.11",
     "@sentry/browser": "^5.17.0",
     "axios": "^0.19.2",
     "axios-cache-adapter": "^2.5.0",
