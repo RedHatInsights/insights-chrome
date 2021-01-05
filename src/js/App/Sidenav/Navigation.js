@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Nav, NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/Nav';
+import { Nav, NavExpandable } from '@patternfly/react-core/dist/js/components/Nav';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -27,7 +27,7 @@ const extraLinks = {
       subItems: [
         { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Product Documentation', external: true },
         { id: 'extra-security', url: './security/insights', title: 'Security' },
-        { id: 'extra-docs', url: './docs/api', title: 'APIs' },
+        { id: 'extra-api-docs', url: './docs/api', title: 'APIs' },
       ],
     },
   ],
