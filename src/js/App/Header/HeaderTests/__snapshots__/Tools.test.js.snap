@@ -18,7 +18,7 @@ exports[`Tools should render correctly 1`] = `
         data-ouia-component-id="0"
         data-ouia-component-type="PF4/Button"
         data-ouia-safe="true"
-        href="http://localhost/settings/my-user-access"
+        href="http://localhost/settings/rbac"
         widget-type="SettingsButton"
       >
         <svg

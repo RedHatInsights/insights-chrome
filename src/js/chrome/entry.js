@@ -4,7 +4,7 @@ import qe from './iqeEnablement';
 import consts from '../consts';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl } from '../utils';
+import { getEnv, getUrl } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
@@ -94,6 +94,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
+      getEnvironment: () => getEnv(),
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,

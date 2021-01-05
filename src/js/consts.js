@@ -22,6 +22,17 @@ const matchValue = (value, matcher) => {
   return typeof match === 'function' ? match(value) : value;
 };
 
+/**
+ * Check if is permitted to see navigation link
+ * @param {array} permissions array checked user permissions
+ * @param {every|some} require type of permissions requirement
+ * @returns {boolean}
+ */
+const checkPermissions = async (permissions = [], require = 'every') => {
+  const userPermissions = await insights.chrome.getUserPermissions();
+  return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
+};
+
 export const visibilityFunctions = {
   isOrgAdmin: async () => {
     const { identity } = await insights.chrome.auth.getUser();
@@ -56,10 +67,8 @@ export const visibilityFunctions = {
   },
   isProd: () => insights.chrome.isProd,
   isBeta: () => insights.chrome.isBeta(),
-  hasPermissions: async (permissions = []) => {
-    const userPermissions = await insights.chrome.getUserPermissions();
-    return userPermissions && permissions.every((item) => userPermissions.find(({ permission }) => permission === item));
-  },
+  loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
+  hasPermissions: checkPermissions,
   apiRequest: async ({ url, method, accessor, matcher, ...options }) => {
     return instance({
       url,

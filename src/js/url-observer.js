@@ -4,7 +4,7 @@
  * which are not using history go, push, pop functions that trigger popstate event.
  * @param {Function} observeCallback callback that will be triggered after URL change
  */
-const registerUrlObserver = (observeCallback) => {
+const registerUrlObserver = () => {
   /**
    * We ignore hash changes
    * Hashes only have frontend effect
@@ -16,9 +16,9 @@ const registerUrlObserver = (observeCallback) => {
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function () {
         const newLocation = document.location.href.replace(/#.*$/, '');
-        if (oldHref !== newLocation) {
+        if (oldHref !== newLocation && window.sendCustomEvent) {
           oldHref = newLocation;
-          observeCallback();
+          window.sendCustomEvent('pageBottom');
         }
       });
     });
