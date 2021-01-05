@@ -16,8 +16,11 @@ export default async function loadRemediation(dependencies) {
       remediationsData.openWizard(data, basePath, wizardRef);
     },
     // eslint-disable-next-line react/display-name
-    RemediationWizard: () => {
-      return <RenderWrapper.default cmp={remediationsData.RemediationWizard} onAppRender={(wizardRef) => deferred.resolve(wizardRef)} />;
-    },
+    RemediationWizard: () => (
+      <RenderWrapper.default
+        cmp={localStorage.getItem('remediations:debug') === 'true' ? remediationsData.NewRemediationWizard : remediationsData.RemediationWizard}
+        onAppRender={(wizardRef) => deferred.resolve(wizardRef)}
+      />
+    ),
   };
 }

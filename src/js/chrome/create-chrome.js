@@ -32,6 +32,14 @@ const createChromeInstance = (jwt, insights) => {
   });
 
   const init = () => {
+    /**
+     * Mutate the root element to enable QA during app init.
+     * Previously was done from applications after react-dom render.
+     */
+    const rootEl = document.getElementById('root');
+    if (rootEl) {
+      rootEl.setAttribute('data-ouia-safe', true);
+    }
     window.insights.chrome = {
       ...window.insights.chrome,
       ...chromeInit(navResolver),

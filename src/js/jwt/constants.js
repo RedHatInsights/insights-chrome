@@ -5,11 +5,11 @@ export const DEFAULT_ROUTES = {
     sso: 'https://sso.redhat.com/auth',
   },
   qa: {
-    url: ['access.qa.redhat.com', 'qa.foo.redhat.com'],
+    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
   },
   ci: {
-    url: ['ci.foo.redhat.com'],
+    url: ['ci.foo.redhat.com', 'ci.cloud.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
   },
   qaprodauth: {
