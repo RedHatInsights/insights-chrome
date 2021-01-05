@@ -14,9 +14,9 @@ const AppSwitcher = ({ currentApp }) => {
 
   const dropdownItems = (activeApp) => {
     const appList = [
-      { title: 'Red Hat Insights', id: 'insights', type: 'link' },
-      { title: 'Red Hat OpenShift Cluster Manager', id: 'openshift', type: 'link' },
-      { title: 'Red Hat Ansible Automation Platform', id: 'ansible', type: 'link' },
+      { title: 'Insights', id: 'insights', type: 'link' },
+      { title: 'OpenShift Cluster Manager', id: 'openshift', type: 'link' },
+      { title: 'Ansible Automation Platform', id: 'ansible', type: 'link' },
       { title: 'Cost Management', id: 'cost-management', type: 'link' },
       { title: 'Migration Services', id: 'migrations', type: 'link' },
       { title: 'Subscription Watch', id: 'subscriptions', type: 'link' },

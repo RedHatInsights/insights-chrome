@@ -94,6 +94,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
+      getEnvironment: () => getEnv(),
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,

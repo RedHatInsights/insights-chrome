@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const { visibilityFunctions, isVisible } = require('./consts');
 
-describe.only('visibilityFunctions', () => {
+describe('visibilityFunctions', () => {
   const originalUser = insights.chrome.auth.getUser;
   const originalProd = insights.chrome.isProd;
   const originalBeta = insights.chrome.isBeta;
@@ -147,6 +147,34 @@ describe('isVisible', () => {
   [true, false].map((visibility) => {
     test(`visibility - ${visibility}`, () => {
       expect(isVisible(['something'], 'something', visibility)).toBe(visibility);
+    });
+  });
+
+  describe('loose permissions', () => {
+    const getUserSpy = jest.spyOn(global.window.insights.chrome.auth, 'getUser');
+    const getUserPermissions = jest.spyOn(window.insights.chrome, 'getUserPermissions');
+    getUserSpy.mockImplementation(() => Promise.resolve());
+
+    beforeEach(() => {
+      getUserSpy.mockClear();
+      getUserPermissions.mockReset();
+    });
+
+    afterAll(() => {
+      getUserSpy.mockRestore();
+      getUserPermissions.mockRestore();
+    });
+
+    test('should return false if user has no required permission', async () => {
+      getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'dogs:are:best' }]));
+      const result = await visibilityFunctions.loosePermissions(['foo:bar:baz', 'beep:boop:beep']);
+      expect(result).toEqual(false);
+    });
+
+    test('should return true if user has atleast one required permission', async () => {
+      getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'foo:bar:baz' }, { permission: 'dogs:are:best' }]));
+      const result = await visibilityFunctions.loosePermissions(['foo:bar:baz', 'beep:boop:beep']);
+      expect(result).toEqual(true);
     });
   });
 });
