@@ -4,11 +4,13 @@ import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import AppFilter from './AppFilter';
 
 const Header = ({ user }) => {
   return user ? (
     <Fragment>
       <Brand />
+      <AppFilter />
       <Tools />
     </Fragment>
   ) : (

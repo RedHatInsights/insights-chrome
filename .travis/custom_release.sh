@@ -4,7 +4,7 @@ set -x
 
 # for now in chrome... push everywhere when master updates
 if [ "${TRAVIS_BRANCH}" = "master" ]; then
-    for env in ci qa
+    for env in ci #qa
     do
         echo
         echo
