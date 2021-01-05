@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
-import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
-import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import PropTypes from 'prop-types';
+import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
+import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
+import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { appNavClick, chromeNavSectionUpdate, clearActive } from '../../redux/actions';
