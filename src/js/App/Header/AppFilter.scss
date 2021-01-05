@@ -1,0 +1,37 @@
+// TODO: use PF variables when exact spacing is known
+.ins-c-page__app-filter-togle {
+    max-width: 250px;
+}
+
+.ins-c-page__app-filter-content {
+    color: black;
+    padding: 32px;
+}
+
+.ins-c-page__app-filter-search {
+    width: 300px;
+    .pf-c-search-input__icon {
+        color: black;
+    }
+    .pf-c-search-input__text-input{
+        color: black;
+    }
+    
+}
+
+.ins-c-page__app-filter-app-title {
+    color: black;
+    padding-bottom: 32px;
+}
+
+.ins-c-page__app-filter-app-section {
+    margin-bottom: 32px;
+    color: black !important; 
+}
+
+.ins-c-app-filter-app-icon {
+    height: 32px;
+    width: 32px;
+    margin-right: 16px;
+    margin-top: 16px;
+}
