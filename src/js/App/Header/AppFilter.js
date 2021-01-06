@@ -6,8 +6,14 @@ import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-
 import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Text/Text';
-import { Grid } from '@patternfly/react-core/dist/js/layouts/Grid/Grid';
-import { GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/GridItem';
+import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+
+import { Gallery } from '@patternfly/react-core/dist/js/layouts/Gallery/Gallery';
+import { GalleryItem } from '@patternfly/react-core/dist/js/layouts/Gallery/GalleryItem';
 
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import ansible from '../../../../static/images/platform-icons/ansible.svg';
@@ -17,6 +23,8 @@ import migrationsNamespace from '../../../../static/images/platform-icons/migrat
 
 import { getNavFromConfig } from '../../nav/globalNav';
 import sourceOfTruth from '../../nav/sourceOfTruth';
+
+import { FilterIcon } from '@patternfly/react-icons';
 
 import './AppFilter.scss';
 
@@ -43,17 +51,29 @@ const AppFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState('');
   const [apps, setApps] = useState([]);
+  const [filteredApps, setFilteredApps] = useState([]);
 
   useEffect(() => {
     (async () => {
       const navigationYml = await sourceOfTruth();
       const appData = await getNavFromConfig(safeLoad(navigationYml), undefined);
       setApps(appIds.map((id) => appData[id]));
+      setFilteredApps(appIds.map((id) => appData[id]));
     })();
   }, []);
 
-  const renderApp = (app) =>
-    app ? (
+  useEffect(() => {
+    setFilteredApps(
+      apps.filter((app) =>
+        app?.routes?.some((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase()))
+          ? { ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }
+          : false
+      )
+    );
+  }, [filterValue]);
+
+  const renderApp = (app) => (
+    <GalleryItem>
       <TextContent className="ins-c-page__app-filter-app-title">
         {
           <React.Fragment>
@@ -61,19 +81,17 @@ const AppFilter = () => {
               {getIcon(app.id)}
               {app.title}
             </Text>
-            {app.routes.map((subApp) =>
-              subApp.title.toLowerCase().includes(filterValue.toLocaleLowerCase()) ? (
-                <Text className="pf-u-pl-xl pf-u-ml-md">
-                  <a href={`${app.id}/${subApp.id}`}>{subApp.title}</a>
-                </Text>
-              ) : null
-            )}
+            {app.routes.map((subApp) => (
+              <Text key={`${app.id}/${subApp.id}`} className="pf-u-pl-xl pf-u-ml-md">
+                <a href={`${app.id}/${subApp.id}`}>{subApp.title}</a>
+              </Text>
+            ))}
           </React.Fragment>
         }
       </TextContent>
-    ) : null;
+    </GalleryItem>
+  );
 
-  // TODO: if this is here to stay, change to more generic dynamic layout!!!
   return (
     <Dropdown
       isPlain
@@ -94,22 +112,20 @@ const AppFilter = () => {
           onChange={(val) => setFilterValue(val)}
           onClear={() => setFilterValue('')}
         />
-        <Grid hasGutter>
-          <GridItem span={4}>
-            {renderApp(apps?.[0])}
-            {renderApp(apps?.[1])}
-          </GridItem>
-          <GridItem span={4}>
-            {renderApp(apps?.[2])}
-            {renderApp(apps?.[3])}
-            {renderApp(apps?.[4])}
-            {renderApp(apps?.[5])}
-          </GridItem>
-          <GridItem span={4}>
-            {renderApp(apps?.[6])}
-            {renderApp(apps?.[7])}
-          </GridItem>
-        </Grid>
+        {filteredApps?.length > 0 ? (
+          <Gallery hasGutter>{filteredApps.map((app) => renderApp(app))}</Gallery>
+        ) : (
+          <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+            <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+            <Title headingLevel="h4">No matching applications or services found.</Title>
+            <EmptyStateBody className="pf-u-mb-xl">
+              This filter criteria matches no applications or services. Try changing your inpout filter.
+            </EmptyStateBody>
+            <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+              Clear all filters
+            </Button>
+          </EmptyState>
+        )}
       </div>
     </Dropdown>
   );
