@@ -28,7 +28,7 @@ import { FilterIcon } from '@patternfly/react-icons';
 
 import './AppFilter.scss';
 
-const getIcon = (id = 'default') =>
+const getIcon = (id) =>
   ({
     insights: (
       <img
@@ -42,7 +42,14 @@ const getIcon = (id = 'default') =>
     'cost-management': <img className="ins-c-app-filter-app-icon" src={costManagement} alt="Cost Management Logo" />,
     migrations: <img className="ins-c-app-filter-app-icon" src={migrationsNamespace} alt="Migration Services Logo" />,
     ansible: <img className="ins-c-app-filter-app-icon" src={ansible} alt="Automation Logo" />,
-    default: <CogIcon className="ins-c-app-filter-app-icon" />,
+    settings: <CogIcon className="ins-c-app-filter-app-icon" />,
+    subscriptions: (
+      <img
+        className="ins-c-app-filter-app-icon"
+        src={`${insights.chrome.isBeta() ? 'beta' : ''}/apps/landing/fonts/Subscriptions.svg`}
+        alt="Subscriptions Logo"
+      />
+    ),
   }[id]);
 
 const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];
@@ -80,11 +87,12 @@ const AppFilter = () => {
             <SplitItem>{getIcon(app.id)}</SplitItem>
             <SplitItem>
               <TextContent>
-                <Text component={TextVariants.h4}>{app.title}</Text>
-                {app.title}
+                <Text component="h4">{app.title}</Text>
                 {app.routes.map((subApp) => (
-                  <Text key={`${app.id}/${subApp.id}`} className="pf-u-pl-xl pf-u-ml-md">
-                    <a href={`${app.id}/${subApp.id}`}>{subApp.title}</a>
+                  <Text component="p" key={`${app.id}/${subApp.id}`}>
+                    <Text component="a" href={`${app.id}/${subApp.id}`}>
+                      {subApp.title}
+                    </Text>
                   </Text>
                 ))}
               </TextContent>
