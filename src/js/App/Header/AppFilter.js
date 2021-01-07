@@ -12,8 +12,8 @@ import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyS
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 
-import { Gallery } from '@patternfly/react-core/dist/js/layouts/Gallery/Gallery';
-import { GalleryItem } from '@patternfly/react-core/dist/js/layouts/Gallery/GalleryItem';
+import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
+import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
 
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import ansible from '../../../../static/images/platform-icons/ansible.svg';
@@ -73,23 +73,26 @@ const AppFilter = () => {
   }, [filterValue]);
 
   const renderApp = (app) => (
-    <GalleryItem>
-      <TextContent className="ins-c-page__app-filter-app-title">
-        {
-          <React.Fragment>
-            <Text component={TextVariants.h4}>
-              {getIcon(app.id)}
-              {app.title}
-            </Text>
-            {app.routes.map((subApp) => (
-              <Text key={`${app.id}/${subApp.id}`} className="pf-u-pl-xl pf-u-ml-md">
-                <a href={`${app.id}/${subApp.id}`}>{subApp.title}</a>
-              </Text>
-            ))}
-          </React.Fragment>
-        }
-      </TextContent>
-    </GalleryItem>
+    <div className="galleryItem">
+      {
+        <React.Fragment>
+          <Split>
+            <SplitItem>{getIcon(app.id)}</SplitItem>
+            <SplitItem>
+              <TextContent>
+                <Text component={TextVariants.h4}>{app.title}</Text>
+                {app.title}
+                {app.routes.map((subApp) => (
+                  <Text key={`${app.id}/${subApp.id}`} className="pf-u-pl-xl pf-u-ml-md">
+                    <a href={`${app.id}/${subApp.id}`}>{subApp.title}</a>
+                  </Text>
+                ))}
+              </TextContent>
+            </SplitItem>
+          </Split>
+        </React.Fragment>
+      }
+    </div>
   );
 
   return (
@@ -113,7 +116,7 @@ const AppFilter = () => {
           onClear={() => setFilterValue('')}
         />
         {filteredApps?.length > 0 ? (
-          <Gallery hasGutter>{filteredApps.map((app) => renderApp(app))}</Gallery>
+          <div className="gallery">{filteredApps.map((app) => renderApp(app))}</div>
         ) : (
           <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
             <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
