@@ -33,12 +33,12 @@ const getIcon = (id = 'default') =>
     insights: (
       <img
         className="ins-c-app-filter-app-icon"
-        src={`${insights.chrome.isBeta() ? 'beta' : ''}/apps/landing/fonts/Insights.svg`}
+        src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Insights.svg`}
         alt="Insights Logo"
       />
     ),
     openshift: <img className="ins-c-app-filter-app-icon" src={openshift} alt="Openshift Logo" />,
-    SAP: <img className="ins-c-app-filter-app-icon" src={`${insights.chrome.isBeta() ? 'beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
+    SAP: <img className="ins-c-app-filter-app-icon" src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
     'cost-management': <img className="ins-c-app-filter-app-icon" src={costManagement} alt="Cost Management Logo" />,
     migrations: <img className="ins-c-app-filter-app-icon" src={migrationsNamespace} alt="Migration Services Logo" />,
     ansible: <img className="ins-c-app-filter-app-icon" src={ansible} alt="Automation Logo" />,
