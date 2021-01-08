@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { safeLoad } from 'js-yaml';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
-import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
-import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
-import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
-import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
-import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-
-import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
-import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
-
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
+import {
+  Button,
+  CaretDownIcon,
+  Dropdown,
+  DropdownToggle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  SearchInput,
+  Split,
+  SplitItem,
+  Text,
+  TextContent,
+  Title,
+} from '@patternfly/react-core';
+import { CogIcon, FilterIcon } from '@patternfly/react-icons';
 
 import ansible from '../../../../static/images/platform-icons/ansible.svg';
 import openshift from '../../../../static/images/platform-icons/openshift.svg';
 import costManagement from '../../../../static/images/platform-icons/cost-management.svg';
 import migrationsNamespace from '../../../../static/images/platform-icons/migrations-namespace.svg';
-
 import { getNavFromConfig } from '../../nav/globalNav';
 import sourceOfTruth from '../../nav/sourceOfTruth';
-
-import { FilterIcon } from '@patternfly/react-icons';
-
 import './AppFilter.scss';
 
 const getIcon = (id) =>
@@ -119,7 +116,7 @@ const AppFilter = () => {
             <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
             <Title headingLevel="h4">No matching applications or services found.</Title>
             <EmptyStateBody className="pf-u-mb-xl">
-              This filter criteria matches no applications or services. Try changing your inpout filter.
+              This filter criteria matches no applications or services. Try changing your input filter.
             </EmptyStateBody>
             <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
               Clear all filters
