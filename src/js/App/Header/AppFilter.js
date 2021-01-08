@@ -5,7 +5,7 @@ import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdo
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
-import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Text/Text';
+import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
 import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
 import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
@@ -15,7 +15,7 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button/Button'
 import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
 import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
 
-import settingsButton from '../../../../static/images/settings-button.svg';
+import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 
 import ansible from '../../../../static/images/platform-icons/ansible.svg';
 import openshift from '../../../../static/images/platform-icons/openshift.svg';
@@ -31,24 +31,14 @@ import './AppFilter.scss';
 
 const getIcon = (id) =>
   ({
-    insights: (
-      <img
-        src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Insights.svg`}
-        alt="Insights Logo"
-      />
-    ),
+    insights: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Insights.svg`} alt="Insights Logo" />,
     openshift: <img src={openshift} alt="Openshift Logo" />,
     SAP: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
     'cost-management': <img src={costManagement} alt="Cost Management Logo" />,
     migrations: <img src={migrationsNamespace} alt="Migration Services Logo" />,
     ansible: <img src={ansible} alt="Automation Logo" />,
-    settings: <img src={settingsButton} alt="Settings" />,
-    subscriptions: (
-      <img
-        src={`${insights.chrome.isBeta() ? 'beta' : ''}/apps/landing/fonts/Subscriptions.svg`}
-        alt="Subscriptions Logo"
-      />
-    ),
+    settings: <CogIcon className="ins-c-app-filter-app-icon" />,
+    subscriptions: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Subscriptions.svg`} alt="Subscriptions Logo" />,
   }[id]);
 
 const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];

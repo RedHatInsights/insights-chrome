@@ -1,7 +1,14 @@
 // TODO: use PF variables when exact spacing is known
 .ins-c-page__app-filter-toggle {
-    margin-left: 20px;
+    margin-left: var(--pf-global--spacer--lg);
     max-width: 250px;
+}
+
+.ins-c-app-filter-app-icon {
+    height: 48px;
+    width: 48px;
+    color: var(--pf-global--disabled-color--200);
+
 }
 
 @media screen and (max-width: 998px) { 
@@ -24,6 +31,7 @@
     left: 100px;
     margin-left: var(--pf-global--spacer--sm);
     padding: var(--pf-global--spacer--xl);
+    min-width: 100%;
     div.gallery {
         margin-top: var(--pf-global--spacer--xl);
         column-gap: 0;
@@ -60,9 +68,10 @@
                     color: var(--pf-global--BackgroundColor--dark-100);
                     font: var(--pf-global--FontFamily--redhatfont--heading--sans-serif);
                     font-weight:  var(--pf-global--FontWeight--normal);
+                    margin-bottom: var(--pf-global--spacer--md);
                 }
                 p {
-                    margin-bottom: var(--pf-global--spacer--sm);
+                    margin-bottom: var(--pf-global--spacer--md);
                 }
                 a {
                     color: var(--pf-global--active-color--100);
