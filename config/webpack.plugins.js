@@ -24,6 +24,7 @@ const plugins = [
       './InventoryDetail': resolve(__dirname, '../src/js/inventory/modules/InventoryDetail.js'),
       './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
       './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
+      './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.js')
     },
     shared: [
       { react: { singleton: true, requiredVersion: deps.react } },
