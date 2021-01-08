@@ -15,7 +15,8 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button/Button'
 import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
 import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
 
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
+import settingsButton from '../../../../static/images/settings-button.svg';
+
 import ansible from '../../../../static/images/platform-icons/ansible.svg';
 import openshift from '../../../../static/images/platform-icons/openshift.svg';
 import costManagement from '../../../../static/images/platform-icons/cost-management.svg';
@@ -32,20 +33,18 @@ const getIcon = (id) =>
   ({
     insights: (
       <img
-        className="ins-c-app-filter-app-icon"
         src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Insights.svg`}
         alt="Insights Logo"
       />
     ),
-    openshift: <img className="ins-c-app-filter-app-icon" src={openshift} alt="Openshift Logo" />,
-    SAP: <img className="ins-c-app-filter-app-icon" src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
-    'cost-management': <img className="ins-c-app-filter-app-icon" src={costManagement} alt="Cost Management Logo" />,
-    migrations: <img className="ins-c-app-filter-app-icon" src={migrationsNamespace} alt="Migration Services Logo" />,
-    ansible: <img className="ins-c-app-filter-app-icon" src={ansible} alt="Automation Logo" />,
-    settings: <CogIcon className="ins-c-app-filter-app-icon" />,
+    openshift: <img src={openshift} alt="Openshift Logo" />,
+    SAP: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
+    'cost-management': <img src={costManagement} alt="Cost Management Logo" />,
+    migrations: <img src={migrationsNamespace} alt="Migration Services Logo" />,
+    ansible: <img src={ansible} alt="Automation Logo" />,
+    settings: <img src={settingsButton} alt="Settings" />,
     subscriptions: (
       <img
-        className="ins-c-app-filter-app-icon"
         src={`${insights.chrome.isBeta() ? 'beta' : ''}/apps/landing/fonts/Subscriptions.svg`}
         alt="Subscriptions Logo"
       />
@@ -105,10 +104,11 @@ const AppFilter = () => {
 
   return (
     <Dropdown
+      className="ins-c-page__app-filter-toggle"
       isPlain
       onSelect={() => setIsOpen(true)}
       toggle={
-        <DropdownToggle className="ins-c-page__app-filter-togle" id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
+        <DropdownToggle className="ins-c-page__app-filter-toggle" id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
           All apps and services
         </DropdownToggle>
       }
