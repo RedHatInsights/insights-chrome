@@ -4,13 +4,6 @@
     max-width: 250px;
 }
 
-.ins-c-app-filter-app-icon {
-    height: 48px;
-    width: 48px;
-    color: var(--pf-global--disabled-color--200);
-
-}
-
 @media screen and (max-width: 998px) { 
    .ins-c-page__app-filter-toggle {
       display: none;
@@ -30,23 +23,18 @@
 .ins-c-page__app-filter-content {
     left: 100px;
     margin-left: var(--pf-global--spacer--sm);
-    padding: var(--pf-global--spacer--xl);
+    padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl);
     min-width: 100%;
     div.gallery {
         margin-top: var(--pf-global--spacer--xl);
-        column-gap: 0;
+        column-gap: 64px;
     }
-    @media screen and (min-width: 768px) { 
-      div.gallery {
-        column-count: 1;
-      }
-    }
-    @media screen and (min-width: 992px) { 
+    @media screen and (max-width: 1499px) { 
       div.gallery {
         column-count: 2;
       }
     }
-    @media screen and (min-width: 1300px) { 
+    @media screen and (min-width: 1500px) { 
       div.gallery {
         column-count: 3;
       }
@@ -57,16 +45,23 @@
         width: 350px;
         .pf-l-split {
             .pf-l-split__item:first-of-type {
-                margin-right: var(--pf-global--spacer--md);
+                margin-right: var(--pf-global--spacer--lg);
                 width: var(--pf-global--spacer--2xl);
                 img {
                     width: var(--pf-global--icon--FontSize--xl);
+                }
+                svg {
+                    height: 48px;
+                    width: 48px;
+                }
+                .icon-gray {
+                    color: var(--pf-global--palette--black-300);
                 }
             }
             .pf-l-split__item {
                 h4 {
                     color: var(--pf-global--BackgroundColor--dark-100);
-                    font: var(--pf-global--FontFamily--redhatfont--heading--sans-serif);
+                    font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif
                     font-weight:  var(--pf-global--FontWeight--normal);
                     margin-bottom: var(--pf-global--spacer--md);
                 }

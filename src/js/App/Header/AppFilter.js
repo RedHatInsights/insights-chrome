@@ -37,7 +37,7 @@ const getIcon = (id) =>
     'cost-management': <img src={costManagement} alt="Cost Management Logo" />,
     migrations: <img src={migrationsNamespace} alt="Migration Services Logo" />,
     ansible: <img src={ansible} alt="Automation Logo" />,
-    settings: <CogIcon className="ins-c-app-filter-app-icon" />,
+    settings: <CogIcon className="icon-gray" />,
     subscriptions: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Subscriptions.svg`} alt="Subscriptions Logo" />,
   }[id]);
 
