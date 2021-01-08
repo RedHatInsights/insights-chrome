@@ -1,92 +1,73 @@
 // TODO: use PF variables when exact spacing is known
-.ins-c-page__app-filter-togle {
+.ins-c-page__app-filter-toggle {
+    margin-left: 20px;
     max-width: 250px;
 }
 
-.ins-c-page__app-filter-content {
-    color: black;
-    padding: 32px;
+@media screen and (max-width: 998px) { 
+   .ins-c-page__app-filter-toggle {
+      display: none;
+   }
 }
 
 .ins-c-page__app-filter-search {
     width: 300px;
     .pf-c-search-input__icon {
-        color: black;
+        color: var(--pf-global--BackgroundColor--dark-100);
     }
     .pf-c-search-input__text-input{
-        color: black;
+        color: var(--pf-global--BackgroundColor--dark-100);
     }
-    
 }
 
-// .ins-c-page__app-filter-app-title {
-//     color: black;
-//     padding-bottom: 32px;
-// }
-
-.ins-c-page__app-filter-app-section {
-    margin-bottom: 32px;
-    color: black !important; 
-}
-
-.ins-c-app-filter-app-icon {
-    height: 32px;
-    width: 32px;
-}
-
-div.gallery {
-    margin-top: 32px;
-    column-gap: 0px;
-
-}
-
-@media screen and (min-width: 768px) { 
-  div.gallery {
-    column-count: 1;
-  }
-}
-
-@media screen and (min-width: 992px) { 
-  div.gallery {
-    column-count: 2;
-  }
-}
-
-@media screen and (min-width: 1200px) { 
-  div.gallery {
-    column-count: 3;
-  }
-}
-
-
-div.galleryItem {
-    width: 350px;
-    display: inline-block;
-}
-
-.pf-l-split {
-    .pf-l-split__item:first-of-type {
-        margin-right: 16px; 
-        width: 50px;
-        img {
-            height: 36px;
-            width: 36px;
+.ins-c-page__app-filter-content {
+    left: 100px;
+    margin-left: var(--pf-global--spacer--sm);
+    padding: var(--pf-global--spacer--xl);
+    div.gallery {
+        margin-top: var(--pf-global--spacer--xl);
+        column-gap: 0;
+    }
+    @media screen and (min-width: 768px) { 
+      div.gallery {
+        column-count: 1;
+      }
+    }
+    @media screen and (min-width: 992px) { 
+      div.gallery {
+        column-count: 2;
+      }
+    }
+    @media screen and (min-width: 1300px) { 
+      div.gallery {
+        column-count: 3;
+      }
+    }
+    div.galleryItem {
+        display: inline-block;
+        margin-bottom: var(--pf-global--spacer--xl);
+        width: 350px;
+        .pf-l-split {
+            .pf-l-split__item:first-of-type {
+                margin-right: var(--pf-global--spacer--md);
+                width: var(--pf-global--spacer--2xl);
+                img {
+                    width: var(--pf-global--icon--FontSize--xl);
+                }
+            }
+            .pf-l-split__item {
+                h4 {
+                    color: var(--pf-global--BackgroundColor--dark-100);
+                    font: var(--pf-global--FontFamily--redhatfont--heading--sans-serif);
+                    font-weight:  var(--pf-global--FontWeight--normal);
+                }
+                p {
+                    margin-bottom: var(--pf-global--spacer--sm);
+                }
+                a {
+                    color: var(--pf-global--active-color--100);
+                }
+            }
         }
     }
-
-    .pf-l-split__item {
-        h4 {
-            color: #151515;
-            font: --pf-global--FontFamily--redhatfont--heading--sans-serif;
-            font-weight: 400;
-            padding-top: 12px;
-        }
-        p {
-            margin-bottom: 8px;
-        }
-        a {
-            color: #0066cc;
-        }
-    }
-
- }
+}
