@@ -94,20 +94,19 @@ const AppFilter = () => {
 
   return (
     <Dropdown
-      className="ins-c-page__app-filter-toggle"
+      className="ins-c-page__app-filter-dropdown"
       isPlain
       onSelect={() => setIsOpen(true)}
       toggle={
-        <DropdownToggle className="ins-c-page__app-filter-toggle" id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
+        <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
           All apps and services
         </DropdownToggle>
       }
       isOpen={isOpen}
       ouiaId="App Filter"
     >
-      <div className="ins-c-page__app-filter-content">
+      <div className="content">
         <SearchInput
-          className="ins-c-page__app-filter-search"
           placeholder="Find application or service"
           value={filterValue}
           onChange={(val) => setFilterValue(val)}
