@@ -10,11 +10,22 @@
         padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl);
         .pf-c-search-input {
             width: 300px;
-            .pf-c-search-input__icon {
+            &__icon {
                 color: var(--pf-global--BackgroundColor--dark-100);
             }
-            .pf-c-search-input__text-input{
+            &__text-input{
                 color: var(--pf-global--BackgroundColor--dark-100);
+            }
+        }
+
+        .pf-c-empty-state {
+            --pf-c-empty-state__body--Color: #6a6e73;
+            h4 {
+                color: var(--pf-global--BackgroundColor--dark-100);
+                font-size: var(--pf-c-title--m-xl--FontSize);
+            }
+            button {
+                color: var(--pf-global--active-color--100);
             }
         }
         div.gallery {
@@ -70,7 +81,7 @@
     }
 }
 
-@media screen and (max-width: 998px) { 
+@media screen and (max-width: 992px) { 
    .ins-c-page__app-filter-dropdown {
       display: none;
    }
