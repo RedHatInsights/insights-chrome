@@ -1,14 +1,12 @@
 import React from 'react';
-import * as jwt from '../jwt';
 
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
-import allowedUnauthedPaths from '../consts';
+import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
 
 import flatten from 'lodash/flatten';
 
 import * as jwt from '../jwt';
 import cookie from 'js-cookie';
-import { options as defaultOptions } from '../constants';
+import { options as defaultOptions, allowedUnauthedPaths } from '../constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 function getWindow() {
@@ -65,8 +63,7 @@ const useChromeAuth = () => {
       return getOfflineToken(options.realm, options.clientId);
     },
     initPromise: promise,
-    ...jwt,
-    // jwt: jwt
+    jwt: jwt
   };
 };
 
