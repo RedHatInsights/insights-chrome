@@ -9,10 +9,6 @@ import cookie from 'js-cookie';
 import { options as defaultOptions, allowedUnauthedPaths } from '../constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
-function getWindow() {
-  return window;
-}
-
 function bouncer() {
   if (allowUnauthed()) {
     return;
@@ -31,7 +27,7 @@ function getAllowedUnauthedPaths() {
 }
 
 export function allowUnauthed() {
-  if (getAllowedUnauthedPaths().includes(getWindow().location.pathname)) {
+  if (getAllowedUnauthedPaths().includes(window.location.pathname)) {
     return true;
   }
 
@@ -63,7 +59,7 @@ const useChromeAuth = () => {
       return getOfflineToken(options.realm, options.clientId);
     },
     initPromise: promise,
-    jwt: jwt
+    ...jwt
   };
 };
 
