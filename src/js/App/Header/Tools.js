@@ -39,7 +39,7 @@ const Tools = () => {
       aria-label="Go to settings"
       widget-type="SettingsButton"
       className="ins-c-toolbar__button-settings"
-      href={`${document.baseURI}settings/rbac`}
+      href={`${document.baseURI}settings/my-user-access`}
       component="a"
     >
       <CogIcon />
@@ -95,7 +95,7 @@ const Tools = () => {
     { title: 'separator' },
     {
       title: 'Settings',
-      url: `${document.baseURI}settings/rbac`,
+      url: `${document.baseURI}settings/my-user-access`,
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
