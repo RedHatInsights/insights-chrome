@@ -32,7 +32,7 @@ export function allowUnauthed() {
   return false;
 }
 
-const useChromeAuth = () => {
+export const initChromeAuth = () => {
   console.time(TIMER_STR); // eslint-disable-line no-console
   let options = {
     ...defaultOptions,
@@ -53,13 +53,21 @@ const useChromeAuth = () => {
   const promise = jwt.init(options).then(bouncer);
 
   return {
-    getOfflineToken: () => {
-      return getOfflineToken(options.realm, options.clientId);
-    },
     initPromise: promise,
-    ...jwt,
   };
 };
 
+const useChromeAuth = () => {
+  let options = {
+    ...defaultOptions,
+  };
+
+  return {
+    getOfflineToken: () => {
+      return getOfflineToken(options.realm, options.clientId);
+    },
+    ...jwt,
+  };
+};
 
 export default useChromeAuth;
