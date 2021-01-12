@@ -1,37 +1,89 @@
-// TODO: use PF variables when exact spacing is known
-.ins-c-page__app-filter-togle {
-    max-width: 250px;
-}
-
-.ins-c-page__app-filter-content {
-    color: black;
-    padding: 32px;
-}
-
-.ins-c-page__app-filter-search {
-    width: 300px;
-    .pf-c-search-input__icon {
-        color: black;
+.ins-c-page__app-filter-dropdown {
+    .pf-c-dropdown__toggle {
+        margin-left: var(--pf-global--spacer--xl);
+        max-width: 250px;
     }
-    .pf-c-search-input__text-input{
-        color: black;
+    .pf-c-dropdown__menu {
+        left: 42px;
+        margin-top: var(--pf-global--spacer--md);
+        min-width: 100%;
+        padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl);
+        .pf-c-search-input {
+            width: 300px;
+            &__icon {
+                color: var(--pf-global--BackgroundColor--dark-100);
+            }
+            &__text-input{
+                color: var(--pf-global--BackgroundColor--dark-100);
+            }
+        }
+
+        .pf-c-empty-state {
+            --pf-c-empty-state__body--Color: #6a6e73;
+            h4 {
+                color: var(--pf-global--BackgroundColor--dark-100);
+                font-size: var(--pf-c-title--m-xl--FontSize);
+            }
+            button {
+                color: var(--pf-global--active-color--100);
+            }
+        }
+        div.gallery {
+            margin-top: var(--pf-global--spacer--xl);
+            column-gap: 64px;
+        }
+        @media screen and (max-width: 1499px) { 
+          div.gallery {
+            column-count: 2;
+          }
+        }
+        @media screen and (min-width: 1500px) { 
+          div.gallery {
+            column-count: 3;
+          }
+        }
+        div.galleryItem {
+            display: inline-block;
+            margin-bottom: var(--pf-global--spacer--xl);
+            width: 350px;
+            .pf-l-split {
+                .pf-l-split__item:first-of-type {
+                    margin-right: var(--pf-global--spacer--lg);
+                    width: var(--pf-global--spacer--2xl);
+                    img {
+                        width: var(--pf-global--icon--FontSize--xl);
+                    }
+                    svg {
+                        height: 48px;
+                        width: 48px;
+                    }
+                    .icon-gray {
+                        color: var(--pf-global--palette--black-300);
+                    }
+                }
+                .pf-l-split__item {
+                    h4 {
+                        color: var(--pf-global--BackgroundColor--dark-100);
+                        font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif
+                        font-weight:  var(--pf-global--FontWeight--normal);
+                        margin-bottom: var(--pf-global--spacer--md);
+                    }
+                    p {
+                        margin-bottom: var(--pf-global--spacer--md);
+                    }
+                    a {
+                        color: var(--pf-global--active-color--100);
+                    }
+                }
+            }
+        }
+
     }
-    
 }
 
-.ins-c-page__app-filter-app-title {
-    color: black;
-    padding-bottom: 32px;
+@media screen and (max-width: 992px) { 
+   .ins-c-page__app-filter-dropdown {
+      display: none;
+   }
 }
 
-.ins-c-page__app-filter-app-section {
-    margin-bottom: 32px;
-    color: black !important; 
-}
-
-.ins-c-app-filter-app-icon {
-    height: 32px;
-    width: 32px;
-    margin-right: 16px;
-    margin-top: 16px;
-}
