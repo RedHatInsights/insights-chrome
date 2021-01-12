@@ -9,7 +9,7 @@ import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipG
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, storeFilter, generateFilter, selectWorkloads } from './constants';
+import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
 
 const GlobalFilter = () => {
@@ -99,22 +99,12 @@ const GlobalFilter = () => {
 
   useEffect(() => {
     if (userLoaded && token && isAllowed()) {
-      if (!Object.values(selectedTags?.[workloads?.[0]?.name] || {})?.some(({ isSelected } = {}) => isSelected)) {
-        setValue({
-          ...(selectedTags || {}),
-          [workloads?.[0]?.name || 'Workloads']: {
-            ...selectedTags?.[workloads?.[0]?.name],
-            ...selectWorkloads(),
-          },
-        });
-      } else {
-        dispatch(globalFilterChange(selectedTags));
-      }
+      dispatch(globalFilterChange(selectedTags));
     }
   }, [selectedTags, isAllowed()]);
 
   useEffect(() => {
-    const sapTag = workloads?.[0]?.tags?.[1];
+    const sapTag = workloads?.[0]?.tags?.[0];
     if (typeof sapCount === 'number' && sapTag) {
       sapTag.count = sapCount;
     }
@@ -132,7 +122,7 @@ const GlobalFilter = () => {
         <SplitItem>
           {userLoaded && isAllowed() !== undefined ? (
             <GroupFilterWrapper position="right" content="You do not have the required inventory permissions to perform this action">
-              <GroupFilter {...filter} isDisabled={!isAllowed()} placeholder="Search tags" />
+              <GroupFilter {...filter} isDisabled={!isAllowed()} placeholder="Filter results" />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />
@@ -145,11 +135,7 @@ const GlobalFilter = () => {
                 {chips.map(({ category, chips }, key) => (
                   <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'ins-m-sticky' : ''}>
                     {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
-                      <Chip
-                        key={chipKey}
-                        className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
-                        onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}
-                      >
+                      <Chip key={chipKey} onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}>
                         {tagKey}
                         {value ? `=${value}` : ''}
                       </Chip>
