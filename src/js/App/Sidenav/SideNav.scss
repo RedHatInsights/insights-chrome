@@ -1,0 +1,11 @@
+.ins-c-app-title {
+    color: white;
+    padding: calc(8px + var(--pf-global--spacer--sm)) 12px;
+    width: 100%;
+    margin-top: 7px;
+    border-bottom: 3px solid #3c3f42;
+    text-transform: capitalize;
+    font-weight: var(--pf-global--FontWeight--semi-bold);
+    white-space: normal;
+    text-align: left;
+}
