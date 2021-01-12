@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
 
 import flatten from 'lodash/flatten';
@@ -59,7 +57,7 @@ const useChromeAuth = () => {
       return getOfflineToken(options.realm, options.clientId);
     },
     initPromise: promise,
-    ...jwt
+    ...jwt,
   };
 };
 
