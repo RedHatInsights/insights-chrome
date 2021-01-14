@@ -1,4 +1,4 @@
-import { flatTags, selectWorkloads, updateSelected, storeFilter, createTagsFilter } from './constants';
+import { flatTags, updateSelected, storeFilter, createTagsFilter } from './constants';
 const setItem = jest.fn();
 const getItem = jest.fn();
 Object.defineProperty(window, 'localStorage', {
@@ -54,19 +54,6 @@ describe('flatTags', () => {
     expect(tags).toMatchObject(['someTag/someKey=[someValue]']);
     expect(workloads.SAP.isSelected).toBe(true);
     expect(SID).toMatchObject(['SOMEVAL']);
-  });
-});
-
-describe('selectWorkloads', () => {
-  it('should create workloads all chip', () => {
-    const data = selectWorkloads();
-    expect(data).toMatchObject({
-      'All workloads': {
-        group: { name: 'Workloads', noFilter: true, type: 'radio' },
-        isSelected: true,
-        item: {},
-      },
-    });
   });
 });
 

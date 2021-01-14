@@ -13,23 +13,12 @@ export const workloads = [
     noFilter: true,
     tags: [
       {
-        tag: { key: 'All workloads' },
-      },
-      {
         tag: { key: 'SAP' },
       },
     ],
-    type: 'radio',
+    type: 'checkbox',
   },
 ];
-
-export const selectWorkloads = () => ({
-  [workloads?.[0]?.tags?.[0]?.tag?.key || 'All workloads']: {
-    group: omit(workloads[0], 'tags'),
-    isSelected: true,
-    item: {},
-  },
-});
 
 export const updateSelected = (original, namespace, key, value, isSelected, extra) => ({
   ...original,
