@@ -6,6 +6,7 @@ import { connect, useDispatch } from 'react-redux';
 import AppSwitcher from './AppSwitcher';
 import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
+import './SideNav.scss';
 
 export const SideNav = ({ activeTechnology, globalNav }) => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export const SideNav = ({ activeTechnology, globalNav }) => {
 
   return globalNav ? (
     <Fragment>
-      <AppSwitcher currentApp={activeTechnology} />
+      {insights.chrome.isBeta() ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
       <Navigation />
     </Fragment>
   ) : (
