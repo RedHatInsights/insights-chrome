@@ -36,7 +36,7 @@ function getUrl(type) {
 }
 
 function getPendoConf(data) {
-  const accountID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
+  const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements = {};
 
@@ -51,7 +51,13 @@ function getPendoConf(data) {
 
   return {
     visitor: {
-      id: accountID,
+      id: userID,
+
+      // Here we want to store this separately
+      // even if its duplicative... just to be extra sure
+      // in case another we property overrides account_num account_id
+      cloud_user_id: userID,
+
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
       isOrgAdmin: data.identity.user.is_org_admin,
@@ -63,13 +69,22 @@ function getPendoConf(data) {
       // TODO add in customer name as name:
       // here if/when we get that in the JWT
       id: data.identity.account_number,
+
+      account_number: data.identity.account_number, // The EBS id
+      account_id: data.identity.internal.org_id, // The internal RH org id
+
+      // Here we want to store this separately
+      // even if its duplicative... just to be extra sure
+      // in case another we property overrides account_num account_id
+      cloud_org_id: data.identity.internal.org_id,
+      cloud_ebs_id: data.identity.account_number,
     },
   };
 }
 
 export default (data) => {
   // eslint-disable-next-line
-    (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];v=['initialize','identify','updateOptions','pageLoad'];for(w=0,x=v.length;w<x;++w)(function(m){o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);y=e.createElement(n);y.async=!0;y.src=`https://cdn.pendo.io/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
+    (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];v=['initialize','identify','updateOptions','pageLoad'];for(w=0,x=v.length;w<x;++w)(function(m){o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);y=e.createElement(n);y.async=!0;y.src=`https://content.analytics.cloud.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
 
   try {
     initPendo(getPendoConf(data));
