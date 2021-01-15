@@ -11,6 +11,7 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
+import './Tools.scss';
 
 const Tools = () => {
   {
