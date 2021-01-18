@@ -8,7 +8,6 @@ import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Drop
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import './UserToggle.scss';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
   return [
