@@ -141,8 +141,9 @@ export function noAccess() {
   const { store } = spinUpStore();
   window.insights.chrome.auth
     .getUser()
-    .then(({ entitlements }) => {
-      if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
+    .then((data) => {
+      if (data && !consts.allowedUnauthedPaths.includes(location.pathname)) {
+        const { entitlements } = data;
         const path = location.pathname.split('/');
         const apps = Object.keys(entitlements || {});
 
