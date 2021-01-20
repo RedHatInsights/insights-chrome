@@ -10,7 +10,7 @@ const Header = ({ user }) => {
   return user ? (
     <Fragment>
       <Brand />
-      <AppFilter />
+      {!window.insights.chrome.isProd && <AppFilter />}
       <Tools />
     </Fragment>
   ) : (
