@@ -140,7 +140,7 @@
     "@patternfly/react-table": "^4.16.20",
     "@redhat-cloud-services/entitlements-client": "^1.0.75",
     "@redhat-cloud-services/frontend-components": "^2.5.1",
-    "@redhat-cloud-services/frontend-components-inventory": "^2.4.35",
+    "@redhat-cloud-services/frontend-components-inventory": "^2.4.38",
     "@redhat-cloud-services/frontend-components-inventory-compliance": "^2.2.24",
     "@redhat-cloud-services/frontend-components-inventory-general-info": "^2.2.8",
     "@redhat-cloud-services/frontend-components-inventory-insights": "^2.6.6",

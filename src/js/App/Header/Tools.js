@@ -69,7 +69,7 @@ const Tools = () => {
   }
   const aboutMenuDropdownItems = [
     {
-      title: 'Get support',
+      title: 'Support options',
       url: 'https://access.redhat.com/support',
     },
     {

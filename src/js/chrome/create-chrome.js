@@ -26,9 +26,21 @@ const createChromeInstance = (jwt, insights) => {
    * Load navigation after login
    */
   const navResolver = jwtResolver.then(async () => {
+    const user = await libjwt.jwt.getUserInfo();
+    if (!user) {
+      /**
+       * Stop navigation loading and caching if there is no user logged in
+       */
+      return;
+    }
     const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
     const navigationData = await loadNav(navigationYml, chromeInstance.cache);
-    chromeNavUpdate(navigationData);
+    /**
+     * Prevent navigation caching if no cache exists
+     */
+    if (chromeInstance.cache) {
+      chromeNavUpdate(navigationData);
+    }
   });
 
   const init = () => {
