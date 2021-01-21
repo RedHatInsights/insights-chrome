@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalFilter from './GlobalFilter';
 
-const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden }) => {
+const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved }) => {
   const isGlobalFilterEnabled =
-    (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+    (!globalFilterRemoved && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   return (
     <Fragment>
       <div
@@ -49,11 +49,11 @@ RootApp.propTypes = {
   activeLocation: PropTypes.string,
   pageAction: PropTypes.string,
   pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  globalFilterHidden: PropTypes.bool,
+  globalFilterRemoved: PropTypes.bool,
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterHidden } = {} }) {
-  return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterHidden };
+function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
+  return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
 }
 
 export default connect(stateToProps, null)(RootApp);
