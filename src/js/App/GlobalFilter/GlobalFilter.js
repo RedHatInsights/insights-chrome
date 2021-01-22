@@ -20,12 +20,13 @@ const GlobalFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();
   const dispatch = useDispatch();
-  const { isLoaded, count, total, sapCount } = useSelector(
-    ({ globalFilter: { tags, sid, workloads } }) => ({
+  const { isLoaded, count, total, sapCount, isDisabled } = useSelector(
+    ({ globalFilter: { tags, sid, workloads, globalFilterHidden } }) => ({
       isLoaded: tags?.isLoaded && sid?.isLoaded && workloads?.isLoaded,
       count: tags?.count || 0 + sid?.count || 0 + workloads?.count || 0,
       total: tags?.total || 0 + sid?.total || 0 + workloads?.total || 0,
       sapCount: workloads?.hasSap,
+      isDisabled: globalFilterHidden,
     }),
     shallowEqual
   );
@@ -115,14 +116,21 @@ const GlobalFilter = () => {
     1
   );
   chips?.splice(0, 0, ...(workloadsChip || []));
-  const GroupFilterWrapper = isAllowed() ? Fragment : Tooltip;
+  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : Fragment;
   return (
     <Fragment>
       <Split hasGutter className="ins-c-chrome__global-filter">
         <SplitItem>
           {userLoaded && isAllowed() !== undefined ? (
-            <GroupFilterWrapper position="right" content="You do not have the required inventory permissions to perform this action">
-              <GroupFilter {...filter} isDisabled={!isAllowed()} placeholder="Filter results" />
+            <GroupFilterWrapper
+              {...((!isAllowed() || isDisabled) && {
+                content: !isAllowed()
+                  ? 'You do not have the required inventory permissions to perform this action'
+                  : 'Global filter is not applicable for this page',
+                position: 'right',
+              })}
+            >
+              <GroupFilter {...filter} isDisabled={!isAllowed() || isDisabled} placeholder="Filter results" />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />
@@ -135,16 +143,22 @@ const GlobalFilter = () => {
                 {chips.map(({ category, chips }, key) => (
                   <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'ins-m-sticky' : ''}>
                     {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
-                      <Chip key={chipKey} onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}>
+                      <Chip
+                        key={chipKey}
+                        onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}
+                        isReadOnly={isDisabled}
+                      >
                         {tagKey}
                         {value ? `=${value}` : ''}
                       </Chip>
                     ))}
                   </ChipGroup>
                 ))}
-                <Button variant="link" onClick={() => setValue(() => ({}))}>
-                  Clear filters
-                </Button>
+                {!isDisabled && (
+                  <Button variant="link" onClick={() => setValue(() => ({}))}>
+                    Clear filters
+                  </Button>
+                )}
               </Fragment>
             )}
           </SplitItem>

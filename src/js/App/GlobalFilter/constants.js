@@ -116,7 +116,7 @@ export const generateFilter = async () => {
           [tag?.key]: {
             group: omit(workloads[0], 'tags'),
             isSelected: true,
-            item: {},
+            item: { tagKey: tag?.key },
           },
         }
       : data.Workloads;

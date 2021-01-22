@@ -21,6 +21,7 @@ import {
   onGetAllSIDsPending,
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
+  onGlobalFilterRemove,
 } from './globalFilterReducers';
 import {
   CLICK_ACTION,
@@ -38,6 +39,7 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
+  GLOBAL_FILTER_REMOVE,
 } from './action-types';
 
 const reducers = {
@@ -61,6 +63,7 @@ const globalFilter = {
   [`${CHROME_GET_ALL_WORKLOADS}_PENDING`]: onGetAllWorkloadsPending,
   [GLOBAL_FILTER_SCOPE]: onSetGlobalFilterScope,
   [GLOBAL_FILTER_TOGGLE]: onGlobalFilterToggle,
+  [GLOBAL_FILTER_REMOVE]: onGlobalFilterRemove,
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
 };
 
