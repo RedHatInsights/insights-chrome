@@ -18,7 +18,7 @@ const extraLinks = {
     {
       id: 'extra-inssubs',
       title: 'Subscription Watch',
-      link: './subscriptions/',
+      link: './subscriptions/rhel-sw/all',
     },
     {
       expandable: true,
