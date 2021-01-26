@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { safeLoad } from 'js-yaml';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
 import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
@@ -16,11 +15,12 @@ import { TextContent } from '@patternfly/react-core/dist/js/components/Text/Text
 import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 
-import ansible from '../../../../static/images/platform-icons/ansible.svg';
-import costManagement from '../../../../static/images/platform-icons/cost-management.svg';
+import ansible from '../../../../static/images/landing-page-icons/ansible.svg';
+import costManagement from '../../../../static/images/landing-page-icons/cost-management.svg';
 import { getNavFromConfig } from '../../nav/globalNav';
-import migrationsNamespace from '../../../../static/images/platform-icons/migrations-namespace.svg';
-import openshift from '../../../../static/images/platform-icons/openshift.svg';
+import migrationsNamespace from '../../../../static/images/landing-page-icons/migrations.svg';
+import openshift from '../../../../static/images/landing-page-icons/ocm.svg';
+import settings from '../../../../static/images/landing-page-icons/fa-cog.svg';
 import sourceOfTruth from '../../nav/sourceOfTruth';
 
 import './AppFilter.scss';
@@ -33,7 +33,7 @@ const getIcon = (id) =>
     'cost-management': <img src={costManagement} alt="Cost Management Logo" />,
     migrations: <img src={migrationsNamespace} alt="Migration Services Logo" />,
     ansible: <img src={ansible} alt="Automation Logo" />,
-    settings: <CogIcon className="icon-gray" />,
+    settings: <img src={settings} alt="settings" />,
     subscriptions: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Subscriptions.svg`} alt="Subscriptions Logo" />,
   }[id]);
 
@@ -69,8 +69,8 @@ const AppFilter = () => {
       {
         <React.Fragment>
           <Split>
-            <SplitItem>{getIcon(app.id)}</SplitItem>
-            <SplitItem>
+            <SplitItem className="left">{getIcon(app.id)}</SplitItem>
+            <SplitItem className="right">
               <TextContent>
                 <Text component="h4">{app.title}</Text>
                 {app.routes.map((subApp) => (
@@ -95,7 +95,7 @@ const AppFilter = () => {
       onSelect={() => setIsOpen(true)}
       toggle={
         <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-          All apps and services
+          Applications and services
         </DropdownToggle>
       }
       isOpen={isOpen}
