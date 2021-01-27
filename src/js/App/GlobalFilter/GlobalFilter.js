@@ -1,8 +1,8 @@
 import React, { useEffect, Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
-import { GroupFilter } from '@redhat-cloud-services/frontend-components/components/cjs/ConditionalFilter';
-import { useTagsFilter } from '@redhat-cloud-services/frontend-components/components/cjs/FilterHooks';
-import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
+import { GroupFilter } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
+import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup';

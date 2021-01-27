@@ -17,7 +17,7 @@ const PatchMan = lazy(() =>
 const Advisor = lazy(() =>
   import(
     /* webpackChunkName: "inventory-advisor" */
-    '@redhat-cloud-services/frontend-components-inventory-insights/esm'
+    '@redhat-cloud-services/frontend-components-inventory-insights'
   )
 );
 const Vulnerabilities = lazy(() =>

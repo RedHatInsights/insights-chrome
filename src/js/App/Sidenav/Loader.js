@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
+import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import NavigationItem from './NavigationItem';
