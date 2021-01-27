@@ -45,11 +45,10 @@
         div.galleryItem {
             display: inline-block;
             margin-bottom: var(--pf-global--spacer--xl);
-            min-width: 240px;
+            width: 350px;
             .pf-l-split {
                 .left {
-                    margin-right: var(--pf-global--spacer--lg);
-                    min-width: var(--pf-global--spacer--2xl);
+                    width: 60px;
                     img {
                       width: 36px;
                     }
@@ -78,7 +77,7 @@
 
 @media screen and (max-width: 992px) { 
    .ins-c-page__app-filter-dropdown {
-      display: none;
+      display: none !important;
    }
 }
 
