@@ -107,3 +107,10 @@ export function onGetAllWorkloadsPending(state) {
     },
   };
 }
+
+export function onGlobalFilterRemove(state, { payload }) {
+  return {
+    ...state,
+    globalFilterRemoved: payload.isHidden,
+  };
+}

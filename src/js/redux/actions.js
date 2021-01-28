@@ -101,3 +101,10 @@ export function toggleGlobalFilter(isHidden = true) {
     payload: { isHidden },
   };
 }
+
+export function removeGlobalFilter(isHidden = true) {
+  return {
+    type: actionTypes.GLOBAL_FILTER_REMOVE,
+    payload: { isHidden },
+  };
+}

@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
 import * as actionTypes from '../redux/action-types';
 import loadInventory from '../inventory/index';
@@ -61,6 +61,7 @@ export function chromeInit(navResolver) {
     appAction,
     appObjectId,
     hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
     appNavClick: ({ secondaryNav, ...payload }) => {
@@ -141,8 +142,9 @@ export function noAccess() {
   const { store } = spinUpStore();
   window.insights.chrome.auth
     .getUser()
-    .then(({ entitlements }) => {
-      if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
+    .then((data) => {
+      if (data && !consts.allowedUnauthedPaths.includes(location.pathname)) {
+        const { entitlements } = data;
         const path = location.pathname.split('/');
         const apps = Object.keys(entitlements || {});
 

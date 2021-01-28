@@ -6,11 +6,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
 
+const isFilterEnabled =
+  localStorage.getItem('chrome:experimental:app-filter') === 'true' || (insights.chrome.getEnvironment() === 'ci' && insights.chrome.isBeta());
+
 const Header = ({ user }) => {
   return user ? (
     <Fragment>
       <Brand />
-      <AppFilter />
+      {isFilterEnabled && <AppFilter />}
       <Tools />
     </Fragment>
   ) : (

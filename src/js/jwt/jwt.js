@@ -288,21 +288,29 @@ function refreshTokens() {
 
 // Actually update the token
 function updateToken() {
-  return priv.keycloak.updateToken().then((refreshed) => {
-    // Important! after we update the token
-    // we have to again populate the Cookie!
-    // Otherwise we just update and dont send
-    // the updated token down stream... and things 401
-    setCookie(priv.keycloak.token);
+  return priv.keycloak
+    .updateToken()
+    .then((refreshed) => {
+      // Important! after we update the token
+      // we have to again populate the Cookie!
+      // Otherwise we just update and dont send
+      // the updated token down stream... and things 401
+      setCookie(priv.keycloak.token);
 
-    log('Attempting to update token');
+      log('Attempting to update token');
 
-    if (refreshed) {
-      log('Token was successfully refreshed');
-    } else {
-      log('Token is still valid, not updating');
-    }
-  });
+      if (refreshed) {
+        log('Token was successfully refreshed');
+      } else {
+        log('Token is still valid, not updating');
+      }
+    })
+    .catch(() => {
+      /**
+       * The "priv.keycloak.updateToken" promise does not return any error message
+       */
+      log('Token update failed');
+    });
 }
 
 function getCookieExpires(exp) {

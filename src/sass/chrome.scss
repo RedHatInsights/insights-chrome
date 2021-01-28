@@ -35,7 +35,6 @@ $pf-global--image-path: './assets/images/';
 @import 'helpers.scss';
 
 @import 'partials/_footer.scss';
-@import 'partials/_tempNav.scss';
 
 body {
     position: relative;
@@ -172,6 +171,7 @@ section.ins-c-app-switcher--loading {
         .pf-l-split__item:first-of-type { min-width: 150px;}
 
         .ins-c-tagfilter {
+        width: 100%;
         &.pf-m-expanded { width: 450px; }
         .pf-c-select__menu {
             max-height: 400px;
