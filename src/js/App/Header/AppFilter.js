@@ -56,11 +56,9 @@ const AppFilter = () => {
 
   useEffect(() => {
     setFilteredApps(
-      apps.filter((app) =>
-        app?.routes?.some((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase()))
-          ? { ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }
-          : false
-      )
+      apps
+        .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }))
+        .filter((app) => app.routes?.length > 0)
     );
   }, [filterValue]);
 
