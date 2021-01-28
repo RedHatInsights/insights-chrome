@@ -14,4 +14,5 @@ export default {
   allDetails: () => functionBuilder('chrome:inventory:experimental_detail', true),
   inventoryDrawer: () => functionBuilder('chrome:inventory:experimental_drawer', true),
   globalFilter: () => functionBuilder('chrome:experimental:global-filter', true),
+  appFilter: () => functionBuilder('chrome:experimental:app-filter', true),
 };
