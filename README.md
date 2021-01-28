@@ -178,6 +178,7 @@ Available function:
 - `remediationsDebug` - to enable debug buttons in remediations app
 - `shortSession` - to enable short session in order to test automatic logouts
 - `forcePendo` - to force Pendo initializtion
+- `appFilter` - to enable new application filter in any environment
 
 ## Futher reading
 

@@ -21,6 +21,7 @@ global.window.insights = {
         isBeta: () => {
             return null;
         },
+        getEnvironment: () => 'test',
         isPenTest: () => false,
         isProd: false,
         auth: {
