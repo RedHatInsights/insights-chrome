@@ -6,6 +6,7 @@ import GlobalFilter from './GlobalFilter';
 const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved }) => {
   const isGlobalFilterEnabled =
     (!globalFilterRemoved && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+  const isFeedbackEnabled = insights.chrome.getBundle() === 'insights';
   return (
     <Fragment>
       <div
@@ -18,6 +19,7 @@ const RootApp = ({ activeApp, activeLocation, appId, pageAction, pageObjectId, g
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
         <div className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+          {isFeedbackEnabled && <Feedback/>}
           {isGlobalFilterEnabled && <GlobalFilter />}
           <main className="pf-c-page__main pf-l-page__main" id="root" role="main">
             <section className="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light" widget-type="InsightsPageHeader">
