@@ -35,7 +35,9 @@ const GlobalFilter = () => {
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
   const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
-    storeFilter(selectedTags, token);
+    if (isAllowed() && !isDisabled && userLoaded) {
+      storeFilter(selectedTags, token);
+    }
     batch(() => {
       dispatch(
         fetchAllTags({
