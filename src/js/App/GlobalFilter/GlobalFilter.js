@@ -21,12 +21,12 @@ const GlobalFilter = () => {
   const [token, setToken] = useState();
   const dispatch = useDispatch();
   const { isLoaded, count, total, sapCount, isDisabled } = useSelector(
-    ({ globalFilter: { tags, sid, workloads, globalFilterHidden } }) => ({
+    ({ globalFilter: { tags, sid, workloads, globalFilterHidden }, chrome: { appId } }) => ({
       isLoaded: tags?.isLoaded && sid?.isLoaded && workloads?.isLoaded,
       count: tags?.count || 0 + sid?.count || 0 + workloads?.count || 0,
       total: tags?.total || 0 + sid?.total || 0 + workloads?.total || 0,
       sapCount: workloads?.hasSap,
-      isDisabled: globalFilterHidden,
+      isDisabled: globalFilterHidden || !appId,
     }),
     shallowEqual
   );
@@ -35,9 +35,7 @@ const GlobalFilter = () => {
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
   const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
-    if (isAllowed() && !isDisabled && userLoaded) {
-      storeFilter(selectedTags, token);
-    }
+    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded);
     batch(() => {
       dispatch(
         fetchAllTags({

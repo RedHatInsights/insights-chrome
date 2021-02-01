@@ -131,78 +131,94 @@ describe('storeFilter', () => {
 
   describe('global hash', () => {
     it('should add workloads and empty SID', () => {
-      storeFilter({
-        Workloads: {
-          something: {
-            isSelected: true,
+      storeFilter(
+        {
+          Workloads: {
+            something: {
+              isSelected: true,
+            },
           },
         },
-      });
+        '',
+        true
+      );
       expect(location.hash).toBe('#workloads=something&SIDs=&tags=');
     });
 
     it('should add SIDs', () => {
-      storeFilter({
-        'SAP ID (SID)': {
-          something: {
-            isSelected: true,
+      storeFilter(
+        {
+          'SAP ID (SID)': {
+            something: {
+              isSelected: true,
+            },
           },
         },
-      });
+        '',
+        true
+      );
       expect(location.hash).toBe('#SIDs=something&tags=');
     });
 
     it('should add tags', () => {
-      storeFilter({
-        bridges: {
-          porter: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
+      storeFilter(
+        {
+          bridges: {
+            porter: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
+          },
+          fragile: {
+            tag: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
+            tag2: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
           },
         },
-        fragile: {
-          tag: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
-          },
-          tag2: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
-          },
-        },
-      });
+        '',
+        true
+      );
       expect(location.hash).toBe('#SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
     });
 
     it('should build complex hash', () => {
-      storeFilter({
-        Workloads: {
-          something: {
-            isSelected: true,
+      storeFilter(
+        {
+          Workloads: {
+            something: {
+              isSelected: true,
+            },
+          },
+          'SAP ID (SID)': {
+            something: {
+              isSelected: true,
+            },
+          },
+          bridges: {
+            porter: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
+          },
+          fragile: {
+            tag: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
+            tag2: {
+              isSelected: true,
+              item: { tagValue: 'sam' },
+            },
           },
         },
-        'SAP ID (SID)': {
-          something: {
-            isSelected: true,
-          },
-        },
-        bridges: {
-          porter: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
-          },
-        },
-        fragile: {
-          tag: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
-          },
-          tag2: {
-            isSelected: true,
-            item: { tagValue: 'sam' },
-          },
-        },
-      });
+        '',
+        true
+      );
       expect(location.hash).toBe('#workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
     });
   });
