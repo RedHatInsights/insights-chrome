@@ -78,6 +78,14 @@ const extraLinks = {
       external: true,
     },
   ],
+  'application-services': [
+    {
+      id: 'extra-application-services-docs',
+      url: 'https://access.redhat.com/documentation/en-us/',
+      title: 'Documentation',
+      external: true,
+    },
+  ],
 };
 
 const NavItemLink = ({ id, title, external, url, link }) => (
