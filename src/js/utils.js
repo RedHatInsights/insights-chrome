@@ -132,3 +132,7 @@ export function getUrl(type) {
 export function getEnv() {
   return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
+
+export function isBeta() {
+  return window.location.pathname.split('/')[1] === 'beta' ? true : false;
+}

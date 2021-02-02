@@ -5,9 +5,7 @@ import UnAuthtedHeader from './UnAuthtedHeader';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
-
-const isFilterEnabled =
-  localStorage.getItem('chrome:experimental:app-filter') === 'true' || (insights.chrome.getEnvironment() === 'ci' && insights.chrome.isBeta());
+import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 
 const Header = ({ user }) => {
   return user ? (

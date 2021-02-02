@@ -80,7 +80,10 @@ export function clearActive(state) {
 
 export function navToggleReducer(state) {
   const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
-  let page = document.getElementById('ins-c-sidebar');
+  let page = document.getElementById('ins-c-sidebar') || document.getElementById('ins-c-landing-nav');
+  if (!page) {
+    return state;
+  }
 
   if (mq && mq.matches) {
     page.classList.remove('pf-m-expanded');
