@@ -20,19 +20,13 @@ export const navLoader = () => {
       document.querySelector('aside#ins-c-sidebar')
     );
   } else if (isFilterEnabled && document.querySelector('aside#ins-c-landing-nav')) {
-    const elem = document.querySelector('aside#ins-c-landing-nav');
-    /**
-     * Nav classes have to be added at runtime only when the nav should be rendered
-     * to prevent navigation background to be displayed in non ci-beta envs.
-     */
-    elem.classList.add('pf-c-page__sidebar', 'pf-l-page__sidebar');
     render(
       <Provider store={store}>
         <Suspense fallback={<Fragment />}>
           <LandingNav />
         </Suspense>
       </Provider>,
-      elem
+      document.querySelector('aside#ins-c-landing-nav')
     );
   }
 };

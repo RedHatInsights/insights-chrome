@@ -36,7 +36,7 @@ export function navUpdateReducer(state, { payload: { activeSection, globalNav, .
   return {
     ...state,
     ...payload,
-    globalNav: globalNav.map((app) => ({
+    globalNav: (globalNav || []).map((app) => ({
       ...app,
       active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
     })),
