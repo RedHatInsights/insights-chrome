@@ -79,6 +79,7 @@
     "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
+    "@octokit/rest": "^18.1.0",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "0.0.0",
     "@types/node": "^14.0.13",
     "babel-cli": "^6.26.0",
