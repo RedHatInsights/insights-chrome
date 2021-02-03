@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { safeLoad } from 'js-yaml';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -17,13 +16,12 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 
 import ansible from '../../../../static/images/landing-page-icons/ansible.svg';
 import costManagement from '../../../../static/images/landing-page-icons/cost-management.svg';
-import { getNavFromConfig } from '../../nav/globalNav';
 import migrationsNamespace from '../../../../static/images/landing-page-icons/migrations.svg';
 import openshift from '../../../../static/images/landing-page-icons/ocm.svg';
 import settings from '../../../../static/images/landing-page-icons/fa-cog.svg';
-import sourceOfTruth from '../../nav/sourceOfTruth';
 
 import './AppFilter.scss';
+import useGlobalNav from '../../utils/useGlobalNav';
 
 const getIcon = (id) =>
   ({
@@ -37,22 +35,10 @@ const getIcon = (id) =>
     subscriptions: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Subscriptions.svg`} alt="Subscriptions Logo" />,
   }[id]);
 
-const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];
-
 const AppFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState('');
-  const [apps, setApps] = useState([]);
-  const [filteredApps, setFilteredApps] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const navigationYml = await sourceOfTruth();
-      const appData = await getNavFromConfig(safeLoad(navigationYml), undefined);
-      setApps(appIds.map((id) => appData[id]));
-      setFilteredApps(appIds.map((id) => appData[id]));
-    })();
-  }, []);
+  const { apps, filteredApps, setFilteredApps } = useGlobalNav();
 
   useEffect(() => {
     setFilteredApps(

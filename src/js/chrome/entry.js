@@ -13,7 +13,7 @@ import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import logger from '../jwt/logger';
-import { getUrl, getEnv } from '../utils';
+import { getUrl, getEnv, isBeta } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
 import { flatTags } from '../App/GlobalFilter/constants';
@@ -109,7 +109,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
         login: () => libjwt.jwt.login(),
       },
       isProd: window.location.host === 'cloud.redhat.com',
-      isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
+      isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
