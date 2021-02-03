@@ -1,3 +1,5 @@
+import { getEnv, isBeta } from '../utils';
+
 export function clickReducer(state, action) {
   state = {
     ...state,
@@ -20,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: id === 'landing' || id === 'trust',
+    navHidden: (id === 'landing' && getEnv() !== 'ci' && !isBeta()) || id === 'trust',
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
