@@ -6,37 +6,36 @@ import {
     TextArea } from '@patternfly/react-core';
 import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
-import * as Sentry from '@sentry/browser';
+import Cookies from 'js-cookie';
+import PropTypes from 'prop-types';
 
-const Feedback = () => {
+const Feedback = ({ user }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [textAreaValue, setTextAreaValue] = useState('');
 
-    const token = 'f869e10dc31347119bc8837cb85bcef490d9c65ee5554cac8fb334723871954e';
-    const organization_slug = 'cloud-dot';
-    const project_slug = 'insights';
-
     const handleModalSubmission = () => {
-        console.log('Submitted feedback', textAreaValue);
 
-        fetch(`https://sentry.io/api/0/projects/${organization_slug}/${project_slug}/user-feedback/`, {
+        const apiUrl = window.insights.isProd ? 'https://cloud.redhat.com' : `https://${window.insights.chrome.getEnvironment()}.cloud.redhat.com`;
+
+        fetch(`${apiUrl}/api/feedback/issues`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                comments: textAreaValue,
-                event_id: '1',
-                name: 'test tester',
-                email: 'testing@testing.com'
+                description: `Feedback: ${textAreaValue} \
+                              Username: ${user.identity.user.username} \
+                              Account ID: ${user.identity.account_number} \
+                              Email: ${user.identity.user.email} \
+                              URL: ${window.location.href}`,
+                summary: `${!window.insights.isProd && [PRE-PROD]} Insights Feedback`,
             })
         })
         .then(response => response.json())
         .then(data => console.log(data))
-        .catch(err => Sentry.captureException(err));
         
         setIsModalOpen(false);
     };
@@ -44,10 +43,6 @@ const Feedback = () => {
     return(
         <React.Fragment>
             <Button className='ins-c-button__feedback' onClick={() => setIsModalOpen(true)}>
-                <OutlinedCommentsIcon/>
-                Feedback
-            </Button>
-            <Button className='ins-c-button__feedback2' onClick={() => Sentry.showReportDialog()}>
                 <OutlinedCommentsIcon/>
                 Feedback
             </Button>
@@ -77,6 +72,10 @@ const Feedback = () => {
             </Modal>
         </React.Fragment>
     );
+};
+
+Feedback.propTypes = {
+    user: PropTypes.object
 };
 
 export default Feedback;
