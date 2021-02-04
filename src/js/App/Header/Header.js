@@ -10,8 +10,7 @@ import Feedback from '../Feedback';
 const isFilterEnabled =
   localStorage.getItem('chrome:experimental:app-filter') === 'true' || (insights.chrome.getEnvironment() === 'ci' && insights.chrome.isBeta());
 
-const isFeedbackEnabled =
-  localStorage.getItem('chrome:experimental:feedback') === 'true' || (insights.chrome.getBundle() === 'insights');
+const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
 
 const Header = ({ user }) => {
   return user ? (
@@ -19,7 +18,7 @@ const Header = ({ user }) => {
       <Brand />
       {isFilterEnabled && <AppFilter />}
       <Tools />
-      {isFeedbackEnabled && <Feedback user={user}/>}
+      {isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   ) : (
     <UnAuthtedHeader />
