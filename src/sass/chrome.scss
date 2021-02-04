@@ -178,6 +178,9 @@ section.ins-c-app-switcher--loading {
             overflow: auto;
         }
 
+        .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
+            background: var(--pf-global--Color--light-100);
+        }
         .ins-c-tagfilter__option-value { max-width: 360px; }
         }
     }

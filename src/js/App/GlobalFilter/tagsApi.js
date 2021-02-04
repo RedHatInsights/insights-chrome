@@ -31,10 +31,11 @@ export function getAllTags({ search, activeTags, registeredWith } = {}, paginati
   );
 }
 
-export function getAllSIDs({ activeTags, registeredWith } = {}, pagination = {}) {
+export function getAllSIDs({ search, activeTags, registeredWith } = {}, pagination = {}) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
   return sap.apiSystemProfileGetSapSids(
+    search,
     selectedTags, // tags
     (pagination && pagination.perPage) || 10,
     (pagination && pagination.page) || 1,

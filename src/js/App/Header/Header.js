@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
 import Feedback from '../Feedback';
 
-const isFilterEnabled =
-  localStorage.getItem('chrome:experimental:app-filter') === 'true' || (insights.chrome.getEnvironment() === 'ci' && insights.chrome.isBeta());
+import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 
 const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
 
