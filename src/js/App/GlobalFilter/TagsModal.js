@@ -16,13 +16,14 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
   const [tagsSelected, setTagsSelected] = useState([]);
   const [sidsSelected, setSidsSelected] = useState([]);
   const [filterBy, setFilterBy] = useState('');
+  const [filterSIDsBy, setFilterSIDsBy] = useState('');
   const dispatch = useDispatch();
   const [tagsLoaded, tagsCount, tagsPage, tagsPerPage] = useMetaSelector('tags');
   const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
   const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
   const sids = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
-  const debounceGeTags = useCallback(
+  const debounceGetTags = useCallback(
     debounce((search) => {
       dispatch(
         fetchAllTags(
@@ -31,7 +32,22 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             activeTags: selectedTags,
             search,
           },
-          { tagsPage, tagsPerPage }
+          { page: tagsPage, perPage: tagsPerPage }
+        )
+      );
+    }, 800),
+    []
+  );
+  const debounceGetSIDs = useCallback(
+    debounce((search) => {
+      dispatch(
+        fetchAllSIDs(
+          {
+            registeredWith: filterScope,
+            activeTags: selectedTags,
+            search,
+          },
+          { page: sidPage, perPage: sidPerPage }
         )
       );
     }, 800),
@@ -39,7 +55,9 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
   );
   useEffect(() => {
     setFilterBy(filterTagsBy);
+    setFilterSIDsBy(filterTagsBy);
   }, [filterTagsBy]);
+
   return (
     <TagModal
       tabNames={['tags', 'SAP IDs (SID)']}
@@ -102,6 +120,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         setSidsSelected([]);
         setTagsSelected([]);
         setFilterBy('');
+        setFilterSIDsBy('');
         toggleModal(isSubmit);
       }}
       filters={[
@@ -114,7 +133,21 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
               value: filterBy,
               onChange: (_e, value) => {
                 setFilterBy(() => value);
-                debounceGeTags(value);
+                debounceGetTags(value);
+              },
+            },
+          },
+        ],
+        [
+          {
+            label: 'SIDs filter',
+            placeholder: 'Filter SAP IDs',
+            value: 'sids-filter',
+            filterValues: {
+              value: filterSIDsBy,
+              onChange: (_e, value) => {
+                setFilterSIDsBy(() => value);
+                debounceGetSIDs(value);
               },
             },
           },
@@ -138,7 +171,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
               {
                 registeredWith: filterScope,
                 activeTags: selectedTags,
-                search: filterBy,
+                search: filterSIDsBy,
               },
               pagination
             )
