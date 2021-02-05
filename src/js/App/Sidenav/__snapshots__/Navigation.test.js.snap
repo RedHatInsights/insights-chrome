@@ -132,7 +132,6 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
                 parent="someLocation"
               >
                 <NavItem
-                  className=""
                   isActive={false}
                   onClick={[Function]}
                   preventDefault={true}
@@ -282,7 +281,6 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
                   parent="someLocation"
                 >
                   <NavItem
-                    className=""
                     isActive={false}
                     onClick={[Function]}
                     preventDefault={true}
@@ -489,7 +487,6 @@ exports[`Navigation should render corectly 1`] = `
                       title="Clusters"
                     >
                       <NavItem
-                        className=""
                         isActive={false}
                         itemId="someID"
                         onClick={[Function]}
@@ -536,7 +533,6 @@ exports[`Navigation should render corectly 1`] = `
               title="Rules"
             >
               <NavItem
-                className=""
                 isActive={false}
                 itemId="rules"
                 onClick={[Function]}
@@ -579,7 +575,6 @@ exports[`Navigation should render corectly 1`] = `
               title="Topics"
             >
               <NavItem
-                className=""
                 isActive={false}
                 itemId="topics"
                 onClick={[Function]}
@@ -621,7 +616,6 @@ exports[`Navigation should render corectly 1`] = `
               title="Inventory"
             >
               <NavItem
-                className=""
                 isActive={false}
                 itemId="inventory"
                 onClick={[Function]}
@@ -663,7 +657,6 @@ exports[`Navigation should render corectly 1`] = `
               title="Remediations"
             >
               <NavItem
-                className=""
                 isActive={false}
                 itemId="remediations"
                 onClick={[Function]}
