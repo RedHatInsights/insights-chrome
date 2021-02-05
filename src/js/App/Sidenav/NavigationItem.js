@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { titleCase } from 'title-case';
 
 const basepath = document.baseURI;
 
@@ -9,11 +9,11 @@ const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className
   <NavItem
     {...props}
     itemId={itemID}
-    className={classNames({ 'ins-m-ignore-case': ignoreCase }, className)}
+    className={className}
     preventDefault
     to={navigate || `${basepath}${parent}/${itemID}`}
   >
-    {title}
+    {typeof title === 'string' && !ignoreCase ? titleCase(title) : title}
   </NavItem>
 );
 
