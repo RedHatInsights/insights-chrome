@@ -16,13 +16,12 @@ exports[`Header should render correctly 1`] = `
             aria-disabled={false}
             aria-label="Toggle primary navigation"
             className="pf-c-button pf-m-plain"
-            data-ouia-component-id={0}
+            data-ouia-component-id="chrome-nav-toggle"
             data-ouia-component-type="PF4/Button"
             data-ouia-safe={true}
             disabled={false}
             onClick={[Function]}
             type="button"
-            widget-type="InsightsNavToggle"
           >
             <svg
               aria-hidden={true}
@@ -62,7 +61,7 @@ exports[`Header should render correctly 1`] = `
         aria-disabled={false}
         aria-label="Toggle primary navigation"
         className="pf-c-button pf-m-tertiary"
-        data-ouia-component-id={1}
+        data-ouia-component-id={0}
         data-ouia-component-type="PF4/Button"
         data-ouia-safe={true}
         disabled={false}

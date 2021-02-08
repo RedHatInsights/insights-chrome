@@ -20,7 +20,7 @@ describe('UserToggle', () => {
     const mockSelect = jest.fn();
     const wrapper = shallow(<UserToggle {...props} onSelect={mockSelect} />);
     expect(toJson(wrapper)).toMatchSnapshot();
-    wrapper.find(`[widget-type='InsightsOverflowActions']`).simulate('select');
+    wrapper.find(`[ouiaId='chrome-user-menu']`).simulate('select');
   });
   it('should render correctly with isSmall true', () => {
     const props = {

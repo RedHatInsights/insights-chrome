@@ -52,7 +52,7 @@ describe('Brand', () => {
     const wrapper = shallow(<Brand toggleNav={mockCallBack} navHidden={true} />);
     expect(toJson(wrapper)).toMatchSnapshot();
 
-    wrapper.find(`[widget-type='InsightsNavToggle']`).simulate('click');
+    wrapper.find(`[ouiaId='chrome-nav-toggle']`).simulate('click');
     expect(mockCallBack).toHaveBeenCalledTimes(1);
   });
   it('mapDispatchToProps function fires', () => {
