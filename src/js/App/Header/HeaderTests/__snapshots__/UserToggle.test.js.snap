@@ -74,6 +74,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
         isOpen={false}
         isPlain={true}
         onSelect={[Function]}
+        ouiaId="chrome-user-menu"
         position="right"
         toggle={
           <DropdownToggle
@@ -86,7 +87,6 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
             someFirstName someLastName
           </DropdownToggle>
         }
-        widget-type="InsightsOverflowActions"
       >
         <DropdownWithContext
           aria-label="Overflow actions"
@@ -151,15 +151,13 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
               someFirstName someLastName
             </DropdownToggle>
           }
-          widget-type="InsightsOverflowActions"
         >
           <div
             aria-label="Overflow actions"
             className="pf-c-dropdown pf-m-align-right"
-            data-ouia-component-id={0}
+            data-ouia-component-id="chrome-user-menu"
             data-ouia-component-type="PF4/Dropdown"
             data-ouia-safe={true}
-            widget-type="InsightsOverflowActions"
           >
             <DropdownToggle
               aria-haspopup={true}
@@ -177,10 +175,9 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                   "current": <div
                     aria-label="Overflow actions"
                     class="pf-c-dropdown pf-m-align-right"
-                    data-ouia-component-id="0"
+                    data-ouia-component-id="chrome-user-menu"
                     data-ouia-component-type="PF4/Dropdown"
                     data-ouia-safe="true"
-                    widget-type="InsightsOverflowActions"
                   >
                     <button
                       aria-expanded="false"
@@ -246,10 +243,9 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
                     "current": <div
                       aria-label="Overflow actions"
                       class="pf-c-dropdown pf-m-align-right"
-                      data-ouia-component-id="0"
+                      data-ouia-component-id="chrome-user-menu"
                       data-ouia-component-type="PF4/Dropdown"
                       data-ouia-safe="true"
-                      widget-type="InsightsOverflowActions"
                     >
                       <button
                         aria-expanded="false"
@@ -455,6 +451,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
         isOpen={false}
         isPlain={true}
         onSelect={[Function]}
+        ouiaId="chrome-user-menu"
         position="right"
         toggle={
           <DropdownToggle
@@ -467,7 +464,6 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
             someFirstName someLastName
           </DropdownToggle>
         }
-        widget-type="InsightsOverflowActions"
       >
         <DropdownWithContext
           aria-label="Overflow actions"
@@ -537,15 +533,13 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
               someFirstName someLastName
             </DropdownToggle>
           }
-          widget-type="InsightsOverflowActions"
         >
           <div
             aria-label="Overflow actions"
             className="pf-c-dropdown pf-m-align-right"
-            data-ouia-component-id={1}
+            data-ouia-component-id="chrome-user-menu"
             data-ouia-component-type="PF4/Dropdown"
             data-ouia-safe={true}
-            widget-type="InsightsOverflowActions"
           >
             <DropdownToggle
               aria-haspopup={true}
@@ -563,10 +557,9 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                   "current": <div
                     aria-label="Overflow actions"
                     class="pf-c-dropdown pf-m-align-right"
-                    data-ouia-component-id="1"
+                    data-ouia-component-id="chrome-user-menu"
                     data-ouia-component-type="PF4/Dropdown"
                     data-ouia-safe="true"
-                    widget-type="InsightsOverflowActions"
                   >
                     <button
                       aria-expanded="false"
@@ -632,10 +625,9 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
                     "current": <div
                       aria-label="Overflow actions"
                       class="pf-c-dropdown pf-m-align-right"
-                      data-ouia-component-id="1"
+                      data-ouia-component-id="chrome-user-menu"
                       data-ouia-component-type="PF4/Dropdown"
                       data-ouia-safe="true"
-                      widget-type="InsightsOverflowActions"
                     >
                       <button
                         aria-expanded="false"
@@ -807,6 +799,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   isOpen={false}
   isPlain={true}
   onSelect={[Function]}
+  ouiaId="chrome-user-menu"
   position="right"
   toggle={
     <DropdownToggle
@@ -819,7 +812,6 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
       someName
     </DropdownToggle>
   }
-  widget-type="InsightsOverflowActions"
 />
 `;
 
@@ -868,12 +860,12 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
   isOpen={false}
   isPlain={true}
   onSelect={[Function]}
+  ouiaId="chrome-user-menu"
   position="right"
   toggle={
     <KebabToggle
       onToggle={[Function]}
     />
   }
-  widget-type="InsightsOverflowActions"
 />
 `;
