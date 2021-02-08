@@ -39,7 +39,7 @@ const Tools = () => {
     <Button
       variant="plain"
       aria-label="Go to settings"
-      widget-type="SettingsButton"
+      ouiaId="chrome-settings"
       className="ins-c-toolbar__button-settings"
       href={settingsPath}
       component="a"
@@ -107,6 +107,7 @@ const Tools = () => {
       key="Help menu"
       icon={QuestionCircleIcon}
       id="HelpMenu"
+      ouiaComponentId="chrome-help"
       className="ins-c-toolbar__menu-help"
       hasToggleIndicator={null}
       widget-type="HelpMenu"
