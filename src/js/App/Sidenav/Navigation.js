@@ -11,6 +11,7 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-
 import './Navigation.scss';
 import ExpandableNav from './ExpandableNav';
 import { useHistory } from 'react-router-dom';
+import { isBeta } from '../../utils';
 
 const basepath = document.baseURI;
 
@@ -177,7 +178,7 @@ export const Navigation = () => {
          */
         !parent?.active && dispatch(clearActive());
         prevLocation.current = window.location.pathname;
-        history.push({ pathname: `/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
+        history.push({ pathname: `${isBeta() ? '/beta' : ''}/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
       }
     }
   };
