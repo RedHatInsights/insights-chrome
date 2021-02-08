@@ -1,6 +1,8 @@
 import React from 'react';
 import AsyncInventory from './AsyncInventory';
 
-const DetailWrapper = (props) => <AsyncInventory componentName="DetailWrapper" {...props} />;
+const BaseDetailWrapper = (props) => <AsyncInventory componentName="DetailWrapper" {...props} />;
+
+const DetailWrapper = React.forwardRef((props, ref) => <BaseDetailWrapper innerRef={ref} {...props} />);
 
 export default DetailWrapper;

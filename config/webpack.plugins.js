@@ -3,7 +3,7 @@ const resolve = require('path').resolve;
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const deps = require('../package.json').dependencies;
-const ChunkMapper = new (require('./chunk-mapper'))({
+const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config/chunk-mapper'))({
   modules: 'chrome',
 });
 

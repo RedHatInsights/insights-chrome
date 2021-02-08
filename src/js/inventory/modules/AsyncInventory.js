@@ -25,7 +25,7 @@ const isDrawerEnabled = async () => {
   );
 };
 
-const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => {
+const AsyncInventory = ({ componentName, onLoad, store, history, innerRef, ...props }) => {
   const [Component, setComponent] = useState(Fragment);
   useEffect(() => {
     (async () => {
@@ -97,7 +97,7 @@ const AsyncInventory = ({ componentName, onLoad, store, history, ...props }) => 
   return (
     <Provider store={store}>
       <Router history={history}>
-        <Component {...props} />
+        <Component {...props} ref={innerRef} />
       </Router>
     </Provider>
   );
