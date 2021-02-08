@@ -1,3 +1,5 @@
+/* eslint-disable react/display-name */
+import React, { Fragment } from 'react';
 import setDependencies from '../externalDependencies';
 import { allDetails, drawer } from './accountNumbers.json';
 
@@ -22,41 +24,13 @@ const isDrawerEnabled = async () => {
 };
 
 export default async (dependencies) => {
-  let SystemAdvisoryListStore;
-  let SystemCvesStore;
   let systemProfileStore;
-  let RenderWrapper;
 
   setDependencies(dependencies);
 
   const isDetailsEnabled = await isEnabled();
   const drawerEnabled = await isDrawerEnabled();
-  await import(/* webpackChunkName: "inventory-styles" */ './inventoryStyles');
   const invData = await import(/* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory');
-
-  if (isDetailsEnabled || drawerEnabled) {
-    systemProfileStore = await import(
-      /* webpackChunkName: "inventory-gen-info-store" */
-      '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
-    );
-    RenderWrapper = await import(/* webpackChunkName: "inventory-render-wrapper" */ './RenderWrapper');
-  }
-
-  if (isDetailsEnabled) {
-    SystemAdvisoryListStore = (
-      await import(
-        /* webpackChunkName: "inventory-patch-store" */
-        '@redhat-cloud-services/frontend-components-inventory-patchman/dist/cjs/SystemAdvisoryListStore'
-      )
-    )?.SystemAdvisoryListStore;
-
-    SystemCvesStore = (
-      await import(
-        /* webpackChunkName: "inventory-vuln-store" */
-        '@redhat-cloud-services/frontend-components-inventory-vulnerabilities/dist/cjs/SystemCvesStore'
-      )
-    )?.SystemCvesStore;
-  }
 
   return {
     ...invData,
@@ -65,7 +39,7 @@ export default async (dependencies) => {
         store,
         isDetailsEnabled
           ? {
-              componentMapper: RenderWrapper.default,
+              componentMapper: Fragment,
               appList: [
                 { title: 'General information', name: 'general_information', pageId: 'inventory' },
                 { title: 'Advisor', name: 'advisor', pageId: 'insights' },
@@ -75,15 +49,15 @@ export default async (dependencies) => {
               ],
             }
           : undefined,
-        drawerEnabled ? RenderWrapper.default : undefined,
+        drawerEnabled ? Fragment : undefined,
         true
       ),
     mergeWithDetail: (redux) => ({
       ...invData.mergeWithDetail(redux),
       ...((isDetailsEnabled || drawerEnabled) && { systemProfileStore: systemProfileStore.default }),
       ...(isDetailsEnabled && {
-        SystemCvesStore,
-        SystemAdvisoryListStore,
+        SystemCvesStore: () => <h1>SystemCvesStore is disabled</h1>,
+        SystemAdvisoryListStore: () => <h1>SystemAdvisoryListStore is disabled</h1>,
       }),
     }),
   };

@@ -78,6 +78,7 @@ async function getAppData(appId, propName, masterConfig) {
     return {
       title: app.frontend.title || app.title,
       ignoreCase: app.ignoreCase,
+      ...(app?.frontend?.module && { module: app.frontend.module }),
       ...(!app.frontend.suppress_id && { id: appId }),
       ...(app.frontend.reload && { reload: app.frontend.reload }),
       ...(routes?.length > 0 && { [propName]: routes }),

@@ -1,337 +1,852 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RootApp should render correctly - no data 1`] = `
-Array [
+<div
+  class="pf-c-drawer__content"
+  data-ouia-safe="true"
+>
   <div
-    class="pf-c-drawer__content"
-    data-ouia-safe="true"
+    class="pf-c-page"
   >
-    <div
-      class="ins-m-full--height"
+    <header
+      class="pf-c-page__header"
     >
-      <main
-        class="pf-c-page__main pf-l-page__main"
-        id="root"
-        role="main"
+      <div
+        class="pf-c-page__header-brand"
+      >
+        <div
+          class="pf-c-page__header-brand-toggle"
+        >
+          <button
+            aria-disabled="false"
+            aria-label="Toggle primary navigation"
+            class="pf-c-button pf-m-plain"
+            data-ouia-component-id="chrome-nav-toggle"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1.5em"
+              role="img"
+              style="vertical-align: -0.1875em;"
+              viewBox="0 0 448 512"
+              width="1.5em"
+            >
+              <path
+                d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="pf-c-page__header-brand-link"
+          href="./"
+        >
+          <img
+            alt="Red Hat Logo"
+            src="test-file-stub"
+          />
+        </a>
+      </div>
+      <div
+        class="pf-c-page__header-tools"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Toggle primary navigation"
+          class="pf-c-button pf-m-tertiary"
+          data-ouia-component-id="0"
+          data-ouia-component-type="PF4/Button"
+          data-ouia-safe="true"
+          type="button"
+          widget-type="InsightsNavToggle"
+        >
+          Log in
+        </button>
+      </div>
+    </header>
+    <div
+      class="pf-c-page__sidebar pf-m-expanded"
+      id="ins-c-sidebar"
+    >
+      <div
+        class="pf-c-page__sidebar-body"
       >
         <section
-          class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
-          widget-type="InsightsPageHeader"
+          class="ins-c-app-switcher--loading"
         >
           <div
-            class="pf-c-content"
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-            <h1
-              class="pf-c-title pf-m-2xl ins-l-page__header--loading"
-              widget-type="InsightsPageHeaderTitle"
+             
+          </div>
+        </section>
+        <nav
+          aria-label="Local"
+          class="pf-c-nav"
+          data-ouia-component-id="2"
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="false"
+        >
+          <ul
+            class="pf-c-nav__list"
+          >
+            <li
+              class="pf-c-nav__item"
             >
-              <div
-                class="ins-c-skeleton ins-c-skeleton__sm"
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
               >
-                 
-              </div>
-            </h1>
-          </div>
-        </section>
-        <section
-          class="pf-c-page__main-section pf-l-page__main-section--loading"
-        >
-          <div
-            class="ins-c-spinner ins-m-center"
-            role="status"
-          >
-            <span
-              class="pf-u-screen-reader"
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
             >
-              Loading...
-            </span>
-          </div>
-        </section>
-      </main>
-      <main
-        class="pf-c-page__main"
-        id="no-access"
-      />
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>,
-  <aside
-    class="pf-c-drawer__panel"
-  >
-    <div
-      class="pf-c-drawer__panel-body"
-    />
-  </aside>,
-]
+    <main
+      class="pf-c-page__main"
+      tabindex="-1"
+    >
+      <div
+        class="ins-m-full--height"
+      >
+        <main
+          class="pf-c-page__main"
+          id="no-access"
+        />
+      </div>
+    </main>
+  </div>
+</div>
 `;
 
 exports[`RootApp should render correctly 1`] = `
-Array [
+<div
+  class="pf-c-drawer__content"
+  data-ouia-app-id="app-id"
+  data-ouia-bundle="some-location"
+  data-ouia-safe="true"
+  data-ouia-subnav="some-app"
+>
   <div
-    class="pf-c-drawer__content"
-    data-ouia-app-id="app-id"
-    data-ouia-bundle="some-location"
-    data-ouia-safe="true"
-    data-ouia-subnav="some-app"
+    class="pf-c-page"
   >
-    <div
-      class="ins-m-full--height"
+    <header
+      class="pf-c-page__header"
     >
-      <main
-        class="pf-c-page__main pf-l-page__main"
-        id="root"
-        role="main"
+      <div
+        class="pf-c-page__header-brand"
+      >
+        <div
+          class="pf-c-page__header-brand-toggle"
+        >
+          <button
+            aria-disabled="false"
+            aria-label="Toggle primary navigation"
+            class="pf-c-button pf-m-plain"
+            data-ouia-component-id="chrome-nav-toggle"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1.5em"
+              role="img"
+              style="vertical-align: -0.1875em;"
+              viewBox="0 0 448 512"
+              width="1.5em"
+            >
+              <path
+                d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="pf-c-page__header-brand-link"
+          href="./"
+        >
+          <img
+            alt="Red Hat Logo"
+            src="test-file-stub"
+          />
+        </a>
+      </div>
+      <div
+        class="pf-c-page__header-tools"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Toggle primary navigation"
+          class="pf-c-button pf-m-tertiary"
+          data-ouia-component-id="3"
+          data-ouia-component-type="PF4/Button"
+          data-ouia-safe="true"
+          type="button"
+          widget-type="InsightsNavToggle"
+        >
+          Log in
+        </button>
+      </div>
+    </header>
+    <div
+      class="pf-c-page__sidebar pf-m-expanded"
+      id="ins-c-sidebar"
+    >
+      <div
+        class="pf-c-page__sidebar-body"
       >
         <section
-          class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
-          widget-type="InsightsPageHeader"
+          class="ins-c-app-switcher--loading"
         >
           <div
-            class="pf-c-content"
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-            <h1
-              class="pf-c-title pf-m-2xl ins-l-page__header--loading"
-              widget-type="InsightsPageHeaderTitle"
+             
+          </div>
+        </section>
+        <nav
+          aria-label="Local"
+          class="pf-c-nav"
+          data-ouia-component-id="5"
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="false"
+        >
+          <ul
+            class="pf-c-nav__list"
+          >
+            <li
+              class="pf-c-nav__item"
             >
-              <div
-                class="ins-c-skeleton ins-c-skeleton__sm"
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
               >
-                 
-              </div>
-            </h1>
-          </div>
-        </section>
-        <section
-          class="pf-c-page__main-section pf-l-page__main-section--loading"
-        >
-          <div
-            class="ins-c-spinner ins-m-center"
-            role="status"
-          >
-            <span
-              class="pf-u-screen-reader"
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
             >
-              Loading...
-            </span>
-          </div>
-        </section>
-      </main>
-      <main
-        class="pf-c-page__main"
-        id="no-access"
-      />
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>,
-  <aside
-    class="pf-c-drawer__panel"
-  >
-    <div
-      class="pf-c-drawer__panel-body"
-    />
-  </aside>,
-]
+    <main
+      class="pf-c-page__main"
+      tabindex="-1"
+    >
+      <div
+        class="ins-m-full--height"
+      >
+        <main
+          class="pf-c-page__main"
+          id="no-access"
+        />
+      </div>
+    </main>
+  </div>
+</div>
 `;
 
 exports[`RootApp should render correctly with pageAction 1`] = `
-Array [
+<div
+  class="pf-c-drawer__content"
+  data-ouia-app-id="app-id"
+  data-ouia-bundle="some-location"
+  data-ouia-page-type="some-action"
+  data-ouia-safe="true"
+  data-ouia-subnav="some-app"
+>
   <div
-    class="pf-c-drawer__content"
-    data-ouia-app-id="app-id"
-    data-ouia-bundle="some-location"
-    data-ouia-page-type="some-action"
-    data-ouia-safe="true"
-    data-ouia-subnav="some-app"
+    class="pf-c-page"
   >
-    <div
-      class="ins-m-full--height"
+    <header
+      class="pf-c-page__header"
     >
-      <main
-        class="pf-c-page__main pf-l-page__main"
-        id="root"
-        role="main"
+      <div
+        class="pf-c-page__header-brand"
+      >
+        <div
+          class="pf-c-page__header-brand-toggle"
+        >
+          <button
+            aria-disabled="false"
+            aria-label="Toggle primary navigation"
+            class="pf-c-button pf-m-plain"
+            data-ouia-component-id="chrome-nav-toggle"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1.5em"
+              role="img"
+              style="vertical-align: -0.1875em;"
+              viewBox="0 0 448 512"
+              width="1.5em"
+            >
+              <path
+                d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="pf-c-page__header-brand-link"
+          href="./"
+        >
+          <img
+            alt="Red Hat Logo"
+            src="test-file-stub"
+          />
+        </a>
+      </div>
+      <div
+        class="pf-c-page__header-tools"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Toggle primary navigation"
+          class="pf-c-button pf-m-tertiary"
+          data-ouia-component-id="6"
+          data-ouia-component-type="PF4/Button"
+          data-ouia-safe="true"
+          type="button"
+          widget-type="InsightsNavToggle"
+        >
+          Log in
+        </button>
+      </div>
+    </header>
+    <div
+      class="pf-c-page__sidebar pf-m-expanded"
+      id="ins-c-sidebar"
+    >
+      <div
+        class="pf-c-page__sidebar-body"
       >
         <section
-          class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
-          widget-type="InsightsPageHeader"
+          class="ins-c-app-switcher--loading"
         >
           <div
-            class="pf-c-content"
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-            <h1
-              class="pf-c-title pf-m-2xl ins-l-page__header--loading"
-              widget-type="InsightsPageHeaderTitle"
+             
+          </div>
+        </section>
+        <nav
+          aria-label="Local"
+          class="pf-c-nav"
+          data-ouia-component-id="8"
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="false"
+        >
+          <ul
+            class="pf-c-nav__list"
+          >
+            <li
+              class="pf-c-nav__item"
             >
-              <div
-                class="ins-c-skeleton ins-c-skeleton__sm"
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
               >
-                 
-              </div>
-            </h1>
-          </div>
-        </section>
-        <section
-          class="pf-c-page__main-section pf-l-page__main-section--loading"
-        >
-          <div
-            class="ins-c-spinner ins-m-center"
-            role="status"
-          >
-            <span
-              class="pf-u-screen-reader"
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
             >
-              Loading...
-            </span>
-          </div>
-        </section>
-      </main>
-      <main
-        class="pf-c-page__main"
-        id="no-access"
-      />
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>,
-  <aside
-    class="pf-c-drawer__panel"
-  >
-    <div
-      class="pf-c-drawer__panel-body"
-    />
-  </aside>,
-]
+    <main
+      class="pf-c-page__main"
+      tabindex="-1"
+    >
+      <div
+        class="ins-m-full--height"
+      >
+        <main
+          class="pf-c-page__main"
+          id="no-access"
+        />
+      </div>
+    </main>
+  </div>
+</div>
 `;
 
 exports[`RootApp should render correctly with pageObjectId 1`] = `
-Array [
+<div
+  class="pf-c-drawer__content"
+  data-ouia-app-id="app-id"
+  data-ouia-bundle="some-location"
+  data-ouia-page-object-id="some-object-id"
+  data-ouia-safe="true"
+  data-ouia-subnav="some-app"
+>
   <div
-    class="pf-c-drawer__content"
-    data-ouia-app-id="app-id"
-    data-ouia-bundle="some-location"
-    data-ouia-page-object-id="some-object-id"
-    data-ouia-safe="true"
-    data-ouia-subnav="some-app"
+    class="pf-c-page"
   >
-    <div
-      class="ins-m-full--height"
+    <header
+      class="pf-c-page__header"
     >
-      <main
-        class="pf-c-page__main pf-l-page__main"
-        id="root"
-        role="main"
+      <div
+        class="pf-c-page__header-brand"
+      >
+        <div
+          class="pf-c-page__header-brand-toggle"
+        >
+          <button
+            aria-disabled="false"
+            aria-label="Toggle primary navigation"
+            class="pf-c-button pf-m-plain"
+            data-ouia-component-id="chrome-nav-toggle"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1.5em"
+              role="img"
+              style="vertical-align: -0.1875em;"
+              viewBox="0 0 448 512"
+              width="1.5em"
+            >
+              <path
+                d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="pf-c-page__header-brand-link"
+          href="./"
+        >
+          <img
+            alt="Red Hat Logo"
+            src="test-file-stub"
+          />
+        </a>
+      </div>
+      <div
+        class="pf-c-page__header-tools"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Toggle primary navigation"
+          class="pf-c-button pf-m-tertiary"
+          data-ouia-component-id="9"
+          data-ouia-component-type="PF4/Button"
+          data-ouia-safe="true"
+          type="button"
+          widget-type="InsightsNavToggle"
+        >
+          Log in
+        </button>
+      </div>
+    </header>
+    <div
+      class="pf-c-page__sidebar pf-m-expanded"
+      id="ins-c-sidebar"
+    >
+      <div
+        class="pf-c-page__sidebar-body"
       >
         <section
-          class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
-          widget-type="InsightsPageHeader"
+          class="ins-c-app-switcher--loading"
         >
           <div
-            class="pf-c-content"
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-            <h1
-              class="pf-c-title pf-m-2xl ins-l-page__header--loading"
-              widget-type="InsightsPageHeaderTitle"
+             
+          </div>
+        </section>
+        <nav
+          aria-label="Local"
+          class="pf-c-nav"
+          data-ouia-component-id="11"
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="false"
+        >
+          <ul
+            class="pf-c-nav__list"
+          >
+            <li
+              class="pf-c-nav__item"
             >
-              <div
-                class="ins-c-skeleton ins-c-skeleton__sm"
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
               >
-                 
-              </div>
-            </h1>
-          </div>
-        </section>
-        <section
-          class="pf-c-page__main-section pf-l-page__main-section--loading"
-        >
-          <div
-            class="ins-c-spinner ins-m-center"
-            role="status"
-          >
-            <span
-              class="pf-u-screen-reader"
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
             >
-              Loading...
-            </span>
-          </div>
-        </section>
-      </main>
-      <main
-        class="pf-c-page__main"
-        id="no-access"
-      />
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>,
-  <aside
-    class="pf-c-drawer__panel"
-  >
-    <div
-      class="pf-c-drawer__panel-body"
-    />
-  </aside>,
-]
+    <main
+      class="pf-c-page__main"
+      tabindex="-1"
+    >
+      <div
+        class="ins-m-full--height"
+      >
+        <main
+          class="pf-c-page__main"
+          id="no-access"
+        />
+      </div>
+    </main>
+  </div>
+</div>
 `;
 
 exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = `
-Array [
+<div
+  class="pf-c-drawer__content"
+  data-ouia-app-id="app-id"
+  data-ouia-bundle="some-location"
+  data-ouia-page-object-id="some-object-id"
+  data-ouia-page-type="some-action"
+  data-ouia-safe="true"
+  data-ouia-subnav="some-app"
+>
   <div
-    class="pf-c-drawer__content"
-    data-ouia-app-id="app-id"
-    data-ouia-bundle="some-location"
-    data-ouia-page-object-id="some-object-id"
-    data-ouia-page-type="some-action"
-    data-ouia-safe="true"
-    data-ouia-subnav="some-app"
+    class="pf-c-page"
   >
-    <div
-      class="ins-m-full--height"
+    <header
+      class="pf-c-page__header"
     >
-      <main
-        class="pf-c-page__main pf-l-page__main"
-        id="root"
-        role="main"
+      <div
+        class="pf-c-page__header-brand"
+      >
+        <div
+          class="pf-c-page__header-brand-toggle"
+        >
+          <button
+            aria-disabled="false"
+            aria-label="Toggle primary navigation"
+            class="pf-c-button pf-m-plain"
+            data-ouia-component-id="chrome-nav-toggle"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1.5em"
+              role="img"
+              style="vertical-align: -0.1875em;"
+              viewBox="0 0 448 512"
+              width="1.5em"
+            >
+              <path
+                d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
+              />
+            </svg>
+          </button>
+        </div>
+        <a
+          class="pf-c-page__header-brand-link"
+          href="./"
+        >
+          <img
+            alt="Red Hat Logo"
+            src="test-file-stub"
+          />
+        </a>
+      </div>
+      <div
+        class="pf-c-page__header-tools"
+      >
+        <button
+          aria-disabled="false"
+          aria-label="Toggle primary navigation"
+          class="pf-c-button pf-m-tertiary"
+          data-ouia-component-id="12"
+          data-ouia-component-type="PF4/Button"
+          data-ouia-safe="true"
+          type="button"
+          widget-type="InsightsNavToggle"
+        >
+          Log in
+        </button>
+      </div>
+    </header>
+    <div
+      class="pf-c-page__sidebar pf-m-expanded"
+      id="ins-c-sidebar"
+    >
+      <div
+        class="pf-c-page__sidebar-body"
       >
         <section
-          class="pf-m-light pf-c-page-header pf-c-page__main-section pf-m-light"
-          widget-type="InsightsPageHeader"
+          class="ins-c-app-switcher--loading"
         >
           <div
-            class="pf-c-content"
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-            <h1
-              class="pf-c-title pf-m-2xl ins-l-page__header--loading"
-              widget-type="InsightsPageHeaderTitle"
+             
+          </div>
+        </section>
+        <nav
+          aria-label="Local"
+          class="pf-c-nav"
+          data-ouia-component-id="14"
+          data-ouia-component-type="PF4/Nav"
+          data-ouia-safe="false"
+        >
+          <ul
+            class="pf-c-nav__list"
+          >
+            <li
+              class="pf-c-nav__item"
             >
-              <div
-                class="ins-c-skeleton ins-c-skeleton__sm"
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
               >
-                 
-              </div>
-            </h1>
-          </div>
-        </section>
-        <section
-          class="pf-c-page__main-section pf-l-page__main-section--loading"
-        >
-          <div
-            class="ins-c-spinner ins-m-center"
-            role="status"
-          >
-            <span
-              class="pf-u-screen-reader"
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
             >
-              Loading...
-            </span>
-          </div>
-        </section>
-      </main>
-      <main
-        class="pf-c-page__main"
-        id="no-access"
-      />
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+            <li
+              class="pf-c-nav__item"
+            >
+              <a
+                class="pf-c-nav__link ins-c-skeleton__link"
+              >
+                <div
+                  class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+                >
+                   
+                </div>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-  </div>,
-  <aside
-    class="pf-c-drawer__panel"
-  >
-    <div
-      class="pf-c-drawer__panel-body"
-    />
-  </aside>,
-]
+    <main
+      class="pf-c-page__main"
+      tabindex="-1"
+    >
+      <div
+        class="ins-m-full--height"
+      >
+        <main
+          class="pf-c-page__main"
+          id="no-access"
+        />
+      </div>
+    </main>
+  </div>
+</div>
 `;

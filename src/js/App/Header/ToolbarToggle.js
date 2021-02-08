@@ -65,7 +65,7 @@ class ToolbarToggle extends Component {
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
       >
-        <this.props.icon />
+        {this.props.icon && <this.props.icon />}
       </DropdownToggle>
     );
 
