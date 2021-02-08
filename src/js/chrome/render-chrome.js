@@ -24,7 +24,7 @@ const App = () => {
           ...acc,
           [appName]: {
             name: appName,
-            manifestLocation: `${window.location.origin}${curr.module?.manifest || `/apps/${appName}/fed-mods.json`}`,
+            manifestLocation: `.${curr.module?.manifest || `/apps/${appName}/fed-mods.json`}`,
           },
         };
       }
@@ -34,7 +34,7 @@ const App = () => {
     {
       chrome: {
         name: 'chrome',
-        manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json`,
+        manifestLocation: `./apps/chrome/js/fed-mods.json`,
       },
     }
   );
