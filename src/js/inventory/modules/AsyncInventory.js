@@ -108,6 +108,9 @@ AsyncInventory.propTypes = {
   onLoad: PropTypes.func,
   componentName: PropTypes.string,
   history: PropTypes.object,
+  innerRef: PropTypes.shape({
+    current: PropTypes.any,
+  }),
 };
 
 AsyncInventory.defaultProps = {
