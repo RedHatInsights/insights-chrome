@@ -1,9 +1,8 @@
 import React from 'react';
 import ConnectedBrand, { Brand } from '../Brand';
-import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import { shallow, mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 describe('Brand', () => {
   let initialState;
@@ -19,24 +18,24 @@ describe('Brand', () => {
 
   it('should render correctly with initial state', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedBrand />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
   it('should render correctly with state navHidden: false', () => {
     const store = mockStore({ chrome: { navHidden: false } });
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedBrand />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
   it('should render correctly with button', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <Brand
         toggleNav={() => {
           return;
@@ -44,20 +43,20 @@ describe('Brand', () => {
         isHidden={true}
       />
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
   it('onClick should fire', () => {
     const mockCallBack = jest.fn();
 
-    const wrapper = shallow(<Brand toggleNav={mockCallBack} navHidden={true} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<Brand toggleNav={mockCallBack} navHidden={true} />);
+    expect(container.querySelector('div')).toMatchSnapshot();
 
-    wrapper.find(`[ouiaId='chrome-nav-toggle']`).simulate('click');
+    container.querySelector(`[data-ouia-component-id='chrome-nav-toggle']`).click();
     expect(mockCallBack).toHaveBeenCalledTimes(1);
   });
   it('mapDispatchToProps function fires', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(<ConnectedBrand store={store} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<ConnectedBrand store={store} />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

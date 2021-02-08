@@ -52,6 +52,10 @@ export function chromeNavUpdate(newNav) {
   return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
 }
 
+export function chromeNavSectionUpdate(newSection) {
+  return { type: actionTypes.CHROME_NAV_SECTION_UPDATE, payload: newSection };
+}
+
 export function appAction(action) {
   return { type: actionTypes.CHROME_PAGE_ACTION, payload: action };
 }
