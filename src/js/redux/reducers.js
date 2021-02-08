@@ -22,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: (id === 'landing' && getEnv() !== 'ci' && !isBeta()) || id === 'trust',
+    navHidden: !(id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
