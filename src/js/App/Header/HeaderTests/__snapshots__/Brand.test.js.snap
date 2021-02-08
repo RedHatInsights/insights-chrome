@@ -37,20 +37,19 @@ exports[`Brand mapDispatchToProps function fires 1`] = `
         <Button
           aria-label="Toggle primary navigation"
           onClick={[Function]}
+          ouiaId="chrome-nav-toggle"
           variant="plain"
-          widget-type="InsightsNavToggle"
         >
           <button
             aria-disabled={false}
             aria-label="Toggle primary navigation"
             className="pf-c-button pf-m-plain"
-            data-ouia-component-id={2}
+            data-ouia-component-id="chrome-nav-toggle"
             data-ouia-component-type="PF4/Button"
             data-ouia-safe={true}
             disabled={false}
             onClick={[Function]}
             type="button"
-            widget-type="InsightsNavToggle"
           >
             <BarsIcon
               color="currentColor"
@@ -106,8 +105,8 @@ exports[`Brand onClick should fire 1`] = `
     <Button
       aria-label="Toggle primary navigation"
       onClick={[Function]}
+      ouiaId="chrome-nav-toggle"
       variant="plain"
-      widget-type="InsightsNavToggle"
     >
       <BarsIcon
         color="currentColor"
@@ -135,8 +134,8 @@ exports[`Brand should render correctly with button 1`] = `
     <Button
       aria-label="Toggle primary navigation"
       onClick={[Function]}
+      ouiaId="chrome-nav-toggle"
       variant="plain"
-      widget-type="InsightsNavToggle"
     >
       <BarsIcon
         color="currentColor"
@@ -182,20 +181,19 @@ exports[`Brand should render correctly with initial state 1`] = `
           <Button
             aria-label="Toggle primary navigation"
             onClick={[Function]}
+            ouiaId="chrome-nav-toggle"
             variant="plain"
-            widget-type="InsightsNavToggle"
           >
             <button
               aria-disabled={false}
               aria-label="Toggle primary navigation"
               className="pf-c-button pf-m-plain"
-              data-ouia-component-id={0}
+              data-ouia-component-id="chrome-nav-toggle"
               data-ouia-component-type="PF4/Button"
               data-ouia-safe={true}
               disabled={false}
               onClick={[Function]}
               type="button"
-              widget-type="InsightsNavToggle"
             >
               <BarsIcon
                 color="currentColor"
@@ -269,20 +267,19 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
           <Button
             aria-label="Toggle primary navigation"
             onClick={[Function]}
+            ouiaId="chrome-nav-toggle"
             variant="plain"
-            widget-type="InsightsNavToggle"
           >
             <button
               aria-disabled={false}
               aria-label="Toggle primary navigation"
               className="pf-c-button pf-m-plain"
-              data-ouia-component-id={1}
+              data-ouia-component-id="chrome-nav-toggle"
               data-ouia-component-type="PF4/Button"
               data-ouia-safe={true}
               disabled={false}
               onClick={[Function]}
               type="button"
-              widget-type="InsightsNavToggle"
             >
               <BarsIcon
                 color="currentColor"

@@ -9,7 +9,7 @@ import Logo from './Logo';
 export const Brand = ({ toggleNav, navHidden }) => (
   <div className="pf-c-page__header-brand">
     <div hidden={navHidden} className="pf-c-page__header-brand-toggle">
-      <Button variant="plain" aria-label="Toggle primary navigation" widget-type="InsightsNavToggle" onClick={() => toggleNav && toggleNav()}>
+      <Button variant="plain" aria-label="Toggle primary navigation" ouiaId="chrome-nav-toggle" onClick={() => toggleNav && toggleNav()}>
         <BarsIcon size="md" />
       </Button>
     </div>
