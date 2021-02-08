@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider, useSelector } from 'react-redux';
 import { spinUpStore } from '../redux-config';
 import RootApp from '../App/RootApp';
+import { isBeta } from '../utils';
 
 import loadInventory from '../inventory/index';
 import loadRemediations from '../remediations';
@@ -24,9 +25,7 @@ const App = () => {
           ...acc,
           [appName]: {
             name: appName,
-            manifestLocation: `${window.location.origin}${insights.chrome.isBeta() ? '/beta' : ''}${
-              curr.module?.manifest || `/apps/${appName}/fed-mods.json`
-            }`,
+            manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${curr.module?.manifest || `/apps/${appName}/fed-mods.json`}`,
           },
         };
       }
@@ -36,7 +35,7 @@ const App = () => {
     {
       chrome: {
         name: 'chrome',
-        manifestLocation: `${window.location.origin}${insights.chrome.isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
       },
     }
   );
