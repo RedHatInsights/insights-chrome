@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import Header from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
+import { isBeta } from '../utils';
 
 const LoadingComponent = () => (
   <Bullseye className="pf-u-p-xl">
@@ -51,7 +52,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
     }
   }, [remoteModule]);
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={isBeta ? '/beta' : '/'}>
       <div
         className="pf-c-drawer__content"
         data-ouia-subnav={activeApp}
