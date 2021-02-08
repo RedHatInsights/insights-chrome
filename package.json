@@ -180,6 +180,7 @@
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",
     "redux-promise-middleware": "^6.1.2",
+    "title-case": "^3.0.3",
     "urijs": "^1.19.5",
     "url-parse": "^1.4.7"
   },
