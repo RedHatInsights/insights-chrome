@@ -13,23 +13,12 @@ export const workloads = [
     noFilter: true,
     tags: [
       {
-        tag: { key: 'All workloads' },
-      },
-      {
         tag: { key: 'SAP' },
       },
     ],
-    type: 'radio',
+    type: 'checkbox',
   },
 ];
-
-export const selectWorkloads = () => ({
-  [workloads?.[0]?.tags?.[0]?.tag?.key || 'All workloads']: {
-    group: omit(workloads[0], 'tags'),
-    isSelected: true,
-    item: {},
-  },
-});
 
 export const updateSelected = (original, namespace, key, value, isSelected, extra) => ({
   ...original,
@@ -63,20 +52,22 @@ export const createTagsFilter = (tags = []) =>
     };
   }, {});
 
-export const storeFilter = (tags, token) => {
+export const storeFilter = (tags, token, isEnabled) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
-  const searchParams = new URLSearchParams();
-  const [, SIDs, mappedTags] = flatTags(tags, false, true);
-  if (tags?.Workloads) {
-    const currWorkloads = Object.entries(tags?.Workloads || {})?.find(([, { isSelected }]) => isSelected)?.[0];
-    if (currWorkloads) {
-      searchParams.append('workloads', currWorkloads);
+  if (isEnabled) {
+    const searchParams = new URLSearchParams();
+    const [, SIDs, mappedTags] = flatTags(tags, false, true);
+    if (tags?.Workloads) {
+      const currWorkloads = Object.entries(tags?.Workloads || {})?.find(([, { isSelected }]) => isSelected)?.[0];
+      if (currWorkloads) {
+        searchParams.append('workloads', currWorkloads);
+      }
     }
-  }
-  searchParams.append('SIDs', SIDs);
-  searchParams.append('tags', mappedTags);
+    searchParams.append('SIDs', SIDs);
+    searchParams.append('tags', mappedTags);
 
-  location.hash = searchParams.toString();
+    location.hash = searchParams.toString();
+  }
 
   localStorage.setItem(
     `${GLOBAL_FILTER_KEY}/${token}`,
@@ -127,7 +118,7 @@ export const generateFilter = async () => {
           [tag?.key]: {
             group: omit(workloads[0], 'tags'),
             isSelected: true,
-            item: {},
+            item: { tagKey: tag?.key },
           },
         }
       : data.Workloads;

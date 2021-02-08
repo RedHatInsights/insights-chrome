@@ -1,3 +1,5 @@
+import { getEnv, isBeta } from '../utils';
+
 export function clickReducer(state, action) {
   state = {
     ...state,
@@ -20,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: id === 'landing' || id === 'trust',
+    navHidden: !(id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
@@ -34,7 +36,7 @@ export function navUpdateReducer(state, { payload: { activeSection, globalNav, .
   return {
     ...state,
     ...payload,
-    globalNav: globalNav.map((app) => ({
+    globalNav: (globalNav || []).map((app) => ({
       ...app,
       active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
     })),
@@ -80,7 +82,10 @@ export function clearActive(state) {
 
 export function navToggleReducer(state) {
   const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
-  let page = document.getElementById('ins-c-sidebar');
+  let page = document.getElementById('ins-c-sidebar') || document.getElementById('ins-c-landing-nav');
+  if (!page) {
+    return state;
+  }
 
   if (mq && mq.matches) {
     page.classList.remove('pf-m-expanded');

@@ -21,6 +21,8 @@
             padding: 0;
             width: 100%;
             justify-content: space-between;
+            display: flex;
+
             .pf-c-dropdown__toggle-text {
                 text-transform: capitalize;
                 font-weight: var(--pf-global--FontWeight--semi-bold);

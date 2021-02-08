@@ -11,6 +11,7 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
+import './Tools.scss';
 
 const Tools = () => {
   {
@@ -19,7 +20,7 @@ const Tools = () => {
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
-  const settingsPath = `${document.baseURI}settings/${window.insights.chrome.isBeta() ? 'my-user-access' : 'rbac'}`;
+  const settingsPath = `${document.baseURI}settings/my-user-access`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
@@ -68,7 +69,7 @@ const Tools = () => {
   }
   const aboutMenuDropdownItems = [
     {
-      title: 'Get support',
+      title: 'Support options',
       url: 'https://access.redhat.com/support',
     },
     {

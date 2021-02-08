@@ -23,7 +23,7 @@ exports[`AppSwitcher should render correctly 1`] = `
       <span
         className="pf-c-dropdown__toggle-text"
       >
-        Red Hat Insights
+        Insights
       </span>
       <span
         className="pf-c-dropdown__toggle-icon"

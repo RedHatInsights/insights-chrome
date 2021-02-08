@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { globalFilterScope, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
 import * as actionTypes from '../redux/action-types';
 import loadInventory from '../inventory/index';
@@ -13,7 +13,7 @@ import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import logger from '../jwt/logger';
-import { getUrl, getEnv } from '../utils';
+import { getUrl, getEnv, isBeta } from '../utils';
 import { createSupportCase } from '../createCase';
 import get from 'lodash/get';
 import { flatTags } from '../App/GlobalFilter/constants';
@@ -61,6 +61,7 @@ export function chromeInit(navResolver) {
     appAction,
     appObjectId,
     hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
     appNavClick: ({ secondaryNav, ...payload }) => {
@@ -108,7 +109,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
         login: () => libjwt.jwt.login(),
       },
       isProd: window.location.host === 'cloud.redhat.com',
-      isBeta: () => (window.location.pathname.split('/')[1] === 'beta' ? true : false),
+      isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
@@ -141,8 +142,9 @@ export function noAccess() {
   const { store } = spinUpStore();
   window.insights.chrome.auth
     .getUser()
-    .then(({ entitlements }) => {
-      if (!consts.allowedUnauthedPaths.includes(location.pathname)) {
+    .then((data) => {
+      if (data && !consts.allowedUnauthedPaths.includes(location.pathname)) {
+        const { entitlements } = data;
         const path = location.pathname.split('/');
         const apps = Object.keys(entitlements || {});
 

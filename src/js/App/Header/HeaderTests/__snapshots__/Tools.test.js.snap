@@ -68,7 +68,7 @@ exports[`Tools should render correctly 1`] = `
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Get support
+                Support options
               </DropdownItem>
             </React.Fragment>,
             <React.Fragment>

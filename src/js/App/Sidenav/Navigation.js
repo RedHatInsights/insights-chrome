@@ -18,15 +18,15 @@ const extraLinks = {
     {
       id: 'extra-inssubs',
       title: 'Subscription Watch',
-      link: './subscriptions/',
+      link: './subscriptions/rhel-sw/all',
     },
     {
       expandable: true,
       id: 'extra-expandable-docs',
-      title: 'Documentation',
+      title: 'Product Materials',
       subItems: [
-        { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Product Documentation', external: true },
-        { id: 'extra-security', url: './security/insights', title: 'Security' },
+        { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Documentation', external: true },
+        { id: 'extra-security', url: './security/insights', title: 'Security Information' },
         { id: 'extra-docs', url: './docs/api', title: 'APIs' },
       ],
     },
@@ -74,6 +74,14 @@ const extraLinks = {
     {
       id: 'extra-openshift-docs',
       url: 'https://docs.openshift.com/dedicated/4/',
+      title: 'Documentation',
+      external: true,
+    },
+  ],
+  'application-services': [
+    {
+      id: 'extra-application-services-docs',
+      url: 'https://access.redhat.com/documentation/en-us/',
       title: 'Documentation',
       external: true,
     },

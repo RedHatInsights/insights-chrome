@@ -32,15 +32,15 @@ function registerProduct() {
 async function getProductHash() {
   const { store } = spinUpStore();
 
-  const currentApp = store.getState().chrome.appId;
+  const currentApp = store.getState().chrome.activeGroup;
   const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentApp}/app.info.json`;
 
   const appData = await (await fetch(path)).json();
-  return `Current app: ${currentApp}, Current app hash: ${appData.src_hash}`;
+  return `Current app: ${currentApp || 'Unknown'}, Current app hash: ${appData.src_hash || 'Unknown'}`;
 }
 
 export async function createSupportCase(userInfo, fields) {
-  const currentProduct = registerProduct();
+  const currentProduct = registerProduct() || 'Other';
   const currentHash = await getProductHash();
 
   log('Creating a support case');

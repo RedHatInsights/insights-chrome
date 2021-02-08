@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/components/cjs/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/components/cjs/FilterHooks';
@@ -9,7 +9,8 @@ import { Chip, ChipGroup } from '@patternfly/react-core/dist/js/components/ChipG
 import { Button } from '@patternfly/react-core/dist/js/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, storeFilter, generateFilter, selectWorkloads } from './constants';
+import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
+import debounce from 'lodash/debounce';
 
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
@@ -19,12 +20,13 @@ const GlobalFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();
   const dispatch = useDispatch();
-  const { isLoaded, count, total, sapCount } = useSelector(
-    ({ globalFilter: { tags, sid, workloads } }) => ({
+  const { isLoaded, count, total, sapCount, isDisabled } = useSelector(
+    ({ globalFilter: { tags, sid, workloads, globalFilterHidden }, chrome: { appId } }) => ({
       isLoaded: tags?.isLoaded && sid?.isLoaded && workloads?.isLoaded,
       count: tags?.count || 0 + sid?.count || 0 + workloads?.count || 0,
       total: tags?.total || 0 + sid?.total || 0 + workloads?.total || 0,
       sapCount: workloads?.hasSap,
+      isDisabled: globalFilterHidden || !appId,
     }),
     shallowEqual
   );
@@ -32,6 +34,33 @@ const GlobalFilter = () => {
   const sid = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
+  const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
+    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded);
+    batch(() => {
+      dispatch(
+        fetchAllTags({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+      dispatch(
+        fetchAllSIDs({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+      dispatch(
+        fetchAllWorkloads({
+          registeredWith: filterScope,
+          activeTags: selectedTags,
+          search: filterTagsBy,
+        })
+      );
+    });
+  };
+  const debouncedLoadTags = useCallback(debounce(loadTags, 800), []);
   const { filter, chips, selectedTags, setValue, filterTagsBy } = useTagsFilter(
     [...workloads, ...sid, ...tags],
     isLoaded && Boolean(token),
@@ -50,6 +79,7 @@ const GlobalFilter = () => {
       setHasAccess(permissions?.some((item) => ['inventory:*:*', 'inventory:*:read', 'inventory:hosts:read'].includes(item?.permission || item)));
     })();
   }, [userLoaded]);
+
   useEffect(() => {
     if (!token && userLoaded) {
       (async () => {
@@ -58,51 +88,24 @@ const GlobalFilter = () => {
         setToken(() => currToken);
       })();
     } else if (userLoaded && token && isAllowed()) {
-      storeFilter(selectedTags, token);
-      batch(() => {
-        dispatch(
-          fetchAllTags({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-        dispatch(
-          fetchAllSIDs({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-        dispatch(
-          fetchAllWorkloads({
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search: filterTagsBy,
-          })
-        );
-      });
+      loadTags(selectedTags, filterScope, filterTagsBy, token);
     }
-  }, [selectedTags, filterScope, filterTagsBy, userLoaded, isAllowed()]);
+  }, [selectedTags, filterScope, userLoaded, isAllowed()]);
+
+  useEffect(() => {
+    if (userLoaded && isAllowed()) {
+      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token);
+    }
+  }, [filterTagsBy]);
 
   useEffect(() => {
     if (userLoaded && token && isAllowed()) {
-      if (!Object.values(selectedTags?.[workloads?.[0]?.name] || {})?.some(({ isSelected } = {}) => isSelected)) {
-        setValue({
-          ...(selectedTags || {}),
-          [workloads?.[0]?.name || 'Workloads']: {
-            ...selectedTags?.[workloads?.[0]?.name],
-            ...selectWorkloads(),
-          },
-        });
-      } else {
-        dispatch(globalFilterChange(selectedTags));
-      }
+      dispatch(globalFilterChange(selectedTags));
     }
   }, [selectedTags, isAllowed()]);
 
   useEffect(() => {
-    const sapTag = workloads?.[0]?.tags?.[1];
+    const sapTag = workloads?.[0]?.tags?.[0];
     if (typeof sapCount === 'number' && sapTag) {
       sapTag.count = sapCount;
     }
@@ -113,14 +116,21 @@ const GlobalFilter = () => {
     1
   );
   chips?.splice(0, 0, ...(workloadsChip || []));
-  const GroupFilterWrapper = isAllowed() ? Fragment : Tooltip;
+  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : Fragment;
   return (
     <Fragment>
       <Split hasGutter className="ins-c-chrome__global-filter">
         <SplitItem>
           {userLoaded && isAllowed() !== undefined ? (
-            <GroupFilterWrapper position="right" content="You do not have the required inventory permissions to perform this action">
-              <GroupFilter {...filter} isDisabled={!isAllowed()} placeholder="Search tags" />
+            <GroupFilterWrapper
+              {...((!isAllowed() || isDisabled) && {
+                content: !isAllowed()
+                  ? 'You do not have the required inventory permissions to perform this action'
+                  : 'Global filter is not applicable for this page',
+                position: 'right',
+              })}
+            >
+              <GroupFilter {...filter} isDisabled={!isAllowed() || isDisabled} placeholder="Filter results" />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />
@@ -135,8 +145,8 @@ const GlobalFilter = () => {
                     {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
                       <Chip
                         key={chipKey}
-                        className={tagKey === 'All workloads' ? 'ins-m-permanent' : ''}
                         onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false))}
+                        isReadOnly={isDisabled}
                       >
                         {tagKey}
                         {value ? `=${value}` : ''}
@@ -144,9 +154,11 @@ const GlobalFilter = () => {
                     ))}
                   </ChipGroup>
                 ))}
-                <Button variant="link" onClick={() => setValue(() => ({}))}>
-                  Clear filters
-                </Button>
+                {!isDisabled && (
+                  <Button variant="link" onClick={() => setValue(() => ({}))}>
+                    Clear filters
+                  </Button>
+                )}
               </Fragment>
             )}
           </SplitItem>

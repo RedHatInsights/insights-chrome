@@ -2,7 +2,7 @@
 set -e
 set -x
 
-# for now in chrome... push everywhere when master updates
+# push to ci and qa when master merges
 if [ "${TRAVIS_BRANCH}" = "master" ]; then
     for env in ci qa
     do

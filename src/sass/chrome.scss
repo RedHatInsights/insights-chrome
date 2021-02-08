@@ -35,7 +35,6 @@ $pf-global--image-path: './assets/images/';
 @import 'helpers.scss';
 
 @import 'partials/_footer.scss';
-@import 'partials/_tempNav.scss';
 
 body {
     position: relative;
@@ -172,12 +171,16 @@ section.ins-c-app-switcher--loading {
         .pf-l-split__item:first-of-type { min-width: 150px;}
 
         .ins-c-tagfilter {
+        width: 100%;
         &.pf-m-expanded { width: 450px; }
         .pf-c-select__menu {
             max-height: 400px;
             overflow: auto;
         }
 
+        .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
+            background: var(--pf-global--Color--light-100);
+        }
         .ins-c-tagfilter__option-value { max-width: 360px; }
         }
     }

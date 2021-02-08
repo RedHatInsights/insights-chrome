@@ -1,6 +1,7 @@
 'use strict';
 
 import logger from './jwt/logger';
+import get from 'lodash/get';
 
 const log = logger('Analytics.js');
 
@@ -35,6 +36,15 @@ function getUrl(type) {
   return type === 'bundle' ? sections[1] : sections[2];
 }
 
+function getAdobeVisitorId() {
+  const visitor = get('window.s.visitor', false);
+  if (visitor) {
+    return visitor.getMarketingCloudVisitorID();
+  }
+
+  return -1;
+}
+
 function getPendoConf(data) {
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
@@ -57,6 +67,8 @@ function getPendoConf(data) {
       // even if its duplicative... just to be extra sure
       // in case another we property overrides account_num account_id
       cloud_user_id: userID,
+
+      adobe_cloud_visitor_id: getAdobeVisitorId(),
 
       internal: data.identity.user.is_internal,
       lang: data.identity.user.locale,
@@ -84,8 +96,7 @@ function getPendoConf(data) {
 
 export default (data) => {
   // eslint-disable-next-line
-    (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=[];v=['initialize','identify','updateOptions','pageLoad'];for(w=0,x=v.length;w<x;++w)(function(m){o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);y=e.createElement(n);y.async=!0;y.src=`https://content.analytics.cloud.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
-
+  (function (p, e, n, d, o) { var v, w, x, y, z; o = p[d] = p[d] || {}; o._q = []; v = ['initialize', 'identify', 'updateOptions', 'pageLoad']; for (w = 0, x = v.length; w < x; ++w)(function (m) { o[m] = o[m] || function () { o._q[m === v[0] ? 'unshift' : 'push']([m].concat([].slice.call(arguments, 0))); }; })(v[w]); y = e.createElement(n); y.onerror = function (error) { console.error('Pendo blocked') };y.async=!0;y.src=`https://content.analytics.cloud.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
   try {
     initPendo(getPendoConf(data));
     log('Pendo initialized');

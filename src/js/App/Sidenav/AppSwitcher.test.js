@@ -21,7 +21,7 @@ describe('AppSwitcher', () => {
     const store = mockStore(initialState);
     const wrapper = mount(
       <Provider store={store}>
-        <AppSwitcher currentApp="Red Hat Insights" />
+        <AppSwitcher currentApp="Insights" />
       </Provider>
     );
     expect(toJson(wrapper, { mode: 'deep' })).toMatchSnapshot();
