@@ -107,10 +107,9 @@ const Tools = () => {
       key="Help menu"
       icon={QuestionCircleIcon}
       id="HelpMenu"
-      ouiaComponentId="chrome-help"
+      ouiaId="chrome-help"
       className="ins-c-toolbar__menu-help"
       hasToggleIndicator={null}
-      widget-type="HelpMenu"
       dropdownItems={aboutMenuDropdownItems}
     />
   );
