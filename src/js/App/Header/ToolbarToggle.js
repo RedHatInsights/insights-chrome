@@ -90,6 +90,7 @@ ToolbarToggle.propTypes = {
   className: PropTypes.string,
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hasToggleIndicator: PropTypes.bool,
+  ouiaId: PropTypes.string,
 };
 
 export default ToolbarToggle;
