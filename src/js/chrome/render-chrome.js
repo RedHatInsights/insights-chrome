@@ -7,6 +7,7 @@ import { isBeta } from '../utils';
 
 import loadInventory from '../inventory/index';
 import loadRemediations from '../remediations';
+import { headerLoader } from '../App/Header';
 
 /**
  * This has to be posponed in order to let shared react modules to initialize
@@ -53,6 +54,8 @@ function renderChrome() {
       </Provider>,
       pageRoot
     );
+  } else {
+    headerLoader();
   }
 }
 
