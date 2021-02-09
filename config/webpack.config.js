@@ -7,7 +7,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
   entry: path.resolve(__dirname, '../src/js/chrome.js'),
   output: {
     path: path.resolve(__dirname, '../build/js'),
-    filename: `chrome${noHash ? '' : '.[chunkhash]'}.js`,
+    filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
     publicPath,
     chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
   },
