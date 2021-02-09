@@ -1,9 +1,8 @@
 import React from 'react';
 import ConnectedUserIcon, { UserIcon } from '../UserIcon';
-import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import { shallow, mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 describe('Connected User Icon', () => {
   let initialState;
@@ -25,12 +24,12 @@ describe('Connected User Icon', () => {
 
   it('should render correctly with initial state', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedUserIcon />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container.querySelector('img')).toMatchSnapshot();
   });
 });
 
@@ -40,7 +39,7 @@ describe('User Icon', () => {
       username: 'test',
     };
     const mockGetImage = jest.fn();
-    const wrapper = shallow(<UserIcon account={account} getImage={mockGetImage} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<UserIcon account={account} getImage={mockGetImage} />);
+    expect(container.querySelector('img')).toMatchSnapshot();
   });
 });

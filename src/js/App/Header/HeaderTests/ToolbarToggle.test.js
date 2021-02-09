@@ -1,6 +1,5 @@
 import React from 'react';
-import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import ToolbarToggle from '../ToolbarToggle';
 
 describe('ToolbarToggle', () => {
@@ -20,7 +19,7 @@ describe('ToolbarToggle', () => {
       ],
       isOpen: true,
     };
-    const wrapper = shallow(<ToolbarToggle {...toolbarToggleProps} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

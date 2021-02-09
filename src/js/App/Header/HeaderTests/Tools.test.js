@@ -1,12 +1,18 @@
 import React from 'react';
 import Tools from '../Tools';
-import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { render, act } from '@testing-library/react';
+
+jest.mock('../UserToggle', () => () => '<UserToggle />');
+jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');
+jest.mock('../InsightsAbout', () => () => '<InsightsAbout />');
 
 describe('Tools', () => {
-  it('should render correctly', () => {
+  it('should render correctly', async () => {
     const mockClick = jest.fn();
-    const wrapper = shallow(<Tools onClick={mockClick} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    let container;
+    await act(async () => {
+      container = render(<Tools onClick={mockClick} />).container;
+    });
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

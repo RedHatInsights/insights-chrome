@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
+import { NavExpandable } from '@patternfly/react-core';
 import NavigationItem from './NavigationItem';
 
 const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp }) => {
