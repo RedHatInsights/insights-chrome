@@ -7,6 +7,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
       <DropdownItem
         component="a"
         href="url1"
+        ouiaId="title1"
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -15,6 +16,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
       <DropdownItem
         component="button"
         onClick={[Function]}
+        ouiaId="title2"
       >
         title2
       </DropdownItem>,
