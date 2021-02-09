@@ -12,6 +12,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    console.error('Chrome encountered an error!', error);
     this.setState(() => ({
       errorId: Sentry.captureException(new Error('Support case created'), {
         error,

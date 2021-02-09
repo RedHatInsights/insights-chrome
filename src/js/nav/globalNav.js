@@ -88,10 +88,10 @@ async function getAppData(appId, propName, masterConfig) {
 
 export async function loadNav(yamlConfig, cache) {
   const [active, section] = [getUrl('bundle') || 'insights', getUrl('app')];
-  let activeBundle = await cache.getItem(`navigation-${active}`);
+  let activeBundle = await cache?.getItem(`navigation-${active}`);
   if (!activeBundle) {
     activeBundle = await getNavFromConfig(safeLoad(yamlConfig), active);
-    cache.setItem(`navigation-${active}`, activeBundle);
+    cache?.setItem(`navigation-${active}`, activeBundle);
   }
 
   const globalNav = (activeBundle[active] || activeBundle.insights)?.routes;
