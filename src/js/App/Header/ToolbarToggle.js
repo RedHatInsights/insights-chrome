@@ -40,6 +40,7 @@ class ToolbarToggle extends Component {
     const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) => (
       <DropdownItem
         key={title}
+        ouiaId={title}
         component={url ? 'a' : 'button'}
         // Because the urls are using 'a', don't use onClick for accessibility
         // If it is a button, use the onClick prop
@@ -57,9 +58,9 @@ class ToolbarToggle extends Component {
 
     const toggle = (
       <DropdownToggle
-        widget-type={this.props.widgetType}
         className={this.props.className}
         id={this.props.id}
+        ouiaId={this.props.id}
         iconComponent={null}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
@@ -75,6 +76,7 @@ class ToolbarToggle extends Component {
         isOpen={this.state.isOpen}
         dropdownItems={dropdownItems}
         onSelect={this.onSelect}
+        ouiaId={this.props.ouiaId}
         isPlain
       />
     );
@@ -88,6 +90,7 @@ ToolbarToggle.propTypes = {
   className: PropTypes.string,
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hasToggleIndicator: PropTypes.bool,
+  ouiaId: PropTypes.string,
 };
 
 export default ToolbarToggle;
