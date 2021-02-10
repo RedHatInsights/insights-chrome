@@ -74,6 +74,7 @@ const Tools = () => {
         </Fragment>
       )}
       id="SettingsMenu"
+      ouiaId="chrome-settings"
       hasToggleIndicator={null}
       widget-type="SettingsMenu"
       dropdownItems={settingsMenuDropdownItems}
@@ -129,7 +130,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: switchRelease,
+      onClick: () => (window.location = switchRelease(window.insights.chrome.isBeta(), window.location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
