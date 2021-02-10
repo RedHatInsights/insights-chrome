@@ -1,73 +1,157 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ConnectedSideNav should render correctly 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
->
-  <Connect(SideNav) />
-</ContextProvider>
+<div>
+  <section
+    class="ins-c-app-switcher--loading"
+  >
+    <div
+      class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+    >
+       
+    </div>
+  </section>
+  <nav
+    aria-label="Local"
+    class="pf-c-nav"
+    data-ouia-component-id="1"
+    data-ouia-component-type="PF4/Nav"
+    data-ouia-safe="false"
+  >
+    <ul
+      class="pf-c-nav__list"
+    >
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 `;
 
 exports[`ConnectedSideNav should render correctly part 2 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
->
-  <Connect(SideNav) />
-</ContextProvider>
+<div>
+  <section
+    class="ins-c-app-switcher--loading"
+  >
+    <div
+      class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+    >
+       
+    </div>
+  </section>
+  <nav
+    aria-label="Local"
+    class="pf-c-nav"
+    data-ouia-component-id="3"
+    data-ouia-component-type="PF4/Nav"
+    data-ouia-safe="false"
+  >
+    <ul
+      class="pf-c-nav__list"
+    >
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+      >
+        <a
+          class="pf-c-nav__link ins-c-skeleton__link"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+          >
+             
+          </div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 `;

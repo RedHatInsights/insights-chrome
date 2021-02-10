@@ -1,15 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AppSwitcher from './AppSwitcher';
 import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
 import './SideNav.scss';
 
-export const SideNav = ({ activeTechnology, globalNav }) => {
+export const SideNav = () => {
   const dispatch = useDispatch();
+  const { activeTechnology, globalNav } = useSelector(({ chrome }) => chrome);
   const [isFirst, setIsFirst] = useState(true);
   useEffect(() => {
     if (globalNav && isFirst) {
@@ -44,8 +45,4 @@ SideNav.defaultProps = {
   activeLocation: '',
 };
 
-export default connect(({ chrome: { activeTechnology, globalNav, appNav } }) => ({
-  activeTechnology,
-  globalNav,
-  appNav,
-}))(SideNav);
+export default SideNav;
