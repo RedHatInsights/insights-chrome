@@ -99,6 +99,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,
+      isChrome2: true,
     },
     experimental: {},
   };
