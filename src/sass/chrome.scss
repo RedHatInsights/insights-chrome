@@ -62,6 +62,30 @@ aside {
 .pf-c-page {
   --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
   --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
+  .ins-m-full--height { height: 100%; }
+  div.ins-c-chrome__global-filter {
+      padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+      background: var(--pf-global--BackgroundColor--100);
+      border-bottom: 1px solid var(--pf-global--palette--black-500);
+      .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
+      .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+      .ins-m-permanent button { display: none; }
+      .pf-l-split__item:first-of-type { min-width: 150px;}
+
+      .ins-c-tagfilter {
+      width: 100%;
+      &.pf-m-expanded { width: 450px; }
+      .pf-c-select__menu {
+          max-height: 400px;
+          overflow: auto;
+      }
+
+      .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
+          background: var(--pf-global--Color--light-100);
+      }
+      .ins-c-tagfilter__option-value { max-width: 360px; }
+      }
+  }
 }
 
 // Page layout styles
@@ -157,33 +181,6 @@ section.ins-c-app-switcher--loading {
 // Pen testing
 .ins-c-pen-test {
     border-top: 3px solid #A18FFF;
-}
-
-.pf-c-page {
-    .ins-m-full--height { height: 100%; }
-    div.ins-c-chrome__global-filter {
-        padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
-        background: var(--pf-global--BackgroundColor--100);
-        border-bottom: 1px solid var(--pf-global--palette--black-500);
-        .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
-        .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
-        .ins-m-permanent button { display: none; }
-        .pf-l-split__item:first-of-type { min-width: 150px;}
-
-        .ins-c-tagfilter {
-        width: 100%;
-        &.pf-m-expanded { width: 450px; }
-        .pf-c-select__menu {
-            max-height: 400px;
-            overflow: auto;
-        }
-
-        .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
-            background: var(--pf-global--Color--light-100);
-        }
-        .ins-c-tagfilter__option-value { max-width: 360px; }
-        }
-    }
 }
 
 // PF navigation text alignment fix
