@@ -8,7 +8,7 @@ function Unauthed() {
     <Fragment>
       <Login /> {/* Removed brand */}
       {cookie.get('cs_loggedOut') === 'true' ? (
-        <HeaderAlert variant="success" title={'You have successfully logged out.'} onAppear={() => cookie.set('cs_loggedOut', 'false')} />
+        <HeaderAlert variant="success" title={'You have successfully logged out.'} onDismiss={() => cookie.set('cs_loggedOut', 'false')} />
       ) : null}
     </Fragment>
   );

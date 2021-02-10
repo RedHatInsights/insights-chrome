@@ -19,7 +19,7 @@ export const Header = () => {
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
           title={`You are now using the ${window.insights.chrome.isBeta() ? 'beta' : 'stable'} release.`}
-          onAppear={() => cookie.set('cs_toggledRelease', 'false')}
+          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
     </Fragment>

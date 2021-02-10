@@ -9,9 +9,8 @@ describe('HeaderAlert', () => {
   });
 
   it('should render correctly dismissable', () => {
-    const onAppear = jest.fn();
-    const { container } = render(<HeaderAlert title="test" dismissable={true} onAppear={onAppear} />);
+    const onDismiss = jest.fn();
+    const { container } = render(<HeaderAlert title="test" dismissable={true} onDismiss={onDismiss} />);
     expect(container.querySelector('div')).toMatchSnapshot();
-    expect(onAppear).toHaveBeenCalledTimes(1);
   });
 });

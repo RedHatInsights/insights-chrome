@@ -4,7 +4,7 @@ import { AlertActionCloseButton } from '@patternfly/react-core/dist/js/component
 import PropTypes from 'prop-types';
 import './HeaderAlert.scss';
 
-const HeaderAlert = ({ title, variant, onAppear, dismissable, dismissDelay }) => {
+const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) => {
   const [alertVisible, setAlertVisible] = useState(true);
   const [timer, setTimer] = useState(null);
 
@@ -15,16 +15,20 @@ const HeaderAlert = ({ title, variant, onAppear, dismissable, dismissDelay }) =>
   }, []);
 
   const createTimer = () => {
-    onAppear && onAppear();
     timer !== null && clearTimeout(timer);
-
     dismissable ||
       setTimer(
         setTimeout(() => {
           setAlertVisible(false);
           clearTimeout(timer);
+          onDismiss && onDismiss();
         }, dismissDelay)
       );
+  };
+
+  const onClose = () => {
+    onDismiss && onDismiss();
+    setAlertVisible(false);
   };
 
   return (
@@ -34,7 +38,7 @@ const HeaderAlert = ({ title, variant, onAppear, dismissable, dismissDelay }) =>
           variant={variant}
           title={title}
           className="ins-c-alert"
-          actionClose={dismissable ? <AlertActionCloseButton onClose={() => setAlertVisible(false)} /> : null}
+          actionClose={dismissable ? <AlertActionCloseButton onClose={onClose} /> : null}
         />
       )}
     </React.Fragment>
@@ -50,7 +54,7 @@ HeaderAlert.defaultProps = {
 HeaderAlert.propTypes = {
   title: PropTypes.string,
   variant: PropTypes.string,
-  onAppear: PropTypes.func,
+  onDismiss: PropTypes.func,
   dismissable: PropTypes.bool,
   dismissDelay: PropTypes.number,
 };
