@@ -1,13 +1,9 @@
-@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_all.scss';
+@import '~@redhat-cloud-services/frontend-components-utilities/styles/_all.scss';
 @import '~@patternfly/patternfly/sass-utilities/_all';
 
 .pf-c-about-modal-box__content {
     --pf-c-about-modal-box__content--MarginTop: var(--pf-global--spacer--md);
     --pf-c-about-modal-box__content--MarginBottom: var(--pf-global--spacer--md);
-}
-
-.pf-c-about-modal-box__hero {
-    --pf-c-about-modal-box__hero--sm--BackgroundImage: url('/../../build/assets/images/fedora-background.svg');
 }
 
 .ins-c-page__about--modal dl {

@@ -27,8 +27,8 @@ const Tools = () => {
   }
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
-      user.identity.account_number && setIsSettingsDisabled(false);
-      user.identity.user.is_internal && setIsInternal(true);
+      user?.identity?.account_number && setIsSettingsDisabled(false);
+      user?.identity?.user?.is_internal && setIsInternal(true);
     });
   }, []);
 
@@ -39,7 +39,7 @@ const Tools = () => {
     <Button
       variant="plain"
       aria-label="Go to settings"
-      widget-type="SettingsButton"
+      ouiaId="chrome-settings"
       className="ins-c-toolbar__button-settings"
       href={settingsPath}
       component="a"
@@ -107,9 +107,9 @@ const Tools = () => {
       key="Help menu"
       icon={QuestionCircleIcon}
       id="HelpMenu"
+      ouiaId="chrome-help"
       className="ins-c-toolbar__menu-help"
       hasToggleIndicator={null}
-      widget-type="HelpMenu"
       dropdownItems={aboutMenuDropdownItems}
     />
   );

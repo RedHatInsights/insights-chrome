@@ -5,7 +5,7 @@ import React, { Suspense, lazy } from 'react';
 const GeneralInformation = lazy(() =>
   import(
     /* webpackChunkName: "inventory-general-info" */
-    '@redhat-cloud-services/frontend-components-inventory-general-info/esm'
+    '@redhat-cloud-services/frontend-components-inventory-general-info'
   )
 );
 const PatchMan = lazy(() =>
@@ -29,7 +29,7 @@ const Vulnerabilities = lazy(() =>
 const Compliance = lazy(() =>
   import(
     /* webpackChunkName: "inventory-compliance" */
-    '@redhat-cloud-services/frontend-components-inventory-compliance/esm'
+    '@redhat-cloud-services/frontend-components-inventory-compliance'
   )
 );
 import { Spinner } from '@patternfly/react-core';

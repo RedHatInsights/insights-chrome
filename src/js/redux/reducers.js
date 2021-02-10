@@ -22,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: (id === 'landing' && getEnv() !== 'ci' && !isBeta()) || id === 'trust',
+    navHidden: !(id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
@@ -36,10 +36,21 @@ export function navUpdateReducer(state, { payload: { activeSection, globalNav, .
   return {
     ...state,
     ...payload,
-    globalNav: (globalNav || []).map((app) => ({
+    activeSection,
+    globalNav: globalNav.map((app) => ({
       ...app,
       active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
     })),
+  };
+}
+
+export function navUpdateSection(state, { payload }) {
+  if (!payload) {
+    return state;
+  }
+  return {
+    ...state,
+    activeSection: payload,
   };
 }
 

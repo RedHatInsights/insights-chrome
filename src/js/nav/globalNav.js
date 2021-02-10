@@ -1,5 +1,5 @@
 import { visibilityFunctions, isVisible } from '../consts';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import flatMap from 'lodash/flatMap';
 import { getUrl } from '../utils';
 
@@ -78,6 +78,7 @@ async function getAppData(appId, propName, masterConfig) {
     return {
       title: app.frontend.title || app.title,
       ignoreCase: app.ignoreCase,
+      ...(app?.frontend?.module && { module: app.frontend.module }),
       ...(!app.frontend.suppress_id && { id: appId }),
       ...(app.frontend.reload && { reload: app.frontend.reload }),
       ...(routes?.length > 0 && { [propName]: routes }),
@@ -87,10 +88,10 @@ async function getAppData(appId, propName, masterConfig) {
 
 export async function loadNav(yamlConfig, cache) {
   const [active, section] = [getUrl('bundle') || 'insights', getUrl('app')];
-  let activeBundle = await cache.getItem(`navigation-${active}`);
+  let activeBundle = await cache?.getItem(`navigation-${active}`);
   if (!activeBundle) {
-    activeBundle = await getNavFromConfig(safeLoad(yamlConfig), active);
-    cache.setItem(`navigation-${active}`, activeBundle);
+    activeBundle = await getNavFromConfig(load(yamlConfig), active);
+    cache?.setItem(`navigation-${active}`, activeBundle);
   }
 
   const globalNav = (activeBundle[active] || activeBundle.insights)?.routes;

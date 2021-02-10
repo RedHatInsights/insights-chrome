@@ -1,4 +1,3 @@
-import { headerLoader } from '../App/Header';
 import { allowUnauthed } from '../auth';
 import { decodeToken } from '../jwt/jwt';
 import { spinUpStore } from '../redux-config';
@@ -22,7 +21,6 @@ const initializeJWT = async (libjwt, chromeInstance) => {
       actions.userLogIn(false);
     }
   }
-  headerLoader();
 };
 
 export default initializeJWT;
