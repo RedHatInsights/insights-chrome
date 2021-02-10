@@ -53,11 +53,77 @@ exports[`Tools should render correctly 1`] = `
   <div
     class="pf-c-page__header-tools-group pf-m-hidden-on-sm"
   >
-    <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;UserToggle /&gt;
-    </div>
-  </div>
-</div>
+    <PageHeaderToolsItem>
+      <Connect(UserToggle)
+        extraItems={
+          Array [
+            <React.Fragment>
+              <Divider
+                component="li"
+              />
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Settings
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Use the beta release
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <Divider
+                component="li"
+              />
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="a"
+                href="https://access.redhat.com/support"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Support options
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Open support case
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="a"
+                href="http://localhost/docs/api"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                API documentation
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                About
+              </DropdownItem>
+            </React.Fragment>,
+          ]
+        }
+        isSmall={true}
+      />
+    </PageHeaderToolsItem>
+  </PageHeaderToolsGroup>
+</PageHeaderTools>
 `;
