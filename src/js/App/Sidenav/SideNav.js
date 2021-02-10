@@ -7,6 +7,7 @@ import AppSwitcher from './AppSwitcher';
 import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
 import './SideNav.scss';
+import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 
 export const SideNav = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export const SideNav = () => {
 
   return appId && globalNav ? (
     <Fragment>
-      {insights.chrome.isBeta() ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
+      {isFilterEnabled ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
       <Navigation />
     </Fragment>
   ) : (
