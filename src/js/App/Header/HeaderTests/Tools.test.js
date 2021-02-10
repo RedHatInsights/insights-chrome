@@ -1,5 +1,5 @@
 import React from 'react';
-import Tools from '../Tools';
+import Tools, { switchRelease } from '../Tools';
 import { render, act } from '@testing-library/react';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
@@ -14,5 +14,10 @@ describe('Tools', () => {
       container = render(<Tools onClick={mockClick} />).container;
     });
     expect(container.querySelector('div')).toMatchSnapshot();
+  });
+
+  it('should switch release correctly', () => {
+    expect(switchRelease(true, '/beta/settings/rbac')).toEqual(`${document.baseURI}settings/rbac`);
+    expect(switchRelease(false, '/settings/rbac')).toEqual(`${document.baseURI}beta/settings/rbac`);
   });
 });

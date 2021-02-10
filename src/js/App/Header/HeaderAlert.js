@@ -11,9 +11,7 @@ const HeaderAlert = ({ title, variant, onAppear, dismissable, dismissDelay }) =>
   useEffect(() => createTimer(), []);
 
   useEffect(() => {
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   const createTimer = () => {
