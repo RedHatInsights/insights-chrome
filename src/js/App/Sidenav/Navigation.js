@@ -11,6 +11,7 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-
 import './Navigation.scss';
 import ExpandableNav from './ExpandableNav';
 import { useHistory } from 'react-router-dom';
+import { isBeta } from '../../utils';
 
 const basepath = document.baseURI;
 
@@ -127,7 +128,10 @@ export const Navigation = () => {
        * Browser redo button
        */
       if (action === 'POP') {
-        const pathname = typeof location === 'string' ? location : location.pathname;
+        let pathname = typeof location === 'string' ? location : location.pathname;
+        if (isBeta() && !pathname.includes('beta/')) {
+          pathname = `/beta${pathname}`;
+        }
         if (pathname !== prevLocation.current) {
           /**
            * The browser back button glitches insanely because of the app initial "nav click" in chrome.
