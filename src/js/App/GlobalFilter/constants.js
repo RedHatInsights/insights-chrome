@@ -52,7 +52,7 @@ export const createTagsFilter = (tags = []) =>
     };
   }, {});
 
-export const storeFilter = (tags, token, isEnabled) => {
+export const storeFilter = (tags, token, isEnabled, history) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
   if (isEnabled) {
     const searchParams = new URLSearchParams();
@@ -66,7 +66,10 @@ export const storeFilter = (tags, token, isEnabled) => {
     searchParams.append('SIDs', SIDs);
     searchParams.append('tags', mappedTags);
 
-    location.hash = searchParams.toString();
+    history.push({
+      ...history.location,
+      hash: searchParams.toString(),
+    });
   }
 
   localStorage.setItem(

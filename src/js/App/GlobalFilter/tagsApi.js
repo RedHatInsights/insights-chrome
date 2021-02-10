@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { flatTags, INVENTORY_API_BASE } from './constants';
 import { TagsApi, SapSystemApi } from '@redhat-cloud-services/host-inventory-client';
 export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance);

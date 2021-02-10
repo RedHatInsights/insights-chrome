@@ -5,7 +5,7 @@ exports[`Login should render correctly with content 1`] = `
   action="[object Object]"
   aria-label="Success Alert"
   class="pf-c-alert pf-m-success ins-c-alert__logout"
-  data-ouia-component-id="0"
+  data-ouia-component-id="OUIA-Generated-Alert-success-1"
   data-ouia-component-type="PF4/Alert"
   data-ouia-safe="true"
 >

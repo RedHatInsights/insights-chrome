@@ -3,9 +3,9 @@
 exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
 <div>
   <nav
-    aria-label="Local"
+    aria-label="Insights Global Navigation"
     class="pf-c-nav pf-m-scrollable"
-    data-ouia-component-id="7"
+    data-ouia-component-id="OUIA-Generated-Nav-4"
     data-ouia-component-type="PF4/Nav"
     data-ouia-safe="true"
   >
@@ -21,9 +21,9 @@ exports[`ConnectedNavigation mapDispatchToProps function fires 1`] = `
 exports[`ConnectedNavigation should render correctly with initial state 1`] = `
 <div>
   <nav
-    aria-label="Local"
+    aria-label="Insights Global Navigation"
     class="pf-c-nav pf-m-scrollable"
-    data-ouia-component-id="5"
+    data-ouia-component-id="OUIA-Generated-Nav-3"
     data-ouia-component-type="PF4/Nav"
     data-ouia-safe="true"
   >
@@ -39,9 +39,9 @@ exports[`ConnectedNavigation should render correctly with initial state 1`] = `
 exports[`Navigation should render corectly 1`] = `
 <div>
   <nav
-    aria-label="Local"
+    aria-label="Insights Global Navigation"
     class="pf-c-nav pf-m-scrollable"
-    data-ouia-component-id="1"
+    data-ouia-component-id="OUIA-Generated-Nav-1"
     data-ouia-component-type="PF4/Nav"
     data-ouia-safe="true"
   >
@@ -57,9 +57,9 @@ exports[`Navigation should render corectly 1`] = `
 exports[`Navigation should render correctly 2 1`] = `
 <div>
   <nav
-    aria-label="Local"
+    aria-label="Insights Global Navigation"
     class="pf-c-nav pf-m-scrollable"
-    data-ouia-component-id="3"
+    data-ouia-component-id="OUIA-Generated-Nav-2"
     data-ouia-component-type="PF4/Nav"
     data-ouia-safe="true"
   >

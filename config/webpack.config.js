@@ -40,7 +40,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
       },
       {
         test: /\.s?[ac]ss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
       },
       {
         test: /\.(jpg|png|svg)$/,

@@ -1,5 +1,5 @@
 import { visibilityFunctions, isVisible } from '../consts';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import flatMap from 'lodash/flatMap';
 import { getUrl } from '../utils';
 
@@ -90,7 +90,7 @@ export async function loadNav(yamlConfig, cache) {
   const [active, section] = [getUrl('bundle') || 'insights', getUrl('app')];
   let activeBundle = await cache?.getItem(`navigation-${active}`);
   if (!activeBundle) {
-    activeBundle = await getNavFromConfig(safeLoad(yamlConfig), active);
+    activeBundle = await getNavFromConfig(load(yamlConfig), active);
     cache?.setItem(`navigation-${active}`, activeBundle);
   }
 

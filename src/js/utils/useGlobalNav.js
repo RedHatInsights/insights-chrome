@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
@@ -15,7 +15,7 @@ const useGlobalNav = () => {
   useEffect(() => {
     (async () => {
       const navigationYml = await sourceOfTruth();
-      const appData = await getNavFromConfig(safeLoad(navigationYml), undefined);
+      const appData = await getNavFromConfig(load(navigationYml), undefined);
       setState({ apps: appIds.map((id) => appData[id]), filteredApps: appIds.map((id) => appData[id]), isLoaded: true });
     })();
   }, []);
