@@ -38,7 +38,7 @@ const AsyncInventory = ({ componentName, onLoad, store, history, innerRef, ...pr
       if (isDetailsEnabled || drawerEnabled) {
         systemProfileStore = await import(
           /* webpackChunkName: "inventory-gen-info-store" */
-          '@redhat-cloud-services/frontend-components-inventory-general-info/cjs/systemProfileStore'
+          '@redhat-cloud-services/frontend-components-inventory-general-info/redux'
         );
         RenderWrapper = await import(/* webpackChunkName: "inventory-render-wrapper" */ '../RenderWrapper');
       }

@@ -1,4 +1,4 @@
-import instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 

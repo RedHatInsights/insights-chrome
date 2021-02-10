@@ -1,6 +1,6 @@
 import React from 'react';
 import setDependencies from '../externalDependencies';
-import Deferred from '@redhat-cloud-services/frontend-components-utilities/files/Deffered';
+import Deferred from '@redhat-cloud-services/frontend-components-utilities/Deffered';
 
 export default async function loadRemediation(dependencies) {
   setDependencies(dependencies);
