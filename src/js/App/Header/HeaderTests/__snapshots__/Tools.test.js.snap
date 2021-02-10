@@ -48,12 +48,18 @@ exports[`Tools should render correctly 1`] = `
             </React.Fragment>,
             <React.Fragment>
               <DropdownItem
-                component="a"
-                href="http://localhost/settings/my-user-access"
-                rel="noopener noreferrer"
-                target="_blank"
+                component="button"
+                onClick={[Function]}
               >
                 Settings
+              </DropdownItem>
+            </React.Fragment>,
+            <React.Fragment>
+              <DropdownItem
+                component="button"
+                onClick={[Function]}
+              >
+                Use the beta release
               </DropdownItem>
             </React.Fragment>,
             <React.Fragment>

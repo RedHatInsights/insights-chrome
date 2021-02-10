@@ -72,7 +72,6 @@ exports[`Header should render correctly 1`] = `
         Log in
       </button>
     </div>,
-    "",
   ]
 </Connect(Header)>
 `;
@@ -81,6 +80,5 @@ exports[`unauthed should render correctly 1`] = `
 <Fragment>
   <Connect(Brand) />
   <Login />
-  <LogoutAlert />
 </Fragment>
 `;

@@ -6,13 +6,21 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
+import HeaderAlert from './HeaderAlert';
+import cookie from 'js-cookie';
 
 const Header = ({ user }) => {
   return user ? (
     <Fragment>
       <Brand />
-      {isFilterEnabled && <AppFilter />}
+      {user && isFilterEnabled && <AppFilter />}
       <Tools />
+      {cookie.get('cs_toggledRelease') === 'true' ? (
+        <HeaderAlert
+          title={`You are now using the ${window.insights.chrome.isBeta() ? 'beta' : 'stable'} release.`}
+          onAppear={() => cookie.set('cs_toggledRelease', 'false')}
+        />
+      ) : null}
     </Fragment>
   ) : (
     <UnAuthtedHeader />
