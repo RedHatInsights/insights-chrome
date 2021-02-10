@@ -181,6 +181,7 @@ exports[`Brand should render correctly with state navHidden: false 1`] = `
 >
   <div
     class="pf-c-page__header-brand-toggle"
+    hidden=""
   >
     <button
       aria-disabled="false"

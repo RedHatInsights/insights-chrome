@@ -32,4 +32,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({ chrome: { navHidden } }) => ({ navHidden }), mapDispatchToProps)(Brand);
+export default connect(({ chrome: { navHidden, user } }) => ({ navHidden: !user ? true : navHidden }), mapDispatchToProps)(Brand);

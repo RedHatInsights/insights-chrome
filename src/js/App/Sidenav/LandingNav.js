@@ -11,12 +11,6 @@ const LandingNav = () => {
   const showNav = useSelector(({ chrome: { user } }) => !!user);
   useEffect(() => {
     if (showNav) {
-      const elem = document.querySelector('aside#ins-c-landing-nav');
-      /**
-       * Nav classes have to be added at runtime only when the nav should be rendered
-       * to prevent navigation background to be displayed in non ci-beta envs.
-       */
-      elem.classList.add('pf-m-dark', 'pf-c-page__sidebar');
       setElementReady(true);
     }
   }, [showNav]);
@@ -26,6 +20,7 @@ const LandingNav = () => {
   /**
    * render navigation only if the user is logged in
    */
+  console.log({ showNav, elementReady });
   if (!showNav || !elementReady) {
     return null;
   }
