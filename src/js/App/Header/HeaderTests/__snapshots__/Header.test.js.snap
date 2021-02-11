@@ -6,6 +6,7 @@ exports[`Header should render correctly 1`] = `
 >
   <div
     class="pf-c-page__header-brand-toggle"
+    hidden=""
   >
     <button
       aria-disabled="false"
@@ -49,6 +50,7 @@ exports[`unauthed should render correctly 1`] = `
 >
   <div
     class="pf-c-page__header-brand-toggle"
+    hidden=""
   >
     <button
       aria-disabled="false"

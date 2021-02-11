@@ -8,7 +8,8 @@ import { BrowserRouter } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import Header from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
-import { isBeta } from '../utils';
+import { getEnv, isBeta } from '../utils';
+import LandingNav from './Sidenav/LandingNav';
 
 const LoadingComponent = () => (
   <Bullseye className="pf-u-p-xl">
@@ -20,6 +21,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const isGlobalFilterEnabled =
     (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   const scalprum = useScalprum(config);
+  const hideNav = useSelector(({ chrome: { user } }) => !user);
   const remoteModule = useSelector(({ chrome }) => {
     if (chrome?.activeSection?.module) {
       const appName = chrome?.activeSection?.module?.appName || chrome?.activeSection?.id;
@@ -51,8 +53,9 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
+  const useLandingNav = isBeta() && getEnv() === 'ci';
   return (
-    <BrowserRouter basename={isBeta ? '/beta' : '/'}>
+    <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
       <div
         className="pf-c-drawer__content"
         data-ouia-subnav={activeApp}
@@ -62,7 +65,10 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         {...(pageAction && { 'data-ouia-page-type': pageAction })}
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
-        <Page header={<PageHeader headerTools={<Header />} />} sidebar={<PageSidebar id="ins-c-sidebar" nav={<SideNav />} isNavOpen />}>
+        <Page
+          header={<PageHeader headerTools={<Header />} />}
+          sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} isNavOpen />}
+        >
           <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
             {isGlobalFilterEnabled && <GlobalFilter />}
             {remoteModule && (
