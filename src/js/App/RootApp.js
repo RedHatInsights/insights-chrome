@@ -18,8 +18,6 @@ const LoadingComponent = () => (
 );
 
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
-  const isGlobalFilterEnabled =
-    (!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const remoteModule = useSelector(({ chrome }) => {
@@ -33,6 +31,9 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       };
     }
   });
+  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
+  const isGlobalFilterEnabled =
+    !isLanding && ((!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
   useEffect(() => {
     const contentElement = document.getElementById('root');
@@ -53,7 +54,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-  const useLandingNav = isBeta() && getEnv() === 'ci';
+  const useLandingNav = isLanding && isBeta() && getEnv() === 'ci';
   return (
     <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
       <div
