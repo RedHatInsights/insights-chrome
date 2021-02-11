@@ -2,6 +2,7 @@ import { visibilityFunctions, isVisible } from '../consts';
 import { load } from 'js-yaml';
 import flatMap from 'lodash/flatMap';
 import { getUrl, isBeta } from '../utils';
+import flatten from 'lodash/flatten';
 
 export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
@@ -146,6 +147,6 @@ export async function loadNav(yamlConfig, cache) {
           globalNav,
           activeTechnology: 'Applications',
         }),
-    modules: (activeBundle[active] || activeBundle.insights)?.modules,
+    modules: flatten((activeBundle[active] || activeBundle.insights)?.modules || []),
   };
 }
