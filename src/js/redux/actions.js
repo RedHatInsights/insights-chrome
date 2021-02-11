@@ -1,10 +1,6 @@
 import * as actionTypes from './action-types';
 import { getAllTags, getAllSIDs, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 
-export const onToggle = () => ({
-  type: actionTypes.NAVIGATION_TOGGLE,
-});
-
 export const userLogIn = (user) => ({
   type: actionTypes.USER_LOGIN,
   payload: user,
