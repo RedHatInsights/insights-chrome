@@ -17,11 +17,19 @@ const LoadingComponent = () => (
   </Bullseye>
 );
 
+const isModule = (key, chrome) => key === (chrome?.activeSection?.id || chrome?.activeLocation);
+
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const remoteModule = useSelector(({ chrome }) => {
-    const activeModule = chrome?.modules?.find((app) => Object.keys(app)?.[0] === chrome?.activeSection || chrome?.activeLocation);
+    const activeModule = chrome?.modules?.reduce((app, curr) => {
+      const [currKey] = Object.keys(curr);
+      if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
+        app = curr[currKey];
+      }
+      return app;
+    }, {});
     if (activeModule) {
       const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
       const [scope, module] = activeModule?.module?.split?.('#') || [];
