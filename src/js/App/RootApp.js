@@ -29,7 +29,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         app = curr[currKey];
       }
       return app;
-    }, {});
+    }, undefined);
     if (activeModule) {
       const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
       const [scope, module] = activeModule?.module?.split?.('#') || [];
