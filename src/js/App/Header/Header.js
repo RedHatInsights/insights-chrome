@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import Logo from './Logo';
 
 export const Header = () => {
-  const user = useSelector(({ chrome: { user } }) => user);
+  const user = useSelector(({ chrome }) => chrome?.user);
   return (
     <Fragment>
       <Logo />
@@ -17,7 +17,7 @@ export const Header = () => {
 };
 
 export const HeaderTools = () => {
-  const user = useSelector(({ chrome: { user } }) => user);
+  const user = useSelector(({ chrome }) => chrome?.user);
   if (!user) {
     return <UnAuthtedHeader />;
   }
