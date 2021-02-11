@@ -74,7 +74,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
           <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
             {isGlobalFilterEnabled && <GlobalFilter />}
             {remoteModule && (
-              <main role="main">
+              <main role="main" className={appId}>
                 {typeof remoteModule !== 'undefined' && scalprum.initialized ? (
                   <ErrorBoundary>
                     {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
