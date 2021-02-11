@@ -44,7 +44,6 @@ experimental: {
 The following events can be observed:
 
 * `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
-* `NAVIGATION_TOGGLE` - fired when user clicks on burger to hide navigation. No data are given.
 * `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
 
 ## Global actions

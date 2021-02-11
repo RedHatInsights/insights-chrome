@@ -21,12 +21,6 @@ const PUBLIC_EVENTS = {
       },
     }),
   ],
-  NAVIGATION_TOGGLE: [
-    (callback) => ({
-      on: actionTypes.NAVIGATION_TOGGLE,
-      callback,
-    }),
-  ],
   GLOBAL_FILTER_UPDATE: [
     (callback) => ({
       on: actionTypes.GLOBAL_FILTER_UPDATE,
