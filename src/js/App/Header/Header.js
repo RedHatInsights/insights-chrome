@@ -1,22 +1,25 @@
 import React, { Fragment } from 'react';
-import Brand from './Brand';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
+import Logo from './Logo';
 
-const Header = () => {
+export const Header = () => {
   const user = useSelector(({ chrome: { user } }) => user);
-  return user ? (
+  return (
     <Fragment>
-      <Brand />
-      {isFilterEnabled && <AppFilter />}
-      <Tools />
+      <Logo />
+      {user && isFilterEnabled && <AppFilter />}
     </Fragment>
-  ) : (
-    <UnAuthtedHeader />
   );
 };
 
-export default Header;
+export const HeaderTools = () => {
+  const user = useSelector(({ chrome: { user } }) => user);
+  if (!user) {
+    return <UnAuthtedHeader />;
+  }
+  return <Tools />;
+};
