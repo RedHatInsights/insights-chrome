@@ -53,24 +53,6 @@ describe('Chrome API', () => {
     expect(result.navId).toBe('map');
   });
 
-  test('allows for an event NAVIGATION_TOGGLE to be registered', () => {
-    const callback = jest.fn();
-    const chrome = chromeInit(getMockLibJwt());
-    chrome.on('NAVIGATION_TOGGLE', callback);
-
-    chrome.$internal.store.dispatch(actions.onToggle());
-    expect(callback).toHaveBeenCalled();
-  });
-
-  test('allows for an event NAVIGATION_TOGGLE to be unregistered', () => {
-    const callback = jest.fn();
-    const chrome = chromeInit(getMockLibJwt());
-    const unregister = chrome.on('NAVIGATION_TOGGLE', callback);
-    unregister();
-    chrome.$internal.store.dispatch(actions.onToggle());
-    expect(callback).not.toHaveBeenCalled();
-  });
-
   test('allows for an event GLOBAL_FILTER_UPDATE to be registered', () => {
     const callback = jest.fn();
     const chrome = chromeInit(getMockLibJwt());

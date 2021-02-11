@@ -10,7 +10,7 @@ import './SideNav.scss';
 
 export const SideNav = () => {
   const dispatch = useDispatch();
-  const { activeTechnology, globalNav } = useSelector(({ chrome }) => chrome);
+  const { activeTechnology, globalNav, appId } = useSelector(({ chrome }) => chrome);
   const [isFirst, setIsFirst] = useState(true);
   useEffect(() => {
     if (globalNav && isFirst) {
@@ -25,7 +25,7 @@ export const SideNav = () => {
     }
   }, [globalNav]);
 
-  return globalNav ? (
+  return appId && globalNav ? (
     <Fragment>
       {insights.chrome.isBeta() ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
       <Navigation />
