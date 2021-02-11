@@ -6,7 +6,7 @@ import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
 import { BrowserRouter } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
-import Header from './Header/Header';
+import { Header, HeaderTools } from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
 import { getEnv, isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
@@ -76,13 +76,14 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
       >
         <Page
-          header={<PageHeader headerTools={<Header />} />}
-          sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} isNavOpen />}
+          isManagedSidebar={!hideNav}
+          header={<PageHeader logoProps={{ href: './' }} logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
+          sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
         >
           <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
             {isGlobalFilterEnabled && <GlobalFilter />}
             {remoteModule && (
-              <main role="main">
+              <main role="main" className={appId}>
                 {typeof remoteModule !== 'undefined' && scalprum.initialized ? (
                   <ErrorBoundary>
                     {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
