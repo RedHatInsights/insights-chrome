@@ -7,7 +7,7 @@ export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
     .filter((appId) => (masterConfig[appId].top_level && appId === active) || !active)
     .reduce(async (acc, appId) => {
-      const [routes, modules] = await getAppData(appId, 'routes', masterConfig);
+      const [routes, modules] = (await getAppData(appId, 'routes', masterConfig)) || [];
       return {
         ...(await acc),
         ...(routes && {
@@ -43,15 +43,16 @@ async function getRoutesForApp(app, masterConfig) {
       await Promise.all(
         app.frontend.sub_apps.map(async (subItem) => {
           if (await calculateVisibility(app, subItem, visibility)) {
-            const [routes, modules] = subItem.title
-              ? [
-                  {
-                    id: subItem.id || '',
-                    title: subItem.title,
-                    ignoreCase: subItem.ignoreCase,
-                  },
-                ]
-              : await getAppData(subItem.id || subItem, 'subItems', masterConfig);
+            const [routes, modules] =
+              (subItem.title
+                ? [
+                    {
+                      id: subItem.id || '',
+                      title: subItem.title,
+                      ignoreCase: subItem.ignoreCase,
+                    },
+                  ]
+                : await getAppData(subItem.id || subItem, 'subItems', masterConfig)) || [];
             return [
               {
                 ...routes,
@@ -65,7 +66,7 @@ async function getRoutesForApp(app, masterConfig) {
         })
       )
     ).reduce(
-      ([accRoutes, accModules], [routes, modules]) => [
+      ([accRoutes, accModules] = [], [routes, modules] = []) => [
         [...(accRoutes || []), ...(routes ? [routes] : [])],
         [...(accModules || []), ...(modules ? [modules] : [])],
       ],
