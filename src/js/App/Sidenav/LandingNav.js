@@ -20,7 +20,6 @@ const LandingNav = () => {
   /**
    * render navigation only if the user is logged in
    */
-  console.log({ showNav, elementReady });
   if (!showNav || !elementReady) {
     return null;
   }

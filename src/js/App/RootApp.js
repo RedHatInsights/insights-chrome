@@ -21,12 +21,13 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const remoteModule = useSelector(({ chrome }) => {
-    if (chrome?.activeSection?.module) {
-      const appName = chrome?.activeSection?.module?.appName || chrome?.activeSection?.id;
-      const [scope, module] = chrome?.activeSection?.module?.split?.('#') || [];
+    const activeModule = chrome?.modules?.find((app) => Object.keys(app)?.[0] === chrome?.activeSection || chrome?.activeLocation);
+    if (activeModule) {
+      const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
+      const [scope, module] = activeModule?.module?.split?.('#') || [];
       return {
-        module: module || chrome?.activeSection?.module?.module,
-        scope: scope || chrome?.activeSection?.module?.scope,
+        module: module || activeModule?.module?.module,
+        scope: scope || activeModule?.module?.scope,
         appName,
       };
     }

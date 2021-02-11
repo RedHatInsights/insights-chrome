@@ -16,23 +16,13 @@ window.insights.loadInventory = loadInventory;
 window.insights.experimental.loadRemediations = loadRemediations;
 
 const App = () => {
-  const globalNav = useSelector(({ chrome }) => chrome?.globalNav);
+  const modules = useSelector(({ chrome }) => chrome?.modules);
 
-  const config = globalNav?.reduce(
-    (acc, curr) => {
-      if (curr?.module) {
-        const appName = curr.module?.appName || curr.id;
-        return {
-          ...acc,
-          [appName]: {
-            name: appName,
-            manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${curr.module?.manifest || `/apps/${appName}/fed-mods.json`}`,
-          },
-        };
-      }
-
-      return acc;
-    },
+  const config = modules?.reduce(
+    (acc, curr) => ({
+      ...acc,
+      ...(curr?.[0] || curr),
+    }),
     {
       chrome: {
         name: 'chrome',
