@@ -6,7 +6,7 @@ import cookie from 'js-cookie';
 function Unauthed() {
   return (
     <Fragment>
-      <Login /> {/* Removed brand */}
+      <Login />
       {cookie.get('cs_loggedOut') === 'true' ? (
         <HeaderAlert variant="success" title={'You have successfully logged out.'} onDismiss={() => cookie.set('cs_loggedOut', 'false')} />
       ) : null}

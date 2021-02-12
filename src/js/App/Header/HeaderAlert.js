@@ -18,13 +18,13 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
 
   const createTimer = () => {
     timer !== null && clearTimeout(timer);
-      setTimer(
-        setTimeout(() => {
-          setAlertVisible(false);
-          clearTimeout(timer);
-          onDismiss && onDismiss();
-        }, dismissDelay)
-      );
+    setTimer(
+      setTimeout(() => {
+        setAlertVisible(false);
+        clearTimeout(timer);
+        onDismiss && onDismiss();
+      }, dismissDelay)
+    );
   };
 
   const onClose = () => {
@@ -34,14 +34,7 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
 
   return (
     <React.Fragment>
-      {alertVisible && (
-        <Alert
-          variant={variant}
-          title={title}
-          className="ins-c-alert"
-          actionClose={<AlertActionCloseButton onClose={onClose} />}
-        />
-      )}
+      {alertVisible && <Alert variant={variant} title={title} className="ins-c-alert" actionClose={<AlertActionCloseButton onClose={onClose} />} />}
     </React.Fragment>
   );
 };
