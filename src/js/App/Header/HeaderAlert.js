@@ -8,7 +8,9 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
   const [alertVisible, setAlertVisible] = useState(true);
   const [timer, setTimer] = useState(null);
 
-  useEffect(() => createTimer(), []);
+  useEffect(() => {
+    dismissable || createTimer();
+  }, []);
 
   useEffect(() => {
     return () => clearTimeout(timer);
@@ -16,7 +18,6 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
 
   const createTimer = () => {
     timer !== null && clearTimeout(timer);
-    dismissable ||
       setTimer(
         setTimeout(() => {
           setAlertVisible(false);
@@ -38,7 +39,7 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
           variant={variant}
           title={title}
           className="ins-c-alert"
-          actionClose={dismissable ? <AlertActionCloseButton onClose={onClose} /> : null}
+          actionClose={<AlertActionCloseButton onClose={onClose} />}
         />
       )}
     </React.Fragment>
@@ -48,7 +49,7 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
 HeaderAlert.defaultProps = {
   variant: 'info',
   dismissable: false,
-  dismissDelay: 8000,
+  dismissDelay: 5000,
 };
 
 HeaderAlert.propTypes = {

@@ -35,7 +35,7 @@ const Tools = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
   const settingsPath = `${document.baseURI}${window.insights.chrome.isBeta() ? 'beta/' : ''}settings/my-user-access`;
-  const betaSwitcherTitle = `Use the ${window.insights.chrome.isBeta() ? 'stable' : 'beta'} release`;
+  const betaSwitcherTitle = `${window.insights.chrome.isBeta() ? 'Stop using' : 'Use'} the beta release`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */

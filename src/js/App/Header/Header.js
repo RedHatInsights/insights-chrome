@@ -18,7 +18,7 @@ export const Header = () => {
       {user && isFilterEnabled && <AppFilter />}
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You are now using the ${window.insights.chrome.isBeta() ? 'beta' : 'stable'} release.`}
+          title={`You're ${window.insights.chrome.isBeta() ? 'now' : 'no longer'} using the beta release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
