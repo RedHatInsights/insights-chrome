@@ -17,7 +17,7 @@ const LoadingComponent = () => (
   </Bullseye>
 );
 
-const isModule = (key, chrome) => key === (chrome?.activeSection?.id || chrome?.activeLocation);
+const isModule = (key, chrome) => key === (chrome?.activeSection?.id || chrome?.activeLocation) || key === chrome?.activeSection?.group;
 
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
