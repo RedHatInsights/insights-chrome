@@ -22,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: !(id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
+    navHidden: (id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
@@ -37,10 +37,12 @@ export function navUpdateReducer(state, { payload: { activeSection, globalNav, .
     ...state,
     ...payload,
     activeSection,
-    globalNav: globalNav.map((app) => ({
-      ...app,
-      active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
-    })),
+    globalNav: globalNav
+      ? globalNav.map((app) => ({
+          ...app,
+          active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
+        }))
+      : state.globalNav,
   };
 }
 
@@ -88,27 +90,6 @@ export function clearActive(state) {
         ...item,
         active: false,
       })),
-  };
-}
-
-export function navToggleReducer(state) {
-  const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
-  let page = document.getElementById('ins-c-sidebar') || document.getElementById('ins-c-landing-nav');
-  if (!page) {
-    return state;
-  }
-
-  if (mq && mq.matches) {
-    page.classList.remove('pf-m-expanded');
-    page.classList.toggle('pf-m-collapsed');
-  } else {
-    page && page.classList.remove('pf-m-collapsed');
-    page && page.classList.toggle('pf-m-expanded');
-  }
-
-  return {
-    ...state,
-    navCollapse: !state.navCollapse,
   };
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import Header from '../Header';
+import { Header } from '../Header';
 import UnauthedHeader from '../UnAuthtedHeader';
 
 describe('Header', () => {
@@ -15,6 +15,7 @@ describe('Header', () => {
       chrome: {
         activeTechnology: 'someTechnology',
         activeLocation: 'someLocation',
+        user: {},
       },
     };
   });
@@ -22,10 +23,10 @@ describe('Header', () => {
     const store = mockStore(initialState);
     const { container } = render(
       <Provider store={store}>
-        <Header currentApp="Red Hat Insights" />
+        <Header />
       </Provider>
     );
-    expect(container.querySelector('div')).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });
 
