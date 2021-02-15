@@ -2,10 +2,15 @@
 
 exports[`Header should render correctly 1`] = `
 <div>
-  <img
-    alt="Red Hat Logo"
-    src="test-file-stub"
-  />
+  <a
+    class="ins-c-header-link"
+    href="./"
+  >
+    <img
+      alt="Red Hat Logo"
+      src="test-file-stub"
+    />
+  </a>
 </div>
 `;
 

@@ -73,51 +73,41 @@ const AppFilter = () => {
   );
 
   return (
-    <div
-      onClick={(event) => {
-        /**
-         * We have to stop the venet when clicking on the app filter.
-         * If the event bubbles up the DOM it will trigger a loho link click which we don't want to
-         */
-        event.preventDefault();
-      }}
+    <Dropdown
+      className="ins-c-page__app-filter-dropdown"
+      isPlain
+      onSelect={() => setIsOpen(true)}
+      toggle={
+        <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
+          Applications and services
+        </DropdownToggle>
+      }
+      isOpen={isOpen}
+      ouiaId="App Filter"
     >
-      <Dropdown
-        className="ins-c-page__app-filter-dropdown"
-        isPlain
-        onSelect={() => setIsOpen(true)}
-        toggle={
-          <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-            Applications and services
-          </DropdownToggle>
-        }
-        isOpen={isOpen}
-        ouiaId="App Filter"
-      >
-        <div className="content">
-          <SearchInput
-            placeholder="Find application or service"
-            value={filterValue}
-            onChange={(val) => setFilterValue(val)}
-            onClear={() => setFilterValue('')}
-          />
-          {filteredApps?.length > 0 ? (
-            <div className="gallery">{filteredApps.map((app) => renderApp(app))}</div>
-          ) : (
-            <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-              <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-              <Title headingLevel="h4">No matching applications or services found.</Title>
-              <EmptyStateBody className="pf-u-mb-xl">
-                This filter criteria matches no applications or services. Try changing your input filter.
-              </EmptyStateBody>
-              <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-                Clear all filters
-              </Button>
-            </EmptyState>
-          )}
-        </div>
-      </Dropdown>
-    </div>
+      <div className="content">
+        <SearchInput
+          placeholder="Find application or service"
+          value={filterValue}
+          onChange={(val) => setFilterValue(val)}
+          onClear={() => setFilterValue('')}
+        />
+        {filteredApps?.length > 0 ? (
+          <div className="gallery">{filteredApps.map((app) => renderApp(app))}</div>
+        ) : (
+          <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+            <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+            <Title headingLevel="h4">No matching applications or services found.</Title>
+            <EmptyStateBody className="pf-u-mb-xl">
+              This filter criteria matches no applications or services. Try changing your input filter.
+            </EmptyStateBody>
+            <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+              Clear all filters
+            </Button>
+          </EmptyState>
+        )}
+      </div>
+    </Dropdown>
   );
 };
 
