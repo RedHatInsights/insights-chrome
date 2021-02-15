@@ -26,7 +26,7 @@ const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => (
     <Page
       isManagedSidebar={!hideNav}
-      header={<PageHeader logoProps={{ href: './' }} logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
+      header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
       sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
     >
       <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>

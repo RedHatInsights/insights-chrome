@@ -10,7 +10,9 @@ export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
   return (
     <Fragment>
-      <Logo />
+      <a href="./" className="ins-c-header-link">
+        <Logo />
+      </a>
       {user && isFilterEnabled && <AppFilter />}
     </Fragment>
   );
