@@ -11,7 +11,22 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
+import { Fragment } from 'react';
+import { Badge } from '@patternfly/react-core';
+import HeaderAlert from './HeaderAlert';
+import cookie from 'js-cookie';
 import './Tools.scss';
+
+export const switchRelease = (isBeta, pathname) => {
+  cookie.set('cs_toggledRelease', 'true');
+  if (isBeta) {
+    return `${document.baseURI}${pathname.replace(/\/*beta\/*/, '')}`;
+  } else {
+    let path = pathname.split('/');
+    path[0] = 'beta';
+    return document.baseURI.concat(path.join('/'));
+  }
+};
 
 const Tools = () => {
   {
@@ -20,7 +35,8 @@ const Tools = () => {
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
-  const settingsPath = `${document.baseURI}settings/my-user-access`;
+  const settingsPath = `${document.baseURI}${window.insights.chrome.isBeta() ? 'beta/' : ''}settings/my-user-access`;
+  const betaSwitcherTitle = `${window.insights.chrome.isBeta() ? 'Stop using' : 'Use'} the beta release`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
@@ -33,19 +49,37 @@ const Tools = () => {
   }, []);
 
   {
+    /* list out the items for the settings menu */
+  }
+  const settingsMenuDropdownItems = [
+    {
+      title: 'Settings',
+      onClick: () => (window.location = settingsPath),
+    },
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(window.insights.chrome.isBeta(), window.location.pathname)),
+    },
+  ];
+
+  {
     /* button that should redirect a user to RBAC with an account */
   }
   const SettingsButton = () => (
-    <Button
-      variant="plain"
-      aria-label="Go to settings"
+    <ToolbarToggle
+      key="Settings menu"
+      icon={() => (
+        <Fragment>
+          {window.insights.chrome.isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
+          <CogIcon />
+        </Fragment>
+      )}
+      id="SettingsMenu"
       ouiaId="chrome-settings"
-      className="ins-c-toolbar__button-settings"
-      href={settingsPath}
-      component="a"
-    >
-      <CogIcon />
-    </Button>
+      hasToggleIndicator={null}
+      widget-type="SettingsMenu"
+      dropdownItems={settingsMenuDropdownItems}
+    />
   );
 
   {
@@ -93,7 +127,11 @@ const Tools = () => {
     { title: 'separator' },
     {
       title: 'Settings',
-      url: `${document.baseURI}settings/my-user-access`,
+      onClick: () => (window.location = settingsPath),
+    },
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(window.insights.chrome.isBeta(), window.location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -121,9 +159,7 @@ const Tools = () => {
         {isInternal && !window.insights.chrome.isProd && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
         )}
-        {!isSettingsDisabled && (
-          <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'settings'}>{<SettingsButton />}</PageHeaderToolsItem>
-        )}
+        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton />}</PageHeaderToolsItem>}
         <PageHeaderToolsItem>{<AboutButton />}</PageHeaderToolsItem>
       </PageHeaderToolsGroup>
 
@@ -165,6 +201,13 @@ const Tools = () => {
           />
         </PageHeaderToolsItem>
       </PageHeaderToolsGroup>
+
+      {cookie.get('cs_toggledRelease') === 'true' ? (
+        <HeaderAlert
+          title={`You're ${window.insights.chrome.isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
+        />
+      ) : null}
 
       {/* Render About Modal */}
       {isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} />}
