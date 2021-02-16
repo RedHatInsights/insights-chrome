@@ -13,6 +13,7 @@ import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
 import { Fragment } from 'react';
 import { Badge } from '@patternfly/react-core';
+import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
 
@@ -200,6 +201,13 @@ const Tools = () => {
           />
         </PageHeaderToolsItem>
       </PageHeaderToolsGroup>
+
+      {cookie.get('cs_toggledRelease') === 'true' ? (
+        <HeaderAlert
+          title={`You're ${window.insights.chrome.isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
+        />
+      ) : null}
 
       {/* Render About Modal */}
       {isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} />}
