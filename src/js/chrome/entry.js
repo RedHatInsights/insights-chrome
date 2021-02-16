@@ -87,6 +87,8 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isProd: window.location.host === 'cloud.redhat.com',
       isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+      forceDemo: () => (Cookies.set('cs_demo', 'true')),
+      isDemo: () => (Cookies.get('cs_demo') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),

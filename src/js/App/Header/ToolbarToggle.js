@@ -37,8 +37,8 @@ class ToolbarToggle extends Component {
 
   render() {
     // Render the questionmark icon items
-    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) => (
-      <DropdownItem
+    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden }) => (
+      !isHidden ? <DropdownItem
         key={title}
         ouiaId={title}
         component={url ? 'a' : 'button'}
@@ -54,6 +54,7 @@ class ToolbarToggle extends Component {
       >
         {title}
       </DropdownItem>
+      : <React.Fragment/>
     ));
 
     const toggle = (
@@ -91,6 +92,7 @@ ToolbarToggle.propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hasToggleIndicator: PropTypes.bool,
   ouiaId: PropTypes.string,
+  isHidden: PropTypes.bool,
 };
 
 export default ToolbarToggle;
