@@ -123,8 +123,8 @@ const Tools = () => {
     {
       title: 'Demo mode',
       onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
-      isHidden: !isDemoAcc
-    }
+      isHidden: !isDemoAcc,
+    },
   ];
 
   {
