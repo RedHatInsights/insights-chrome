@@ -1,4 +1,4 @@
-import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
+import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter, registerModule } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
@@ -45,6 +45,7 @@ export function chromeInit(navResolver) {
     removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
+    registerModule,
     appNavClick: ({ secondaryNav, ...payload }) => {
       if (!secondaryNav) {
         clearActive();
