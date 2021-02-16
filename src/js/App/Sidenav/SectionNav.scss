@@ -1,0 +1,12 @@
+.ins-c-section-nav {
+  .pf-c-nav__section-title {
+    color: var(--pf-global--disabled-color--100);
+    font-size: var(--pf-global--FontSize--sm);
+    font-weight: var(--pf-global--FontWeight--semi-bold);
+    }
+    .pf-c-nav__item {
+      .pf-c-nav__link {
+        padding-left: var(--pf-global--spacer--2xl);
+      }
+    }
+}

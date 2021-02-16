@@ -9,7 +9,7 @@ import { appNavClick, chromeNavSectionUpdate, clearActive } from '../../redux/ac
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
-import ExpandableNav from './ExpandableNav';
+import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 
@@ -190,13 +190,7 @@ export const Navigation = () => {
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
       <NavList>
         {settings?.map((item, key) => (
-          <ExpandableNav
-            activeLocation={activeLocation}
-            activeApp={activeApp}
-            key={item.id || key}
-            {...item}
-            onClick={(event, subItem) => (item.subItems ? onClick(event, subItem, item) : onClick(event, item))}
-          />
+          <SectionNav activeLocation={activeLocation} activeApp={activeApp} key={item.id || key} {...item} onClick={onClick} />
         ))}
         {extraLinks[activeLocation]?.map?.((item) =>
           item?.expandable && activeLocation === 'insights' ? (
