@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Nav, NavExpandable, NavItem, NavList } from '@patternfly/react-core';
+import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import useGlobalNav from '../../utils/useGlobalNav';
 import { isBeta } from '../../utils';
 import NavLoader from './Loader';
 import './LandingNav.scss';
 import { useSelector } from 'react-redux';
+
+const routes = [
+  { title: 'Application Services', id: 'application-services' },
+  { title: 'OpenShift', id: 'openshift' },
+  { title: 'Red Hat Enterprise Linux', id: 'insights' },
+  { title: 'Ansible Automation Platform', id: 'ansible' },
+];
 
 const LandingNav = () => {
   const [elementReady, setElementReady] = useState(false);
@@ -14,7 +21,7 @@ const LandingNav = () => {
       setElementReady(true);
     }
   }, [showNav]);
-  const { apps, isLoaded } = useGlobalNav();
+  const { isLoaded } = useGlobalNav();
   const isBetaEnv = isBeta();
 
   /**
@@ -29,17 +36,13 @@ const LandingNav = () => {
         <NavLoader />
       ) : (
         <NavList>
-          <NavItem preventDefault component="span">
+          <div className="ins-c-app-title">
             <b>Red Hat Hybrid Cloud Console</b>
-          </NavItem>
-          {apps.map(({ id, title, routes }) => (
-            <NavExpandable className="ins-m-navigation-align" key={id} title={title}>
-              {routes.map(({ title, id: path }) => (
-                <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${id}/${path}`}>
-                  {title}
-                </NavItem>
-              ))}
-            </NavExpandable>
+          </div>
+          {routes.map(({ title, id }) => (
+            <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${id}`}>
+              {title}
+            </NavItem>
           ))}
         </NavList>
       )}
