@@ -113,3 +113,23 @@ export function onPageObjectId(state, { payload }) {
     pageObjectId: payload,
   };
 }
+
+export function onRegisterModule(state, { payload }) {
+  const isModuleLoaded = (state.modules || []).find((module) => Object.keys(module).find((key) => key === payload?.module));
+  return {
+    ...state,
+    modules: [
+      ...(state.modules || []),
+      ...(!isModuleLoaded
+        ? [
+            {
+              [payload.module]: {
+                name: payload.module,
+                manifestLocation: payload.manifest || `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/fed-mods.json`,
+              },
+            },
+          ]
+        : []),
+    ],
+  };
+}
