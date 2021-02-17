@@ -37,24 +37,28 @@ class ToolbarToggle extends Component {
 
   render() {
     // Render the questionmark icon items
-    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) => (
-      <DropdownItem
-        key={title}
-        ouiaId={title}
-        component={url ? 'a' : 'button'}
-        // Because the urls are using 'a', don't use onClick for accessibility
-        // If it is a button, use the onClick prop
-        {...(url
-          ? {
-              href: url,
-              target: '_blank',
-              rel: 'noopener noreferrer',
-            }
-          : { onClick: (ev) => this.onClick(ev, url, onClick) })}
-      >
-        {title}
-      </DropdownItem>
-    ));
+    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden }) =>
+      !isHidden ? (
+        <DropdownItem
+          key={title}
+          ouiaId={title}
+          component={url ? 'a' : 'button'}
+          // Because the urls are using 'a', don't use onClick for accessibility
+          // If it is a button, use the onClick prop
+          {...(url
+            ? {
+                href: url,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              }
+            : { onClick: (ev) => this.onClick(ev, url, onClick) })}
+        >
+          {title}
+        </DropdownItem>
+      ) : (
+        <React.Fragment />
+      )
+    );
 
     const toggle = (
       <DropdownToggle
@@ -91,6 +95,7 @@ ToolbarToggle.propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hasToggleIndicator: PropTypes.bool,
   ouiaId: PropTypes.string,
+  isHidden: PropTypes.bool,
 };
 
 export default ToolbarToggle;
