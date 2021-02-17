@@ -173,7 +173,7 @@ export const Navigation = () => {
       /**
        * Routing from legacy has to always trigger browser refresh
        */
-      if (!activeSection.module || !newSection.module) {
+      if (!activeSection?.module || !newSection?.module) {
         isMetaKey ? window.open(url) : (window.location.href = url);
       } else {
         /**
