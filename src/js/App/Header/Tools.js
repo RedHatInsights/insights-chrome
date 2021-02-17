@@ -1,3 +1,5 @@
+// TODO: Delete demo stuff later
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
@@ -35,6 +37,7 @@ const Tools = () => {
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
+  const [isDemoAcc, setIsDemoAcc] = useState(false);
   const settingsPath = `${document.baseURI}${window.insights.chrome.isBeta() ? 'beta/' : ''}settings/my-user-access`;
   const betaSwitcherTitle = `${window.insights.chrome.isBeta() ? 'Stop using' : 'Use'} the beta release`;
 
@@ -45,6 +48,7 @@ const Tools = () => {
     window.insights.chrome.auth.getUser().then((user) => {
       user?.identity?.account_number && setIsSettingsDisabled(false);
       user?.identity?.user?.is_internal && setIsInternal(true);
+      user?.identity?.user?.username === 'insights-demo-2021' && setIsDemoAcc(true);
     });
   }, []);
 
@@ -117,6 +121,11 @@ const Tools = () => {
     {
       title: 'About',
       onClick: () => setIsModalOpen(true),
+    },
+    {
+      title: 'Demo mode',
+      onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
+      isHidden: !isDemoAcc,
     },
   ];
 
