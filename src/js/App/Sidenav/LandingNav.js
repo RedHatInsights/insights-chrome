@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 const routes = [
   { title: 'Application Services', id: 'application-services' },
   { title: 'OpenShift', id: 'openshift' },
-  { title: 'Red Hat Enterprise Linux', id: 'insights' },
+  { title: 'Red Hat Enterprise Linux', id: 'insights/dashboard' },
   { title: 'Ansible Automation Platform', id: 'ansible' },
 ];
 
