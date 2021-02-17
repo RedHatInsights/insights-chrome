@@ -13,11 +13,11 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
-import { Fragment } from 'react';
-import { Badge } from '@patternfly/react-core';
+import { Badge, Flex } from '@patternfly/react-core';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
+import { isBeta } from '../../utils';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -38,8 +38,8 @@ const Tools = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
   const [isDemoAcc, setIsDemoAcc] = useState(false);
-  const settingsPath = `${document.baseURI}${window.insights.chrome.isBeta() ? 'beta/' : ''}settings/my-user-access`;
-  const betaSwitcherTitle = `${window.insights.chrome.isBeta() ? 'Stop using' : 'Use'} the beta release`;
+  const settingsPath = `${document.baseURI}settings/my-user-access`;
+  const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
@@ -57,12 +57,13 @@ const Tools = () => {
   }
   const settingsMenuDropdownItems = [
     {
+      url: settingsPath,
       title: 'Settings',
-      onClick: () => (window.location = settingsPath),
+      target: '_self',
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location = switchRelease(window.insights.chrome.isBeta(), window.location.pathname)),
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
     },
   ];
 
@@ -73,10 +74,10 @@ const Tools = () => {
     <ToolbarToggle
       key="Settings menu"
       icon={() => (
-        <Fragment>
-          {window.insights.chrome.isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
+        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+          {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
           <CogIcon />
-        </Fragment>
+        </Flex>
       )}
       id="SettingsMenu"
       ouiaId="chrome-settings"
@@ -135,12 +136,13 @@ const Tools = () => {
   const mobileDropdownItems = [
     { title: 'separator' },
     {
+      url: settingsPath,
       title: 'Settings',
-      onClick: () => (window.location = settingsPath),
+      target: '_self',
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location = switchRelease(window.insights.chrome.isBeta(), window.location.pathname)),
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -213,7 +215,7 @@ const Tools = () => {
 
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You're ${window.insights.chrome.isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
