@@ -7,10 +7,10 @@ import './LandingNav.scss';
 import { useSelector } from 'react-redux';
 
 const routes = [
-  { title: 'Application Services', id: 'application-services' },
-  { title: 'OpenShift', id: 'openshift' },
-  { title: 'Red Hat Enterprise Linux', id: 'insights' },
-  { title: 'Ansible Automation Platform', id: 'ansible' },
+  { title: 'Application Services', id: 'application-services', route: 'application-services' },
+  { title: 'OpenShift', id: 'openshift', route: 'openshift' },
+  { title: 'Red Hat Enterprise Linux', id: 'insights', route: 'insights/dashboard' },
+  { title: 'Ansible Automation Platform', id: 'ansible', route: 'ansible' },
 ];
 
 const LandingNav = () => {
@@ -39,8 +39,8 @@ const LandingNav = () => {
           <div className="ins-c-app-title">
             <b>Red Hat Hybrid Cloud Console</b>
           </div>
-          {routes.map(({ title, id }) => (
-            <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${id}`}>
+          {routes.map(({ title, id, route }) => (
+            <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
               {title}
             </NavItem>
           ))}
