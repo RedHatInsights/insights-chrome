@@ -75,7 +75,7 @@ const extraLinks = {
     },
     {
       id: 'extra-openshift-docs',
-      url: 'https://docs.openshift.com/dedicated/4/',
+      url: 'https://access.redhat.com/documentation/en-us/openshift_cluster_manager/',
       title: 'Documentation',
       external: true,
     },
