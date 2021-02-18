@@ -21,6 +21,15 @@ const PUBLIC_EVENTS = {
       },
     }),
   ],
+  NAVIGATION_TOGGLE: [
+    (callback) => {
+      console.warn('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');
+      return {
+        on: 'NAVIGATION_TOGGLE',
+        callback,
+      };
+    },
+  ],
   GLOBAL_FILTER_UPDATE: [
     (callback) => ({
       on: actionTypes.GLOBAL_FILTER_UPDATE,
