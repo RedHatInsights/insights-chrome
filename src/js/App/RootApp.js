@@ -74,14 +74,17 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
+  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
   const remoteModule = useSelector(({ chrome }) => {
-    const activeModule = chrome?.modules?.reduce((app, curr) => {
-      const [currKey] = Object.keys(curr);
-      if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
-        app = curr[currKey];
-      }
-      return app;
-    }, undefined);
+    const activeModule =
+      !isLanding &&
+      chrome?.modules?.reduce((app, curr) => {
+        const [currKey] = Object.keys(curr);
+        if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
+          app = curr[currKey];
+        }
+        return app;
+      }, undefined);
     if (activeModule) {
       const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
       const [scope, module] = activeModule?.module?.split?.('#') || [];
@@ -92,7 +95,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       };
     }
   }, shallowEqual);
-  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
   const isGlobalFilterEnabled =
     !isLanding && ((!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
@@ -116,6 +118,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
     }
   }, [remoteModule]);
   const useLandingNav = isLanding && isBeta() && getEnv() === 'ci';
+
   return (
     <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
       <div
