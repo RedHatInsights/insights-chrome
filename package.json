@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development npm run watch",
+    "start:beta": "NODE_ENV=development npm run build:js:beta && npm run build:sass && npm run build:pug:beta -- nohash && npm-run-all --parallel watch:beta:*",
     "analyze:js": "NODE_ENV=production webpack --config config/webpack.config.js --env analyze=true --env publicPath=/apps/chrome/js/ --mode=production",
     "build": "NODE_ENV=production npm run build:js -- --mode=production && npm-run-all build:images-chrome  build:sass    clean:chrome    hash:chrome   build:pug   build:fonts build:Fafonts",
     "build:beta": "NODE_ENV=production npm run build:js:beta -- --mode=production && npm-run-all build:images-chrome build:sass clean:chrome hash:chrome build:pug:beta build:fonts build:Fafonts",
@@ -30,6 +31,8 @@
     "watch:images": "npm run build:images-chrome -- -w",
     "watch:js": "npm run build:js -- --watch --mode=development --env noHash=true",
     "watch:sass": "npm run build:sass -- -w",
+    "watch:beta:js": "npm run build:js:beta -- --watch --mode=development --env noHash=true",
+    "watch:beta:sass": "npm run build:sass -- -w",
     "nightly": "npm run build"
   },
   "jest": {
