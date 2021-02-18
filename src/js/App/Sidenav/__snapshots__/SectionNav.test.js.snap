@@ -104,14 +104,14 @@ exports[`SectionNav should render corectly 1`] = `
 exports[`SectionNav should render group with app 1`] = `
 <div>
   <section
-    aria-labelledby="id"
+    aria-labelledby="section1"
     class="pf-c-nav__section ins-c-section-nav"
   >
     <h2
       class="pf-c-nav__section-title"
-      id="id"
+      id="section1"
     >
-      TITLE
+      SECTION1
     </h2>
     <ul>
       <li
@@ -135,14 +135,14 @@ exports[`SectionNav should render group with app 1`] = `
 exports[`SectionNav should render group with app and sub app 1`] = `
 <div>
   <section
-    aria-labelledby="id"
+    aria-labelledby="section1"
     class="pf-c-nav__section ins-c-section-nav"
   >
     <h2
       class="pf-c-nav__section-title"
-      id="id"
+      id="section1"
     >
-      TITLE
+      SECTION1
     </h2>
     <ul>
       <li

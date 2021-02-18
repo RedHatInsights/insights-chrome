@@ -9,14 +9,13 @@ describe('SectionNav', () => {
     expect(container).toMatchSnapshot();
   });
   it('should render group with app', () => {
-    const props = { id: 'id', title: 'title', activeLocation: 'loc', onClick: jest.fn(), items: [{ id: 'app', title: 'title' }] };
+    const props = { section: 'section1', activeLocation: 'loc', onClick: jest.fn(), items: [{ id: 'app', title: 'title' }] };
     const { container } = render(<SectionNav {...props} />);
     expect(container).toMatchSnapshot();
   });
   it('should render group with app and sub app', () => {
     const props = {
-      id: 'id',
-      title: 'title',
+      section: 'section1',
       activeLocation: 'loc',
       onClick: jest.fn(),
       items: [{ id: 'app', title: 'title', subItems: [{ id: 'subapp', title: 'title2' }] }],
