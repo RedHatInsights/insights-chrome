@@ -132,12 +132,15 @@ export const Navigation = () => {
         if (isBeta() && !pathname.includes('beta/')) {
           pathname = `/beta${pathname}`;
         }
-        if (pathname !== prevLocation.current) {
+        /**
+         * We want to ignore trailing or double slashes to prevent unnecessary in app reloads
+         */
+        if (pathname.replace(/\//gm, '') !== prevLocation.current.replace(/\//gm, '')) {
           /**
            * The browser back button glitches insanely because of the app initial "nav click" in chrome.
            * The back browser navigation between apps is not reliable so we will do it the old fashioned way until all apps are migrated and we can just use react router.
            */
-          window.location.href = `${basepath}${pathname.replace(/^\//, '')}`;
+          window.location.href = `${window.location.origin}${prevLocation.current}`;
         }
       }
     });
