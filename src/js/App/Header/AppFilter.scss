@@ -1,83 +1,142 @@
-.ins-c-page__app-filter-dropdown {
-    .pf-c-dropdown__toggle {
-        margin-left: var(--pf-global--spacer--xl);
-        max-width: 250px;
+@media screen and (max-width:768px) {
+  .pf-c-page__header
+    &-tools-group {
+      margin-left: 0 !important;
     }
-    .pf-c-dropdown__menu {
-        left: 42px;
-        margin-top: var(--pf-global--spacer--md);
-        min-width: 100%;
-        padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl);
-        .pf-c-search-input {
-            width: 300px;
-            &__icon {
-                color: var(--pf-global--BackgroundColor--dark-100);
-            }
-            &__text-input{
-                color: var(--pf-global--BackgroundColor--dark-100);
-            }
-        }
-
-        .pf-c-empty-state {
-            --pf-c-empty-state__body--Color: #6a6e73;
-            h4 {
-                color: var(--pf-global--BackgroundColor--dark-100);
-                font-size: var(--pf-c-title--m-xl--FontSize);
-            }
-            button {
-                color: var(--pf-global--active-color--100);
-            }
-        }
-        div.gallery {
-            margin-top: var(--pf-global--spacer--xl);
-            column-gap: 32px;
-        }
-        @media screen and (max-width: 1499px) { 
-          div.gallery {
-            column-count: 2;
-          }
-        }
-        @media screen and (min-width: 1500px) { 
-          div.gallery {
-            column-count: 3;
-          }
-        }
-        div.galleryItem {
-            display: inline-block;
-            margin-bottom: var(--pf-global--spacer--xl);
-            width: 350px;
-            .pf-l-split {
-                .left {
-                    width: 60px;
-                    img {
-                      width: 36px;
-                    }
-                }
-                .right {
-                    h4 {
-                        color: var(--pf-global--BackgroundColor--dark-100);
-                        font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif
-                        font-weight:  var(--pf-global--FontWeight--normal);
-                        margin-bottom: var(--pf-global--spacer--md);
-                        white-space: nowrap;
-                    }
-                    p {
-                        margin-bottom: var(--pf-global--spacer--sm);
-                    }
-                    a {
-                        white-space: nowrap;
-                        color: var(--pf-global--active-color--100);
-                    }
-                }
-            }
-        }
-
+    &-tools {
+      padding-right: 0;
     }
-}
-
-@media screen and (max-width: 1199px) { 
-  .ins-c-page__app-filter-dropdown {
-    display: none !important;
   }
 }
+
+.pf-c-page__header {
+  .pf-c-backdrop {
+    z-index: -10;
+  }
+}
+
+.ins-c-page__app-filter-dropdown {
+  .pf-c-dropdown__toggle {
+    display: inline-block;
+    margin-left: 66px;
+    position: relative;
+    white-space: nowrap;
+  }
+  @media screen and (max-width:768px) { 
+      .pf-c-dropdown__toggle {
+        margin-left: 10px;
+      }
+  }
+  .pf-c-dropdown__menu::before {
+    background-color: yellow;
+    z-index: -1;
+  }
+
+
+  .pf-c-dropdown__menu {
+    left: 0;
+    top: 78px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    position: fixed; // allows menu to go full width
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
+      .search {
+        padding: var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl) 0;
+        justify-content: center;
+        .pf-c-search-input {
+          width: 300px;
+          &__icon {
+              color: var(--pf-global--BackgroundColor--dark-100);
+          }
+          &__text-input{
+              color: var(--pf-global--BackgroundColor--dark-100);
+          }
+        }
+      }
+      div.gallery {
+        column-gap: var(--pf-global--spacer--lg);
+        margin: 0 auto; // centers columns
+      }
+      div.galleryItem {
+        display: block;
+        padding-bottom: var(--pf-global--spacer--xl);
+        width: 350px;
+        overflow: hidden; // prevents padding from spilling into next column
+        break-inside: avoid-column; // prevents padding from spilling into next column
+        .pf-l-split {
+          margin-top: auto;
+          .left {
+              width: 60px;
+            svg {
+              height: 36px;
+              width: 36px;
+            }
+          }
+          .right {
+            h4 {
+              color: var(--pf-global--BackgroundColor--dark-100);
+              font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif
+              font-weight:  var(--pf-global--FontWeight--normal);
+              margin-bottom: var(--pf-global--spacer--md);
+              white-space: nowrap;
+            }
+            p {
+              margin-bottom: var(--pf-global--spacer--sm);
+            }
+            a {
+              white-space: nowrap;
+              color: var(--pf-global--active-color--100);
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width:999px) { 
+    .pf-c-dropdown__menu {
+      bottom:0; // allows scrolling
+      div.gallery {
+        column-count: 1;
+      }
+    }
+  }
+  @media screen and (min-width: 1000px) and (max-width: 1250px) {
+    .pf-c-dropdown__menu {
+      bottom: 0;  // allows scrolling
+      div.gallery {
+        column-count: 2;
+        width: calc( 350px * 2 - var(--pf-global--spacer--lg) );
+      }
+    }
+  }
+  @media screen and (min-width: 1251px) and (max-width: 1599px) { 
+    div.gallery {
+      column-count: 3;
+      width: calc( 350px * 3 - var(--pf-global--spacer--lg) );
+    }
+  }
+
+  @media screen and (min-width: 1600px) { 
+    div.gallery {
+      column-count: 4;
+      width: calc( 350px * 4 - var(--pf-global--spacer--lg) );
+    }
+  }
+
+  .pf-c-empty-state {
+    --pf-c-empty-state__body--Color: #6a6e73;
+    h4 {
+      color: var(--pf-global--BackgroundColor--dark-100);
+      font-size: var(--pf-c-title--m-xl--FontSize);
+    }
+    button {
+      color: var(--pf-global--active-color--100);
+    }
+  }
+}
+
+
 

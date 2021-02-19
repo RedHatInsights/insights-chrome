@@ -166,7 +166,7 @@ const Tools = () => {
   return (
     <PageHeaderTools widget-type="InsightsToolbar">
       {/* Show tools on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
         {isInternal && !window.insights.chrome.isProd && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
         )}
@@ -175,14 +175,14 @@ const Tools = () => {
       </PageHeaderToolsGroup>
 
       {/* Show full user dropdown on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
         <PageHeaderToolsItem>
           <UserToggle className="ins-c-dropdown__user" />
         </PageHeaderToolsItem>
       </PageHeaderToolsGroup>
 
       {/* Collapse tools and user dropdown to kebab on small screens  */}
-      <PageHeaderToolsGroup visibility={{ sm: 'hidden' }}>
+      <PageHeaderToolsGroup visibility={{ lg: 'hidden' }}>
         <PageHeaderToolsItem>
           <UserToggle
             isSmall
