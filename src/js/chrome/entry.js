@@ -1,4 +1,4 @@
-import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
+import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter, registerModule } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
@@ -20,6 +20,15 @@ const PUBLIC_EVENTS = {
         }
       },
     }),
+  ],
+  NAVIGATION_TOGGLE: [
+    (callback) => {
+      console.warn('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');
+      return {
+        on: 'NAVIGATION_TOGGLE',
+        callback,
+      };
+    },
   ],
   GLOBAL_FILTER_UPDATE: [
     (callback) => ({
@@ -45,6 +54,7 @@ export function chromeInit(navResolver) {
     removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     mapGlobalFilter: flatTags,
+    registerModule,
     appNavClick: ({ secondaryNav, ...payload }) => {
       if (!secondaryNav) {
         clearActive();
@@ -87,6 +97,8 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isProd: window.location.host === 'cloud.redhat.com',
       isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+      forceDemo: () => Cookies.set('cs_demo', 'true'),
+      isDemo: () => (Cookies.get('cs_demo') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),

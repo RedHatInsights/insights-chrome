@@ -212,6 +212,7 @@ function logout(bounce) {
   // Clear cookies and tokens
   priv.keycloak.clearToken();
   cookie.remove(priv.cookie.cookieName);
+  cookie.remove('cs_demo');
 
   const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
   const keys = Object.keys(localStorage).filter(

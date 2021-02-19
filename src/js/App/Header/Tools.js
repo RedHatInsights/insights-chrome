@@ -1,3 +1,5 @@
+// TODO: Delete demo stuff later
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
@@ -11,7 +13,22 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import InsightsAbout from './InsightsAbout';
+import { Badge, Flex } from '@patternfly/react-core';
+import HeaderAlert from './HeaderAlert';
+import cookie from 'js-cookie';
 import './Tools.scss';
+import { isBeta } from '../../utils';
+
+export const switchRelease = (isBeta, pathname) => {
+  cookie.set('cs_toggledRelease', 'true');
+  if (isBeta) {
+    return `${document.baseURI}${pathname.replace(/\/*beta\/*/, '')}`;
+  } else {
+    let path = pathname.split('/');
+    path[0] = 'beta';
+    return document.baseURI.concat(path.join('/'));
+  }
+};
 
 const Tools = () => {
   {
@@ -20,7 +37,9 @@ const Tools = () => {
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
+  const [isDemoAcc, setIsDemoAcc] = useState(false);
   const settingsPath = `${document.baseURI}settings/my-user-access`;
+  const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
 
   {
     /* Disable settings/cog icon when a user doesn't have an account number */
@@ -29,23 +48,43 @@ const Tools = () => {
     window.insights.chrome.auth.getUser().then((user) => {
       user?.identity?.account_number && setIsSettingsDisabled(false);
       user?.identity?.user?.is_internal && setIsInternal(true);
+      user?.identity?.user?.username === 'insights-demo-2021' && setIsDemoAcc(true);
     });
   }, []);
+
+  {
+    /* list out the items for the settings menu */
+  }
+  const settingsMenuDropdownItems = [
+    {
+      url: settingsPath,
+      title: 'Settings',
+      target: '_self',
+    },
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
+    },
+  ];
 
   {
     /* button that should redirect a user to RBAC with an account */
   }
   const SettingsButton = () => (
-    <Button
-      variant="plain"
-      aria-label="Go to settings"
+    <ToolbarToggle
+      key="Settings menu"
+      icon={() => (
+        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+          {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
+          <CogIcon />
+        </Flex>
+      )}
+      id="SettingsMenu"
       ouiaId="chrome-settings"
-      className="ins-c-toolbar__button-settings"
-      href={settingsPath}
-      component="a"
-    >
-      <CogIcon />
-    </Button>
+      hasToggleIndicator={null}
+      widget-type="SettingsMenu"
+      dropdownItems={settingsMenuDropdownItems}
+    />
   );
 
   {
@@ -84,6 +123,11 @@ const Tools = () => {
       title: 'About',
       onClick: () => setIsModalOpen(true),
     },
+    {
+      title: 'Demo mode',
+      onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
+      isHidden: !isDemoAcc,
+    },
   ];
 
   {
@@ -92,8 +136,13 @@ const Tools = () => {
   const mobileDropdownItems = [
     { title: 'separator' },
     {
+      url: settingsPath,
       title: 'Settings',
-      url: `${document.baseURI}settings/my-user-access`,
+      target: '_self',
+    },
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -121,9 +170,7 @@ const Tools = () => {
         {isInternal && !window.insights.chrome.isProd && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
         )}
-        {!isSettingsDisabled && (
-          <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'settings'}>{<SettingsButton />}</PageHeaderToolsItem>
-        )}
+        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton />}</PageHeaderToolsItem>}
         <PageHeaderToolsItem>{<AboutButton />}</PageHeaderToolsItem>
       </PageHeaderToolsGroup>
 
@@ -165,6 +212,13 @@ const Tools = () => {
           />
         </PageHeaderToolsItem>
       </PageHeaderToolsGroup>
+
+      {cookie.get('cs_toggledRelease') === 'true' ? (
+        <HeaderAlert
+          title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
+        />
+      ) : null}
 
       {/* Render About Modal */}
       {isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} />}

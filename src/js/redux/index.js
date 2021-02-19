@@ -10,6 +10,7 @@ import {
   onPageAction,
   onPageObjectId,
   navUpdateSection,
+  onRegisterModule,
 } from './reducers';
 import {
   onGetAllTags,
@@ -40,6 +41,7 @@ import {
   GLOBAL_FILTER_UPDATE,
   GLOBAL_FILTER_REMOVE,
   CHROME_NAV_SECTION_UPDATE,
+  REGISTER_MODULE,
 } from './action-types';
 
 const reducers = {
@@ -52,6 +54,7 @@ const reducers = {
   [CHROME_NAV_SECTION_UPDATE]: navUpdateSection,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
+  [REGISTER_MODULE]: onRegisterModule,
 };
 
 const globalFilter = {

@@ -108,3 +108,23 @@ export function removeGlobalFilter(isHidden = true) {
     payload: { isHidden },
   };
 }
+
+export function registerModule(module, manifest) {
+  if (!module) {
+    throw new Error(`unknown module identifier: ${module}`);
+  }
+  return {
+    type: actionTypes.REGISTER_MODULE,
+    payload: {
+      module,
+      manifest,
+    },
+  };
+}
+
+/**
+ * @deprecated
+ */
+export const onToggle = () => ({
+  type: 'NAVIGATION_TOGGLE',
+});

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { connect, shallowEqual, useSelector } from 'react-redux';
+import { connect, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
@@ -11,6 +11,7 @@ import ErrorBoundary from './ErrorBoundary';
 import { getEnv, isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
+import { onToggle } from '../redux/actions';
 
 const LoadingComponent = () => (
   <Bullseye className="pf-u-p-xl">
@@ -23,32 +24,46 @@ const isModule = (key, chrome) =>
   (key !== undefined && chrome?.activeSection?.group !== undefined && key === chrome?.activeSection?.group);
 
 const ShieldedRoot = memo(
-  ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => (
-    <Page
-      isManagedSidebar={!hideNav}
-      header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
-      sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
-    >
-      <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
-        {isGlobalFilterEnabled && <GlobalFilter />}
-        {remoteModule && (
-          <main role="main" className={appId}>
-            {typeof remoteModule !== 'undefined' && initialized ? (
-              <ErrorBoundary>
-                {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
-                <ScalprumComponent fallback={<LoadingComponent />} LoadingComponent={LoadingComponent} key={remoteModule.appName} {...remoteModule} />
-              </ErrorBoundary>
-            ) : (
-              <Bullseye className="pf-u-p-xl">
-                <Spinner size="xl" />
-              </Bullseye>
-            )}
-          </main>
-        )}
-        <main className="pf-c-page__main" id="no-access"></main>
-      </div>
-    </Page>
-  ),
+  ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+      const navToggleElement = document.querySelector('button#nav-toggle');
+      if (navToggleElement) {
+        navToggleElement.onclick = () => dispatch(onToggle());
+      }
+    }, []);
+    return (
+      <Page
+        isManagedSidebar={!hideNav}
+        header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
+        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
+      >
+        <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+          {isGlobalFilterEnabled && <GlobalFilter />}
+          {remoteModule && (
+            <main role="main" className={appId}>
+              {typeof remoteModule !== 'undefined' && initialized ? (
+                <ErrorBoundary>
+                  {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
+                  <ScalprumComponent
+                    fallback={<LoadingComponent />}
+                    LoadingComponent={LoadingComponent}
+                    key={remoteModule.appName}
+                    {...remoteModule}
+                  />
+                </ErrorBoundary>
+              ) : (
+                <Bullseye className="pf-u-p-xl">
+                  <Spinner size="xl" />
+                </Bullseye>
+              )}
+            </main>
+          )}
+          <main className="pf-c-page__main" id="no-access"></main>
+        </div>
+      </Page>
+    );
+  },
   (prevProps, nextProps) => isEqual(prevProps, nextProps)
 );
 
@@ -74,14 +89,17 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
+  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
   const remoteModule = useSelector(({ chrome }) => {
-    const activeModule = chrome?.modules?.reduce((app, curr) => {
-      const [currKey] = Object.keys(curr);
-      if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
-        app = curr[currKey];
-      }
-      return app;
-    }, undefined);
+    const activeModule =
+      !isLanding &&
+      chrome?.modules?.reduce((app, curr) => {
+        const [currKey] = Object.keys(curr);
+        if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
+          app = curr[currKey];
+        }
+        return app;
+      }, undefined);
     if (activeModule) {
       const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
       const [scope, module] = activeModule?.module?.split?.('#') || [];
@@ -92,7 +110,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       };
     }
   }, shallowEqual);
-  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
   const isGlobalFilterEnabled =
     !isLanding && ((!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
@@ -116,6 +133,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
     }
   }, [remoteModule]);
   const useLandingNav = isLanding && isBeta() && getEnv() === 'ci';
+
   return (
     <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
       <div
