@@ -121,3 +121,10 @@ export function registerModule(module, manifest) {
     },
   };
 }
+
+/**
+ * @deprecated
+ */
+export const onToggle = () => ({
+  type: 'NAVIGATION_TOGGLE',
+});

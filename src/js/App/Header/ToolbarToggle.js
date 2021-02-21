@@ -37,7 +37,7 @@ class ToolbarToggle extends Component {
 
   render() {
     // Render the questionmark icon items
-    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden }) =>
+    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
           key={title}
@@ -48,8 +48,9 @@ class ToolbarToggle extends Component {
           {...(url
             ? {
                 href: url,
-                target: '_blank',
-                rel: 'noopener noreferrer',
+                target,
+                rel,
+                ...rest,
               }
             : { onClick: (ev) => this.onClick(ev, url, onClick) })}
         >
