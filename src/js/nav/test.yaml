@@ -1,0 +1,669 @@
+advisor:
+  title: Advisor
+  api:
+    versions:
+      - v1
+    apiName: insights
+  channel: '#advisor'
+  deployment_repo: https://github.com/RedHatInsights/insights-advisor-frontend-build
+  frontend:
+    paths:
+      - /insights/advisor
+    sub_apps:
+      - id: recommendations
+        title: Recommendations
+      - id: systems
+        title: Systems
+      - id: topics
+        title: Topics
+  source_repo: https://github.com/RedHatInsights/insights-advisor-frontend
+
+ansible:
+  title: Red Hat Ansible Automation Platform
+  frontend:
+    sub_apps:
+      - id: automation-analytics
+        default: true
+      - id: automation-hub
+      - id: catalog
+  top_level: true
+
+api-docs:
+  title: API Documentation
+  deployment_repo: https://github.com/RedHatInsights/api-frontend-build
+  frontend:
+    paths:
+      - /docs/api
+      - /docs
+  source_repo: https://github.com/RedHatInsights/api-frontend
+
+applications:
+  title: Applications
+  deployment_repo: https://github.com/RedHatInsights/settings-frontend-build
+  permissions:
+    method: isOrgAdmin
+    apps:
+      - cost-management
+  frontend:
+    sub_apps:
+      - id: advisor
+        title: Advisor
+        permissions:
+          method: isEntitled
+          args:
+            - insights
+      - id: cost-management
+        title: Cost Management
+        permissions:
+          method: isEntitled
+          args:
+            - cost_management
+    paths:
+      - /settings/applications
+  source_repo: https://github.com/RedHatInsights/settings-frontend
+
+approval:
+  title: Approval
+  api:
+    versions:
+      - v1
+  deployment_repo: https://github.com/RedHatInsights/approvals-frontend-deploy.git
+  frontend:
+    paths:
+      - /ansible/catalog/approval
+    reload: catalog/approval
+  source_repo: https://github.com/RedHatInsights/approval-ui
+
+automation-analytics:
+  title: Automation Analytics
+  api:
+    versions:
+      - v1
+  deployment_repo: https://github.com/RedHatInsights/tower-analytics-frontend-build.git
+  frontend:
+    paths:
+      - /ansible
+      - /ansible/automation-analytics
+    sub_apps:
+      - id: clusters
+        title: Clusters
+        default: true
+      - id: organization-statistics
+        title: Organization Statistics
+      - id: job-explorer
+        title: Job Explorer
+      - id: notifications
+        title: Notifications
+      - id: automation-calculator
+        title: Automation calculator
+  source_repo: https://github.com/RedHatInsights/tower-analytics-frontend
+
+
+automation-hub:
+  title: Automation Hub
+  deployment_repo: https://github.com/RedHatInsights/ansible-hub-ui-build
+  frontend:
+    paths:
+      - /ansible/automation-hub
+    sub_apps:
+      - id: ''
+        title: Collections
+        default: true
+      - id: partners
+        title: Partners
+      - id: my-namespaces
+        title: My namespaces
+      - id: repositories
+        title: Repo Management
+      - id: token
+        title: Connect to Hub
+  source_repo: https://github.com/ansible/ansible-hub-ui
+
+catalog:
+  title: Automation Services Catalog
+  api:
+    versions:
+      - v1
+  channel: '#insights-catalog'
+  deployment_repo: https://github.com/RedHatInsights/catalog-static-deploy
+  frontend:
+    paths:
+      - /ansible/catalog
+    sub_apps:
+      - id: products
+        title: Products
+      - id: portfolios
+        title: Portfolios
+        default: true
+      - id: platforms
+        title: Platforms
+        permissions:
+          method: hasPermissions
+          args:
+            - [catalog:portfolios:create]
+      - id: order-processes
+        title: Order processes
+        permissions:
+          method: hasPermissions
+          args:
+            - [catalog:order_processes:read]
+      - id: orders
+        title: Orders
+      - id: approval
+  source_repo: https://github.com/RedHatInsights/catalog-ui
+
+ccx:
+  title: OpenShift Insights
+  api:
+    versions:
+      - v1
+    apiName: insights-results-aggregator
+
+chrome:
+  channel: '#flip-mode-squad'
+  deployment_repo: https://github.com/RedHatInsights/insights-chrome-build
+  source_repo: https://github.com/RedHatInsights/insights-chrome
+
+compliance:
+  title: Compliance
+  api:
+    versions:
+      - v1
+  deployment_repo: https://github.com/RedHatInsights/compliance-frontend-build
+  frontend:
+    paths:
+      - /insights/compliance
+    sub_apps:
+      - id: reports
+        title: Reports
+        default: true
+      - id: scappolicies
+        title: SCAP Policies
+      - id: systems
+        title: Systems
+  source_repo: https://github.com/RedHatInsights/compliance-frontend
+
+config:
+  title: Cloud Services Config
+  deployment_repo: https://github.com/RedHatInsights/cloud-services-config
+  source_repo: https://github.com/RedHatInsights/cloud-services-config
+
+cost-management:
+  title: Cost Management
+  top_level: true
+  api:
+    versions:
+      - v1
+  channel: '#koku'
+  deployment_repo: https://github.com/RedHatInsights/cost-management-build
+  description: >
+    Cost Management is an application that provides users a view of their
+    enterprise cost. Cost Management allows users to evaluate the cost on
+    infrastructures like Amazon Web Services (AWS) across multiple *master*
+    accounts, breaking down to service usage, compute usage, and storage
+    allocation. Details can also be broken down utilizing tagging to view
+    data attributed to project or cost center assignments. Cost Management
+    also allows users to breakdown cost at the platform level by associating
+    cost with OpenShift clusters, nodes, and the projects running their. Cost
+    can be determined by deriving it from the underlying infrastructure (like
+    AWS) or deriving it based on a user set of rates.
+  docs: https://koku.readthedocs.io/en/latest/
+  frontend:
+    paths:
+      - /cost-management
+    sub_apps:
+      - id: ''
+        title: Overview
+        default: true
+        group: cost-management
+      - id: ocp
+        title: OpenShift
+        group: cost-management
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=OCP'
+                accessor: 'data'
+      - id: infrastructure
+        group: cost-management
+      - id: cost-models
+        title: Cost Models
+        group: cost-management
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=cost_model'
+                accessor: 'data'
+      - id: explorer
+        title: Historical Cost Explorer
+        group: cost-management
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=any&beta=true'
+                accessor: 'data'
+  source_repo: https://github.com/project-koku/
+  mailing_list: cost-mgmt@redhat.com
+
+dashboard:
+  title: Dashboard
+  channel: '#advisor'
+  deployment_repo: https://github.com/RedHatInsights/insights-dashboard-build
+  frontend:
+    paths:
+      - /insights
+      - /insights/dashboard
+  source_repo: https://github.com/RedHatInsights/insights-dashboard
+
+docs:
+  title: Documentation
+  channel: '#flip-mode-squad'
+  frontend:
+    sub_apps:
+      - id: api-docs
+        reload: docs/api
+        default: true
+  top_level: true
+
+drift:
+  title: Configuration Drift
+  api:
+    subItems:
+      drift:
+        versions:
+          - v1
+        title: Comparison reports
+      system-baseline:
+        versions:
+          - v1
+        title: Baselines
+      historical-system-profiles:
+        versions:
+          - v1
+        title: Historical system profiles
+  deployment_repo: https://github.com/RedHatInsights/drift-frontend-build
+  frontend:
+    title: Drift
+    paths:
+      - /insights/drift
+    sub_apps:
+      - id: ''
+        title: Comparison
+        default: true
+      - id: baselines
+        title: Baselines
+  source_repo: https://github.com/RedHatInsights/drift-frontend
+
+frontend-assets:
+  title: Frontend Assets
+  deployment_repo: https://github.com/RedHatInsights/frontend-assets-build.git
+  source_repo: https://github.com/RedHatInsights/frontend-assets
+
+hooks:
+  title: Web Hooks Service
+  api:
+    versions:
+      - v1
+    isBeta: true
+  deployment_repo: https://github.com/RedHatInsights/notifications-frontend-build.git
+  frontend:
+    title: Hooks
+    paths:
+      - /settings/hooks
+  source_repo: https://github.com/RedHatInsights/notifications-frontend
+
+infrastructure:
+  title: Infrastructure
+  frontend:
+    sub_apps:
+      - id: aws
+        title: Amazon Web Services
+        default: true
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=AWS'
+                accessor: 'data'
+      - id: azure
+        title: Microsoft Azure
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=AZURE'
+                accessor: 'data'
+      - id: gcp
+        title: Google Cloud Platform
+        permissions:
+          - method: apiRequest
+            args:
+              - url: '/api/cost-management/v1/user-access/?type=GCP&beta=true'
+                accessor: 'data'
+
+ingress:
+  title: Ingress
+  api:
+    versions:
+      - v1
+
+insights:
+  title: Insights
+  frontend:
+    title: Red Hat Insights
+    sub_apps:
+      - id: dashboard
+        default: true
+      - id: advisor
+      - id: vulnerability
+      - id: compliance
+      - id: patch
+      - id: drift
+      - id: policies
+      - id: inventory
+      - id: remediations
+      - id: registration
+      - id: ros
+  top_level: true
+
+inventory:
+  title: Managed Inventory
+  api:
+    versions:
+      - v1
+  channel: '#flip-mode-squad'
+  deployment_repo: https://github.com/RedHatInsights/insights-inventory-frontend-build
+  frontend:
+    title: Inventory
+    paths:
+      - /insights/inventory
+  source_repo: https://github.com/RedHatInsights/insights-inventory-frontend
+
+landing:
+  channel: '#flip-mode-squad'
+  deployment_repo: https://github.com/RedHatInsights/landing-page-frontend-build
+  source_repo: https://github.com/RedHatInsights/landing-page-frontend
+
+migrations:
+  title: Migrations
+  frontend:
+    sub_apps:
+      - id: migration-analytics
+        default: true
+  top_level: true
+
+migration-analytics:
+  title: Migration Analytics
+  api:
+    versions:
+      - v1
+    alias:
+      - xavier
+    tags:
+      - value: "experimental"
+        title: "Experimental API"
+  deployment_repo: https://github.com/RedHatInsights/xavier-ui-deploy
+  frontend:
+    paths:
+      - /migrations
+      - /migrations/migration-analytics
+  source_repo: https://github.com/project-xavier/xavier-ui
+
+my-user-access:
+  title: My user access
+  channel: '#platform-experience'
+  frontend:
+    app_base: rbac
+    paths:
+      - /settings
+      - /settings/my-user-access
+
+openshift:
+  title: OpenShift (OCM)
+  api:
+    versions:
+      - v1
+  deployment_repo: https://github.com/RedHatInsights/uhc-portal-frontend-deploy.git
+  frontend:
+    title: Red Hat OpenShift Cluster Manager
+    paths:
+      - /openshift
+    sub_apps:
+      - id: ''
+        title: Clusters
+        group: openshift
+        default: true
+      - id: subscriptions
+        title: Subscriptions
+        group: openshift
+  source_repo:
+  top_level: true
+
+patch:
+  title: Patch
+  api:
+    versions:
+      - v1
+  channel: '#team-patchman'
+  deployment_repo: https://github.com/RedHatInsights/patchman-ui-build
+  frontend:
+    title: Patch
+    paths:
+      - /insights/patch
+    sub_apps:
+      - id: advisories
+        title: Advisories
+        default: true
+      - id: systems
+        title: Systems
+      - id: packages
+        title: Packages
+  source_repo: https://github.com/RedHatInsights/patchman-ui
+
+policies:
+  title: Policies
+  api:
+    versions:
+      - v1
+  channel: '#cloudservices-policies'
+  deployment_repo: https://github.com/RedHatInsights/policies-ui-frontend-build
+  frontend:
+    paths:
+      - /insights/policies
+  source_repo: https://github.com/RedHatInsights/policies-ui-frontend
+
+rbac:
+  title: Role-based Access Control
+  api:
+    versions:
+      - v1
+  deployment_repo: https://github.com/RedHatInsights/rbac-frontend-deploy.git
+  permissions:
+    method: isOrgAdmin
+  frontend:
+    title: User access
+    paths:
+      - /settings/rbac
+    sub_apps:
+      - id: users
+        title: Users
+        default: true
+      - id: roles
+        title: Roles
+      - id: groups
+        title: Groups
+  source_repo: https://github.com/RedHatInsights/insights-rbac-ui
+
+registration:
+  title: Register Systems
+  channel: '#advisor'
+  deployment_repo: https://github.com/RedHatInsights/registration-assistant-build
+  frontend:
+    paths:
+      - /insights/registration
+  source_repo: https://github.com/RedHatInsights/registration-assistant/
+
+remediations:
+  title: Remediations
+  api:
+    versions:
+      - v1
+  channel: '#insights-remediations'
+  deployment_repo: https://github.com/RedHatInsights/insights-remediations-frontend-build
+  frontend:
+    paths:
+      - /insights/remediations
+  source_repo: https://github.com/RedHatInsights/insights-remediations-frontend
+
+rhel-sw:
+  title: Red Hat Enterprise Linux
+  frontend:
+    sub_apps:
+      - id: all
+        title: All
+        default: true
+      - id: arm
+        title: ARM
+      - id: ibmpower
+        title: IBM Power
+      - id: ibmz
+        title: IBM Z systems
+      - id: x86
+        title: x86
+
+ros:
+  title: Resource Optimization
+  api:
+    versions:
+      - v0
+  channel: '#team-ros'
+  deployment_repo: https://github.com/RedHatInsights/ros-frontend-build
+  frontend:
+      title: Resource Optimization
+      paths:
+          - /insights/ros
+  source_repo: https://github.com/RedHatInsights/ros-frontend
+
+ruledev:
+  title: Rule Development
+  api:
+    versions:
+      - v1
+    isBeta: true
+    tags:
+      - value: "experimental"
+        title: "Experimental API"
+  channel: '#flip-mode-squad'
+  deployment_repo: https://github.com/RedHatInsights/ruledev-frontend-build
+  frontend:
+    paths:
+      - /staging/ruledev
+  source_repo: https://github.com/RedHatInsights/ruledev-frontend
+
+settings:
+  title: Settings
+  top_level: true
+  frontend:
+    sub_apps:
+      - id: my-user-access
+        default: true
+      - id: rbac
+      section:
+        name: MyCoolSECTIOn
+          items:
+          - id: sources
+          - id: applications
+
+sources:
+  title: Discovered Inventory
+  api:
+    versions:
+      - v1
+  channel: '#insights_topology_svc'
+  deployment_repo: https://github.com/RedHatInsights/sources-ui-deploy
+  frontend:
+    title: Sources
+    paths:
+      - /settings/sources
+  source_repo: https://github.com/RedHatInsights/sources-ui
+
+staging:
+  title: Staging Bundle
+  frontend:
+    sub_apps:
+      - id: ruledev
+  top_level: true
+
+storybook:
+  channel: '#flip-mode-squad'
+  deployment_repo: https://github.com/RedHatInsights/insights-frontend-storybook-build
+  frontend:
+    paths:
+      - /docs/storybook
+  source_repo: https://github.com/RedHatInsights/insights-frontend-storybook
+
+subscriptions:
+  title: Subscription Watch
+  api:
+    versions:
+      - v1
+    tags:
+      - value: "experimental"
+        title: "Experimental API"
+  channel: '#subscriptions'
+  deployment_repo: https://github.com/RedHatInsights/curiosity-frontend-build
+  top_level: true
+  frontend:
+    paths:
+      - /subscriptions
+    sub_apps:
+      - id: rhel-sw
+        default: true
+        group: subscriptions
+      - id: openshift-sw
+        title: Red Hat OpenShift
+        group: subscriptions
+  source_repo: https://github.com/RedHatInsights/curiosity-frontend
+
+trust:
+  title: Insights security
+  channel: '#advisor'
+  top_level: true
+  deployment_repo: https://github.com/RedHatInsights/trust-frontend-build
+  frontend:
+    paths:
+      - /security/insights
+  source_repo: https://github.com/RedHatInsights/trust-frontend
+
+user-preferences:
+  title: User Preferences
+  deployment_repo: https://github.com/RedHatInsights/user-preferences-frontend-build
+  top_level: true
+  frontend:
+    title: User preferences
+    paths:
+      - /user-preferences
+    sub_apps:
+      - id: email
+        title: Email preferences
+        default: true
+  source_repo: https://github.com/RedHatInsights/user-preferences-frontend
+
+vulnerability:
+  title: Vulnerability Management
+  api:
+    versions:
+      - v1
+  channel: '#team-vulnerability'
+  deployment_repo: https://github.com/RedHatInsights/vulnerability-ui-build
+  frontend:
+    title: Vulnerability
+    paths:
+      - /insights/vulnerability
+    sub_apps:
+      - id: cves
+        title: CVEs
+        default: true
+      - id: reports
+        title: Reports
+      - id: systems
+        title: Systems
+  source_repo: https://github.com/RedHatInsights/vulnerability-ui
