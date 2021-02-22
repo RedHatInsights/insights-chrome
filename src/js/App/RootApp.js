@@ -93,6 +93,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const remoteModule = useSelector(({ chrome }) => {
     const activeModule =
       !isLanding &&
+      !hideNav &&
       chrome?.modules?.reduce((app, curr) => {
         const [currKey] = Object.keys(curr);
         if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
