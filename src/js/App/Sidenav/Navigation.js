@@ -190,9 +190,9 @@ export const Navigation = () => {
   };
 
   const settingsWithSections = settings.reduce((acc, item) => {
-    const section = acc.find((i) => i.section === item.section) || { items: [], section: item.section };
+    const section = acc.find(({ section }) => section === item.section) || { items: [], section: item.section };
     return [
-      ...acc.filter((i) => i.section === undefined || i.section !== item.section),
+      ...acc.filter(({ section }) => section === undefined || section !== item.section),
       item.section ? { ...section, items: [...section.items, item] } : item,
     ];
   }, []);

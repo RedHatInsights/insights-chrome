@@ -110,9 +110,7 @@ exports[`SectionNav should render group with app 1`] = `
     <h2
       class="pf-c-nav__section-title"
       id="section1"
-    >
-      SECTION1
-    </h2>
+    />
     <ul>
       <li
         class="pf-c-nav__item"
@@ -141,9 +139,7 @@ exports[`SectionNav should render group with app and sub app 1`] = `
     <h2
       class="pf-c-nav__section-title"
       id="section1"
-    >
-      SECTION1
-    </h2>
+    />
     <ul>
       <li
         class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
