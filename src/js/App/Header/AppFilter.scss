@@ -1,5 +1,5 @@
 @media screen and (max-width:768px) {
-  .pf-c-page__header
+  .pf-c-page__header {
     &-tools-group {
       margin-left: 0 !important;
     }
@@ -108,21 +108,21 @@
       bottom: 0;  // allows scrolling
       div.gallery {
         column-count: 2;
-        width: calc( 350px * 2 - var(--pf-global--spacer--lg) );
+        width: calc( 350px * 2 );
       }
     }
   }
   @media screen and (min-width: 1251px) and (max-width: 1599px) { 
     div.gallery {
       column-count: 3;
-      width: calc( 350px * 3 - var(--pf-global--spacer--lg) );
+      width: calc( 350px * 3 );
     }
   }
 
   @media screen and (min-width: 1600px) { 
     div.gallery {
       column-count: 4;
-      width: calc( 350px * 4 - var(--pf-global--spacer--lg) );
+      width: calc( 350px * 4 );
     }
   }
 
@@ -137,6 +137,3 @@
     }
   }
 }
-
-
-

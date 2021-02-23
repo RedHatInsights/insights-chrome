@@ -6,7 +6,7 @@ exports[`Tools should render correctly 1`] = `
   widget-type="InsightsToolbar"
 >
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-sm"
+    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
   >
     <div
       class="pf-c-page__header-tools-item"
@@ -20,7 +20,7 @@ exports[`Tools should render correctly 1`] = `
     </div>
   </div>
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-sm"
+    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
   >
     <div
       class="pf-c-page__header-tools-item"
@@ -29,7 +29,7 @@ exports[`Tools should render correctly 1`] = `
     </div>
   </div>
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden-on-sm"
+    class="pf-c-page__header-tools-group pf-m-hidden-on-lg"
   >
     <div
       class="pf-c-page__header-tools-item"
