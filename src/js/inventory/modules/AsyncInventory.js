@@ -2,7 +2,6 @@ import React, { useState, Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import '../inventoryStyles';
 import { allDetails, drawer } from '../accountNumbers.json';
 
 const isEnabled = async () => {
@@ -58,9 +57,19 @@ const AsyncInventory = ({ componentName, onLoad, store, history, innerRef, ...pr
           )
         )?.SystemCvesStore;
       }
-      const { inventoryConnector, mergeWithDetail, ...rest } = await import(
-        /* webpackChunkName: "inventory" */ '@redhat-cloud-services/frontend-components-inventory/esm'
-      );
+
+      const { inventoryConnector, mergeWithDetail, shared, api, ...rest } = await Promise.all([
+        import(/* webpackChunkName: "inventoryConnector" */ '@redhat-cloud-services/frontend-components-inventory/inventoryConnector'),
+        import(/* webpackChunkName: "inventoryRedux" */ '@redhat-cloud-services/frontend-components-inventory/redux'),
+        import(/* webpackChunkName: "inventoryShared" */ '@redhat-cloud-services/frontend-components-inventory/shared'),
+        import(/* webpackChunkName: "inventoryApi" */ '@redhat-cloud-services/frontend-components-inventory/api'),
+      ]).then(([{ inventoryConnector }, { mergeWithDetail, ...rest }, shared, api]) => ({
+        inventoryConnector,
+        mergeWithDetail,
+        shared,
+        api,
+        ...rest,
+      }));
       const { [componentName]: InvCmp } = inventoryConnector(
         store,
         isDetailsEnabled
@@ -88,6 +97,8 @@ const AsyncInventory = ({ componentName, onLoad, store, history, innerRef, ...pr
       });
       onLoad({
         ...rest,
+        ...shared,
+        api,
         mergeWithDetail: detailMerger,
       });
       setComponent(() => InvCmp);
