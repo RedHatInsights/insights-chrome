@@ -23,7 +23,7 @@ import IconCostManagement from './icon-cost-management';
 import IconInsights from './icon-insights';
 import IconMigrations from './icon-migrations';
 import IconOpenshift from './icon-openshift';
-import IconSAP from './icon-SAP';
+import Iconsap from './icon-SAP';
 import IconSubscriptions from './icon-subscriptions';
 
 import './AppFilter.scss';
