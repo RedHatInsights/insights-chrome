@@ -5,7 +5,7 @@ import { connect, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import { Header, HeaderTools } from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
@@ -78,11 +78,16 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
-  const isLanding = useSelector(({ chrome }) => chrome?.appId === 'landing');
+  const { pathname } = useLocation();
+  /**
+   * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
+   * We need the information before anything is rendered to determine if we use root module or render landing page.
+   * This will be replaced once we can use react router for all pages. Landing page will have its own route.
+   */
+  const isLanding = pathname === '/';
   const remoteModule = useSelector(({ chrome }) => {
     const activeModule =
       !isLanding &&
-      !hideNav &&
       chrome?.modules?.reduce((app, curr) => {
         const [currKey] = Object.keys(curr);
         if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
@@ -125,27 +130,25 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
   const useLandingNav = isLanding && isBeta() && getEnv() === 'ci';
 
   return (
-    <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
-      <div
-        className="pf-c-drawer__content"
-        data-ouia-subnav={activeApp}
-        data-ouia-bundle={activeLocation}
-        data-ouia-app-id={appId}
-        data-ouia-safe="true"
-        {...(pageAction && { 'data-ouia-page-type': pageAction })}
-        {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
-      >
-        <ShieldedRoot
-          isGlobalFilterEnabled={isGlobalFilterEnabled}
-          hideNav={hideNav}
-          insightsContentRef={insightsContentRef}
-          useLandingNav={useLandingNav}
-          initialized={scalprum.initialized}
-          remoteModule={remoteModule}
-          appId={appId}
-        />
-      </div>
-    </BrowserRouter>
+    <div
+      className="pf-c-drawer__content"
+      data-ouia-subnav={activeApp}
+      data-ouia-bundle={activeLocation}
+      data-ouia-app-id={appId}
+      data-ouia-safe="true"
+      {...(pageAction && { 'data-ouia-page-type': pageAction })}
+      {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
+    >
+      <ShieldedRoot
+        isGlobalFilterEnabled={isGlobalFilterEnabled}
+        hideNav={hideNav}
+        insightsContentRef={insightsContentRef}
+        useLandingNav={useLandingNav}
+        initialized={scalprum.initialized}
+        remoteModule={remoteModule}
+        appId={appId}
+      />
+    </div>
   );
 };
 
@@ -162,4 +165,12 @@ RootApp.propTypes = {
 function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
   return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
 }
-export default connect(stateToProps, null)(RootApp);
+const ConnectedRootApp = connect(stateToProps, null)(RootApp);
+
+const Chrome = (props) => (
+  <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
+    <ConnectedRootApp {...props} />
+  </BrowserRouter>
+);
+
+export default Chrome;
