@@ -11,6 +11,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
     publicPath,
     chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
   },
+  devtool: false,
   resolve: {
     alias: {
       PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
@@ -35,8 +36,13 @@ const commonConfig = ({ publicPath, noHash }) => ({
     rules: [
       {
         test: /src\/.*\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+      {
+        test: /src\/.*\.js$/,
         exclude: /node_modules/,
-        use: [{ loader: 'source-map-loader' }, { loader: 'babel-loader' }],
+        use: [{ loader: 'babel-loader' }],
       },
       {
         test: /\.s?[ac]ss$/,
