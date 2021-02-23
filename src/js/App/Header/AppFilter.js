@@ -54,32 +54,31 @@ const AppFilter = () => {
     );
   }, [filterValue]);
 
-const App = ({ id, title, routes }) => (
-  <div className="galleryItem">
-    <Split>
-      <SplitItem className="left">{getIcon(id)}</SplitItem>
-      <SplitItem className="right">
-        <TextContent>
-          <Text component="h4">{title}</Text>
-          {routes.map((subApp) => (
-            <Text component="p" key={`${id}/${subApp.id}`}>
-              <Text component="a" href={`${id}/${subApp.id}`}>
-                {subApp.title}
+  const App = ({ id, title, routes }) => (
+    <div className="galleryItem">
+      <Split>
+        <SplitItem className="left">{getIcon(id)}</SplitItem>
+        <SplitItem className="right">
+          <TextContent>
+            <Text component="h4">{title}</Text>
+            {routes.map((subApp) => (
+              <Text component="p" key={`${id}/${subApp.id}`}>
+                <Text component="a" href={`${id}/${subApp.id}`}>
+                  {subApp.title}
+                </Text>
               </Text>
-            </Text>
-          ))}
-        </TextContent>
-      </SplitItem>
-    </Split>
-  </div>
-);
+            ))}
+          </TextContent>
+        </SplitItem>
+      </Split>
+    </div>
+  );
 
-App.propTypes = {
-  id: PropTypes.string,
-  title: PropTypes.node,
-  routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
-};
-
+  App.propTypes = {
+    id: PropTypes.string,
+    title: PropTypes.node,
+    routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+  };
 
   return (
     <React.Fragment>

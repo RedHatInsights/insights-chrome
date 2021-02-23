@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './icon-openshift.scss';
 const IconOpenshift = () => (
   // eslint-disable-next-line max-len
   <svg width="42px" height="41px" viewBox="0 0 42 41" version="1.1" xmlns="http://www.w3.org/2000/svg">

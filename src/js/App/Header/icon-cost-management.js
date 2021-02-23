@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './icon-cost-management.scss';
 const IconCostManagement = () => (
   // eslint-disable-next-line max-len
   <svg height="100" width="100" viewBox="0 0 100 100" y="0px" x="0px" id="Layer_1" version="1.1">

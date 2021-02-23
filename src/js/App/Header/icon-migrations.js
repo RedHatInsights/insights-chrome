@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './icon-migrations.scss';
 const IconMigrations = () => (
   // eslint-disable-next-line max-len
   <svg width="45px" height="56px" viewBox="0 0 45 56" version="1.1" xmlns="http://www.w3.org/2000/svg">

@@ -3,15 +3,7 @@ import React from 'react';
 import './icon-ansible.scss';
 const IconAnsible = () => (
   // eslint-disable-next-line max-len
-  <svg
-    className="IconAnsible"
-    xmlns="http://www.w3.org/2000/svg"
-    id="svg1459"
-    version="1.1"
-    viewBox="0 0 40 56"
-    height="56px"
-    width="40px"
-  >
+  <svg className="IconAnsible" xmlns="http://www.w3.org/2000/svg" id="svg1459" version="1.1" viewBox="0 0 40 56" height="56px" width="40px">
     <title id="title1442">Automation-icon</title>
     <g
       transform="matrix(0.87287214,0,0,0.93093993,3.0441677,1.9302288)"
@@ -21,12 +13,7 @@ const IconAnsible = () => (
       stroke="none"
       id="Post-summit-dashboard,-August-19"
     >
-      <g
-        fillRule="nonzero"
-        fill="#000000"
-        transform="translate(-974,-220)"
-        id="RHCS-Landing-Icons-2"
-      >
+      <g fillRule="nonzero" fill="#000000" transform="translate(-974,-220)" id="RHCS-Landing-Icons-2">
         <g transform="translate(974,220)" id="Automation-icon">
           <path
             id="Shape"
