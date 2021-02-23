@@ -50,7 +50,7 @@ exports[`RootApp should render correctly - no data 1`] = `
       tabindex="-1"
     >
       <div
-        class="ins-m-full--height"
+        class="ins-c-render ins-m-full--height"
       >
         <main
           class="pf-c-page__main"
@@ -115,7 +115,7 @@ exports[`RootApp should render correctly 1`] = `
       tabindex="-1"
     >
       <div
-        class="ins-m-full--height"
+        class="ins-c-render ins-m-full--height"
       >
         <main
           class="pf-c-page__main"
@@ -181,7 +181,7 @@ exports[`RootApp should render correctly with pageAction 1`] = `
       tabindex="-1"
     >
       <div
-        class="ins-m-full--height"
+        class="ins-c-render ins-m-full--height"
       >
         <main
           class="pf-c-page__main"
@@ -247,7 +247,7 @@ exports[`RootApp should render correctly with pageObjectId 1`] = `
       tabindex="-1"
     >
       <div
-        class="ins-m-full--height"
+        class="ins-c-render ins-m-full--height"
       >
         <main
           class="pf-c-page__main"
@@ -314,7 +314,7 @@ exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = 
       tabindex="-1"
     >
       <div
-        class="ins-m-full--height"
+        class="ins-c-render ins-m-full--height"
       >
         <main
           class="pf-c-page__main"
