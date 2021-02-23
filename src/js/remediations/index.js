@@ -5,8 +5,7 @@ import Deferred from '@redhat-cloud-services/frontend-components-utilities/Deffe
 export default async function loadRemediation(dependencies) {
   setDependencies(dependencies);
 
-  await import(/* webpackChunkName: "remediation-styles" */ './remediationsStyles');
-  const remediationsData = await import(/* webpackChunkName: "remediations" */ '@redhat-cloud-services/frontend-components-remediations/esm');
+  const remediationsData = await import(/* webpackChunkName: "remediations" */ '@redhat-cloud-services/frontend-components-remediations');
   const RenderWrapper = await import(/* webpackChunkName: "remediations-render-wrapper" */ './Wrapper');
   const deferred = new Deferred();
   return {

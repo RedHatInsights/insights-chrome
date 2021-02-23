@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development npm run watch",
+    "start:beta": "NODE_ENV=development npm run build:js:beta && npm run build:sass && npm run build:pug:beta -- nohash && npm-run-all --parallel watch:beta:*",
     "analyze:js": "NODE_ENV=production webpack --config config/webpack.config.js --env analyze=true --env publicPath=/apps/chrome/js/ --mode=production",
     "build": "NODE_ENV=production npm run build:js -- --mode=production && npm-run-all build:images-chrome  build:sass    clean:chrome    hash:chrome   build:pug   build:fonts build:Fafonts",
     "build:beta": "NODE_ENV=production npm run build:js:beta -- --mode=production && npm-run-all build:images-chrome build:sass clean:chrome hash:chrome build:pug:beta build:fonts build:Fafonts",
@@ -30,6 +31,8 @@
     "watch:images": "npm run build:images-chrome -- -w",
     "watch:js": "npm run build:js -- --watch --mode=development --env noHash=true",
     "watch:sass": "npm run build:sass -- -w",
+    "watch:beta:js": "npm run build:js:beta -- --watch --mode=development --env noHash=true",
+    "watch:beta:sass": "npm run build:sass -- -w",
     "nightly": "npm run build"
   },
   "jest": {
@@ -139,6 +142,8 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "@babel/runtime": "^7.12.13",
+    "@data-driven-forms/pf4-component-mapper": "^2.23.1",
+    "@data-driven-forms/react-form-renderer": "^2.23.1",
     "@patternfly/patternfly": "^4.80.3",
     "@patternfly/react-core": "4.90.2",
     "@patternfly/react-icons": "^4.8.4",
@@ -152,7 +157,7 @@
     "@redhat-cloud-services/frontend-components-inventory-patchman": "^1.9.1",
     "@redhat-cloud-services/frontend-components-inventory-vulnerabilities": "^1.62.2",
     "@redhat-cloud-services/frontend-components-notifications": "^3.0.3",
-    "@redhat-cloud-services/frontend-components-remediations": "^2.3.10",
+    "@redhat-cloud-services/frontend-components-remediations": "^3.0.0",
     "@redhat-cloud-services/frontend-components-utilities": "^3.0.3",
     "@redhat-cloud-services/host-inventory-client": "^1.0.93",
     "@redhat-cloud-services/keycloak-js": "0.0.3",

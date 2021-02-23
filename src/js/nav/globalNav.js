@@ -60,6 +60,7 @@ async function getRoutesForApp(app, masterConfig) {
                 ...(subItem.default && { default: subItem.default }),
                 ...(subItem.group && { group: subItem.group }),
                 ...(subItem.reload && { reload: subItem.reload }),
+                ...(subItem.section && { reload: subItem.section }),
               },
               modules,
             ];
@@ -107,6 +108,7 @@ async function getAppData(appId, propName, masterConfig) {
         ...(!app.frontend.suppress_id && { id: appId }),
         ...(app.frontend.reload && { reload: app.frontend.reload }),
         ...(routes?.length > 0 && { [propName]: routes }),
+        ...(app.frontend.section && { section: app.frontend.section }),
       },
       [
         ...(modules || []),
@@ -135,6 +137,7 @@ export async function loadNav(yamlConfig, cache) {
   }
 
   const globalNav = (activeBundle[active] || activeBundle.insights)?.routes;
+
   return {
     ...(activeBundle[active]
       ? {
