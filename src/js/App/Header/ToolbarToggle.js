@@ -37,28 +37,29 @@ class ToolbarToggle extends Component {
 
   render() {
     // Render the questionmark icon items
-    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
-      !isHidden ? (
-        <DropdownItem
-          key={title}
-          ouiaId={title}
-          component={url ? 'a' : 'button'}
-          // Because the urls are using 'a', don't use onClick for accessibility
-          // If it is a button, use the onClick prop
-          {...(url
-            ? {
-                href: url,
-                target,
-                rel,
-                ...rest,
-              }
-            : { onClick: (ev) => this.onClick(ev, url, onClick) })}
-        >
-          {title}
-        </DropdownItem>
-      ) : (
-        <React.Fragment />
-      )
+    const dropdownItems = this.props.dropdownItems.map(
+      ({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }, index) =>
+        !isHidden ? (
+          <DropdownItem
+            key="item"
+            ouiaId={title}
+            component={url ? 'a' : 'button'}
+            // Because the urls are using 'a', don't use onClick for accessibility
+            // If it is a button, use the onClick prop
+            {...(url
+              ? {
+                  href: url,
+                  target,
+                  rel,
+                  ...rest,
+                }
+              : { onClick: (ev) => this.onClick(ev, url, onClick) })}
+          >
+            {title}
+          </DropdownItem>
+        ) : (
+          <React.Fragment key="fragment" />
+        )
     );
 
     const toggle = (
@@ -66,7 +67,6 @@ class ToolbarToggle extends Component {
         className={this.props.className}
         id={this.props.id}
         ouiaId={this.props.id}
-        iconComponent={null}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
       >
