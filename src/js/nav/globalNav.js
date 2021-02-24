@@ -52,6 +52,7 @@ async function getRoutesForApp(app, masterConfig) {
                       title: subItem.title,
                       ignoreCase: subItem.ignoreCase,
                       ...(subItem.section && { section: subItem.section }),
+                      ...(subItem.sub_apps && { subItems: subItem.sub_apps }),
                     },
                   ]
                 : await getAppData(subItem.id || subItem, 'subItems', masterConfig)) || [];
