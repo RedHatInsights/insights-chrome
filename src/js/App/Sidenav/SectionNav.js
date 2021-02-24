@@ -35,7 +35,18 @@ const SectionNav = ({ items, section, onClick, ...props }) => {
 SectionNav.propTypes = {
   items: PropTypes.array,
   subItems: PropTypes.array,
-  section: PropTypes.string.isRequired,
+  section: (props, propName, component) => {
+    if (!props[propName] && Object.prototype.hasOwnProperty.call(props, 'items')) {
+      return new Error(
+        `Prop "${propName}" is required if object has "items" prop. Invalid prop ${propName} supplied to ${component}. Validation failed.`
+      );
+    }
+    if (props[propName] && typeof props[propName] !== 'string') {
+      return new Error(
+        `Failed prop type. Invalid prop ${propName} supplied to ${component}. Expected "string", got "${typeof props[propName]}". Validation failed.`
+      );
+    }
+  },
   id: PropTypes.string,
   title: PropTypes.string,
   activeLocation: PropTypes.string.isRequired,

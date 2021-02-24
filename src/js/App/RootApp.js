@@ -1,9 +1,10 @@
 import React, { memo, useEffect, useRef } from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
-import { Bullseye, Page, PageHeader, PageSidebar, Spinner } from '@patternfly/react-core';
+import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { BrowserRouter } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import { Header, HeaderTools } from './Header/Header';
@@ -12,12 +13,7 @@ import { getEnv, isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
-
-const LoadingComponent = () => (
-  <Bullseye className="pf-u-p-xl">
-    <Spinner size="xl" />
-  </Bullseye>
-);
+import LoadingFallback from '../utils/loading-fallback';
 
 const isModule = (key, chrome) =>
   key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
@@ -38,24 +34,17 @@ const ShieldedRoot = memo(
         header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
         sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
       >
-        <div ref={insightsContentRef} className={isGlobalFilterEnabled ? '' : 'ins-m-full--height'}>
+        <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
           {remoteModule && (
             <main role="main" className={appId}>
               {typeof remoteModule !== 'undefined' && initialized ? (
                 <ErrorBoundary>
                   {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
-                  <ScalprumComponent
-                    fallback={<LoadingComponent />}
-                    LoadingComponent={LoadingComponent}
-                    key={remoteModule.appName}
-                    {...remoteModule}
-                  />
+                  <ScalprumComponent fallback={LoadingFallback} LoadingFallback={LoadingFallback} key={remoteModule.appName} {...remoteModule} />
                 </ErrorBoundary>
               ) : (
-                <Bullseye className="pf-u-p-xl">
-                  <Spinner size="xl" />
-                </Bullseye>
+                LoadingFallback
               )}
             </main>
           )}
