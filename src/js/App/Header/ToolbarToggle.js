@@ -40,7 +40,7 @@ class ToolbarToggle extends Component {
     const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
-          key={title}
+          key="item"
           ouiaId={title}
           component={url ? 'a' : 'button'}
           // Because the urls are using 'a', don't use onClick for accessibility
@@ -57,7 +57,7 @@ class ToolbarToggle extends Component {
           {title}
         </DropdownItem>
       ) : (
-        <React.Fragment />
+        <React.Fragment key="fragment" />
       )
     );
 
@@ -66,7 +66,6 @@ class ToolbarToggle extends Component {
         className={this.props.className}
         id={this.props.id}
         ouiaId={this.props.id}
-        iconComponent={null}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
       >
