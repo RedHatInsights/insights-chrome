@@ -4,7 +4,7 @@ import qe from './iqeEnablement';
 import consts from '../consts';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl, getEnv, isBeta } from '../utils';
+import { getUrl, getEnv, isBeta, updateDocumentTitle } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
@@ -46,15 +46,7 @@ export function chromeInit(navResolver) {
   const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
 
   return {
-    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
-    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     appAction,
-    appObjectId,
-    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
-    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
-    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-    mapGlobalFilter: flatTags,
-    registerModule,
     appNavClick: ({ secondaryNav, ...payload }) => {
       if (!secondaryNav) {
         clearActive();
@@ -65,6 +57,16 @@ export function chromeInit(navResolver) {
         custom: true,
       });
     },
+    appObjectId,
+    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    identifyApp: (data, appTitle) =>
+      navResolver.then(() => {
+        identifyApp(data, store.getState().chrome.globalNav);
+        updateDocumentTitle(appTitle);
+      }),
+    mapGlobalFilter: flatTags,
+    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     on: (type, callback) => {
       if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
         throw new Error(`Unknown event type: ${type}`);
@@ -78,6 +80,9 @@ export function chromeInit(navResolver) {
       }
       return middlewareListener.addNew(listener(callback));
     },
+    registerModule,
+    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
+    updateDocumentTitle,
     $internal: { store },
   };
 }
