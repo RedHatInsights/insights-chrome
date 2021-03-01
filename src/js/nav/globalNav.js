@@ -51,6 +51,8 @@ async function getRoutesForApp(app, masterConfig) {
                       id: subItem.id || '',
                       title: subItem.title,
                       ignoreCase: subItem.ignoreCase,
+                      ...(subItem.section && { section: subItem.section }),
+                      ...(subItem.sub_apps && { subItems: subItem.sub_apps }),
                     },
                   ]
                 : await getAppData(subItem.id || subItem, 'subItems', masterConfig)) || [];
@@ -60,7 +62,7 @@ async function getRoutesForApp(app, masterConfig) {
                 ...(subItem.default && { default: subItem.default }),
                 ...(subItem.group && { group: subItem.group }),
                 ...(subItem.reload && { reload: subItem.reload }),
-                ...(subItem.section && { reload: subItem.section }),
+                ...(subItem.section && { section: subItem.section }),
               },
               modules,
             ];

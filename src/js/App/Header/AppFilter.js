@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -123,7 +124,7 @@ const AppFilter = () => {
           )}
         </div>
       </Dropdown>
-      <div className={isOpen && 'pf-c-backdrop'} />
+      <div className={classnames({ 'pf-c-backdrop': isOpen })} />
     </React.Fragment>
   );
 };

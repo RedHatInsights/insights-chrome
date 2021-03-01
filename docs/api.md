@@ -32,11 +32,29 @@ chrome: {
     createCase,
     visibilityFunctions,
     init,
+    updateDocumentTitle
 },
 loadInventory,
 experimental: {
     loadRemediations,
 }
+```
+
+## Update document title
+
+Please do not update title directly via `document.title`. Use one of following options.
+
+### While identifying app
+This is prefered way if the document title stays the same on each app page.
+```js
+insights.chrome.identifyApp('advisor', 'App title');
+```
+
+### Using updateDocumentTitle function
+Can be used for changing app title in different app pages.
+```js
+insights.chrome.updateDocumentTitle('New title')
+
 ```
 
 ## Global events
