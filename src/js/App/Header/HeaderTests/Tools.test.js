@@ -4,7 +4,6 @@ import { render, act } from '@testing-library/react';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
 jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');
-jest.mock('../InsightsAbout', () => () => '<InsightsAbout />');
 
 describe('Tools', () => {
   it('should render correctly', async () => {
