@@ -44,7 +44,7 @@ const extraLinks = {
   'cost-management': [
     {
       id: 'extra-cost-management',
-      url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
+      url: 'https://access.redhat.com/documentation/en-us/cost_management_service/2021/',
       title: 'Documentation',
       external: true,
     },
