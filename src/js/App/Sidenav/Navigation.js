@@ -29,7 +29,7 @@ const extraLinks = {
       subItems: [
         { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Documentation', external: true },
         { id: 'extra-security', url: './security/insights', title: 'Security Information' },
-        { id: 'extra-docs', url: './docs/api', title: 'APIs' },
+        { id: 'extra-api-docs', url: './docs/api', title: 'APIs' },
       ],
     },
   ],
@@ -44,7 +44,7 @@ const extraLinks = {
   'cost-management': [
     {
       id: 'extra-cost-management',
-      url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
+      url: 'https://access.redhat.com/documentation/en-us/cost_management_service/2021/',
       title: 'Documentation',
       external: true,
     },
@@ -83,7 +83,7 @@ const extraLinks = {
   'application-services': [
     {
       id: 'extra-application-services-docs',
-      url: 'https://access.redhat.com/documentation/en-us/',
+      url: 'https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka',
       title: 'Documentation',
       external: true,
     },
@@ -189,15 +189,23 @@ export const Navigation = () => {
     }
   };
 
+  const settingsWithSections = settings.reduce((acc, item) => {
+    const section = acc.find(({ section }) => section === item.section) || { items: [], section: item.section };
+    return [
+      ...acc.filter(({ section }) => section === undefined || section !== item.section),
+      item.section ? { ...section, items: [...section.items, item] } : item,
+    ];
+  }, []);
+
   return (
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
       <NavList>
-        {settings?.map((item, key) => (
+        {settingsWithSections?.map((item, key) => (
           <SectionNav activeLocation={activeLocation} activeApp={activeApp} key={item.id || key} {...item} onClick={onClick} />
         ))}
         {extraLinks[activeLocation]?.map?.((item) =>
           item?.expandable && activeLocation === 'insights' ? (
-            <NavExpandable title={item.title}>
+            <NavExpandable key={item.id} title={item.title}>
               {item?.subItems?.map((item) => (
                 <NavItemLink key={item.id} {...item} />
               ))}

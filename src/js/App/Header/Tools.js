@@ -12,7 +12,6 @@ import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
-import InsightsAbout from './InsightsAbout';
 import { Badge, Flex } from '@patternfly/react-core';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
@@ -35,7 +34,6 @@ const Tools = () => {
     /* Set the state */
   }
   const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
   const [isDemoAcc, setIsDemoAcc] = useState(false);
   const settingsPath = `${document.baseURI}settings/my-user-access`;
@@ -120,10 +118,6 @@ const Tools = () => {
       url: `${document.baseURI}docs/api`,
     },
     {
-      title: 'About',
-      onClick: () => setIsModalOpen(true),
-    },
-    {
       title: 'Demo mode',
       onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
       isHidden: !isDemoAcc,
@@ -166,7 +160,7 @@ const Tools = () => {
   return (
     <PageHeaderTools widget-type="InsightsToolbar">
       {/* Show tools on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
         {isInternal && !window.insights.chrome.isProd && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
         )}
@@ -175,14 +169,14 @@ const Tools = () => {
       </PageHeaderToolsGroup>
 
       {/* Show full user dropdown on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', sm: 'visible' }}>
+      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
         <PageHeaderToolsItem>
           <UserToggle className="ins-c-dropdown__user" />
         </PageHeaderToolsItem>
       </PageHeaderToolsGroup>
 
       {/* Collapse tools and user dropdown to kebab on small screens  */}
-      <PageHeaderToolsGroup visibility={{ sm: 'hidden' }}>
+      <PageHeaderToolsGroup visibility={{ lg: 'hidden' }}>
         <PageHeaderToolsItem>
           <UserToggle
             isSmall
@@ -219,9 +213,6 @@ const Tools = () => {
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-
-      {/* Render About Modal */}
-      {isModalOpen && <InsightsAbout isModalOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} />}
     </PageHeaderTools>
   );
 };

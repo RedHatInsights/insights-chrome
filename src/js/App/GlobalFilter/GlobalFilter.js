@@ -118,7 +118,7 @@ const GlobalFilter = () => {
     1
   );
   chips?.splice(0, 0, ...(workloadsChip || []));
-  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : Fragment;
+  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : ({ children }) => <Fragment>{children}</Fragment>;
   return (
     <Fragment>
       <Split hasGutter className="ins-c-chrome__global-filter">
