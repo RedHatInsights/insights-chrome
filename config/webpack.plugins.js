@@ -29,6 +29,7 @@ const plugins = [
       { react: { singleton: true, requiredVersion: deps.react } },
       { 'react-dom': { singleton: true, requiredVersion: deps['react-dom'] } },
       { 'react-router-dom': { requiredVersion: deps['react-router-dom'] } },
+      { 'react-redux': { requiredVersion: deps['react-redux'] } },
       { '@patternfly/react-table': { singleton: true } },
       { '@patternfly/react-core': { singleton: true } },
     ],
