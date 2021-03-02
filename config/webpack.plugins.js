@@ -28,7 +28,7 @@ const plugins = [
     shared: [
       { react: { singleton: true, requiredVersion: deps.react } },
       { 'react-dom': { singleton: true, requiredVersion: deps['react-dom'] } },
-      { 'react-redux': { singleton: true, requiredVersion: deps['react-redux'] } },
+      { 'react-redux': { requiredVersion: deps['react-redux'] } },
       { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
       { '@patternfly/react-table': { singleton: true } },
       { '@patternfly/react-core': { singleton: true } },
