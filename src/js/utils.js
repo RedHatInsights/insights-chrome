@@ -136,3 +136,14 @@ export function getEnv() {
 export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
 }
+
+export function updateDocumentTitle(title) {
+  if (typeof title === 'undefined') {
+    return;
+  }
+  if (typeof title === 'string') {
+    document.title = title;
+  } else {
+    console.warn(`Title is not a string. Got ${typeof title} instead.`);
+  }
+}

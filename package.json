@@ -163,7 +163,7 @@
     "@redhat-cloud-services/keycloak-js": "0.0.3",
     "@redhat-cloud-services/rbac-client": "^1.0.93",
     "@scalprum/core": "0.0.10",
-    "@scalprum/react-core": "0.0.14",
+    "@scalprum/react-core": "0.0.15",
     "@sentry/browser": "^6.1.0",
     "axios": "^0.21.1",
     "axios-cache-adapter": "^2.7.0",
@@ -190,7 +190,7 @@
     "redux": "^4.0.5",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.5",
+    "urijs": "^1.19.6",
     "url-parse": "^1.4.7"
   },
   "alias": {

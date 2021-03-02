@@ -29,7 +29,7 @@ const extraLinks = {
       subItems: [
         { id: 'extra-docs', url: 'https://access.redhat.com/documentation/en-us/red_hat_insights/', title: 'Documentation', external: true },
         { id: 'extra-security', url: './security/insights', title: 'Security Information' },
-        { id: 'extra-docs', url: './docs/api', title: 'APIs' },
+        { id: 'extra-api-docs', url: './docs/api', title: 'APIs' },
       ],
     },
   ],
@@ -44,7 +44,7 @@ const extraLinks = {
   'cost-management': [
     {
       id: 'extra-cost-management',
-      url: 'https://access.redhat.com/documentation/en-us/openshift_container_platform/#category-cost-management',
+      url: 'https://access.redhat.com/documentation/en-us/cost_management_service/2021/',
       title: 'Documentation',
       external: true,
     },
@@ -205,7 +205,7 @@ export const Navigation = () => {
         ))}
         {extraLinks[activeLocation]?.map?.((item) =>
           item?.expandable && activeLocation === 'insights' ? (
-            <NavExpandable title={item.title}>
+            <NavExpandable key={item.id} title={item.title}>
               {item?.subItems?.map((item) => (
                 <NavItemLink key={item.id} {...item} />
               ))}

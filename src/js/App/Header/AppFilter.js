@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -15,6 +16,8 @@ import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitIte
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Spinner } from '@patternfly/react-core/dist/js/components/Spinner/Spinner';
+import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
 
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 
@@ -44,7 +47,7 @@ const getIcon = (id) =>
 const AppFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState('');
-  const { apps, filteredApps, setFilteredApps } = useGlobalNav();
+  const { apps, filteredApps, setFilteredApps, isLoaded } = useGlobalNav();
 
   useEffect(() => {
     setFilteredApps(
@@ -94,36 +97,45 @@ const AppFilter = () => {
         isOpen={isOpen}
         ouiaId="App Filter"
       >
-        <div className="content">
-          <Flex className="search">
-            <SearchInput
-              placeholder="Find application or service"
-              value={filterValue}
-              onChange={(val) => setFilterValue(val)}
-              onClear={() => setFilterValue('')}
-            />
-          </Flex>
-          {filteredApps?.length > 0 ? (
-            <div className="gallery">
-              {filteredApps.map((app) => (
-                <App key={app.id} {...app} />
-              ))}
-            </div>
+        <div className="content pf-u-p-lg">
+          {isLoaded ? (
+            <React.Fragment>
+              <Flex className="search">
+                <SearchInput
+                  placeholder="Find application or service"
+                  value={filterValue}
+                  onChange={(val) => setFilterValue(val)}
+                  onClear={() => setFilterValue('')}
+                />
+              </Flex>
+              {filteredApps?.length > 0 ? (
+                <div className="gallery">
+                  {filteredApps.map((app) => (
+                    <App key={app.id} {...app} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+                  <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+                  <Title headingLevel="h4">No matching applications or services found.</Title>
+                  <EmptyStateBody className="pf-u-mb-xl">
+                    This filter criteria matches no applications or services. Try changing your input filter.
+                  </EmptyStateBody>
+                  <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                    Clear all filters
+                  </Button>
+                </EmptyState>
+              )}
+            </React.Fragment>
           ) : (
-            <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-              <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-              <Title headingLevel="h4">No matching applications or services found.</Title>
-              <EmptyStateBody className="pf-u-mb-xl">
-                This filter criteria matches no applications or services. Try changing your input filter.
-              </EmptyStateBody>
-              <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-                Clear all filters
-              </Button>
-            </EmptyState>
+            <Bullseye className="pf-u-p-xl">
+              <Spinner />
+            </Bullseye>
           )}
         </div>
+        )
       </Dropdown>
-      <div className={isOpen && 'pf-c-backdrop'} />
+      <div className={classnames({ 'pf-c-backdrop': isOpen })} />
     </React.Fragment>
   );
 };

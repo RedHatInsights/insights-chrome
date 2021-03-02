@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { allDetails, drawer } from '../accountNumbers.json';
+import LoadingFallback from '../../utils/loading-fallback';
 
 const isEnabled = async () => {
   const isExperimentalEnabled = window.localStorage.getItem('chrome:inventory:experimental_detail');
@@ -108,7 +109,7 @@ const AsyncInventory = ({ componentName, onLoad, store, history, innerRef, ...pr
   return (
     <Provider store={store}>
       <Router history={history}>
-        <Component {...props} ref={innerRef} />
+        <Component {...props} fallback={LoadingFallback} ref={innerRef} />
       </Router>
     </Provider>
   );
