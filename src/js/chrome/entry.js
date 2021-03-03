@@ -9,6 +9,7 @@ import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../App/GlobalFilter/constants';
+import debugFunctions from '../debugFunctions';
 
 const PUBLIC_EVENTS = {
   APP_NAVIGATION: [
@@ -88,6 +89,7 @@ export function chromeInit(navResolver) {
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
+  console.log(debugFunctions, 'ffffff!');
   return {
     chrome: {
       auth: {
@@ -111,6 +113,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       visibilityFunctions,
       init: initFunc,
       isChrome2: true,
+      enable: debugFunctions,
     },
     experimental: {},
   };
