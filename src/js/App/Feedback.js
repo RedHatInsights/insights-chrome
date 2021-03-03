@@ -36,7 +36,7 @@ const Feedback = ({ user }) => {
 
   return (
     <React.Fragment>
-      <Button className="ins-c-button__feedback" onClick={() => setIsModalOpen(true)}>
+      <Button ouiaId='feedback-button' className="ins-c-button__feedback" onClick={() => setIsModalOpen(true)}>
         <OutlinedCommentsIcon />
         Feedback
       </Button>
@@ -46,10 +46,10 @@ const Feedback = ({ user }) => {
         variant={ModalVariant.medium}
         onClose={() => setIsModalOpen(false)}
         actions={[
-          <Button key="confirm" variant="primary" onClick={handleModalSubmission}>
+          <Button ouiaId='submit-feedback' key="confirm" variant="primary" onClick={handleModalSubmission}>
             Submit feedback
           </Button>,
-          <Button key="cancel" variant="link" onClick={() => setIsModalOpen(false)}>
+          <Button ouiaId='cancel-feedback' key="cancel" variant="link" onClick={() => setIsModalOpen(false)}>
             Cancel
           </Button>,
         ]}
