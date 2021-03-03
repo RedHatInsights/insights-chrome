@@ -18,11 +18,6 @@ const basepath = document.baseURI;
 const extraLinks = {
   insights: [
     {
-      id: 'extra-inssubs',
-      title: 'Subscription Watch',
-      link: './subscriptions/rhel-sw/all',
-    },
-    {
       expandable: true,
       id: 'extra-expandable-docs',
       title: 'Product Materials',
