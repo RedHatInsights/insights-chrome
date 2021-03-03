@@ -150,7 +150,7 @@
     "@patternfly/react-table": "^4.20.15",
     "@redhat-cloud-services/entitlements-client": "^1.0.93",
     "@redhat-cloud-services/frontend-components": "^3.0.5",
-    "@redhat-cloud-services/frontend-components-inventory": "3.0.0",
+    "@redhat-cloud-services/frontend-components-inventory": "^3.0.2",
     "@redhat-cloud-services/frontend-components-inventory-compliance": "^3.0.2",
     "@redhat-cloud-services/frontend-components-inventory-general-info": "^3.0.2",
     "@redhat-cloud-services/frontend-components-inventory-insights": "^3.0.2",
