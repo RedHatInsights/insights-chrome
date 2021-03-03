@@ -1,35 +1,37 @@
 import React, { useState } from 'react';
-import { Button, Modal, ModalVariant, Form, FormGroup, TextArea } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, Form, FormGroup, TextArea, Label } from '@patternfly/react-core';
 import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 
+// This only works in prod and stage (api limitation)
+
 const Feedback = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState('');
+  const env = window.insights.chrome.getEnvironment();
+  const isAvailable = (env === 'prod' || env === 'stage');
 
   const handleModalSubmission = () => {
-    const apiUrl = window.insights.isProd ? 'https://cloud.redhat.com' : `https://${window.insights.chrome.getEnvironment()}.cloud.redhat.com`;
 
-    fetch(`${apiUrl}/api/feedback/issues`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        description: `Feedback: ${textAreaValue} \
-                              Username: ${user.identity.user.username} \
-                              Account ID: ${user.identity.account_number} \
-                              Email: ${user.identity.user.email} \
-                              URL: ${window.location.href}`,
-        summary: `${!window.insights.isProd && '[PRE-PROD]'} Insights Feedback`,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+    if(isAvailable) {
+      fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
+          summary: `${!window.insights.isProd && '[PRE-PROD]'} Insights Feedback`,
+        }),
+      })
+      .then((response) => response.json());
+    } else {
+      console.log('This actually only works in prod and stage');
+    }
 
     setIsModalOpen(false);
   };
@@ -64,6 +66,9 @@ const Feedback = ({ user }) => {
             />
           </FormGroup>
         </Form>
+        { !isAvailable &&
+          <Label color="red"> Submitting feedback currently works in prod and stage </Label>
+        }
       </Modal>
     </React.Fragment>
   );
