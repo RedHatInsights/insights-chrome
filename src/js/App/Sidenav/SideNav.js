@@ -1,15 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Navigation from './Navigation';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AppSwitcher from './AppSwitcher';
 import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
 import './SideNav.scss';
+import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 
-export const SideNav = ({ activeTechnology, globalNav }) => {
+export const SideNav = () => {
   const dispatch = useDispatch();
+  const { activeTechnology, globalNav, appId } = useSelector(({ chrome }) => chrome);
   const [isFirst, setIsFirst] = useState(true);
   useEffect(() => {
     if (globalNav && isFirst) {
@@ -24,9 +26,9 @@ export const SideNav = ({ activeTechnology, globalNav }) => {
     }
   }, [globalNav]);
 
-  return globalNav ? (
+  return appId && globalNav ? (
     <Fragment>
-      {insights.chrome.isBeta() ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
+      {isFilterEnabled ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
       <Navigation />
     </Fragment>
   ) : (
@@ -44,8 +46,4 @@ SideNav.defaultProps = {
   activeLocation: '',
 };
 
-export default connect(({ chrome: { activeTechnology, globalNav, appNav } }) => ({
-  activeTechnology,
-  globalNav,
-  appNav,
-}))(SideNav);
+export default SideNav;

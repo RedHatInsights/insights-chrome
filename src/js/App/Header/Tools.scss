@@ -1,3 +1,8 @@
 .ins-c-toolbar__menu-user#UserMenu{
     display: flex;
 }
+
+.ins-c-toolbar__beta-badge {
+    background-color: var(--pf-global--primary-color--200);
+    margin-right: var(--pf-global--spacer--sm);
+}

@@ -2,10 +2,10 @@ const masterConfig = require('../../../testdata/masterConfig.json');
 const masterConfigPermissions = require('../../../testdata/masterConfigPermissions.json');
 const navFunctions = require('./globalNav');
 
-import * as instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import * as instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 // eslint-disable-next-line max-len
 const globalNav = {
-  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] },
+  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }], modules: [] },
 };
 
 describe('globalNav', () => {

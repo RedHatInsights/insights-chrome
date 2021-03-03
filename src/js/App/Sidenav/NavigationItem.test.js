@@ -1,31 +1,30 @@
 import React from 'react';
 import NavigationItem from './NavigationItem';
-import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 describe('NavigationItem', () => {
   it('should render coorectly', () => {
-    const wrapper = shallow(<NavigationItem />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<NavigationItem />);
+    expect(container).toMatchSnapshot();
   });
   it('parent with value and itemID undefined', () => {
     let props = { parent: 'someValue' };
-    const wrapper = shallow(<NavigationItem {...props} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<NavigationItem {...props} />);
+    expect(container).toMatchSnapshot();
   });
   it('parent and itemID with value', () => {
     let props = { parent: 'someValue', itemID: 'someID' };
-    const wrapper = shallow(<NavigationItem {...props} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<NavigationItem {...props} />);
+    expect(container).toMatchSnapshot();
   });
   it('parent undefined and itemID with value', () => {
     let props = { itemID: 'someID' };
-    const wrapper = shallow(<NavigationItem {...props} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<NavigationItem {...props} />);
+    expect(container).toMatchSnapshot();
   });
   it('with some navigate value set', () => {
     let navigate = {};
-    const wrapper = shallow(<NavigationItem navigate={navigate} />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<NavigationItem navigate={navigate} />);
+    expect(container).toMatchSnapshot();
   });
 });

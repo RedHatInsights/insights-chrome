@@ -32,6 +32,7 @@ chrome: {
     createCase,
     visibilityFunctions,
     init,
+    updateDocumentTitle
 },
 loadInventory,
 experimental: {
@@ -39,12 +40,28 @@ experimental: {
 }
 ```
 
+## Update document title
+
+Please do not update title directly via `document.title`. Use one of following options.
+
+### While identifying app
+This is prefered way if the document title stays the same on each app page.
+```js
+insights.chrome.identifyApp('advisor', 'App title');
+```
+
+### Using updateDocumentTitle function
+Can be used for changing app title in different app pages.
+```js
+insights.chrome.updateDocumentTitle('New title')
+
+```
+
 ## Global events
 
 The following events can be observed:
 
 * `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
-* `NAVIGATION_TOGGLE` - fired when user clicks on burger to hide navigation. No data are given.
 * `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
 
 ## Global actions
@@ -155,3 +172,43 @@ window.insights.chrome.createCase({
 ## Deprecated functions
 
 * `insights.chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
+
+## Register custom module
+
+If you want to register custom federated module you can do so by simply calling `insights.chrome.registerModule(module)`.
+
+Where the `module` is name of the application that exposes fed-mods.json for loading federated modules. This function also consumes second parameter `manifest` to point where the manifest is located. For instance if your manifest is located at `/apps/$APP_NAME/js/static/manifest.json` where `$APP_NAME` is name of your application you want to pass in your path.
+
+### Example of usage
+
+If you are going to use chrome async component, make sure that you register the module before using it. If the module is not registered it will throw an error upon loading, you can safely register all modules you wish to use either on app render or conditionally check if user has rights for such screen partial and register right before calling the async component loader.
+
+Once you register the module you can use [AsyncComponent](https://github.com/RedHatInsights/frontend-components/blob/master/packages/components/src/AsyncComponent/index.js) from frontend-components.
+
+
+```JSX
+import { React } from 'react'
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
+
+const MyCmp = () => <AsyncComponent appName="rbac" module="./Detail" />;
+
+export default MyCmp;
+```
+
+This example requires the RBAC application to expose module `Detail` in the module federation plugin.
+
+#### Without manifest
+
+```JS
+insights.chrome.registerModule('rbac')
+```
+
+This will register new module with name `rbac` with calculated manifest location.
+
+#### With manifest location
+
+```JS
+insights.chrome.registerModule('rbac', `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/js/fed-mods.json`)
+```
+
+This will register new module with name `rbac` and passes your own manifest location.

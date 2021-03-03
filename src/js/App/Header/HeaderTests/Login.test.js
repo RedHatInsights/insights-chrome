@@ -1,11 +1,10 @@
 import React from 'react';
-import toJson from 'enzyme-to-json';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import Login from '../Login';
 
 describe('Login', () => {
   it('should render correctly', () => {
-    const wrapper = shallow(<Login />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { container } = render(<Login />);
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

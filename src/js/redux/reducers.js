@@ -22,7 +22,7 @@ export function globalNavReducer(state, { data: { id, activeApp } }) {
     ...state,
     appId: id,
     activeGroup: activeApp,
-    navHidden: (id === 'landing' && getEnv() !== 'ci' && !isBeta()) || id === 'trust',
+    navHidden: (id === 'landing' && getEnv() === 'ci' && isBeta()) || id === 'trust' || !state.user,
     globalNav:
       state.globalNav &&
       state.globalNav.map((item) => ({
@@ -36,10 +36,23 @@ export function navUpdateReducer(state, { payload: { activeSection, globalNav, .
   return {
     ...state,
     ...payload,
-    globalNav: (globalNav || []).map((app) => ({
-      ...app,
-      active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
-    })),
+    activeSection,
+    globalNav: globalNav
+      ? globalNav.map((app) => ({
+          ...app,
+          active: activeSection && (app.title === activeSection.title || app.id === activeSection.id),
+        }))
+      : state.globalNav,
+  };
+}
+
+export function navUpdateSection(state, { payload }) {
+  if (!payload) {
+    return state;
+  }
+  return {
+    ...state,
+    activeSection: payload,
   };
 }
 
@@ -80,27 +93,6 @@ export function clearActive(state) {
   };
 }
 
-export function navToggleReducer(state) {
-  const mq = window.matchMedia && window.matchMedia('(min-width: 1200px)');
-  let page = document.getElementById('ins-c-sidebar') || document.getElementById('ins-c-landing-nav');
-  if (!page) {
-    return state;
-  }
-
-  if (mq && mq.matches) {
-    page.classList.remove('pf-m-expanded');
-    page.classList.toggle('pf-m-collapsed');
-  } else {
-    page && page.classList.remove('pf-m-collapsed');
-    page && page.classList.toggle('pf-m-expanded');
-  }
-
-  return {
-    ...state,
-    navCollapse: !state.navCollapse,
-  };
-}
-
 export function loginReducer(state, { payload }) {
   return {
     ...state,
@@ -119,5 +111,25 @@ export function onPageObjectId(state, { payload }) {
   return {
     ...state,
     pageObjectId: payload,
+  };
+}
+
+export function onRegisterModule(state, { payload }) {
+  const isModuleLoaded = (state.modules || []).find((module) => Object.keys(module).find((key) => key === payload?.module));
+  return {
+    ...state,
+    modules: [
+      ...(state.modules || []),
+      ...(!isModuleLoaded
+        ? [
+            {
+              [payload.module]: {
+                name: payload.module,
+                manifestLocation: payload.manifest || `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/fed-mods.json`,
+              },
+            },
+          ]
+        : []),
+    ],
   };
 }

@@ -131,6 +131,10 @@ describe('storeFilter', () => {
 
   describe('global hash', () => {
     it('should add workloads and empty SID', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           Workloads: {
@@ -140,12 +144,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#workloads=something&SIDs=&tags=');
+      expect(push).toHaveBeenCalledWith({ hash: 'workloads=something&SIDs=&tags=' });
     });
 
     it('should add SIDs', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           'SAP ID (SID)': {
@@ -155,12 +164,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#SIDs=something&tags=');
+      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=something&tags=' });
     });
 
     it('should add tags', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           bridges: {
@@ -181,12 +195,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam' });
     });
 
     it('should build complex hash', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           Workloads: {
@@ -217,9 +236,12 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+      expect(push).toHaveBeenCalledWith({
+        hash: 'workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+      });
     });
   });
 

@@ -1,36 +1,32 @@
 import React, { Fragment } from 'react';
-import Brand from './Brand';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
 import Feedback from '../Feedback';
 
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
+import { useSelector } from 'react-redux';
+import Logo from './Logo';
 
 const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
 
-const Header = ({ user }) => {
-  return user ? (
+export const Header = () => {
+  const user = useSelector(({ chrome }) => chrome?.user);
+  return (
     <Fragment>
-      <Brand />
-      {isFilterEnabled && <AppFilter />}
-      <Tools />
+      <a href="./" className="ins-c-header-link">
+        <Logo />
+      </a>
+      {user && isFilterEnabled && <AppFilter />}
       {isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
-  ) : (
-    <UnAuthtedHeader />
   );
 };
 
-Header.propTypes = {
-  user: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.shape({
-      [PropTypes.string]: PropTypes.any,
-    }),
-  ]),
+export const HeaderTools = () => {
+  const user = useSelector(({ chrome }) => chrome?.user);
+  if (!user) {
+    return <UnAuthtedHeader />;
+  }
+  return <Tools />;
 };
-
-export default connect(({ chrome: { user } }) => ({ user }))(Header);

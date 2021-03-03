@@ -11,11 +11,13 @@ import { Tooltip } from '@patternfly/react-core/dist/js/components/Tooltip';
 import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
+import { useHistory } from 'react-router-dom';
 
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
 
   const isAllowed = () => hasAccess;
+  const history = useHistory();
 
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();
@@ -35,7 +37,7 @@ const GlobalFilter = () => {
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
   const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
-    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded);
+    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded, history);
     batch(() => {
       dispatch(
         fetchAllTags({
@@ -116,7 +118,7 @@ const GlobalFilter = () => {
     1
   );
   chips?.splice(0, 0, ...(workloadsChip || []));
-  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : Fragment;
+  const GroupFilterWrapper = !isAllowed() || isDisabled ? Tooltip : ({ children }) => <Fragment>{children}</Fragment>;
   return (
     <Fragment>
       <Split hasGutter className="ins-c-chrome__global-filter">

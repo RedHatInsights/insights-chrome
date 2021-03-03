@@ -5,7 +5,7 @@ const path = require('path');
 const release = process.argv[2]; //"insights or insightsbeta"
 
 async function getAssetPath(extension, noHash) {
-    const files = glob.sync(`build/**/chrome${noHash ? '' : '.*'}.${extension}`);
+    const files = glob.sync(`build/**/chrome${extension === 'js' ? '-root': ''}${noHash ? '' : '.*'}.${extension}`);
     return path.relative('build/', files[0]);
 }
 
