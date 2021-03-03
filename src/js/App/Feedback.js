@@ -30,7 +30,7 @@ const Feedback = ({ user }) => {
       })
       .then((response) => response.json());
     } else {
-      console.log('This actually only works in prod and stage');
+      console.log('Submitting feedback only works in prod and stage');
     }
 
     setIsModalOpen(false);
@@ -67,7 +67,7 @@ const Feedback = ({ user }) => {
           </FormGroup>
         </Form>
         { !isAvailable &&
-          <Label color="red"> Submitting feedback currently works in prod and stage </Label>
+          <Label color="red"> Submitting feedback only works in prod and stage </Label>
         }
       </Modal>
     </React.Fragment>
