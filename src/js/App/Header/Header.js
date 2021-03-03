@@ -18,7 +18,7 @@ export const Header = () => {
         <Logo />
       </a>
       {user && isFilterEnabled && <AppFilter />}
-      {isFeedbackEnabled && <Feedback user={user} />}
+      {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   );
 };
