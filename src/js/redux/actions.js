@@ -122,6 +122,10 @@ export function registerModule(module, manifest) {
   };
 }
 
+export const onToggleContextSwitcher = () => ({
+  type: actionTypes.TOGGLECONTEXTSWITCHER,
+});
+
 /**
  * @deprecated
  */
