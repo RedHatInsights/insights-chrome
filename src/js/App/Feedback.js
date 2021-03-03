@@ -11,11 +11,10 @@ const Feedback = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState('');
   const env = window.insights.chrome.getEnvironment();
-  const isAvailable = (env === 'prod' || env === 'stage');
+  const isAvailable = env === 'prod' || env === 'stage';
 
   const handleModalSubmission = () => {
-
-    if(isAvailable) {
+    if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
         method: 'POST',
         headers: {
@@ -27,8 +26,7 @@ const Feedback = ({ user }) => {
           description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
           summary: `${!window.insights.isProd && '[PRE-PROD]'} Insights Feedback`,
         }),
-      })
-      .then((response) => response.json());
+      }).then((response) => response.json());
     } else {
       console.log('Submitting feedback only works in prod and stage');
     }
@@ -66,9 +64,7 @@ const Feedback = ({ user }) => {
             />
           </FormGroup>
         </Form>
-        { !isAvailable &&
-          <Label color="red"> Submitting feedback only works in prod and stage </Label>
-        }
+        {!isAvailable && <Label color="red"> Submitting feedback only works in prod and stage </Label>}
       </Modal>
     </React.Fragment>
   );
