@@ -89,7 +89,6 @@ export function chromeInit(navResolver) {
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
-  console.log(debugFunctions, 'ffffff!');
   return {
     chrome: {
       auth: {
