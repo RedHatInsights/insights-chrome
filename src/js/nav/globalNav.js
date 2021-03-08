@@ -53,6 +53,7 @@ async function getRoutesForApp(app, masterConfig) {
                       ignoreCase: subItem.ignoreCase,
                       ...(subItem.section && { section: subItem.section }),
                       ...(subItem.sub_apps && { subItems: subItem.sub_apps }),
+                      ...(subItem.navigate && { navigate: subItem.navigate }),
                     },
                   ]
                 : await getAppData(subItem.id || subItem, 'subItems', masterConfig)) || [];
@@ -63,6 +64,7 @@ async function getRoutesForApp(app, masterConfig) {
                 ...(subItem.group && { group: subItem.group }),
                 ...(subItem.reload && { reload: subItem.reload }),
                 ...(subItem.section && { section: subItem.section }),
+                ...(subItem.navigate && { navigate: subItem.navigate }),
               },
               modules,
             ];
@@ -111,6 +113,7 @@ async function getAppData(appId, propName, masterConfig) {
         ...(app.frontend.reload && { reload: app.frontend.reload }),
         ...(routes?.length > 0 && { [propName]: routes }),
         ...(app.frontend.section && { section: app.frontend.section }),
+        ...(app.navigate && { navigate: app.navigate }),
       },
       [
         ...(modules || []),

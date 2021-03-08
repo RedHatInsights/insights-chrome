@@ -57,6 +57,7 @@ exports[`SectionNav should render app with subapp withou group 1`] = `
             href="http://localhost/loc/app/subapp"
           >
             Title2
+             
           </a>
         </li>
       </ul>
@@ -78,6 +79,7 @@ exports[`SectionNav should render app without group 1`] = `
       href="http://localhost/loc/app"
     >
       Title
+       
     </a>
   </li>
 </div>
@@ -96,6 +98,7 @@ exports[`SectionNav should render corectly 1`] = `
       href="http://localhost/loc/id"
     >
       Title
+       
     </a>
   </li>
 </div>
@@ -123,6 +126,7 @@ exports[`SectionNav should render group with app 1`] = `
           href="http://localhost/loc/app"
         >
           Title
+           
         </a>
       </li>
     </ul>
@@ -196,6 +200,7 @@ exports[`SectionNav should render group with app and sub app 1`] = `
                 href="http://localhost/loc/app/subapp"
               >
                 Title2
+                 
               </a>
             </li>
           </ul>
