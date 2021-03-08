@@ -3,10 +3,13 @@ import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
 import ContextSwitcher from './ContextSwitcher';
+import Feedback from '../Feedback';
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
+
+const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
 
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
@@ -17,6 +20,7 @@ export const Header = () => {
       </a>
       {user && isFilterEnabled && <AppFilter />}
       {user && isContextSwitcherEnabled && <ContextSwitcher />}
+      {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   );
 };

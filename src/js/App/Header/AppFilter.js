@@ -97,7 +97,7 @@ const AppFilter = () => {
         isOpen={isOpen}
         ouiaId="App Filter"
       >
-        <div className="content pf-u-p-lg">
+        <div className="content">
           {isLoaded ? (
             <React.Fragment>
               <Flex className="search">

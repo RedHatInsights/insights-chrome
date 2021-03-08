@@ -150,18 +150,23 @@ export const generateFilter = async () => {
   ];
 };
 
+export const escaper = (value) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
+
 export const flatTags = memoize(
   (filter, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries(item || {})
         .filter(([, { isSelected }]) => isSelected)
-        .map(
-          ([tagKey, { item, value: tagValue }]) =>
-            `${namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''}${
-              encode ? encodeURIComponent(item?.tagKey || tagKey) : item?.tagKey || tagKey
-            }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''}`
-        )
+        .map(([tagKey, { item, value: tagValue }]) => {
+          return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
+            encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
+          }${
+            item?.tagValue || tagValue
+              ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}`
+              : ''
+          }`;
+        })
     );
     return format
       ? [
