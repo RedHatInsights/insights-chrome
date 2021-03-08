@@ -9,7 +9,7 @@ export function clickReducer(state, action) {
   return state;
 }
 
-export function contextSwitcherBannerReducer(state, action) {
+export function contextSwitcherBannerReducer(state) {
   state = {
     ...state,
     contextSwitcherOpen: !state.contextSwitcherOpen,

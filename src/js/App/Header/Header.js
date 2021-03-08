@@ -19,7 +19,7 @@ export const Header = () => {
         <Logo />
       </a>
       {user && isFilterEnabled && <AppFilter />}
-      {user && isContextSwitcherEnabled && <ContextSwitcher />}
+      {user && isContextSwitcherEnabled && <ContextSwitcher user={user} />}
       {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   );

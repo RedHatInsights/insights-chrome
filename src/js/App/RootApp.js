@@ -34,7 +34,7 @@ const ShieldedRoot = memo(
         isManagedSidebar={!hideNav}
         header={
           <PageHeader
-            className={classnames({ 'mm-test': isOpen })}
+            className={classnames({ 'context-switcher-banner': isOpen })}
             logoComponent="div"
             logo={<Header />}
             showNavToggle={!hideNav}
