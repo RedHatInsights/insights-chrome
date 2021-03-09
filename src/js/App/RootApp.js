@@ -22,6 +22,7 @@ const isModule = (key, chrome) =>
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => {
     const dispatch = useDispatch();
+    const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
     useEffect(() => {
       const navToggleElement = document.querySelector('button#nav-toggle');
       if (navToggleElement) {
@@ -31,7 +32,15 @@ const ShieldedRoot = memo(
     return (
       <Page
         isManagedSidebar={!hideNav}
-        header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
+        header={
+          <PageHeader
+            className={classnames({ 'context-switcher-banner': isOpen })}
+            logoComponent="div"
+            logo={<Header />}
+            showNavToggle={!hideNav}
+            headerTools={<HeaderTools />}
+          />
+        }
         sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>

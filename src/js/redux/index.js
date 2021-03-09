@@ -11,6 +11,7 @@ import {
   onPageObjectId,
   navUpdateSection,
   onRegisterModule,
+  contextSwitcherBannerReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -42,6 +43,7 @@ import {
   GLOBAL_FILTER_REMOVE,
   CHROME_NAV_SECTION_UPDATE,
   REGISTER_MODULE,
+  TOGGLECONTEXTSWITCHER,
 } from './action-types';
 
 const reducers = {
@@ -55,6 +57,7 @@ const reducers = {
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,
+  [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
 };
 
 const globalFilter = {
