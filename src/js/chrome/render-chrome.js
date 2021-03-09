@@ -28,6 +28,11 @@ const App = () => {
         name: 'chrome',
         manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
       },
+      'cost-management': {
+        name: 'cost-management',
+        scope: 'costManagement',
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/cost-management/fed-mods.json`,
+      },
     }
   );
 
