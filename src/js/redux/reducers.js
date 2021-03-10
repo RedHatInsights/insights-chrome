@@ -9,6 +9,14 @@ export function clickReducer(state, action) {
   return state;
 }
 
+export function contextSwitcherBannerReducer(state) {
+  state = {
+    ...state,
+    contextSwitcherOpen: !state.contextSwitcherOpen,
+  };
+  return state;
+}
+
 export function globalNavReducer(state, { data: { id, activeApp } }) {
   const activeGroup = state.globalNav ? state.globalNav.filter((item) => item.group === id) : [];
   let active;

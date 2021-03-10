@@ -1,0 +1,16 @@
+{
+  "appA": {
+    "top_level": "someotherstuff",
+    "routes": "fakeroutes",
+    "frontend": {
+      "sub_apps": [
+        {
+          "id": "subid1",
+          "title": "subtitle1",
+          "navigate": "example.url.com"
+        }
+      ]
+    },
+    "title": "title1"
+  }
+}

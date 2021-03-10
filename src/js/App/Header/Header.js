@@ -2,9 +2,10 @@ import React, { Fragment } from 'react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
+import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
-
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
+import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 
@@ -18,6 +19,7 @@ export const Header = () => {
         <Logo />
       </a>
       {user && isFilterEnabled && <AppFilter />}
+      {user && isContextSwitcherEnabled && <ContextSwitcher user={user} />}
       {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   );

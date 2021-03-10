@@ -81,7 +81,7 @@ export function chromeInit(navResolver) {
       }
       return middlewareListener.addNew(listener(callback));
     },
-    registerModule,
+    registerModule: (...args) => store.dispatch(registerModule(...args)),
     removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
     updateDocumentTitle,
     $internal: { store },

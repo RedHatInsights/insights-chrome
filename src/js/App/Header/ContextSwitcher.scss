@@ -1,0 +1,55 @@
+.ins-c-page__context-switcher-dropdown {
+  .pf-c-dropdown__toggle {
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+  }
+  &.pf-m-expanded {
+    .pf-c-dropdown__menu {
+      top: 56px;
+      z-index: unset;
+      .viewing-as {
+        z-index: -1000;
+        left: 0;
+        top: 76px;
+        width: 100%;
+        padding: 2px 0 2px 20px;
+        font-size: 10px;
+        position: fixed; // allows menu to go full width
+        background-color: var(--pf-global--info-color--100);
+        color: black;
+        opacity: 1;
+        animation-name: fadeInOpacity;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: 1s;
+        animation: pulse 2.5s infinite;
+      }
+      @keyframes fadeInOpacity {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }   
+      @keyframes pulse {
+        0% {
+          background-color: var(--pf-global--active-color--300);
+        }
+        50% {
+          background-color: var(--pf-global--active-color--400);
+        }
+        0% {
+          background-color: var(--pf-global--active-color--300);
+        }
+      }
+    }
+  }
+}
+
+.context-switcher-banner {
+  margin-bottom: 18px;
+  transition: margin-bottom .3s;
+}
+
