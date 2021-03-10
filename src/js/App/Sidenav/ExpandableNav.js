@@ -18,7 +18,7 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
             parent={subItem.reload ? activeLocation : `${activeLocation}${id ? `/${id}` : ''}`}
             isActive={active && subItem.id === activeApp}
             onClick={(event) => onClick(event, subItem)}
-            navigate={navigate}
+            navigate={subItem?.navigate}
           />
         ))}
       </NavExpandable>
