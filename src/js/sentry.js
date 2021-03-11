@@ -96,7 +96,7 @@ function sentryTags(user) {
 
 /* eslint-enable camelcase */
 export default (user) => {
-  // if env === [cloud].redhat.com, actually init.
+  // this should only be enabled for prod and prod beta
   if (window.insights.chrome.getEnvironment() === 'prod') {
     initSentry();
     sentryTags(user);
