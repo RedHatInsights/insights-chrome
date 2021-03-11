@@ -148,7 +148,7 @@ export const Navigation = () => {
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     if (item.navigate) {
-      window.location.href = item.navigate;
+      window.open(item.navigate);
       return;
     }
     // always redirect if in subNav and current or new navigation has reload
