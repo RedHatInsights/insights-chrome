@@ -40,9 +40,18 @@ const getIcon = (id) =>
     migrations: <IconMigrations alt="Migration Services Logo" />,
     openshift: <IconOpenshift alt="Openshift Logo" />,
     settings: <CogIcon fill="var(--pf-global--Color--300)" alt="Settings Icon" />,
-    SAP: <IconSAP alt="SAP Logo" />,
+    SAP: <IconSAP alt="SAP Icon" />,
     subscriptions: <IconSubscriptions alt="Subscriptions Logo" />,
   }[id]);
+
+const extraApps = [
+  {
+    title: 'Insights for SAP',
+    id: 'SAP',
+    routes: [{ id: 'sap-dashboard', title: 'Dashboard' }],
+    isEntitled: async () => await insights.chrome.auth.getUser().entitlements?.insights?.is_entitled,
+  },
+];
 
 const AppFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,11 +60,11 @@ const AppFilter = () => {
 
   useEffect(() => {
     setFilteredApps(
-      apps
+      [...apps, ...extraApps.filter((app) => app.isEntitled())]
         .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }))
         .filter((app) => app.routes?.length > 0)
     );
-  }, [filterValue]);
+  }, [filterValue, apps]);
 
   const App = ({ id, title, routes }) => (
     <div className="galleryItem">
