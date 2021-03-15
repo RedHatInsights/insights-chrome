@@ -41,7 +41,7 @@ const ShieldedRoot = memo(
             headerTools={<HeaderTools />}
           />
         }
-        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav />} />}
+        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav key="side-nav" />} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
