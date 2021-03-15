@@ -12,9 +12,9 @@ import { globalNavComparator } from '../../utils/comparators';
 export const SideNav = () => {
   const dispatch = useDispatch();
 
-  const activeTechnology = useSelector(({ chrome: { activeTechnology } }) => activeTechnology);
-  const appId = useSelector(({ chrome: { appId } }) => appId);
-  const globalNav = useSelector(({ chrome: { globalNav } }) => globalNav, globalNavComparator);
+  const activeTechnology = useSelector(({ chrome }) => chrome?.activeTechnology);
+  const appId = useSelector(({ chrome }) => chrome?.appId);
+  const globalNav = useSelector(({ chrome }) => chrome?.globalNav, globalNavComparator);
   const isFirst = useRef(true);
 
   useEffect(() => {

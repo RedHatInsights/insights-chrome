@@ -6,4 +6,4 @@ export const globalNavComparator = (a, b) =>
     b?.map(({ id }) => id)
   );
 
-export const activeSectionComparator = (a, b) => a.id === b.id;
+export const activeSectionComparator = (a, b) => a?.id === b?.id;

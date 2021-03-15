@@ -102,16 +102,16 @@ NavItemLink.propTypes = {
 
 export const Navigation = () => {
   const { activeApp, activeLocation, activeGroup, appId } = useSelector(
-    ({ chrome: { activeApp, activeLocation, activeGroup, appId } }) => ({
-      activeApp,
-      activeLocation,
-      activeGroup,
-      appId,
+    ({ chrome }) => ({
+      activeApp: chrome?.activeApp,
+      activeLocation: chrome?.activeLocation,
+      activeGroup: chrome?.activeGroup,
+      appId: chrome?.appId,
     }),
     shallowEqual
   );
-  const activeSection = useSelector(({ chrome: { activeSection } }) => activeSection, activeSectionComparator);
-  const settings = useSelector(({ chrome: { globalNav } }) => globalNav, globalNavComparator);
+  const activeSection = useSelector(({ chrome }) => chrome?.activeSection, activeSectionComparator);
+  const settings = useSelector(({ chrome }) => chrome?.globalNav, globalNavComparator);
   const dispatch = useDispatch();
   const history = useHistory();
   const prevLocation = useRef(window.location.pathname);
