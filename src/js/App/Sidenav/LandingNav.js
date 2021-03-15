@@ -37,7 +37,7 @@ const LandingNav = () => {
       ) : (
         <NavList>
           <div className="ins-c-app-title">
-            <b>Red Hat Hybrid Cloud Console</b>
+            <b>Hybrid Cloud Console</b>
           </div>
           {routes.map(({ title, id, route }) => (
             <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
