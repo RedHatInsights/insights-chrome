@@ -54,9 +54,8 @@ const extraApps = [
 ];
 
 const AppFilter = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState('');
-  const { apps, filteredApps, setFilteredApps, isLoaded } = useGlobalNav();
+  const { apps, filteredApps, setFilteredApps, isLoaded, isOpen, setIsOpen } = useGlobalNav();
 
   useEffect(() => {
     setFilteredApps(
