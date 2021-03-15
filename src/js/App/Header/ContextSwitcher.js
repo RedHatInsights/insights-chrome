@@ -14,7 +14,7 @@ const ContextSwitcher = ({ user }) => {
     dispatch(onToggleContextSwitcher());
   };
   const dropdownItems = [
-    <DropdownItem key="{user.identity.account_number}" description="PERSONAL ACCOUNT">
+    <DropdownItem key={user.identity.account_number} description="PERSONAL ACCOUNT">
       {user.identity.account_number}
     </DropdownItem>,
     <DropdownItem key="678909">678909</DropdownItem>,
