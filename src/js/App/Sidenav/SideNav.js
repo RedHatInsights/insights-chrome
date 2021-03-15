@@ -1,5 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, useEffect, useRef } from 'react';
 import Navigation from './Navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -8,13 +7,18 @@ import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
 import './SideNav.scss';
 import { isFilterEnabled } from '../../utils/isAppNavEnabled';
+import { globalNavComparator } from '../../utils/comparators';
 
 export const SideNav = () => {
   const dispatch = useDispatch();
-  const { activeTechnology, globalNav, appId } = useSelector(({ chrome }) => chrome);
-  const [isFirst, setIsFirst] = useState(true);
+
+  const activeTechnology = useSelector(({ chrome }) => chrome?.activeTechnology);
+  const appId = useSelector(({ chrome }) => chrome?.appId);
+  const globalNav = useSelector(({ chrome }) => chrome?.globalNav, globalNavComparator);
+  const isFirst = useRef(true);
+
   useEffect(() => {
-    if (globalNav && isFirst) {
+    if (globalNav && isFirst.current) {
       const { subItems } = globalNav?.find?.(({ active }) => active) || {};
       const defaultActive =
         subItems?.find?.(({ id }) => location.pathname.split('/').find((item) => item === id)) ||
@@ -22,7 +26,7 @@ export const SideNav = () => {
         subItems?.[0];
 
       dispatch(appNavClick(defaultActive || {}));
-      setIsFirst(() => false);
+      isFirst.current = false;
     }
   }, [globalNav]);
 
@@ -34,16 +38,6 @@ export const SideNav = () => {
   ) : (
     <NavLoader />
   );
-};
-
-SideNav.propTypes = {
-  activeTechnology: PropTypes.string,
-  globalNav: PropTypes.arrayOf(PropTypes.object),
-};
-
-SideNav.defaultProps = {
-  activeTechnology: '',
-  activeLocation: '',
 };
 
 export default SideNav;
