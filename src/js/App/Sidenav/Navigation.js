@@ -147,6 +147,10 @@ export const Navigation = () => {
     let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
+    if (item.navigate) {
+      window.open(item.navigate);
+      return;
+    }
     // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
       const activeLevel = settings.find(({ id }) => id === appId);
