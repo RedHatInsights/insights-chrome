@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import useGlobalNav from '../../utils/useGlobalNav';
 import { isBeta } from '../../utils';
-import NavLoader from './Loader';
 import './LandingNav.scss';
 import { useSelector } from 'react-redux';
 
@@ -21,7 +19,6 @@ const LandingNav = () => {
       setElementReady(true);
     }
   }, [showNav]);
-  const { isLoaded } = useGlobalNav();
   const isBetaEnv = isBeta();
 
   /**
@@ -32,20 +29,16 @@ const LandingNav = () => {
   }
   return (
     <Nav className="ins-c-landing-nav">
-      {!isLoaded ? (
-        <NavLoader />
-      ) : (
-        <NavList>
-          <div className="ins-c-app-title">
-            <b>Hybrid Cloud Console</b>
-          </div>
-          {routes.map(({ title, id, route }) => (
-            <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
-              {title}
-            </NavItem>
-          ))}
-        </NavList>
-      )}
+      <NavList>
+        <div className="ins-c-app-title">
+          <b>Hybrid Cloud Console</b>
+        </div>
+        {routes.map(({ title, id, route }) => (
+          <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
+            {title}
+          </NavItem>
+        ))}
+      </NavList>
     </Nav>
   );
 };

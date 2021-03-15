@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
-import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/components/cjs/Skeleton';
-import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
-import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
+import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
+import { Nav, NavList } from '@patternfly/react-core';
 import NavigationItem from './NavigationItem';
 
 const NavLoader = () => (
