@@ -5,25 +5,32 @@ import sourceOfTruth from '../nav/sourceOfTruth';
 
 const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];
 
-const useGlobalNav = (isOpen) => {
+const useGlobalNav = () => {
   const [state, setState] = useState({
+    isOpen: false,
     apps: [],
     filteredApps: [],
     isLoaded: false,
   });
   const setFilteredApps = (filteredApps) => setState((prev) => ({ ...prev, filteredApps }));
+  const setIsOpen = (isOpen) => setState((prev) => ({ ...prev, isOpen }));
   useEffect(() => {
-    if (isOpen === true && state.isLoaded === false) {
+    if (state.isOpen === true && state.isLoaded === false) {
       setState({ ...state, isLoaded: null });
       (async () => {
         const navigationYml = await sourceOfTruth();
         const appData = await getNavFromConfig(load(navigationYml), undefined);
-        setState({ apps: appIds.map((id) => appData[id]).filter((app) => !!app), filteredApps: appIds.map((id) => appData[id]), isLoaded: true });
+        setState(({ isOpen }) => ({
+          apps: appIds.map((id) => appData[id]).filter((app) => !!app),
+          filteredApps: appIds.map((id) => appData[id]),
+          isLoaded: true,
+          isOpen,
+        }));
       })();
     }
-  }, [isOpen]);
+  }, [state.isOpen]);
 
-  return { ...state, setFilteredApps };
+  return { ...state, setFilteredApps, setIsOpen };
 };
 
 export default useGlobalNav;
