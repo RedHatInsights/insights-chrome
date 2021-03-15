@@ -12,6 +12,7 @@ import './Navigation.scss';
 import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
+import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
 
 const basepath = document.baseURI;
 
@@ -100,17 +101,17 @@ NavItemLink.propTypes = {
 };
 
 export const Navigation = () => {
-  const { settings, activeApp, activeLocation, activeSection, activeGroup, appId } = useSelector(
-    ({ chrome: { globalNav, activeApp, activeLocation, activeSection, activeGroup, appId } }) => ({
-      settings: globalNav,
+  const { activeApp, activeLocation, activeGroup, appId } = useSelector(
+    ({ chrome: { activeApp, activeLocation, activeGroup, appId } }) => ({
       activeApp,
       activeLocation,
-      activeSection,
       activeGroup,
       appId,
     }),
     shallowEqual
   );
+  const activeSection = useSelector(({ chrome: { activeSection } }) => activeSection, activeSectionComparator);
+  const settings = useSelector(({ chrome: { globalNav } }) => globalNav, globalNavComparator);
   const dispatch = useDispatch();
   const history = useHistory();
   const prevLocation = useRef(window.location.pathname);
