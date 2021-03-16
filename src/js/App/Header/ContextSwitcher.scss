@@ -8,6 +8,9 @@
     .pf-c-dropdown__menu {
       top: 56px;
       z-index: unset;
+      .pf-c-search-input {
+        margin: 0 10px 0 10px;
+      }
       .viewing-as {
         z-index: -1000;
         left: 0;

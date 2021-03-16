@@ -31,7 +31,7 @@ const LandingNav = () => {
     <Nav className="ins-c-landing-nav">
       <NavList>
         <div className="ins-c-app-title">
-          <b>Hybrid Cloud Console</b>
+          <b>Your Hybrid Cloud</b>
         </div>
         {routes.map(({ title, id, route }) => (
           <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
