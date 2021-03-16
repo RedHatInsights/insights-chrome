@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -44,110 +44,116 @@ const getIcon = (id) =>
     subscriptions: <IconSubscriptions alt="Subscriptions Logo" />,
   }[id]);
 
-const extraApps = [
-  {
-    title: 'Insights for SAP',
-    id: 'SAP',
-    routes: [{ id: 'sap-dashboard', title: 'Dashboard' }],
-    isEntitled: async () => await insights.chrome.auth.getUser().entitlements?.insights?.is_entitled,
-  },
-];
+const App = ({ id, title, routes }) => (
+  <div className="galleryItem">
+    <Split>
+      <SplitItem className="left">{getIcon(id)}</SplitItem>
+      <SplitItem className="right">
+        <TextContent>
+          <Text component="h4">{title}</Text>
+          {routes.map((subApp) => (
+            <Text component="p" key={`${id}/${subApp.id}`}>
+              <Text component="a" href={`${id}/${subApp.id}`}>
+                {subApp.title}
+              </Text>
+            </Text>
+          ))}
+        </TextContent>
+      </SplitItem>
+    </Split>
+  </div>
+);
+
+App.propTypes = {
+  id: PropTypes.string,
+  title: PropTypes.node,
+  routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+};
+
+const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => (
+  <Dropdown
+    className="ins-c-page__app-filter-dropdown"
+    isPlain
+    onSelect={() => setIsOpen(true)}
+    toggle={
+      <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
+        Apps and services
+      </DropdownToggle>
+    }
+    isOpen={isOpen}
+    ouiaId="App Filter"
+  >
+    <div className="content">
+      {isLoaded ? (
+        <React.Fragment>
+          <Flex className="search">
+            <SearchInput
+              placeholder="Find application or service"
+              value={filterValue}
+              onChange={(val) => setFilterValue(val)}
+              onClear={() => setFilterValue('')}
+            />
+          </Flex>
+          {filteredApps?.length > 0 ? (
+            <div className="gallery">
+              {filteredApps.map((app) => (
+                <App key={app.id} {...app} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+              <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+              <Title headingLevel="h4">No matching applications or services found.</Title>
+              <EmptyStateBody className="pf-u-mb-xl">
+                This filter criteria matches no applications or services. Try changing your input filter.
+              </EmptyStateBody>
+              <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                Clear all filters
+              </Button>
+            </EmptyState>
+          )}
+        </React.Fragment>
+      ) : (
+        <Bullseye className="pf-u-p-xl">
+          <Spinner />
+        </Bullseye>
+      )}
+    </div>
+    )
+  </Dropdown>
+);
+
+AppFilterDropdown.propTypes = {
+  isLoaded: PropTypes.bool,
+  isOpen: PropTypes.bool,
+  filterValue: PropTypes.string,
+  setFilterValue: PropTypes.func,
+  setIsOpen: PropTypes.func.isRequired,
+  filteredApps: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.node.isRequired,
+      routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+    })
+  ),
+};
 
 const AppFilter = () => {
-  const [filterValue, setFilterValue] = useState('');
-  const { apps, filteredApps, setFilteredApps, isLoaded, isOpen, setIsOpen } = useGlobalNav();
-
-  useEffect(() => {
-    setFilteredApps(
-      [...apps, ...extraApps.filter((app) => app.isEntitled())]
-        .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }))
-        .filter((app) => app.routes?.length > 0)
-    );
-  }, [filterValue, apps]);
-
-  const App = ({ id, title, routes }) => (
-    <div className="galleryItem">
-      <Split>
-        <SplitItem className="left">{getIcon(id)}</SplitItem>
-        <SplitItem className="right">
-          <TextContent>
-            <Text component="h4">{title}</Text>
-            {routes.map((subApp) => (
-              <Text component="p" key={`${id}/${subApp.id}`}>
-                <Text component="a" href={`${id}/${subApp.id}`}>
-                  {subApp.title}
-                </Text>
-              </Text>
-            ))}
-          </TextContent>
-        </SplitItem>
-      </Split>
-    </div>
-  );
-
-  App.propTypes = {
-    id: PropTypes.string,
-    title: PropTypes.node,
-    routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
-  };
+  const { filteredApps, isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useGlobalNav();
 
   return (
     <React.Fragment>
-      <Dropdown
-        className="ins-c-page__app-filter-dropdown"
-        isPlain
-        onSelect={() => setIsOpen(true)}
-        toggle={
-          <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-            Apps and services
-          </DropdownToggle>
-        }
+      <AppFilterDropdown
+        isLoaded={!!isLoaded}
+        setIsOpen={setIsOpen}
         isOpen={isOpen}
-        ouiaId="App Filter"
-      >
-        <div className="content">
-          {isLoaded ? (
-            <React.Fragment>
-              <Flex className="search">
-                <SearchInput
-                  placeholder="Find application or service"
-                  value={filterValue}
-                  onChange={(val) => setFilterValue(val)}
-                  onClear={() => setFilterValue('')}
-                />
-              </Flex>
-              {filteredApps?.length > 0 ? (
-                <div className="gallery">
-                  {filteredApps.map((app) => (
-                    <App key={app.id} {...app} />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-                  <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-                  <Title headingLevel="h4">No matching applications or services found.</Title>
-                  <EmptyStateBody className="pf-u-mb-xl">
-                    This filter criteria matches no applications or services. Try changing your input filter.
-                  </EmptyStateBody>
-                  <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-                    Clear all filters
-                  </Button>
-                </EmptyState>
-              )}
-            </React.Fragment>
-          ) : (
-            <Bullseye className="pf-u-p-xl">
-              <Spinner />
-            </Bullseye>
-          )}
-        </div>
-        )
-      </Dropdown>
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        filteredApps={filteredApps}
+      />
       <div className={classnames({ 'pf-c-backdrop': isOpen })} />
     </React.Fragment>
   );
 };
 
 export default AppFilter;
-
-AppFilter.propTypes = {};

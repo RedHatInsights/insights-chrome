@@ -5,32 +5,51 @@ import sourceOfTruth from '../nav/sourceOfTruth';
 
 const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];
 
+const extraApps = [
+  {
+    title: 'Insights for SAP',
+    id: 'SAP',
+    routes: [{ id: 'sap-dashboard', title: 'Dashboard' }],
+    isEntitled: async () => await insights.chrome.auth.getUser().entitlements?.insights?.is_entitled,
+  },
+];
+
 const useGlobalNav = () => {
   const [state, setState] = useState({
     isOpen: false,
     apps: [],
     filteredApps: [],
     isLoaded: false,
+    filterValue: '',
   });
-  const setFilteredApps = (filteredApps) => setState((prev) => ({ ...prev, filteredApps }));
   const setIsOpen = (isOpen) => setState((prev) => ({ ...prev, isOpen }));
+  const setFilterValue = (filterValue = '') => setState((prev) => ({ ...prev, filterValue }));
   useEffect(() => {
     if (state.isOpen === true && state.isLoaded === false) {
       setState({ ...state, isLoaded: null });
       (async () => {
         const navigationYml = await sourceOfTruth();
         const appData = await getNavFromConfig(load(navigationYml), undefined);
-        setState(({ isOpen }) => ({
+        setState((prev) => ({
+          ...prev,
           apps: appIds.map((id) => appData[id]).filter((app) => !!app),
           filteredApps: appIds.map((id) => appData[id]),
           isLoaded: true,
-          isOpen,
         }));
       })();
     }
   }, [state.isOpen]);
 
-  return { ...state, setFilteredApps, setIsOpen };
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      filteredApps: [...prev.apps, ...extraApps.filter((app) => app.isEntitled())]
+        .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(state.filterValue.toLowerCase())) }))
+        .filter((app) => app.routes?.length > 0),
+    }));
+  }, [state.filterValue]);
+
+  return { ...state, setFilterValue, setIsOpen };
 };
 
 export default useGlobalNav;
