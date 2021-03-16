@@ -5,7 +5,7 @@ import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
 import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
 import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { appNavClick, chromeNavSectionUpdate, clearActive } from '../../redux/actions';
+import { appNavClick, chromeNavSectionUpdate, clearActive, toggleGlobalFilter } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './Navigation.scss';
@@ -183,6 +183,7 @@ export const Navigation = () => {
          * Between chrome 2.0 apps navigation
          */
         !parent?.active && dispatch(clearActive());
+        dispatch(toggleGlobalFilter(false));
         prevLocation.current = window.location.pathname;
         history.push({ pathname: `/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
       }
