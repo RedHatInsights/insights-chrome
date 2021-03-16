@@ -24,6 +24,7 @@ import {
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
   onGlobalFilterRemove,
+  globalFilterDefaultState,
 } from './globalFilterReducers';
 import {
   CLICK_ACTION,
@@ -78,6 +79,6 @@ export default function () {
 
   return {
     chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
-    globalFilter: (state = {}, action) => applyReducerHash(globalFilter)(state, action),
+    globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }
