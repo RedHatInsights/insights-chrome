@@ -47,6 +47,7 @@
         padding: var(--pf-global--spacer--xl) 0 var(--pf-global--spacer--xl) 0;
         justify-content: center;
         .pf-c-search-input {
+          display: flex;
           width: 300px;
           &__icon {
               color: var(--pf-global--BackgroundColor--dark-100);

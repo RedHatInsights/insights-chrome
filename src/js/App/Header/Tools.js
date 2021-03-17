@@ -1,6 +1,7 @@
 // TODO: Delete demo stuff later
 
-import React, { useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
 import { PageHeaderTools } from '@patternfly/react-core/dist/js/components/Page/PageHeaderTools';
@@ -29,81 +30,73 @@ export const switchRelease = (isBeta, pathname) => {
   }
 };
 
-const Tools = () => {
-  {
-    /* Set the state */
-  }
-  const [isSettingsDisabled, setIsSettingsDisabled] = useState(true);
-  const [isInternal, setIsInternal] = useState(false);
-  const [isDemoAcc, setIsDemoAcc] = useState(false);
-  const settingsPath = `${document.baseURI}settings/my-user-access`;
-  const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
+const InternalButton = () => (
+  <Button
+    variant="plain"
+    aria-label="Go to internal tools"
+    widget-type="InternalButton"
+    className="ins-c-toolbar__button-internal"
+    href={`${document.baseURI}internal`}
+    component="a"
+  >
+    <RedhatIcon />
+  </Button>
+);
 
+const SettingsButton = ({ settingsMenuDropdownItems }) => (
+  <ToolbarToggle
+    key="Settings menu"
+    icon={() => (
+      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
+        <CogIcon />
+      </Flex>
+    )}
+    id="SettingsMenu"
+    ouiaId="chrome-settings"
+    hasToggleIndicator={null}
+    widget-type="SettingsMenu"
+    dropdownItems={settingsMenuDropdownItems}
+  />
+);
+
+SettingsButton.propTypes = {
+  settingsMenuDropdownItems: PropTypes.array.isRequired,
+};
+
+const settingsPath = `${document.baseURI}settings/my-user-access`;
+const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
+/* list out the items for the settings menu */
+const settingsMenuDropdownItems = [
   {
-    /* Disable settings/cog icon when a user doesn't have an account number */
-  }
+    url: settingsPath,
+    title: 'Settings',
+    target: '_self',
+  },
+  {
+    title: betaSwitcherTitle,
+    onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
+  },
+];
+
+const Tools = () => {
+  const [{ isDemoAcc, isInternal, isSettingsDisabled }, setState] = useState({
+    isSettingsDisabled: true,
+    isInternal: true,
+    isDemoAcc: false,
+  });
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
-      user?.identity?.account_number && setIsSettingsDisabled(false);
-      user?.identity?.user?.is_internal && setIsInternal(true);
-      user?.identity?.user?.username === 'insights-demo-2021' && setIsDemoAcc(true);
+      /* Disable settings/cog icon when a user doesn't have an account number */
+      setState({
+        isSettingsDisabled: !user?.identity?.account_number,
+        isInternal: !!user?.identity?.user?.is_internal,
+        isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
+      });
     });
   }, []);
 
-  {
-    /* list out the items for the settings menu */
-  }
-  const settingsMenuDropdownItems = [
-    {
-      url: settingsPath,
-      title: 'Settings',
-      target: '_self',
-    },
-    {
-      title: betaSwitcherTitle,
-      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
-    },
-  ];
-
-  {
-    /* button that should redirect a user to RBAC with an account */
-  }
-  const SettingsButton = () => (
-    <ToolbarToggle
-      key="Settings menu"
-      icon={() => (
-        <Flex alignItems={{ default: 'alignItemsCenter' }}>
-          {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
-          <CogIcon />
-        </Flex>
-      )}
-      id="SettingsMenu"
-      ouiaId="chrome-settings"
-      hasToggleIndicator={null}
-      widget-type="SettingsMenu"
-      dropdownItems={settingsMenuDropdownItems}
-    />
-  );
-
-  {
-    /* button that should redirect a user to internal bundle if internal employee*/
-  }
-  const InternalButton = () => (
-    <Button
-      variant="plain"
-      aria-label="Go to internal tools"
-      widget-type="InternalButton"
-      className="ins-c-toolbar__button-internal"
-      href={`${document.baseURI}internal`}
-      component="a"
-    >
-      <RedhatIcon />
-    </Button>
-  );
-
-  {
-    /* list out the items for the about menu */
-  }
+  /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
       title: 'Support options',
@@ -124,9 +117,7 @@ const Tools = () => {
     },
   ];
 
-  {
-    /* Combine aboutMenuItems with a settings link on mobile */
-  }
+  /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
     { title: 'separator' },
     {
@@ -142,9 +133,7 @@ const Tools = () => {
     ...aboutMenuDropdownItems,
   ];
 
-  {
-    /* QuestionMark icon that should be used for "help/support" things */
-  }
+  /* QuestionMark icon that should be used for "help/support" things */
   const AboutButton = () => (
     <ToolbarToggle
       key="Help menu"
@@ -164,7 +153,7 @@ const Tools = () => {
         {isInternal && !window.insights.chrome.isProd && (
           <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
         )}
-        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton />}</PageHeaderToolsItem>}
+        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</PageHeaderToolsItem>}
         <PageHeaderToolsItem>{<AboutButton />}</PageHeaderToolsItem>
       </PageHeaderToolsGroup>
 
@@ -217,4 +206,4 @@ const Tools = () => {
   );
 };
 
-export default Tools;
+export default memo(Tools);
