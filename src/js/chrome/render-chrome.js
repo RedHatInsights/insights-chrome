@@ -5,14 +5,17 @@ import { spinUpStore } from '../redux-config';
 import RootApp from '../App/RootApp';
 import { isBeta } from '../utils';
 
-import loadInventory from '../inventory/index';
 import loadRemediations from '../remediations';
 import { headerLoader } from '../App/Header';
 
 /**
  * This has to be posponed in order to let shared react modules to initialize
  */
-window.insights.loadInventory = loadInventory;
+window.insights.loadInventory = () => {
+  console.log(
+    'Do not use `loadInventory` anymore! We have async inventory https://github.com/RedHatInsights/frontend-components/blob/master/packages/components/src/Inventory/InventoryTable.js '
+  );
+};
 window.insights.experimental.loadRemediations = loadRemediations;
 
 const App = () => {
