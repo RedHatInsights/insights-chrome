@@ -7,7 +7,7 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
  */
 const LoadingFallback = (
   <Bullseye className="pf-u-p-xl">
-    <Spinner size="xl" />
+    <Spinner data-ouia-component-id="remote-module-loader" size="xl" />
   </Bullseye>
 );
 
