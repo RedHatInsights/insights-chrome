@@ -202,3 +202,8 @@ section.ins-c-app-switcher--loading {
         flex-grow: 1;
     }
 }
+
+// mobile fixes
+@media only screen and (max-width: $pf-global--breakpoint--sm) {
+  .ins-m-hide-on-sm {display: none;}
+}
