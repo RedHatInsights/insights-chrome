@@ -11,14 +11,7 @@ const NavLoader = () => (
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="false">
       <NavList>
         {[...new Array(4)].map((_i, key) => (
-          <NavigationItem
-            key={key}
-            title={
-              <a className="ins-c-skeleton__link">
-                <Skeleton size={SkeletonSize.lg} className="ins-m-dark" />
-              </a>
-            }
-          />
+          <NavigationItem key={key} title={<Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />} />
         ))}
       </NavList>
     </Nav>

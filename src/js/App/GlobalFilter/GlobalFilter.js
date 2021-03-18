@@ -32,7 +32,7 @@ const GlobalFilterDropdown = ({
   ]);
   return (
     <Fragment>
-      <Split hasGutter className="ins-c-chrome__global-filter">
+      <Split id="global-filter" hasGutter className="ins-c-chrome__global-filter">
         <SplitItem>
           {userLoaded && allowed !== undefined ? (
             <GroupFilterWrapper

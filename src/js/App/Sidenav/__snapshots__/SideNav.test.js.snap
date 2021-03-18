@@ -31,15 +31,11 @@ exports[`ConnectedSideNav should render correctly 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -53,15 +49,11 @@ exports[`ConnectedSideNav should render correctly 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -75,15 +67,11 @@ exports[`ConnectedSideNav should render correctly 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -97,15 +85,11 @@ exports[`ConnectedSideNav should render correctly 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -145,15 +129,11 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -167,15 +147,11 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -189,15 +165,11 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
@@ -211,15 +183,11 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
           class="pf-c-nav__link"
           href="http://localhost//undefined"
         >
-          <a
-            class="ins-c-skeleton__link"
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
           >
-            <div
-              class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
-            >
-               
-            </div>
-          </a>
+             
+          </div>
            
         </a>
       </li>
