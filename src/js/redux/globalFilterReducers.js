@@ -1,10 +1,11 @@
 import groupBy from 'lodash/groupBy';
 export const SID_KEY = 'SAP ID (SID)';
 
-export const defaultState = {
-  tags: { isLoaded: false, items: [] },
-  sid: { isLoaded: false, items: [] },
-  workloads: { isLoaded: false, items: {} },
+export const globalFilterDefaultState = {
+  scope: 'insights',
+  tags: { isLoaded: false, items: [], count: 0, total: 0 },
+  sid: { isLoaded: false, items: [], count: 0, total: 0 },
+  workloads: { isLoaded: false, items: [], count: 0, total: 0, hasSap: 0 },
 };
 
 export function onGetAllTags(state, { payload }) {
@@ -29,6 +30,7 @@ export function onGetAllTagsPending(state) {
   return {
     ...state,
     tags: {
+      ...state.tags,
       isLoaded: false,
     },
   };
@@ -84,16 +86,20 @@ export function onGetAllSIDsPending(state) {
   return {
     ...state,
     sid: {
+      ...state.sid,
       isLoaded: false,
     },
   };
 }
 
 export function onGetAllWorkloads(state, { payload }) {
+  const count = payload?.results?.find(({ value } = {}) => value)?.count || 0;
   return {
     ...state,
     workloads: {
       isLoaded: true,
+      count,
+      total: count,
       hasSap: payload?.results?.find(({ value } = {}) => value)?.count || 0,
     },
   };
@@ -103,6 +109,7 @@ export function onGetAllWorkloadsPending(state) {
   return {
     ...state,
     workloads: {
+      ...state.workloads,
       isLoaded: false,
     },
   };
