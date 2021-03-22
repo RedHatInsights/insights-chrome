@@ -40,7 +40,7 @@ class ToolbarToggle extends Component {
     const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
-          key="item"
+          key={title}
           ouiaId={title}
           component={url ? 'a' : 'button'}
           // Because the urls are using 'a', don't use onClick for accessibility

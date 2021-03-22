@@ -2,19 +2,19 @@
 
 exports[`ToolbarToggle should render correctly 1`] = `
 <div
-  class="pf-c-dropdown pf-m-align-right"
+  class="pf-c-dropdown pf-m-align-right pf-m-expanded"
   data-ouia-component-id="OUIA-Generated-Dropdown-1"
   data-ouia-component-type="PF4/Dropdown"
   data-ouia-safe="true"
 >
   <button
-    aria-expanded="false"
+    aria-expanded="true"
     aria-haspopup="true"
     class="pf-c-dropdown__toggle pf-m-plain"
-    data-ouia-component-id="OUIA-Generated-DropdownToggle-1"
+    data-ouia-component-id="foo"
     data-ouia-component-type="PF4/DropdownToggle"
     data-ouia-safe="true"
-    id="pf-dropdown-toggle-id-0"
+    id="foo"
     type="button"
   >
     <span
@@ -35,5 +35,43 @@ exports[`ToolbarToggle should render correctly 1`] = `
       </svg>
     </span>
   </button>
+  <ul
+    aria-labelledby="foo"
+    class="pf-c-dropdown__menu pf-m-align-right"
+    role="menu"
+  >
+    <li
+      role="menuitem"
+    >
+      <a
+        aria-disabled="false"
+        class="pf-c-dropdown__menu-item"
+        data-ouia-component-id="title1"
+        data-ouia-component-type="PF4/DropdownItem"
+        data-ouia-safe="true"
+        href="url1"
+        rel="noopener noreferrer"
+        tabindex="-1"
+        target="_blank"
+      >
+        title1
+      </a>
+    </li>
+    <li
+      role="menuitem"
+    >
+      <button
+        aria-disabled="false"
+        class="pf-c-dropdown__menu-item"
+        data-ouia-component-id="title2"
+        data-ouia-component-type="PF4/DropdownItem"
+        data-ouia-safe="true"
+        tabindex="-1"
+        type="button"
+      >
+        title2
+      </button>
+    </li>
+  </ul>
 </div>
 `;
