@@ -136,7 +136,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-  const useLandingNav = isLanding && isBeta() && (getEnv() === 'ci' || getEnv() === 'qa');
+  const useLandingNav = isLanding && isBeta() && (getEnv() === 'ci' || getEnv() === 'qa' || getEnv() === 'stage');
 
   return (
     <div
