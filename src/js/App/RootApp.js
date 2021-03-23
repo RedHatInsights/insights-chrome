@@ -140,6 +140,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
 
   return (
     <div
+      id="chrome-app-render-root"
       className="pf-c-drawer__content"
       data-ouia-subnav={activeApp}
       data-ouia-bundle={activeLocation}

@@ -4,6 +4,7 @@ exports[`RootApp should render correctly - no data 1`] = `
 <div
   class="pf-c-drawer__content"
   data-ouia-safe="true"
+  id="chrome-app-render-root"
 >
   <div
     class="pf-c-page"
@@ -69,6 +70,7 @@ exports[`RootApp should render correctly 1`] = `
   data-ouia-bundle="some-location"
   data-ouia-safe="true"
   data-ouia-subnav="some-app"
+  id="chrome-app-render-root"
 >
   <div
     class="pf-c-page"
@@ -135,6 +137,7 @@ exports[`RootApp should render correctly with pageAction 1`] = `
   data-ouia-page-type="some-action"
   data-ouia-safe="true"
   data-ouia-subnav="some-app"
+  id="chrome-app-render-root"
 >
   <div
     class="pf-c-page"
@@ -201,6 +204,7 @@ exports[`RootApp should render correctly with pageObjectId 1`] = `
   data-ouia-page-object-id="some-object-id"
   data-ouia-safe="true"
   data-ouia-subnav="some-app"
+  id="chrome-app-render-root"
 >
   <div
     class="pf-c-page"
@@ -268,6 +272,7 @@ exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = 
   data-ouia-page-type="some-action"
   data-ouia-safe="true"
   data-ouia-subnav="some-app"
+  id="chrome-app-render-root"
 >
   <div
     class="pf-c-page"
