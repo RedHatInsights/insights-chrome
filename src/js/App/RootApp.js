@@ -99,6 +99,14 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       !isLanding &&
       chrome?.modules?.reduce((app, curr) => {
         const [currKey] = Object.keys(curr);
+        /**
+         * hot fix for modules defined in sub apps
+         * Chrome can't handle it right now. We will come up with a propper solution this just needs to go in quickly
+         */
+        if (chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && currKey === chrome?.activeApp) {
+          app = curr[currKey];
+        }
+
         if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
           app = curr[currKey];
         }
@@ -136,7 +144,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-  const useLandingNav = isLanding && isBeta() && (getEnv() === 'ci' || getEnv() === 'qa');
+  const useLandingNav = isLanding && isBeta() && (getEnv() === 'ci' || getEnv() === 'qa' || getEnv() === 'stage');
 
   return (
     <div
