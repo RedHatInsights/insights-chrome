@@ -94,6 +94,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
         <React.Fragment>
           <Flex className="search">
             <SearchInput
+              data-ouia-component-id="app-filter-search"
               placeholder="Find application or service"
               value={filterValue}
               onChange={(val) => setFilterValue(val)}
@@ -113,7 +114,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
               <EmptyStateBody className="pf-u-mb-xl">
                 This filter criteria matches no applications or services. Try changing your input filter.
               </EmptyStateBody>
-              <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+              <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
                 Clear all filters
               </Button>
             </EmptyState>
@@ -125,7 +126,6 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
         </Bullseye>
       )}
     </div>
-    )
   </Dropdown>
 );
 

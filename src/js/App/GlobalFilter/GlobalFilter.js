@@ -5,7 +5,7 @@ import { GroupFilter } from '@redhat-cloud-services/frontend-components/Conditio
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
-import { Button, Chip, ChipGroup, Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { Button, Chip, ChipGroup, Divider, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
@@ -105,6 +105,7 @@ const GlobalFilterDropdown = ({
           }}
         />
       )}
+      <Divider />
     </Fragment>
   );
 };
