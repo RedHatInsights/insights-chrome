@@ -44,20 +44,23 @@ const getIcon = (id) =>
     subscriptions: <IconSubscriptions alt="Subscriptions Logo" />,
   }[id]);
 
-const App = ({ id, title, routes }) => (
+const App = ({ id, title, routes, parent }) => (
   <div className="galleryItem">
     <Split>
       <SplitItem className="left">{getIcon(id)}</SplitItem>
       <SplitItem className="right">
         <TextContent>
           <Text component="h4">{title}</Text>
-          {routes.map((subApp) => (
-            <Text component="p" key={`${id}/${subApp.id}`}>
-              <Text component="a" href={`${id}/${subApp.id}`}>
-                {subApp.title}
+          {routes.map((subApp) => {
+            const redirectUrl = subApp.reload || `${parent ? `${parent.id}/` : ''}${id}/${subApp.id}`;
+            return (
+              <Text component="p" key={`${id}/${subApp.id}`}>
+                <Text component="a" href={redirectUrl}>
+                  {subApp.title}
+                </Text>
               </Text>
-            </Text>
-          ))}
+            );
+          })}
         </TextContent>
       </SplitItem>
     </Split>
@@ -68,6 +71,9 @@ App.propTypes = {
   id: PropTypes.string,
   title: PropTypes.node,
   routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+  parent: PropTypes.shape({
+    id: PropTypes.string,
+  }),
 };
 
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => (

@@ -22,7 +22,7 @@ import { isBeta } from '../../utils';
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
   if (isBeta) {
-    return `${document.baseURI}${pathname.replace(/\/*beta\/*/, '')}`;
+    return `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
   } else {
     let path = pathname.split('/');
     path[0] = 'beta';

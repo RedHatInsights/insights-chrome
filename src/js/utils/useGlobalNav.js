@@ -30,12 +30,18 @@ const useGlobalNav = () => {
       (async () => {
         const navigationYml = await sourceOfTruth();
         const appData = await getNavFromConfig(load(navigationYml), undefined);
-        setState((prev) => ({
-          ...prev,
-          apps: appIds.map((id) => appData[id]).filter((app) => !!app),
-          filteredApps: appIds.map((id) => appData[id]),
-          isLoaded: true,
-        }));
+        setState((prev) => {
+          const apps = appIds.map((id) => appData[id]).filter((app) => !!app);
+          return {
+            ...prev,
+            apps: apps,
+            filteredApps: appIds.map((id) => ({
+              ...appData[id],
+              parent: apps?.find(({ routes }) => routes?.find(({ id: appId }) => appId === id)),
+            })),
+            isLoaded: true,
+          };
+        });
       })();
     }
   }, [state.isOpen]);
