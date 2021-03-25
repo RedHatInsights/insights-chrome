@@ -101,6 +101,15 @@ aside {
     }
 }
 
+#chrome-app-render-root {
+    /* https://github.com/RedHatInsights/insights-chrome/pull/1278/files#diff-e953d69488a613b49aa81408a3595bd7161bf7547cca09d3378351b6c4552502L93
+    * 100% heing is required to have the nav and app content to fill the page height even though there is not enough content.
+    * It will be cut off witout it.
+    * We will revisit this rule after all apps have adopted chrome 2 and we have only one required layout.
+    */
+    height: 100%;
+}
+
 // Landing page logout alert
 .pf-c-alert.ins-c-alert {
     position: absolute;
