@@ -23,14 +23,14 @@ $pf-global--image-path: './assets/images/';
 @import '~@patternfly/patternfly/layouts/Flex/flex.scss';
 @import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import '~@redhat-cloud-services/frontend-components/components/Spinner.css';
-@import '~@redhat-cloud-services/frontend-components/components/Skeleton.css';
-@import '~@redhat-cloud-services/frontend-components/components/ConditionalFilter.css';
+@import '~@redhat-cloud-services/frontend-components/Spinner/spinner.css';
+@import '~@redhat-cloud-services/frontend-components/Skeleton/skeleton.css';
+@import '~@redhat-cloud-services/frontend-components/ConditionalFilter/onditionalFilter.css';
 
 // Accessibility
 @import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
 @import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
-@import '~@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
+@import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 @import 'helpers.scss';
 
