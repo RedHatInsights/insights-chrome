@@ -66,8 +66,8 @@ describe('User', () => {
   /* eslint-enable camelcase */
 
   describe('default', () => {
-    test('appends the entitlements data onto the user object', () => {
-      const o = user.default(token);
+    test('appends the entitlements data onto the user object', async () => {
+      const o = await user.default(token);
       expect(o).toHaveProperty('entitlements', { foo: 'bar' });
       expect(o).toHaveProperty('identity');
     });
