@@ -71,7 +71,7 @@ function tryBounceIfUnentitled(data, section) {
   }
 
   if (section && section !== '') {
-    if (data[service] && data[service].is_entitled) {
+    if (data?.[service]?.is_entitled) {
       log(`Entitled to: ${service}`);
     } else {
       log(`Not entitled to: ${service}`);
@@ -80,7 +80,7 @@ function tryBounceIfUnentitled(data, section) {
   }
 }
 
-export default (token) => {
+export default async (token) => {
   let user = buildUser(token);
 
   const pathName = getWindow().location.pathname.split('/');
@@ -91,21 +91,25 @@ export default (token) => {
 
   if (user) {
     log(`Account Number: ${user.identity.account_number}`);
+    let data;
+    try {
+      data = await servicesApi(token.jti).servicesGet();
+    } catch {
+      // let's swallow error from services API
+    }
 
     // NOTE: Openshift supports Users with Account Number of -1
     // thus we need to bypass here
-    // dont call entitlements on / /beta /openshift or /beta/openshift
+    // call entitlements on / /beta /openshift or /beta/openshift,
+    // but swallow error
     //
     // Landing Page *does* support accounts with -1
     // it has to
     if (pageAllowsUnentitled()) {
-      return new Promise((resolve) => {
-        user.identity = {
-          ...user.identity,
-          entitlements: {},
-        };
-        resolve(user);
-      });
+      return {
+        ...user,
+        entitlements: data || {}, // if the services returned error, use empty object
+      };
     }
 
     // Important this has to come after the above -1 allow checks
@@ -121,18 +125,13 @@ export default (token) => {
       return;
     }
 
-    return servicesApi(token.jti)
-      .servicesGet()
-      .then((data) => {
-        tryBounceIfUnentitled(data, pathName[0]);
-        return {
-          ...user,
-          entitlements: data,
-        };
-      });
+    tryBounceIfUnentitled(data, pathName[0]);
+
+    return {
+      ...user,
+      entitlements: data,
+    };
   } else {
     log('User not ready');
   }
-
-  return new Promise((res) => res());
 };
