@@ -16,49 +16,6 @@ exports[`Header should render correctly 1`] = `
 
 exports[`unauthed should render correctly 1`] = `
 <div
-  class="pf-c-page__header-brand"
->
-  <div
-    class="pf-c-page__header-brand-toggle"
-  >
-    <button
-      aria-disabled="false"
-      aria-label="Toggle primary navigation"
-      class="pf-c-button pf-m-plain"
-      data-ouia-component-id="chrome-nav-toggle"
-      data-ouia-component-type="PF4/Button"
-      data-ouia-safe="true"
-      type="button"
-    >
-      <svg
-        aria-hidden="true"
-        fill="currentColor"
-        height="1.5em"
-        role="img"
-        style="vertical-align: -0.1875em;"
-        viewBox="0 0 448 512"
-        width="1.5em"
-      >
-        <path
-          d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-        />
-      </svg>
-    </button>
-  </div>
-  <a
-    class="pf-c-page__header-brand-link"
-    href="./"
-  >
-    <img
-      alt="Red Hat Logo"
-      src="test-file-stub"
-    />
-  </a>
-</div>
-`;
-
-exports[`unauthed should render correctly 1`] = `
-<div
   class="pf-c-page__header-tools"
 >
   <button

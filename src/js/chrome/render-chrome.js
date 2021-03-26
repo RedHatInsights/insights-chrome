@@ -47,7 +47,7 @@ function renderChrome() {
       </Provider>,
       pageRoot
     );
-  } else {
+  } else if (['landing', undefined].includes(store.getState()?.chrome?.appId)) {
     headerLoader();
   }
 }
