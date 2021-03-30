@@ -14,6 +14,7 @@ import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import LoadingFallback from '../utils/loading-fallback';
+import checkSubAppExceptionModule from '../utils/modulesExceptions';
 
 const isModule = (key, chrome) =>
   key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
@@ -102,8 +103,9 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         /**
          * hot fix for modules defined in sub apps
          * Chrome can't handle it right now. We will come up with a propper solution this just needs to go in quickly
+         * Use it as a first condition so it wont override already working module identifications
          */
-        if (chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && currKey === chrome?.activeApp) {
+        if (checkSubAppExceptionModule(currKey, chrome)) {
           app = curr[currKey];
         }
 
