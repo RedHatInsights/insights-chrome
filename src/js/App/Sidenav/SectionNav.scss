@@ -40,6 +40,10 @@
             .pf-c-nav__item {
               .pf-c-nav__link{
                 padding-left: var(--pf-global--spacer--sm);
+                svg {
+                  width: 12px;
+                  height: 12px;
+                }
               }
             }
           }
@@ -55,6 +59,10 @@
       --pf-c-nav__link--hover--after--BorderColor:  var(--pf-global--primary-color--light-100);
       a {
         padding-left: var(--pf-global--spacer--sm)
+      }
+      svg {
+        width: 12px;
+        height: 12px;
       }
     }
   }
