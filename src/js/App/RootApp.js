@@ -17,8 +17,7 @@ import LoadingFallback from '../utils/loading-fallback';
 
 const isModule = (key, chrome) =>
   key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
-  (key !== undefined && chrome?.activeSection?.group !== undefined && key === chrome?.activeSection?.group) ||
-  key === chrome?.activeApp;
+  (key !== undefined && chrome?.activeSection?.group !== undefined && key === chrome?.activeSection?.group);
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => {
@@ -100,6 +99,14 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       !isLanding &&
       chrome?.modules?.reduce((app, curr) => {
         const [currKey] = Object.keys(curr);
+        /**
+         * hot fix for modules defined in sub apps
+         * Chrome can't handle it right now. We will come up with a propper solution this just needs to go in quickly
+         */
+        if (chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && currKey === chrome?.activeApp) {
+          app = curr[currKey];
+        }
+
         if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
           app = curr[currKey];
         }
