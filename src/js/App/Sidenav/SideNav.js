@@ -22,7 +22,6 @@ export const SideNav = () => {
       const { subItems } = globalNav?.find?.(({ active }) => active) || {};
       const defaultActive =
         subItems?.find?.(({ id }) => location.pathname.split('/').find((item) => item === id)) ||
-        subItems?.find?.(({ reload }) => reload && window.location.pathname.includes(reload)) ||
         subItems?.find?.(({ default: isDefault }) => isDefault) ||
         subItems?.[0];
 
