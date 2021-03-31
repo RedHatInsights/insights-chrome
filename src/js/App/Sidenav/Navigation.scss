@@ -2,3 +2,21 @@
     align-items: center;
     svg { margin-left: var(--pf-global--spacer--sm); }
 }
+
+.ins-c-navigation__beta-badge {
+    float: right;
+    margin-left: auto;
+    margin-right: 0px !important;
+}
+
+.ins-c-navigation__beta-info-modal {
+    text-align: center;
+    width: 90%;
+    div {
+        margin: var(--pf-global--spacer--md);
+    }
+    .info-icon {
+        color: var(--pf-global--info-color--100);
+        margin: var(--pf-global--spacer--md);
+    }
+}

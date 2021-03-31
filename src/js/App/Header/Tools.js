@@ -18,6 +18,7 @@ import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
 import { isBeta } from '../../utils';
+import classnames from 'classnames';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -29,6 +30,8 @@ export const switchRelease = (isBeta, pathname) => {
     return document.baseURI.concat(path.join('/'));
   }
 };
+
+export const betaBadge = (css) => <Badge className={classnames('ins-c-toolbar__beta-badge', css)}>beta</Badge>;
 
 const InternalButton = () => (
   <Button
