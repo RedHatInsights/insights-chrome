@@ -52,13 +52,13 @@ exports[`SectionNav should render app with subapp and custom url, but without gr
           data-ouia-component-type="PF4/NavItem"
           data-ouia-safe="true"
         >
-          <div
+          <a
             class="pf-c-nav__link"
+            href="http://localhost/loc/app/subapp"
           >
             Title2
              
-             
-          </div>
+          </a>
         </li>
       </ul>
     </section>
@@ -118,13 +118,13 @@ exports[`SectionNav should render app with subapp without group 1`] = `
           data-ouia-component-type="PF4/NavItem"
           data-ouia-safe="true"
         >
-          <div
+          <a
             class="pf-c-nav__link"
+            href="http://localhost/loc/app/subapp"
           >
             Title2
              
-             
-          </div>
+          </a>
         </li>
       </ul>
     </section>
@@ -140,13 +140,13 @@ exports[`SectionNav should render app without group 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost/loc/app"
     >
       Title
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -159,13 +159,13 @@ exports[`SectionNav should render corectly 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost/loc/id"
     >
       Title
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -187,13 +187,13 @@ exports[`SectionNav should render group with app 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost/loc/app"
         >
           Title
            
-           
-        </div>
+        </a>
       </li>
     </ul>
   </section>
@@ -261,13 +261,13 @@ exports[`SectionNav should render group with app and sub app 1`] = `
               data-ouia-component-type="PF4/NavItem"
               data-ouia-safe="true"
             >
-              <div
+              <a
                 class="pf-c-nav__link"
+                href="http://localhost/loc/app/subapp"
               >
                 Title2
                  
-                 
-              </div>
+              </a>
             </li>
           </ul>
         </section>
@@ -338,11 +338,11 @@ exports[`SectionNav should render group with app, sub app and custom url 1`] = `
               data-ouia-component-type="PF4/NavItem"
               data-ouia-safe="true"
             >
-              <div
+              <a
                 class="pf-c-nav__link"
+                href="example.url.com"
               >
                 Title2
-                 
                 <svg
                   aria-hidden="true"
                   fill="currentColor"
@@ -357,7 +357,7 @@ exports[`SectionNav should render group with app, sub app and custom url 1`] = `
                   />
                 </svg>
                  
-              </div>
+              </a>
             </li>
           </ul>
         </section>

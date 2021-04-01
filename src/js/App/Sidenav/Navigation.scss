@@ -3,10 +3,10 @@
     svg { margin-left: var(--pf-global--spacer--sm); }
 }
 
-.ins-c-navigation__beta-badge {
+.pf-c-nav__item .pf-c-nav__link .ins-c-navigation__beta-badge {
     float: right;
+    margin-right: 0px;
     margin-left: auto;
-    margin-right: 0px !important;
 }
 
 .ins-c-navigation__beta-info-modal {

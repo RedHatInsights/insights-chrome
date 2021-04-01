@@ -152,7 +152,7 @@ export const Navigation = () => {
     let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
-    if (item?.isPublicBeta && !showBetaModal && !isBeta()) {
+    if (item?.isBeta && !showBetaModal && !isBeta()) {
       setShowBetaModal(true);
       setDeferedOnclickArgs([event, item, parent]);
       return;

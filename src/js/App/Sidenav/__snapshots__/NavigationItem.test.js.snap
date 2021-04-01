@@ -8,12 +8,12 @@ exports[`NavigationItem parent and itemID with value 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost/someValue/someID"
     >
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -26,12 +26,12 @@ exports[`NavigationItem parent undefined and itemID with value 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost//someID"
     >
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -44,12 +44,12 @@ exports[`NavigationItem parent with value and itemID undefined 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost/someValue/undefined"
     >
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -62,12 +62,12 @@ exports[`NavigationItem should render coorectly 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="http://localhost//undefined"
     >
        
-       
-    </div>
+    </a>
   </li>
 </div>
 `;
@@ -80,10 +80,10 @@ exports[`NavigationItem with some navigate value set 1`] = `
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
-    <div
+    <a
       class="pf-c-nav__link"
+      href="[object Object]"
     >
-       
       <svg
         aria-hidden="true"
         fill="currentColor"
@@ -98,7 +98,7 @@ exports[`NavigationItem with some navigate value set 1`] = `
         />
       </svg>
        
-    </div>
+    </a>
   </li>
 </div>
 `;

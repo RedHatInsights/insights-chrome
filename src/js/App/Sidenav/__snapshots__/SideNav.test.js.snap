@@ -27,8 +27,9 @@ exports[`ConnectedSideNav should render correctly 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -36,8 +37,7 @@ exports[`ConnectedSideNav should render correctly 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -45,8 +45,9 @@ exports[`ConnectedSideNav should render correctly 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -54,8 +55,7 @@ exports[`ConnectedSideNav should render correctly 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -63,8 +63,9 @@ exports[`ConnectedSideNav should render correctly 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -72,8 +73,7 @@ exports[`ConnectedSideNav should render correctly 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -81,8 +81,9 @@ exports[`ConnectedSideNav should render correctly 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -90,8 +91,7 @@ exports[`ConnectedSideNav should render correctly 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
     </ul>
   </nav>
@@ -125,8 +125,9 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -134,8 +135,7 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -143,8 +143,9 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -152,8 +153,7 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -161,8 +161,9 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -170,8 +171,7 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
       <li
         class="pf-c-nav__item"
@@ -179,8 +179,9 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <div
+        <a
           class="pf-c-nav__link"
+          href="http://localhost//undefined"
         >
           <div
             class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
@@ -188,8 +189,7 @@ exports[`ConnectedSideNav should render correctly part 2 1`] = `
              
           </div>
            
-           
-        </div>
+        </a>
       </li>
     </ul>
   </nav>
