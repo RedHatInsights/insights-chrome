@@ -9,8 +9,9 @@ import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
+import { isBeta } from '../../utils';
 
-const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
+const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || (isBeta() && insights.chrome.getBundle() === 'insights');
 
 export const Header = ({ logoClassName }) => {
   const user = useSelector(({ chrome }) => chrome?.user);
