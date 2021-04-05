@@ -1,11 +1,10 @@
 const checkApproval = (moduleKey, chrome) =>
   chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && moduleKey === chrome?.activeApp;
 
-const checkSubsCentral = (_moduleKey, chrome) => chrome?.activeApp === 'rhel' && window.location.pathname.includes('/subscriptions/manifests');
+
 
 const moduleRules = {
   approval: checkApproval,
-  'subscription-central': checkSubsCentral,
 };
 
 /**
