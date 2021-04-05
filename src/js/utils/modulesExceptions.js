@@ -1,8 +1,6 @@
 const checkApproval = (moduleKey, chrome) =>
   chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && moduleKey === chrome?.activeApp;
 
-
-
 const moduleRules = {
   approval: checkApproval,
 };
