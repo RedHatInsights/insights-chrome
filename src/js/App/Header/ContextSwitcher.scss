@@ -1,4 +1,8 @@
 .ins-c-page__context-switcher-dropdown {
+  --pf-c-dropdown__toggle--before--BorderTopColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderRightColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderBottomColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--disabled-color--100) !important;
   .pf-c-dropdown__toggle {
     display: inline-block;
     position: relative;

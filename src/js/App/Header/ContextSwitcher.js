@@ -29,7 +29,6 @@ const ContextSwitcher = ({ user }) => {
       onSelect={onSelect}
       toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Viewing account: {user.identity.account_number}</DropdownToggle>}
       isOpen={isOpen}
-      isPlain
     >
       <SearchInput placeholder="Search account" />
       <ul>{dropdownItems}</ul>

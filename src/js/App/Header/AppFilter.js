@@ -79,11 +79,10 @@ App.propTypes = {
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => (
   <Dropdown
     className="ins-c-page__app-filter-dropdown"
-    isPlain
     onSelect={() => setIsOpen(true)}
     toggle={
       <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-        Apps and services
+        Find an app or service
       </DropdownToggle>
     }
     isOpen={isOpen}

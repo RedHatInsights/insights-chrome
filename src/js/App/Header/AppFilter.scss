@@ -16,9 +16,14 @@
 }
 
 .ins-c-page__app-filter-dropdown {
+  --pf-c-dropdown__toggle--before--BorderTopColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderRightColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderBottomColor: var(--pf-global--disabled-color--100) !important;
+  --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--disabled-color--100) !important;
   .pf-c-dropdown__toggle {
     display: inline-block;
     margin-left: 66px;
+    margin-right: 8px;
     position: relative;
     white-space: nowrap;
   }
@@ -28,7 +33,6 @@
       }
   }
   .pf-c-dropdown__menu::before {
-    background-color: yellow;
     z-index: -1;
   }
 
