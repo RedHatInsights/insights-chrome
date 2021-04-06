@@ -1,8 +1,11 @@
 const checkApproval = (moduleKey, chrome) =>
   chrome?.activeApp === 'approval' && chrome?.activeSection?.id === 'catalog' && moduleKey === chrome?.activeApp;
 
+const checkManifests = (_moduleKey, chrome) => chrome?.activeApp === 'rhel' && window.location.pathname.includes('/insights/subscriptions/manifest');
+
 const moduleRules = {
   approval: checkApproval,
+  manifests: checkManifests,
 };
 
 /**
