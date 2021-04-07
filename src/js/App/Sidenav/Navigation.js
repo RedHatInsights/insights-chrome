@@ -78,14 +78,6 @@ const extraLinks = {
       external: true,
     },
   ],
-  'application-services': [
-    {
-      id: 'extra-application-services-docs',
-      url: 'https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka',
-      title: 'Documentation',
-      external: true,
-    },
-  ],
 };
 
 const NavItemLink = ({ id, title, external, url, link }) => (
