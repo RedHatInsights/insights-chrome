@@ -77,7 +77,7 @@ const extraLinks = {
       title: 'Documentation',
       external: true,
     },
-  ]
+  ],
 };
 
 const NavItemLink = ({ id, title, external, url, link }) => (
