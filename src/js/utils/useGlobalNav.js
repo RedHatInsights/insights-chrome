@@ -3,7 +3,7 @@ import { load } from 'js-yaml';
 import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
-const appIds = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'];
+const appIds = ['insights', 'openshift', 'cost-management', 'subscriptions', 'ansible', 'settings'];
 
 const extraApps = [
   {
