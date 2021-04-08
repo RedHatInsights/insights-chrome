@@ -10,6 +10,9 @@
       z-index: unset;
       .pf-c-search-input {
         margin: 0 10px 0 10px;
+        .pf-c-search-input__text .pf-c-search-input__text-input{
+          color: black;
+        }
       }
       .viewing-as {
         z-index: -1000;
