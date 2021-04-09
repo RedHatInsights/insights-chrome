@@ -9,7 +9,7 @@ import './Navigation.scss';
 import PropTypes from 'prop-types';
 
 const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }) => (
-  <Modal isOpen={isOpen} onClose={onCancel} variant={ModalVariant.medium}>
+  <Modal aria-label="Beta info modal" isOpen={isOpen} onClose={onCancel} variant={ModalVariant.medium}>
     <Bullseye>
       <div className="ins-c-navigation__beta-info-modal">
         <InfoCircleIcon size="xl" className="info-icon" />
