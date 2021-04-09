@@ -32,7 +32,8 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
       ouiaId={id}
       title={title}
       parent={activeLocation}
-      isActive={active || id === activeApp}
+      // TODO: Fix me! Please! This is ugly!
+      isActive={!window.location.pathname.includes('openshift/cost-management/') && (active || id === activeApp)}
       onClick={onClick}
       navigate={navigate}
       isBeta={isBeta}
