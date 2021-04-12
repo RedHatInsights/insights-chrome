@@ -10,6 +10,9 @@
       z-index: unset;
       .pf-c-search-input {
         margin: 0 10px 0 10px;
+        .pf-c-search-input__text .pf-c-search-input__text-input{
+          color: var(--pf-global--Color--100);
+        }
       }
       .viewing-as {
         z-index: -1000;
@@ -20,7 +23,7 @@
         font-size: 10px;
         position: fixed; // allows menu to go full width
         background-color: var(--pf-global--info-color--100);
-        color: black;
+        color: var(--pf-global--Color--100);
         opacity: 1;
         animation-name: fadeInOpacity;
         animation-iteration-count: 1;
