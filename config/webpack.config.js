@@ -36,11 +36,6 @@ const commonConfig = ({ publicPath, noHash }) => ({
     rules: [
       {
         test: /src\/.*\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader'],
-      },
-      {
-        test: /src\/.*\.js$/,
         exclude: /node_modules/,
         use: [{ loader: 'babel-loader' }],
       },
