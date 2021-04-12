@@ -34,7 +34,7 @@ const LandingNav = () => {
           <b>Hybrid Cloud Console</b>
         </div>
         {routes
-          .filter(({ key }) => key !== 'application-services' || (isBeta() && ['ci', 'qa', 'stage'].includes(getEnv())))
+          .filter(({ id }) => id !== 'application-services' || (isBeta() && ['ci', 'qa', 'stage'].includes(getEnv())))
           .map(({ title, id, route }) => (
             <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
               {title}
