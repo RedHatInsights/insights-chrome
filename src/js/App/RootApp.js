@@ -9,7 +9,7 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import SideNav from './Sidenav/SideNav';
 import { Header, HeaderTools } from './Header/Header';
 import ErrorBoundary from './ErrorBoundary';
-import { getEnv, isBeta } from '../utils';
+import { isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
@@ -146,7 +146,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-  const useLandingNav = isLanding && isBeta() && (getEnv() === 'ci' || getEnv() === 'qa' || getEnv() === 'stage');
+  const useLandingNav = isLanding && isBeta();
 
   return (
     <div
