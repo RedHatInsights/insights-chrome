@@ -44,8 +44,8 @@ const ContextSwitcher = ({ user }) => {
   );
 };
 
- ContextSwitcher.propTypes = {
-   user: PropTypes.object,
- };
+ContextSwitcher.propTypes = {
+  user: PropTypes.object,
+};
 
- export default ContextSwitcher;
+export default ContextSwitcher;
