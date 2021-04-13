@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
 import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
@@ -7,12 +7,14 @@ import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/Nav
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { appNavClick, chromeNavSectionUpdate, clearActive, toggleGlobalFilter } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import BetaInfoModal from './BetaInfoModal';
 
 import './Navigation.scss';
 import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
+import { switchRelease } from '../Header/Tools.js';
 
 const basepath = document.baseURI;
 
@@ -76,14 +78,6 @@ const extraLinks = {
       external: true,
     },
   ],
-  'application-services': [
-    {
-      id: 'extra-application-services-docs',
-      url: 'https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka',
-      title: 'Documentation',
-      external: true,
-    },
-  ],
 };
 
 const NavItemLink = ({ id, title, external, url, link }) => (
@@ -115,6 +109,8 @@ export const Navigation = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const prevLocation = useRef(window.location.pathname);
+  const [showBetaModal, setShowBetaModal] = useState(false);
+  const [deferedOnClickArgs, setDeferedOnclickArgs] = useState([]);
   useEffect(() => {
     const unregister = history.listen((location, action) => {
       if (action === 'PUSH' && location.state) {
@@ -147,6 +143,12 @@ export const Navigation = () => {
     const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2;
     let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
+
+    if (item?.isBeta && !showBetaModal && !isBeta()) {
+      setShowBetaModal(true);
+      setDeferedOnclickArgs([event, item, parent]);
+      return;
+    }
 
     if (item.navigate) {
       window.open(item.navigate);
@@ -199,24 +201,36 @@ export const Navigation = () => {
   }, []);
 
   return (
-    <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
-      <NavList>
-        {settingsWithSections?.map((item, key) => (
-          <SectionNav activeLocation={activeLocation} activeApp={activeApp} key={item.id || key} {...item} onClick={onClick} />
-        ))}
-        {extraLinks[activeLocation]?.map?.((item) =>
-          item?.expandable && activeLocation === 'insights' ? (
-            <NavExpandable key={item.id} title={item.title}>
-              {item?.subItems?.map((item) => (
-                <NavItemLink key={item.id} {...item} />
-              ))}
-            </NavExpandable>
-          ) : (
-            <NavItemLink key={item.id} {...item} />
-          )
-        )}
-      </NavList>
-    </Nav>
+    <React.Fragment>
+      <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
+        <NavList>
+          {settingsWithSections?.map((item, key) => (
+            <SectionNav activeLocation={activeLocation} activeApp={activeApp} key={item.id || key} {...item} onClick={onClick} />
+          ))}
+          {extraLinks[activeLocation]?.map?.((item) =>
+            item?.expandable && activeLocation === 'insights' ? (
+              <NavExpandable key={item.id} title={item.title}>
+                {item?.subItems?.map((item) => (
+                  <NavItemLink key={item.id} {...item} />
+                ))}
+              </NavExpandable>
+            ) : (
+              <NavItemLink key={item.id} {...item} />
+            )
+          )}
+        </NavList>
+      </Nav>
+      <BetaInfoModal
+        isOpen={showBetaModal}
+        onClick={() => {
+          onClick(...deferedOnClickArgs);
+          isBeta() || (window.location = switchRelease(false, window.location.pathname));
+          setShowBetaModal(false);
+        }}
+        onCancel={() => setShowBetaModal(false)}
+        menuItemClicked={deferedOnClickArgs[1]?.title}
+      />
+    </React.Fragment>
   );
 };
 
