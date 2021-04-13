@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
@@ -10,30 +10,37 @@ import './ContextSwitcher.scss';
 const ContextSwitcher = ({ user }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
+  const [searchValue, setSearchValue] = useState('');
   const onSelect = () => {
     dispatch(onToggleContextSwitcher());
   };
   const dropdownItems = [
-    <DropdownItem key={user.identity.account_number} description="PERSONAL ACCOUNT">
+    <SearchInput value={searchValue} onChange={(_, val) => setSearchValue(val.target.value)} key="Search account" placeholder="Search account" />,
+    <DropdownItem onClick={onSelect} key={user.identity.account_number} description="PERSONAL ACCOUNT">
       {user.identity.account_number}
     </DropdownItem>,
-    <DropdownItem key="678909">678909</DropdownItem>,
-    <DropdownItem key="678735">678735</DropdownItem>,
-    <DropdownItem key="123456">123456</DropdownItem>,
+    <DropdownItem onClick={onSelect} key="678909">
+      678909
+    </DropdownItem>,
+    <DropdownItem onClick={onSelect} key="678735">
+      678735
+    </DropdownItem>,
+    <DropdownItem onClick={onSelect} key="123456">
+      123456
+    </DropdownItem>,
+    <div key={`${user.identity.account_number}`} className="viewing-as">
+      Viewing as Account {user.identity.account_number}
+    </div>,
   ];
 
   return (
     <Dropdown
       className="ins-c-page__context-switcher-dropdown"
       ouiaId="Account Switcher"
-      onSelect={onSelect}
       toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Viewing account: {user.identity.account_number}</DropdownToggle>}
       isOpen={isOpen}
-    >
-      <SearchInput placeholder="Search account" />
-      <ul>{dropdownItems}</ul>
-      <div className="viewing-as">Viewing as Account {user.identity.account_number}</div>
-    </Dropdown>
+      dropdownItems={dropdownItems}
+    />
   );
 };
 

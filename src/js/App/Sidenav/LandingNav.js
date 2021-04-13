@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import { isBeta } from '../../utils';
+import { isBeta, getEnv } from '../../utils';
 import './LandingNav.scss';
 import { useSelector } from 'react-redux';
 
@@ -33,11 +33,13 @@ const LandingNav = () => {
         <div className="ins-c-app-title">
           <b>Hybrid Cloud Console</b>
         </div>
-        {routes.map(({ title, id, route }) => (
-          <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
-            {title}
-          </NavItem>
-        ))}
+        {routes
+          .filter(({ id }) => id !== 'application-services' || (isBeta() && ['ci', 'qa', 'stage'].includes(getEnv())))
+          .map(({ title, id, route }) => (
+            <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
+              {title}
+            </NavItem>
+          ))}
       </NavList>
     </Nav>
   );

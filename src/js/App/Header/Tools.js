@@ -13,11 +13,13 @@ import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
-import { Badge, Flex } from '@patternfly/react-core';
+import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
+import { Badge } from '@patternfly/react-core/dist/js/components/Badge/Badge';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
 import { isBeta } from '../../utils';
+import classnames from 'classnames';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -29,6 +31,8 @@ export const switchRelease = (isBeta, pathname) => {
     return document.baseURI.concat(path.join('/'));
   }
 };
+
+export const betaBadge = (css) => <Badge className={classnames('ins-c-toolbar__beta-badge', css)}>beta</Badge>;
 
 const InternalButton = () => (
   <Button
