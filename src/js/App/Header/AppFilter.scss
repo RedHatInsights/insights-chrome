@@ -69,14 +69,7 @@
         break-inside: avoid-column; // prevents padding from spilling into next column
         .pf-l-split {
           margin-top: auto;
-          .left {
-              width: 60px;
-            svg {
-              height: 36px;
-              width: 36px;
-            }
-          }
-          .right {
+          .pf-l-split__item {
             h4 {
               color: var(--pf-global--BackgroundColor--dark-100);
               font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif
