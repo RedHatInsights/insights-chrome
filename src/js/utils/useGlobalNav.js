@@ -1,16 +1,30 @@
 import { useEffect, useState } from 'react';
 import { load } from 'js-yaml';
-import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
-const appIds = ['insights', 'openshift', 'cost-management', 'subscriptions', 'ansible', 'settings'];
-
-const extraApps = [
+// TODO: add App services 26.4. for release
+const allowedApps = [
+  { id: 'openshift', title: 'Openshift', routes: [{ id: '', title: 'Clusters' }, { id: 'subscriptions' }, { id: 'cost-management' }] },
   {
-    title: 'Insights for SAP',
-    id: 'SAP',
-    routes: [{ id: 'sap-dashboard', title: 'Dashboard' }],
-    isEntitled: async () => await insights.chrome.auth.getUser().entitlements?.insights?.is_entitled,
+    id: 'insights',
+    title: 'Red Hat Enterprise Linux',
+    routes: [
+      { id: 'dashboard' },
+      { id: 'advisor' },
+      { id: 'drift' },
+      { id: 'inventory' },
+      { id: 'vulnerability' },
+      { id: 'compliance' },
+      { id: 'policies' },
+      { id: 'patch' },
+      { id: 'subscriptions' },
+      { id: 'remediations' },
+    ],
+  },
+  { id: 'ansible', routes: [{ id: 'automation-hub' }, { id: 'catalog' }, { id: 'automation-analytics' }] },
+  {
+    id: 'settings',
+    routes: [{ id: 'my-user-access' }, { id: 'rbac' }, { id: 'sources' }, { id: 'integrations' }, { id: 'notifications' }, { id: 'applications' }],
   },
 ];
 
@@ -29,16 +43,25 @@ const useGlobalNav = () => {
       setState({ ...state, isLoaded: null });
       (async () => {
         const navigationYml = await sourceOfTruth();
-        const appData = await getNavFromConfig(load(navigationYml), undefined);
+        const loadedYaml = load(navigationYml);
+        const apps = allowedApps
+          .map((app) =>
+            loadedYaml[app.id]
+              ? {
+                  ...loadedYaml[app.id],
+                  ...app,
+                  routes: app.routes
+                    .map((subApp) => (loadedYaml[subApp.id] ? { ...loadedYaml[subApp.id], parent: app.id, ...subApp } : null))
+                    .filter((a) => a),
+                }
+              : null
+          )
+          .filter((a) => a);
         setState((prev) => {
-          const apps = appIds.map((id) => appData[id]).filter((app) => !!app);
           return {
             ...prev,
             apps: apps,
-            filteredApps: appIds.map((id) => ({
-              ...appData[id],
-              parent: apps?.find(({ routes }) => routes?.find(({ id: appId }) => appId === id)),
-            })),
+            filteredApps: apps,
             isLoaded: true,
           };
         });
@@ -49,7 +72,7 @@ const useGlobalNav = () => {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      filteredApps: [...prev.apps, ...extraApps.filter((app) => app.isEntitled())]
+      filteredApps: [...prev.apps]
         .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(state.filterValue.toLowerCase())) }))
         .filter((app) => app.routes?.length > 0),
     }));
