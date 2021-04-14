@@ -24,7 +24,7 @@ const allowedApps = [
   { id: 'ansible', routes: [{ id: 'automation-hub' }, { id: 'catalog' }, { id: 'automation-analytics' }] },
   {
     id: 'settings',
-    routes: [{ id: 'my-user-access' }, { id: 'rbac' }, { id: 'sources' }, { id: 'integrations' }, { id: 'notifications' }, { id: 'applications' }],
+    routes: [{ id: 'my-user-access' }, { id: 'rbac' }, { id: 'sources' }, { id: 'integrations' }, { id: 'applications' }],
   },
 ];
 
