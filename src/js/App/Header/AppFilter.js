@@ -19,36 +19,13 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Spinner } from '@patternfly/react-core/dist/js/components/Spinner/Spinner';
 import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
 
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
-
-import IconAnsible from './icon-ansible';
-import IconCostManagement from './icon-cost-management';
-import IconInsights from './icon-insights';
-import IconMigrations from './icon-migrations';
-import IconOpenshift from './icon-openshift';
-import IconSAP from './icon-sap';
-import IconSubscriptions from './icon-subscriptions';
-
 import './AppFilter.scss';
 import useGlobalNav from '../../utils/useGlobalNav';
-
-const getIcon = (id) =>
-  ({
-    ansible: <IconAnsible alt="Ansible Logo" />,
-    'cost-management': <IconCostManagement alt="Cost Management Logo" />,
-    insights: <IconInsights alt="Insights Logo" />,
-    migrations: <IconMigrations alt="Migration Services Logo" />,
-    openshift: <IconOpenshift alt="Openshift Logo" />,
-    settings: <CogIcon fill="var(--pf-global--Color--300)" alt="Settings Icon" />,
-    SAP: <IconSAP alt="SAP Icon" />,
-    subscriptions: <IconSubscriptions alt="Subscriptions Logo" />,
-  }[id]);
 
 const App = ({ id, title, routes, parent }) => (
   <div className="galleryItem">
     <Split>
-      <SplitItem className="left">{getIcon(id)}</SplitItem>
-      <SplitItem className="right">
+      <SplitItem>
         <TextContent>
           <Text component="h4">{title}</Text>
           {routes.map((subApp) => {
