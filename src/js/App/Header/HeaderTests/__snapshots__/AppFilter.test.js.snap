@@ -11,7 +11,7 @@ exports[`<AppFilter /> should render correctly 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="false"
-      class="pf-c-dropdown__toggle pf-m-plain"
+      class="pf-c-dropdown__toggle"
       data-ouia-component-id="OUIA-Generated-DropdownToggle-1"
       data-ouia-component-type="PF4/DropdownToggle"
       data-ouia-safe="true"
@@ -21,7 +21,7 @@ exports[`<AppFilter /> should render correctly 1`] = `
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Apps and services
+        Find an app or service
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"
@@ -59,7 +59,7 @@ exports[`<AppFilter /> should render empty state on no filter match and clear ap
     <button
       aria-expanded="true"
       aria-haspopup="false"
-      class="pf-c-dropdown__toggle pf-m-plain"
+      class="pf-c-dropdown__toggle"
       data-ouia-component-id="OUIA-Generated-DropdownToggle-4"
       data-ouia-component-type="PF4/DropdownToggle"
       data-ouia-safe="true"
@@ -69,7 +69,7 @@ exports[`<AppFilter /> should render empty state on no filter match and clear ap
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Apps and services
+        Find an app or service
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"
