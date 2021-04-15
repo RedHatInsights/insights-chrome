@@ -60,16 +60,19 @@ const extraLinks = {
       id: 'extra-openshift-support',
       title: 'Support Cases',
       link: 'https://access.redhat.com/support/cases',
+      external: true,
     },
     {
       id: 'extra-openshift-cm',
       title: 'Cluster Manager Feedback',
       link: 'mailto:ocm-feedback@redhat.com',
+      external: true,
     },
     {
       id: 'extra-openshift-marketplace',
       title: 'Red Hat Marketplace',
       link: 'https://marketplace.redhat.com',
+      external: true,
     },
     {
       id: 'extra-openshift-docs',
