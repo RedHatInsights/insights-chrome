@@ -17,7 +17,7 @@ export const DEFAULT_ROUTES = {
     sso: 'https://sso.redhat.com/auth',
   },
   stage: {
-    url: ['cloud.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
   },
 };
