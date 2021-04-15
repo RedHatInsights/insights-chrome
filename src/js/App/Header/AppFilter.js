@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -56,7 +57,7 @@ App.propTypes = {
 
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => (
   <Dropdown
-    className="ins-c-page__app-filter-dropdown"
+    className="ins-c-page__app-filter-dropdown-toggle"
     onSelect={() => setIsOpen(true)}
     toggle={
       <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
@@ -66,43 +67,50 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
     isOpen={isOpen}
     ouiaId="App Filter"
   >
-    <div className="content">
-      {isLoaded ? (
-        <React.Fragment>
-          <Flex className="search">
-            <SearchInput
-              data-ouia-component-id="app-filter-search"
-              placeholder="Find application or service"
-              value={filterValue}
-              onChange={(val) => setFilterValue(val)}
-              onClear={() => setFilterValue('')}
-            />
-          </Flex>
-          {filteredApps?.length > 0 ? (
-            <div className="gallery">
-              {filteredApps.map((app) => (
-                <App key={app.id} {...app} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-              <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-              <Title headingLevel="h4">No matching applications or services found.</Title>
-              <EmptyStateBody className="pf-u-mb-xl">
-                This filter criteria matches no applications or services. Try changing your input filter.
-              </EmptyStateBody>
-              <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-                Clear all filters
-              </Button>
-            </EmptyState>
-          )}
-        </React.Fragment>
-      ) : (
-        <Bullseye className="pf-u-p-xl">
-          <Spinner />
-        </Bullseye>
-      )}
-    </div>
+    {ReactDOM.createPortal(
+      <div className="pf-c-dropdown ins-c-page__app-filter-dropdown-menu">
+        <div className="pf-c-dropdown__menu">
+          <div className="content">
+            {isLoaded ? (
+              <React.Fragment>
+                <Flex className="search">
+                  <SearchInput
+                    data-ouia-component-id="app-filter-search"
+                    placeholder="Find application or service"
+                    value={filterValue}
+                    onChange={(val) => setFilterValue(val)}
+                    onClear={() => setFilterValue('')}
+                  />
+                </Flex>
+                {filteredApps?.length > 0 ? (
+                  <div className="gallery">
+                    {filteredApps.map((app) => (
+                      <App key={app.id} {...app} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+                    <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+                    <Title headingLevel="h4">No matching applications or services found.</Title>
+                    <EmptyStateBody className="pf-u-mb-xl">
+                      This filter criteria matches no applications or services. Try changing your input filter.
+                    </EmptyStateBody>
+                    <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                      Clear all filters
+                    </Button>
+                  </EmptyState>
+                )}
+              </React.Fragment>
+            ) : (
+              <Bullseye className="pf-u-p-xl">
+                <Spinner />
+              </Bullseye>
+            )}
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
   </Dropdown>
 );
 
