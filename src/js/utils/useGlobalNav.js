@@ -3,17 +3,7 @@ import { load } from 'js-yaml';
 import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
-const appIds = ['insights', 'openshift', 'cost-management', 'subscriptions', 'ansible', 'settings'];
-
-const extraApps = [
-  {
-    title: 'Insights for SAP',
-    id: 'SAP',
-    routes: [{ id: 'sap-dashboard', title: 'Dashboard' }],
-    isEntitled: async () => await insights.chrome.auth.getUser().entitlements?.insights?.is_entitled,
-  },
-];
-
+const appIds = ['openshift', 'insights', 'ansible', 'settings'];
 const useGlobalNav = () => {
   const [state, setState] = useState({
     isOpen: false,
@@ -49,7 +39,7 @@ const useGlobalNav = () => {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      filteredApps: [...prev.apps, ...extraApps.filter((app) => app.isEntitled())]
+      filteredApps: [...prev.apps]
         .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(state.filterValue.toLowerCase())) }))
         .filter((app) => app.routes?.length > 0),
     }));

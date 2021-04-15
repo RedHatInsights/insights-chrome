@@ -28,9 +28,6 @@ const fetchPermissions = (userToken, app = '') => {
 export const createFetchPermissionsWatcher = () => {
   let currentCall = {};
   return async (userToken, app = '') => {
-    if (insights.chrome.getBundle() === 'openshift') {
-      return Promise.resolve([]);
-    }
     if (typeof currentCall?.[app] === 'undefined') {
       currentCall[app] = await fetchPermissions(userToken, app);
     }
