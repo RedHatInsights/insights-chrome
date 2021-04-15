@@ -18,9 +18,15 @@
 .ins-c-page__app-filter-dropdown {
   .pf-c-dropdown__toggle {
     display: inline-block;
-    margin-left: 66px;
+    margin-left: 72px;
+    margin-right: var(--pf-global--spacer--sm);
     position: relative;
     white-space: nowrap;
+    &::before {
+      --pf-c-dropdown__toggle--before--BorderTopColor: var(--pf-global--disabled-color--100);
+      --pf-c-dropdown__toggle--before--BorderRightColor: var(--pf-global--disabled-color--100);
+      --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--disabled-color--100);
+    }
   }
   @media screen and (max-width:768px) { 
       .pf-c-dropdown__toggle {
@@ -28,7 +34,6 @@
       }
   }
   .pf-c-dropdown__menu::before {
-    background-color: yellow;
     z-index: -1;
   }
 
@@ -69,14 +74,7 @@
         break-inside: avoid-column; // prevents padding from spilling into next column
         .pf-l-split {
           margin-top: auto;
-          .left {
-              width: 60px;
-            svg {
-              height: 36px;
-              width: 36px;
-            }
-          }
-          .right {
+          .pf-l-split__item {
             h4 {
               color: var(--pf-global--BackgroundColor--dark-100);
               font: "RedHatDisplay", "Overpass", overpass, helvetica, arial, sans-serif; //--pf-global--FontFamily--heading--sans-serif

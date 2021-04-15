@@ -69,15 +69,15 @@ export const visibilityFunctions = {
   isBeta: () => insights.chrome.isBeta(),
   loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
-  apiRequest: async ({ url, method, accessor, matcher, ...options }) => {
+  apiRequest: async ({ url, method = 'GET', accessor, matcher, ...options }) => {
     return instance({
       url,
-      method: method || 'GET',
+      method,
       ...options,
     })
       .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        console.log('Unable to retrieve visibility result', { visibilityMethod: 'apiRequest', method, url });
         return false;
       });
   },

@@ -39,7 +39,6 @@ const ContextSwitcher = ({ user }) => {
       ouiaId="Account Switcher"
       toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Viewing account: {user.identity.account_number}</DropdownToggle>}
       isOpen={isOpen}
-      isPlain
       dropdownItems={dropdownItems}
     />
   );

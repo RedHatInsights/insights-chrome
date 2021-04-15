@@ -159,7 +159,7 @@ export const Navigation = () => {
     }
     // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
-      const activeLevel = settings.find(({ id }) => id === appId);
+      const activeLevel = settings.find(({ id, title }) => id === appId || title === appId);
       const activeItem = activeLevel?.subItems?.find?.(({ id }) => id === activeGroup);
       if (item.reload || activeItem?.reload) {
         url = `${url}/${item.reload || `${appId}/${item.id}`}`;
