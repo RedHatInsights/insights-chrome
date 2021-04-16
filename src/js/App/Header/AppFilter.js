@@ -68,50 +68,47 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
     ouiaId="App Filter"
   >
     {ReactDOM.createPortal(
-      <>
-        <div className="pf-c-dropdown ins-c-page__app-filter-dropdown-menu">
-          <div className="pf-c-dropdown__menu">
-            <div className="content">
-              {isLoaded ? (
-                <React.Fragment>
-                  <Flex className="search">
-                    <SearchInput
-                      data-ouia-component-id="app-filter-search"
-                      placeholder="Find application or service"
-                      value={filterValue}
-                      onChange={(val) => setFilterValue(val)}
-                      onClear={() => setFilterValue('')}
-                    />
-                  </Flex>
-                  {filteredApps?.length > 0 ? (
-                    <div className="gallery">
-                      {filteredApps.map((app) => (
-                        <App key={app.id} {...app} />
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-                      <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-                      <Title headingLevel="h4">No matching applications or services found.</Title>
-                      <EmptyStateBody className="pf-u-mb-xl">
-                        This filter criteria matches no applications or services. Try changing your input filter.
-                      </EmptyStateBody>
-                      <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-                        Clear all filters
-                      </Button>
-                    </EmptyState>
-                  )}
-                </React.Fragment>
-              ) : (
-                <Bullseye className="pf-u-p-xl">
-                  <Spinner />
-                </Bullseye>
-              )}
-            </div>
+      <div className="pf-c-dropdown ins-c-page__app-filter-dropdown-menu" data-testid="ins-c__find-app-service">
+        <div className="pf-c-dropdown__menu">
+          <div className="content">
+            {isLoaded ? (
+              <React.Fragment>
+                <Flex className="search">
+                  <SearchInput
+                    data-ouia-component-id="app-filter-search"
+                    placeholder="Find application or service"
+                    value={filterValue}
+                    onChange={(val) => setFilterValue(val)}
+                    onClear={() => setFilterValue('')}
+                  />
+                </Flex>
+                {filteredApps?.length > 0 ? (
+                  <div className="gallery">
+                    {filteredApps.map((app) => (
+                      <App key={app.id} {...app} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+                    <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+                    <Title headingLevel="h4">No matching applications or services found.</Title>
+                    <EmptyStateBody className="pf-u-mb-xl">
+                      This filter criteria matches no applications or services. Try changing your input filter.
+                    </EmptyStateBody>
+                    <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                      Clear all filters
+                    </Button>
+                  </EmptyState>
+                )}
+              </React.Fragment>
+            ) : (
+              <Bullseye className="pf-u-p-xl">
+                <Spinner />
+              </Bullseye>
+            )}
           </div>
         </div>
-        <div className={classnames({ 'pf-c-backdrop': isOpen })} />
-      </>,
+      </div>,
       document.body
     )}
   </Dropdown>
@@ -145,6 +142,7 @@ const AppFilter = () => {
         setFilterValue={setFilterValue}
         filteredApps={filteredApps}
       />
+      <div className={classnames({ 'pf-c-backdrop': isOpen })} />
     </React.Fragment>
   );
 };
