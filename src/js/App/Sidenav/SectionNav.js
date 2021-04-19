@@ -5,7 +5,7 @@ import ExpandableNav from './ExpandableNav';
 import './SectionNav.scss';
 
 const sectionTitleMapper = (id) =>
-  ({ operations: 'Operations Insights', security: 'Security Insights', business: 'Business Insight', insights: 'Insights' }[id] || '');
+  ({ operations: 'Operations Insights', security: 'Security Insights', business: 'Business Insights', insights: 'Insights' }[id] || '');
 
 const SectionNav = ({ items, section, onClick, ...props }) => {
   if (items?.length > 0) {
