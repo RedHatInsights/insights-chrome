@@ -1,4 +1,5 @@
-@media screen and (max-width:768px) {
+@import '~@patternfly/patternfly/sass-utilities/_all';
+@media screen and (max-width: $pf-global--breakpoint--md) {
   .pf-c-page__header {
     &-tools-group {
       margin-left: 0 !important;
@@ -28,9 +29,9 @@
       --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--disabled-color--100);
     }
   }
-  @media screen and (max-width:768px) { 
+  @media screen and (max-width: $pf-global--breakpoint--md) { 
       .pf-c-dropdown__toggle {
-        margin-left: 10px;
+        margin-left: var(--pf-global--spacer--md);
       }
   }
   .pf-c-dropdown__menu::before {
@@ -94,7 +95,7 @@
       }
     }
   }
-  @media screen and (max-width:768px) { 
+  @media screen and (max-width: $pf-global--breakpoint--md) { 
     .pf-c-dropdown__menu {
       bottom:0; // allows scrolling
       div.gallery {
