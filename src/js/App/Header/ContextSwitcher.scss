@@ -1,3 +1,4 @@
+@import '~@patternfly/patternfly/sass-utilities/_all';
 .ins-c-page__context-switcher-dropdown {
   .pf-c-dropdown__toggle {
     display: inline-block;
@@ -62,5 +63,13 @@
 .context-switcher-banner {
   margin-bottom: 18px;
   transition: margin-bottom .3s;
+}
+
+@media screen and (max-width: $pf-global--breakpoint--xl) {
+  .ins-c-page__context-switcher-dropdown {
+    .pf-c-dropdown__toggle {
+      display: none;
+    }
+  }
 }
 
