@@ -5,7 +5,7 @@ import { PageHeaderTools } from '@patternfly/react-core';
 
 const Login = () => (
   <PageHeaderTools>
-    <Button variant="tertiary" aria-label="Toggle primary navigation" widget-type="InsightsNavToggle" onClick={login}>
+    <Button ouiaId="top-right-login-button" variant="tertiary" aria-label="Toggle primary navigation" widget-type="InsightsNavToggle" onClick={login}>
       Log in
     </Button>
   </PageHeaderTools>
