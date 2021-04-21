@@ -25,7 +25,7 @@ import useGlobalNav from '../../utils/useGlobalNav';
 
 const generateUrl = (redirectUrl) => {
   if (redirectUrl.includes('openshift/subscriptions')) {
-    return `${redirectUrl}/openshift-sw`;
+    return `${redirectUrl}/openshift-container`;
   }
 
   if (redirectUrl.includes('insights/subscriptions')) {
