@@ -81,6 +81,14 @@ const extraLinks = {
       external: true,
     },
   ],
+  settings: [
+    {
+      id: 'extra-settings',
+      url: 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
+      title: 'Documentation',
+      external: true,
+    },
+  ],
 };
 
 const NavItemLink = ({ id, title, external, url, link }) => (
