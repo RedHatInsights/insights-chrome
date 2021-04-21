@@ -22,6 +22,19 @@ import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullse
 import './AppFilter.scss';
 import useGlobalNav from '../../utils/useGlobalNav';
 
+const generateUrl = (redirectUrl) => {
+
+  if(redirectUrl.includes('openshift/subscriptions')) {
+    return `${redirectUrl}/openshift-sw`;
+  }
+
+  if(redirectUrl.includes('insights/subscriptions')) {
+    return `${redirectUrl}/rhel`;
+  }
+
+  return redirectUrl;
+}
+
 const App = ({ id, title, routes, parent }) => (
   <div className="galleryItem">
     <Split>
@@ -30,10 +43,9 @@ const App = ({ id, title, routes, parent }) => (
           <Text component="h4">{title}</Text>
           {routes.map((subApp) => {
             const redirectUrl = `${parent ? `${parent.id}/` : ''}${subApp.reload || `${id}/${subApp.id}`}`;
-
             return (
               <Text component="p" key={`${id}/${subApp.id}`}>
-                <Text component="a" href={redirectUrl}>
+                <Text component="a" href={generateUrl(redirectUrl)}>
                   {subApp.title}
                 </Text>
               </Text>
