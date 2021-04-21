@@ -24,17 +24,16 @@ import './AppFilter.scss';
 import useGlobalNav from '../../utils/useGlobalNav';
 
 const generateUrl = (redirectUrl) => {
-
-  if(redirectUrl.includes('openshift/subscriptions')) {
+  if (redirectUrl.includes('openshift/subscriptions')) {
     return `${redirectUrl}/openshift-sw`;
   }
 
-  if(redirectUrl.includes('insights/subscriptions')) {
+  if (redirectUrl.includes('insights/subscriptions')) {
     return `${redirectUrl}/rhel`;
   }
 
   return redirectUrl;
-}
+};
 
 const App = ({ id, title, routes, parent }) => (
   <div className="galleryItem">
