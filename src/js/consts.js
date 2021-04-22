@@ -1,6 +1,7 @@
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import cookie from 'js-cookie';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -69,6 +70,8 @@ export const visibilityFunctions = {
   isBeta: () => insights.chrome.isBeta(),
   loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
+  hasLocalStorage: (key, value) => localStorage.get(key) === value,
+  hasCookie: (cookieKey, cookieValue) => cookie.get(cookieKey) === cookieValue,
   apiRequest: async ({ url, method = 'GET', accessor, matcher, ...options }) => {
     return instance({
       url,
