@@ -88,6 +88,9 @@ export default async (token) => {
   if (pathName[0] === 'beta') {
     pathName.shift();
   }
+  if (pathName?.[1] === 'subscriptions' || pathName?.[1] === 'cost-management') {
+    pathName.shift();
+  }
 
   if (user) {
     log(`Account Number: ${user.identity.account_number}`);
