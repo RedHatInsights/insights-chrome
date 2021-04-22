@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import { render, fireEvent, act, screen } from '@testing-library/react';
 
 import AppFilter from '../AppFilter';
 
@@ -43,7 +43,8 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    expect(container.querySelectorAll('.content')).toHaveLength(1);
+    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    expect(menuContainer.querySelectorAll('.content')).toHaveLength(1);
   });
 
   test('should set and clear filter input value', async () => {
@@ -52,12 +53,13 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    const input = container.querySelector('input');
+    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    const input = menuContainer.querySelector('input');
     await act(async () => {
       fireEvent.change(input, { target: { value: 'foo' } });
     });
     expect(input.value).toEqual('foo');
-    const clearButton = container.querySelector('[data-ouia-component-id=app-filter-search] button');
+    const clearButton = menuContainer.querySelector('[data-ouia-component-id=app-filter-search] button');
     expect(clearButton).toBeTruthy();
     await act(async () => {
       fireEvent.click(clearButton);
@@ -71,12 +73,13 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    const input = container.querySelector('input');
+    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    const input = menuContainer.querySelector('input');
     await act(async () => {
       fireEvent.change(input, { target: { value: 'foo' } });
     });
     expect(container).toMatchSnapshot();
-    const clearButton = container.querySelector('[data-ouia-component-id=app-filter-clear-input]');
+    const clearButton = menuContainer.querySelector('[data-ouia-component-id=app-filter-clear-input]');
     expect(clearButton).toBeTruthy();
     await act(async () => {
       fireEvent.click(clearButton);
