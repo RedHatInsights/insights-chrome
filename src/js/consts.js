@@ -34,8 +34,6 @@ const checkPermissions = async (permissions = [], require = 'every') => {
   return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
 };
 
-// cookie.set('some-key', 'some-val');
-
 export const visibilityFunctions = {
   isOrgAdmin: async () => {
     const { identity } = await insights.chrome.auth.getUser();
