@@ -4,6 +4,8 @@ import { NavGroup } from '@patternfly/react-core/dist/js/components/Nav/NavGroup
 import ExpandableNav from './ExpandableNav';
 import './SectionNav.scss';
 
+const anisbleHackIds = ['automation-calculator', 'organization-statistics', 'job-explorer', 'clusters', 'notifications'];
+
 const sectionTitleMapper = (id) =>
   ({ operations: 'Operations Insights', security: 'Security Insights', business: 'Business Insights', insights: 'Insights' }[id] || '');
 
@@ -16,7 +18,13 @@ const SectionNav = ({ items, section, onClick, ...props }) => {
             key={item.id || key}
             {...props}
             {...item}
-            onClick={(event, subItem) => (item.subItems ? onClick(event, subItem, item) : onClick(event, item))}
+            onClick={(event, subItem) => {
+              // TODO: Fix me! It adds parent that have been removed in Navigation.js:209
+              if (anisbleHackIds.includes(item.id)) {
+                return onClick(event, item, { id: 'insights' });
+              }
+              return item.subItems ? onClick(event, subItem, item) : onClick(event, item);
+            }}
           />
         ))}
       </NavGroup>
