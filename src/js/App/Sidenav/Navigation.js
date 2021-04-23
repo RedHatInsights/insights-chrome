@@ -201,7 +201,13 @@ export const Navigation = () => {
     }
   };
 
-  const settingsWithSections = settings.reduce((acc, item) => {
+  // TODO: Fix me! This is a manifestation of despair that extracts subapps from automation-analytics to make navigation flat.
+  // It feeds on YOUR sanity. Kill this unholy abomination before it lays eggs!
+  const settingsWithUnrolledAnsible = [
+    ...settings.filter((app) => app.id !== 'automation-analytics'),
+    ...(settings.find((app) => app.id === 'automation-analytics')?.subItems?.map((subApp) => ({ ...subApp, section: 'insights' })) || []),
+  ];
+  const settingsWithSections = settingsWithUnrolledAnsible.reduce((acc, item) => {
     const section = acc.find(({ section }) => section === item.section) || { items: [], section: item.section };
     return [
       ...acc.filter(({ section }) => section === undefined || section !== item.section),
