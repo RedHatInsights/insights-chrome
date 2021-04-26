@@ -32,6 +32,10 @@ const generateUrl = (redirectUrl) => {
     return `${redirectUrl}/rhel`;
   }
 
+  if (redirectUrl.includes('application-services/streams')) {
+    return `/beta/${redirectUrl}`;
+  }
+
   return redirectUrl;
 };
 
