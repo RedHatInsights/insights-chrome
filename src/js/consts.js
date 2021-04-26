@@ -36,32 +36,33 @@ const checkPermissions = async (permissions = [], require = 'every') => {
 
 export const visibilityFunctions = {
   isOrgAdmin: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_org_admin;
+      return data.identity.user.is_org_admin;
     } catch {
       return false;
     }
   },
   isActive: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_active;
+      return data.identity.user.is_active;
     } catch {
       return false;
     }
   },
   isInternal: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_internal;
+      return data.identity.user.is_internal;
     } catch {
       return false;
     }
   },
   isEntitled: async (appName) => {
-    const { entitlements } = await insights.chrome.auth.getUser();
-    return entitlements && appName
+    const data = await insights.chrome.auth.getUser();
+    const { entitlements } = data || {};
+    return data.entitlements && appName
       ? Boolean(entitlements[appName] && entitlements[appName].is_entitled)
       : // eslint-disable-next-line camelcase
         Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
