@@ -54,9 +54,10 @@ async function getRoutesForApp(app, masterConfig) {
                       ...(subItem.section && { section: subItem.section }),
                       ...(subItem.sub_apps && { subItems: subItem.sub_apps }),
                       ...(subItem.navigate && { navigate: subItem.navigate }),
+                      isBeta: app.frontend.isBeta || subItem.isBeta,
                     },
                   ]
-                : await getAppData(subItem.id || subItem, 'subItems', masterConfig)) || [];
+                : await getAppData(subItem.id || subItem, 'subItems', masterConfig, app.frontend.isBeta)) || [];
             return [
               {
                 ...routes,
@@ -86,7 +87,7 @@ async function getRoutesForApp(app, masterConfig) {
 }
 
 // Gets the app's data from the master config, if it exists
-async function getAppData(appId, propName, masterConfig) {
+async function getAppData(appId, propName, masterConfig, parentIsBeta) {
   const app = masterConfig[appId];
   if (app?.frontend) {
     if (app?.permissions && !app?.permissions?.apps) {
@@ -114,6 +115,7 @@ async function getAppData(appId, propName, masterConfig) {
         ...(routes?.length > 0 && { [propName]: routes }),
         ...(app.frontend.section && { section: app.frontend.section }),
         ...(app.navigate && { navigate: app.navigate }),
+        isBeta: parentIsBeta || app.frontend.isBeta,
       },
       [
         ...(modules || []),
