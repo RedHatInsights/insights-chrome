@@ -152,6 +152,8 @@ describe('RootApp', () => {
   });
 
   it('should render PageSidebar with SideNav component', async () => {
+    const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
+    useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
     const store = mockStore({
       chrome: {
         ...initialState.chrome,

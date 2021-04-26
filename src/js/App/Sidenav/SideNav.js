@@ -2,11 +2,9 @@ import React, { Fragment, useEffect, useRef } from 'react';
 import Navigation from './Navigation';
 import { useDispatch, useSelector } from 'react-redux';
 
-import AppSwitcher from './AppSwitcher';
 import { appNavClick } from '../../redux/actions';
 import NavLoader from './Loader';
 import './SideNav.scss';
-import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 import { globalNavComparator } from '../../utils/comparators';
 
 export const SideNav = () => {
@@ -32,7 +30,7 @@ export const SideNav = () => {
 
   return appId && globalNav ? (
     <Fragment>
-      {isFilterEnabled ? <div className="ins-c-app-title">{activeTechnology}</div> : <AppSwitcher currentApp={activeTechnology} />}
+      <div className="ins-c-app-title">{activeTechnology}</div>
       <Navigation />
     </Fragment>
   ) : (
