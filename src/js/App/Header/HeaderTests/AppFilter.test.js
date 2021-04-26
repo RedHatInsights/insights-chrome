@@ -13,7 +13,7 @@ jest.mock('../../../nav/sourceOfTruth', () => {
 });
 jest.mock('../../../nav/globalNav', () => {
   const source = jest.requireActual('../../../nav/globalNav');
-  const appData = ['insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'].reduce(
+  const appData = ['application-services', 'insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'].reduce(
     (acc, curr) => ({
       ...acc,
       [curr]: {

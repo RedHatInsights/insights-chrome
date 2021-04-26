@@ -146,7 +146,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-  const useLandingNav = isLanding;
 
   return (
     <div
@@ -163,7 +162,7 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         isGlobalFilterEnabled={isGlobalFilterEnabled}
         hideNav={hideNav}
         insightsContentRef={insightsContentRef}
-        useLandingNav={useLandingNav}
+        useLandingNav={isLanding}
         initialized={scalprum.initialized}
         remoteModule={remoteModule}
         appId={appId}
