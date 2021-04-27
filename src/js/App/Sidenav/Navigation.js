@@ -117,7 +117,10 @@ export const Navigation = () => {
   const settings = useSelector(({ chrome }) => chrome?.globalNav, globalNavComparator);
   const dispatch = useDispatch();
   const history = useHistory();
-  const prevLocation = useRef(window.location.pathname);
+  /**
+   * Initial prevLocation must be empty to prevent full page reloads withing first rendered app.
+   */
+  const prevLocation = useRef(undefined);
   const [showBetaModal, setShowBetaModal] = useState(false);
   const [deferedOnClickArgs, setDeferedOnclickArgs] = useState([]);
   useEffect(() => {
@@ -128,7 +131,7 @@ export const Navigation = () => {
       /**
        * Browser redo button
        */
-      if (action === 'POP') {
+      if (prevLocation.current && action === 'POP') {
         let pathname = typeof location === 'string' ? location : location.pathname;
         if (isBeta() && !pathname.includes('beta/')) {
           pathname = `/beta${pathname}`;
@@ -136,7 +139,7 @@ export const Navigation = () => {
         /**
          * We want to ignore trailing or double slashes to prevent unnecessary in app reloads
          */
-        if (pathname.replace(/\//gm, '') !== prevLocation.current.replace(/\//gm, '')) {
+        if (pathname.replace(/\//gm, '') === prevLocation.current.replace(/\//gm, '')) {
           /**
            * The browser back button glitches insanely because of the app initial "nav click" in chrome.
            * The back browser navigation between apps is not reliable so we will do it the old fashioned way until all apps are migrated and we can just use react router.
