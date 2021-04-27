@@ -9,6 +9,13 @@
     margin-left: auto;
 }
 
+.pf-c-nav {
+    .ins-c-navigation__beta-badge {
+        background-color: var(--pf-global--palette--green-300);
+        color: var(--pf-global--Color--dark-100);
+    }
+}
+
 .ins-c-navigation__beta-info-modal {
     text-align: center;
     width: 90%;
