@@ -17,7 +17,7 @@ const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className
     to={navigate || `${basepath}${parent}/${itemID}`}
   >
     {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {!isLoading && navigate && <ExternalLinkAltIcon />}
-    {!isLoading && isBeta && betaBadge('ins-c-navigation__beta-badge')}
+    {!isLoading && isBeta && !window.insights.chrome.isBeta() && !navigate && betaBadge('ins-c-navigation__beta-badge')}
   </NavItem>
 );
 
