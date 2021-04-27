@@ -150,9 +150,9 @@ export const Navigation = () => {
 
     return () => unregister();
   }, []);
-  const onClick = (event, item, parent, isBetaRedirect) => {
+  const onClick = (event, item, parent) => {
     const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2;
-    let url = `${basepath}${isBetaRedirect ? 'beta/' : ''}${activeLocation || ''}`;
+    let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     if (item?.isBeta && !showBetaModal && !isBeta()) {
@@ -166,12 +166,7 @@ export const Navigation = () => {
       return;
     }
 
-    if (isBetaRedirect) {
-      url = `${url}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
-      isMetaKey ? window.open(url) : (window.location.href = url);
-      return;
-    }
-    // always redirect if in subNav and current or new navigation has reload or beta redirect
+    // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
       const activeLevel = settings.find(({ id, title }) => id === appId || title === appId);
       const activeItem = activeLevel?.subItems?.find?.(({ id }) => id === activeGroup);
@@ -246,7 +241,14 @@ export const Navigation = () => {
       </Nav>
       <BetaInfoModal
         isOpen={showBetaModal}
-        onClick={() => onClick(...deferedOnClickArgs.current, !isBeta())}
+        onClick={(event) => {
+          if (!isBeta()) {
+            const [origEvent, item, parent] = deferedOnClickArgs;
+            const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2 || origEvent.ctrlKey || origEvent.metaKey || origEvent.which === 2;
+            const url = `${basepath}beta/${activeLocation || ''}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
+            isMetaKey ? window.open(url) : (window.location.href = url);
+          }
+        }}
         onCancel={() => setShowBetaModal(false)}
         menuItemClicked={deferedOnClickArgs[1]?.title}
       />
