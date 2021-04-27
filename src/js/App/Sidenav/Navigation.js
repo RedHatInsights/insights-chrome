@@ -14,7 +14,6 @@ import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
-import { switchRelease } from '../Header/Tools.js';
 
 const basepath = document.baseURI;
 
@@ -122,7 +121,7 @@ export const Navigation = () => {
    */
   const prevLocation = useRef(undefined);
   const [showBetaModal, setShowBetaModal] = useState(false);
-  const [deferedOnClickArgs, setDeferedOnclickArgs] = useState([]);
+  const deferedOnClickArgs = useRef([]);
   useEffect(() => {
     const unregister = history.listen((location, action) => {
       if (action === 'PUSH' && location.state) {
@@ -157,8 +156,8 @@ export const Navigation = () => {
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     if (item?.isBeta && !showBetaModal && !isBeta()) {
+      deferedOnClickArgs.current = [event, item, parent];
       setShowBetaModal(true);
-      setDeferedOnclickArgs([event, item, parent]);
       return;
     }
 
@@ -166,6 +165,7 @@ export const Navigation = () => {
       window.open(item.navigate);
       return;
     }
+
     // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
       const activeLevel = settings.find(({ id, title }) => id === appId || title === appId);
@@ -173,6 +173,7 @@ export const Navigation = () => {
       if (item.reload || activeItem?.reload) {
         url = `${url}/${item.reload || `${appId}/${item.id}`}`;
         isMetaKey ? window.open(url) : (window.location.href = url);
+        return;
       }
     }
 
@@ -240,10 +241,13 @@ export const Navigation = () => {
       </Nav>
       <BetaInfoModal
         isOpen={showBetaModal}
-        onClick={() => {
-          onClick(...deferedOnClickArgs);
-          isBeta() || (window.location = switchRelease(false, window.location.pathname));
-          setShowBetaModal(false);
+        onClick={(event) => {
+          if (!isBeta()) {
+            const [origEvent, item, parent] = deferedOnClickArgs;
+            const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2 || origEvent.ctrlKey || origEvent.metaKey || origEvent.which === 2;
+            const url = `${basepath}beta/${activeLocation || ''}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
+            isMetaKey ? window.open(url) : (window.location.href = url);
+          }
         }}
         onCancel={() => setShowBetaModal(false)}
         menuItemClicked={deferedOnClickArgs[1]?.title}
