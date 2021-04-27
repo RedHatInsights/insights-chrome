@@ -14,7 +14,6 @@ import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
-import { switchRelease } from '../Header/Tools.js';
 
 const basepath = document.baseURI;
 
@@ -122,7 +121,7 @@ export const Navigation = () => {
    */
   const prevLocation = useRef(undefined);
   const [showBetaModal, setShowBetaModal] = useState(false);
-  const [deferedOnClickArgs, setDeferedOnclickArgs] = useState([]);
+  const deferedOnClickArgs = useRef([]);
   useEffect(() => {
     const unregister = history.listen((location, action) => {
       if (action === 'PUSH' && location.state) {
@@ -151,14 +150,14 @@ export const Navigation = () => {
 
     return () => unregister();
   }, []);
-  const onClick = (event, item, parent) => {
+  const onClick = (event, item, parent, isBetaRedirect) => {
     const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2;
-    let url = `${basepath}${activeLocation || ''}`;
+    let url = `${basepath}${isBetaRedirect ? 'beta/' : ''}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     if (item?.isBeta && !showBetaModal && !isBeta()) {
       setShowBetaModal(true);
-      setDeferedOnclickArgs([event, item, parent]);
+      deferedOnClickArgs.current = [event, item, parent];
       return;
     }
 
@@ -166,13 +165,20 @@ export const Navigation = () => {
       window.open(item.navigate);
       return;
     }
-    // always redirect if in subNav and current or new navigation has reload
+
+    if (isBetaRedirect) {
+      url = `${url}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
+      isMetaKey ? window.open(url) : (window.location.href = url);
+      return;
+    }
+    // always redirect if in subNav and current or new navigation has reload or beta redirect
     if (parent?.active) {
       const activeLevel = settings.find(({ id, title }) => id === appId || title === appId);
       const activeItem = activeLevel?.subItems?.find?.(({ id }) => id === activeGroup);
       if (item.reload || activeItem?.reload) {
         url = `${url}/${item.reload || `${appId}/${item.id}`}`;
         isMetaKey ? window.open(url) : (window.location.href = url);
+        return;
       }
     }
 
@@ -240,11 +246,7 @@ export const Navigation = () => {
       </Nav>
       <BetaInfoModal
         isOpen={showBetaModal}
-        onClick={() => {
-          onClick(...deferedOnClickArgs);
-          isBeta() || (window.location = switchRelease(false, window.location.pathname));
-          setShowBetaModal(false);
-        }}
+        onClick={() => onClick(...deferedOnClickArgs.current, !isBeta())}
         onCancel={() => setShowBetaModal(false)}
         menuItemClicked={deferedOnClickArgs[1]?.title}
       />
