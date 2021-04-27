@@ -14,7 +14,6 @@ import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
-import { switchRelease } from '../Header/Tools.js';
 
 const basepath = document.baseURI;
 
@@ -117,9 +116,12 @@ export const Navigation = () => {
   const settings = useSelector(({ chrome }) => chrome?.globalNav, globalNavComparator);
   const dispatch = useDispatch();
   const history = useHistory();
-  const prevLocation = useRef(window.location.pathname);
+  /**
+   * Initial prevLocation must be empty to prevent full page reloads withing first rendered app.
+   */
+  const prevLocation = useRef(undefined);
   const [showBetaModal, setShowBetaModal] = useState(false);
-  const [deferedOnClickArgs, setDeferedOnclickArgs] = useState([]);
+  const deferedOnClickArgs = useRef([]);
   useEffect(() => {
     const unregister = history.listen((location, action) => {
       if (action === 'PUSH' && location.state) {
@@ -128,7 +130,7 @@ export const Navigation = () => {
       /**
        * Browser redo button
        */
-      if (action === 'POP') {
+      if (prevLocation.current && action === 'POP') {
         let pathname = typeof location === 'string' ? location : location.pathname;
         if (isBeta() && !pathname.includes('beta/')) {
           pathname = `/beta${pathname}`;
@@ -136,7 +138,7 @@ export const Navigation = () => {
         /**
          * We want to ignore trailing or double slashes to prevent unnecessary in app reloads
          */
-        if (pathname.replace(/\//gm, '') !== prevLocation.current.replace(/\//gm, '')) {
+        if (pathname.replace(/\//gm, '') === prevLocation.current.replace(/\//gm, '')) {
           /**
            * The browser back button glitches insanely because of the app initial "nav click" in chrome.
            * The back browser navigation between apps is not reliable so we will do it the old fashioned way until all apps are migrated and we can just use react router.
@@ -154,8 +156,8 @@ export const Navigation = () => {
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
     if (item?.isBeta && !showBetaModal && !isBeta()) {
+      deferedOnClickArgs.current = [event, item, parent];
       setShowBetaModal(true);
-      setDeferedOnclickArgs([event, item, parent]);
       return;
     }
 
@@ -163,6 +165,7 @@ export const Navigation = () => {
       window.open(item.navigate);
       return;
     }
+
     // always redirect if in subNav and current or new navigation has reload
     if (parent?.active) {
       const activeLevel = settings.find(({ id, title }) => id === appId || title === appId);
@@ -170,6 +173,7 @@ export const Navigation = () => {
       if (item.reload || activeItem?.reload) {
         url = `${url}/${item.reload || `${appId}/${item.id}`}`;
         isMetaKey ? window.open(url) : (window.location.href = url);
+        return;
       }
     }
 
@@ -237,10 +241,13 @@ export const Navigation = () => {
       </Nav>
       <BetaInfoModal
         isOpen={showBetaModal}
-        onClick={() => {
-          onClick(...deferedOnClickArgs);
-          isBeta() || (window.location = switchRelease(false, window.location.pathname));
-          setShowBetaModal(false);
+        onClick={(event) => {
+          if (!isBeta()) {
+            const [origEvent, item, parent] = deferedOnClickArgs;
+            const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2 || origEvent.ctrlKey || origEvent.metaKey || origEvent.which === 2;
+            const url = `${basepath}beta/${activeLocation || ''}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
+            isMetaKey ? window.open(url) : (window.location.href = url);
+          }
         }}
         onCancel={() => setShowBetaModal(false)}
         menuItemClicked={deferedOnClickArgs[1]?.title}
