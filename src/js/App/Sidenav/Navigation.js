@@ -243,14 +243,14 @@ export const Navigation = () => {
         isOpen={showBetaModal}
         onClick={(event) => {
           if (!isBeta()) {
-            const [origEvent, item, parent] = deferedOnClickArgs;
+            const [origEvent, item, parent] = deferedOnClickArgs.current;
             const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2 || origEvent.ctrlKey || origEvent.metaKey || origEvent.which === 2;
             const url = `${basepath}beta/${activeLocation || ''}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
             isMetaKey ? window.open(url) : (window.location.href = url);
           }
         }}
         onCancel={() => setShowBetaModal(false)}
-        menuItemClicked={deferedOnClickArgs[1]?.title}
+        menuItemClicked={deferedOnClickArgs.current[1]?.title}
       />
     </React.Fragment>
   );
