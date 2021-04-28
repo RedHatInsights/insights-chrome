@@ -155,8 +155,9 @@ export const Navigation = () => {
     let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
-    if (item?.isBeta && !showBetaModal && !isBeta()) {
+    if (item?.isBeta && !showBetaModal && !isBeta() && !item?.navigate) {
       deferedOnClickArgs.current = [event, item, parent];
+      console.log(deferedOnClickArgs);
       setShowBetaModal(true);
       return;
     }
@@ -243,14 +244,15 @@ export const Navigation = () => {
         isOpen={showBetaModal}
         onClick={(event) => {
           if (!isBeta()) {
-            const [origEvent, item, parent] = deferedOnClickArgs;
+            const [origEvent, item, parent] = deferedOnClickArgs.current;
+            console.log(deferedOnClickArgs.current);
             const isMetaKey = event.ctrlKey || event.metaKey || event.which === 2 || origEvent.ctrlKey || origEvent.metaKey || origEvent.which === 2;
             const url = `${basepath}beta/${activeLocation || ''}/${item.reload || (parent ? `${parent.id}/${item.id}` : item.id)}`;
             isMetaKey ? window.open(url) : (window.location.href = url);
           }
         }}
         onCancel={() => setShowBetaModal(false)}
-        menuItemClicked={deferedOnClickArgs[1]?.title}
+        menuItemClicked={deferedOnClickArgs.current[1]?.title}
       />
     </React.Fragment>
   );
