@@ -155,7 +155,7 @@ export const Navigation = () => {
     let url = `${basepath}${activeLocation || ''}`;
     const newSection = settings.find(({ id }) => (parent ? parent.id === id : item.id === id));
 
-    if (item?.isBeta && !showBetaModal && !isBeta()) {
+    if (item?.isBeta && !showBetaModal && !isBeta() && !item?.navigate) {
       deferedOnClickArgs.current = [event, item, parent];
       setShowBetaModal(true);
       return;
