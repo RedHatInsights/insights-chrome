@@ -96,7 +96,7 @@ export default async (token) => {
     log(`Account Number: ${user.identity.account_number}`);
     let data;
     try {
-      if(user.identity.account_number) {
+      if (user.identity.account_number) {
         data = await servicesApi(token.jti).servicesGet();
       } else {
         console.log('Cannot call entitlements API, no account number');
