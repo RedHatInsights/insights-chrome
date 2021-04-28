@@ -74,16 +74,24 @@ export const visibilityFunctions = {
   hasLocalStorage: (key, value) => localStorage.get(key) === value,
   hasCookie: (cookieKey, cookieValue) => cookie.get(cookieKey) === cookieValue,
   apiRequest: async ({ url, method = 'GET', accessor, matcher, ...options }) => {
-    return instance({
-      url,
-      method,
-      ...options,
-    })
-      .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
-      .catch(() => {
-        console.log('Unable to retrieve visibility result', { visibilityMethod: 'apiRequest', method, url });
-        return false;
-      });
+    const data = await insights.chrome.auth.getUser();
+
+    // this will log a bunch of 403s if the account number isn't present
+    if (data.identity.account_number) {
+      return instance({
+        url,
+        method,
+        ...options,
+      })
+        .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
+        .catch(() => {
+          console.log('Unable to retrieve visibility result', { visibilityMethod: 'apiRequest', method, url });
+          return false;
+        });
+    } else {
+      console.log('Unable to call API, no account number');
+      return false;
+    }
   },
 };
 
