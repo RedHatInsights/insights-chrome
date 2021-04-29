@@ -154,7 +154,7 @@
     "@redhat-cloud-services/frontend-components": "^3.1.10",
     "@redhat-cloud-services/frontend-components-inventory": "^3.1.9",
     "@redhat-cloud-services/frontend-components-notifications": "^3.1.0",
-    "@redhat-cloud-services/frontend-components-remediations": "3.1.15",
+    "@redhat-cloud-services/frontend-components-remediations": "3.1.16",
     "@redhat-cloud-services/frontend-components-utilities": "^3.1.1",
     "@redhat-cloud-services/host-inventory-client": "^1.0.93",
     "@redhat-cloud-services/keycloak-js": "0.0.3",
