@@ -73,7 +73,7 @@ export default {
     xhrResults.map((e) => console.log(`[iqe] xhr incomplete: ${e._url}`)); // eslint-disable-line no-console
     Object.values(fetchResults).map((e) => console.log(`[iqe] fetch incomplete: ${e}`)); // eslint-disable-line no-console
 
-    return xhrResults.length > 0 || fetchResults.hasOwnProperty('length') ? fetchResults.length : Object.values(fetchResults).length > 0; // eslint-disable-line no-prototype-builtins
+    return xhrResults.length > 0 || Object.values(fetchResults).length > 0;
   },
   isPageSafe: () => !document.querySelectorAll('[data-ouia-safe=false]').length !== 0,
   xhrResults: () => {
