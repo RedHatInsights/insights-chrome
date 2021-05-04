@@ -3,7 +3,7 @@ import logger from '../jwt/logger';
 
 const log = logger('fetchPermissions.js');
 
-const perPage = 100;
+const perPage = 1000;
 
 const fetchPermissions = (userToken, app = '') => {
   const rbacApi = createRbacAPI(userToken);
