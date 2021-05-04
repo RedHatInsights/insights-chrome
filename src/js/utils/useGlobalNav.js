@@ -3,7 +3,7 @@ import { load } from 'js-yaml';
 import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
-const appIds = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
+const appIds = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'subscriptions', 'cost-management', 'settings'];
 const useGlobalNav = () => {
   const [state, setState] = useState({
     isOpen: false,
