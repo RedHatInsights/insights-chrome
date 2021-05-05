@@ -8,7 +8,7 @@ import { getUrl, getEnv, isBeta, updateDocumentTitle } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
-import { flatTags } from '../App/GlobalFilter/constants';
+import { flatTags, cookieSearch } from '../App/GlobalFilter/constants';
 import debugFunctions from '../debugFunctions';
 
 const PUBLIC_EVENTS = {
@@ -89,6 +89,8 @@ export function chromeInit(navResolver) {
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
+  const searchParams = new URLSearchParams(location.search);
+  cookieSearch.forEach((key) => searchParams.get(key) && Cookies.set(key, searchParams.get(key)));
   return {
     chrome: {
       auth: {
