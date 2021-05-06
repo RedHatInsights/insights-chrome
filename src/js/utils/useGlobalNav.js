@@ -3,7 +3,7 @@ import { load } from 'js-yaml';
 import { getNavFromConfig } from '../nav/globalNav';
 import sourceOfTruth from '../nav/sourceOfTruth';
 
-const appIds = ['application-services', 'openshift', 'insights', 'ansible', 'settings'];
+const appIds = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'subscriptions', 'cost-management', 'settings'];
 const useGlobalNav = () => {
   const [state, setState] = useState({
     isOpen: false,
@@ -25,10 +25,12 @@ const useGlobalNav = () => {
           return {
             ...prev,
             apps: apps,
-            filteredApps: appIds.map((id) => ({
-              ...appData[id],
-              parent: apps?.find(({ routes }) => routes?.find(({ id: appId }) => appId === id)),
-            })),
+            filteredApps: appIds
+              .map((id) => ({
+                ...appData[id],
+                parent: apps?.find(({ routes }) => routes?.find(({ id: appId }) => appId === id)),
+              }))
+              .filter((app) => app?.routes?.length > 0),
             isLoaded: true,
           };
         });

@@ -209,10 +209,10 @@ const GlobalFilter = () => {
         setValue(() => data);
         setToken(() => currToken);
       })();
-    } else if (userLoaded && token && isAllowed()) {
+    } else if (userLoaded && token && isAllowed() && !isDisabled) {
       loadTags(selectedTags, filterScope, filterTagsBy, token);
     }
-  }, [selectedTags, filterScope, userLoaded, isAllowed()]);
+  }, [selectedTags, filterScope, userLoaded, isAllowed(), isDisabled]);
 
   useEffect(() => {
     if (userLoaded && isAllowed()) {
