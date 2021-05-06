@@ -2,28 +2,22 @@ const webpack = require('webpack');
 const resolve = require('path').resolve;
 const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
-const gitRevisionPlugin = new (require('git-revision-webpack-plugin'))({
-  branch: true,
-});
 
 const deps = require('../package.json').dependencies;
 const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config/chunk-mapper'))({
   modules: 'chrome',
 });
 
-const gitBranch = process.env.TRAVIS_BRANCH || process.env.BRANCH || gitRevisionPlugin.branch();
-const akamaiBranches = ['prod-stable', 'prod-beta'];
-
 const plugins = [
   new WriteFileWebpackPlugin(),
-  ...(akamaiBranches.includes(gitBranch)
-    ? []
-    : [
+  ...(process.env.SOURCEMAPS === 'true'
+    ? [
         new webpack.SourceMapDevToolPlugin({
           test: /\.js/i,
           filename: `sourcemaps/[name].js.map`,
         }),
-      ]),
+      ]
+    : []),
   new ModuleFederationPlugin({
     name: 'chrome',
     filename: 'chrome.[hash].js',

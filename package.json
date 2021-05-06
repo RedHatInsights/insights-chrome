@@ -4,8 +4,8 @@
   "description": "Chroming for Insights",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=development npm run watch",
-    "start:beta": "NODE_ENV=development npm run build:js:beta -- --env noHash=true && npm run build:sass && npm run build:pug:beta -- nohash && npm-run-all --parallel watch:beta:*",
+    "start": "NODE_ENV=development SOURCEMAPS=true npm run watch",
+    "start:beta": "NODE_ENV=development SOURCEMAPS=true npm run build:js:beta -- --env noHash=true && npm run build:sass && npm run build:pug:beta -- nohash && npm-run-all --parallel watch:beta:*",
     "analyze:js": "NODE_ENV=production webpack --config config/webpack.config.js --env analyze=true --env publicPath=/apps/chrome/js/ --mode=production",
     "build": "NODE_ENV=production npm run build:js -- --mode=production && npm-run-all build:images-chrome  build:sass    clean:chrome    hash:chrome   build:pug   build:fonts build:Fafonts",
     "build:beta": "NODE_ENV=production npm run build:js:beta -- --mode=production && npm-run-all build:images-chrome build:sass clean:chrome hash:chrome build:pug:beta build:fonts build:Fafonts",
