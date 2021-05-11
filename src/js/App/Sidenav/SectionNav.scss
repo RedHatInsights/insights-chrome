@@ -2,7 +2,6 @@
 .ins-c-app-title {
   color: var(--pf-global--Color--light-100);
   font-size: var(--pf-global--FontSize--lg);
-  margin: 0 !important;
   white-space: nowrap;
 }
 
@@ -10,41 +9,39 @@
   section.ins-c-section-nav {
     margin-top: 0 !important;
     h2.pf-c-nav__section-title {
-      color: var(--pf-global--disabled-color--100);
+      border: 0;
+      border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
+      color: var(--pf-global--palette--black-500);
       font-size: var(--pf-global--FontSize--xs);
-      font-weight: var(--pf-global--FontWeight--semi-bold);
-      text-transform: uppercase;
-      padding-bottom: var(--pf-global--spacer--md);
-      padding-left: var(--pf-global--spacer--lg);
-      padding-top: var(--pf-global--spacer--md);
+      font-weight: var(--pf-global--FontWeight--medium);
+      padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+      svg {
+        margin-right: var(--pf-global--spacer--sm);
       }
+    }
     ul
       > li.pf-c-nav__item {
-        margin-top: 0;
-        border: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
-        border-left: 0;
-        border-right: 0;
-        border-top: 0;
+        --pf-c-nav__item--before--BorderWidth: 0;
+        &:last-child {
+          margin-bottom: var(--pf-global--spacer--md);
+        }
         a.pf-c-nav__link, button.pf-c-nav__link {
-          padding-left: var(--pf-global--spacer--xl);
           svg {
             margin-left: 3px;
           }
         }
         .pf-c-nav__subnav {
-          --pf-c-nav__link--active--after--BorderColor: var(--pf-global--primary-color--light-100);
-          --pf-c-nav__link--hover--after--BorderColor: var(--pf-global--primary-color--light-100);
-          padding-left: var(--pf-global--spacer--xl);
-          padding-bottom: 0;
+          padding: 0 0 0 var(--pf-global--spacer--lg);
           .pf-c-nav__list {
             .pf-c-nav__item {
               .pf-c-nav__link{
-                padding-left: var(--pf-global--spacer--sm);
+                padding-left: var(--pf-global--spacer--lg);
                 svg {
-                  width: 12px;
-                  height: 12px;
-                  margin-left: var(--pf-global--spacer--sm)
+                  margin-left: var(--pf-global--spacer--sm);
                 }
+              }
+              &:last-child {
+                margin-bottom: var(--pf-global--spacer--sm);
               }
             }
           }
@@ -57,13 +54,15 @@
       }
     }
     .ins-c-navigation__additional-links{
-      --pf-c-nav__link--hover--after--BorderColor:  var(--pf-global--primary-color--light-100);
+      border: none !important;
       a {
         padding-left: var(--pf-global--spacer--lg);
       }
-      svg {
-        width: 12px;
-        height: 12px;
-      }
     }
+  > .pf-c-nav__item:not(:first-child) {
+    border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
+  }   
+  svg {
+    width: 12px;  
   }
+}
