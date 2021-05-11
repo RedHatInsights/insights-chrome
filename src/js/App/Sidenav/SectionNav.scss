@@ -21,14 +21,10 @@
     }
     ul
       > li.pf-c-nav__item {
+        --pf-c-nav__item--MarginTop: 0;
         --pf-c-nav__item--before--BorderWidth: 0;
         &:last-child {
-          margin-bottom: var(--pf-global--spacer--md);
-        }
-        a.pf-c-nav__link, button.pf-c-nav__link {
-          svg {
-            margin-left: 3px;
-          }
+          margin-bottom: var(--pf-global--spacer--sm);
         }
         .pf-c-nav__subnav {
           padding: 0 0 0 var(--pf-global--spacer--lg);
@@ -36,9 +32,6 @@
             .pf-c-nav__item {
               .pf-c-nav__link{
                 padding-left: var(--pf-global--spacer--lg);
-                svg {
-                  margin-left: var(--pf-global--spacer--sm);
-                }
               }
               &:last-child {
                 margin-bottom: var(--pf-global--spacer--sm);
@@ -53,9 +46,9 @@
         }
       }
     }
-    .ins-c-navigation__additional-links{
+    .pf-c-nav__item.ins-c-navigation__additional-links {
       border: none !important;
-      a {
+      .pf-c-nav__link {
         padding-left: var(--pf-global--spacer--lg);
       }
     }
@@ -63,6 +56,7 @@
     border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
   }   
   svg {
+    margin-left: var(--pf-global--spacer--sm);
     width: 12px;  
   }
 }

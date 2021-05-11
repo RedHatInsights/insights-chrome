@@ -31,12 +31,7 @@ const sectionTitleMapper = (id) =>
       </div>
     ),
 
-    insights: (
-      <div>
-        Insights
-      </div>
-    ),
-
+    insights: <div>Insights</div>,
   }[id] || '');
 
 const SectionNav = ({ items, section, onClick, ...props }) => {
