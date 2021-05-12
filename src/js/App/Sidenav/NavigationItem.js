@@ -8,18 +8,19 @@ import classnames from 'classnames';
 import './Navigation.scss';
 
 const basepath = document.baseURI;
-const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className, isBeta, isLoading, isHidden, ...props }) => (
-  <NavItem
-    {...props}
-    itemId={itemID}
-    className={classnames(className, { 'ins-c-navigation__additional-links': !isLoading && navigate }, { 'ins-c-navigation__isHidden': isHidden })}
-    preventDefault
-    to={navigate || `${basepath}${parent}/${itemID}`}
-  >
-    {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {!isLoading && navigate && <ExternalLinkAltIcon />}
-    {!isLoading && isBeta && !window.insights.chrome.isBeta() && !navigate && betaBadge('ins-c-navigation__beta-badge')}
-  </NavItem>
-);
+const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className, isBeta, isLoading, isHidden, ...props }) =>
+  isHidden ? null : (
+    <NavItem
+      {...props}
+      itemId={itemID}
+      className={classnames(className, { 'ins-c-navigation__additional-links': !isLoading && navigate })}
+      preventDefault
+      to={navigate || `${basepath}${parent}/${itemID}`}
+    >
+      {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {!isLoading && navigate && <ExternalLinkAltIcon />}
+      {!isLoading && isBeta && !window.insights.chrome.isBeta() && !navigate && betaBadge('ins-c-navigation__beta-badge')}
+    </NavItem>
+  );
 
 NavigationItem.propTypes = {
   itemID: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
