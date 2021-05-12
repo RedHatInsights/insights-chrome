@@ -16,6 +16,7 @@
       font-weight: var(--pf-global--FontWeight--medium);
       padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
       svg {
+        margin-left: var(--pf-global--spacer--none);
         margin-right: var(--pf-global--spacer--sm);
       }
     }
