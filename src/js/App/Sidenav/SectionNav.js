@@ -2,12 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavGroup } from '@patternfly/react-core/dist/js/components/Nav/NavGroup';
 import ExpandableNav from './ExpandableNav';
+import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
+import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
+import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
 import './SectionNav.scss';
 
 const anisbleHackIds = ['automation-calculator', 'organization-statistics', 'job-explorer', 'clusters', 'notifications'];
 
 const sectionTitleMapper = (id) =>
-  ({ operations: 'Operations Insights', security: 'Security Insights', business: 'Business Insights', insights: 'Insights' }[id] || '');
+  ({
+    operations: (
+      <div>
+        <WrenchIcon />
+        Operations Insights
+      </div>
+    ),
+    security: (
+      <div>
+        <SecurityIcon />
+        Security Insights
+      </div>
+    ),
+
+    business: (
+      <div>
+        <TrendUpIcon />
+        Business Insights
+      </div>
+    ),
+
+    insights: <div>Insights</div>,
+  }[id] || '');
 
 const SectionNav = ({ items, section, onClick, ...props }) => {
   if (items?.length > 0) {
