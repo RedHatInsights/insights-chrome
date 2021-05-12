@@ -152,7 +152,7 @@
     "@patternfly/react-tokens": "^4.10.5",
     "@redhat-cloud-services/entitlements-client": "^1.0.93",
     "@redhat-cloud-services/frontend-components": "^3.1.10",
-    "@redhat-cloud-services/frontend-components-inventory": "^3.1.24",
+    "@redhat-cloud-services/frontend-components-inventory": "^3.1.25",
     "@redhat-cloud-services/frontend-components-notifications": "^3.1.0",
     "@redhat-cloud-services/frontend-components-remediations": "3.1.17",
     "@redhat-cloud-services/frontend-components-utilities": "^3.1.1",
