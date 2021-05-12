@@ -19,12 +19,16 @@ import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
 import { isBeta } from '../../utils';
+import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
+  const { store } = spinUpStore();
+  const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta; 
+
   if (isBeta) {
-    return `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
+    return isAppOnlyOnBeta ? window.location.origin : `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
   } else {
     let path = pathname.split('/');
     path[0] = 'beta';
