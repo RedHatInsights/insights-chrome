@@ -69,6 +69,7 @@ export const visibilityFunctions = {
   },
   isProd: () => insights.chrome.isProd,
   isBeta: () => insights.chrome.isBeta(),
+  isHidden: () => true,
   loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
   hasLocalStorage: (key, value) => localStorage.get(key) === value,

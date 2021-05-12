@@ -16,6 +16,7 @@ List of available permissions methods:
 * `isEntitled` - test if logged in user is entitled, entitlements to check for is passed as an argument
 * `isProd` - test if current environment is production (prod-beta and prod-stable)
 * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
+* `isHidden` - hides item in navigation
 * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
 * `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
 * `apiRequest` - call custom API endpoint to test if the item should be displayed.

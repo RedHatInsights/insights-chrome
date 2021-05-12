@@ -8,11 +8,11 @@ import classnames from 'classnames';
 import './Navigation.scss';
 
 const basepath = document.baseURI;
-const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className, isBeta, isLoading, ...props }) => (
+const NavigationItem = ({ itemID, title, parent, navigate, ignoreCase, className, isBeta, isLoading, isHidden, ...props }) => (
   <NavItem
     {...props}
     itemId={itemID}
-    className={classnames(className, { 'ins-c-navigation__additional-links': !isLoading && navigate })}
+    className={classnames(className, { 'ins-c-navigation__additional-links': !isLoading && navigate }, { 'ins-c-navigation__isHidden': isHidden })}
     preventDefault
     to={navigate || `${basepath}${parent}/${itemID}`}
   >
@@ -30,6 +30,7 @@ NavigationItem.propTypes = {
   className: PropTypes.string,
   isBeta: PropTypes.bool,
   isLoading: PropTypes.bool,
+  isHidden: PropTypes.bool,
 };
 
 NavigationItem.defaultProps = {
