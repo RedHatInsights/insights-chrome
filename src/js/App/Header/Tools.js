@@ -25,7 +25,7 @@ import classnames from 'classnames';
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
   const { store } = spinUpStore();
-  const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta; 
+  const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta;
 
   if (isBeta) {
     return isAppOnlyOnBeta ? window.location.origin : `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
