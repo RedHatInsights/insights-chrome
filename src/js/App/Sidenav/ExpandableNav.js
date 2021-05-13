@@ -7,7 +7,9 @@ import './SectionNav.scss';
 const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp, navigate, isBeta, isHidden }) => {
   if (subItems?.length > 0) {
     return (
-      <NavExpandable className="ins-m-navigation-align" title={title} id={id} itemID={id} ouiaId={id} isActive={active} isExpanded={active}>
+      isHidden
+      ? null
+      : <NavExpandable className="ins-m-navigation-align" title={title} id={id} itemID={id} ouiaId={id} isActive={active} isExpanded={active}>
         {subItems.map((subItem, subKey) => (
           <NavigationItem
             ignoreCase={subItem.ignoreCase}
