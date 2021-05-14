@@ -97,7 +97,7 @@ function sentryTags(user) {
 /* eslint-enable camelcase */
 export default (user) => {
   // this should only be enabled for prod and prod beta
-  if (window.insights.chrome.getEnvironment() === 'prod') {
+  if (window.insights.chrome.isProd) {
     initSentry();
     sentryTags(user);
   }
