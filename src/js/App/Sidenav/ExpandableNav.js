@@ -4,9 +4,9 @@ import { NavExpandable } from '@patternfly/react-core';
 import NavigationItem from './NavigationItem';
 import './SectionNav.scss';
 
-const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp, navigate, isBeta }) => {
+const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp, navigate, isBeta, isHidden }) => {
   if (subItems?.length > 0) {
-    return (
+    return isHidden ? null : (
       <NavExpandable className="ins-m-navigation-align" title={title} id={id} itemID={id} ouiaId={id} isActive={active} isExpanded={active}>
         {subItems.map((subItem, subKey) => (
           <NavigationItem
@@ -20,6 +20,7 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
             onClick={(event) => onClick(event, subItem)}
             navigate={subItem?.navigate}
             isBeta={subItem?.isBeta}
+            isHidden={subItem?.isHidden}
           />
         ))}
       </NavExpandable>
@@ -37,6 +38,7 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
       onClick={onClick}
       navigate={navigate}
       isBeta={isBeta}
+      isHidden={isHidden}
     />
   );
 };
@@ -52,6 +54,7 @@ ExpandableNav.propTypes = {
   active: PropTypes.bool,
   navigate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   isBeta: PropTypes.bool,
+  isHidden: PropTypes.bool,
 };
 
 export default ExpandableNav;
