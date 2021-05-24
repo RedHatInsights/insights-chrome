@@ -71,7 +71,7 @@ export const visibilityFunctions = {
   isBeta: () => insights.chrome.isBeta(),
   isHidden: () => true,
   withEmail: async (toHave) => {
-    const data = await insights.chrome.getUser();
+    const data = await insights.chrome.auth.getUser();
     const {
       identity: { user },
     } = data || {};
