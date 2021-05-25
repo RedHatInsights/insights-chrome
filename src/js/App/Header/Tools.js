@@ -25,7 +25,9 @@ import classnames from 'classnames';
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
   const { store } = spinUpStore();
-  const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta;
+  // const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta; // eslint-disable-line
+  const isAppOnlyOnBeta = true;
+  console.log('Testing out what we have inside our store: ', store.getState());
 
   if (isBeta) {
     return isAppOnlyOnBeta ? window.location.origin : `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
@@ -93,6 +95,11 @@ const Tools = () => {
     isInternal: true,
     isDemoAcc: false,
   });
+  const { store } = spinUpStore();
+  // const isAppOnlyOnBeta = store.getState().chrome.activeSection.isBeta; // eslint-disable-line
+  const testingStore = store.getState().chrome.activeSection.isBeta;
+  console.log('Need to test this shit out again: ', store);
+  console.log('isAppOnlyBeta is a real variable?: ', testingStore);
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
       /* Disable settings/cog icon when a user doesn't have an account number */
