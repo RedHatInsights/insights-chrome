@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
+import classnames from 'classnames';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 
-const ContextSwitcher = ({ user }) => {
+const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
   const [searchValue, setSearchValue] = useState('');
@@ -35,7 +36,7 @@ const ContextSwitcher = ({ user }) => {
 
   return (
     <Dropdown
-      className="ins-c-page__context-switcher-dropdown"
+      className={classnames('ins-c-page__context-switcher-dropdown', className)}
       ouiaId="Account Switcher"
       toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Viewing account: {user.identity.account_number}</DropdownToggle>}
       isOpen={isOpen}
@@ -46,6 +47,7 @@ const ContextSwitcher = ({ user }) => {
 
 ContextSwitcher.propTypes = {
   user: PropTypes.object,
+  className: PropTypes.string,
 };
 
 export default ContextSwitcher;
