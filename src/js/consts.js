@@ -70,6 +70,13 @@ export const visibilityFunctions = {
   isProd: () => insights.chrome.isProd,
   isBeta: () => insights.chrome.isBeta(),
   isHidden: () => true,
+  withEmail: async (toHave) => {
+    const data = await insights.chrome.auth.getUser();
+    const {
+      identity: { user },
+    } = data || {};
+    return user?.email?.includes(toHave);
+  },
   loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
   hasLocalStorage: (key, value) => localStorage.get(key) === value,

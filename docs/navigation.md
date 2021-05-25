@@ -17,6 +17,9 @@ List of available permissions methods:
 * `isProd` - test if current environment is production (prod-beta and prod-stable)
 * `isBeta` - test if current environment is beta (ci-beta, qa-beta and prod-beta)
 * `isHidden` - hides item in navigation
+* `withEmail` - show nav only if user's email contains first argument
+* `hasLocalStorage` - test if value (passed as second argument) equals to localStorage key (passed as first arg) value
+* `hasCookie` - test if value (passed as second argument) equals to cookie  key (passed as first arg) value
 * `hasPermissions` - test if current user has rbac role permissions ['app:scope:permission'], uses logical AND to evaluate the permissions
 * `loosePermissions` - similar to `hasPermissions`, uses logical OR to evaluate the permissions
 * `apiRequest` - call custom API endpoint to test if the item should be displayed.
