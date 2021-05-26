@@ -14,7 +14,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
         <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
-        <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
+        <dd className="ins-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
         {isOrgAdmin && <dd className="ins-c-dropdown-item__stack--subValue">Org. Administrator</dd>}
       </dl>
     </DropdownItem>,
