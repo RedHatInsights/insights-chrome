@@ -19,7 +19,7 @@ export const Header = ({ logoClassName }) => {
         <Logo />
       </a>
       {user && <AppFilter />}
-      {user && isContextSwitcherEnabled && <ContextSwitcher user={user} />}
+      {user && isContextSwitcherEnabled && <ContextSwitcher user={user} className="data-hj-suppress" />}
       {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
   );
