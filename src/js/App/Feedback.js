@@ -11,6 +11,8 @@ const Feedback = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState('');
   const env = window.insights.chrome.getEnvironment();
+  const app = window.insights.chrome.getApp();
+  const bundle = window.insights.chrome.getBundle();
   const isAvailable = env === 'prod' || env === 'stage';
 
   const handleModalSubmission = () => {
@@ -25,6 +27,7 @@ const Feedback = ({ user }) => {
         body: JSON.stringify({
           description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
           summary: `${!window.insights.chrome.isProd && '[PRE-PROD]'} Insights Feedback`,
+          labels: [app, bundle],
         }),
       }).then((response) => response.json());
     } else {
