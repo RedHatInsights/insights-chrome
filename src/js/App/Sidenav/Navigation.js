@@ -199,6 +199,9 @@ export const Navigation = () => {
          */
         !parent?.active && dispatch(clearActive());
         dispatch(toggleGlobalFilter(false));
+        if (item.active) {
+          dispatch(appNavClick(item, event));
+        }
         prevLocation.current = window.location.pathname;
         history.push({ pathname: `/${activeLocation}${parent ? `/${parent.id}` : ''}/${item.id}`, state: newSection });
       }
