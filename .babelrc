@@ -12,5 +12,12 @@
     "@babel/plugin-transform-runtime",
     "@babel/plugin-syntax-dynamic-import",
     "babel-plugin-lodash"
-  ]
+  ],
+  "env": {
+    "test": {
+        "plugins": [
+            "babel-plugin-rewire"
+        ]
+    }
+  }
 }
