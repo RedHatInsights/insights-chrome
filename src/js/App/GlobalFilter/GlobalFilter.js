@@ -26,10 +26,10 @@ const GlobalFilterDropdown = ({
 }) => {
   const allowed = isAllowed();
   const dispatch = useDispatch();
-  const GroupFilterWrapper = useMemo(() => (!allowed || isDisabled ? Tooltip : ({ children }) => <Fragment>{children}</Fragment>), [
-    allowed,
-    isDisabled,
-  ]);
+  const GroupFilterWrapper = useMemo(
+    () => (!allowed || isDisabled ? Tooltip : ({ children }) => <Fragment>{children}</Fragment>),
+    [allowed, isDisabled]
+  );
   return (
     <Fragment>
       <Split id="global-filter" hasGutter className="ins-c-chrome__global-filter">
