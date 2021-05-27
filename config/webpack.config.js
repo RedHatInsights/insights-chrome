@@ -58,6 +58,9 @@ const commonConfig = ({ publicPath, noHash }) => ({
     ],
   },
   plugins,
+  devServer: {
+    writeToDisk: true,
+  }
 });
 
 module.exports = function (env) {
