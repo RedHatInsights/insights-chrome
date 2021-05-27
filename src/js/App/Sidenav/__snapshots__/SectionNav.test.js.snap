@@ -180,7 +180,9 @@ exports[`SectionNav should render group with app 1`] = `
       class="pf-c-nav__section-title"
       id="section1"
     />
-    <ul>
+    <ul
+      class="pf-c-nav__list ins-c-section-nav"
+    >
       <li
         class="pf-c-nav__item"
         data-ouia-component-id="app"
@@ -210,7 +212,9 @@ exports[`SectionNav should render group with app and sub app 1`] = `
       class="pf-c-nav__section-title"
       id="section1"
     />
-    <ul>
+    <ul
+      class="pf-c-nav__list ins-c-section-nav"
+    >
       <li
         class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
         data-ouia-component-id="app"
@@ -287,7 +291,9 @@ exports[`SectionNav should render group with app, sub app and custom url 1`] = `
       class="pf-c-nav__section-title"
       id="section1"
     />
-    <ul>
+    <ul
+      class="pf-c-nav__list ins-c-section-nav"
+    >
       <li
         class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
         data-ouia-component-id="app"

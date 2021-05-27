@@ -1,5 +1,3 @@
-import 'babel-polyfill';
-
 global.SVGPathElement = function () {};
 
 global.MutationObserver = class {

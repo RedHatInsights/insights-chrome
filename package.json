@@ -45,6 +45,7 @@
       "src/**/*.js",
       "!src/**/*Styles.js"
     ],
+    "testEnvironment": "jsdom",
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!@redhat-cloud-services).+(js|jsx)$"
     ],
