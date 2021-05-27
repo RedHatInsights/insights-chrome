@@ -4,7 +4,7 @@ const WriteFileWebpackPlugin = require('write-file-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 
 const deps = require('../package.json').dependencies;
-const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config/chunk-mapper'))({
+const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
   modules: 'chrome',
 });
 
