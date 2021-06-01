@@ -37,8 +37,18 @@ UserIcon.propTypes = {
   }),
 };
 
-export default connect(({ chrome: { user: { identity: { user: { username } } } } }) => ({
-  account: {
-    username: username,
-  },
-}))(UserIcon);
+export default connect(
+  ({
+    chrome: {
+      user: {
+        identity: {
+          user: { username },
+        },
+      },
+    },
+  }) => ({
+    account: {
+      username: username,
+    },
+  })
+)(UserIcon);
