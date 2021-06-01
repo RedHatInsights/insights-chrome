@@ -1,5 +1,3 @@
-// TODO: Delete demo stuff later
-
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
