@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
+import { NavItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { titleCase } from 'title-case';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';

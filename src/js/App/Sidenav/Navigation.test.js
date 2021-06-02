@@ -23,6 +23,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@patternfly/react-core/dist/js/helpers/util', () => ({
   isElementInView: jest.fn(),
+  getUniqueId: () => Math.random().toString()
 }));
 
 describe('Navigation', () => {
