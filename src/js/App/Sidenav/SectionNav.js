@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavGroup } from '@patternfly/react-core/dist/js/components/Nav/NavGroup';
+import { NavGroup } from '@patternfly/react-core';
 import ExpandableNav from './ExpandableNav';
 import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
 import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';

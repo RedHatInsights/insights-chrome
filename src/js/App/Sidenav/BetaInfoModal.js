@@ -1,9 +1,6 @@
 import React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/js/components/Modal/Modal';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
+import { Button, Bullseye, Modal, ModalVariant, Title } from '@patternfly/react-core';
 import './Navigation.scss';
 
 import PropTypes from 'prop-types';

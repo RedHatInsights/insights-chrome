@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { KebabToggle } from '@patternfly/react-core/dist/js/components/Dropdown/KebabToggle';
-import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
-import { DropdownSeparator } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownSeparator';
-import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
+import { DropdownToggle, KebabToggle, DropdownItem, DropdownSeparator, DropdownPosition, Dropdown } from '@patternfly/react-core';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

@@ -2,23 +2,28 @@ import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
-import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
-import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
-import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
-import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
-import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
-import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
-import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Spinner } from '@patternfly/react-core/dist/js/components/Spinner/Spinner';
-import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
+
+import {
+  Flex,
+  SearchInput,
+  Split,
+  SplitItem,
+  TextContent,
+  Text,
+  Title,
+  Spinner,
+  Bullseye,
+  EmptyStateIcon,
+  EmptyStateBody,
+  EmptyState,
+  EmptyStateVariant,
+  DropdownToggle,
+  Dropdown,
+  Button,
+} from '@patternfly/react-core';
 
 import './AppFilter.scss';
 import useGlobalNav from '../../utils/useGlobalNav';
