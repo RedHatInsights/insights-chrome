@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Nav } from '@patternfly/react-core/dist/js/components/Nav/Nav';
-import { NavList } from '@patternfly/react-core/dist/js/components/Nav/NavList';
-import { NavItem } from '@patternfly/react-core/dist/js/components/Nav/NavItem';
-import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
+import { Nav, NavList, NavItem, NavExpandable } from '@patternfly/react-core';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { appNavClick, chromeNavSectionUpdate, clearActive, toggleGlobalFilter } from '../../redux/actions';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';

@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { NotAuthorized } from '@redhat-cloud-services/frontend-components/components/NotAuthorized';
-import { Spinner } from '@redhat-cloud-services/frontend-components/components/Spinner';
-import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye';
+import { NotAuthorized } from '@redhat-cloud-services/frontend-components/NotAuthorized';
+import { Spinner } from '@redhat-cloud-services/frontend-components/Spinner';
+import { Bullseye } from '@patternfly/react-core';
 
 const NoAccess = ({ activeAppTitle }) =>
   activeAppTitle ? (
