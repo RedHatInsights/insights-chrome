@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
-import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
+import { SearchInput } from '@patternfly/react-core';
 import classnames from 'classnames';
 
 import { useDispatch, useSelector } from 'react-redux';

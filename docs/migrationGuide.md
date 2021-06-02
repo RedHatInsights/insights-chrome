@@ -13,7 +13,7 @@ In order to fully use federated modules you have to update the version of these 
 ```
 * webpack: >= 5.9.0
 * webpack-cli: >= 4.2.0
-* @redhat-cloud-services/frontend-components-config: >= 3.0.0 - if you are using it
+* @redhat-cloud-services/frontend-components-config: >= 4.0.0 - if you are using it
 ```
 
 And change your prod/start scripts (webpack now uses different script to run dev-server)
@@ -78,7 +78,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './utilities/store';
 import App from './App';
-import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 const MyApp = () => (
   // this is just an example here goes everything that was in `entry.js`
