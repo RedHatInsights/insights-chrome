@@ -118,6 +118,8 @@ export function bootstrapCache(endpoint, cacheKey) {
   });
 }
 
+const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
+
 export function getUrl(type) {
   if (window.location.pathname === ('/beta' || '/')) {
     return 'landing';
@@ -125,10 +127,10 @@ export function getUrl(type) {
 
   const sections = window.location.pathname.split('/');
   if (sections[1] === 'beta') {
-    return type === 'bundle' ? sections[2] : sections[3];
+    return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
   }
 
-  return type === 'bundle' ? sections[1] : sections[2];
+  return type === 'bundle' ? sections[1] : sections[2 + isAnsible(sections)];
 }
 
 export function getEnv() {
