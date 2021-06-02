@@ -13,7 +13,7 @@ In order to fully use federated modules you have to update the version of these 
 ```
 * webpack: >= 5.9.0
 * webpack-cli: >= 4.2.0
-* @redhat-cloud-services/frontend-components-config: >= 3.0.0 - if you are using it
+* @redhat-cloud-services/frontend-components-config: >= 4.0.0 - if you are using it
 ```
 
 And change your prod/start scripts (webpack now uses different script to run dev-server)
