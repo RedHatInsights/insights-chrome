@@ -153,7 +153,7 @@ export async function loadNav(yamlConfig, cache) {
           globalNav,
           activeTechnology: activeBundle[active].title,
           activeLocation: active,
-          activeSection: globalNav?.find?.(({ id }) => id === section),
+          activeSection: globalNav?.find?.(({ id }) => id === section) || globalNav?.find?.(({ default: isDefault }) => isDefault),
         }
       : {
           globalNav,
