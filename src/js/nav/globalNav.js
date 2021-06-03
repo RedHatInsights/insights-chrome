@@ -155,7 +155,7 @@ export async function loadNav(yamlConfig, cache) {
           activeLocation: active,
           activeSection:
             globalNav?.find?.(({ id }) => id === section) ||
-            globalNav?.find?.(({ subItems } = {}) => active === 'ansible' && subItems?.find(({ id } = {}) => id === section)) ||
+            globalNav?.find?.(({ subItems } = {}) => active === 'ansible' && section && subItems?.find(({ id } = {}) => id === section)) ||
             globalNav?.find?.(({ default: isDefault }) => isDefault),
         }
       : {
