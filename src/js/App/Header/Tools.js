@@ -1,5 +1,3 @@
-// TODO: Delete demo stuff later
-
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Badge, DropdownItem, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, Divider, Button } from '@patternfly/react-core';
@@ -12,12 +10,16 @@ import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
 import { isBeta } from '../../utils';
+import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
+  const { store } = spinUpStore();
+  const isAppOnlyOnBeta = store.getState().chrome.activeSection?.isBeta;
+
   if (isBeta) {
-    return `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
+    return isAppOnlyOnBeta ? window.location.origin : `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
   } else {
     let path = pathname.split('/');
     path[0] = 'beta';
@@ -82,6 +84,7 @@ const Tools = () => {
     isInternal: true,
     isDemoAcc: false,
   });
+
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
       /* Disable settings/cog icon when a user doesn't have an account number */
