@@ -137,7 +137,7 @@
     "@redhat-cloud-services/frontend-components": "^3.2.3",
     "@redhat-cloud-services/frontend-components-inventory": "^3.2.2",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.2",
-    "@redhat-cloud-services/frontend-components-remediations": "^3.2.2",
+    "@redhat-cloud-services/frontend-components-remediations": "^3.2.3",
     "@redhat-cloud-services/frontend-components-utilities": "^3.2.2",
     "@redhat-cloud-services/host-inventory-client": "^1.0.97",
     "@redhat-cloud-services/keycloak-js": "0.0.3",
