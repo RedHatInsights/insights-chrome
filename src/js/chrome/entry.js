@@ -1,28 +1,16 @@
-import React, { lazy, Suspense, Fragment } from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter } from '../redux/actions';
+import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter, registerModule } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
-import * as actionTypes from '../redux/action-types';
-import loadInventory from '../inventory/index';
-import loadRemediations from '../remediations';
 import qe from './iqeEnablement';
 import consts from '../consts';
-import RootApp from '../App/RootApp';
-import debugFunctions from '../debugFunctions';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import logger from '../jwt/logger';
-import { getUrl, getEnv, isBeta } from '../utils';
-import { createSupportCase } from '../createCase';
+import { getUrl, getEnv, isBeta, updateDocumentTitle } from '../utils';
 import get from 'lodash/get';
-import { flatTags } from '../App/GlobalFilter/constants';
+import { createSupportCase } from '../createCase';
+import * as actionTypes from '../redux/action-types';
+import { flatTags, cookieSearch } from '../App/GlobalFilter/constants';
+import debugFunctions from '../debugFunctions';
 
-const NoAccess = lazy(() => import(/* webpackChunkName: "NoAccess" */ '../App/NoAccess'));
-
-const log = logger('entry.js');
-
-// used for translating event names exposed publicly to internal event names
 const PUBLIC_EVENTS = {
   APP_NAVIGATION: [
     (fn) => ({
@@ -35,10 +23,13 @@ const PUBLIC_EVENTS = {
     }),
   ],
   NAVIGATION_TOGGLE: [
-    (callback) => ({
-      on: actionTypes.NAVIGATION_TOGGLE,
-      callback,
-    }),
+    (callback) => {
+      console.warn('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');
+      return {
+        on: 'NAVIGATION_TOGGLE',
+        callback,
+      };
+    },
   ],
   GLOBAL_FILTER_UPDATE: [
     (callback) => ({
@@ -50,20 +41,13 @@ const PUBLIC_EVENTS = {
 };
 
 export function chromeInit(navResolver) {
-  const { store, middlewareListener, actions } = spinUpStore();
+  const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
-  const { identifyApp, appNavClick, clearActive, appAction, appObjectId } = actions;
+  const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
 
   return {
-    identifyApp: (data) => navResolver.then(() => identifyApp(data, store.getState().chrome.globalNav)),
-    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     appAction,
-    appObjectId,
-    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
-    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
-    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-    mapGlobalFilter: flatTags,
     appNavClick: ({ secondaryNav, ...payload }) => {
       if (!secondaryNav) {
         clearActive();
@@ -74,6 +58,16 @@ export function chromeInit(navResolver) {
         custom: true,
       });
     },
+    appObjectId,
+    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
+    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    identifyApp: (data, appTitle) =>
+      navResolver.then(() => {
+        identifyApp(data, store.getState().chrome.globalNav);
+        updateDocumentTitle(appTitle);
+      }),
+    mapGlobalFilter: flatTags,
+    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     on: (type, callback) => {
       if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
         throw new Error(`Unknown event type: ${type}`);
@@ -87,16 +81,16 @@ export function chromeInit(navResolver) {
       }
       return middlewareListener.addNew(listener(callback));
     },
+    registerModule: (...args) => store.dispatch(registerModule(...args)),
+    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
+    updateDocumentTitle,
     $internal: { store },
-    loadInventory,
-    experimental: {
-      loadRemediations,
-    },
-    enable: debugFunctions,
   };
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
+  const searchParams = new URLSearchParams(location.search);
+  cookieSearch.forEach((key) => searchParams.get(key) && Cookies.set(key, searchParams.get(key)));
   return {
     chrome: {
       auth: {
@@ -111,65 +105,17 @@ export function bootstrap(libjwt, initFunc, getUser) {
       isProd: window.location.host === 'cloud.redhat.com',
       isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+      forceDemo: () => Cookies.set('cs_demo', 'true'),
+      isDemo: () => (Cookies.get('cs_demo') ? true : false),
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,
+      isChrome2: true,
+      enable: debugFunctions,
     },
-    loadInventory,
-    experimental: {
-      loadRemediations,
-    },
+    experimental: {},
   };
-}
-
-export function rootApp() {
-  const { store } = spinUpStore();
-  const pageRoot = document.querySelector('.pf-c-page__drawer');
-  if (pageRoot) {
-    render(
-      <Provider store={store}>
-        <RootApp />
-      </Provider>,
-      pageRoot
-    );
-  }
-}
-
-export function noAccess() {
-  const { store } = spinUpStore();
-  window.insights.chrome.auth
-    .getUser()
-    .then((data) => {
-      if (data && !consts.allowedUnauthedPaths.includes(location.pathname)) {
-        const { entitlements } = data;
-        const path = location.pathname.split('/');
-        const apps = Object.keys(entitlements || {});
-
-        /* eslint-disable camelcase */
-        const grantAccess = Object.entries(entitlements || {}).filter(([app, { is_entitled }]) => {
-          // check if app key from entitlements is anywhere in URL and if so check if user is entitled for such app
-          return path.includes(app) && is_entitled;
-        });
-        /* eslint-enable camelcase */
-
-        // also grant access to other pages like settings/general
-        const isTrackedApp = path.some((value) => apps.includes(value));
-        if (!(grantAccess && grantAccess.length > 0) && isTrackedApp) {
-          document.getElementById('root').style.display = 'none';
-          document.querySelector('#no-access.pf-c-page__main').style.display = 'block';
-          render(
-            <Provider store={store}>
-              <Suspense fallback={Fragment}>
-                <NoAccess />
-              </Suspense>
-            </Provider>,
-            document.querySelector('#no-access')
-          );
-        }
-      }
-    })
-    .catch(log('Error fetching user entitlements!'));
 }

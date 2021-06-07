@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar } from '@patternfly/react-core/dist/js/components/Avatar/Avatar';
+import { Avatar } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './UserIcon.scss';
@@ -37,8 +37,18 @@ UserIcon.propTypes = {
   }),
 };
 
-export default connect(({ chrome: { user: { identity: { user: { username } } } } }) => ({
-  account: {
-    username: username,
-  },
-}))(UserIcon);
+export default connect(
+  ({
+    chrome: {
+      user: {
+        identity: {
+          user: { username },
+        },
+      },
+    },
+  }) => ({
+    account: {
+      username: username,
+    },
+  })
+)(UserIcon);

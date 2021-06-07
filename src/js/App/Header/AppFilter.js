@@ -1,116 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { EmptyState, EmptyStateVariant } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyState';
-import { EmptyStateIcon } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateIcon';
-import { EmptyStateBody } from '@patternfly/react-core/dist/js/components/EmptyState/EmptyStateBody';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { SearchInput } from '@patternfly/react-core/dist/js/components/SearchInput/SearchInput';
-import { Split } from '@patternfly/react-core/dist/js/layouts/Split/Split';
-import { SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/SplitItem';
-import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
-import { Text } from '@patternfly/react-core/dist/js/components/Text/Text';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import React, { useRef } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
-import ansible from '../../../../static/images/landing-page-icons/ansible.svg';
-import costManagement from '../../../../static/images/landing-page-icons/cost-management.svg';
-import migrationsNamespace from '../../../../static/images/landing-page-icons/migrations.svg';
-import openshift from '../../../../static/images/landing-page-icons/ocm.svg';
-import settings from '../../../../static/images/landing-page-icons/fa-cog.svg';
+import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+
+import {
+  Flex,
+  SearchInput,
+  Split,
+  SplitItem,
+  TextContent,
+  Text,
+  Title,
+  Spinner,
+  Bullseye,
+  EmptyStateIcon,
+  EmptyStateBody,
+  EmptyState,
+  EmptyStateVariant,
+  DropdownToggle,
+  Dropdown,
+  Button,
+} from '@patternfly/react-core';
 
 import './AppFilter.scss';
 import useGlobalNav from '../../utils/useGlobalNav';
 
-const getIcon = (id) =>
-  ({
-    insights: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Insights.svg`} alt="Insights Logo" />,
-    openshift: <img src={openshift} alt="Openshift Logo" />,
-    SAP: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/SAP.svg`} alt="SAP Logo" />,
-    'cost-management': <img src={costManagement} alt="Cost Management Logo" />,
-    migrations: <img src={migrationsNamespace} alt="Migration Services Logo" />,
-    ansible: <img src={ansible} alt="Automation Logo" />,
-    settings: <img src={settings} alt="settings" />,
-    subscriptions: <img src={`${insights.chrome.isBeta() ? '/beta' : ''}/apps/landing/fonts/Subscriptions.svg`} alt="Subscriptions Logo" />,
-  }[id]);
+const generateUrl = (redirectUrl) => {
+  if (redirectUrl.includes('openshift/subscriptions')) {
+    return `${redirectUrl}/openshift-container`;
+  }
 
-const AppFilter = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [filterValue, setFilterValue] = useState('');
-  const { apps, filteredApps, setFilteredApps } = useGlobalNav();
+  if (redirectUrl.includes('insights/subscriptions')) {
+    return `${redirectUrl}/rhel`;
+  }
 
-  useEffect(() => {
-    setFilteredApps(
-      apps
-        .map((app) => ({ ...app, routes: app.routes.filter((subApp) => subApp.title.toLowerCase().includes(filterValue.toLowerCase())) }))
-        .filter((app) => app.routes?.length > 0)
-    );
-  }, [filterValue]);
+  if (redirectUrl.includes('application-services/streams')) {
+    return `/beta/${redirectUrl}`;
+  }
 
-  const renderApp = (app) => (
-    <div className="galleryItem">
-      {
-        <React.Fragment>
-          <Split>
-            <SplitItem className="left">{getIcon(app.id)}</SplitItem>
-            <SplitItem className="right">
-              <TextContent>
-                <Text component="h4">{app.title}</Text>
-                {app.routes.map((subApp) => (
-                  <Text component="p" key={`${app.id}/${subApp.id}`}>
-                    <Text component="a" href={`${app.id}/${subApp.id}`}>
-                      {subApp.title}
-                    </Text>
-                  </Text>
-                ))}
-              </TextContent>
-            </SplitItem>
-          </Split>
-        </React.Fragment>
-      }
-    </div>
-  );
+  return redirectUrl;
+};
 
+const App = ({ id, title, routes, parent }) => (
+  <div className="galleryItem">
+    <Split>
+      <SplitItem>
+        <TextContent>
+          <Text component="h4">{title}</Text>
+          {routes?.map((subApp) => {
+            const redirectUrl = `${parent ? `${parent.id}/` : ''}${subApp.reload || `${id}/${subApp.id}`}`;
+            return (
+              <Text component="p" key={`${id}/${subApp.id}`}>
+                <Text component="a" href={generateUrl(redirectUrl)}>
+                  {subApp.title}
+                </Text>
+              </Text>
+            );
+          })}
+        </TextContent>
+      </SplitItem>
+    </Split>
+  </div>
+);
+
+App.propTypes = {
+  id: PropTypes.string,
+  title: PropTypes.node,
+  routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+  parent: PropTypes.shape({
+    id: PropTypes.string,
+  }),
+};
+
+const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => {
+  const dropdownRef = useRef(null);
   return (
     <Dropdown
-      className="ins-c-page__app-filter-dropdown"
-      isPlain
+      className="ins-c-page__app-filter-dropdown-toggle"
       onSelect={() => setIsOpen(true)}
       toggle={
-        <DropdownToggle id="toggle-id" onToggle={() => setIsOpen(!isOpen)} toggleIndicator={CaretDownIcon}>
-          Applications and services
+        <DropdownToggle
+          id="toggle-id"
+          onToggle={(_isOpen, event) => {
+            if (!dropdownRef.current?.contains(event.target)) {
+              setIsOpen(!isOpen);
+            }
+          }}
+          toggleIndicator={CaretDownIcon}
+        >
+          Find an app or service
         </DropdownToggle>
       }
       isOpen={isOpen}
       ouiaId="App Filter"
     >
-      <div className="content">
-        <SearchInput
-          placeholder="Find application or service"
-          value={filterValue}
-          onChange={(val) => setFilterValue(val)}
-          onClear={() => setFilterValue('')}
-        />
-        {filteredApps?.length > 0 ? (
-          <div className="gallery">{filteredApps.map((app) => renderApp(app))}</div>
-        ) : (
-          <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
-            <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-            <Title headingLevel="h4">No matching applications or services found.</Title>
-            <EmptyStateBody className="pf-u-mb-xl">
-              This filter criteria matches no applications or services. Try changing your input filter.
-            </EmptyStateBody>
-            <Button className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
-              Clear all filters
-            </Button>
-          </EmptyState>
-        )}
-      </div>
+      {ReactDOM.createPortal(
+        <div ref={dropdownRef} className="pf-c-dropdown ins-c-page__app-filter-dropdown-menu" data-testid="ins-c__find-app-service">
+          <div className="pf-c-dropdown__menu">
+            <div className="content">
+              {isLoaded ? (
+                <React.Fragment>
+                  <Flex className="search">
+                    <SearchInput
+                      data-ouia-component-id="app-filter-search"
+                      placeholder="Find application or service"
+                      value={filterValue}
+                      onChange={(val) => setFilterValue(val)}
+                      onClear={() => setFilterValue('')}
+                    />
+                  </Flex>
+                  {filteredApps?.length > 0 ? (
+                    <div className="gallery">
+                      {filteredApps.map((app) => (
+                        <App key={app.id} {...app} />
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
+                      <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
+                      <Title headingLevel="h4">No matching applications or services found.</Title>
+                      <EmptyStateBody className="pf-u-mb-xl">
+                        This filter criteria matches no applications or services. Try changing your input filter.
+                      </EmptyStateBody>
+                      <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                        Clear all filters
+                      </Button>
+                    </EmptyState>
+                  )}
+                </React.Fragment>
+              ) : (
+                <Bullseye className="pf-u-p-xl">
+                  <Spinner />
+                </Bullseye>
+              )}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </Dropdown>
   );
 };
 
-export default AppFilter;
+AppFilterDropdown.propTypes = {
+  isLoaded: PropTypes.bool,
+  isOpen: PropTypes.bool,
+  filterValue: PropTypes.string,
+  setFilterValue: PropTypes.func,
+  setIsOpen: PropTypes.func.isRequired,
+  filteredApps: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.node.isRequired,
+      routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
+    })
+  ),
+};
 
-AppFilter.propTypes = {};
+const AppFilter = () => {
+  const { filteredApps, isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useGlobalNav();
+
+  return (
+    <React.Fragment>
+      <AppFilterDropdown
+        isLoaded={!!isLoaded}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        filteredApps={filteredApps}
+      />
+      <div className={classnames({ 'pf-c-backdrop': isOpen })} />
+    </React.Fragment>
+  );
+};
+
+export default AppFilter;

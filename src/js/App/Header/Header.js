@@ -1,31 +1,42 @@
 import React, { Fragment } from 'react';
-import Brand from './Brand';
+import PropTypes from 'prop-types';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import AppFilter from './AppFilter';
-import { isFilterEnabled } from '../../utils/isAppNavEnabled';
+import ContextSwitcher from './ContextSwitcher';
+import Feedback from '../Feedback';
+import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
+import { useSelector } from 'react-redux';
+import Logo from './Logo';
 
-const Header = ({ user }) => {
-  return user ? (
+const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
+
+export const Header = ({ logoClassName }) => {
+  const user = useSelector(({ chrome }) => chrome?.user);
+  return (
     <Fragment>
-      <Brand />
-      {isFilterEnabled && <AppFilter />}
-      <Tools />
+      <a href="./" className={`ins-c-header-link${logoClassName ? ` ${logoClassName}` : ''}`}>
+        <Logo />
+      </a>
+      {user && <AppFilter />}
+      {user && isContextSwitcherEnabled && <ContextSwitcher user={user} className="data-hj-suppress" />}
+      {user && isFeedbackEnabled && <Feedback user={user} />}
     </Fragment>
-  ) : (
-    <UnAuthtedHeader />
   );
 };
 
 Header.propTypes = {
-  user: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.shape({
-      [PropTypes.string]: PropTypes.any,
-    }),
-  ]),
+  logoClassName: PropTypes.string,
 };
 
-export default connect(({ chrome: { user } }) => ({ user }))(Header);
+Header.defaultProps = {
+  logoClassName: '',
+};
+
+export const HeaderTools = () => {
+  const user = useSelector(({ chrome }) => chrome?.user);
+  if (!user) {
+    return <UnAuthtedHeader />;
+  }
+  return <Tools />;
+};

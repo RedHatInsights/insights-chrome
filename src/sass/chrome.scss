@@ -23,14 +23,10 @@ $pf-global--image-path: './assets/images/';
 @import '~@patternfly/patternfly/layouts/Flex/flex.scss';
 @import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
-@import '~@redhat-cloud-services/frontend-components/components/Spinner.css';
-@import '~@redhat-cloud-services/frontend-components/components/Skeleton.css';
-@import '~@redhat-cloud-services/frontend-components/components/ConditionalFilter.css';
-
 // Accessibility
 @import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
 @import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
-@import '~@redhat-cloud-services/frontend-components/components/tagFilterHook.scss';
+@import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 @import 'helpers.scss';
 
@@ -44,8 +40,8 @@ aside {
     overflow: auto !important;
 }
 
-.pf-c-about-modal-box__logo {
-    display: none;
+.ins-c-header-link {
+    display: flex;
 }
 
 #no-access.pf-c-page__main {
@@ -60,13 +56,38 @@ aside {
 
 // Page temp styles
 .pf-c-page {
-  --pf-c-page__sidebar--Transition:                 all 500ms cubic-bezier(.42, 0, .58, 1);
-  --pf-m-emphasis--FontSize:                        var(--pf-global--FontSize--xl);
-}
+    --pf-c-page__sidebar--Transition: all 500ms cubic-bezier(.42, 0, .58, 1);
+    --pf-m-emphasis--FontSize: var(--pf-global--FontSize--xl);
 
-// Page layout styles
-.pf-c-drawer__content, #root.pf-c-page__main, #temp.pf-c-page__main, #no-access.pf-c-page__main {
-    height: 100%;
+    .ins-m-full--height { height: 100%; }
+
+    .ins-c-chrome__global-filter {
+        padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+        background: var(--pf-global--BackgroundColor--100);
+
+        .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
+        .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
+        .ins-m-permanent button { display: none; }
+        .pf-l-split__item:first-of-type { min-width: 150px;}
+
+        .ins-c-tagfilter {
+            width: 100%;
+
+            &.pf-m-expanded { width: 450px; }
+            .pf-c-select__menu {
+                max-height: 400px;
+                overflow: auto;
+            }
+
+            .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
+                background: var(--pf-global--Color--light-100);
+            }
+
+            .ins-c-tagfilter__option-value {
+                max-width: 360px;
+            }
+        }
+    }
 }
 
 // Page root background color
@@ -76,8 +97,17 @@ aside {
     }
 }
 
+#chrome-app-render-root {
+    /* https://github.com/RedHatInsights/insights-chrome/pull/1278/files#diff-e953d69488a613b49aa81408a3595bd7161bf7547cca09d3378351b6c4552502L93
+    * 100% heing is required to have the nav and app content to fill the page height even though there is not enough content.
+    * It will be cut off witout it.
+    * We will revisit this rule after all apps have adopted chrome 2 and we have only one required layout.
+    */
+    height: 100%;
+}
+
 // Landing page logout alert
-.pf-c-alert.ins-c-alert__logout{
+.pf-c-alert.ins-c-alert {
     position: absolute;
     top: var(--pf-c-page__header--MinHeight);
     right: var(--pf-c-page__header-tools--MarginRight);
@@ -111,13 +141,13 @@ aside {
 
 // Brand
 .pf-c-brand {
-  fill: #fff;
-  min-width: 200px;
-  
-  @media screen and (min-width: $pf-global--breakpoint--md) {
-    width: 100%;
-    min-width: auto;
-  }
+    fill: #fff;
+    min-width: 200px;
+
+    @media screen and (min-width: $pf-global--breakpoint--md) {
+        width: 100%;
+        min-width: auto;
+    }
 }
 
 // Page sidebar
@@ -154,36 +184,13 @@ section.ins-c-app-switcher--loading {
     .pf-c-dropdown__toggle-icon { height: 1em; }
 }
 
+.ins-c-skeleton__link {
+    width: 100%;
+}
+
 // Pen testing
 .ins-c-pen-test {
     border-top: 3px solid #A18FFF;
-}
-
-.pf-c-page {
-    .ins-m-full--height { height: 100%; }
-    div.ins-c-chrome__global-filter {
-        padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
-        background: var(--pf-global--BackgroundColor--100);
-        border-bottom: 1px solid var(--pf-global--palette--black-500);
-        .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
-        .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
-        .ins-m-permanent button { display: none; }
-        .pf-l-split__item:first-of-type { min-width: 150px;}
-
-        .ins-c-tagfilter {
-        width: 100%;
-        &.pf-m-expanded { width: 450px; }
-        .pf-c-select__menu {
-            max-height: 400px;
-            overflow: auto;
-        }
-
-        .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
-            background: var(--pf-global--Color--light-100);
-        }
-        .ins-c-tagfilter__option-value { max-width: 360px; }
-        }
-    }
 }
 
 // PF navigation text alignment fix
@@ -191,4 +198,18 @@ section.ins-c-app-switcher--loading {
     .pf-c-nav__link {
         text-align: inherit;
     }
+}
+
+.ins-c-render {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    > main {
+        flex-grow: 1;
+    }
+}
+
+// mobile fixes
+@media only screen and (max-width: $pf-global--breakpoint--sm) {
+    .ins-m-hide-on-sm {display: none;}
 }

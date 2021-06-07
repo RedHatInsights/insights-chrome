@@ -1,15 +1,17 @@
-import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 import {
   clickReducer,
   globalNavReducer,
   appNavClick,
-  navToggleReducer,
   loginReducer,
   clearActive,
   navUpdateReducer,
   onPageAction,
   onPageObjectId,
+  navUpdateSection,
+  onRegisterModule,
+  contextSwitcherBannerReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -22,12 +24,12 @@ import {
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
   onGlobalFilterRemove,
+  globalFilterDefaultState,
 } from './globalFilterReducers';
 import {
   CLICK_ACTION,
   GLOBAL_NAV_IDENT,
   APP_NAV_CLICK,
-  NAVIGATION_TOGGLE,
   USER_LOGIN,
   CLEAR_ACTIVE,
   CHROME_NAV_UPDATE,
@@ -40,6 +42,9 @@ import {
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
   GLOBAL_FILTER_REMOVE,
+  CHROME_NAV_SECTION_UPDATE,
+  REGISTER_MODULE,
+  TOGGLECONTEXTSWITCHER,
 } from './action-types';
 
 const reducers = {
@@ -47,11 +52,13 @@ const reducers = {
   [CLICK_ACTION]: clickReducer,
   [GLOBAL_NAV_IDENT]: globalNavReducer,
   [APP_NAV_CLICK]: appNavClick,
-  [NAVIGATION_TOGGLE]: navToggleReducer,
   [USER_LOGIN]: loginReducer,
   [CHROME_NAV_UPDATE]: navUpdateReducer,
+  [CHROME_NAV_SECTION_UPDATE]: navUpdateSection,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
+  [REGISTER_MODULE]: onRegisterModule,
+  [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
 };
 
 const globalFilter = {
@@ -72,6 +79,6 @@ export default function () {
 
   return {
     chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
-    globalFilter: (state = {}, action) => applyReducerHash(globalFilter)(state, action),
+    globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }

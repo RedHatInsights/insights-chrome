@@ -1,73 +1,197 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ConnectedSideNav should render correctly 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
->
-  <Connect(SideNav) />
-</ContextProvider>
+<div>
+  <section
+    class="ins-c-app-switcher--loading"
+  >
+    <div
+      class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+    >
+       
+    </div>
+  </section>
+  <nav
+    aria-label="Insights Global Navigation"
+    class="pf-c-nav"
+    data-ouia-component-id="OUIA-Generated-Nav-1"
+    data-ouia-component-type="PF4/Nav"
+    data-ouia-safe="false"
+  >
+    <ul
+      class="pf-c-nav__list"
+    >
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-1"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-2"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-3"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-4"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 `;
 
 exports[`ConnectedSideNav should render correctly part 2 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
->
-  <Connect(SideNav) />
-</ContextProvider>
+<div>
+  <section
+    class="ins-c-app-switcher--loading"
+  >
+    <div
+      class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+    >
+       
+    </div>
+  </section>
+  <nav
+    aria-label="Insights Global Navigation"
+    class="pf-c-nav"
+    data-ouia-component-id="OUIA-Generated-Nav-2"
+    data-ouia-component-type="PF4/Nav"
+    data-ouia-safe="false"
+  >
+    <ul
+      class="pf-c-nav__list"
+    >
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-5"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-6"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-7"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+      <li
+        class="pf-c-nav__item"
+        data-ouia-component-id="OUIA-Generated-NavItem-8"
+        data-ouia-component-type="PF4/NavItem"
+        data-ouia-safe="true"
+      >
+        <a
+          class="pf-c-nav__link"
+          href="http://localhost//undefined"
+        >
+          <div
+            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+          >
+             
+          </div>
+           
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 `;

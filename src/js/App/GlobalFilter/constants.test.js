@@ -1,4 +1,4 @@
-import { flatTags, updateSelected, storeFilter, createTagsFilter } from './constants';
+import { flatTags, updateSelected, storeFilter, createTagsFilter, escaper } from './constants';
 const setItem = jest.fn();
 const getItem = jest.fn();
 Object.defineProperty(window, 'localStorage', {
@@ -16,10 +16,10 @@ describe('flatTags', () => {
     'SAP ID (SID)': {
       SOMEVAL: { isSelected: true },
     },
-    someTag: {
+    'someTag/slash': {
       someKey: {
         isSelected: true,
-        value: '[someValue]',
+        value: '[someValue=value]',
       },
     },
     anotherTag: {
@@ -33,7 +33,7 @@ describe('flatTags', () => {
   it('should create flat array of global filter', () => {
     const data = flatTags(globalFilter);
     expect(data.length).toBe(2);
-    expect(data).toMatchObject(['someTag/someKey=[someValue]', 'Workloads/SAP']);
+    expect(data).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]', 'Workloads/SAP']);
   });
 
   it('no data', () => {
@@ -45,13 +45,13 @@ describe('flatTags', () => {
   it('with encode enabled', () => {
     const data = flatTags(globalFilter, true);
     expect(data.length).toBe(2);
-    expect(data).toMatchObject(['someTag/someKey=%5BsomeValue%5D', 'Workloads/SAP']);
+    expect(data).toMatchObject(['someTag%252Fslash/someKey=%5BsomeValue%253Dvalue%5D', 'Workloads/SAP']);
   });
 
   it('should return multiple values', () => {
     const [workloads, SID, tags] = flatTags(globalFilter, false, true);
     expect(tags.length).toBe(1);
-    expect(tags).toMatchObject(['someTag/someKey=[someValue]']);
+    expect(tags).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]']);
     expect(workloads.SAP.isSelected).toBe(true);
     expect(SID).toMatchObject(['SOMEVAL']);
   });
@@ -131,6 +131,10 @@ describe('storeFilter', () => {
 
   describe('global hash', () => {
     it('should add workloads and empty SID', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           Workloads: {
@@ -140,12 +144,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#workloads=something&SIDs=&tags=');
+      expect(push).toHaveBeenCalledWith({ hash: 'workloads=something&SIDs=&tags=' });
     });
 
     it('should add SIDs', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           'SAP ID (SID)': {
@@ -155,12 +164,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#SIDs=something&tags=');
+      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=something&tags=' });
     });
 
     it('should add tags', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           bridges: {
@@ -181,12 +195,17 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam' });
     });
 
     it('should build complex hash', () => {
+      const push = jest.fn();
+      const history = {
+        push,
+      };
       storeFilter(
         {
           Workloads: {
@@ -217,9 +236,12 @@ describe('storeFilter', () => {
           },
         },
         '',
-        true
+        true,
+        history
       );
-      expect(location.hash).toBe('#workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam');
+      expect(push).toHaveBeenCalledWith({
+        hash: 'workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+      });
     });
   });
 
@@ -256,5 +278,23 @@ describe('storeFilter', () => {
         },
       },
     });
+  });
+});
+
+describe('escaper', () => {
+  it('should espace all slashes', () => {
+    expect(escaper('////r///rrrr//')).toBe('%2F%2F%2F%2Fr%2F%2F%2Frrrr%2F%2F');
+  });
+
+  it('should escape all equals', () => {
+    expect(escaper('=f==r')).toBe('%3Df%3D%3Dr');
+  });
+
+  it('should escape all equals and slashes', () => {
+    expect(escaper('f=r/f')).toBe('f%3Dr%2Ff');
+  });
+
+  it("shouldn't escape", () => {
+    expect(escaper('Some value!')).toBe('Some value!');
   });
 });

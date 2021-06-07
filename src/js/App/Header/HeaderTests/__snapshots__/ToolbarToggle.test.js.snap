@@ -1,36 +1,77 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ToolbarToggle should render correctly 1`] = `
-<Dropdown
-  dropdownItems={
-    Array [
-      <DropdownItem
-        component="a"
+<div
+  class="pf-c-dropdown pf-m-align-right pf-m-expanded"
+  data-ouia-component-id="OUIA-Generated-Dropdown-1"
+  data-ouia-component-type="PF4/Dropdown"
+  data-ouia-safe="true"
+>
+  <button
+    aria-expanded="true"
+    aria-haspopup="true"
+    class="pf-c-dropdown__toggle pf-m-plain"
+    data-ouia-component-id="foo"
+    data-ouia-component-type="PF4/DropdownToggle"
+    data-ouia-safe="true"
+    id="foo"
+    type="button"
+  >
+    <span
+      class="pf-c-dropdown__toggle-icon"
+    >
+      <svg
+        aria-hidden="true"
+        fill="currentColor"
+        height="1em"
+        role="img"
+        style="vertical-align: -0.125em;"
+        viewBox="0 0 320 512"
+        width="1em"
+      >
+        <path
+          d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+        />
+      </svg>
+    </span>
+  </button>
+  <ul
+    aria-labelledby="foo"
+    class="pf-c-dropdown__menu pf-m-align-right"
+    role="menu"
+  >
+    <li
+      role="menuitem"
+    >
+      <a
+        aria-disabled="false"
+        class="pf-c-dropdown__menu-item"
+        data-ouia-component-id="title1"
+        data-ouia-component-type="PF4/DropdownItem"
+        data-ouia-safe="true"
         href="url1"
         rel="noopener noreferrer"
+        tabindex="-1"
         target="_blank"
       >
         title1
-      </DropdownItem>,
-      <DropdownItem
-        component="button"
-        onClick={[Function]}
+      </a>
+    </li>
+    <li
+      role="menuitem"
+    >
+      <button
+        aria-disabled="false"
+        class="pf-c-dropdown__menu-item"
+        data-ouia-component-id="title2"
+        data-ouia-component-type="PF4/DropdownItem"
+        data-ouia-safe="true"
+        tabindex="-1"
+        type="button"
       >
         title2
-      </DropdownItem>,
-    ]
-  }
-  isOpen={false}
-  isPlain={true}
-  onSelect={[Function]}
-  position="right"
-  toggle={
-    <DropdownToggle
-      iconComponent={null}
-      onToggle={[Function]}
-    >
-      <UNDEFINED />
-    </DropdownToggle>
-  }
-/>
+      </button>
+    </li>
+  </ul>
+</div>
 `;

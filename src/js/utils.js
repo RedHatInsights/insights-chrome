@@ -34,7 +34,9 @@ export function pageAllowsUnentitled() {
     pathname.indexOf('/openshift') === 0 ||
     pathname.indexOf('/beta/openshift') === 0 ||
     pathname.indexOf('/security') === 0 ||
-    pathname.indexOf('/beta/security') === 0
+    pathname.indexOf('/beta/security') === 0 ||
+    pathname.indexOf('/application-services') === 0 ||
+    pathname.indexOf('/beta/application-services') === 0
   ) {
     return true;
   }
@@ -116,6 +118,8 @@ export function bootstrapCache(endpoint, cacheKey) {
   });
 }
 
+const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
+
 export function getUrl(type) {
   if (window.location.pathname === ('/beta' || '/')) {
     return 'landing';
@@ -123,10 +127,10 @@ export function getUrl(type) {
 
   const sections = window.location.pathname.split('/');
   if (sections[1] === 'beta') {
-    return type === 'bundle' ? sections[2] : sections[3];
+    return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
   }
 
-  return type === 'bundle' ? sections[1] : sections[2];
+  return type === 'bundle' ? sections[1] : sections[2 + isAnsible(sections)];
 }
 
 export function getEnv() {
@@ -135,4 +139,15 @@ export function getEnv() {
 
 export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
+}
+
+export function updateDocumentTitle(title) {
+  if (typeof title === 'undefined') {
+    return;
+  }
+  if (typeof title === 'string') {
+    document.title = title;
+  } else {
+    console.warn(`Title is not a string. Got ${typeof title} instead.`);
+  }
 }

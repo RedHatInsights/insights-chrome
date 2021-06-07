@@ -1,9 +1,8 @@
 import React from 'react';
 import ConnectedSideNav from './SideNav';
-import toJson from 'enzyme-to-json';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 describe('ConnectedSideNav', () => {
   let initialState;
@@ -20,20 +19,20 @@ describe('ConnectedSideNav', () => {
   });
   it('should render correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = shallow(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedSideNav />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
   it('should render correctly part 2', () => {
     const store = mockStore(initialState);
-    const wrapper = shallow(
+    const { container } = render(
       <Provider store={store}>
         <ConnectedSideNav />
       </Provider>
     );
-    expect(toJson(wrapper)).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });

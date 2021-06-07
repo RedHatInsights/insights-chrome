@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavExpandable } from '@patternfly/react-core/dist/js/components/Nav/NavExpandable';
+import { NavExpandable } from '@patternfly/react-core';
 import NavigationItem from './NavigationItem';
+import './SectionNav.scss';
 
-const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp }) => {
+const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activeLocation, activeApp, navigate, isBeta, isHidden }) => {
   if (subItems?.length > 0) {
-    return (
+    return isHidden ? null : (
       <NavExpandable className="ins-m-navigation-align" title={title} id={id} itemID={id} ouiaId={id} isActive={active} isExpanded={active}>
         {subItems.map((subItem, subKey) => (
           <NavigationItem
@@ -17,6 +18,9 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
             parent={subItem.reload ? activeLocation : `${activeLocation}${id ? `/${id}` : ''}`}
             isActive={active && subItem.id === activeApp}
             onClick={(event) => onClick(event, subItem)}
+            navigate={subItem?.navigate}
+            isBeta={subItem?.isBeta}
+            isHidden={subItem?.isHidden}
           />
         ))}
       </NavExpandable>
@@ -29,8 +33,12 @@ const ExpandableNav = ({ subItems, onClick, title, id, active, ignoreCase, activ
       ouiaId={id}
       title={title}
       parent={activeLocation}
-      isActive={active || id === activeApp}
+      // TODO: Fix me! Please! This is ugly!
+      isActive={!window.location.pathname.includes('openshift/cost-management/') && (active || id === activeApp)}
       onClick={onClick}
+      navigate={navigate}
+      isBeta={isBeta}
+      isHidden={isHidden}
     />
   );
 };
@@ -44,6 +52,9 @@ ExpandableNav.propTypes = {
   activeLocation: PropTypes.string.isRequired,
   activeApp: PropTypes.string,
   active: PropTypes.bool,
+  navigate: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  isBeta: PropTypes.bool,
+  isHidden: PropTypes.bool,
 };
 
 export default ExpandableNav;

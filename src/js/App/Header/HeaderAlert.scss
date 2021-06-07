@@ -1,0 +1,12 @@
+.ins-c-alert {
+    margin-top: var(--pf-global--spacer--xs);
+
+    .pf-c-alert__title {
+        padding: unset;
+    }
+
+    .pf-c-alert__icon {
+        padding: unset;
+        background-color: unset;
+    }
+}

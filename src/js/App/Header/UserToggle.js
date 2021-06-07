@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { KebabToggle } from '@patternfly/react-core/dist/js/components/Dropdown/KebabToggle';
-import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
-import { DropdownSeparator } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownSeparator';
-import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
+import { DropdownToggle, KebabToggle, DropdownItem, DropdownSeparator, DropdownPosition, Dropdown } from '@patternfly/react-core';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,7 +9,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
         <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
-        <dd className="ins-c-dropdown-item__stack--value">{username}</dd>
+        <dd className="ins-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
         {isOrgAdmin && <dd className="ins-c-dropdown-item__stack--subValue">Org. Administrator</dd>}
       </dl>
     </DropdownItem>,
@@ -90,9 +85,15 @@ export class UserToggle extends Component {
     const { isOpen } = this.state;
     const { account, isSmall, extraItems } = this.props;
     const toggle = isSmall ? (
-      <KebabToggle onToggle={this.onToggle} />
+      <KebabToggle onToggle={this.onToggle} className="data-hj-suppress" />
     ) : (
-      <DropdownToggle id="UserMenu" icon={<UserIcon />} className="ins-c-toolbar__menu-user" widget-type="UserMenu" onToggle={this.onToggle}>
+      <DropdownToggle
+        id="UserMenu"
+        icon={<UserIcon />}
+        className="ins-c-toolbar__menu-user data-hj-suppress"
+        widget-type="UserMenu"
+        onToggle={this.onToggle}
+      >
         {account.name}
       </DropdownToggle>
     );
@@ -100,7 +101,7 @@ export class UserToggle extends Component {
       <Dropdown
         position={DropdownPosition.right}
         aria-label="Overflow actions"
-        widget-type="InsightsOverflowActions"
+        ouiaId="chrome-user-menu"
         onSelect={this.onSelect}
         toggle={toggle}
         isPlain

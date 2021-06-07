@@ -1,9 +1,8 @@
 import React from 'react';
-import toJson from 'enzyme-to-json';
-import { shallow, mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import Header from '../Header';
+import { Header } from '../Header';
 import UnauthedHeader from '../UnAuthtedHeader';
 
 describe('Header', () => {
@@ -16,23 +15,42 @@ describe('Header', () => {
       chrome: {
         activeTechnology: 'someTechnology',
         activeLocation: 'someLocation',
+        user: {},
       },
     };
   });
   it('should render correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
-        <Header currentApp="Red Hat Insights" />
+        <Header />
       </Provider>
     );
-    expect(toJson(wrapper, { mode: 'deep' })).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });
 
 describe('unauthed', () => {
+  let initialState;
+  let mockStore;
+
+  beforeEach(() => {
+    mockStore = configureStore();
+    initialState = {
+      chrome: {
+        activeTechnology: 'someTechnology',
+        activeLocation: 'someLocation',
+      },
+    };
+  });
+
   it('should render correctly', () => {
-    const wrapper = shallow(<UnauthedHeader />);
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const store = mockStore(initialState);
+    const { container } = render(
+      <Provider store={store}>
+        <UnauthedHeader />
+      </Provider>
+    );
+    expect(container.querySelector('div')).toMatchSnapshot();
   });
 });

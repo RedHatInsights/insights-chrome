@@ -1,10 +1,9 @@
 import React from 'react';
 import Footer from './Footer';
 
-import { shallow } from 'enzyme';
-import toJson from 'enzyme-to-json';
+import { render } from '@testing-library/react';
 
 it('renders without crashing!', () => {
-  const wrapper = shallow(<Footer />);
-  expect(toJson(wrapper)).toMatchSnapshot();
+  const { container } = render(<Footer />);
+  expect(container.querySelector('div')).toMatchSnapshot();
 });

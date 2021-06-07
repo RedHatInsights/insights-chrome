@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
-import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
-import { DropdownPosition } from '@patternfly/react-core/dist/js/components/Dropdown/dropdownConstants';
+import { DropdownToggle, DropdownItem, DropdownPosition, Dropdown } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 class ToolbarToggle extends Component {
@@ -37,34 +34,39 @@ class ToolbarToggle extends Component {
 
   render() {
     // Render the questionmark icon items
-    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick }) => (
-      <DropdownItem
-        key={title}
-        component={url ? 'a' : 'button'}
-        // Because the urls are using 'a', don't use onClick for accessibility
-        // If it is a button, use the onClick prop
-        {...(url
-          ? {
-              href: url,
-              target: '_blank',
-              rel: 'noopener noreferrer',
-            }
-          : { onClick: (ev) => this.onClick(ev, url, onClick) })}
-      >
-        {title}
-      </DropdownItem>
-    ));
+    const dropdownItems = this.props.dropdownItems.map(({ url, title, onClick, isHidden, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
+      !isHidden ? (
+        <DropdownItem
+          key={title}
+          ouiaId={title}
+          component={url ? 'a' : 'button'}
+          // Because the urls are using 'a', don't use onClick for accessibility
+          // If it is a button, use the onClick prop
+          {...(url
+            ? {
+                href: url,
+                target,
+                rel,
+                ...rest,
+              }
+            : { onClick: (ev) => this.onClick(ev, url, onClick) })}
+        >
+          {title}
+        </DropdownItem>
+      ) : (
+        <React.Fragment key="fragment" />
+      )
+    );
 
     const toggle = (
       <DropdownToggle
-        widget-type={this.props.widgetType}
         className={this.props.className}
         id={this.props.id}
-        iconComponent={null}
+        ouiaId={this.props.id}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
       >
-        <this.props.icon />
+        {this.props.icon && <this.props.icon />}
       </DropdownToggle>
     );
 
@@ -75,6 +77,7 @@ class ToolbarToggle extends Component {
         isOpen={this.state.isOpen}
         dropdownItems={dropdownItems}
         onSelect={this.onSelect}
+        ouiaId={this.props.ouiaId}
         isPlain
       />
     );
@@ -88,6 +91,8 @@ ToolbarToggle.propTypes = {
   className: PropTypes.string,
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hasToggleIndicator: PropTypes.bool,
+  ouiaId: PropTypes.string,
+  isHidden: PropTypes.bool,
 };
 
 export default ToolbarToggle;

@@ -1,107 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Tools should render correctly 1`] = `
-<PageHeaderTools
+<div
+  class="pf-c-page__header-tools"
   widget-type="InsightsToolbar"
 >
-  <PageHeaderToolsGroup
-    visibility={
-      Object {
-        "default": "hidden",
-        "sm": "visible",
-      }
-    }
+  <div
+    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
   >
-    <PageHeaderToolsItem>
-      <AboutButton />
-    </PageHeaderToolsItem>
-  </PageHeaderToolsGroup>
-  <PageHeaderToolsGroup
-    visibility={
-      Object {
-        "default": "hidden",
-        "sm": "visible",
-      }
-    }
+    <div
+      class="pf-c-page__header-tools-item"
+    >
+      &lt;ToolbarToggle /&gt;
+    </div>
+    <div
+      class="pf-c-page__header-tools-item"
+    >
+      &lt;ToolbarToggle /&gt;
+    </div>
+  </div>
+  <div
+    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
   >
-    <PageHeaderToolsItem>
-      <Connect(UserToggle)
-        className="ins-c-dropdown__user"
-      />
-    </PageHeaderToolsItem>
-  </PageHeaderToolsGroup>
-  <PageHeaderToolsGroup
-    visibility={
-      Object {
-        "sm": "hidden",
-      }
-    }
+    <div
+      class="pf-c-page__header-tools-item"
+    >
+      &lt;UserToggle /&gt;
+    </div>
+  </div>
+  <div
+    class="pf-c-page__header-tools-group pf-m-hidden-on-lg"
   >
-    <PageHeaderToolsItem>
-      <Connect(UserToggle)
-        extraItems={
-          Array [
-            <React.Fragment>
-              <Divider
-                component="li"
-              />
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="a"
-                href="http://localhost/settings/my-user-access"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Settings
-              </DropdownItem>
-            </React.Fragment>,
-            <React.Fragment>
-              <Divider
-                component="li"
-              />
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="a"
-                href="https://access.redhat.com/support"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Support options
-              </DropdownItem>
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="button"
-                onClick={[Function]}
-              >
-                Open support case
-              </DropdownItem>
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="a"
-                href="http://localhost/docs/api"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                API documentation
-              </DropdownItem>
-            </React.Fragment>,
-            <React.Fragment>
-              <DropdownItem
-                component="button"
-                onClick={[Function]}
-              >
-                About
-              </DropdownItem>
-            </React.Fragment>,
-          ]
-        }
-        isSmall={true}
-      />
-    </PageHeaderToolsItem>
-  </PageHeaderToolsGroup>
-</PageHeaderTools>
+    <div
+      class="pf-c-page__header-tools-item"
+    >
+      &lt;UserToggle /&gt;
+    </div>
+  </div>
+</div>
 `;

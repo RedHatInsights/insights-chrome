@@ -1,6 +1,7 @@
-import instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import cookie from 'js-cookie';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -35,51 +36,70 @@ const checkPermissions = async (permissions = [], require = 'every') => {
 
 export const visibilityFunctions = {
   isOrgAdmin: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_org_admin;
+      return data.identity.user.is_org_admin;
     } catch {
       return false;
     }
   },
   isActive: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_active;
+      return data.identity.user.is_active;
     } catch {
       return false;
     }
   },
   isInternal: async () => {
-    const { identity } = await insights.chrome.auth.getUser();
+    const data = await insights.chrome.auth.getUser();
     try {
-      return identity.user.is_internal;
+      return data.identity.user.is_internal;
     } catch {
       return false;
     }
   },
   isEntitled: async (appName) => {
-    const { entitlements } = await insights.chrome.auth.getUser();
-    return entitlements && appName
+    const data = await insights.chrome.auth.getUser();
+    const { entitlements } = data || {};
+    return data.entitlements && appName
       ? Boolean(entitlements[appName] && entitlements[appName].is_entitled)
       : // eslint-disable-next-line camelcase
         Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
   },
   isProd: () => insights.chrome.isProd,
   isBeta: () => insights.chrome.isBeta(),
+  isHidden: () => true,
+  withEmail: async (toHave) => {
+    const data = await insights.chrome.auth.getUser();
+    const {
+      identity: { user },
+    } = data || {};
+    return user?.email?.includes(toHave);
+  },
   loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
-  apiRequest: async ({ url, method, accessor, matcher, ...options }) => {
-    return instance({
-      url,
-      method: method || 'GET',
-      ...options,
-    })
-      .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
-      .catch((err) => {
-        console.log(err);
-        return false;
-      });
+  hasLocalStorage: (key, value) => localStorage.get(key) === value,
+  hasCookie: (cookieKey, cookieValue) => cookie.get(cookieKey) === cookieValue,
+  apiRequest: async ({ url, method = 'GET', accessor, matcher, ...options }) => {
+    const data = await insights.chrome.auth.getUser();
+
+    // this will log a bunch of 403s if the account number isn't present
+    if (data.identity.account_number) {
+      return instance({
+        url,
+        method,
+        ...options,
+      })
+        .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
+        .catch(() => {
+          console.log('Unable to retrieve visibility result', { visibilityMethod: 'apiRequest', method, url });
+          return false;
+        });
+    } else {
+      console.log('Unable to call API, no account number');
+      return false;
+    }
   },
 };
 

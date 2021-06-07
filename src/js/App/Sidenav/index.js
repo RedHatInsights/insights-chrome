@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { render } from 'react-dom';
 import NavLoader from './Loader';
 import { spinUpStore } from '../../redux-config';
-import { isFilterEnabled } from '../../utils/isAppNavEnabled';
 import LandingNav from './LandingNav';
 
 const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './SideNav'));
@@ -19,7 +18,7 @@ export const navLoader = () => {
       </Provider>,
       document.querySelector('aside#ins-c-sidebar')
     );
-  } else if (isFilterEnabled && document.querySelector('aside#ins-c-landing-nav')) {
+  } else if (document.querySelector('aside#ins-c-landing-nav')) {
     render(
       <Provider store={store}>
         <Suspense fallback={<Fragment />}>

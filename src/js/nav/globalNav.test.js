@@ -1,16 +1,46 @@
 const masterConfig = require('../../../testdata/masterConfig.json');
+const masterConfigWithSection = require('../../../testdata/masterConfigWithSection.json');
+const masterConfigWithNavigate = require('../../../testdata/masterConfigWithNavigate.json');
 const masterConfigPermissions = require('../../../testdata/masterConfigPermissions.json');
 const navFunctions = require('./globalNav');
 
-import * as instance from '@redhat-cloud-services/frontend-components-utilities/files/interceptors';
+import * as instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 // eslint-disable-next-line max-len
 const globalNav = {
-  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] },
+  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }], modules: [] },
+};
+
+const globalNavWithSection = {
+  appA: {
+    title: 'title1',
+    ignoreCase: undefined,
+    id: 'appA',
+    routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1', section: 'section1' }],
+    modules: [],
+  },
+};
+
+const globalNavWithNavigate = {
+  appA: {
+    title: 'title1',
+    ignoreCase: undefined,
+    id: 'appA',
+    routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1', navigate: 'example.url.com' }],
+    modules: [],
+  },
 };
 
 describe('globalNav', () => {
   test('should work as expected', async () => {
     expect(await navFunctions.getNavFromConfig(masterConfig, 'appA')).toEqual(globalNav);
+  });
+
+  test('should work as expected with section', async () => {
+    expect(await navFunctions.getNavFromConfig(masterConfigWithSection, 'appA')).toEqual(globalNavWithSection);
+  });
+
+  test('should work as expected with navigate', async () => {
+    expect(await navFunctions.getNavFromConfig(masterConfigWithNavigate, 'appA')).toEqual(globalNavWithNavigate);
   });
 });
 

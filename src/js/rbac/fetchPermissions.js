@@ -3,7 +3,7 @@ import logger from '../jwt/logger';
 
 const log = logger('fetchPermissions.js');
 
-const perPage = 100;
+const perPage = 1000;
 
 const fetchPermissions = (userToken, app = '') => {
   const rbacApi = createRbacAPI(userToken);
@@ -28,7 +28,8 @@ const fetchPermissions = (userToken, app = '') => {
 export const createFetchPermissionsWatcher = () => {
   let currentCall = {};
   return async (userToken, app = '') => {
-    if (insights.chrome.getBundle() === 'openshift') {
+    const user = await insights.chrome.auth.getUser();
+    if (user?.identity && [undefined, -1].includes(user.identity.account_number)) {
       return Promise.resolve([]);
     }
     if (typeof currentCall?.[app] === 'undefined') {

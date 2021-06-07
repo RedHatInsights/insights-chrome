@@ -5,6 +5,8 @@ import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { SID_KEY } from '../../redux/globalFilterReducers';
 
+export const cookieSearch = ['cs_ros_beta_enable'];
+
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -52,7 +54,7 @@ export const createTagsFilter = (tags = []) =>
     };
   }, {});
 
-export const storeFilter = (tags, token, isEnabled) => {
+export const storeFilter = (tags, token, isEnabled, history) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
   if (isEnabled) {
     const searchParams = new URLSearchParams();
@@ -66,7 +68,10 @@ export const storeFilter = (tags, token, isEnabled) => {
     searchParams.append('SIDs', SIDs);
     searchParams.append('tags', mappedTags);
 
-    location.hash = searchParams.toString();
+    history.push({
+      ...history.location,
+      hash: searchParams.toString(),
+    });
   }
 
   localStorage.setItem(
@@ -147,18 +152,23 @@ export const generateFilter = async () => {
   ];
 };
 
+export const escaper = (value) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
+
 export const flatTags = memoize(
   (filter, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries(item || {})
         .filter(([, { isSelected }]) => isSelected)
-        .map(
-          ([tagKey, { item, value: tagValue }]) =>
-            `${namespace ? `${encode ? encodeURIComponent(namespace) : namespace}/` : ''}${
-              encode ? encodeURIComponent(item?.tagKey || tagKey) : item?.tagKey || tagKey
-            }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(item?.tagValue || tagValue) : item?.tagValue || tagValue}` : ''}`
-        )
+        .map(([tagKey, { item, value: tagValue }]) => {
+          return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
+            encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
+          }${
+            item?.tagValue || tagValue
+              ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}`
+              : ''
+          }`;
+        })
     );
     return format
       ? [
