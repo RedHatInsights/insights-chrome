@@ -306,11 +306,11 @@ function updateToken() {
         log('Token is still valid, not updating');
       }
     })
-    .catch(() => {
-      /**
-       * The "priv.keycloak.updateToken" promise does not return any error message
-       */
-      log('Token update failed');
+    .catch((err) => {
+      log(err);
+      Sentry.captureException(err);
+      log('Token updated failed, trying to reauth');
+      login();
     });
 }
 
@@ -345,8 +345,7 @@ export const getEncodedToken = () => {
   log('Trying to get the encoded token');
 
   if (!isExistingValid(priv.keycloak.token)) {
-    Sentry.captureException(new Error('Fetching token failed - expired token'));
-    log('Failed to get encoded token');
+    log('Failed to get encoded token, trying to update');
     updateToken();
   }
 
