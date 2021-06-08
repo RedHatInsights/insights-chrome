@@ -141,3 +141,10 @@ export function onRegisterModule(state, { payload }) {
     ],
   };
 }
+
+export function loadNavigationReducer(state, { payload }) {
+  return {
+    ...state,
+    navigation: payload,
+  };
+}

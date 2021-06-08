@@ -7,6 +7,7 @@ import {
   loginReducer,
   clearActive,
   navUpdateReducer,
+  loadNavigationReducer,
   onPageAction,
   onPageObjectId,
   navUpdateSection,
@@ -45,6 +46,7 @@ import {
   CHROME_NAV_SECTION_UPDATE,
   REGISTER_MODULE,
   TOGGLECONTEXTSWITCHER,
+  LOAD_NAVIGATION,
 } from './action-types';
 
 const reducers = {
@@ -59,6 +61,7 @@ const reducers = {
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,
   [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
+  [LOAD_NAVIGATION]: loadNavigationReducer,
 };
 
 const globalFilter = {

@@ -126,6 +126,11 @@ export const onToggleContextSwitcher = () => ({
   type: actionTypes.TOGGLECONTEXTSWITCHER,
 });
 
+export const loadNavigation = (schema) => ({
+  type: actionTypes.LOAD_NAVIGATION,
+  payload: schema,
+});
+
 /**
  * @deprecated
  */

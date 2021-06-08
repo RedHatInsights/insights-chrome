@@ -22,3 +22,5 @@ export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 export const REGISTER_MODULE = '@@chrome/register-async-module';
 
 export const TOGGLECONTEXTSWITCHER = '@@chrome/context-switcher-toggle';
+
+export const LOAD_NAVIGATION = '@@chrome/load-navigation';
