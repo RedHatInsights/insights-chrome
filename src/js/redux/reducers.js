@@ -148,3 +148,13 @@ export function loadNavigationReducer(state, { payload }) {
     navigation: payload,
   };
 }
+
+export function loadNavigationLandingPageReducer(state, { payload }) {
+  return {
+    ...state,
+    navigation: {
+      ...state.navigation,
+      landingPage: payload,
+    },
+  };
+}

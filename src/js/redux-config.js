@@ -11,7 +11,14 @@ if (process.env.NODE_ENV === 'development' || (window && window.localStorage.get
 }
 
 const middlewareListener = new MiddlewareListener();
-const reduxRegistry = new ReducerRegistry({ chrome: {} }, [promise, middlewareListener.getMiddleware(), ...basicMiddlewares]);
+const reduxRegistry = new ReducerRegistry(
+  {
+    chrome: {
+      navigation: {},
+    },
+  },
+  [promise, middlewareListener.getMiddleware(), ...basicMiddlewares]
+);
 
 reduxRegistry.register(chromeReducer());
 const store = reduxRegistry.getStore();

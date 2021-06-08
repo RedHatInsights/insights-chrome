@@ -13,6 +13,7 @@ import {
   navUpdateSection,
   onRegisterModule,
   contextSwitcherBannerReducer,
+  loadNavigationLandingPageReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -47,6 +48,7 @@ import {
   REGISTER_MODULE,
   TOGGLECONTEXTSWITCHER,
   LOAD_NAVIGATION,
+  LOAD_NAVIGATION_LANDING_PAGE,
 } from './action-types';
 
 const reducers = {
@@ -62,6 +64,7 @@ const reducers = {
   [REGISTER_MODULE]: onRegisterModule,
   [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
   [LOAD_NAVIGATION]: loadNavigationReducer,
+  [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
 };
 
 const globalFilter = {
@@ -81,7 +84,12 @@ export default function () {
   // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
   return {
-    chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
+    chrome: (
+      state = {
+        navigation: {},
+      },
+      action
+    ) => applyReducerHash(reducers)(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }

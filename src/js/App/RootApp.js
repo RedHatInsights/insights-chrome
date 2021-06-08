@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useRef } from 'react';
-import axios from 'axios';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect, shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -13,7 +12,7 @@ import ErrorBoundary from './ErrorBoundary';
 import { isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
-import { loadNavigation, onToggle } from '../redux/actions';
+import { onToggle } from '../redux/actions';
 import LoadingFallback from '../utils/loading-fallback';
 import checkSubAppExceptionModule from '../utils/modulesExceptions';
 
@@ -89,7 +88,6 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
-  const dispatch = useDispatch();
   const { pathname } = useLocation();
   /**
    * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
@@ -148,15 +146,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       }
     }
   }, [remoteModule]);
-
-  /**
-   * Initialize new navigation
-   */
-  useEffect(() => {
-    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/navigation.json`).then((response) => {
-      dispatch(loadNavigation(response.data));
-    });
-  }, []);
 
   return (
     <div

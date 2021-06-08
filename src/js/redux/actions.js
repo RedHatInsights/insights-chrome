@@ -131,6 +131,11 @@ export const loadNavigation = (schema) => ({
   payload: schema,
 });
 
+export const loadNavigationLandingPage = (schema) => ({
+  type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
+  payload: schema,
+});
+
 /**
  * @deprecated
  */
