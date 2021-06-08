@@ -136,6 +136,14 @@ export const loadNavigationLandingPage = (schema) => ({
   payload: schema,
 });
 
+export const loadLeftNavSegment = (schema, segment) => ({
+  type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
+  payload: {
+    segment,
+    schema,
+  },
+});
+
 /**
  * @deprecated
  */

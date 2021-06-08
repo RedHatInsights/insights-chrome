@@ -158,3 +158,13 @@ export function loadNavigationLandingPageReducer(state, { payload }) {
     },
   };
 }
+
+export function loadNavigationSegmentReducer(state, { payload: { segment, schema } }) {
+  return {
+    ...state,
+    navigation: {
+      ...state.navigation,
+      [segment]: schema,
+    },
+  };
+}

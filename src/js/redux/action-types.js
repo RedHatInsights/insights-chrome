@@ -25,3 +25,4 @@ export const TOGGLECONTEXTSWITCHER = '@@chrome/context-switcher-toggle';
 
 export const LOAD_NAVIGATION = '@@chrome/load-navigation';
 export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
+export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
