@@ -7,6 +7,7 @@ import * as Sentry from '@sentry/browser';
 import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
+import { allowedUnauthedPaths } from '../constants';
 
 // Insights Specific
 import insightsUrl from './insights/url';
@@ -288,12 +289,12 @@ function refreshTokens() {
 }
 
 const shouldPageAuth = (path) => {
-  if(path === '/') {
-    return false
+  if (path === '/') {
+    return false;
   }
 
-  return !allowedUnauthedPaths.includes(path.replace(/\/$/, ""));
-}
+  return !allowedUnauthedPaths.includes(path.replace(/\/$/, ''));
+};
 
 // Actually update the token
 function updateToken() {
@@ -321,8 +322,8 @@ function updateToken() {
       /**
        * We should not call login on any unauthed page
        */
-      if(shouldPageAuth(window.location.pathname)) {
-        login()
+      if (shouldPageAuth(window.location.pathname)) {
+        login();
       }
     });
 }
