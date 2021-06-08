@@ -292,12 +292,7 @@ const shouldPageAuth = (path) => {
     return false
   }
 
-  const adjustedPath = path.replace(/\/$/, "");
-  if(allowedUnauthedPaths.includes(adjustedPath)) {
-    return false
-  } else {
-    return true
-  }
+  return !allowedUnauthedPaths.includes(path.replace(/\/$/, ""));
 }
 
 // Actually update the token
