@@ -29,11 +29,18 @@ function getUrl(type) {
   }
 
   const sections = window.location.pathname.split('/');
-  if (sections[1] === 'beta') {
-    return type === 'bundle' ? sections[2] : sections[3];
+  if (type) {
+    if (sections[1] === 'beta') {
+      return type === 'bundle' ? sections[2] : sections[3];
+    }
+
+    return type === 'bundle' ? sections[1] : sections[2];
   }
 
-  return type === 'bundle' ? sections[1] : sections[2];
+  sections.shift();
+  const isBeta = sections[1] === 'beta';
+  isBeta && sections.shift();
+  return [isBeta, ...sections];
 }
 
 function getAdobeVisitorId() {
@@ -56,8 +63,7 @@ function getPendoConf(data) {
       entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
 
-  const currentBundle = getUrl('bundle');
-  const currentApp = getUrl('app');
+  const [isBeta, currentBundle, currentApp, ...rest] = getUrl();
 
   return {
     visitor: {
@@ -75,7 +81,16 @@ function getPendoConf(data) {
       isOrgAdmin: data.identity.user.is_org_admin,
       currentBundle: currentBundle,
       currentApp: currentApp,
-      ...entitlements,
+      isBeta,
+      urlSegment1: currentBundle,
+      urlSegment2: currentApp,
+      ...rest?.reduce(
+        (acc, curr, id) => ({
+          ...acc,
+          ...(curr && { [`urlSegment${id + 3}`]: curr }),
+        }),
+        {}
+      ),
     },
     account: {
       // TODO add in customer name as name:
