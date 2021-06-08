@@ -287,6 +287,19 @@ function refreshTokens() {
   authChannel.postMessage({ type: 'refresh' });
 }
 
+const shouldPageAuth = (path) => {
+  if(path === '/') {
+    return false
+  }
+
+  const adjustedPath = path.replace(/\/$/, "");
+  if(allowedUnauthedPaths.includes(adjustedPath)) {
+    return false
+  } else {
+    return true
+  }
+}
+
 // Actually update the token
 function updateToken() {
   return priv.keycloak
@@ -311,11 +324,11 @@ function updateToken() {
       Sentry.captureException(err);
       log('Token updated failed, trying to reauth');
       /**
-       * The login call here breaks the UI for un atuthed user.
-       * If you access the landing page, you are always immediately redirected to the SSO login page.
-       * Please remove this comment oce the issue is fixed.
+       * We should not call login on any unauthed page
        */
-      // login();
+      if(shouldPageAuth(window.location.pathname)) {
+        login()
+      }
     });
 }
 
