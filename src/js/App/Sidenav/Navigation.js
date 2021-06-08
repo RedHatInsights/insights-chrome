@@ -11,6 +11,9 @@ import SectionNav from './SectionNav';
 import { useHistory } from 'react-router-dom';
 import { isBeta } from '../../utils';
 import { activeSectionComparator, globalNavComparator } from '../../utils/comparators';
+import useNavigation from '../../utils/useNavigation';
+import NavLoader from './Loader';
+import NavigationNew from './NewNav';
 
 const basepath = document.baseURI;
 
@@ -100,6 +103,7 @@ NavItemLink.propTypes = {
 };
 
 export const Navigation = () => {
+  const { loaded, schema } = useNavigation();
   const { activeApp, activeLocation, activeGroup, appId } = useSelector(
     ({ chrome }) => ({
       activeApp: chrome?.activeApp,
@@ -219,8 +223,13 @@ export const Navigation = () => {
     ];
   }, []);
 
+  if (!loaded) {
+    return <NavLoader />;
+  }
+
   return (
     <React.Fragment>
+      <NavigationNew schema={schema} onClick={onClick} />
       <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
         <NavList>
           {settingsWithSections?.map((item, key) => (
