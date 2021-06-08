@@ -4,16 +4,10 @@ import { isBeta } from '../../utils';
 import './LandingNav.scss';
 import { useSelector } from 'react-redux';
 
-const routes = [
-  { title: 'Application Services', id: 'application-services', route: 'application-services' },
-  { title: 'OpenShift', id: 'openshift', route: 'openshift' },
-  { title: 'Red Hat Enterprise Linux', id: 'insights', route: 'insights/dashboard' },
-  { title: 'Ansible Automation Platform', id: 'ansible', route: 'ansible' },
-];
-
 const LandingNav = () => {
   const [elementReady, setElementReady] = useState(false);
   const showNav = useSelector(({ chrome: { user } }) => !!user);
+  const schema = useSelector(({ chrome: { navigation } }) => navigation?.landingPage);
   useEffect(() => {
     if (showNav) {
       setElementReady(true);
@@ -24,17 +18,18 @@ const LandingNav = () => {
   /**
    * render navigation only if the user is logged in
    */
-  if (!showNav || !elementReady) {
+  if (!showNav || !elementReady || !schema) {
     return null;
   }
+
   return (
     <Nav className="ins-c-landing-nav">
       <NavList>
         <div className="ins-c-app-title">
           <b>Hybrid Cloud Console</b>
         </div>
-        {routes.map(({ title, id, route }) => (
-          <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
+        {schema.map(({ title, id, pathname }) => (
+          <NavItem className="ins-m-navigation-align" key={id} to={`${isBetaEnv ? '/beta' : ''}${pathname}`}>
             {title}
           </NavItem>
         ))}
