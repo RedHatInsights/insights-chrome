@@ -41,7 +41,17 @@ const commonConfig = ({ publicPath, noHash }) => ({
       },
       {
         test: /\.s?[ac]ss$/,
-        use: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          'css-loader',
+          'resolve-url-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(jpg|png|svg)$/,
@@ -60,7 +70,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
   plugins,
   devServer: {
     writeToDisk: true,
-  }
+  },
 });
 
 module.exports = function (env) {
