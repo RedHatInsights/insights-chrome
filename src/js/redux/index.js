@@ -48,7 +48,6 @@ import {
   CHROME_NAV_SECTION_UPDATE,
   REGISTER_MODULE,
   TOGGLECONTEXTSWITCHER,
-  LOAD_NAVIGATION,
   LOAD_NAVIGATION_LANDING_PAGE,
   LOAD_LEFT_NAVIGATION_SEGMENT,
 } from './action-types';
@@ -65,7 +64,6 @@ const reducers = {
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,
   [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
-  [LOAD_NAVIGATION]: loadNavigationReducer,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
 };

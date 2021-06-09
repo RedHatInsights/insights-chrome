@@ -126,11 +126,6 @@ export const onToggleContextSwitcher = () => ({
   type: actionTypes.TOGGLECONTEXTSWITCHER,
 });
 
-export const loadNavigation = (schema) => ({
-  type: actionTypes.LOAD_NAVIGATION,
-  payload: schema,
-});
-
 export const loadNavigationLandingPage = (schema) => ({
   type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
   payload: schema,
