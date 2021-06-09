@@ -11,6 +11,7 @@ const fileMapper = {
   settings: 'settings-navigation.json',
   'user-preferences': 'user-preferences-navigation.json',
   openshift: 'openshift-navigation.json',
+  'application-services': 'application-services-navigation.json',
 };
 
 const useNavigation = () => {
