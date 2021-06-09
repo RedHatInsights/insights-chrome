@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { spinUpStore } from '../redux-config';
 import RootApp from '../App/RootApp';
 import { isBeta } from '../utils';
 
 import loadRemediations from '../remediations';
 import { headerLoader } from '../App/Header';
+import { loadModuesSchema } from '../redux/actions';
 
 /**
  * This has to be posponed in order to let shared react modules to initialize
@@ -20,21 +22,19 @@ window.insights.experimental.loadRemediations = loadRemediations;
 
 const App = () => {
   const modules = useSelector(({ chrome }) => chrome?.modules);
+  const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json`).then((response) => {
+      dispatch(loadModuesSchema(response.data));
+    });
+  }, []);
 
-  const config = modules?.reduce(
-    (acc, curr) => ({
-      ...acc,
-      ...(curr?.[0] || curr),
-    }),
-    {
-      chrome: {
-        name: 'chrome',
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
-      },
-    }
-  );
+  if (!modules || !scalprumConfig) {
+    return null;
+  }
 
-  return <RootApp config={config} />;
+  return <RootApp config={scalprumConfig} />;
 };
 
 function renderChrome() {

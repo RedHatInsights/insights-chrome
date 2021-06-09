@@ -15,6 +15,7 @@ import {
   contextSwitcherBannerReducer,
   loadNavigationLandingPageReducer,
   loadNavigationSegmentReducer,
+  loadModulesSchemaReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -50,6 +51,7 @@ import {
   TOGGLECONTEXTSWITCHER,
   LOAD_NAVIGATION_LANDING_PAGE,
   LOAD_LEFT_NAVIGATION_SEGMENT,
+  LOAD_MODULES_SCHEMA,
 } from './action-types';
 
 const reducers = {
@@ -66,6 +68,7 @@ const reducers = {
   [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
+  [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
 };
 
 const globalFilter = {

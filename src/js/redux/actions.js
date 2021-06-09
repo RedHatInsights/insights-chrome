@@ -44,7 +44,7 @@ export function clearActive() {
   };
 }
 
-export function chromeNavUpdate(newNav) {
+export function chromeNavUpdate({ modules, ...newNav }) {
   return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
 }
 
@@ -135,6 +135,13 @@ export const loadLeftNavSegment = (schema, segment) => ({
   type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
   payload: {
     segment,
+    schema,
+  },
+});
+
+export const loadModuesSchema = (schema) => ({
+  type: actionTypes.LOAD_MODULES_SCHEMA,
+  payload: {
     schema,
   },
 });

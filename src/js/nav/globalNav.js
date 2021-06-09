@@ -8,13 +8,12 @@ export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
     .filter((appId) => (masterConfig[appId].top_level && appId === active) || !active)
     .reduce(async (acc, appId) => {
-      const [routes, modules] = (await getAppData(appId, 'routes', masterConfig)) || [];
+      const [routes] = (await getAppData(appId, 'routes', masterConfig)) || [];
       return {
         ...(await acc),
         ...(routes && {
           [appId]: {
             ...routes,
-            modules: [...((await acc)?.modules || []), ...modules],
           },
         }),
       };
@@ -68,7 +67,6 @@ async function getRoutesForApp(app, masterConfig) {
                 ...(subItem.section && { section: subItem.section }),
                 ...(subItem.navigate && { navigate: subItem.navigate }),
               },
-              modules,
             ];
           }
         })

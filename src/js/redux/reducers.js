@@ -123,23 +123,20 @@ export function onPageObjectId(state, { payload }) {
 }
 
 export function onRegisterModule(state, { payload }) {
-  const isModuleLoaded = (state.modules || []).find((module) => Object.keys(module).find((key) => key === payload?.module));
-  return {
-    ...state,
-    modules: [
-      ...(state.modules || []),
-      ...(!isModuleLoaded
-        ? [
-            {
-              [payload.module]: {
-                name: payload.module,
-                manifestLocation: payload.manifest || `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/fed-mods.json`,
-              },
-            },
-          ]
-        : []),
-    ],
-  };
+  const isModuleLoaded = state.modules[payload.module];
+  if (!isModuleLoaded) {
+    return {
+      ...state,
+      modules: {
+        ...state.modules,
+        [payload.module]: {
+          manifestLocation: payload.manifestLocation || payload.manifest,
+        },
+      },
+    };
+  }
+
+  return state;
 }
 
 export function loadNavigationReducer(state, { payload }) {
@@ -166,5 +163,29 @@ export function loadNavigationSegmentReducer(state, { payload: { segment, schema
       ...state.navigation,
       [segment]: schema,
     },
+  };
+}
+
+export function loadModulesSchemaReducer(state, { payload: { schema } }) {
+  const scalprumConfig = Object.entries(schema).reduce(
+    (acc, [name, config]) => ({
+      ...acc,
+      [name]: {
+        name,
+        module: `${name}#./RootApp`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}`,
+      },
+    }),
+    {
+      chrome: {
+        name: 'chrome',
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
+      },
+    }
+  );
+  return {
+    ...state,
+    modules: schema,
+    scalprumConfig,
   };
 }

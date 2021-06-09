@@ -15,6 +15,7 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import LoadingFallback from '../utils/loading-fallback';
 import checkSubAppExceptionModule from '../utils/modulesExceptions';
+import Routes from './Routes';
 
 const isModule = (key, chrome) =>
   key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
@@ -30,6 +31,10 @@ const ShieldedRoot = memo(
         navToggleElement.onclick = () => dispatch(onToggle());
       }
     }, []);
+
+    if (!initialized) {
+      return null;
+    }
     return (
       <Page
         isManagedSidebar={!hideNav}
@@ -46,18 +51,7 @@ const ShieldedRoot = memo(
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
-          {remoteModule && (
-            <main role="main" className={appId}>
-              {typeof remoteModule !== 'undefined' && initialized ? (
-                <ErrorBoundary>
-                  {/* Slcaprum component does not react on config changes. Hack it with key to force new instance until that is enabled. */}
-                  <ScalprumComponent fallback={LoadingFallback} LoadingFallback={LoadingFallback} key={remoteModule.appName} {...remoteModule} />
-                </ErrorBoundary>
-              ) : (
-                LoadingFallback
-              )}
-            </main>
-          )}
+          <Routes />
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
       </Page>
@@ -95,57 +89,10 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
    * This will be replaced once we can use react router for all pages. Landing page will have its own route.
    */
   const isLanding = pathname === '/';
-  const remoteModule = useSelector(({ chrome }) => {
-    const activeModule =
-      !isLanding &&
-      chrome?.modules?.reduce((app, curr) => {
-        const [currKey] = Object.keys(curr);
-        /**
-         * hot fix for modules defined in sub apps
-         * Chrome can't handle it right now. We will come up with a propper solution this just needs to go in quickly
-         * Use it as a first condition so it wont override already working module identifications
-         */
-        if (checkSubAppExceptionModule(currKey, chrome)) {
-          app = curr[currKey];
-        }
 
-        if (isModule(currKey, chrome) || isModule(curr?.[currKey]?.module?.group, chrome)) {
-          app = curr[currKey];
-        }
-        return app;
-      }, undefined);
-    if (activeModule) {
-      const appName = activeModule?.module?.appName || chrome?.activeSection?.id || chrome?.activeLocation;
-      const [scope, module] = activeModule?.module?.split?.('#') || [];
-      return {
-        module: module || activeModule?.module?.module,
-        scope: scope || activeModule?.module?.scope,
-        appName,
-      };
-    }
-  }, shallowEqual);
   const isGlobalFilterEnabled =
     !isLanding && ((!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
-  useEffect(() => {
-    const contentElement = document.getElementById('root');
-    if (!remoteModule) {
-      if (contentElement) {
-        insightsContentRef.current.appendChild(contentElement);
-        contentElement.hidden = false;
-        contentElement.style.display = 'initial';
-      }
-    } else {
-      try {
-        contentElement.hidden = true;
-        insightsContentRef.current.removeChild(contentElement);
-      } catch (error) {
-        /**
-         * legacy content element is not a child of chrome content
-         */
-      }
-    }
-  }, [remoteModule]);
 
   return (
     <div
@@ -164,8 +111,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
         insightsContentRef={insightsContentRef}
         useLandingNav={isLanding}
         initialized={scalprum.initialized}
-        remoteModule={remoteModule}
-        appId={appId}
       />
     </div>
   );
