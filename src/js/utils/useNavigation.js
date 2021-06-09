@@ -8,6 +8,7 @@ import { isBeta } from '../utils';
 const fileMapper = {
   insights: 'rhel-navigation.json',
   ansible: 'ansible-navigation.json',
+  settings: 'settings-navigation.json',
 };
 
 const useNavigation = () => {
