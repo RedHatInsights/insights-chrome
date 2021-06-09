@@ -10,6 +10,7 @@ const fileMapper = {
   ansible: 'ansible-navigation.json',
   settings: 'settings-navigation.json',
   'user-preferences': 'user-preferences-navigation.json',
+  openshift: 'openshift-navigation.json',
 };
 
 const useNavigation = () => {
