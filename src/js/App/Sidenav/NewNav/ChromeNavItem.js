@@ -10,7 +10,7 @@ import { betaBadge } from '../../Header/Tools';
 import NavContext from './navContext';
 
 const basepath = document.baseURI;
-const ChromeNavItem = ({ className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv }) => {
+const ChromeNavItem = ({ className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv, active }) => {
   const { onClick } = useContext(NavContext);
   if (isHidden) {
     return null;
@@ -22,6 +22,7 @@ const ChromeNavItem = ({ className, href, isHidden, ignoreCase, title, isExterna
       itemID={href}
       preventDefault
       onClick={onClick}
+      isActive={active}
       to={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
@@ -38,6 +39,7 @@ ChromeNavItem.propTypes = {
   isBeta: PropTypes.bool,
   href: PropTypes.string.isRequired,
   className: PropTypes.string,
+  active: PropTypes.bool,
 };
 
 export default ChromeNavItem;
