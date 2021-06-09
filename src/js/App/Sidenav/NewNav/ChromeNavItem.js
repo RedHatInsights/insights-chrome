@@ -25,7 +25,7 @@ const ChromeNavItem = ({ className, href, isHidden, ignoreCase, title, isExterna
       to={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
-      {!isBetaEnv && !isBeta() && !isExternal && betaBadge('ins-c-navigation__beta-badge')}
+      {!isBetaEnv && isBeta() && !isExternal && betaBadge('ins-c-navigation__beta-badge')}
     </NavItem>
   );
 };

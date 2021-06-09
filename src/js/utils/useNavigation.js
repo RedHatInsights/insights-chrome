@@ -7,20 +7,15 @@ import { isBeta } from '../utils';
 
 const fileMapper = {
   insights: 'rhel-navigation.json',
+  ansible: 'ansible-navigation.json',
 };
 
 const useNavigation = () => {
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
-  const schema = useSelector(
-    ({
-      chrome: {
-        navigation: { insights },
-      },
-    }) => insights
-  );
   const { pathname } = useLocation();
   const currentNamespace = pathname.split('/')[1];
+  const schema = useSelector(({ chrome: { navigation } }) => navigation[currentNamespace]);
 
   useEffect(() => {
     if (currentNamespace) {
