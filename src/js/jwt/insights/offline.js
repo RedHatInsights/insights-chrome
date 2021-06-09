@@ -14,10 +14,12 @@ const priv = {};
 // so that is somewhat difficult
 export function wipePostbackParamsThatAreNotForUs() {
   if (getWindow().location.href.indexOf(consts.offlineToken) !== -1) {
+    const { hash, search, origin, pathname } = getWindow().location;
+    const noAuthParam = new URLSearchParams(search).get(consts.noAuthParam);
     // this is a UHC offline token postback
     // we need to not let the JWT lib see this
     // and try to use it
-    priv.postbackUrl = getWindow().location.href;
+    priv.postbackUrl = `${origin}${pathname}?${consts.noAuthParam}=${noAuthParam}${hash}`;
 
     // we do this because keycloak.js looks at the hash for its parameters
     // and if found uses the params for its own use
@@ -37,6 +39,10 @@ export function wipePostbackParamsThatAreNotForUs() {
 export function getOfflineToken(realm, clientId) {
   const postbackUrl = getPostbackUrl();
 
+  if (priv.response) {
+    return Promise.resolve(priv.response);
+  }
+
   if (!postbackUrl) {
     // we need this postback URL because it contains parameters needed to
     // call KC for the actual offline token
@@ -52,6 +58,9 @@ export function getOfflineToken(realm, clientId) {
     url: tokenURL,
     data: getPostDataString(getPostDataObject(postbackUrl, clientId, params.code)),
     config: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
+  }).then((response) => {
+    priv.response = response;
+    return response;
   });
 }
 

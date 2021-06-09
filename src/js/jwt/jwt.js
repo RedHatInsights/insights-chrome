@@ -310,7 +310,12 @@ function updateToken() {
       log(err);
       Sentry.captureException(err);
       log('Token updated failed, trying to reauth');
-      login();
+      /**
+       * The login call here breaks the UI for un atuthed user.
+       * If you access the landing page, you are always immediately redirected to the SSO login page.
+       * Please remove this comment oce the issue is fixed.
+       */
+      // login();
     });
 }
 
