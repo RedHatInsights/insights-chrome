@@ -27,12 +27,11 @@ const generateRoutesList = (modules) => {
 
 const Routes = () => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
-  console.log('render', { modules });
+
   if (!modules) {
     return null;
   }
   const list = generateRoutesList(modules);
-  console.log({ list });
   return (
     <Switch>
       {list.map((app) => (

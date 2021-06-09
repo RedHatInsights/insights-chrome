@@ -6,7 +6,7 @@ import LoadingFallback from '../../utils/loading-fallback';
 
 const ChromeRoute = ({ scope, module, ...props }) => {
   return (
-    <Route {...props}>
+    <Route key={props.pathname} {...props}>
       <main role="main" className={scope}>
         <ScalprumComponent appName={scope} fallback={LoadingFallback} LoadingFallback={LoadingFallback} scope={scope} module={module} />
       </main>
@@ -18,6 +18,6 @@ ChromeRoute.propTypes = {
   scope: PropTypes.string.isRequired,
   module: PropTypes.string.isRequired,
   pathname: PropTypes.string.isRequired,
-}
+};
 
 export default ChromeRoute;

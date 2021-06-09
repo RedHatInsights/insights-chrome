@@ -229,7 +229,7 @@ export const Navigation = () => {
 
   return (
     <React.Fragment>
-      <NavigationNew schema={schema} onClick={onClick} />
+      <NavigationNew schema={schema} />
       <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
         <NavList>
           {settingsWithSections?.map((item, key) => (
