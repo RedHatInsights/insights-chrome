@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Switch } from 'react-router';
+import { Route, Switch } from 'react-router';
 import ChromeRoute from './ChromeRoute';
 
 const generateRoutesList = (modules) => {
@@ -10,18 +10,21 @@ const generateRoutesList = (modules) => {
         ...acc,
         ...modules
           .map(({ module, routes }) =>
-            routes.map((pathname) => ({
+            /**Clean up this map function */
+            routes.map((route) => ({
               scope,
               module,
-              pathname,
+              path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
+              dynamic: typeof route === 'string' ? true : route.dynamic,
+              exact: typeof route === 'string' ? false : route.exact,
             }))
           )
           .flat(),
       ],
       []
     )
-    .sort((a, b) => (a.pathname.length < b.pathname.length ? 1 : -1));
+    .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
   return reactModules;
 };
 
@@ -37,6 +40,7 @@ const Routes = () => {
       {list.map((app) => (
         <ChromeRoute key={app.pathname} {...app} />
       ))}
+      <Route>Not found</Route>
     </Switch>
   );
 };
