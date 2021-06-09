@@ -9,6 +9,7 @@ const fileMapper = {
   insights: 'rhel-navigation.json',
   ansible: 'ansible-navigation.json',
   settings: 'settings-navigation.json',
+  'user-preferences': 'user-preferences-navigation.json',
 };
 
 const useNavigation = () => {
