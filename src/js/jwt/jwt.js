@@ -306,11 +306,16 @@ function updateToken() {
         log('Token is still valid, not updating');
       }
     })
-    .catch(() => {
+    .catch((err) => {
+      log(err);
+      Sentry.captureException(err);
+      log('Token updated failed, trying to reauth');
       /**
-       * The "priv.keycloak.updateToken" promise does not return any error message
+       * The login call here breaks the UI for un atuthed user.
+       * If you access the landing page, you are always immediately redirected to the SSO login page.
+       * Please remove this comment oce the issue is fixed.
        */
-      log('Token update failed');
+      // login();
     });
 }
 
@@ -345,8 +350,7 @@ export const getEncodedToken = () => {
   log('Trying to get the encoded token');
 
   if (!isExistingValid(priv.keycloak.token)) {
-    Sentry.captureException(new Error('Fetching token failed - expired token'));
-    log('Failed to get encoded token');
+    log('Failed to get encoded token, trying to update');
     updateToken();
   }
 

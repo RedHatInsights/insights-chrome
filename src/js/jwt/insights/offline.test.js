@@ -3,8 +3,11 @@ const offline = require('./offline');
 
 const defaults = {
   location: {
-    hash: 'fdsjkfjkfsdkfjksdjklsjf',
-    href: 'https://test.com?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f#foo=bar',
+    hash: '#foo=bar',
+    search: '?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f',
+    href: 'https://test.com/some/path?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f#foo=bar',
+    origin: 'https://test.com',
+    pathname: '/some/path',
   },
 };
 
@@ -72,7 +75,7 @@ describe('Offline', () => {
       });
 
       test('sets postbackUrl', () => {
-        expect(getPostbackUrl()).toBe('https://test.com?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f#foo=bar');
+        expect(getPostbackUrl()).toBe('https://test.com/some/path?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f');
       });
 
       test('removes noauth query param', () => {
