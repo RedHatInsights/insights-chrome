@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import ChromeRoute from './ChromeRoute';
@@ -28,7 +29,7 @@ const generateRoutesList = (modules) => {
   return reactModules;
 };
 
-const Routes = () => {
+const Routes = ({ insightsContentRef }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
 
   if (!modules) {
@@ -38,11 +39,15 @@ const Routes = () => {
   return (
     <Switch>
       {list.map((app) => (
-        <ChromeRoute key={app.pathname} {...app} />
+        <ChromeRoute insightsContentRef={insightsContentRef} key={app.pathname} {...app} />
       ))}
       <Route>Not found</Route>
     </Switch>
   );
+};
+
+Routes.propTypes = {
+  insightsContentRef: PropTypes.object,
 };
 
 export default Routes;

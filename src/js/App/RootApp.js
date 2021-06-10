@@ -51,7 +51,7 @@ const ShieldedRoot = memo(
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
-          <Routes />
+          <Routes insightsContentRef={insightsContentRef} />
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
       </Page>

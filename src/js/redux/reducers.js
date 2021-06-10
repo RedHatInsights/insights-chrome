@@ -189,3 +189,10 @@ export function loadModulesSchemaReducer(state, { payload: { schema } }) {
     scalprumConfig,
   };
 }
+
+export function changeActiveModuleReducer(state, { payload }) {
+  return {
+    ...state,
+    activeModule: payload,
+  };
+}

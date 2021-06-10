@@ -146,6 +146,11 @@ export const loadModuesSchema = (schema) => ({
   },
 });
 
+export const changeActiveModule = (module) => ({
+  type: actionTypes.CHANGE_ACTIVE_MODULE,
+  payload: module,
+});
+
 /**
  * @deprecated
  */

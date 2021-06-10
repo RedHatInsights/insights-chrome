@@ -16,6 +16,7 @@ import {
   loadNavigationLandingPageReducer,
   loadNavigationSegmentReducer,
   loadModulesSchemaReducer,
+  changeActiveModuleReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -52,6 +53,7 @@ import {
   LOAD_NAVIGATION_LANDING_PAGE,
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
+  CHANGE_ACTIVE_MODULE,
 } from './action-types';
 
 const reducers = {
@@ -69,6 +71,7 @@ const reducers = {
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
+  [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
 };
 
 const globalFilter = {

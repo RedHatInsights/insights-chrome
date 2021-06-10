@@ -1,14 +1,32 @@
 import { ScalprumComponent } from '@scalprum/react-core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
+import { useDispatch } from 'react-redux';
+import { changeActiveModule } from '../../redux/actions';
 
-const ChromeRoute = ({ scope, module, dynamic, ...props }) => {
+const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(changeActiveModule(scope));
+  }, [scope]);
+
+  useEffect(() => {
+    if (dynamic === false) {
+      const contentElement = document.getElementById('root');
+      if (contentElement && insightsContentRef) {
+        insightsContentRef.current.appendChild(contentElement);
+        contentElement.hidden = false;
+        contentElement.style.display = 'initial';
+      }
+    }
+  }, []);
+
   if (dynamic === false) {
-    console.log('Render static app');
-    return <div>There will be static application</div>;
+    return null;
   }
+
   return (
     <Route key={props.path} {...props}>
       <main role="main" className={scope}>
@@ -24,6 +42,7 @@ ChromeRoute.propTypes = {
   path: PropTypes.string.isRequired,
   exact: PropTypes.bool,
   dynamic: PropTypes.bool,
+  insightsContentRef: PropTypes.object.isRequired,
 };
 
 export default ChromeRoute;

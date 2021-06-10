@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavClick } from '../../../redux/actions';
+
+const useDynamicModule = () => {
+  const [isDynamic, setIsDynamic] = useState(undefined);
+  const { modules, activeModule } = useSelector(({ chrome: { modules, activeModule } }) => ({
+    modules,
+    activeModule,
+  }));
+  useEffect(() => {
+    const currentModule = modules[activeModule];
+    if (currentModule) {
+      setIsDynamic(currentModule.dynamic !== false);
+    }
+  }, [activeModule]);
+
+  return { isDynamic, activeModule };
+};
 
 const LinkWrapper = ({ href, className, children }) => {
   let actionId = href.split('/').slice(2).join('/');
@@ -34,17 +50,31 @@ LinkWrapper.propTypes = {
 
 const basepath = document.baseURI;
 
-const RefreshLink = ({ href, isExternal, ...props }) => <a href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`} {...props} />;
+const RefreshLink = ({
+  href,
+  isExternal,
+  onClick /** on click must be separated because PF adds prevent default. We want that only for SPA links */,
+  ...props
+}) => <a href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`} {...props} />;
 
 RefreshLink.propTypes = {
   href: PropTypes.string.isRequired,
   isExternal: PropTypes.bool,
+  appId: PropTypes.string,
+  onClick: PropTypes.any,
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
-  const isModule = useSelector(({ chrome: { modules } }) => Object.prototype.hasOwnProperty.call(modules, appId));
-  const LinkComponent = isModule ? LinkWrapper : 'a';
-  return <LinkComponent {...rest}>{children}</LinkComponent>;
+  const { isDynamic, activeModule } = useDynamicModule();
+  if (typeof isDynamic === 'undefined') {
+    return null;
+  }
+  const LinkComponent = isDynamic || appId === activeModule ? LinkWrapper : RefreshLink;
+  return (
+    <LinkComponent appId={appId} {...rest}>
+      {children}
+    </LinkComponent>
+  );
 };
 
 ChromeLink.propTypes = {
