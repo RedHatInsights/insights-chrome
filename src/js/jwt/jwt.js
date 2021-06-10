@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/browser';
 import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
-import { allowedUnauthedPaths } from '../constants';
+import { allowedUnauthedPaths } from './constants';
 
 // Insights Specific
 import insightsUrl from './insights/url';
