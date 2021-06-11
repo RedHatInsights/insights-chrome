@@ -56,7 +56,8 @@ export function pageRequiresAuthentication() {
     section === 'openshift' ||
     section === 'settings' ||
     section === 'user-preferences' ||
-    section === 'internal'
+    section === 'internal' ||
+    section === 'application-services'
   ) {
     return true;
   }
