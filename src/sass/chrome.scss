@@ -212,4 +212,17 @@ section.ins-c-app-switcher--loading {
 // mobile fixes
 @media only screen and (max-width: $pf-global--breakpoint--sm) {
     .ins-m-hide-on-sm {display: none;}
+
+    .ins-c-table-empty-state.pf-m-grid-md.pf-c-table,
+    .ins-c-table-empty-state.pf-m-grid-lg.pf-c-table {
+        [data-label] {
+            --pf-c-table--cell--hidden-visible--Display: 0;
+        }
+        tr:first-of-type {
+            > td::before { 
+                display: none; 
+            }
+        }
+    }
 }
+
