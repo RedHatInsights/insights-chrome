@@ -44,7 +44,7 @@ export function chromeInit() {
   const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
-  const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
+  const { appAction, appObjectId, clearActive, appNavClick } = actions;
 
   return {
     appAction,

@@ -8,7 +8,7 @@ import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navigation from './Sidenav/Navigation';
 import { Header, HeaderTools } from './Header/Header';
-import { isBeta } from '../utils';
+import { getUrl, isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
@@ -68,7 +68,7 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
-const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObjectId, globalFilterHidden }) => {
+const RootApp = ({ activeApp, activeLocation, config, pageAction, pageObjectId, globalFilterHidden }) => {
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const { pathname } = useLocation();
@@ -88,8 +88,8 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
       id="chrome-app-render-root"
       className="pf-c-drawer__content"
       data-ouia-subnav={activeApp}
-      data-ouia-bundle={activeLocation}
-      data-ouia-app-id={appId}
+      data-ouia-bundle={getUrl('bundle')}
+      data-ouia-app-id={getUrl('app')}
       data-ouia-safe="true"
       {...(pageAction && { 'data-ouia-page-type': pageAction })}
       {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
@@ -106,7 +106,6 @@ const RootApp = ({ activeApp, activeLocation, appId, config, pageAction, pageObj
 };
 
 RootApp.propTypes = {
-  appId: PropTypes.string,
   activeApp: PropTypes.string,
   activeLocation: PropTypes.string,
   pageAction: PropTypes.string,
@@ -115,8 +114,8 @@ RootApp.propTypes = {
   config: PropTypes.any,
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, appId, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
-  return { activeApp, activeLocation, appId, pageAction, pageObjectId, globalFilterRemoved };
+function stateToProps({ chrome: { activeApp, activeLocation, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
+  return { activeApp, activeLocation, pageAction, pageObjectId, globalFilterRemoved };
 }
 const ConnectedRootApp = connect(stateToProps, null)(RootApp);
 
