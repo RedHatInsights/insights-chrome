@@ -52,6 +52,7 @@
       overflow-y:scroll;
       overflow-x:hidden;
       position: fixed; // allows menu to go full width
+      height: 100%;
       .content {
         display: flex;
         flex-direction: column;
