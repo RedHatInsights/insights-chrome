@@ -43,7 +43,7 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
   return (
-    <NavLink onClick={onClick} to={href} className={className}>
+    <NavLink data-testid="router-link" onClick={onClick} to={href} className={className}>
       {children}
     </NavLink>
   );
@@ -64,10 +64,12 @@ const RefreshLink = ({
   isExternal,
   onLinkClick,
   onClick /** on click must be separated because PF adds prevent default. We want that only for SPA links */,
+  appId,
   isBeta,
   ...props
 }) => (
   <a
+    data-testid="native-link"
     href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
     onClick={(event) => {
       if (isBeta && !isExternal) {

@@ -5,6 +5,7 @@ import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadNavigationLandingPage } from '../../redux/actions';
+import NavLoader from './Loader';
 
 const LandingNav = () => {
   const isBetaEnv = isBeta();
@@ -37,7 +38,7 @@ const LandingNav = () => {
    * render navigation only if the user is logged in
    */
   if (!showNav || !elementReady || !schema) {
-    return null;
+    return <NavLoader />;
   }
 
   return (

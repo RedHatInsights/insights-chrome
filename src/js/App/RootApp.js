@@ -8,11 +8,12 @@ import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navigation from './Sidenav/Navigation';
 import { Header, HeaderTools } from './Header/Header';
-import { getUrl, isBeta } from '../utils';
+import { isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import Routes from './Routes';
+import useOuiaTags from '../utils/useOuiaTags';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -28,6 +29,7 @@ const ShieldedRoot = memo(
     if (!initialized) {
       return null;
     }
+
     return (
       <Page
         isManagedSidebar={!hideNav}
@@ -68,7 +70,8 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
-const RootApp = ({ activeApp, activeLocation, config, pageAction, pageObjectId, globalFilterHidden }) => {
+const RootApp = ({ activeLocation, config, globalFilterHidden }) => {
+  const ouiaTags = useOuiaTags();
   const scalprum = useScalprum(config);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const { pathname } = useLocation();
@@ -84,16 +87,7 @@ const RootApp = ({ activeApp, activeLocation, config, pageAction, pageObjectId, 
   const insightsContentRef = useRef(null);
 
   return (
-    <div
-      id="chrome-app-render-root"
-      className="pf-c-drawer__content"
-      data-ouia-subnav={activeApp}
-      data-ouia-bundle={getUrl('bundle')}
-      data-ouia-app-id={getUrl('app')}
-      data-ouia-safe="true"
-      {...(pageAction && { 'data-ouia-page-type': pageAction })}
-      {...(pageObjectId && { 'data-ouia-page-object-id': pageObjectId })}
-    >
+    <div id="chrome-app-render-root" className="pf-c-drawer__content" {...ouiaTags}>
       <ShieldedRoot
         isGlobalFilterEnabled={isGlobalFilterEnabled}
         hideNav={hideNav}
@@ -114,10 +108,10 @@ RootApp.propTypes = {
   config: PropTypes.any,
 };
 
-function stateToProps({ chrome: { activeApp, activeLocation, pageAction, pageObjectId }, globalFilter: { globalFilterRemoved } = {} }) {
-  return { activeApp, activeLocation, pageAction, pageObjectId, globalFilterRemoved };
+function stateToProps({ chrome: { activeLocation }, globalFilter: { globalFilterRemoved } = {} }) {
+  return { activeLocation, globalFilterRemoved };
 }
-const ConnectedRootApp = connect(stateToProps, null)(RootApp);
+export const ConnectedRootApp = connect(stateToProps, null)(RootApp);
 
 const Chrome = (props) => (
   <BrowserRouter basename={isBeta() ? '/beta' : '/'}>

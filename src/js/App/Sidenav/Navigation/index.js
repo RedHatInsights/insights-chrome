@@ -1,5 +1,4 @@
 import React, { Fragment, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Nav, NavList } from '@patternfly/react-core';
 
 import NavContext from './navContext';
@@ -64,10 +63,6 @@ const Navigation = () => {
       />
     </Fragment>
   );
-};
-
-Navigation.propTypes = {
-  schema: PropTypes.object.isRequired,
 };
 
 export default Navigation;
