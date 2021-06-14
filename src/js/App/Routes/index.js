@@ -39,7 +39,7 @@ const Routes = ({ insightsContentRef }) => {
   return (
     <Switch>
       {list.map((app) => (
-        <ChromeRoute insightsContentRef={insightsContentRef} key={app.pathname} {...app} />
+        <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
       ))}
       <Route>Not found</Route>
     </Switch>

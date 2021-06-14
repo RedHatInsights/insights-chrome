@@ -38,7 +38,7 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
 
 ChromeRoute.propTypes = {
   scope: PropTypes.string.isRequired,
-  module: PropTypes.string.isRequired,
+  module: PropTypes.string,
   path: PropTypes.string.isRequired,
   exact: PropTypes.bool,
   dynamic: PropTypes.bool,

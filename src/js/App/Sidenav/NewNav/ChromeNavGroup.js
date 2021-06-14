@@ -13,7 +13,11 @@ const sectionTitleMapper = {
   'trend-up': <TrendUpIcon />,
 };
 
-const ChromeNavGroup = ({ navItems, icon, title }) => {
+const ChromeNavGroup = ({ navItems, isHidden, icon, title }) => {
+  if (isHidden) {
+    return null;
+  }
+
   const groupTitle = (
     <div>
       {icon && sectionTitleMapper[icon]}
@@ -33,6 +37,7 @@ ChromeNavGroup.propTypes = {
   navItems: PropTypes.array.isRequired,
   icon: PropTypes.oneOf(['wrench', 'shield', 'trend-up']),
   title: PropTypes.string.isRequired,
+  isHidden: PropTypes.bool,
 };
 
 export default ChromeNavGroup;
