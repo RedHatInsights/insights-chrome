@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavClick } from '../../../redux/actions';
+import NavContext from './navContext';
 
 const useDynamicModule = () => {
   const [isDynamic, setIsDynamic] = useState(undefined);
@@ -21,7 +22,7 @@ const useDynamicModule = () => {
   return { isDynamic, activeModule };
 };
 
-const LinkWrapper = ({ href, className, children }) => {
+const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop();
@@ -32,7 +33,13 @@ const LinkWrapper = ({ href, className, children }) => {
     navId: actionId,
   };
   const dispatch = useDispatch();
-  const onClick = () => {
+  const onClick = (event) => {
+    if (isBeta) {
+      if (!onLinkClick(event, href)) {
+        return false;
+      }
+    }
+
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
   return (
@@ -46,6 +53,8 @@ LinkWrapper.propTypes = {
   href: PropTypes.string.isRequired,
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
+  isBeta: PropTypes.bool,
+  onLinkClick: PropTypes.func.isRequired,
 };
 
 const basepath = document.baseURI;
@@ -53,25 +62,43 @@ const basepath = document.baseURI;
 const RefreshLink = ({
   href,
   isExternal,
+  onLinkClick,
   onClick /** on click must be separated because PF adds prevent default. We want that only for SPA links */,
+  isBeta,
   ...props
-}) => <a href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`} {...props} />;
+}) => (
+  <a
+    href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
+    onClick={(event) => {
+      if (isBeta && !isExternal) {
+        if (!onLinkClick(event, href)) {
+          return false;
+        }
+      }
+    }}
+    {...props}
+  />
+);
 
 RefreshLink.propTypes = {
   href: PropTypes.string.isRequired,
   isExternal: PropTypes.bool,
   appId: PropTypes.string,
   onClick: PropTypes.any,
+  onLinkClick: PropTypes.func.isRequired,
+  isBeta: PropTypes.bool,
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
+  const { onLinkClick } = useContext(NavContext);
   const { isDynamic, activeModule } = useDynamicModule();
   if (typeof isDynamic === 'undefined') {
     return null;
   }
+
   const LinkComponent = isDynamic || appId === activeModule ? LinkWrapper : RefreshLink;
   return (
-    <LinkComponent appId={appId} {...rest}>
+    <LinkComponent onLinkClick={onLinkClick} appId={appId} {...rest}>
       {children}
     </LinkComponent>
   );

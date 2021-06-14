@@ -1,28 +1,21 @@
 import React, { memo, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { connect, shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
-import { useScalprum, ScalprumComponent } from '@scalprum/react-core';
+import { useScalprum } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { BrowserRouter, useLocation } from 'react-router-dom';
-import SideNav from './Sidenav/SideNav';
+import Navigation from './Sidenav/Navigation';
 import { Header, HeaderTools } from './Header/Header';
-import ErrorBoundary from './ErrorBoundary';
 import { isBeta } from '../utils';
 import LandingNav from './Sidenav/LandingNav';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
-import LoadingFallback from '../utils/loading-fallback';
-import checkSubAppExceptionModule from '../utils/modulesExceptions';
 import Routes from './Routes';
 
-const isModule = (key, chrome) =>
-  key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
-  (key !== undefined && chrome?.activeSection?.group !== undefined && key === chrome?.activeSection?.group);
-
 const ShieldedRoot = memo(
-  ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => {
+  ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
     const dispatch = useDispatch();
     const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
     useEffect(() => {
@@ -47,7 +40,7 @@ const ShieldedRoot = memo(
             headerTools={<HeaderTools />}
           />
         }
-        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <SideNav key="side-nav" />} />}
+        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <Navigation key="side-nav" />} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
@@ -66,10 +59,6 @@ ShieldedRoot.propTypes = {
   insightsContentRef: PropTypes.object.isRequired,
   isGlobalFilterEnabled: PropTypes.bool.isRequired,
   initialized: PropTypes.bool,
-  remoteModule: PropTypes.shape({
-    appName: PropTypes.string.isRequired,
-  }),
-  appId: PropTypes.string,
 };
 ShieldedRoot.defaultProps = {
   useLandingNav: false,

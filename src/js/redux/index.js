@@ -7,7 +7,6 @@ import {
   loginReducer,
   clearActive,
   navUpdateReducer,
-  loadNavigationReducer,
   onPageAction,
   onPageObjectId,
   navUpdateSection,

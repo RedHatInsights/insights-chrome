@@ -40,7 +40,7 @@ const PUBLIC_EVENTS = {
   ],
 };
 
-export function chromeInit(navResolver) {
+export function chromeInit() {
   const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
@@ -61,11 +61,9 @@ export function chromeInit(navResolver) {
     appObjectId,
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
-    identifyApp: (data, appTitle) =>
-      navResolver.then(() => {
-        identifyApp(data, store.getState().chrome.globalNav);
-        updateDocumentTitle(appTitle);
-      }),
+    identifyApp: (_data, appTitle) => {
+      updateDocumentTitle(appTitle);
+    },
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     on: (type, callback) => {

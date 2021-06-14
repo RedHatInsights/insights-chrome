@@ -1,8 +1,6 @@
 import { visibilityFunctions, isVisible } from '../consts';
-import { load } from 'js-yaml';
 import flatMap from 'lodash/flatMap';
-import { getUrl, isBeta } from '../utils';
-import flattenDeep from 'lodash/flattenDeep';
+import { isBeta } from '../utils';
 
 export let getNavFromConfig = async (masterConfig, active) => {
   return await Object.keys(masterConfig)
@@ -39,11 +37,11 @@ async function getRoutesForApp(app, masterConfig) {
   if (app?.frontend && app?.frontend?.sub_apps) {
     const visibility = await isCurrVisible(app.permissions);
 
-    const [routes, modules] = (
+    const [routes] = (
       await Promise.all(
         app.frontend.sub_apps.map(async (subItem) => {
           if (await calculateVisibility(app, subItem, visibility)) {
-            const [routes, modules] =
+            const [routes] =
               (subItem.title
                 ? [
                     {
@@ -79,7 +77,7 @@ async function getRoutesForApp(app, masterConfig) {
       []
     );
 
-    return [routes.filter((subAppData) => subAppData?.title), modules];
+    return [routes.filter((subAppData) => subAppData?.title)];
   }
 
   return [];
@@ -133,33 +131,4 @@ async function getAppData(appId, propName, masterConfig, parentIsBeta) {
       ],
     ];
   }
-}
-
-export async function loadNav(yamlConfig, cache) {
-  const [active, section] = [getUrl('bundle') || 'insights', getUrl('app')];
-  let activeBundle = await cache?.getItem(`navigation-${active}`);
-  if (!activeBundle) {
-    activeBundle = await getNavFromConfig(load(yamlConfig), active);
-    cache?.setItem(`navigation-${active}`, activeBundle);
-  }
-
-  const globalNav = (activeBundle[active] || activeBundle.insights)?.routes;
-
-  return {
-    ...(activeBundle[active]
-      ? {
-          globalNav,
-          activeTechnology: activeBundle[active].title,
-          activeLocation: active,
-          activeSection:
-            globalNav?.find?.(({ id }) => id === section) ||
-            globalNav?.find?.(({ subItems } = {}) => active === 'ansible' && section && subItems?.find(({ id } = {}) => id === section)) ||
-            globalNav?.find?.(({ default: isDefault }) => isDefault),
-        }
-      : {
-          globalNav,
-          activeTechnology: 'Applications',
-        }),
-    modules: flattenDeep((activeBundle[active] || activeBundle.insights)?.modules || []),
-  };
 }

@@ -196,7 +196,6 @@ const useNavigation = () => {
           navItems,
           sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
         };
-        console.log(navItems);
         observer = registerLocationObserver(window.location.pathname, schema);
         observer.observe(document.querySelector('body'), {
           childList: true,

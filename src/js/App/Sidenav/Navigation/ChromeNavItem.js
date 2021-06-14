@@ -21,10 +21,10 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
       preventDefault
       isActive={active}
       to={href}
-      component={(props) => <ChromeLink {...props} isExternal={isExternal} appId={appId} />}
+      component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
-      {!isBetaEnv && isBeta() && !isExternal && betaBadge('ins-c-navigation__beta-badge')}
+      {isBetaEnv && !isBeta() && !isExternal && betaBadge('ins-c-navigation__beta-badge')}
     </NavItem>
   );
 };

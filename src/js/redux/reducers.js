@@ -139,13 +139,6 @@ export function onRegisterModule(state, { payload }) {
   return state;
 }
 
-export function loadNavigationReducer(state, { payload }) {
-  return {
-    ...state,
-    navigation: payload,
-  };
-}
-
 export function loadNavigationLandingPageReducer(state, { payload }) {
   return {
     ...state,
