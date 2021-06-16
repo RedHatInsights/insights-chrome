@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import ChromeRoute from './ChromeRoute';
 
-const generateRoutesList = (modules) => {
-  const reactModules = Object.entries(modules)
+const generateRoutesList = (modules) =>
+  Object.entries(modules)
     .reduce(
       (acc, [scope, { manifestLocation, modules = [] }]) => [
         ...acc,
@@ -26,8 +26,6 @@ const generateRoutesList = (modules) => {
       []
     )
     .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
-  return reactModules;
-};
 
 const Routes = ({ insightsContentRef }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);

@@ -25,9 +25,6 @@ const LandingNav = () => {
     }
   }, [showNav]);
 
-  /**
-   * Load landing page nav
-   */
   useEffect(() => {
     axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/landing-navigation.json`).then((response) => {
       dispatch(loadNavigationLandingPage(response.data));

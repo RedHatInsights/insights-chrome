@@ -7,7 +7,7 @@ import { appNavClick } from '../../../redux/actions';
 import NavContext from './navContext';
 
 const useDynamicModule = () => {
-  const [isDynamic, setIsDynamic] = useState(undefined);
+  const [isDynamic, setIsDynamic] = useState();
   const { modules, activeModule } = useSelector(({ chrome: { modules, activeModule } }) => ({
     modules,
     activeModule,
