@@ -6,20 +6,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { appNavClick } from '../../../redux/actions';
 import NavContext from './navContext';
 
-const useDynamicModule = () => {
+const useDynamicModule = (appId) => {
   const [isDynamic, setIsDynamic] = useState();
   const { modules, activeModule } = useSelector(({ chrome: { modules, activeModule } }) => ({
     modules,
     activeModule,
   }));
   useEffect(() => {
-    const currentModule = modules[activeModule];
-    if (currentModule) {
-      setIsDynamic(currentModule.dynamic !== false);
+    const currentModule = modules[appId];
+    if (!currentModule) {
+      setIsDynamic(false);
+    } else if (appId === activeModule) {
+      setIsDynamic(true);
+    } else if (currentModule && appId !== activeModule) {
+      setIsDynamic(currentModule.dynamic !== false && modules[activeModule]?.dynamic !== false);
     }
-  }, [activeModule]);
+  }, [appId]);
 
-  return { isDynamic, activeModule };
+  return isDynamic;
 };
 
 const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
@@ -93,12 +97,13 @@ RefreshLink.propTypes = {
 
 const ChromeLink = ({ appId, children, ...rest }) => {
   const { onLinkClick } = useContext(NavContext);
-  const { isDynamic, activeModule } = useDynamicModule();
-  if (typeof isDynamic === 'undefined') {
+  const isDynamic = useDynamicModule(appId);
+
+  if (!rest.isExternal && typeof isDynamic === 'undefined') {
     return null;
   }
 
-  const LinkComponent = isDynamic || appId === activeModule ? LinkWrapper : RefreshLink;
+  const LinkComponent = isDynamic ? LinkWrapper : RefreshLink;
   return (
     <LinkComponent onLinkClick={onLinkClick} appId={appId} {...rest}>
       {children}
@@ -107,7 +112,7 @@ const ChromeLink = ({ appId, children, ...rest }) => {
 };
 
 ChromeLink.propTypes = {
-  appId: PropTypes.string.isRequired,
+  appId: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 

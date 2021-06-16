@@ -47,7 +47,7 @@ describe('ChromeLink', () => {
     expect(getAllByTestId('router-link')).toHaveLength(1);
   });
 
-  test('should native link for non dynamic module', () => {
+  test('should pick native link for non dynamic module', () => {
     const store = mockStore({
       chrome: {
         activeModule: 'differentModule',
