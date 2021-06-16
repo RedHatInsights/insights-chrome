@@ -102,7 +102,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
         logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
         login: () => libjwt.jwt.login(),
       },
-      isProd: window.location.host === 'cloud.redhat.com',
+      isProd: window.location.host === 'cloud.redhat.com' || window.location.host === 'console.redhat.com',
       isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       forceDemo: () => Cookies.set('cs_demo', 'true'),
