@@ -14,6 +14,7 @@ const fileMapper = {
   'user-preferences': 'user-preferences-navigation.json',
   openshift: 'openshift-navigation.json',
   'application-services': 'application-services-navigation.json',
+  edge: 'edge-navigation.json',
 };
 
 function levelArray(navItems) {
