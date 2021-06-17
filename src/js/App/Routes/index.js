@@ -7,7 +7,7 @@ import ChromeRoute from './ChromeRoute';
 const generateRoutesList = (modules) =>
   Object.entries(modules)
     .reduce(
-      (acc, [scope, { manifestLocation, modules = [] }]) => [
+      (acc, [scope, { dynamic, manifestLocation, modules = [] }]) => [
         ...acc,
         ...modules
           .map(({ module, routes }) =>
@@ -17,7 +17,7 @@ const generateRoutesList = (modules) =>
               module,
               path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
-              dynamic: typeof route === 'string' ? true : route.dynamic,
+              dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
               exact: typeof route === 'string' ? false : route.exact,
             }))
           )
