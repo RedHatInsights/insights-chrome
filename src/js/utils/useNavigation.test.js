@@ -534,7 +534,7 @@ describe('useNavigatiom', () => {
         await renderHook(() => useNavigation(), {
           wrapper,
           initialProps: {
-            path: '/insights',
+            path: '/insights/dashboard',
           },
         });
       });

@@ -48,10 +48,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <a
-          class="pf-c-nav__link ins-c-navigation__additional-links"
-          title="[object Object]"
-        />
+        <div
+          class="ins-c-skeleton ins-c-skeleton__lg pf-c-nav__link ins-m-dark ins-c-skeleton__link"
+        >
+           
+        </div>
       </li>
       <li
         class="pf-c-nav__item ins-c-navigation__additional-links"
@@ -59,10 +60,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <a
-          class="pf-c-nav__link ins-c-navigation__additional-links"
-          title="[object Object]"
-        />
+        <div
+          class="ins-c-skeleton ins-c-skeleton__lg pf-c-nav__link ins-m-dark ins-c-skeleton__link"
+        >
+           
+        </div>
       </li>
       <li
         class="pf-c-nav__item ins-c-navigation__additional-links"
@@ -70,10 +72,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <a
-          class="pf-c-nav__link ins-c-navigation__additional-links"
-          title="[object Object]"
-        />
+        <div
+          class="ins-c-skeleton ins-c-skeleton__lg pf-c-nav__link ins-m-dark ins-c-skeleton__link"
+        >
+           
+        </div>
       </li>
       <li
         class="pf-c-nav__item ins-c-navigation__additional-links"
@@ -81,10 +84,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
         data-ouia-component-type="PF4/NavItem"
         data-ouia-safe="true"
       >
-        <a
-          class="pf-c-nav__link ins-c-navigation__additional-links"
-          title="[object Object]"
-        />
+        <div
+          class="ins-c-skeleton ins-c-skeleton__lg pf-c-nav__link ins-m-dark ins-c-skeleton__link"
+        >
+           
+        </div>
       </li>
     </ul>
   </nav>

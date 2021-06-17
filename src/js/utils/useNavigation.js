@@ -81,11 +81,10 @@ function mutateSchema(hrefMatch, navItems) {
 }
 
 const highlightItems = (pathname, schema) => {
-  const basePathname = pathname.replace(/^\/beta\//, '/');
-  const segmentsCount = basePathname.split('/').length;
+  const segmentsCount = pathname.split('/').length + 1;
   const matchedLink = schema.sortedLinks.find((href) => {
     const segmentedHref = href.split('/').slice(0, segmentsCount).join('/');
-    return basePathname.includes(segmentedHref);
+    return pathname.includes(segmentedHref);
   });
   return mutateSchema(matchedLink, schema.navItems);
 };
