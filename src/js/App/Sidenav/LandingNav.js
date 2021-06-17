@@ -5,7 +5,7 @@ import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadNavigationLandingPage } from '../../redux/actions';
-import NavLoader from './Loader';
+import NavLoader from './Navigation/Loader';
 
 const LandingNav = () => {
   const isBetaEnv = isBeta();

@@ -9,7 +9,7 @@ import { isBeta } from '../../../utils';
 
 import './Navigation.scss';
 import useNavigation from '../../../utils/useNavigation';
-import NavLoader from '../Loader';
+import NavLoader from './Loader';
 
 const Navigation = () => {
   const { loaded, schema } = useNavigation();

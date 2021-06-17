@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { render } from 'react-dom';
-import NavLoader from './Loader';
+import NavLoader from './Navigation/Loader';
 import { spinUpStore } from '../../redux-config';
 import LandingNav from './LandingNav';
 
