@@ -63,6 +63,7 @@ export function chromeInit() {
     hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
     identifyApp: (_data, appTitle) => {
       updateDocumentTitle(appTitle);
+      return Promise.resolve();
     },
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),

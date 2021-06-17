@@ -5,7 +5,7 @@ import NavLoader from './Loader';
 import { spinUpStore } from '../../redux-config';
 import LandingNav from './LandingNav';
 
-const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './SideNav'));
+const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './Navigation'));
 
 export const navLoader = () => {
   const { store } = spinUpStore();
