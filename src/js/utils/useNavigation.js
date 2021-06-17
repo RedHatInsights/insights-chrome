@@ -15,6 +15,7 @@ const fileMapper = {
   openshift: 'openshift-navigation.json',
   'application-services': 'application-services-navigation.json',
   edge: 'edge-navigation.json',
+  docs: 'docs-navigation.json',
 };
 
 function levelArray(navItems) {
