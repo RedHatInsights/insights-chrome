@@ -26,7 +26,7 @@ const Feedback = ({ user }) => {
         },
         body: JSON.stringify({
           description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
-          summary: `${!window.insights.chrome.isProd && '[PRE-PROD]'} Insights Feedback`,
+          summary: `${window.insights.chrome.isProd ? '[PROD]' : '[PRE-PROD]'} Insights Feedback`,
           labels: [app, bundle],
         }),
       }).then((response) => response.json());
