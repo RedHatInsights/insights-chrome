@@ -75,6 +75,12 @@ const RefreshLink = ({
   <a
     data-testid="native-link"
     href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
+    {...(isExternal
+      ? {
+          rel: 'noreferrer noopener',
+          target: '_blank',
+        }
+      : {})}
     onClick={(event) => {
       if (isBeta && !isExternal) {
         if (!onLinkClick(event, href)) {
@@ -103,7 +109,7 @@ const ChromeLink = ({ appId, children, ...rest }) => {
     return null;
   }
 
-  const LinkComponent = isDynamic ? LinkWrapper : RefreshLink;
+  const LinkComponent = !rest.isExternal && isDynamic ? LinkWrapper : RefreshLink;
   return (
     <LinkComponent onLinkClick={onLinkClick} appId={appId} {...rest}>
       {children}
