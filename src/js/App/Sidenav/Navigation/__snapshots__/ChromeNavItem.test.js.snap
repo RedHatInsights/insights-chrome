@@ -56,8 +56,11 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
   >
     <a
       class="pf-c-nav__link ins-c-navigation__additional-links"
-      data-testid="router-link"
+      data-testid="native-link"
       href="/foo"
+      itemid="/foo"
+      rel="noreferrer noopener"
+      target="_blank"
     >
       Foo
        
