@@ -12,6 +12,10 @@ import {
   navUpdateSection,
   onRegisterModule,
   contextSwitcherBannerReducer,
+  loadNavigationLandingPageReducer,
+  loadNavigationSegmentReducer,
+  loadModulesSchemaReducer,
+  changeActiveModuleReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -45,6 +49,10 @@ import {
   CHROME_NAV_SECTION_UPDATE,
   REGISTER_MODULE,
   TOGGLECONTEXTSWITCHER,
+  LOAD_NAVIGATION_LANDING_PAGE,
+  LOAD_LEFT_NAVIGATION_SEGMENT,
+  LOAD_MODULES_SCHEMA,
+  CHANGE_ACTIVE_MODULE,
 } from './action-types';
 
 const reducers = {
@@ -59,6 +67,10 @@ const reducers = {
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,
   [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
+  [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
+  [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
+  [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
+  [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
 };
 
 const globalFilter = {
@@ -78,7 +90,12 @@ export default function () {
   // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
   return {
-    chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
+    chrome: (
+      state = {
+        navigation: {},
+      },
+      action
+    ) => applyReducerHash(reducers)(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }

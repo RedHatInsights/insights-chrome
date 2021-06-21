@@ -7,7 +7,7 @@ const navFunctions = require('./globalNav');
 import * as instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 // eslint-disable-next-line max-len
 const globalNav = {
-  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }], modules: [] },
+  appA: { title: 'title1', ignoreCase: undefined, id: 'appA', routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1' }] },
 };
 
 const globalNavWithSection = {
@@ -16,7 +16,6 @@ const globalNavWithSection = {
     ignoreCase: undefined,
     id: 'appA',
     routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1', section: 'section1' }],
-    modules: [],
   },
 };
 
@@ -26,7 +25,6 @@ const globalNavWithNavigate = {
     ignoreCase: undefined,
     id: 'appA',
     routes: [{ id: 'subid1', ignoreCase: undefined, title: 'subtitle1', navigate: 'example.url.com' }],
-    modules: [],
   },
 };
 

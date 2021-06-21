@@ -1,7 +1,4 @@
-import { loadNav } from '../nav/globalNav';
 import qe from './iqeEnablement';
-import sourceOfTruth from '../nav/sourceOfTruth';
-import { spinUpStore } from '../redux-config';
 import { chromeInit, bootstrap } from './entry';
 import initializeJWT from './initialize-jwt';
 import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
@@ -12,25 +9,12 @@ import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
  * @param {object} insights existing insights instance
  */
 const createChromeInstance = (jwt, insights) => {
-  const {
-    actions: { chromeNavUpdate },
-  } = spinUpStore();
   const libjwt = jwt;
   const chromeInstance = {
     cache: undefined,
   };
 
   const jwtResolver = initializeJWT(libjwt, chromeInstance);
-
-  /**
-   * Load navigation after login
-   */
-  const navResolver = jwtResolver.then(async () => {
-    const navigationYml = await sourceOfTruth(libjwt.jwt.getEncodedToken());
-    const navigationData = await loadNav(navigationYml, chromeInstance.cache);
-    chromeNavUpdate(navigationData);
-  });
-
   const init = () => {
     /**
      * Mutate the root element to enable QA during app init.
@@ -42,7 +26,7 @@ const createChromeInstance = (jwt, insights) => {
     }
     window.insights.chrome = {
       ...window.insights.chrome,
-      ...chromeInit(navResolver),
+      ...chromeInit(),
     };
   };
 

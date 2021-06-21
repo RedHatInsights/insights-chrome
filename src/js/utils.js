@@ -119,7 +119,7 @@ export function bootstrapCache(endpoint, cacheKey) {
   });
 }
 
-const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
+export const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
 
 export function getUrl(type) {
   if (window.location.pathname === ('/beta' || '/')) {

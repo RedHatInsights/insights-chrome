@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
-import { Nav, NavList } from '@patternfly/react-core';
-import NavigationItem from './NavigationItem';
+import { Nav, NavList, NavItem } from '@patternfly/react-core';
 
 const NavLoader = () => (
   <Fragment>
@@ -11,7 +10,11 @@ const NavLoader = () => (
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="false">
       <NavList>
         {[...new Array(4)].map((_i, key) => (
-          <NavigationItem key={key} title={<Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />} />
+          <NavItem key={key} preventDefault>
+            <a href="#">
+              <Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />
+            </a>
+          </NavItem>
         ))}
       </NavList>
     </Nav>
