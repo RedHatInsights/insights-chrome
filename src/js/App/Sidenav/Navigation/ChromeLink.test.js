@@ -96,7 +96,7 @@ describe('ChromeLink', () => {
           id: 'foo',
           event: {
             id: 'foo',
-            navId: 'foo',
+            navId: '/',
             href: '/insights/foo',
           },
         },
