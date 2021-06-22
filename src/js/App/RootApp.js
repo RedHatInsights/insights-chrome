@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
-import { useScalprum } from '@scalprum/react-core';
+import { useScalprum, ScalprumProvider } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navigation from './Sidenav/Navigation';
@@ -70,9 +70,9 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
-const RootApp = ({ activeLocation, config, globalFilterHidden }) => {
+const RootApp = ({ activeLocation, globalFilterHidden }) => {
   const ouiaTags = useOuiaTags();
-  const scalprum = useScalprum(config);
+  const initialized = useScalprum(({ initialized }) => initialized);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const { pathname } = useLocation();
   /**
@@ -93,7 +93,7 @@ const RootApp = ({ activeLocation, config, globalFilterHidden }) => {
         hideNav={hideNav}
         insightsContentRef={insightsContentRef}
         useLandingNav={isLanding}
-        initialized={scalprum.initialized}
+        initialized={initialized}
       />
     </div>
   );
@@ -108,10 +108,22 @@ RootApp.propTypes = {
   config: PropTypes.any,
 };
 
+const ScalprumRoot = ({ config, ...props }) => {
+  return (
+    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true } }}>
+      <RootApp {...props} />
+    </ScalprumProvider>
+  );
+};
+
+ScalprumRoot.propTypes = {
+  config: PropTypes.any,
+};
+
 function stateToProps({ chrome: { activeLocation }, globalFilter: { globalFilterRemoved } = {} }) {
   return { activeLocation, globalFilterRemoved };
 }
-export const ConnectedRootApp = connect(stateToProps, null)(RootApp);
+export const ConnectedRootApp = connect(stateToProps, null)(ScalprumRoot);
 
 const Chrome = (props) => (
   <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
