@@ -184,6 +184,7 @@ describe('RootApp', () => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
     const store = mockStore({
+      globalFilter: { tags: {}, sid: {}, workloads: {} },
       chrome: {
         ...initialState.chrome,
         user: {
@@ -198,7 +199,7 @@ describe('RootApp', () => {
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
         <Provider store={store}>
-          <RootApp config={config} />
+          <RootApp globalFilterHidden config={config} />
         </Provider>
       );
       getByLabelText = internalGetByLabelText;
