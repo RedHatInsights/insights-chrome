@@ -35,6 +35,7 @@ const plugins = [
       { 'react-redux': { requiredVersion: deps['react-redux'] } },
       { '@patternfly/react-table': { requiredVersion: deps['react-table'] } },
       { '@patternfly/react-core': { requiredVersion: deps['react-core'] } },
+      { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
     ],
   }),
   ChunkMapper,
