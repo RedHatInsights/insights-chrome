@@ -48,14 +48,15 @@ export default () => {
 
   wipePostbackParamsThatAreNotForUs();
   const token = cookie.get(options.cookieName);
+  const refreshToken = cookie.get('cs_jwt_refresh');
 
   // If we find an existing token, use it
   // so that we dont auth even when a valid token is present
   // otherwise its quick, but we bounce around and get a new token
   // on every page load
-  if (token && token.length > 10) {
+  if (token && token.length > 10 && refreshToken && refreshToken.length > 10) {
+    options.refreshToken = refreshToken;
     options.token = token;
-    options.refreshToken = cookie.get('cs_jwt_refresh');
   }
 
   const promise = jwt.init(options).then(bouncer);
