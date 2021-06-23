@@ -277,6 +277,7 @@ export const expiredToken = () => {
 
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
+  setCookie(priv.getToken());
   authChannel.postMessage({ type: 'refresh' });
 }
 
