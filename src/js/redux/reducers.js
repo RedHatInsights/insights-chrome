@@ -187,5 +187,10 @@ export function changeActiveModuleReducer(state, { payload }) {
   return {
     ...state,
     activeModule: payload,
+    /**
+     * @deprecated
+     * App id is replaced by active module. It is still required until we completely remove usage of main.yml
+     */
+    appId: payload,
   };
 }
