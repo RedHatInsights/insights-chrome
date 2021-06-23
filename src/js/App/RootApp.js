@@ -70,11 +70,12 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
-const RootApp = ({ activeLocation, globalFilterHidden }) => {
+const RootApp = ({ globalFilterHidden }) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
   const hideNav = useSelector(({ chrome: { user } }) => !user);
   const { pathname } = useLocation();
+  const activeLocation = pathname.split('/')[1];
   /**
    * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
    * We need the information before anything is rendered to determine if we use root module or render landing page.
@@ -101,7 +102,6 @@ const RootApp = ({ activeLocation, globalFilterHidden }) => {
 
 RootApp.propTypes = {
   activeApp: PropTypes.string,
-  activeLocation: PropTypes.string,
   pageAction: PropTypes.string,
   pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   globalFilterHidden: PropTypes.bool,
@@ -120,8 +120,8 @@ ScalprumRoot.propTypes = {
   config: PropTypes.any,
 };
 
-function stateToProps({ chrome: { activeLocation }, globalFilter: { globalFilterRemoved } = {} }) {
-  return { activeLocation, globalFilterRemoved };
+function stateToProps({ globalFilter: { globalFilterRemoved } = {} }) {
+  return { globalFilterRemoved };
 }
 export const ConnectedRootApp = connect(stateToProps, null)(ScalprumRoot);
 
