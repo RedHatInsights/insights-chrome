@@ -26,7 +26,7 @@ const Feedback = ({ user }) => {
         },
         body: JSON.stringify({
           description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
-          summary: `${window.insights.chrome.isProd ? '[PROD]' : '[PRE-PROD]'} Insights Feedback`,
+          summary: `${window.insights.chrome.isProd ? '[PROD]' : '[PRE-PROD]'} App Feedback`,
           labels: [app, bundle],
         }),
       }).then((response) => response.json());
@@ -58,7 +58,7 @@ const Feedback = ({ user }) => {
         ]}
       >
         <Form>
-          <FormGroup label="Please leave us your feedback for Red Hat Insights below" fieldId="horizontal-form-exp">
+          <FormGroup label="Please leave us your feedback below." fieldId="horizontal-form-exp">
             <TextArea
               value={textAreaValue}
               onChange={(value) => setTextAreaValue(value)}
