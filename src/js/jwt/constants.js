@@ -20,6 +20,14 @@ export const DEFAULT_ROUTES = {
     url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
   },
+  fedrampprod: {
+    url: [],
+    sso: ''
+  },
+  fedrampstage: {
+    url: [],
+    sso: ''
+  },
 };
 
 export const options = {
