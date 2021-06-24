@@ -93,9 +93,9 @@ describe('ChromeLink', () => {
       {
         type: APP_NAV_CLICK,
         payload: {
-          id: 'foo',
+          id: '/',
           event: {
-            id: 'foo',
+            id: '/',
             navId: '/',
             href: '/insights/foo',
           },
