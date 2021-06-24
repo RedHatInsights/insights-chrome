@@ -31,6 +31,9 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop();
   }
+  if (href.split('/').length === 3) {
+    actionId = '/';
+  }
   /**
    * If the sub nav item points to application root
    * eg. /openshift/cost-management we don't want to send "/cost-management" but "/"
@@ -39,7 +42,7 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
   const domEvent = {
     href,
     id: actionId,
-    navId: href.split('/').length === 3 ? '/' : actionId,
+    navId: actionId,
   };
   const dispatch = useDispatch();
   const onClick = (event) => {
