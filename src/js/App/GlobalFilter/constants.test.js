@@ -147,7 +147,11 @@ describe('storeFilter', () => {
         true,
         history
       );
-      expect(push).toHaveBeenCalledWith({ hash: 'workloads=something&SIDs=&tags=' });
+      expect(push).toHaveBeenCalledWith({
+        hash: 'workloads=something&SIDs=&tags=',
+        pathname: '/',
+        search: '',
+      });
     });
 
     it('should add SIDs', () => {
@@ -167,7 +171,11 @@ describe('storeFilter', () => {
         true,
         history
       );
-      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=something&tags=' });
+      expect(push).toHaveBeenCalledWith({
+        hash: 'SIDs=something&tags=',
+        pathname: '/',
+        search: '',
+      });
     });
 
     it('should add tags', () => {
@@ -198,7 +206,11 @@ describe('storeFilter', () => {
         true,
         history
       );
-      expect(push).toHaveBeenCalledWith({ hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam' });
+      expect(push).toHaveBeenCalledWith({
+        hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+        pathname: '/',
+        search: '',
+      });
     });
 
     it('should build complex hash', () => {
@@ -241,6 +253,8 @@ describe('storeFilter', () => {
       );
       expect(push).toHaveBeenCalledWith({
         hash: 'workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+        pathname: '/',
+        search: '',
       });
     });
   });
