@@ -5,9 +5,9 @@ import { useLocation } from 'react-router-dom';
 import flatMap from 'lodash/flatMap';
 import { loadLeftNavSegment } from '../redux/actions';
 import { isBeta } from '../utils';
-import { visibilityFunctions } from '../consts';
+import { evaluateVisibility } from './isNavItemVisible';
 
-const fileMapper = {
+export const navigationFileMapper = {
   insights: 'rhel-navigation.json',
   ansible: 'ansible-navigation.json',
   settings: 'settings-navigation.json',
@@ -91,59 +91,6 @@ const highlightItems = (pathname, schema) => {
   return mutateSchema(matchedLink, schema.navItems);
 };
 
-const isCurrVisible = (permissions) =>
-  Promise.all(
-    flatMap(
-      Array.isArray(permissions) ? permissions : [permissions],
-      async ({ method, args } = {}) =>
-        // (null, undefined, true) !== false
-        (await visibilityFunctions?.[method]?.(...(args || []))) !== false
-    )
-  ).then((visibility) => visibility.every(Boolean));
-
-const evaluteVisibility = async (navItem) => {
-  /**
-   * Skip evaluation for hidden items
-   */
-  if (navItem.isHidden === true) {
-    return navItem;
-  }
-
-  const result = {
-    ...navItem,
-    isHidden: false,
-  };
-
-  if (typeof result.permissions !== 'undefined') {
-    const visible = await isCurrVisible(result.permissions);
-    /**
-     * Hide item visibility check failed
-     */
-    if (!visible) {
-      return {
-        ...result,
-        isHidden: true,
-      };
-    }
-  }
-
-  if (typeof result.groupId !== 'undefined') {
-    /**
-     * Evalute group items
-     */
-    result.navItems = await Promise.all(result.navItems.map(evaluteVisibility));
-  }
-
-  if (result.expandable === true) {
-    /**
-     * Evaluate sub routes
-     */
-    result.routes = await Promise.all(result.routes.map(evaluteVisibility));
-  }
-
-  return result;
-};
-
 const useNavigation = () => {
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
@@ -185,24 +132,26 @@ const useNavigation = () => {
   useEffect(() => {
     let observer;
     if (currentNamespace) {
-      axios.get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${fileMapper[currentNamespace]}`).then(async (response) => {
-        if (observer && typeof observer.disconnect === 'function') {
-          observer.disconnect();
-        }
+      axios
+        .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${navigationFileMapper[currentNamespace]}`)
+        .then(async (response) => {
+          if (observer && typeof observer.disconnect === 'function') {
+            observer.disconnect();
+          }
 
-        const data = response.data;
-        const navItems = await Promise.all(data.navItems.map(evaluteVisibility));
-        const schema = {
-          ...data,
-          navItems,
-          sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
-        };
-        observer = registerLocationObserver(pathname, schema);
-        observer.observe(document.querySelector('body'), {
-          childList: true,
-          subtree: true,
+          const data = response.data;
+          const navItems = await Promise.all(data.navItems.map(evaluateVisibility));
+          const schema = {
+            ...data,
+            navItems,
+            sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
+          };
+          observer = registerLocationObserver(pathname, schema);
+          observer.observe(document.querySelector('body'), {
+            childList: true,
+            subtree: true,
+          });
         });
-      });
     }
     return () => {
       if (observer && typeof observer.disconnect === 'function') {
