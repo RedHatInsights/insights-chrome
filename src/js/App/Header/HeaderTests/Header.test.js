@@ -16,7 +16,7 @@ describe('Header', () => {
         activeTechnology: 'someTechnology',
         activeLocation: 'someLocation',
         user: {},
-        navigation: {}
+        navigation: {},
       },
     };
   });

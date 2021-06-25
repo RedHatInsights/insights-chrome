@@ -5,12 +5,12 @@ import { isBeta } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
 import { navigationFileMapper } from '../../../utils/useNavigation';
 
-const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
+export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
 
 function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }) {
   const costLinks = [];
-  const subscptionLinks = [];
+  const subscriptionsLinks = [];
   let url = href;
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
@@ -19,7 +19,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
       }
 
       if (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions')) {
-        subscptionLinks.push({
+        subscriptionsLinks.push({
           ...rest,
           href,
           title,
@@ -36,7 +36,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
     title,
     href: url,
     costLinks,
-    subscptionLinks,
+    subscriptionsLinks,
   };
 }
 
@@ -57,7 +57,7 @@ const useAppFilter = () => {
       },
       subscriptions: {
         id: 'subscriptions',
-        title: 'Subsciptions',
+        title: 'Subscriptions',
         links: [],
       },
     },
@@ -79,14 +79,15 @@ const useAppFilter = () => {
       cost: [],
       subs: [],
     };
-    const promises = links.map(async ({ costLinks, subscptionLinks, ...rest }) => {
+    const promises = links.map(async ({ costLinks, subscriptionsLinks, ...rest }) => {
       if (costLinks.length > 0) {
-        extraLinks.cost = costLinks;
-        return;
+        extraLinks.cost = await costLinks.filter(evaluateVisibility);
       }
 
-      if (subscptionLinks.length > 0) {
-        extraLinks.subs = subscptionLinks;
+      if (subscriptionsLinks.length > 0) {
+        extraLinks.subs = await subscriptionsLinks.filter(evaluateVisibility);
+      }
+      if (subscriptionsLinks.length > 0 || costLinks.length > 0) {
         return;
       }
       const link = await evaluateVisibility(rest);
