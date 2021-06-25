@@ -26,53 +26,35 @@ import {
 } from '@patternfly/react-core';
 
 import './AppFilter.scss';
-import useGlobalNav from '../../utils/useGlobalNav';
+import useAppFilter from './useAppFilter';
+import ChromeLink from '../../Sidenav/Navigation/ChromeLink';
 
-const generateUrl = (redirectUrl) => {
-  if (redirectUrl.includes('openshift/subscriptions')) {
-    return `${redirectUrl}/openshift-container`;
-  }
-
-  if (redirectUrl.includes('insights/subscriptions')) {
-    return `${redirectUrl}/rhel`;
-  }
-
-  if (redirectUrl.includes('application-services/streams')) {
-    return `/beta/${redirectUrl}`;
-  }
-
-  return redirectUrl;
-};
-
-const App = ({ id, title, routes, parent }) => (
-  <div className="galleryItem">
-    <Split>
-      <SplitItem>
-        <TextContent>
-          <Text component="h4">{title}</Text>
-          {routes?.map((subApp) => {
-            const redirectUrl = `${parent ? `${parent.id}/` : ''}${subApp.reload || `${id}/${subApp.id}`}`;
-            return (
-              <Text component="p" key={`${id}/${subApp.id}`}>
-                <Text component="a" href={generateUrl(redirectUrl)}>
-                  {subApp.title}
+const App = ({ id, title, links = [] }) =>
+  links.length > 0 ? (
+    <div className="galleryItem">
+      <Split>
+        <SplitItem>
+          <TextContent>
+            <Text component="h4">{title}</Text>
+            {links.map(({ href, title, isHidden, ...rest }) =>
+              isHidden ? null : (
+                <Text component="p" key={`${id}-${href}`}>
+                  <ChromeLink {...rest} appId="static" title={title} href={href}>
+                    {title}
+                  </ChromeLink>
                 </Text>
-              </Text>
-            );
-          })}
-        </TextContent>
-      </SplitItem>
-    </Split>
-  </div>
-);
+              )
+            )}
+          </TextContent>
+        </SplitItem>
+      </Split>
+    </div>
+  ) : null;
 
 App.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.string.isRequired,
   title: PropTypes.node,
-  routes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })),
-  parent: PropTypes.shape({
-    id: PropTypes.string,
-  }),
+  links: PropTypes.arrayOf(PropTypes.shape({ href: PropTypes.string.isRequired, title: PropTypes.string.isRequired })).isRequired,
 };
 
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => {
@@ -161,12 +143,12 @@ AppFilterDropdown.propTypes = {
 };
 
 const AppFilter = () => {
-  const { filteredApps, isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useGlobalNav();
+  const { filteredApps, isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useAppFilter();
 
   return (
     <React.Fragment>
       <AppFilterDropdown
-        isLoaded={!!isLoaded}
+        isLoaded={isLoaded}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         filterValue={filterValue}
