@@ -3,34 +3,6 @@ import { render, fireEvent, act, screen } from '@testing-library/react';
 
 import AppFilter from '../AppFilter';
 
-jest.mock('../../../nav/sourceOfTruth', () => {
-  const source = jest.requireActual('../../../nav/sourceOfTruth');
-  return {
-    __esModule: true,
-    ...source,
-    default: jest.fn().mockResolvedValue({}),
-  };
-});
-jest.mock('../../../nav/globalNav', () => {
-  const source = jest.requireActual('../../../nav/globalNav');
-  const appData = ['application-services', 'insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'].reduce(
-    (acc, curr) => ({
-      ...acc,
-      [curr]: {
-        id: curr,
-        title: curr,
-        routes: [{ id: curr, title: curr }],
-      },
-    }),
-    {}
-  );
-  return {
-    __esModule: true,
-    ...source,
-    getNavFromConfig: jest.fn().mockImplementation(() => Promise.resolve(appData)),
-  };
-});
-
 describe('<AppFilter />', () => {
   test('should render correctly', () => {
     const { container } = render(<AppFilter />);

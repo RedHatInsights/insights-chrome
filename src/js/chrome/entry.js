@@ -44,15 +44,11 @@ export function chromeInit() {
   const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
-  const { appAction, appObjectId, clearActive, appNavClick } = actions;
+  const { appAction, appObjectId, appNavClick } = actions;
 
   return {
     appAction,
     appNavClick: ({ secondaryNav, ...payload }) => {
-      if (!secondaryNav) {
-        clearActive();
-      }
-
       appNavClick({
         ...payload,
         custom: true,
