@@ -69,7 +69,8 @@ export const storeFilter = (tags, token, isEnabled, history) => {
     searchParams.append('tags', mappedTags);
 
     history.push({
-      ...history.location,
+      pathname: location.pathname,
+      search: location.search,
       hash: searchParams.toString(),
     });
   }
