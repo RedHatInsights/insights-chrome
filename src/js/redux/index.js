@@ -1,15 +1,10 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 import {
-  clickReducer,
-  globalNavReducer,
   appNavClick,
   loginReducer,
-  clearActive,
-  navUpdateReducer,
   onPageAction,
   onPageObjectId,
-  navUpdateSection,
   onRegisterModule,
   contextSwitcherBannerReducer,
   loadNavigationLandingPageReducer,
@@ -31,12 +26,8 @@ import {
   globalFilterDefaultState,
 } from './globalFilterReducers';
 import {
-  CLICK_ACTION,
-  GLOBAL_NAV_IDENT,
   APP_NAV_CLICK,
   USER_LOGIN,
-  CLEAR_ACTIVE,
-  CHROME_NAV_UPDATE,
   CHROME_PAGE_ACTION,
   CHROME_PAGE_OBJECT,
   CHROME_GET_ALL_TAGS,
@@ -46,7 +37,6 @@ import {
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
   GLOBAL_FILTER_REMOVE,
-  CHROME_NAV_SECTION_UPDATE,
   REGISTER_MODULE,
   TOGGLECONTEXTSWITCHER,
   LOAD_NAVIGATION_LANDING_PAGE,
@@ -56,13 +46,8 @@ import {
 } from './action-types';
 
 const reducers = {
-  [CLEAR_ACTIVE]: clearActive,
-  [CLICK_ACTION]: clickReducer,
-  [GLOBAL_NAV_IDENT]: globalNavReducer,
   [APP_NAV_CLICK]: appNavClick,
   [USER_LOGIN]: loginReducer,
-  [CHROME_NAV_UPDATE]: navUpdateReducer,
-  [CHROME_NAV_SECTION_UPDATE]: navUpdateSection,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,

@@ -46,7 +46,7 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
   };
   const dispatch = useDispatch();
   const onClick = (event) => {
-    if (isBeta) {
+    if (onLinkClick && isBeta) {
       if (!onLinkClick(event, href)) {
         return false;
       }
@@ -90,7 +90,7 @@ const RefreshLink = ({
         }
       : {})}
     onClick={(event) => {
-      if (isBeta && !isExternal) {
+      if (onLinkClick && isBeta && !isExternal) {
         if (!onLinkClick(event, href)) {
           return false;
         }
@@ -105,7 +105,7 @@ RefreshLink.propTypes = {
   isExternal: PropTypes.bool,
   appId: PropTypes.string,
   onClick: PropTypes.any,
-  onLinkClick: PropTypes.func.isRequired,
+  onLinkClick: PropTypes.func,
   isBeta: PropTypes.bool,
 };
 

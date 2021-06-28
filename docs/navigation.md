@@ -4,7 +4,7 @@ Chrome leverages [Cloud Services Config](https://github.com/redhatinsights/cloud
 
 ## Dynamic Navigation
 
-Along with static navigation set in CSC, apps can opt into dynamic navigation by updating the `main.yml` file with a few options:
+Along with static navigation set in CSC, apps can opt into dynamic navigation by updating the `<namespace-navigation>` file with a few options:
 
 ### Permissions
 
@@ -32,49 +32,48 @@ List of available permissions methods:
 
 #### apiRequest example
 
-```yml
- app:
-  title: App title
-  api:
-    versions:
-      - v1
-  frontend:
-    paths:
-      - /foo/bar
-    sub_apps:
-      - id: sub-app-one
-        title: sub-app-one
-      - id: dynamic-sub-app
-        title: dynamic-sub-app
-        permissions:
-          method: apiRequest
-          args: # acceps all axios request config options https://github.com/axios/axios#request-config
-            - url: "/request/url"
-              foo: bar
+```JSON
+{
+    "appId": "sources",
+    "title": "Sources",
+    "href": "/settings/sources",
+    "permissions": [
+        {
+            "method": "apiRequest",
+            "args": [
+                {
+                    "url": "/api/sources/v3.1/sources",
+                    "matcher": "isNotEmpty"
+                }
+            ]
+        }
+    ]
+}
  ```
 
 #### Multiple permissions example
 
 Each nav item can have multiple required permissions. If **all checks are successful** the item will display.
 
-```yml
-app:
-  title: App title
-  api:
-    versions:
-      - v1
-  frontend:
-    paths:
-      - /foo/bar
-    sub_apps:
-      - id: 'sub-app-one'
-        title: 'Sub app one'
-    permissions:
-        - method: apiRequest
-          args:
-            - url: '/foo/bar'
-              show: true
-        - method: hasPermissions
-          args:
-            - [catalog:portfolios:create]
+```JSON
+{
+    "appId": "sources",
+    "title": "Sources",
+    "href": "/settings/sources",
+    "permissions": [
+        {
+          "method": "hasPermissions",
+          "args": [["sources:foo:bar"]]
+        },
+        {
+            "method": "apiRequest",
+            "args": [
+                {
+                    "url": "/api/sources/v3.1/sources",
+                    "matcher": "isNotEmpty"
+                }
+            ]
+        }
+    ]
+}
 ```
