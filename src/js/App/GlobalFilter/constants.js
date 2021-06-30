@@ -69,7 +69,8 @@ export const storeFilter = (tags, token, isEnabled, history) => {
     searchParams.append('tags', mappedTags);
 
     history.push({
-      pathname: location.pathname,
+      // we have to replace beta otherwise it's repeated
+      pathname: location.pathname.replace('/beta', ''),
       search: location.search,
       hash: searchParams.toString(),
     });
