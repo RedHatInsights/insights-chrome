@@ -1,7 +1,5 @@
-import React, { Fragment, useRef, useState, useContext } from 'react';
-import { Nav, NavList, NavItem } from '@patternfly/react-core';
-import { useHistory } from 'react-router-dom';
-import { QuickStartContext } from '@patternfly/quickstarts';
+import React, { Fragment, useRef, useState } from 'react';
+import { Nav, NavList } from '@patternfly/react-core';
 
 import NavContext from './navContext';
 import componentMapper from './componentMapper';
@@ -17,9 +15,6 @@ const Navigation = () => {
   const { loaded, schema } = useNavigation();
   const [showBetaModal, setShowBetaModal] = useState();
   const deferedOnClickArgs = useRef([]);
-
-  const history = useHistory();
-  const { allQuickStarts } = useContext(QuickStartContext);
 
   const onLinkClick = (origEvent, href) => {
     if (!showBetaModal && !isBeta()) {
