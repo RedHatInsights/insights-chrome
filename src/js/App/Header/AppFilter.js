@@ -50,16 +50,18 @@ const App = ({ id, title, routes, parent }) => (
       <SplitItem>
         <TextContent>
           <Text component="h4">{title}</Text>
-          {routes?.map((subApp) => {
-            const redirectUrl = `${parent ? `${parent.id}/` : ''}${subApp.reload || `${id}/${subApp.id}`}`;
-            return (
-              <Text component="p" key={`${id}/${subApp.id}`}>
-                <Text component="a" href={generateUrl(redirectUrl)}>
-                  {subApp.title}
+          {routes
+            ?.filter(({ isHidden }) => !isHidden)
+            .map((subApp) => {
+              const redirectUrl = `${parent ? `${parent.id}/` : ''}${subApp.reload || `${id}/${subApp.id}`}`;
+              return (
+                <Text component="p" key={`${id}/${subApp.id}`}>
+                  <Text component="a" href={generateUrl(redirectUrl)}>
+                    {subApp.title}
+                  </Text>
                 </Text>
-              </Text>
-            );
-          })}
+              );
+            })}
         </TextContent>
       </SplitItem>
     </Split>
