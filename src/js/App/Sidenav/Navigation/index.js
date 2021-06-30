@@ -50,8 +50,6 @@ const Navigation = () => {
             {schema.navItems.map((item, index) => (
               <ChromeNavItemFactory key={index} {...item} />
             ))}
-            {/* TODO: Quick starts catalog */}
-            {allQuickStarts.length > 0 && <NavItem onClick={() => history.push('/resources')}>Resources</NavItem>}
           </NavContext.Provider>
         </NavList>
       </Nav>

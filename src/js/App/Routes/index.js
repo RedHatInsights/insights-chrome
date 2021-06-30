@@ -39,9 +39,6 @@ const Routes = ({ insightsContentRef }) => {
       {list.map((app) => (
         <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
       ))}
-      <Route path="/resources">
-        <QuickStartCatalogPage />
-      </Route>
       <Route>Not found</Route>
     </Switch>
   );

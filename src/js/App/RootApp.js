@@ -14,7 +14,7 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
-import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
+import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage, QuickStartCatalogPage } from '@patternfly/quickstarts';
 import '@patternfly/quickstarts/dist/quickstarts.css';
 
 const ShieldedRoot = memo(
@@ -130,6 +130,7 @@ const ScalprumRoot = ({ config, ...props }) => {
               experimentalApi: true,
               setQuickStarts: valuesForQuickstartContext.setAllQuickStarts,
               toggleQuickStart: valuesForQuickstartContext.setActiveQuickStart,
+              QuickStartCatalogPage: QuickStartCatalogPage,
             },
           }}
         >
