@@ -43,6 +43,11 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
     href,
     id: actionId,
     navId: actionId,
+    /**
+     * @deprecated
+     * Remove once nav overhaul is in all environments
+     */
+    type: 'click',
   };
   const dispatch = useDispatch();
   const onClick = (event) => {
