@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import ChromeRoute from './ChromeRoute';
+import { QuickStartCatalogPage } from '@patternfly/quickstarts';
 
 const generateRoutesList = (modules) =>
   Object.entries(modules)
@@ -29,7 +30,6 @@ const generateRoutesList = (modules) =>
 
 const Routes = ({ insightsContentRef }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
-
   if (!modules) {
     return null;
   }
@@ -39,6 +39,9 @@ const Routes = ({ insightsContentRef }) => {
       {list.map((app) => (
         <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
       ))}
+      <Route path="/resources">
+        <QuickStartCatalogPage />
+      </Route>
       <Route>Not found</Route>
     </Switch>
   );

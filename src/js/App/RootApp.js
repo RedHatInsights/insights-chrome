@@ -14,6 +14,8 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
+import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
+import '@patternfly/quickstarts/dist/quickstarts.css';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -109,10 +111,32 @@ RootApp.propTypes = {
 };
 
 const ScalprumRoot = ({ config, ...props }) => {
+  const [activeQuickStartID, setActiveQuickStartID] = React.useState('');
+  const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
+  const valuesForQuickstartContext = useValuesForQuickStartContext({
+    activeQuickStartID,
+    setActiveQuickStartID,
+    allQuickStartStates,
+    setAllQuickStartStates,
+  });
+
   return (
-    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true } }}>
-      <RootApp {...props} />
-    </ScalprumProvider>
+    <QuickStartContext.Provider value={valuesForQuickstartContext}>
+      <QuickStartDrawer>
+        <ScalprumProvider
+          config={config}
+          api={{
+            chrome: {
+              experimentalApi: true,
+              setQuickStarts: valuesForQuickstartContext.setAllQuickStarts,
+              toggleQuickStart: valuesForQuickstartContext.setActiveQuickStart,
+            },
+          }}
+        >
+          <RootApp {...props} />
+        </ScalprumProvider>
+      </QuickStartDrawer>
+    </QuickStartContext.Provider>
   );
 };
 
