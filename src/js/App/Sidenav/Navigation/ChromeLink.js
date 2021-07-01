@@ -121,7 +121,6 @@ const ChromeLink = ({ appId, children, ...rest }) => {
   const { onLinkClick } = useContext(NavContext);
   const currAppId = useSelector(({ chrome }) => chrome?.appId);
   const isDynamic = useDynamicModule(appId);
-  console.log(appId, 'this is appId!');
 
   if (!rest.isExternal && typeof isDynamic === 'undefined') {
     return null;
