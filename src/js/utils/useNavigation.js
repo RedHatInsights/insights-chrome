@@ -7,6 +7,27 @@ import { loadLeftNavSegment } from '../redux/actions';
 import { isBeta } from '../utils';
 import { evaluateVisibility } from './isNavItemVisible';
 
+function cleanNavItemsHref(navItem) {
+  const result = { ...navItem };
+
+  if (typeof result.groupId !== 'undefined') {
+    result.navItems = result.navItems.map(cleanNavItemsHref);
+  }
+
+  if (result.expandable === true) {
+    result.routes = result.routes.map(cleanNavItemsHref);
+  }
+
+  if (typeof result.href === 'string') {
+    /**
+     * Remove traling "/" from  the link
+     */
+    result.href = result.href.replace(/\/$/, '');
+  }
+
+  return result;
+}
+
 export const navigationFileMapper = {
   insights: 'rhel-navigation.json',
   ansible: 'ansible-navigation.json',
@@ -83,12 +104,13 @@ function mutateSchema(hrefMatch, navItems) {
 }
 
 const highlightItems = (pathname, schema) => {
-  const segmentsCount = pathname.split('/').length + 1;
+  const cleanPathname = pathname.replace(/\/$/, '');
+  const segmentsCount = cleanPathname.split('/').length + 1;
   const matchedLink = schema.sortedLinks.find((href) => {
-    const segmentedHref = href.split('/').slice(0, segmentsCount).join('/');
-    return pathname.includes(segmentedHref);
+    const segmentedHref = href.replace(/\/$/, '').split('/').slice(0, segmentsCount).join('/');
+    return cleanPathname.includes(segmentedHref);
   });
-  return mutateSchema(matchedLink, schema.navItems);
+  return mutateSchema(matchedLink?.replace(/\/$/, ''), schema.navItems);
 };
 
 const useNavigation = () => {
@@ -140,7 +162,7 @@ const useNavigation = () => {
           }
 
           const data = response.data;
-          const navItems = await Promise.all(data.navItems.map(evaluateVisibility));
+          const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
           const schema = {
             ...data,
             navItems,
