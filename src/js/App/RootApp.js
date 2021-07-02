@@ -110,7 +110,13 @@ RootApp.propTypes = {
 
 const ScalprumRoot = ({ config, ...props }) => {
   return (
-    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true } }}>
+    /**
+     * Once all applications are migrated to chrome 2:
+     * - define chrome API in chrome root after it mounts
+     * - copy these functions to window
+     * - add deprecation warning to the window functions
+     */
+    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true, ...window.insights.chrome } }}>
       <RootApp {...props} />
     </ScalprumProvider>
   );
