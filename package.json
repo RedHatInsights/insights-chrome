@@ -130,7 +130,7 @@
     "@data-driven-forms/pf4-component-mapper": "^3.6.4",
     "@data-driven-forms/react-form-renderer": "^3.6.4",
     "@patternfly/patternfly": "^4.103.6",
-    "@patternfly/quickstarts": "1.0.0-rc.23",
+    "@patternfly/quickstarts": "1.0.0-rc.27",
     "@patternfly/react-core": "4.121.1",
     "@patternfly/react-icons": "^4.10.7",
     "@patternfly/react-table": "^4.27.7",

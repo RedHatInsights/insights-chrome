@@ -59,8 +59,9 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
 
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
+  const quickStartHighlightId = href.split('/').slice(-1);
   return (
-    <NavLink data-testid="router-link" onClick={onClick} to={href} className={className}>
+    <NavLink data-testid="router-link" onClick={onClick} to={href} className={className} data-quickstart-id={quickStartHighlightId}>
       {children}
     </NavLink>
   );

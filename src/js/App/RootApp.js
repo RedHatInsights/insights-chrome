@@ -16,6 +16,7 @@ import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage, QuickStartCatalogPage } from '@patternfly/quickstarts';
 import '@patternfly/quickstarts/dist/quickstarts.css';
+import '@patternfly/quickstarts/dist/global.css';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
