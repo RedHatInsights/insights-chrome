@@ -61,7 +61,7 @@ describe('useAppFilter', () => {
       data: {
         'cost-management': {
           id: 'cost-management',
-          title: 'Cost management',
+          title: 'Cost Management',
           links: [],
         },
         subscriptions: {
@@ -361,7 +361,7 @@ describe('useAppFilter', () => {
     expect(result.current.filteredApps).toEqual([
       {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [
           {
             appId: 'foo',
@@ -435,7 +435,7 @@ describe('useAppFilter', () => {
     expect(result.current.filteredApps).toEqual([
       {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [
           {
             appId: 'foo',
