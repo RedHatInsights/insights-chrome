@@ -26,6 +26,14 @@ jest.mock('react-router-dom', () => {
   };
 });
 
+window.ResizeObserver =
+  window.ResizeObserver ||
+  jest.fn().mockImplementation(() => ({
+    disconnect: jest.fn(),
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+  }));
+
 import * as utils from '../utils';
 import * as routerDom from 'react-router-dom';
 
