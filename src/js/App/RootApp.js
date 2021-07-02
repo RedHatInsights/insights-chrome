@@ -121,6 +121,12 @@ const ScalprumRoot = ({ config, ...props }) => {
     setAllQuickStartStates,
   });
 
+  /**
+   * Once all applications are migrated to chrome 2:
+   * - define chrome API in chrome root after it mounts
+   * - copy these functions to window
+   * - add deprecation warning to the window functions
+   */
   return (
     <QuickStartContext.Provider value={valuesForQuickstartContext}>
       <QuickStartDrawer>
@@ -129,9 +135,12 @@ const ScalprumRoot = ({ config, ...props }) => {
           api={{
             chrome: {
               experimentalApi: true,
-              setQuickStarts: valuesForQuickstartContext.setAllQuickStarts,
-              toggleQuickStart: valuesForQuickstartContext.setActiveQuickStart,
-              QuickStartCatalogPage: QuickStartCatalogPage,
+              ...window.insights.chrome,
+              quickStarts: {
+                set: valuesForQuickstartContext.setAllQuickStarts,
+                toggle: valuesForQuickstartContext.setActiveQuickStart,
+                Catalog: QuickStartCatalogPage,
+              },
             },
           }}
         >

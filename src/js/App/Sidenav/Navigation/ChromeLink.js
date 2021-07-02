@@ -26,14 +26,15 @@ const useDynamicModule = (appId) => {
   return isDynamic;
 };
 
-const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
+const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children }) => {
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop();
   }
-  if (href.split('/').length === 3) {
+  if (currAppId !== appId && href.split('/').length === 3) {
     actionId = '/';
   }
+
   /**
    * If the sub nav item points to application root
    * eg. /openshift/cost-management we don't want to send "/cost-management" but "/"
@@ -73,6 +74,8 @@ LinkWrapper.propTypes = {
   children: PropTypes.node.isRequired,
   isBeta: PropTypes.bool,
   onLinkClick: PropTypes.func.isRequired,
+  currAppId: PropTypes.string.isRequired,
+  appId: PropTypes.string.isRequired,
 };
 
 const basepath = document.baseURI;
@@ -117,6 +120,7 @@ RefreshLink.propTypes = {
 
 const ChromeLink = ({ appId, children, ...rest }) => {
   const { onLinkClick } = useContext(NavContext);
+  const currAppId = useSelector(({ chrome }) => chrome?.appId);
   const isDynamic = useDynamicModule(appId);
 
   if (!rest.isExternal && typeof isDynamic === 'undefined') {
@@ -125,7 +129,7 @@ const ChromeLink = ({ appId, children, ...rest }) => {
 
   const LinkComponent = !rest.isExternal && isDynamic ? LinkWrapper : RefreshLink;
   return (
-    <LinkComponent onLinkClick={onLinkClick} appId={appId} {...rest}>
+    <LinkComponent onLinkClick={onLinkClick} appId={appId} currAppId={currAppId} {...rest}>
       {children}
     </LinkComponent>
   );
