@@ -52,7 +52,7 @@ const useAppFilter = () => {
     data: {
       'cost-management': {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [],
       },
       subscriptions: {
