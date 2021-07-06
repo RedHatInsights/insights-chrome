@@ -28,17 +28,6 @@ function cleanNavItemsHref(navItem) {
   return result;
 }
 
-export const navigationFileMapper = {
-  insights: 'rhel-navigation.json',
-  ansible: 'ansible-navigation.json',
-  settings: 'settings-navigation.json',
-  'user-preferences': 'user-preferences-navigation.json',
-  openshift: 'openshift-navigation.json',
-  'application-services': 'application-services-navigation.json',
-  edge: 'edge-navigation.json',
-  docs: 'docs-navigation.json',
-};
-
 function levelArray(navItems) {
   return flatMap(navItems, ({ href, routes, navItems }) => {
     if (!href && navItems) {
@@ -154,26 +143,24 @@ const useNavigation = () => {
   useEffect(() => {
     let observer;
     if (currentNamespace) {
-      axios
-        .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${navigationFileMapper[currentNamespace]}`)
-        .then(async (response) => {
-          if (observer && typeof observer.disconnect === 'function') {
-            observer.disconnect();
-          }
+      axios.get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json`).then(async (response) => {
+        if (observer && typeof observer.disconnect === 'function') {
+          observer.disconnect();
+        }
 
-          const data = response.data;
-          const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
-          const schema = {
-            ...data,
-            navItems,
-            sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
-          };
-          observer = registerLocationObserver(pathname, schema);
-          observer.observe(document.querySelector('body'), {
-            childList: true,
-            subtree: true,
-          });
+        const data = response.data;
+        const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
+        const schema = {
+          ...data,
+          navItems,
+          sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
+        };
+        observer = registerLocationObserver(pathname, schema);
+        observer.observe(document.querySelector('body'), {
+          childList: true,
+          subtree: true,
         });
+      });
     }
     return () => {
       if (observer && typeof observer.disconnect === 'function') {
