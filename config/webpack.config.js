@@ -4,7 +4,7 @@ const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const commonConfig = ({ publicPath, noHash }) => ({
-  entry: path.resolve(__dirname, '../src/js/chrome.js'),
+  entry: [path.resolve(__dirname, '../src/js/chrome.js')],
   output: {
     path: path.resolve(__dirname, '../build/js'),
     filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
@@ -64,6 +64,10 @@ const commonConfig = ({ publicPath, noHash }) => ({
             },
           },
         ],
+      },
+      {
+        test: /\.pug$/,
+        use: ['pug-loader'],
       },
     ],
   },

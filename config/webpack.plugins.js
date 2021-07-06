@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const resolve = require('path').resolve;
 const { ModuleFederationPlugin } = require('webpack').container;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 const deps = require('../package.json').dependencies;
 const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
@@ -40,6 +42,11 @@ const plugins = [
     ],
   }),
   ChunkMapper,
+  new HtmlWebpackPlugin({
+    template: path.resolve(__dirname, '../src/pug/templates/index.pug'),
+    inject: true,
+    filename: '../index.html',
+  }),
 ];
 
 module.exports = plugins;
