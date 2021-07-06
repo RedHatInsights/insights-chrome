@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isBeta } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
-import { navigationFileMapper } from '../../../utils/useNavigation';
 
 export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
@@ -127,7 +126,7 @@ const useAppFilter = () => {
         ...prev,
         isLoading: true,
       }));
-      let bundles = requiredBundles.filter((app) => !existingSchemas.includes(app)).map((app) => navigationFileMapper[app]);
+      let bundles = requiredBundles.filter((app) => !existingSchemas.includes(app));
       bundles.map((fragment) =>
         axios
           .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}`)

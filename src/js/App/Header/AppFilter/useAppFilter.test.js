@@ -7,7 +7,6 @@ import configureStore from 'redux-mock-store';
 import * as axios from 'axios';
 
 import useAppFilter, { requiredBundles } from './useAppFilter';
-import { navigationFileMapper } from '../../../utils/useNavigation';
 
 jest.mock('axios', () => {
   const axios = jest.requireActual('axios');
@@ -97,7 +96,7 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(6);
     for (let index = 0; index < 6; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${navigationFileMapper[requiredBundles[index]]}`]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}`]);
     }
     axiosGetSpy.mockReset();
   });
