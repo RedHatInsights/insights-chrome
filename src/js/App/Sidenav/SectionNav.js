@@ -7,7 +7,7 @@ import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
 import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
 import './SectionNav.scss';
 
-const anisbleHackIds = ['automation-calculator', 'organization-statistics', 'job-explorer', 'clusters', 'notifications'];
+const anisbleHackIds = ['savings-planner', 'automation-calculator', 'organization-statistics', 'job-explorer', 'clusters', 'notifications'];
 
 const sectionTitleMapper = (id) =>
   ({
