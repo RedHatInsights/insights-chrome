@@ -129,7 +129,7 @@ const useAppFilter = () => {
       let bundles = requiredBundles.filter((app) => !existingSchemas.includes(app));
       bundles.map((fragment) =>
         axios
-          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}`)
+          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json`)
           .then(handleBundleData)
           .catch((err) => {
             console.error('Unable to load appfilter bundle', err);

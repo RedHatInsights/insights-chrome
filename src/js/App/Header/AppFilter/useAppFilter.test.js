@@ -96,7 +96,7 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(6);
     for (let index = 0; index < 6; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}`]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json`]);
     }
     axiosGetSpy.mockReset();
   });
