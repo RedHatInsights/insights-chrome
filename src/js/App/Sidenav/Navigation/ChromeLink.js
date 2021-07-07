@@ -26,11 +26,15 @@ const useDynamicModule = (appId) => {
   return isDynamic;
 };
 
-const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
+const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children }) => {
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop();
   }
+  if (currAppId !== appId && href.split('/').length === 3) {
+    actionId = '/';
+  }
+
   /**
    * If the sub nav item points to application root
    * eg. /openshift/cost-management we don't want to send "/cost-management" but "/"
@@ -39,11 +43,16 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, children }) => {
   const domEvent = {
     href,
     id: actionId,
-    navId: href.split('/').length === 3 ? '/' : actionId,
+    navId: actionId,
+    /**
+     * @deprecated
+     * Remove once nav overhaul is in all environments
+     */
+    type: 'click',
   };
   const dispatch = useDispatch();
   const onClick = (event) => {
-    if (isBeta) {
+    if (onLinkClick && isBeta) {
       if (!onLinkClick(event, href)) {
         return false;
       }
@@ -64,6 +73,8 @@ LinkWrapper.propTypes = {
   children: PropTypes.node.isRequired,
   isBeta: PropTypes.bool,
   onLinkClick: PropTypes.func.isRequired,
+  currAppId: PropTypes.string.isRequired,
+  appId: PropTypes.string.isRequired,
 };
 
 const basepath = document.baseURI;
@@ -87,7 +98,7 @@ const RefreshLink = ({
         }
       : {})}
     onClick={(event) => {
-      if (isBeta && !isExternal) {
+      if (onLinkClick && isBeta && !isExternal) {
         if (!onLinkClick(event, href)) {
           return false;
         }
@@ -102,12 +113,13 @@ RefreshLink.propTypes = {
   isExternal: PropTypes.bool,
   appId: PropTypes.string,
   onClick: PropTypes.any,
-  onLinkClick: PropTypes.func.isRequired,
+  onLinkClick: PropTypes.func,
   isBeta: PropTypes.bool,
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
   const { onLinkClick } = useContext(NavContext);
+  const currAppId = useSelector(({ chrome }) => chrome?.appId);
   const isDynamic = useDynamicModule(appId);
 
   if (!rest.isExternal && typeof isDynamic === 'undefined') {
@@ -116,7 +128,7 @@ const ChromeLink = ({ appId, children, ...rest }) => {
 
   const LinkComponent = !rest.isExternal && isDynamic ? LinkWrapper : RefreshLink;
   return (
-    <LinkComponent onLinkClick={onLinkClick} appId={appId} {...rest}>
+    <LinkComponent onLinkClick={onLinkClick} appId={appId} currAppId={currAppId} {...rest}>
       {children}
     </LinkComponent>
   );

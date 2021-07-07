@@ -41,10 +41,6 @@ describe('Reducers', () => {
     it('finds the app using identifyApp()', () => {
       expect(() => actions.identifyApp('inventory', mockNav)).not.toThrowError('unknown app identifier: inventory');
     });
-
-    it('throws error on unknown app', () => {
-      expect(() => actions.identifyApp('foo', mockNav)).toThrowError('unknown app identifier: foo');
-    });
   });
 
   describe('onPageAction', () => {

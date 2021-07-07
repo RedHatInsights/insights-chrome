@@ -5,9 +5,30 @@ import { useLocation } from 'react-router-dom';
 import flatMap from 'lodash/flatMap';
 import { loadLeftNavSegment } from '../redux/actions';
 import { isBeta } from '../utils';
-import { visibilityFunctions } from '../consts';
+import { evaluateVisibility } from './isNavItemVisible';
 
-const fileMapper = {
+function cleanNavItemsHref(navItem) {
+  const result = { ...navItem };
+
+  if (typeof result.groupId !== 'undefined') {
+    result.navItems = result.navItems.map(cleanNavItemsHref);
+  }
+
+  if (result.expandable === true) {
+    result.routes = result.routes.map(cleanNavItemsHref);
+  }
+
+  if (typeof result.href === 'string') {
+    /**
+     * Remove traling "/" from  the link
+     */
+    result.href = result.href.replace(/\/$/, '');
+  }
+
+  return result;
+}
+
+export const navigationFileMapper = {
   insights: 'rhel-navigation.json',
   ansible: 'ansible-navigation.json',
   settings: 'settings-navigation.json',
@@ -83,65 +104,13 @@ function mutateSchema(hrefMatch, navItems) {
 }
 
 const highlightItems = (pathname, schema) => {
-  const segmentsCount = pathname.split('/').length + 1;
+  const cleanPathname = pathname.replace(/\/$/, '');
+  const segmentsCount = cleanPathname.split('/').length + 1;
   const matchedLink = schema.sortedLinks.find((href) => {
-    const segmentedHref = href.split('/').slice(0, segmentsCount).join('/');
-    return pathname.includes(segmentedHref);
+    const segmentedHref = href.replace(/\/$/, '').split('/').slice(0, segmentsCount).join('/');
+    return cleanPathname.includes(segmentedHref);
   });
-  return mutateSchema(matchedLink, schema.navItems);
-};
-
-const isCurrVisible = (permissions) =>
-  Promise.all(
-    flatMap(
-      Array.isArray(permissions) ? permissions : [permissions],
-      async ({ method, args } = {}) =>
-        // (null, undefined, true) !== false
-        (await visibilityFunctions?.[method]?.(...(args || []))) !== false
-    )
-  ).then((visibility) => visibility.every(Boolean));
-
-const evaluteVisibility = async (navItem) => {
-  /**
-   * Skip evaluation for hidden items
-   */
-  if (navItem.isHidden === true) {
-    return navItem;
-  }
-
-  const result = {
-    ...navItem,
-    isHidden: false,
-  };
-
-  if (typeof result.permissions !== 'undefined') {
-    const visible = await isCurrVisible(result.permissions);
-    /**
-     * Hide item visibility check failed
-     */
-    if (!visible) {
-      return {
-        ...result,
-        isHidden: true,
-      };
-    }
-  }
-
-  if (typeof result.groupId !== 'undefined') {
-    /**
-     * Evalute group items
-     */
-    result.navItems = await Promise.all(result.navItems.map(evaluteVisibility));
-  }
-
-  if (result.expandable === true) {
-    /**
-     * Evaluate sub routes
-     */
-    result.routes = await Promise.all(result.routes.map(evaluteVisibility));
-  }
-
-  return result;
+  return mutateSchema(matchedLink?.replace(/\/$/, ''), schema.navItems);
 };
 
 const useNavigation = () => {
@@ -185,24 +154,26 @@ const useNavigation = () => {
   useEffect(() => {
     let observer;
     if (currentNamespace) {
-      axios.get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${fileMapper[currentNamespace]}`).then(async (response) => {
-        if (observer && typeof observer.disconnect === 'function') {
-          observer.disconnect();
-        }
+      axios
+        .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${navigationFileMapper[currentNamespace]}`)
+        .then(async (response) => {
+          if (observer && typeof observer.disconnect === 'function') {
+            observer.disconnect();
+          }
 
-        const data = response.data;
-        const navItems = await Promise.all(data.navItems.map(evaluteVisibility));
-        const schema = {
-          ...data,
-          navItems,
-          sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
-        };
-        observer = registerLocationObserver(pathname, schema);
-        observer.observe(document.querySelector('body'), {
-          childList: true,
-          subtree: true,
+          const data = response.data;
+          const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
+          const schema = {
+            ...data,
+            navItems,
+            sortedLinks: levelArray(data.navItems).sort((a, b) => (a.length < b.length ? 1 : -1)),
+          };
+          observer = registerLocationObserver(pathname, schema);
+          observer.observe(document.querySelector('body'), {
+            childList: true,
+            subtree: true,
+          });
         });
-      });
     }
     return () => {
       if (observer && typeof observer.disconnect === 'function') {

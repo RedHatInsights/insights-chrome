@@ -38,7 +38,7 @@ ChromeNavItem.propTypes = {
   href: PropTypes.string.isRequired,
   className: PropTypes.string,
   active: PropTypes.bool,
-  appId: PropTypes.string.isRequired,
+  appId: PropTypes.string,
 };
 
 export default ChromeNavItem;
