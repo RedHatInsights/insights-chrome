@@ -21,12 +21,12 @@ export const DEFAULT_ROUTES = {
     sso: 'https://sso.stage.redhat.com/auth',
   },
   fedrampprod: {
-    url: [],
-    sso: ''
+    url: ['gov.cloud.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
   },
   fedrampstage: {
-    url: [],
-    sso: ''
+    url: ['gov.cloud.stage.redhat.com'],
+    sso: 'https://sso.stage.redhat.com/auth',
   },
 };
 
