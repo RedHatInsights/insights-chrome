@@ -1,23 +1,31 @@
 // Global Defaults
 export const DEFAULT_ROUTES = {
   prod: {
-    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com'],
+    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
   },
   qa: {
-    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com'],
+    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
   },
   ci: {
-    url: ['ci.foo.redhat.com', 'ci.cloud.redhat.com'],
+    url: ['ci.foo.redhat.com', 'ci.cloud.redhat.com', 'ci.console.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
   },
   qaprodauth: {
-    url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com'],
+    url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com', 'qaprodauth.console.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com'],
+    sso: 'https://sso.stage.redhat.com/auth',
+  },
+  gov: {
+    url: ['gov.cloud.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+  },
+  govStage: {
+    url: ['gov.cloud.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
   },
 };
