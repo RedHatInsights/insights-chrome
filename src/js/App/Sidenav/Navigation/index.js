@@ -7,7 +7,6 @@ import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../BetaInfoModal';
 import { isBeta } from '../../../utils';
 
-import './Navigation.scss';
 import useNavigation from '../../../utils/useNavigation';
 import NavLoader from './Loader';
 
