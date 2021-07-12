@@ -1,22 +1,21 @@
 import React, { memo, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import GlobalFilter from './GlobalFilter/GlobalFilter';
-import { useScalprum, ScalprumProvider } from '@scalprum/react-core';
+import { useDispatch, useSelector } from 'react-redux';
+import GlobalFilter from '../GlobalFilter/GlobalFilter';
+import { useScalprum } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
-import { BrowserRouter, useLocation } from 'react-router-dom';
-import Navigation from './Sidenav/Navigation';
-import { Header, HeaderTools } from './Header/Header';
-import { isBeta } from '../utils';
-import LandingNav from './Sidenav/LandingNav';
+import { useLocation } from 'react-router-dom';
+import { Header, HeaderTools } from '../Header/Header';
 import isEqual from 'lodash/isEqual';
-import { onToggle } from '../redux/actions';
-import Routes from './Routes';
-import useOuiaTags from '../utils/useOuiaTags';
+import { onToggle } from '../../redux/actions';
+import Routes from '../Routes';
+import useOuiaTags from '../../utils/useOuiaTags';
+
+import '../Sidenav/Navigation/Navigation.scss';
 
 const ShieldedRoot = memo(
-  ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
+  ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
     const dispatch = useDispatch();
     const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
     useEffect(() => {
@@ -42,7 +41,7 @@ const ShieldedRoot = memo(
             headerTools={<HeaderTools />}
           />
         }
-        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <Navigation key="side-nav" />} />}
+        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
@@ -56,11 +55,11 @@ const ShieldedRoot = memo(
 );
 
 ShieldedRoot.propTypes = {
-  useLandingNav: PropTypes.bool,
   hideNav: PropTypes.bool,
   insightsContentRef: PropTypes.object.isRequired,
   isGlobalFilterEnabled: PropTypes.bool.isRequired,
   initialized: PropTypes.bool,
+  Sidebar: PropTypes.element,
 };
 ShieldedRoot.defaultProps = {
   useLandingNav: false,
@@ -70,11 +69,11 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
-const RootApp = ({ globalFilterHidden }) => {
+const RootApp = ({ globalFilterHidden, Sidebar }) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
-  const hideNav = useSelector(({ chrome: { user } }) => !user);
   const { pathname } = useLocation();
+  const hideNav = useSelector(({ chrome: { user } }) => !user || !Sidebar);
   const activeLocation = pathname.split('/')[1];
   /**
    * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
@@ -93,8 +92,8 @@ const RootApp = ({ globalFilterHidden }) => {
         isGlobalFilterEnabled={isGlobalFilterEnabled}
         hideNav={hideNav}
         insightsContentRef={insightsContentRef}
-        useLandingNav={isLanding}
         initialized={initialized}
+        Sidebar={Sidebar}
       />
     </div>
   );
@@ -106,35 +105,7 @@ RootApp.propTypes = {
   pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   globalFilterHidden: PropTypes.bool,
   config: PropTypes.any,
+  Sidebar: PropTypes.element,
 };
 
-const ScalprumRoot = ({ config, ...props }) => {
-  return (
-    /**
-     * Once all applications are migrated to chrome 2:
-     * - define chrome API in chrome root after it mounts
-     * - copy these functions to window
-     * - add deprecation warning to the window functions
-     */
-    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true, ...window.insights.chrome } }}>
-      <RootApp {...props} />
-    </ScalprumProvider>
-  );
-};
-
-ScalprumRoot.propTypes = {
-  config: PropTypes.any,
-};
-
-function stateToProps({ globalFilter: { globalFilterRemoved } = {} }) {
-  return { globalFilterRemoved };
-}
-export const ConnectedRootApp = connect(stateToProps, null)(ScalprumRoot);
-
-const Chrome = (props) => (
-  <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
-    <ConnectedRootApp {...props} />
-  </BrowserRouter>
-);
-
-export default Chrome;
+export default RootApp;
