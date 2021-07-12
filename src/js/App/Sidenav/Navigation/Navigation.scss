@@ -28,6 +28,7 @@
     }
     ul
       > li.pf-c-nav__item {
+        border-top: 0;
         --pf-c-nav__item--MarginTop: 0;
         --pf-c-nav__item--before--BorderWidth: 0;
         &:last-child {
