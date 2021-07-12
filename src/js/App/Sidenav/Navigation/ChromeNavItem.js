@@ -18,6 +18,7 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
     <NavItem
       className={classNames(className, { 'ins-c-navigation__additional-links': isExternal })}
       itemID={href}
+      data-quickstart-id={href}
       preventDefault
       isActive={active}
       to={href}

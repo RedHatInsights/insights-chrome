@@ -14,6 +14,9 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
+import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage, QuickStartCatalogPage } from '@patternfly/quickstarts';
+import '@patternfly/quickstarts/dist/quickstarts.css';
+import '@patternfly/quickstarts/dist/global.css';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -109,16 +112,42 @@ RootApp.propTypes = {
 };
 
 const ScalprumRoot = ({ config, ...props }) => {
+  const [activeQuickStartID, setActiveQuickStartID] = React.useState('');
+  const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
+  const valuesForQuickstartContext = useValuesForQuickStartContext({
+    activeQuickStartID,
+    setActiveQuickStartID,
+    allQuickStartStates,
+    setAllQuickStartStates,
+  });
+
+  /**
+   * Once all applications are migrated to chrome 2:
+   * - define chrome API in chrome root after it mounts
+   * - copy these functions to window
+   * - add deprecation warning to the window functions
+   */
   return (
-    /**
-     * Once all applications are migrated to chrome 2:
-     * - define chrome API in chrome root after it mounts
-     * - copy these functions to window
-     * - add deprecation warning to the window functions
-     */
-    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true, ...window.insights.chrome } }}>
-      <RootApp {...props} />
-    </ScalprumProvider>
+    <QuickStartContext.Provider value={valuesForQuickstartContext}>
+      <QuickStartDrawer>
+        <ScalprumProvider
+          config={config}
+          api={{
+            chrome: {
+              experimentalApi: true,
+              ...window.insights.chrome,
+              quickStarts: {
+                set: valuesForQuickstartContext.setAllQuickStarts,
+                toggle: valuesForQuickstartContext.setActiveQuickStart,
+                Catalog: QuickStartCatalogPage,
+              },
+            },
+          }}
+        >
+          <RootApp {...props} />
+        </ScalprumProvider>
+      </QuickStartDrawer>
+    </QuickStartContext.Provider>
   );
 };
 

@@ -8,8 +8,16 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {
     return null;
   }
 
+  const quickStartHighlightId = title.replace(/\s/g, '-');
   return (
-    <NavExpandable id={id} isExpanded={active} isActive={active} className="ins-m-navigation-align" title={title}>
+    <NavExpandable
+      id={id}
+      isExpanded={active}
+      isActive={active}
+      className="ins-m-navigation-align"
+      title={title}
+      data-quickstart-id={quickStartHighlightId}
+    >
       {routes.map((item, index) => (
         <ChromeNavItemFactory key={index} {...item} />
       ))}

@@ -82,6 +82,7 @@ exports[`ChromeNavGroup should render nav item group with items 1`] = `
       >
         <a
           class="pf-c-nav__link"
+          data-quickstart-id="foo"
           data-testid="router-link"
           href="/foo"
         >
