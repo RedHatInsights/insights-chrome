@@ -25,7 +25,9 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
         });
       }
 
-      url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+      if (!url && href.match(/^\//)) {
+        url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+      }
     });
   }
 
