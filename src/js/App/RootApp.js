@@ -15,6 +15,7 @@ import { onToggle } from '../redux/actions';
 import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import Banner from './Banners/Banner';
+import cookie from 'js-cookie';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -34,10 +35,10 @@ const ShieldedRoot = memo(
     return (
       <Page
         isManagedSidebar={!hideNav}
-        className={classnames({ 'ins-c-page__hasBanner': useLandingNav })}
+        className={classnames({ 'ins-c-page__hasBanner': useLandingNav && !cookie.get('cs_jwt') })}
         header={
           <Fragment>
-            {useLandingNav ? <Banner/> : undefined }
+            {useLandingNav && !cookie.get('cs_jwt') ? <Banner/> : undefined }
             <PageHeader
               className={classnames({ 'context-switcher-banner': isOpen })}
               logoComponent="div"
