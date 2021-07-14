@@ -86,6 +86,7 @@ const RefreshLink = ({
   onClick /** on click must be separated because PF adds prevent default. We want that only for SPA links */,
   appId,
   isBeta,
+  currAppId,
   ...props
 }) => (
   <a
@@ -115,6 +116,7 @@ RefreshLink.propTypes = {
   onClick: PropTypes.any,
   onLinkClick: PropTypes.func,
   isBeta: PropTypes.bool,
+  currAppId: PropTypes.any,
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
