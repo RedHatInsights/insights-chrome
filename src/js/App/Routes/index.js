@@ -2,7 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
+
+const redirects = [
+  {
+    path: '/insights',
+    to: '/insights/dashboard',
+  },
+];
 
 const generateRoutesList = (modules) =>
   Object.entries(modules)
@@ -36,6 +44,11 @@ const Routes = ({ insightsContentRef }) => {
   const list = generateRoutesList(modules);
   return (
     <Switch>
+      {redirects.map(({ path, to }) => (
+        <Route key={path} exact path={path}>
+          <Redirect to={to} />
+        </Route>
+      ))}
       {list.map((app) => (
         <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
       ))}
