@@ -73,46 +73,41 @@ LinkWrapper.propTypes = {
   children: PropTypes.node.isRequired,
   isBeta: PropTypes.bool,
   onLinkClick: PropTypes.func.isRequired,
-  currAppId: PropTypes.string.isRequired,
+  currAppId: PropTypes.string,
   appId: PropTypes.string.isRequired,
 };
 
 const basepath = document.baseURI;
 
-const RefreshLink = ({
-  href,
-  isExternal,
-  onLinkClick,
-  onClick /** on click must be separated because PF adds prevent default. We want that only for SPA links */,
-  appId,
-  isBeta,
-  ...props
-}) => (
-  <a
-    data-testid="native-link"
-    href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
-    {...(isExternal
-      ? {
-          rel: 'noreferrer noopener',
-          target: '_blank',
+const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }) => rest;
+
+const RefreshLink = (props) => {
+  const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);
+  return (
+    <a
+      data-testid="native-link"
+      href={isExternal ? href : `${basepath}${href.replace(/^\//, '')}`}
+      {...(isExternal
+        ? {
+            rel: 'noreferrer noopener',
+            target: '_blank',
+          }
+        : {})}
+      onClick={(event) => {
+        if (onLinkClick && isBeta && !isExternal) {
+          if (!onLinkClick(event, href)) {
+            return false;
+          }
         }
-      : {})}
-    onClick={(event) => {
-      if (onLinkClick && isBeta && !isExternal) {
-        if (!onLinkClick(event, href)) {
-          return false;
-        }
-      }
-    }}
-    {...props}
-  />
-);
+      }}
+      {...rest}
+    />
+  );
+};
 
 RefreshLink.propTypes = {
   href: PropTypes.string.isRequired,
   isExternal: PropTypes.bool,
-  appId: PropTypes.string,
-  onClick: PropTypes.any,
   onLinkClick: PropTypes.func,
   isBeta: PropTypes.bool,
 };
