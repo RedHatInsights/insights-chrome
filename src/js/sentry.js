@@ -59,17 +59,25 @@ function initSentry() {
       break;
   }
 
-  // dsn: key
-  // environment: logs Prod or Prod Beta for filtering
-  // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
-  // attachStacktrace: attach the actual console logs
-  // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
-  Sentry.init({
-    dsn: API_KEY,
-    environment: `Prod${appDetails.beta}`,
-    maxBreadcrumbs: 50,
-    attachStacktrace: true,
-  });
+    // dsn: key
+    // environment: logs Prod or Prod Beta for filtering
+    // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
+    // attachStacktrace: attach the actual console logs
+    // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
+    Sentry.init({
+        dsn: API_KEY,
+        environment: `Prod${appDetails.beta}`,
+        maxBreadcrumbs: 50,
+        attachStacktrace: true,
+        beforeSend(event, hint) {
+            const error = hint.originalException;
+            if (error && error.message && error.message.match(/Request failed with status code 403/i)) {
+                return null;
+            }
+
+            return event;
+        }
+    });
 }
 
 // Sets up the tagging in sentry. This is stuff that can be filtered.
