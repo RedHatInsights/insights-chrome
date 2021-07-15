@@ -13,11 +13,11 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
   let url = href;
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
-      if (href.includes('/openshift/cost-management')) {
+      if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
         costLinks.push({ ...rest, href, title });
       }
 
-      if (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions')) {
+      if (rest.filterable !== false && (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions'))) {
         subscriptionsLinks.push({
           ...rest,
           href,
@@ -25,7 +25,9 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
         });
       }
 
-      url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+      if (!url && href.match(/^\//)) {
+        url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+      }
     });
   }
 
@@ -72,7 +74,8 @@ const useAppFilter = () => {
         return [...acc, curr];
       }, [])
       .flat()
-      .map(getBundleLink);
+      .map(getBundleLink)
+      .filter(({ filterable }) => filterable !== false);
     const bundleLinks = [];
     const extraLinks = {
       cost: [],
