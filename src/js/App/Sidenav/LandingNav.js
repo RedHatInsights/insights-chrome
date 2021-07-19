@@ -2,39 +2,50 @@ import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { isBeta } from '../../utils';
 import './LandingNav.scss';
-import { useSelector } from 'react-redux';
-
-const routes = [
-  { title: 'Application Services', id: 'application-services', route: 'application-services' },
-  { title: 'OpenShift', id: 'openshift', route: 'openshift' },
-  { title: 'Red Hat Enterprise Linux', id: 'insights', route: 'insights/dashboard' },
-  { title: 'Ansible Automation Platform', id: 'ansible', route: 'ansible' },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { loadNavigationLandingPage } from '../../redux/actions';
+import NavLoader from './Navigation/Loader';
 
 const LandingNav = () => {
+  const isBetaEnv = isBeta();
+  const dispatch = useDispatch();
   const [elementReady, setElementReady] = useState(false);
   const showNav = useSelector(({ chrome: { user } }) => !!user);
+  const schema = useSelector(
+    ({
+      chrome: {
+        navigation: { landingPage },
+      },
+    }) => landingPage
+  );
   useEffect(() => {
     if (showNav) {
       setElementReady(true);
     }
   }, [showNav]);
-  const isBetaEnv = isBeta();
+
+  useEffect(() => {
+    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/landing-navigation.json`).then((response) => {
+      dispatch(loadNavigationLandingPage(response.data));
+    });
+  }, []);
 
   /**
    * render navigation only if the user is logged in
    */
-  if (!showNav || !elementReady) {
-    return null;
+  if (!showNav || !elementReady || !schema) {
+    return <NavLoader />;
   }
+
   return (
     <Nav className="ins-c-landing-nav">
       <NavList>
         <div className="ins-c-app-title">
           <b>Hybrid Cloud Console</b>
         </div>
-        {routes.map(({ title, id, route }) => (
-          <NavItem className="ins-m-navigation-align" key={id} to={`/${isBetaEnv ? 'beta/' : ''}${route}`}>
+        {schema.map(({ title, id, href }) => (
+          <NavItem className="ins-m-navigation-align" key={id} to={`${isBetaEnv ? '/beta' : ''}${href}`}>
             {title}
           </NavItem>
         ))}

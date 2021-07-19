@@ -1,8 +1,6 @@
 import createChromeInstance from './create-chrome';
 
 jest.mock('../jwt/jwt');
-jest.mock('../nav/sourceOfTruth');
-jest.mock('../nav/globalNav');
 jest.mock('../rbac/fetchPermissions');
 
 describe('create chrome', () => {
