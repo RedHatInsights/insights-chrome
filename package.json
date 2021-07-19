@@ -144,7 +144,7 @@
     "@redhat-cloud-services/keycloak-js": "0.0.3",
     "@redhat-cloud-services/rbac-client": "^1.0.97",
     "@scalprum/core": "0.0.10",
-    "@scalprum/react-core": "0.1.0-beta.1",
+    "@scalprum/react-core": "0.1.0",
     "@sentry/browser": "^6.4.1",
     "abortcontroller-polyfill": "^1.7.3",
     "axios": "^0.21.1",

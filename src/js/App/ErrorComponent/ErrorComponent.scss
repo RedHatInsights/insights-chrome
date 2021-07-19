@@ -1,0 +1,21 @@
+.ins-c-error-component {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  .pf-c-empty-state {
+    width: 100%;
+  }
+  .pf-c-empty-state__content {
+    width: 100%;
+    .error-text {
+      display: block;
+      max-width: 100%;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .error-line {
+      white-space: nowrap;
+    }
+  }
+}
