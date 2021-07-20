@@ -1,44 +1,49 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent, act, screen } from '@testing-library/react';
+import configureStore from 'redux-mock-store';
 
 import AppFilter from '../AppFilter';
 
-jest.mock('../../../nav/sourceOfTruth', () => {
-  const source = jest.requireActual('../../../nav/sourceOfTruth');
+jest.mock('axios', () => {
+  const axios = jest.requireActual('axios');
   return {
     __esModule: true,
-    ...source,
-    default: jest.fn().mockResolvedValue({}),
-  };
-});
-jest.mock('../../../nav/globalNav', () => {
-  const source = jest.requireActual('../../../nav/globalNav');
-  const appData = ['application-services', 'insights', 'openshift', 'cost-management', 'migrations', 'subscriptions', 'ansible', 'settings'].reduce(
-    (acc, curr) => ({
-      ...acc,
-      [curr]: {
-        id: curr,
-        title: curr,
-        routes: [{ id: curr, title: curr }],
-      },
-    }),
-    {}
-  );
-  return {
-    __esModule: true,
-    ...source,
-    getNavFromConfig: jest.fn().mockImplementation(() => Promise.resolve(appData)),
+    ...axios,
+    default: {
+      ...axios.default,
+      get: () => Promise.resolve({ data: { navItems: [] } }),
+    },
   };
 });
 
+const mockStore = configureStore();
+const store = mockStore({
+  chrome: {
+    navigation: {},
+  },
+});
+
+const ContextWrapper = ({ children }) => (
+  <Provider store={store}>
+    <MemoryRouter>{children}</MemoryRouter>
+  </Provider>
+);
+
 describe('<AppFilter />', () => {
   test('should render correctly', () => {
-    const { container } = render(<AppFilter />);
+    const { container } = render(<AppFilter />, {
+      wrapper: ContextWrapper,
+    });
     expect(container).toMatchSnapshot();
   });
 
   test('should open and fetch data', async () => {
-    const { container } = render(<AppFilter />);
+    const { container } = render(<AppFilter />, {
+      wrapper: ContextWrapper,
+    });
     const button = container.querySelector('#toggle-id');
     await act(async () => {
       fireEvent.click(button);
@@ -48,7 +53,9 @@ describe('<AppFilter />', () => {
   });
 
   test('should set and clear filter input value', async () => {
-    const { container } = render(<AppFilter />);
+    const { container } = render(<AppFilter />, {
+      wrapper: ContextWrapper,
+    });
     const button = container.querySelector('#toggle-id');
     await act(async () => {
       fireEvent.click(button);
@@ -68,7 +75,9 @@ describe('<AppFilter />', () => {
   });
 
   test('should render empty state on no filter match and clear app filters', async () => {
-    const { container } = render(<AppFilter />);
+    const { container } = render(<AppFilter />, {
+      wrapper: ContextWrapper,
+    });
     const button = container.querySelector('#toggle-id');
     await act(async () => {
       fireEvent.click(button);
