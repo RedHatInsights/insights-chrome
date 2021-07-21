@@ -8,7 +8,7 @@ import NavContext from './navContext';
 
 const useDynamicModule = (appId) => {
   const [isDynamic, setIsDynamic] = useState();
-  const { modules, activeModule } = useSelector(({ chrome: { modules, activeModule } }) => ({
+  const { modules, activeModule } = useSelector(({ chrome: { modules = {}, activeModule } }) => ({
     modules,
     activeModule,
   }));
