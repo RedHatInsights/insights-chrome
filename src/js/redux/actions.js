@@ -8,44 +8,8 @@ export const userLogIn = (user) => ({
 
 export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
 
-function isCurrApp(item, app) {
-  if (item.id === app) {
-    return true;
-  } else if (item.subItems && item.subItems.some((sub) => sub.id === app)) {
-    return true;
-  } else if (item.group === app && item.active) {
-    return true;
-  }
-
-  return false;
-}
-
-export function identifyApp(data, options) {
-  if (data === 'landing' || data === 'trust') {
-    return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: data } };
-  }
-
-  if (!options.some((item) => isCurrApp(item, data))) {
-    throw new Error(`unknown app identifier: ${data}`);
-  }
-
-  const firstLevel = options.find((item) => isCurrApp(item, data));
-
-  return { type: actionTypes.GLOBAL_NAV_IDENT, data: { id: firstLevel.id || firstLevel.title, activeApp: data } };
-}
-
 export function appNavClick(item, event) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item && item.id, event } };
-}
-
-export function clearActive() {
-  return {
-    type: actionTypes.CLEAR_ACTIVE,
-  };
-}
-
-export function chromeNavUpdate(newNav) {
-  return { type: actionTypes.CHROME_NAV_UPDATE, payload: newNav };
 }
 
 export function chromeNavSectionUpdate(newSection) {
@@ -124,6 +88,31 @@ export function registerModule(module, manifest) {
 
 export const onToggleContextSwitcher = () => ({
   type: actionTypes.TOGGLECONTEXTSWITCHER,
+});
+
+export const loadNavigationLandingPage = (schema) => ({
+  type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
+  payload: schema,
+});
+
+export const loadLeftNavSegment = (schema, segment) => ({
+  type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
+  payload: {
+    segment,
+    schema,
+  },
+});
+
+export const loadModuesSchema = (schema) => ({
+  type: actionTypes.LOAD_MODULES_SCHEMA,
+  payload: {
+    schema,
+  },
+});
+
+export const changeActiveModule = (module) => ({
+  type: actionTypes.CHANGE_ACTIVE_MODULE,
+  payload: module,
 });
 
 /**

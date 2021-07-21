@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { render } from 'react-dom';
-import NavLoader from './Loader';
+import NavLoader from './Navigation/Loader';
 import { spinUpStore } from '../../redux-config';
 import LandingNav from './LandingNav';
 
-const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './SideNav'));
+const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './Navigation'));
 
 export const navLoader = () => {
   const { store } = spinUpStore();

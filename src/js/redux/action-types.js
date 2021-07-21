@@ -1,12 +1,6 @@
 export const USER_LOGIN = '@@chrome/user-login';
-export const CLICK_ACTION = '@@chrome/click-action';
 
 export const APP_NAV_CLICK = '@@chrome/app-nav-click';
-export const CLEAR_ACTIVE = '@@chrome/app-clear-active';
-
-export const GLOBAL_NAV_IDENT = '@@chrome/identify-app';
-export const CHROME_NAV_UPDATE = '@@chrome/app-nav-update';
-export const CHROME_NAV_SECTION_UPDATE = '@@chrome/nav-section-update';
 
 export const CHROME_PAGE_ACTION = '@@chrome/app-page-action';
 export const CHROME_PAGE_OBJECT = '@@chrome/app-object-id';
@@ -22,3 +16,9 @@ export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 export const REGISTER_MODULE = '@@chrome/register-async-module';
 
 export const TOGGLECONTEXTSWITCHER = '@@chrome/context-switcher-toggle';
+
+export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
+export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
+export const LOAD_MODULES_SCHEMA = '@@chrome/load-modules-schema';
+
+export const CHANGE_ACTIVE_MODULE = '@@chrome/change-active-module';
