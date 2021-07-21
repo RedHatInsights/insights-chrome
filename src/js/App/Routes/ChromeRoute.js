@@ -5,6 +5,7 @@ import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
 import { useDispatch } from 'react-redux';
 import { changeActiveModule } from '../../redux/actions';
+import ErrorComponent from '../ErrorComponent/ErrorComponent';
 
 const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) => {
   const dispatch = useDispatch();
@@ -30,7 +31,14 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
   return (
     <Route key={props.path} {...props}>
       <main role="main" className={scope}>
-        <ScalprumComponent appName={scope} fallback={LoadingFallback} LoadingFallback={LoadingFallback} scope={scope} module={module} />
+        <ScalprumComponent
+          ErrorComponent={<ErrorComponent />}
+          appName={scope}
+          fallback={LoadingFallback}
+          LoadingFallback={LoadingFallback}
+          scope={scope}
+          module={module}
+        />
       </main>
     </Route>
   );

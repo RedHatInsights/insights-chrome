@@ -63,7 +63,7 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useSelector(({ chrome: { navigation } }) => Object.keys(navigation));
+  const existingSchemas = useSelector(({ chrome: { navigation } }) => navigation);
 
   const handleBundleData = async ({ data: { id, navItems, title } }) => {
     let links = navItems
@@ -129,11 +129,12 @@ const useAppFilter = () => {
         ...prev,
         isLoading: true,
       }));
-      let bundles = requiredBundles.filter((app) => !existingSchemas.includes(app));
+      let bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
       bundles.map((fragment) =>
         axios
           .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json`)
           .then(handleBundleData)
+          .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data })))
           .catch((err) => {
             console.error('Unable to load appfilter bundle', err);
           })

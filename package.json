@@ -129,11 +129,11 @@
   "dependencies": {
     "@data-driven-forms/pf4-component-mapper": "^3.6.4",
     "@data-driven-forms/react-form-renderer": "^3.6.4",
-    "@patternfly/patternfly": "^4.103.6",
-    "@patternfly/react-core": "4.121.1",
-    "@patternfly/react-icons": "^4.10.7",
-    "@patternfly/react-table": "^4.27.7",
-    "@patternfly/react-tokens": "^4.11.8",
+    "@patternfly/patternfly": "^4.115.2",
+    "@patternfly/react-core": "^4.135.0",
+    "@patternfly/react-icons": "^4.11.0",
+    "@patternfly/react-table": "^4.29.0",
+    "@patternfly/react-tokens": "^4.12.0",
     "@redhat-cloud-services/entitlements-client": "^1.0.97",
     "@redhat-cloud-services/frontend-components": "^3.3.0",
     "@redhat-cloud-services/frontend-components-inventory": "^3.2.6",
@@ -144,7 +144,7 @@
     "@redhat-cloud-services/keycloak-js": "0.0.3",
     "@redhat-cloud-services/rbac-client": "^1.0.97",
     "@scalprum/core": "0.0.10",
-    "@scalprum/react-core": "0.1.0-beta.1",
+    "@scalprum/react-core": "0.1.0",
     "@sentry/browser": "^6.4.1",
     "abortcontroller-polyfill": "^1.7.3",
     "axios": "^0.21.1",
@@ -167,7 +167,7 @@
     "redux": "^4.1.0",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.6"
+    "urijs": "^1.19.7"
   },
   "alias": {
     "PFReactTable": "./config/patternfly-table-externals.js",
