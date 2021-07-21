@@ -1,35 +1,17 @@
 import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
 
-import flatten from 'lodash/flatten';
-
 import * as jwt from '../jwt';
 import cookie from 'js-cookie';
-import { options as defaultOptions, allowedUnauthedPaths } from '../constants';
+import { options as defaultOptions } from '../constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 function bouncer() {
-  if (allowUnauthed()) {
-    return;
-  }
-
   if (!jwt.isAuthenticated()) {
     cookie.remove(defaultOptions.cookieName);
     jwt.login();
   }
 
   console.timeEnd(TIMER_STR); // eslint-disable-line no-console
-}
-
-function getAllowedUnauthedPaths() {
-  return flatten(allowedUnauthedPaths.map((e) => [e, e + '/']));
-}
-
-export function allowUnauthed() {
-  if (getAllowedUnauthedPaths().includes(window.location.pathname)) {
-    return true;
-  }
-
-  return false;
 }
 
 export const initChromeAuth = () => {
