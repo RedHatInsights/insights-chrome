@@ -40,6 +40,12 @@ aside {
     overflow: auto !important;
 }
 
+.pf-c-page.ins-c-page__hasBanner {
+    grid-template-areas: "banner banner"
+                         "header header"
+                         "nav main";
+}
+
 .ins-c-header-link {
     display: flex;
 }

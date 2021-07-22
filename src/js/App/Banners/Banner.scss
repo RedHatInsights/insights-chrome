@@ -1,0 +1,22 @@
+.ins-c-banner {
+    height: 72px;
+    background: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    grid-area: banner;
+    h3 {
+        font-size: var(--pf-global--FontSize--lg); // this is being overriden in the css
+        padding: var(--pf-global--spacer--md) 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .ins-c-banner {
+        height: auto;
+        h3 { padding-bottom: 0; }
+    }
+  }
+  
