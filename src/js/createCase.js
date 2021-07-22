@@ -2,7 +2,8 @@ import Cookies from 'js-cookie';
 import * as Sentry from '@sentry/browser';
 import logger from './jwt/logger';
 const log = logger('createCase.js');
-import { spinUpStore } from './redux-config';
+
+import { getUrl } from './utils';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -19,24 +20,32 @@ const APP_PRODUCTS = [
   { id: 'automation-analytics', name: 'Ansible Automation Analytics' },
 ];
 
-function registerProduct() {
-  const { store } = spinUpStore();
-  const currentBundle = store.getState().chrome.activeLocation;
-  const currentApp = store.getState().chrome.appId;
+function getLocation() {
 
-  const product = BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentBundle) || APP_PRODUCTS.find((app) => app.id === currentApp);
+  const currentLocation = {
+    bundle: getUrl('bundle'),
+    app: getUrl('app')
+  }
+
+  return currentLocation;
+}
+
+function registerProduct() {
+
+  const currentLocation = getLocation();
+
+  const product = BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentLocation.bundle) || APP_PRODUCTS.find((app) => app.id === currentLocation.app);
 
   return product?.name;
 }
 
 async function getProductHash() {
-  const { store } = spinUpStore();
+  const currentLocation = getLocation();
 
-  const currentApp = store.getState().chrome.activeGroup;
-  const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentApp}/app.info.json`;
+  const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentLocation.app}/app.info.json`;
 
-  const appData = currentApp.length && (await (await fetch(path)).json());
-  return appData ? `Current app: ${currentApp}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
+  const appData = currentLocation.app.length && (await (await fetch(path)).json());
+  return appData ? `Current app: ${currentApp.app}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
 }
 
 export async function createSupportCase(userInfo, fields) {

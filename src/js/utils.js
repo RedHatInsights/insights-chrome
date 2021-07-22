@@ -122,7 +122,7 @@ export function bootstrapCache(endpoint, cacheKey) {
 export const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
 
 export function getUrl(type) {
-  if (window.location.pathname === ('/beta' || '/')) {
+  if (window.location.pathname === ('/beta') || window.location.pathname === ('/')) {
     return 'landing';
   }
 
