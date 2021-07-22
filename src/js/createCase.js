@@ -21,20 +21,19 @@ const APP_PRODUCTS = [
 ];
 
 function getLocation() {
-
   const currentLocation = {
     bundle: getUrl('bundle'),
-    app: getUrl('app')
-  }
+    app: getUrl('app'),
+  };
 
   return currentLocation;
 }
 
 function registerProduct() {
-
   const currentLocation = getLocation();
 
-  const product = BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentLocation.bundle) || APP_PRODUCTS.find((app) => app.id === currentLocation.app);
+  const product =
+    BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentLocation.bundle) || APP_PRODUCTS.find((app) => app.id === currentLocation.app);
 
   return product?.name;
 }
@@ -45,7 +44,7 @@ async function getProductHash() {
   const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentLocation.app}/app.info.json`;
 
   const appData = currentLocation.app.length && (await (await fetch(path)).json());
-  return appData ? `Current app: ${currentApp.app}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
+  return appData ? `Current app: ${currentLocation.app}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
 }
 
 export async function createSupportCase(userInfo, fields) {
