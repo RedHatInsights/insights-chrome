@@ -29,8 +29,8 @@ const plugins = [
       './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.js'),
     },
     shared: [
-      { react: { singleton: true, requiredVersion: deps.react } },
-      { 'react-dom': { singleton: true, requiredVersion: deps['react-dom'] } },
+      { react: { singleton: true, eager: true, requiredVersion: deps.react } },
+      { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
       { 'react-router-dom': { requiredVersion: deps['react-router-dom'] } },
       { 'react-redux': { requiredVersion: deps['react-redux'] } },
       { '@patternfly/react-table': { requiredVersion: deps['react-table'] } },
