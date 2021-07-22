@@ -2,6 +2,7 @@
 
 import logger from './jwt/logger';
 import get from 'lodash/get';
+import { isBeta } from './utils';
 
 const log = logger('Analytics.js');
 
@@ -28,19 +29,18 @@ function getUrl(type) {
     return 'landing';
   }
 
-  const sections = window.location.pathname.split('/');
+  const sections = window.location.pathname.split('/').slice(1);
+  const isBetaEnv = isBeta();
   if (type) {
-    if (sections[1] === 'beta') {
-      return type === 'bundle' ? sections[2] : sections[3];
+    if (isBetaEnv) {
+      return type === 'bundle' ? sections[1] : sections[2];
     }
 
-    return type === 'bundle' ? sections[1] : sections[2];
+    return type === 'bundle' ? sections[0] : sections[1];
   }
 
-  sections.shift();
-  const isBeta = sections[1] === 'beta';
-  isBeta && sections.shift();
-  return [isBeta, ...sections];
+  isBetaEnv && sections.shift();
+  return [isBetaEnv, ...sections];
 }
 
 function getAdobeVisitorId() {
