@@ -89,7 +89,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       auth: {
         getOfflineToken: () => libjwt.getOfflineToken(),
         doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
-        getToken: () => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()),
+        getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
         qe: qe,
         logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
