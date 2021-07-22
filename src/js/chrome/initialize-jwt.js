@@ -1,4 +1,3 @@
-import { allowUnauthed } from '../auth';
 import { decodeToken } from '../jwt/jwt';
 import { spinUpStore } from '../redux-config';
 import { CacheAdapter } from '../utils/cache';
@@ -16,10 +15,8 @@ const initializeJWT = async (libjwt, chromeInstance) => {
     const user = await libjwt.jwt.getUserInfo();
     actions.userLogIn(user);
     chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(libjwt.jwt.getEncodedToken())?.session_state}-chrome-store`);
-  } catch (_e) {
-    if (allowUnauthed()) {
-      actions.userLogIn(false);
-    }
+  } catch {
+    actions.userLogIn(false);
   }
 };
 
