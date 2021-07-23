@@ -4,10 +4,10 @@ import ArrowRightIcon from '@patternfly/react-icons/dist/js/icons/arrow-right-ic
 import './Banner.scss';
 
 const bannerContent = {
-    title: 'Changes are coming to cloud.redhat.com on July 29',
+    title: 'Changes are coming to cloud.redhat.com on July 29.',
     link: {
-        title: 'Learn more on our blog',
-        href: '#'
+        title: 'Learn more on our blog.',
+        href: 'https://www.openshift.com/blog/check-out-our-new-look'
     }
 }
 
