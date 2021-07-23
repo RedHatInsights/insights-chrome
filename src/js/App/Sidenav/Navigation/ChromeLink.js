@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ const useDynamicModule = (appId) => {
 };
 
 const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children }) => {
+  const linkRef = useRef();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop();
@@ -58,10 +59,14 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
       }
     }
 
+    /**
+     * Add reference to the DOM link element
+     */
+    domEvent.target = linkRef.current;
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
   return (
-    <NavLink data-testid="router-link" onClick={onClick} to={href} className={className}>
+    <NavLink ref={linkRef} data-testid="router-link" onClick={onClick} to={href} className={className}>
       {children}
     </NavLink>
   );
