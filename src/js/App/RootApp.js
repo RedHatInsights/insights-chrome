@@ -38,7 +38,7 @@ const ShieldedRoot = memo(
         className={classnames({ 'ins-c-page__hasBanner': useLandingNav && !cookie.get('cs_jwt') })}
         header={
           <Fragment>
-            {useLandingNav && !cookie.get('cs_jwt') ? <Banner/> : undefined }
+            {useLandingNav && !cookie.get('cs_jwt') ? <Banner /> : undefined}
             <PageHeader
               className={classnames({ 'context-switcher-banner': isOpen })}
               logoComponent="div"
