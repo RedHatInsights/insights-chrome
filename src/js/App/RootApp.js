@@ -22,7 +22,6 @@ const isModule = (key, chrome) =>
   key === (chrome?.activeSection?.id || chrome?.activeLocation) ||
   (key !== undefined && chrome?.activeSection?.group !== undefined && key === chrome?.activeSection?.group);
 
-
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, remoteModule, appId }) => {
     const dispatch = useDispatch();
