@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, Fragment } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,8 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
 import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
+import Banner from './Banners/Banner';
+import cookie from 'js-cookie';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -33,14 +35,18 @@ const ShieldedRoot = memo(
     return (
       <Page
         isManagedSidebar={!hideNav}
+        className={classnames({ 'ins-c-page__hasBanner': useLandingNav && !cookie.get('cs_jwt') })}
         header={
-          <PageHeader
-            className={classnames({ 'context-switcher-banner': isOpen })}
-            logoComponent="div"
-            logo={<Header />}
-            showNavToggle={!hideNav}
-            headerTools={<HeaderTools />}
-          />
+          <Fragment>
+            {useLandingNav && !cookie.get('cs_jwt') ? <Banner /> : undefined}
+            <PageHeader
+              className={classnames({ 'context-switcher-banner': isOpen })}
+              logoComponent="div"
+              logo={<Header />}
+              showNavToggle={!hideNav}
+              headerTools={<HeaderTools />}
+            />
+          </Fragment>
         }
         sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={useLandingNav ? <LandingNav /> : <Navigation key="side-nav" />} />}
       >
