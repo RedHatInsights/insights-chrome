@@ -19,7 +19,7 @@ const Navigation = () => {
   const onLinkClick = (origEvent, href) => {
     if (!showBetaModal && !isBeta()) {
       origEvent.preventDefault();
-      deferedOnClickArgs.current = [origEvent, href];
+      deferedOnClickArgs.current = [origEvent, href, origEvent?.target?.text];
       setShowBetaModal(true);
       return false;
     }
@@ -59,7 +59,7 @@ const Navigation = () => {
           }
         }}
         onCancel={() => setShowBetaModal(false)}
-        menuItemClicked={deferedOnClickArgs.current[1]?.title}
+        menuItemClicked={deferedOnClickArgs.current[2]}
       />
     </Fragment>
   );
