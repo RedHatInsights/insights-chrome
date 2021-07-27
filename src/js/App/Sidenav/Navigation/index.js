@@ -17,7 +17,7 @@ const Navigation = () => {
   const deferedOnClickArgs = useRef([]);
 
   const onLinkClick = (origEvent, href) => {
-    if (!showBetaModal) {
+    if (!showBetaModal && !isBeta()) {
       origEvent.preventDefault();
       deferedOnClickArgs.current = [origEvent, href, origEvent?.target?.text];
       setShowBetaModal(true);
