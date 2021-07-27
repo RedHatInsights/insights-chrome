@@ -8,7 +8,7 @@ import { getUrl, getEnv, isBeta, updateDocumentTitle } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
-import { flatTags, cookieSearch } from '../App/GlobalFilter/constants';
+import { flatTags } from '../App/GlobalFilter/constants';
 import debugFunctions from '../debugFunctions';
 
 const PUBLIC_EVENTS = {
@@ -40,19 +40,15 @@ const PUBLIC_EVENTS = {
   ],
 };
 
-export function chromeInit(navResolver) {
+export function chromeInit() {
   const { store, actions, middlewareListener } = spinUpStore();
 
   // public API actions
-  const { identifyApp, appAction, appObjectId, clearActive, appNavClick } = actions;
+  const { appAction, appObjectId, appNavClick } = actions;
 
   return {
     appAction,
     appNavClick: ({ secondaryNav, ...payload }) => {
-      if (!secondaryNav) {
-        clearActive();
-      }
-
       appNavClick({
         ...payload,
         custom: true,
@@ -61,11 +57,10 @@ export function chromeInit(navResolver) {
     appObjectId,
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
     hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
-    identifyApp: (data, appTitle) =>
-      navResolver.then(() => {
-        identifyApp(data, store.getState().chrome.globalNav);
-        updateDocumentTitle(appTitle);
-      }),
+    identifyApp: (_data, appTitle) => {
+      updateDocumentTitle(appTitle);
+      return Promise.resolve();
+    },
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     on: (type, callback) => {
@@ -89,8 +84,6 @@ export function chromeInit(navResolver) {
 }
 
 export function bootstrap(libjwt, initFunc, getUser) {
-  const searchParams = new URLSearchParams(location.search);
-  cookieSearch.forEach((key) => searchParams.get(key) && Cookies.set(key, searchParams.get(key)));
   return {
     chrome: {
       auth: {

@@ -5,8 +5,6 @@ import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { SID_KEY } from '../../redux/globalFilterReducers';
 
-export const cookieSearch = ['cs_ros_beta_enable'];
-
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [

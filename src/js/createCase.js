@@ -35,8 +35,8 @@ async function getProductHash() {
   const currentApp = store.getState().chrome.activeGroup;
   const path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${currentApp}/app.info.json`;
 
-  const appData = await (await fetch(path)).json();
-  return `Current app: ${currentApp || 'Unknown'}, Current app hash: ${appData.src_hash || 'Unknown'}`;
+  const appData = currentApp.length && (await (await fetch(path)).json());
+  return appData ? `Current app: ${currentApp}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
 }
 
 export async function createSupportCase(userInfo, fields) {

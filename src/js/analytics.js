@@ -2,6 +2,7 @@
 
 import logger from './jwt/logger';
 import get from 'lodash/get';
+import { isBeta } from './utils';
 
 const log = logger('Analytics.js');
 
@@ -28,12 +29,18 @@ function getUrl(type) {
     return 'landing';
   }
 
-  const sections = window.location.pathname.split('/');
-  if (sections[1] === 'beta') {
-    return type === 'bundle' ? sections[2] : sections[3];
+  const sections = window.location.pathname.split('/').slice(1);
+  const isBetaEnv = isBeta();
+  if (type) {
+    if (isBetaEnv) {
+      return type === 'bundle' ? sections[1] : sections[2];
+    }
+
+    return type === 'bundle' ? sections[0] : sections[1];
   }
 
-  return type === 'bundle' ? sections[1] : sections[2];
+  isBetaEnv && sections.shift();
+  return [isBetaEnv, ...sections];
 }
 
 function getAdobeVisitorId() {
@@ -56,8 +63,7 @@ function getPendoConf(data) {
       entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
 
-  const currentBundle = getUrl('bundle');
-  const currentApp = getUrl('app');
+  const [isBeta, currentBundle, currentApp, ...rest] = getUrl();
 
   return {
     visitor: {
@@ -75,7 +81,16 @@ function getPendoConf(data) {
       isOrgAdmin: data.identity.user.is_org_admin,
       currentBundle: currentBundle,
       currentApp: currentApp,
-      ...entitlements,
+      isBeta,
+      urlSegment1: currentBundle,
+      urlSegment2: currentApp,
+      ...rest?.reduce(
+        (acc, curr, id) => ({
+          ...acc,
+          ...(curr && { [`urlSegment${id + 3}`]: curr }),
+        }),
+        {}
+      ),
     },
     account: {
       // TODO add in customer name as name:
