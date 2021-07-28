@@ -28,7 +28,7 @@ const LazyQuickStartCatalog = ({ ...props }) => {
     hint: 'Learn how to create, import, and run applications with step-by-step instructions and tasks.',
     showFilter: true,
     ...props,
-  }
+  };
   return (
     <Suspense fallback={<LoadingBox />}>
       <QuickStartCatalog {...propsWithDefaults} />
@@ -143,7 +143,7 @@ const ScalprumRoot = ({ config, ...props }) => {
     setAllQuickStartStates,
     footer: {
       show: false,
-    }
+    },
   });
 
   /**
