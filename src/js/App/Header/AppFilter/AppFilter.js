@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -28,6 +28,7 @@ import {
 import './AppFilter.scss';
 import useAppFilter from './useAppFilter';
 import ChromeLink from '../../Sidenav/Navigation/ChromeLink';
+import { useLocation } from 'react-router-dom';
 
 const App = ({ id, title, links = [] }) =>
   links.length > 0 ? (
@@ -39,7 +40,7 @@ const App = ({ id, title, links = [] }) =>
             {links.map(({ href, title, isHidden, ...rest }) =>
               isHidden ? null : (
                 <Text component="p" key={`${id}-${href}`}>
-                  <ChromeLink {...rest} appId="static" title={title} href={href}>
+                  <ChromeLink {...rest} title={title} href={href}>
                     {title}
                   </ChromeLink>
                 </Text>
@@ -59,10 +60,17 @@ App.propTypes = {
 
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => {
   const dropdownRef = useRef(null);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (isLoaded) {
+      setIsOpen(false);
+    }
+  }, [pathname]);
+
   return (
     <Dropdown
       className="ins-c-page__app-filter-dropdown-toggle"
-      onSelect={() => setIsOpen(true)}
       toggle={
         <DropdownToggle
           id="toggle-id"
