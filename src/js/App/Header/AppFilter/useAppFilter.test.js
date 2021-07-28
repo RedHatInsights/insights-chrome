@@ -297,6 +297,7 @@ describe('useAppFilter', () => {
     });
     expect(result.current.data[TEST_ID].links).toEqual([
       {
+        appId: 'foo',
         href: '/foo/bar',
         isHidden: false,
         title: 'title',
