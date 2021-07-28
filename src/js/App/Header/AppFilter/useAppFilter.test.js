@@ -7,7 +7,6 @@ import configureStore from 'redux-mock-store';
 import * as axios from 'axios';
 
 import useAppFilter, { requiredBundles } from './useAppFilter';
-import { navigationFileMapper } from '../../../utils/useNavigation';
 
 jest.mock('axios', () => {
   const axios = jest.requireActual('axios');
@@ -61,7 +60,7 @@ describe('useAppFilter', () => {
       data: {
         'cost-management': {
           id: 'cost-management',
-          title: 'Cost management',
+          title: 'Cost Management',
           links: [],
         },
         subscriptions: {
@@ -97,7 +96,7 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(6);
     for (let index = 0; index < 6; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${navigationFileMapper[requiredBundles[index]]}`]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json`]);
     }
     axiosGetSpy.mockReset();
   });
@@ -361,7 +360,7 @@ describe('useAppFilter', () => {
     expect(result.current.filteredApps).toEqual([
       {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [
           {
             appId: 'foo',
@@ -435,7 +434,7 @@ describe('useAppFilter', () => {
     expect(result.current.filteredApps).toEqual([
       {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [
           {
             appId: 'foo',

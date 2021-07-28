@@ -3,6 +3,9 @@ $pf-global--image-path: './assets/images/';
 
 @import '~@patternfly/patternfly/patternfly-base.scss';
 
+// Quick starts
+@import '~@patternfly/quickstarts/dist/quickstarts.min.css';
+
 // Components
 @import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
 @import '~@patternfly/patternfly/components/Page/page.scss';
