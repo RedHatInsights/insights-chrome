@@ -40,4 +40,4 @@ export const noAuthParam = 'noauth';
 
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
 
-export const allowedUnauthedPaths = ['/', '/logout', '/beta', '/security/insights', '/beta/security/insights'];
+export const allowedUnauthedPaths = ['/security/insights', '/beta/security/insights'];
