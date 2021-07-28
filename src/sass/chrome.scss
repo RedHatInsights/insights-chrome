@@ -10,8 +10,8 @@ $pf-global--image-path: './assets/images/';
     margin-top: 0;
     padding-top: 23px;
 }
-.pfext-page-layout__content {
-    height: 100%;
+.pfext-page-layout__content.pfext-is-dark {
+    background: unset;
 }
 
 // Components
