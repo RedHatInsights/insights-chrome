@@ -42,8 +42,11 @@ const ErrorComponent = (props) => {
             <FlexItem>
               <ExpandableSection toggleTextExpanded="Show less" toggleTextCollapsed="Show more">
                 <TextContent>
-                  <Text className="error-text">{props.error}</Text>
-                  {props.errorInfo?.componentStack && (
+                  {typeof props?.error === 'string' && <Text className="error-text">{props.error}</Text>}
+                  {typeof props?.error === 'object' && typeof props?.error?.message === 'string' && (
+                    <Text className="error-text">{props.error.message}</Text>
+                  )}
+                  {typeof props.errorInfo?.componentStack === 'string' && (
                     <Text className="error-text" component="code">
                       {props.errorInfo?.componentStack.split('\n').map((content, index) => (
                         <div className="error-line" key={index}>
