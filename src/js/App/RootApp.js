@@ -1,11 +1,11 @@
-import React, { memo, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
+import React, { memo, useEffect, useRef, Fragment } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumProvider } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
-import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage, LoadingBox } from '@patternfly/quickstarts';
+import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navigation from './Sidenav/Navigation';
 import { Header, HeaderTools } from './Header/Header';
@@ -17,24 +17,7 @@ import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import Banner from './Banners/Banner';
 import cookie from 'js-cookie';
-
-const QuickStartCatalog = lazy(() =>
-  import(/* webpackChunkName: "quick-start" */ './QuickStartCatalog').then(({ QuickStartCatalog }) => ({ default: QuickStartCatalog }))
-);
-
-const LazyQuickStartCatalog = ({ ...props }) => {
-  const propsWithDefaults = {
-    title: 'Quick starts',
-    hint: 'Learn how to create, import, and run applications with step-by-step instructions and tasks.',
-    showFilter: true,
-    ...props,
-  };
-  return (
-    <Suspense fallback={<LoadingBox />}>
-      <QuickStartCatalog {...propsWithDefaults} />
-    </Suspense>
-  );
-};
+import { LazyQuickStartCatalog } from './QuickStart/LazyQuickStartCatalog';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
