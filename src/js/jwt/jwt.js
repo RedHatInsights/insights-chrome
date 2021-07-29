@@ -7,18 +7,18 @@ import * as Sentry from '@sentry/browser';
 import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
-import { allowedUnauthedPaths } from './constants';
 
 // Insights Specific
 import insightsUrl from './insights/url';
 import insightsUser from './insights/user';
 import urijs from 'urijs';
 import { DEFAULT_ROUTES, options as defaultOptions } from './constants';
+import Priv from './Priv';
 
 const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
-const priv = {};
+const priv = new Priv();
 
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
@@ -88,9 +88,7 @@ export const init = (options) => {
 
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
 
-  priv.cookie = {
-    cookieName,
-  };
+  priv.setCookie({ cookieName });
   //constructor for new Keycloak Object?
   options.url = insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES);
   options.clientId = 'cloud-services';
@@ -110,17 +108,13 @@ export const init = (options) => {
   }
 
   //priv.keycloak = Keycloak(options);
-  priv.keycloak = Keycloak(options);
-  priv.keycloak.onTokenExpired = updateToken;
-  priv.keycloak.onAuthSuccess = loginAllTabs;
-  priv.keycloak.onAuthRefreshSuccess = refreshTokens;
+  priv.setKeycloak(options, updateToken, loginAllTabs, refreshTokens);
 
   if (options.token) {
     if (isExistingValid(options.token)) {
       // we still need to init async
       // so that the renewal times and such fire
-      priv.keycloak.init(options);
-
+      priv.initializeKeycloak(options);
       return new Promise((resolve) => {
         // Here we have an existing key
         // We need to set up some of the keycloak state
@@ -128,8 +122,7 @@ export const init = (options) => {
         // to check if things are good get faked out
         // TODO reafctor the direct access to priv.keycloak
         // away from the users
-        priv.keycloak.authenticated = true;
-        priv.keycloak.token = options.token;
+        priv.setToken(options.token);
         resolve();
       });
     } else {
@@ -137,7 +130,7 @@ export const init = (options) => {
     }
   }
 
-  return priv.keycloak.init(options).then(initSuccess).catch(initError);
+  return priv.initialize(options).then(initSuccess).catch(initError);
 };
 
 function isExistingValid(token) {
@@ -169,7 +162,7 @@ function isExistingValid(token) {
     // and the API is true (because NTP) and we could send down
     // a JWT that is actually exipred
     if (exp > 90) {
-      priv.keycloak.tokenParsed = parsed;
+      priv.setTokenParsed(parsed);
       return true;
     } else {
       if (exp > 0) {
@@ -189,8 +182,8 @@ function isExistingValid(token) {
 // keycloak init successful
 function initSuccess() {
   log('JWT Initialized');
-  setCookie(priv.keycloak.token);
-  setRefresh(priv.keycloak.refreshToken);
+  setCookie(priv.getToken());
+  setRefresh(priv.getRefershToken());
 }
 
 // keycloak init failed
@@ -204,15 +197,15 @@ export function login() {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
-  return priv.keycloak.login({ redirectUri: location.href });
+  return priv.login({ redirectUri: location.href });
 }
 
 function logout(bounce) {
   log('Logging out');
 
   // Clear cookies and tokens
-  priv.keycloak.clearToken();
-  cookie.remove(priv.cookie.cookieName);
+  priv.clearToken();
+  cookie.remove(priv.getCookie().cookieName);
   cookie.remove('cs_demo');
 
   const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
@@ -231,7 +224,7 @@ function logout(bounce) {
     cookie.set('cs_loggedOut', 'true', {
       expires: eightSeconds,
     });
-    priv.keycloak.logout({
+    priv.logout({
       redirectUri: `https://${window.location.host}${isBeta}`,
     });
   }
@@ -251,14 +244,13 @@ function loginAllTabs() {
 export const getUserInfo = () => {
   log('Getting User Information');
   const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
-
-  if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.keycloak.token)) {
-    return insightsUser(priv.keycloak.tokenParsed);
+  if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.getToken())) {
+    return insightsUser(priv.getTokenParsed());
   }
 
   return updateToken()
     .then(() => {
-      insightsUser(priv.keycloak.tokenParsed);
+      insightsUser(priv.getTokenParsed());
       log('Successfully updated token');
     })
     .catch(() => {
@@ -271,8 +263,8 @@ export const getUserInfo = () => {
 
 // Check to see if the user is loaded, this is what API calls should wait on
 export const isAuthenticated = () => {
-  log(`User Ready: ${priv.keycloak.authenticated}`);
-  return priv.keycloak.authenticated;
+  log(`User Ready: ${priv.getAuthenticated()}`);
+  return priv.getAuthenticated();
 };
 
 /*** Check Token Status ***/
@@ -284,27 +276,20 @@ export const expiredToken = () => {
 
 // Broadcast message to refresh tokens across tabs
 function refreshTokens() {
+  setCookie(priv.getToken());
   authChannel.postMessage({ type: 'refresh' });
 }
 
-const shouldPageAuth = (path) => {
-  if (path === '/') {
-    return false;
-  }
-
-  return !allowedUnauthedPaths.includes(path.replace(/\/$/, ''));
-};
-
 // Actually update the token
 function updateToken() {
-  return priv.keycloak
+  return priv
     .updateToken()
     .then((refreshed) => {
       // Important! after we update the token
       // we have to again populate the Cookie!
       // Otherwise we just update and dont send
       // the updated token down stream... and things 401
-      setCookie(priv.keycloak.token);
+      setCookie(priv.getToken());
 
       log('Attempting to update token');
 
@@ -318,12 +303,7 @@ function updateToken() {
       log(err);
       Sentry.captureException(err);
       log('Token updated failed, trying to reauth');
-      /**
-       * We should not call login on any unauthed page
-       */
-      if (shouldPageAuth(window.location.pathname)) {
-        login();
-      }
+      login();
     });
 }
 
@@ -339,7 +319,7 @@ function getCookieExpires(exp) {
 function setCookie(token) {
   log('Setting the cs_jwt cookie');
   if (token && token.length > 10) {
-    setCookieWrapper(`${priv.cookie.cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+    setCookieWrapper(`${priv.getCookie().cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
   }
 }
 
@@ -357,12 +337,12 @@ function setCookieWrapper(str) {
 export const getEncodedToken = () => {
   log('Trying to get the encoded token');
 
-  if (!isExistingValid(priv.keycloak.token)) {
+  if (!isExistingValid(priv.getToken())) {
     log('Failed to get encoded token, trying to update');
     updateToken();
   }
 
-  return priv.keycloak.token;
+  return priv.getToken();
 };
 
 // Keycloak server URL

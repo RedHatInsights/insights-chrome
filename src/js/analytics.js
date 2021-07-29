@@ -2,6 +2,7 @@
 
 import logger from './jwt/logger';
 import get from 'lodash/get';
+import { isBeta } from './utils';
 
 const log = logger('Analytics.js');
 
@@ -28,19 +29,18 @@ function getUrl(type) {
     return 'landing';
   }
 
-  const sections = window.location.pathname.split('/');
+  const sections = window.location.pathname.split('/').slice(1);
+  const isBetaEnv = isBeta();
   if (type) {
-    if (sections[1] === 'beta') {
-      return type === 'bundle' ? sections[2] : sections[3];
+    if (isBetaEnv) {
+      return type === 'bundle' ? sections[1] : sections[2];
     }
 
-    return type === 'bundle' ? sections[1] : sections[2];
+    return type === 'bundle' ? sections[0] : sections[1];
   }
 
-  sections.shift();
-  const isBeta = sections[1] === 'beta';
-  isBeta && sections.shift();
-  return [isBeta, ...sections];
+  isBetaEnv && sections.shift();
+  return [isBetaEnv, ...sections];
 }
 
 function getAdobeVisitorId() {
@@ -111,7 +111,7 @@ function getPendoConf(data) {
 
 export default (data) => {
   // eslint-disable-next-line
-  (function (p, e, n, d, o) { var v, w, x, y, z; o = p[d] = p[d] || {}; o._q = []; v = ['initialize', 'identify', 'updateOptions', 'pageLoad']; for (w = 0, x = v.length; w < x; ++w)(function (m) { o[m] = o[m] || function () { o._q[m === v[0] ? 'unshift' : 'push']([m].concat([].slice.call(arguments, 0))); }; })(v[w]); y = e.createElement(n); y.onerror = function (error) { console.error('Pendo blocked') };y.async=!0;y.src=`https://content.analytics.cloud.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
+  (function (p, e, n, d, o) { var v, w, x, y, z; o = p[d] = p[d] || {}; o._q = []; v = ['initialize', 'identify', 'updateOptions', 'pageLoad']; for (w = 0, x = v.length; w < x; ++w)(function (m) { o[m] = o[m] || function () { o._q[m === v[0] ? 'unshift' : 'push']([m].concat([].slice.call(arguments, 0))); }; })(v[w]); y = e.createElement(n); y.onerror = function (error) { console.error('Pendo blocked') };y.async=!0;y.src=`https://content.analytics.console.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
   try {
     initPendo(getPendoConf(data));
     log('Pendo initialized');

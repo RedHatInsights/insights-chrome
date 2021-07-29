@@ -20,6 +20,14 @@ export const DEFAULT_ROUTES = {
     url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
   },
+  gov: {
+    url: ['gov.cloud.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+  },
+  govStage: {
+    url: ['gov.cloud.stage.redhat.com'],
+    sso: 'https://sso.stage.redhat.com/auth',
+  },
 };
 
 export const options = {
@@ -31,5 +39,3 @@ export const options = {
 export const noAuthParam = 'noauth';
 
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
-
-export const allowedUnauthedPaths = ['/', '/logout', '/beta', '/security/insights', '/beta/security/insights'];

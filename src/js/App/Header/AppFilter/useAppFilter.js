@@ -1,24 +1,24 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta } from '../../../utils';
+import { isBeta, getEnv } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
-import { navigationFileMapper } from '../../../utils/useNavigation';
 
-export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
+export const requiredBundles = ['application-services', 'openshift', 'insights', ...(getEnv() !== 'prod' ? ['edge'] : []), 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
 
 function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }) {
   const costLinks = [];
   const subscriptionsLinks = [];
   let url = href;
+  let appId = rest.appId;
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
-      if (href.includes('/openshift/cost-management')) {
+      if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
         costLinks.push({ ...rest, href, title });
       }
 
-      if (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions')) {
+      if (rest.filterable !== false && (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions'))) {
         subscriptionsLinks.push({
           ...rest,
           href,
@@ -26,12 +26,16 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
         });
       }
 
-      url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+      if (!url && href.match(/^\//)) {
+        url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+        appId = rest.appId ? rest.appId : appId;
+      }
     });
   }
 
   return {
     ...rest,
+    appId,
     isExternal,
     title,
     href: url,
@@ -52,7 +56,7 @@ const useAppFilter = () => {
     data: {
       'cost-management': {
         id: 'cost-management',
-        title: 'Cost management',
+        title: 'Cost Management',
         links: [],
       },
       subscriptions: {
@@ -62,7 +66,7 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useSelector(({ chrome: { navigation } }) => Object.keys(navigation));
+  const existingSchemas = useSelector(({ chrome: { navigation } }) => navigation);
 
   const handleBundleData = async ({ data: { id, navItems, title } }) => {
     let links = navItems
@@ -73,7 +77,8 @@ const useAppFilter = () => {
         return [...acc, curr];
       }, [])
       .flat()
-      .map(getBundleLink);
+      .map(getBundleLink)
+      .filter(({ filterable }) => filterable !== false);
     const bundleLinks = [];
     const extraLinks = {
       cost: [],
@@ -127,11 +132,12 @@ const useAppFilter = () => {
         ...prev,
         isLoading: true,
       }));
-      let bundles = requiredBundles.filter((app) => !existingSchemas.includes(app)).map((app) => navigationFileMapper[app]);
+      let bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
       bundles.map((fragment) =>
         axios
-          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}`)
+          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json`)
           .then(handleBundleData)
+          .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data })))
           .catch((err) => {
             console.error('Unable to load appfilter bundle', err);
           })
