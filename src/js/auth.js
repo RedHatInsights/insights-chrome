@@ -1,43 +1,16 @@
 import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
-import consts from './consts';
-
-// Started off using Array.flat
-// Edge lacks this and every version of IE
-// Use lodash instead
-import flatten from 'lodash/flatten';
-
 import * as jwt from './jwt/jwt';
 import cookie from 'js-cookie';
 import { options as defaultOptions } from './jwt/constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
-function getWindow() {
-  return window;
-}
-
 function bouncer() {
-  if (allowUnauthed()) {
-    return;
-  }
-
   if (!jwt.isAuthenticated()) {
     cookie.remove(defaultOptions.cookieName);
     jwt.login();
   }
 
   console.timeEnd(TIMER_STR); // eslint-disable-line no-console
-}
-
-function getAllowedUnauthedPaths() {
-  return flatten(consts.allowedUnauthedPaths.map((e) => [e, e + '/']));
-}
-
-export function allowUnauthed() {
-  if (getAllowedUnauthedPaths().includes(getWindow().location.pathname)) {
-    return true;
-  }
-
-  return false;
 }
 
 export default () => {
