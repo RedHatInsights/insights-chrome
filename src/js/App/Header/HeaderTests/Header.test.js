@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import { Header } from '../Header';
 import UnauthedHeader from '../UnAuthtedHeader';
 
@@ -23,9 +24,11 @@ describe('Header', () => {
   it('should render correctly', () => {
     const store = mockStore(initialState);
     const { container } = render(
-      <Provider store={store}>
-        <Header />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store}>
+          <Header />
+        </Provider>
+      </MemoryRouter>
     );
     expect(container).toMatchSnapshot();
   });
@@ -48,9 +51,11 @@ describe('unauthed', () => {
   it('should render correctly', () => {
     const store = mockStore(initialState);
     const { container } = render(
-      <Provider store={store}>
-        <UnauthedHeader />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store}>
+          <UnauthedHeader />
+        </Provider>
+      </MemoryRouter>
     );
     expect(container.querySelector('div')).toMatchSnapshot();
   });
