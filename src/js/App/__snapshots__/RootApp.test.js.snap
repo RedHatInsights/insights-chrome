@@ -9,7 +9,7 @@ exports[`RootApp should render correctly - no data 1`] = `
   landing="true"
 >
   <div
-    class="pf-c-page ins-c-page__hasBanner"
+    class="pf-c-page"
   >
     <div
       class="ins-c-banner"
