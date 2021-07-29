@@ -1,16 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta } from '../../../utils';
+import { isBeta, getEnv } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
 
-export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
+export const requiredBundles = ['application-services', 'openshift', 'insights', ...(getEnv() !== 'prod' ? ['edge'] : []), 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
 
 function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }) {
   const costLinks = [];
   const subscriptionsLinks = [];
   let url = href;
+  let appId = rest.appId;
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
       if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
@@ -27,12 +28,14 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
 
       if (!url && href.match(/^\//)) {
         url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+        appId = rest.appId ? rest.appId : appId;
       }
     });
   }
 
   return {
     ...rest,
+    appId,
     isExternal,
     title,
     href: url,
