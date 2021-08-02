@@ -3,102 +3,110 @@
 exports[`RootApp should render correctly - no data 1`] = `
 <div
   class="pf-c-drawer__content"
-  data-ouia-bundle=""
-  data-ouia-safe="true"
-  id="chrome-app-render-root"
-  landing="true"
 >
   <div
-    class="pf-c-page"
+    class="pf-c-drawer__body pfext-quick-start-drawer__body"
   >
     <div
-      class="ins-c-banner"
-    >
-      <h3
-        class=""
-        data-ouia-component-id="OUIA-Generated-Text-1"
-        data-ouia-component-type="PF4/Text"
-        data-ouia-safe="true"
-        data-pf-content="true"
-      >
-        Changes are coming to cloud.redhat.com on July 29.
-      </h3>
-      <a
-        aria-disabled="false"
-        class="pf-c-button pf-m-link pf-m-display-lg"
-        data-ouia-component-id="OUIA-Generated-Button-link-1"
-        data-ouia-component-type="PF4/Button"
-        data-ouia-safe="true"
-        href="https://www.openshift.com/blog/check-out-our-new-look"
-        target="_blank"
-      >
-        Learn more on our blog.
-         
-        <svg
-          aria-hidden="true"
-          fill="currentColor"
-          height="1em"
-          role="img"
-          style="vertical-align: -0.125em;"
-          viewBox="0 0 448 512"
-          width="1em"
-        >
-          <path
-            d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"
-          />
-        </svg>
-      </a>
-    </div>
-    <header
-      class="pf-c-page__header"
+      class="pf-c-drawer__content"
+      data-ouia-bundle=""
+      data-ouia-safe="true"
+      id="chrome-app-render-root"
+      landing="true"
     >
       <div
-        class="pf-c-page__header-brand"
+        class="pf-c-page"
       >
         <div
-          class="pf-c-page__header-brand-link"
+          class="ins-c-banner"
         >
-          <a
-            class="ins-c-header-link"
-            href="./"
+          <h3
+            class=""
+            data-ouia-component-id="OUIA-Generated-Text-1"
+            data-ouia-component-type="PF4/Text"
+            data-ouia-safe="true"
+            data-pf-content="true"
           >
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
+            Changes are coming to cloud.redhat.com on July 29.
+          </h3>
+          <a
+            aria-disabled="false"
+            class="pf-c-button pf-m-link pf-m-display-lg"
+            data-ouia-component-id="OUIA-Generated-Button-link-1"
+            data-ouia-component-type="PF4/Button"
+            data-ouia-safe="true"
+            href="https://www.openshift.com/blog/check-out-our-new-look"
+            target="_blank"
+          >
+            Learn more on our blog.
+             
+            <svg
+              aria-hidden="true"
+              fill="currentColor"
+              height="1em"
+              role="img"
+              style="vertical-align: -0.125em;"
+              viewBox="0 0 448 512"
+              width="1em"
+            >
+              <path
+                d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"
+              />
+            </svg>
           </a>
         </div>
-      </div>
-      <div
-        class="pf-c-page__header-tools"
-      >
-        <button
-          aria-disabled="false"
-          aria-label="Toggle primary navigation"
-          class="pf-c-button pf-m-tertiary"
-          data-ouia-component-id="top-right-login-button"
-          data-ouia-component-type="PF4/Button"
-          data-ouia-safe="true"
-          type="button"
-          widget-type="InsightsNavToggle"
+        <header
+          class="pf-c-page__header"
         >
-          Log in
-        </button>
-      </div>
-    </header>
-    <main
-      class="pf-c-page__main"
-      tabindex="-1"
-    >
-      <div
-        class="ins-c-render ins-m-full--height"
-      >
+          <div
+            class="pf-c-page__header-brand"
+          >
+            <div
+              class="pf-c-page__header-brand-link"
+            >
+              <a
+                class="ins-c-header-link"
+                href="./"
+              >
+                <img
+                  alt="Red Hat Logo"
+                  src="test-file-stub"
+                />
+              </a>
+            </div>
+          </div>
+          <div
+            class="pf-c-page__header-tools"
+          >
+            <button
+              aria-disabled="false"
+              aria-label="Toggle primary navigation"
+              class="pf-c-button pf-m-tertiary"
+              data-ouia-component-id="top-right-login-button"
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe="true"
+              type="button"
+              widget-type="InsightsNavToggle"
+            >
+              Log in
+            </button>
+          </div>
+        </header>
         <main
           class="pf-c-page__main"
-          id="no-access"
-        />
+          tabindex="-1"
+        >
+          <div
+            class="ins-c-render ins-m-full--height"
+          >
+            <main
+              class="pf-c-page__main"
+              id="no-access"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
 </div>
 `;
@@ -106,65 +114,73 @@ exports[`RootApp should render correctly - no data 1`] = `
 exports[`RootApp should render correctly 1`] = `
 <div
   class="pf-c-drawer__content"
-  data-ouia-app-id="app-id"
-  data-ouia-bundle="some-location"
-  data-ouia-safe="true"
-  data-ouia-subnav="some-app"
-  id="chrome-app-render-root"
 >
   <div
-    class="pf-c-page"
+    class="pf-c-drawer__body pfext-quick-start-drawer__body"
   >
-    <header
-      class="pf-c-page__header"
+    <div
+      class="pf-c-drawer__content"
+      data-ouia-app-id="app-id"
+      data-ouia-bundle="some-location"
+      data-ouia-safe="true"
+      data-ouia-subnav="some-app"
+      id="chrome-app-render-root"
     >
       <div
-        class="pf-c-page__header-brand"
+        class="pf-c-page"
       >
-        <div
-          class="pf-c-page__header-brand-link"
+        <header
+          class="pf-c-page__header"
         >
-          <a
-            class="ins-c-header-link"
-            href="./"
+          <div
+            class="pf-c-page__header-brand"
           >
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </a>
-        </div>
-      </div>
-      <div
-        class="pf-c-page__header-tools"
-      >
-        <button
-          aria-disabled="false"
-          aria-label="Toggle primary navigation"
-          class="pf-c-button pf-m-tertiary"
-          data-ouia-component-id="top-right-login-button"
-          data-ouia-component-type="PF4/Button"
-          data-ouia-safe="true"
-          type="button"
-          widget-type="InsightsNavToggle"
-        >
-          Log in
-        </button>
-      </div>
-    </header>
-    <main
-      class="pf-c-page__main"
-      tabindex="-1"
-    >
-      <div
-        class="ins-c-render ins-m-full--height"
-      >
+            <div
+              class="pf-c-page__header-brand-link"
+            >
+              <a
+                class="ins-c-header-link"
+                href="./"
+              >
+                <img
+                  alt="Red Hat Logo"
+                  src="test-file-stub"
+                />
+              </a>
+            </div>
+          </div>
+          <div
+            class="pf-c-page__header-tools"
+          >
+            <button
+              aria-disabled="false"
+              aria-label="Toggle primary navigation"
+              class="pf-c-button pf-m-tertiary"
+              data-ouia-component-id="top-right-login-button"
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe="true"
+              type="button"
+              widget-type="InsightsNavToggle"
+            >
+              Log in
+            </button>
+          </div>
+        </header>
         <main
           class="pf-c-page__main"
-          id="no-access"
-        />
+          tabindex="-1"
+        >
+          <div
+            class="ins-c-render ins-m-full--height"
+          >
+            <main
+              class="pf-c-page__main"
+              id="no-access"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
 </div>
 `;
@@ -172,66 +188,74 @@ exports[`RootApp should render correctly 1`] = `
 exports[`RootApp should render correctly with pageAction 1`] = `
 <div
   class="pf-c-drawer__content"
-  data-ouia-app-id="app-id"
-  data-ouia-bundle="some-location"
-  data-ouia-page-type="some-action"
-  data-ouia-safe="true"
-  data-ouia-subnav="some-app"
-  id="chrome-app-render-root"
 >
   <div
-    class="pf-c-page"
+    class="pf-c-drawer__body pfext-quick-start-drawer__body"
   >
-    <header
-      class="pf-c-page__header"
+    <div
+      class="pf-c-drawer__content"
+      data-ouia-app-id="app-id"
+      data-ouia-bundle="some-location"
+      data-ouia-page-type="some-action"
+      data-ouia-safe="true"
+      data-ouia-subnav="some-app"
+      id="chrome-app-render-root"
     >
       <div
-        class="pf-c-page__header-brand"
+        class="pf-c-page"
       >
-        <div
-          class="pf-c-page__header-brand-link"
+        <header
+          class="pf-c-page__header"
         >
-          <a
-            class="ins-c-header-link"
-            href="./"
+          <div
+            class="pf-c-page__header-brand"
           >
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </a>
-        </div>
-      </div>
-      <div
-        class="pf-c-page__header-tools"
-      >
-        <button
-          aria-disabled="false"
-          aria-label="Toggle primary navigation"
-          class="pf-c-button pf-m-tertiary"
-          data-ouia-component-id="top-right-login-button"
-          data-ouia-component-type="PF4/Button"
-          data-ouia-safe="true"
-          type="button"
-          widget-type="InsightsNavToggle"
-        >
-          Log in
-        </button>
-      </div>
-    </header>
-    <main
-      class="pf-c-page__main"
-      tabindex="-1"
-    >
-      <div
-        class="ins-c-render ins-m-full--height"
-      >
+            <div
+              class="pf-c-page__header-brand-link"
+            >
+              <a
+                class="ins-c-header-link"
+                href="./"
+              >
+                <img
+                  alt="Red Hat Logo"
+                  src="test-file-stub"
+                />
+              </a>
+            </div>
+          </div>
+          <div
+            class="pf-c-page__header-tools"
+          >
+            <button
+              aria-disabled="false"
+              aria-label="Toggle primary navigation"
+              class="pf-c-button pf-m-tertiary"
+              data-ouia-component-id="top-right-login-button"
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe="true"
+              type="button"
+              widget-type="InsightsNavToggle"
+            >
+              Log in
+            </button>
+          </div>
+        </header>
         <main
           class="pf-c-page__main"
-          id="no-access"
-        />
+          tabindex="-1"
+        >
+          <div
+            class="ins-c-render ins-m-full--height"
+          >
+            <main
+              class="pf-c-page__main"
+              id="no-access"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
 </div>
 `;
@@ -239,66 +263,74 @@ exports[`RootApp should render correctly with pageAction 1`] = `
 exports[`RootApp should render correctly with pageObjectId 1`] = `
 <div
   class="pf-c-drawer__content"
-  data-ouia-app-id="app-id"
-  data-ouia-bundle="some-location"
-  data-ouia-page-object-id="some-object-id"
-  data-ouia-safe="true"
-  data-ouia-subnav="some-app"
-  id="chrome-app-render-root"
 >
   <div
-    class="pf-c-page"
+    class="pf-c-drawer__body pfext-quick-start-drawer__body"
   >
-    <header
-      class="pf-c-page__header"
+    <div
+      class="pf-c-drawer__content"
+      data-ouia-app-id="app-id"
+      data-ouia-bundle="some-location"
+      data-ouia-page-object-id="some-object-id"
+      data-ouia-safe="true"
+      data-ouia-subnav="some-app"
+      id="chrome-app-render-root"
     >
       <div
-        class="pf-c-page__header-brand"
+        class="pf-c-page"
       >
-        <div
-          class="pf-c-page__header-brand-link"
+        <header
+          class="pf-c-page__header"
         >
-          <a
-            class="ins-c-header-link"
-            href="./"
+          <div
+            class="pf-c-page__header-brand"
           >
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </a>
-        </div>
-      </div>
-      <div
-        class="pf-c-page__header-tools"
-      >
-        <button
-          aria-disabled="false"
-          aria-label="Toggle primary navigation"
-          class="pf-c-button pf-m-tertiary"
-          data-ouia-component-id="top-right-login-button"
-          data-ouia-component-type="PF4/Button"
-          data-ouia-safe="true"
-          type="button"
-          widget-type="InsightsNavToggle"
-        >
-          Log in
-        </button>
-      </div>
-    </header>
-    <main
-      class="pf-c-page__main"
-      tabindex="-1"
-    >
-      <div
-        class="ins-c-render ins-m-full--height"
-      >
+            <div
+              class="pf-c-page__header-brand-link"
+            >
+              <a
+                class="ins-c-header-link"
+                href="./"
+              >
+                <img
+                  alt="Red Hat Logo"
+                  src="test-file-stub"
+                />
+              </a>
+            </div>
+          </div>
+          <div
+            class="pf-c-page__header-tools"
+          >
+            <button
+              aria-disabled="false"
+              aria-label="Toggle primary navigation"
+              class="pf-c-button pf-m-tertiary"
+              data-ouia-component-id="top-right-login-button"
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe="true"
+              type="button"
+              widget-type="InsightsNavToggle"
+            >
+              Log in
+            </button>
+          </div>
+        </header>
         <main
           class="pf-c-page__main"
-          id="no-access"
-        />
+          tabindex="-1"
+        >
+          <div
+            class="ins-c-render ins-m-full--height"
+          >
+            <main
+              class="pf-c-page__main"
+              id="no-access"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
 </div>
 `;
@@ -306,67 +338,75 @@ exports[`RootApp should render correctly with pageObjectId 1`] = `
 exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = `
 <div
   class="pf-c-drawer__content"
-  data-ouia-app-id="app-id"
-  data-ouia-bundle="some-location"
-  data-ouia-page-object-id="some-object-id"
-  data-ouia-page-type="some-action"
-  data-ouia-safe="true"
-  data-ouia-subnav="some-app"
-  id="chrome-app-render-root"
 >
   <div
-    class="pf-c-page"
+    class="pf-c-drawer__body pfext-quick-start-drawer__body"
   >
-    <header
-      class="pf-c-page__header"
+    <div
+      class="pf-c-drawer__content"
+      data-ouia-app-id="app-id"
+      data-ouia-bundle="some-location"
+      data-ouia-page-object-id="some-object-id"
+      data-ouia-page-type="some-action"
+      data-ouia-safe="true"
+      data-ouia-subnav="some-app"
+      id="chrome-app-render-root"
     >
       <div
-        class="pf-c-page__header-brand"
+        class="pf-c-page"
       >
-        <div
-          class="pf-c-page__header-brand-link"
+        <header
+          class="pf-c-page__header"
         >
-          <a
-            class="ins-c-header-link"
-            href="./"
+          <div
+            class="pf-c-page__header-brand"
           >
-            <img
-              alt="Red Hat Logo"
-              src="test-file-stub"
-            />
-          </a>
-        </div>
-      </div>
-      <div
-        class="pf-c-page__header-tools"
-      >
-        <button
-          aria-disabled="false"
-          aria-label="Toggle primary navigation"
-          class="pf-c-button pf-m-tertiary"
-          data-ouia-component-id="top-right-login-button"
-          data-ouia-component-type="PF4/Button"
-          data-ouia-safe="true"
-          type="button"
-          widget-type="InsightsNavToggle"
-        >
-          Log in
-        </button>
-      </div>
-    </header>
-    <main
-      class="pf-c-page__main"
-      tabindex="-1"
-    >
-      <div
-        class="ins-c-render ins-m-full--height"
-      >
+            <div
+              class="pf-c-page__header-brand-link"
+            >
+              <a
+                class="ins-c-header-link"
+                href="./"
+              >
+                <img
+                  alt="Red Hat Logo"
+                  src="test-file-stub"
+                />
+              </a>
+            </div>
+          </div>
+          <div
+            class="pf-c-page__header-tools"
+          >
+            <button
+              aria-disabled="false"
+              aria-label="Toggle primary navigation"
+              class="pf-c-button pf-m-tertiary"
+              data-ouia-component-id="top-right-login-button"
+              data-ouia-component-type="PF4/Button"
+              data-ouia-safe="true"
+              type="button"
+              widget-type="InsightsNavToggle"
+            >
+              Log in
+            </button>
+          </div>
+        </header>
         <main
           class="pf-c-page__main"
-          id="no-access"
-        />
+          tabindex="-1"
+        >
+          <div
+            class="ins-c-render ins-m-full--height"
+          >
+            <main
+              class="pf-c-page__main"
+              id="no-access"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   </div>
 </div>
 `;

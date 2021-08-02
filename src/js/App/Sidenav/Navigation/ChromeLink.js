@@ -65,8 +65,14 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
     domEvent.target = linkRef.current;
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
+
+  // turns /settings/rbac/roles -> settings_rbac_roles
+  const quickStartHighlightId = href
+    .split('/')
+    .slice(href.startsWith('/') ? 1 : 0)
+    .join('_');
   return (
-    <NavLink ref={linkRef} data-testid="router-link" onClick={onClick} to={href} className={className}>
+    <NavLink ref={linkRef} data-testid="router-link" onClick={onClick} to={href} className={className} data-quickstart-id={quickStartHighlightId}>
       {children}
     </NavLink>
   );
