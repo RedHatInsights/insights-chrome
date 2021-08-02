@@ -32,10 +32,12 @@ const ShieldedRoot = memo(
       return null;
     }
 
+    const hasBanner = false; // Update this later when we use feature flags
+
     return (
       <Page
         isManagedSidebar={!hideNav}
-        className={classnames({ 'ins-c-page__hasBanner': useLandingNav && !cookie.get('cs_jwt') })}
+        className={classnames({ 'ins-c-page__hasBanner': hasBanner })}
         header={
           <Fragment>
             {useLandingNav && !cookie.get('cs_jwt') ? <Banner /> : undefined}
