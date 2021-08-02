@@ -3,6 +3,17 @@ $pf-global--image-path: './assets/images/';
 
 @import '~@patternfly/patternfly/patternfly-base.scss';
 
+// Quick starts
+@import '~@patternfly/quickstarts/dist/quickstarts.min';
+// TODO: Bring these quick starts overrides into the lib instead 
+.pfext-page-layout__title {
+    margin-top: 0;
+    padding-top: 23px;
+}
+.pfext-page-layout__content.pfext-is-dark {
+    background: unset;
+}
+
 // Components
 @import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
 @import '~@patternfly/patternfly/components/Page/page.scss';
