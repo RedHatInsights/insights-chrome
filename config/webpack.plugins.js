@@ -3,6 +3,7 @@ const resolve = require('path').resolve;
 const { ModuleFederationPlugin } = require('webpack').container;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const deps = require('../package.json').dependencies;
 const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
@@ -18,6 +19,9 @@ const plugins = [
         }),
       ]
     : []),
+  new MiniCssExtractPlugin({
+    filename: '[name].css',
+  }),
   new ModuleFederationPlugin({
     name: 'chrome',
     filename: 'chrome.[contenthash].js',
@@ -43,7 +47,7 @@ const plugins = [
   }),
   ChunkMapper,
   new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, '../src/pug/templates/index.pug'),
+    template: path.resolve(__dirname, '../src/index.html'),
     inject: 'body',
     filename: '../index.html',
   }),
