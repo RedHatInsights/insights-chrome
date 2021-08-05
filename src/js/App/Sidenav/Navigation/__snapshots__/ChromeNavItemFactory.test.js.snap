@@ -10,6 +10,7 @@ exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
   >
     <a
       class="pf-c-nav__link"
+      data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
     >
@@ -27,6 +28,7 @@ exports[`ChromeNavItemFactory should render chrome nav item 2`] = `
     data-ouia-component-id="OUIA-Generated-NavExpandable-1"
     data-ouia-component-type="PF4/NavExpandable"
     data-ouia-safe="true"
+    data-quickstart-id="bar"
   >
     <button
       aria-expanded="false"

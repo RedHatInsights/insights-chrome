@@ -5,6 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from './GlobalFilter/GlobalFilter';
 import { useScalprum, ScalprumProvider } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
+import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navigation from './Sidenav/Navigation';
 import { Header, HeaderTools } from './Header/Header';
@@ -16,6 +17,7 @@ import Routes from './Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import Banner from './Banners/Banner';
 import cookie from 'js-cookie';
+import { LazyQuickStartCatalog } from './QuickStart/LazyQuickStartCatalog';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -32,10 +34,12 @@ const ShieldedRoot = memo(
       return null;
     }
 
+    const hasBanner = false; // Update this later when we use feature flags
+
     return (
       <Page
         isManagedSidebar={!hideNav}
-        className={classnames({ 'ins-c-page__hasBanner': useLandingNav && !cookie.get('cs_jwt') })}
+        className={classnames({ 'ins-c-page__hasBanner': hasBanner })}
         header={
           <Fragment>
             {useLandingNav && !cookie.get('cs_jwt') ? <Banner /> : undefined}
@@ -115,16 +119,45 @@ RootApp.propTypes = {
 };
 
 const ScalprumRoot = ({ config, ...props }) => {
+  const [activeQuickStartID, setActiveQuickStartID] = React.useState('');
+  const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
+  const valuesForQuickstartContext = useValuesForQuickStartContext({
+    activeQuickStartID,
+    setActiveQuickStartID,
+    allQuickStartStates,
+    setAllQuickStartStates,
+    footer: {
+      show: false,
+    },
+  });
+
+  /**
+   * Once all applications are migrated to chrome 2:
+   * - define chrome API in chrome root after it mounts
+   * - copy these functions to window
+   * - add deprecation warning to the window functions
+   */
   return (
-    /**
-     * Once all applications are migrated to chrome 2:
-     * - define chrome API in chrome root after it mounts
-     * - copy these functions to window
-     * - add deprecation warning to the window functions
-     */
-    <ScalprumProvider config={config} api={{ chrome: { experimentalApi: true, ...window.insights.chrome } }}>
-      <RootApp {...props} />
-    </ScalprumProvider>
+    <QuickStartContext.Provider value={valuesForQuickstartContext}>
+      <QuickStartDrawer>
+        <ScalprumProvider
+          config={config}
+          api={{
+            chrome: {
+              experimentalApi: true,
+              ...window.insights.chrome,
+              quickStarts: {
+                set: valuesForQuickstartContext.setAllQuickStarts,
+                toggle: valuesForQuickstartContext.setActiveQuickStart,
+                Catalog: LazyQuickStartCatalog,
+              },
+            },
+          }}
+        >
+          <RootApp {...props} />
+        </ScalprumProvider>
+      </QuickStartDrawer>
+    </QuickStartContext.Provider>
   );
 };
 
