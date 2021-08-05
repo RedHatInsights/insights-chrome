@@ -12,6 +12,7 @@ exports[`ChromeNavItem should render nav item 1`] = `
   >
     <a
       class="pf-c-nav__link"
+      data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
     >
@@ -32,6 +33,7 @@ exports[`ChromeNavItem should render nav item with a node title 1`] = `
   >
     <a
       class="pf-c-nav__link"
+      data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
     >
@@ -56,6 +58,7 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
   >
     <a
       class="pf-c-nav__link ins-c-navigation__additional-links"
+      data-quickstart-id="/foo"
       data-testid="native-link"
       href="/foo"
       itemid="/foo"
@@ -92,6 +95,7 @@ exports[`ChromeNavItem should render nav item with beta badge 1`] = `
   >
     <a
       class="pf-c-nav__link"
+      data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
     >
