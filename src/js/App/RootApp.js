@@ -18,6 +18,7 @@ import useOuiaTags from '../utils/useOuiaTags';
 import Banner from './Banners/Banner';
 import cookie from 'js-cookie';
 import { LazyQuickStartCatalog } from './QuickStart/LazyQuickStartCatalog';
+import { usePendoFeedback } from './Feedback';
 
 const ShieldedRoot = memo(
   ({ useLandingNav, hideNav, insightsContentRef, isGlobalFilterEnabled, initialized }) => {
@@ -146,6 +147,7 @@ const ScalprumRoot = ({ config, ...props }) => {
             chrome: {
               experimentalApi: true,
               ...window.insights.chrome,
+              usePendoFeedback,
               quickStarts: {
                 set: valuesForQuickstartContext.setAllQuickStarts,
                 toggle: valuesForQuickstartContext.setActiveQuickStart,

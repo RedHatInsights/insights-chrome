@@ -22,3 +22,4 @@ export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
 export const LOAD_MODULES_SCHEMA = '@@chrome/load-modules-schema';
 
 export const CHANGE_ACTIVE_MODULE = '@@chrome/change-active-module';
+export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
