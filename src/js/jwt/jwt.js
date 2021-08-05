@@ -333,7 +333,7 @@ function getCookieExpires(exp) {
 function setCookie(token) {
   log('Setting the cs_jwt cookie');
   if (token && token.length > 10) {
-    setCookieWrapper(`${priv.getCookie().cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+    setCookieWrapper(`${priv.getCookie().cookieName}=${token};` + `path=/;` + `secure=true;` + `HttpOnly=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
   }
 }
 
