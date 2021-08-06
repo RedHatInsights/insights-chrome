@@ -121,3 +121,8 @@ export const changeActiveModule = (module) => ({
 export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
+
+export const setPendoFeedbackFlag = (payload) => ({
+  type: actionTypes.SET_PENDO_FEEDBACK_FLAG,
+  payload,
+});

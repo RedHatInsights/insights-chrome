@@ -108,3 +108,10 @@ export function changeActiveModuleReducer(state, { payload }) {
     appId: payload,
   };
 }
+
+export function setPendoFeedbackFlag(state, { payload }) {
+  return {
+    ...state,
+    usePendoFeedback: payload,
+  };
+}
