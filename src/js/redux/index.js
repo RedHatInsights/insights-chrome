@@ -11,6 +11,7 @@ import {
   loadNavigationSegmentReducer,
   loadModulesSchemaReducer,
   changeActiveModuleReducer,
+  setPendoFeedbackFlag,
 } from './reducers';
 import {
   onGetAllTags,
@@ -43,6 +44,7 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
   CHANGE_ACTIVE_MODULE,
+  SET_PENDO_FEEDBACK_FLAG,
 } from './action-types';
 
 const reducers = {
@@ -56,6 +58,7 @@ const reducers = {
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
   [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
+  [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
 };
 
 const globalFilter = {
