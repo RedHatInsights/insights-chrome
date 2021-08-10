@@ -23,7 +23,7 @@ export const Header = ({ logoClassName }) => {
   const user = useSelector(({ chrome }) => chrome?.user);
   return (
     <Fragment>
-      <a href="./" className={`ins-c-header-link${logoClassName ? ` ${logoClassName}` : ''}`}>
+      <a href="./" className={`ins-m-hide-on-md ins-c-header-link${logoClassName ? ` ${logoClassName}` : ''}`}>
         <Logo />
       </a>
       {user && <AppFilter />}

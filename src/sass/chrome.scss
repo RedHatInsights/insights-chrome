@@ -226,7 +226,10 @@ section.ins-c-app-switcher--loading {
     }
 }
 
-// mobile fixes
+@media only screen and (max-width: $pf-global--breakpoint--md) {
+    .ins-m-hide-on-md {display: none;}
+}
+
 @media only screen and (max-width: $pf-global--breakpoint--sm) {
     .ins-m-hide-on-sm {display: none;}
 
