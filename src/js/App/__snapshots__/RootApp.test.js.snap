@@ -65,7 +65,7 @@ exports[`RootApp should render correctly - no data 1`] = `
               class="pf-c-page__header-brand-link"
             >
               <a
-                class="ins-c-header-link"
+                class="ins-m-hide-on-md ins-c-header-link"
                 href="./"
               >
                 <img
@@ -139,7 +139,7 @@ exports[`RootApp should render correctly 1`] = `
               class="pf-c-page__header-brand-link"
             >
               <a
-                class="ins-c-header-link"
+                class="ins-m-hide-on-md ins-c-header-link"
                 href="./"
               >
                 <img
@@ -214,7 +214,7 @@ exports[`RootApp should render correctly with pageAction 1`] = `
               class="pf-c-page__header-brand-link"
             >
               <a
-                class="ins-c-header-link"
+                class="ins-m-hide-on-md ins-c-header-link"
                 href="./"
               >
                 <img
@@ -289,7 +289,7 @@ exports[`RootApp should render correctly with pageObjectId 1`] = `
               class="pf-c-page__header-brand-link"
             >
               <a
-                class="ins-c-header-link"
+                class="ins-m-hide-on-md ins-c-header-link"
                 href="./"
               >
                 <img
@@ -365,7 +365,7 @@ exports[`RootApp should render correctly with pageObjectId and pageAction 1`] = 
               class="pf-c-page__header-brand-link"
             >
               <a
-                class="ins-c-header-link"
+                class="ins-m-hide-on-md ins-c-header-link"
                 href="./"
               >
                 <img

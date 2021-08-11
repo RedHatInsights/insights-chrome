@@ -3,7 +3,7 @@
 exports[`Header should render correctly 1`] = `
 <div>
   <a
-    class="ins-c-header-link"
+    class="ins-m-hide-on-md ins-c-header-link"
     href="./"
   >
     <img
