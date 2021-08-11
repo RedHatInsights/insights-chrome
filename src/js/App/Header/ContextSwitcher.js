@@ -38,7 +38,7 @@ const ContextSwitcher = ({ user, className }) => {
     <Dropdown
       className={classnames('ins-c-page__context-switcher-dropdown', className)}
       ouiaId="Account Switcher"
-      toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Viewing account: {user.identity.account_number}</DropdownToggle>}
+      toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Acct: {user.identity.account_number}</DropdownToggle>}
       isOpen={isOpen}
       dropdownItems={dropdownItems}
     />
