@@ -26,7 +26,7 @@ const useDynamicModule = (appId) => {
   return isDynamic;
 };
 
-const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children }) => {
+const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
@@ -72,7 +72,15 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
     .slice(href.startsWith('/') ? 1 : 0)
     .join('_');
   return (
-    <NavLink ref={linkRef} data-testid="router-link" onClick={onClick} to={href} className={className} data-quickstart-id={quickStartHighlightId}>
+    <NavLink
+      tabIndex={tabIndex}
+      ref={linkRef}
+      data-testid="router-link"
+      onClick={onClick}
+      to={href}
+      className={className}
+      data-quickstart-id={quickStartHighlightId}
+    >
       {children}
     </NavLink>
   );
@@ -86,6 +94,7 @@ LinkWrapper.propTypes = {
   onLinkClick: PropTypes.func.isRequired,
   currAppId: PropTypes.string,
   appId: PropTypes.string.isRequired,
+  tabIndex: PropTypes.number,
 };
 
 const basepath = document.baseURI;
@@ -125,7 +134,7 @@ RefreshLink.propTypes = {
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
-  const { onLinkClick } = useContext(NavContext);
+  const { onLinkClick, isNavOpen, inPageLayout } = useContext(NavContext);
   const currAppId = useSelector(({ chrome }) => chrome?.appId);
   const isDynamic = useDynamicModule(appId);
 
@@ -135,7 +144,7 @@ const ChromeLink = ({ appId, children, ...rest }) => {
 
   const LinkComponent = !rest.isExternal && isDynamic ? LinkWrapper : RefreshLink;
   return (
-    <LinkComponent onLinkClick={onLinkClick} appId={appId} currAppId={currAppId} {...rest}>
+    <LinkComponent {...(inPageLayout && !isNavOpen ? { tabIndex: -1 } : {})} onLinkClick={onLinkClick} appId={appId} currAppId={currAppId} {...rest}>
       {children}
     </LinkComponent>
   );

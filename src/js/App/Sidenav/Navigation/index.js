@@ -1,5 +1,5 @@
 import React, { Fragment, useRef, useState } from 'react';
-import { Nav, NavList } from '@patternfly/react-core';
+import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
 
 import NavContext from './navContext';
 import componentMapper from './componentMapper';
@@ -35,16 +35,22 @@ const Navigation = () => {
       <div className="ins-c-app-title">{schema.title}</div>
       <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
         <NavList>
-          <NavContext.Provider
-            value={{
-              componentMapper,
-              onLinkClick,
-            }}
-          >
-            {schema.navItems.map((item, index) => (
-              <ChromeNavItemFactory key={index} {...item} />
-            ))}
-          </NavContext.Provider>
+          <PageContextConsumer>
+            {({ isNavOpen }) => (
+              <NavContext.Provider
+                value={{
+                  componentMapper,
+                  onLinkClick,
+                  inPageLayout: true,
+                  isNavOpen,
+                }}
+              >
+                {schema.navItems.map((item, index) => (
+                  <ChromeNavItemFactory key={index} {...item} />
+                ))}
+              </NavContext.Provider>
+            )}
+          </PageContextConsumer>
         </NavList>
       </Nav>
       <BetaInfoModal
