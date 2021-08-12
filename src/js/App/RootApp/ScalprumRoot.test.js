@@ -1,12 +1,12 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import RootApp, { ConnectedRootApp } from './RootApp';
+import ScalprumRoot from './ScalprumRoot';
 import { act, render, waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
-jest.mock('../utils', () => {
-  const utils = jest.requireActual('../utils');
+jest.mock('../../utils', () => {
+  const utils = jest.requireActual('../../utils');
   return {
     __esModule: true,
     ...utils,
@@ -34,10 +34,10 @@ window.ResizeObserver =
     unobserve: jest.fn(),
   }));
 
-import * as utils from '../utils';
+import * as utils from '../../utils';
 import * as routerDom from 'react-router-dom';
 
-describe('RootApp', () => {
+describe('ScalprumRoot', () => {
   let initialState;
   let mockStore;
   let config;
@@ -72,80 +72,6 @@ describe('RootApp', () => {
     };
   });
 
-  it('should render correctly - no data', async () => {
-    const store = mockStore({ chrome: {} });
-    const { container } = render(
-      <Provider store={store}>
-        <RootApp config={config} />
-      </Provider>
-    );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
-  });
-
-  it('should render correctly', () => {
-    const store = mockStore(initialState);
-    const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <ConnectedRootApp config={config} />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
-  });
-
-  it('should render correctly with pageAction', () => {
-    const store = mockStore({
-      chrome: {
-        ...initialState.chrome,
-        pageAction: 'some-action',
-      },
-    });
-    const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <ConnectedRootApp config={config} />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
-  });
-
-  it('should render correctly with pageObjectId', () => {
-    const store = mockStore({
-      chrome: {
-        ...initialState.chrome,
-        pageObjectId: 'some-object-id',
-      },
-    });
-    const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <ConnectedRootApp config={config} />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
-  });
-
-  it('should render correctly with pageObjectId and pageAction', () => {
-    const store = mockStore({
-      chrome: {
-        ...initialState.chrome,
-        pageAction: 'some-action',
-        pageObjectId: 'some-object-id',
-      },
-    });
-    const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <ConnectedRootApp config={config} />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
-  });
-
   it('should render PageSidebar with LandingNav component', async () => {
     /**
      * Temporarily override the module mock
@@ -156,6 +82,7 @@ describe('RootApp', () => {
     getEnvSpy.mockReturnValue('ci');
 
     const store = mockStore({
+      ...initialState,
       chrome: {
         ...initialState.chrome,
         navigation: {
@@ -174,7 +101,7 @@ describe('RootApp', () => {
       const { container: internalContainer } = await render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
-            <ConnectedRootApp config={config} />
+            <ScalprumRoot config={config} />
           </MemoryRouter>
         </Provider>
       );
@@ -207,7 +134,9 @@ describe('RootApp', () => {
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
         <Provider store={store}>
-          <RootApp globalFilterHidden config={config} />
+          <MemoryRouter initialEntries={['/']}>
+            <ScalprumRoot globalFilterHidden config={config} />
+          </MemoryRouter>
         </Provider>
       );
       getByLabelText = internalGetByLabelText;
@@ -228,7 +157,9 @@ describe('RootApp', () => {
 
     const { container } = render(
       <Provider store={store}>
-        <RootApp config={config} globalFilterHidden={false} />
+        <MemoryRouter initialEntries={['/']}>
+          <ScalprumRoot config={config} globalFilterHidden={false} />
+        </MemoryRouter>
       </Provider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeTruthy());

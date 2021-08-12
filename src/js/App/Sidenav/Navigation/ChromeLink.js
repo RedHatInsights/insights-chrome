@@ -130,6 +130,7 @@ RefreshLink.propTypes = {
   isExternal: PropTypes.bool,
   onLinkClick: PropTypes.func,
   isBeta: PropTypes.bool,
+  currAppId: PropTypes.any,
 };
 
 const ChromeLink = ({ appId, children, ...rest }) => {
