@@ -81,7 +81,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
           }}
           toggleIndicator={CaretDownIcon}
         >
-          Find an app or service
+          All apps and services
         </DropdownToggle>
       }
       isOpen={isOpen}

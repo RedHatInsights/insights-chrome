@@ -30,7 +30,7 @@ exports[`Header should render correctly 1`] = `
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Find an app or service
+        All apps and services
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"
