@@ -1,9 +1,9 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import { QuickStartDrawer, QuickStartContext, useValuesForQuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
+import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
 import cookie from 'js-cookie';
 
 import Banner from '../Banners/Banner';
@@ -23,17 +23,57 @@ const loaderWrapper = (Component, props = {}) => (
 
 const ScalprumRoot = ({ config, ...props }) => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
-  const [activeQuickStartID, setActiveQuickStartID] = React.useState('');
+  const [activeQuickStartID, setActiveQuickStartID] = useState(''); // useLocalStorage('insights-quickstartId', '');
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
-  const valuesForQuickstartContext = useValuesForQuickStartContext({
-    activeQuickStartID,
-    setActiveQuickStartID,
-    allQuickStartStates,
-    setAllQuickStartStates,
-    footer: {
-      show: false,
+  const [quickStarts, setQuickStarts] = useState({});
+  /**
+   * Updates the scalprum context for quick starts
+   * @param {string} key App identifier
+   * @param {array} qs Array of quick starts
+   */
+  const updateQuickStarts = (key, qs) => {
+    const mergedQuickStarts = {
+      ...quickStarts,
+      [key]: qs,
+    };
+    setQuickStarts(mergedQuickStarts);
+    // refresh scalprum provider
+    const updatedScalprumApi = {
+      ...scalprumApi,
+    };
+    updatedScalprumApi.chrome.quickStarts.get = mergedQuickStarts;
+    setScalprumApi(updatedScalprumApi);
+  };
+  const [scalprumApi, setScalprumApi] = React.useState({
+    chrome: {
+      experimentalApi: true,
+      ...window.insights.chrome,
+      usePendoFeedback,
+      quickStarts: {
+        get: quickStarts,
+        set: updateQuickStarts,
+        toggle: setActiveQuickStartID,
+        Catalog: LazyQuickStartCatalog,
+      },
     },
   });
+
+  const combinedQuickStarts = () => {
+    const combined = [];
+    for (const key in quickStarts) {
+      combined.push(...quickStarts[key]);
+    }
+    return combined;
+  };
+  const quickStartProps = {
+    quickStarts: combinedQuickStarts(),
+    activeQuickStartID,
+    allQuickStartStates,
+    setActiveQuickStartID,
+    setAllQuickStartStates,
+    showCardFooters: false,
+  };
+
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -41,38 +81,22 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QuickStartContext.Provider value={valuesForQuickstartContext}>
-      <QuickStartDrawer>
-        <ScalprumProvider
-          config={config}
-          api={{
-            chrome: {
-              experimentalApi: true,
-              ...window.insights.chrome,
-              usePendoFeedback,
-              quickStarts: {
-                set: valuesForQuickstartContext.setAllQuickStarts,
-                toggle: valuesForQuickstartContext.setActiveQuickStart,
-                Catalog: LazyQuickStartCatalog,
-              },
-            },
-          }}
-        >
-          <Switch>
-            <Route exact path="/">
-              {!cookie.get('cs_jwt') ? <Banner /> : undefined}
-              <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
-            </Route>
-            <Route path="/security">
-              <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
-            </Route>
-            <Route>
-              <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
-            </Route>
-          </Switch>
-        </ScalprumProvider>
-      </QuickStartDrawer>
-    </QuickStartContext.Provider>
+    <QuickStartContainer {...quickStartProps}>
+      <ScalprumProvider config={config} api={scalprumApi}>
+        <Switch>
+          <Route exact path="/">
+            {!cookie.get('cs_jwt') ? <Banner /> : undefined}
+            <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
+          </Route>
+          <Route path="/security">
+            <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
+          </Route>
+          <Route>
+            <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
+          </Route>
+        </Switch>
+      </ScalprumProvider>
+    </QuickStartContainer>
   );
 };
 

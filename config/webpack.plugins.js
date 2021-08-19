@@ -35,6 +35,7 @@ const plugins = [
       { 'react-redux': { requiredVersion: deps['react-redux'] } },
       { '@patternfly/react-table': { requiredVersion: deps['react-table'] } },
       { '@patternfly/react-core': { requiredVersion: deps['react-core'] } },
+      { '@patternfly/quickstarts': { singleton: true, requiredVersion: '1.2.0-rc.1' } },
       { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
     ],
   }),
