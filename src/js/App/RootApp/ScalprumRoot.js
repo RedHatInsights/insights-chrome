@@ -79,6 +79,7 @@ const ScalprumRoot = ({ config, ...props }) => {
             ...window.insights.chrome,
             usePendoFeedback,
             quickStarts: {
+              version: 1,
               set: updateQuickStarts,
               toggle: setActiveQuickStartID,
               Catalog: LazyQuickStartCatalog,
