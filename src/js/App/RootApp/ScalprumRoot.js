@@ -23,7 +23,7 @@ const loaderWrapper = (Component, props = {}) => (
 
 const ScalprumRoot = ({ config, ...props }) => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
-  const [activeQuickStartID, setActiveQuickStartID] = useState(''); // useLocalStorage('insights-quickstartId', '');
+  const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage('insights-quickstartId', '');
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
   const [quickStarts, setQuickStarts] = useState({});
   /**

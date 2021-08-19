@@ -81,7 +81,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
           }}
           toggleIndicator={CaretDownIcon}
         >
-          LOCAL ENV - All apps and services
+          All apps and services
         </DropdownToggle>
       }
       isOpen={isOpen}
