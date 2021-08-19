@@ -27,7 +27,12 @@ const ScalprumRoot = ({ config, ...props }) => {
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
   const [quickStarts, setQuickStarts] = useState({});
   /**
-   * Updates the scalprum context for quick starts
+   * Updates the available quick starts
+   *
+   * Usage example:
+   * const { quickStarts } = useChrome();
+   * quickStarts.set('applicationServices', quickStartsArray)
+   *
    * @param {string} key App identifier
    * @param {array} qs Array of quick starts
    */
@@ -37,27 +42,11 @@ const ScalprumRoot = ({ config, ...props }) => {
       [key]: qs,
     };
     setQuickStarts(mergedQuickStarts);
-    // refresh scalprum provider
-    const updatedScalprumApi = {
-      ...scalprumApi,
-    };
-    updatedScalprumApi.chrome.quickStarts.get = mergedQuickStarts;
-    setScalprumApi(updatedScalprumApi);
   };
-  const [scalprumApi, setScalprumApi] = React.useState({
-    chrome: {
-      experimentalApi: true,
-      ...window.insights.chrome,
-      usePendoFeedback,
-      quickStarts: {
-        get: quickStarts,
-        set: updateQuickStarts,
-        toggle: setActiveQuickStartID,
-        Catalog: LazyQuickStartCatalog,
-      },
-    },
-  });
-
+  /**
+   * Combines the quick start arrays
+   * @returns Array of quick starts
+   */
   const combinedQuickStarts = () => {
     const combined = [];
     for (const key in quickStarts) {
@@ -82,7 +71,21 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - add deprecation warning to the window functions
      */
     <QuickStartContainer {...quickStartProps}>
-      <ScalprumProvider config={config} api={scalprumApi}>
+      <ScalprumProvider
+        config={config}
+        api={{
+          chrome: {
+            experimentalApi: true,
+            ...window.insights.chrome,
+            usePendoFeedback,
+            quickStarts: {
+              set: updateQuickStarts,
+              toggle: setActiveQuickStartID,
+              Catalog: LazyQuickStartCatalog,
+            },
+          },
+        }}
+      >
         <Switch>
           <Route exact path="/">
             {!cookie.get('cs_jwt') ? <Banner /> : undefined}
