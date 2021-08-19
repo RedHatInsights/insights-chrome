@@ -15,7 +15,7 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import ErrorCircleOIcon from '@patternfly/react-icons/dist/js/icons/error-circle-o-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { getUrl } from '../../utils';
 
 import './ErrorComponent.scss';
@@ -32,12 +32,22 @@ const ErrorComponent = (props) => {
   return (
     <Bullseye className="ins-c-error-component">
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ErrorCircleOIcon} />
+        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
           Something went wrong
         </Title>
         <EmptyStateBody>
-          Unexpected error occured.
+          <p className="ins-c-error-component__text">
+            There was a problem processing the request. Please try again. If the problem persists, contact{' '}
+            <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
+              Red Hat support
+            </a>{' '}
+            or check our{' '}
+            <a href="https://status.redhat.com/" target="_blank" rel="noreferrer">
+              status page
+            </a>{' '}
+            for known outages.
+          </p>
           <Flex alignContent={{ default: 'alignContentCenter' }} direction={{ default: 'column' }}>
             <FlexItem>
               <ExpandableSection toggleTextExpanded="Show less" toggleTextCollapsed="Show more">
@@ -64,10 +74,10 @@ const ErrorComponent = (props) => {
           <Button
             variant="primary"
             onClick={() => {
-              window.location.reload();
+              window.history.back();
             }}
           >
-            Try reloading your browser.
+            Return to last page.
           </Button>
         </EmptyStatePrimary>
       </EmptyState>

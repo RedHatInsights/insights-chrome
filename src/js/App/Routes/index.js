@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
+import NotFoundRoute from './NotFoundRoute';
 
 const redirects = [
   {
@@ -52,7 +53,9 @@ const Routes = ({ insightsContentRef }) => {
       {list.map((app) => (
         <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
       ))}
-      <Route>Not found</Route>
+      <Route>
+        <NotFoundRoute />
+      </Route>
     </Switch>
   );
 };

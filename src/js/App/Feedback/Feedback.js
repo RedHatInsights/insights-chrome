@@ -4,10 +4,12 @@ import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 // This only works in prod and stage (api limitation)
 
 const Feedback = ({ user }) => {
+  const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState('');
   const env = window.insights.chrome.getEnvironment();
@@ -39,7 +41,15 @@ const Feedback = ({ user }) => {
 
   return (
     <React.Fragment>
-      <Button ouiaId="feedback-button" className="ins-c-button__feedback" onClick={() => setIsModalOpen(true)}>
+      <Button
+        ouiaId="feedback-button"
+        className="ins-c-button__feedback"
+        onClick={() => {
+          if (!usePendoFeedback) {
+            setIsModalOpen(true);
+          }
+        }}
+      >
         <OutlinedCommentsIcon />
         Feedback
       </Button>
