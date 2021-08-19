@@ -33,7 +33,7 @@ const Navigation = () => {
   return (
     <Fragment>
       <div className="ins-c-app-title">{schema.title}</div>
-      <Nav aria-label="Insights Global Navigation" data-ouia-safe="true">
+      <Nav aria-label="Insights Global Navigation" data-ouia-safe="true" ouiaId="SideNavigation">
         <NavList>
           <PageContextConsumer>
             {({ isNavOpen }) => (

@@ -39,13 +39,13 @@ const LandingNav = () => {
   }
 
   return (
-    <Nav className="ins-c-landing-nav">
+    <Nav className="ins-c-landing-nav" ouiaId="SideNavigation">
       <NavList>
         <div className="ins-c-app-title">
           <b>Home</b>
         </div>
         {schema.map(({ title, id, href }) => (
-          <NavItem className="ins-m-navigation-align" key={id} to={`${isBetaEnv ? '/beta' : ''}${href}`}>
+          <NavItem className="ins-m-navigation-align" key={id} ouiaId={id} to={`${isBetaEnv ? '/beta' : ''}${href}`}>
             {title}
           </NavItem>
         ))}
