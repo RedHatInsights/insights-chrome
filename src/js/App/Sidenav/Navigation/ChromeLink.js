@@ -91,7 +91,7 @@ LinkWrapper.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   isBeta: PropTypes.bool,
-  onLinkClick: PropTypes.func.isRequired,
+  onLinkClick: PropTypes.func,
   currAppId: PropTypes.string,
   appId: PropTypes.string.isRequired,
   tabIndex: PropTypes.number,
