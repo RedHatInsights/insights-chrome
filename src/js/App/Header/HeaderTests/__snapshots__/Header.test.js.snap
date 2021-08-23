@@ -3,7 +3,7 @@
 exports[`Header should render correctly 1`] = `
 <div>
   <a
-    class="ins-c-header-link"
+    class="ins-m-hide-on-md ins-c-header-link"
     href="./"
   >
     <img
@@ -30,7 +30,7 @@ exports[`Header should render correctly 1`] = `
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Find an app or service
+        All apps and services
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"

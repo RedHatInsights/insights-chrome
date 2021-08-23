@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import flatMap from 'lodash/flatMap';
 import { loadLeftNavSegment } from '../redux/actions';
 import { isBeta } from '../utils';
 import { evaluateVisibility } from './isNavItemVisible';
+import { QuickStartContext } from '@patternfly/quickstarts';
 
 function cleanNavItemsHref(navItem) {
   const result = { ...navItem };
@@ -92,6 +93,17 @@ function mutateSchema(hrefMatch, navItems) {
   });
 }
 
+const shouldPreseverQuickstartSearch = (prevSearch, activeQuickStartID) => {
+  const prevParams = new URLSearchParams(prevSearch);
+  return activeQuickStartID !== prevParams.get('quickstart');
+};
+
+const appendQSSearch = (currentSearch, activeQuickStartID) => {
+  const search = new URLSearchParams(currentSearch);
+  search.set('quickstart', activeQuickStartID);
+  return search.toString();
+};
+
 const highlightItems = (pathname, schema) => {
   const cleanPathname = pathname.replace(/\/$/, '');
   const segmentsCount = cleanPathname.split('/').length + 1;
@@ -105,9 +117,21 @@ const highlightItems = (pathname, schema) => {
 const useNavigation = () => {
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
-  const { pathname } = useLocation();
+  const { replace, location } = useHistory();
+  const { pathname } = location;
+  const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }) => navigation[currentNamespace]);
+
+  /**
+   * We need a side effect to get the value into the mutation observer closure
+   */
+  const activeQSId = useRef('');
+  const activeLocation = useRef({});
+  useEffect(() => {
+    activeQSId.current = activeQuickStartID;
+    activeLocation.current = location;
+  }, [activeQuickStartID]);
 
   const registerLocationObserver = (initialPathname, schema) => {
     let prevPathname = initialPathname;
@@ -135,6 +159,14 @@ const useNavigation = () => {
               currentNamespace
             )
           );
+        }
+
+        if (activeQSId.current && shouldPreseverQuickstartSearch(window.location.search, activeQSId.current)) {
+          replace({
+            ...activeLocation.current,
+            pathname: newPathname.replace(/^\/beta\//, '/'),
+            search: appendQSSearch(window.location.search, activeQSId.current),
+          });
         }
       });
     });
