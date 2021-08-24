@@ -1,0 +1,29 @@
+.ins-c-global-filter__menu {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 450px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.ins-c-global-filter__select {
+  &.expanded {
+    width: 450px;
+  }
+  .pf-c-select__toggle-text {
+    flex-grow: 1;
+    > input.pf-c-form-control {
+      border: none;
+    }
+  }
+}
+.ins-c-global-filter__checkbox {
+  .pf-c-check__label {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      .pf-c-badge {
+          margin-left: 8px;
+          padding-top: 3px;
+      }
+  }
+}
