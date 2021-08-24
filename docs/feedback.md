@@ -12,11 +12,14 @@ Apps get the feedback tab by default if they're in a bundle that has it activate
 
 We supply a native feedback form for the customers to submit, however, some applications would rather use pendo's form in order to collect the feedback instead.
 
-In order to do this, we disable to form functionality, but keep the button so that pendo can target the element on the page. Chrome supplies a hook that allows team to disable the native form's functionality.
+In order to do this, we disable to form functionality, but keep the button so that pendo can target the element on the page. Chrome supplies a hook that allows team to disable the native form's functionality which you can use through the frontend components.
 
 ```js
- const { usePendoFeedback } = useChrome();
-usePendoFeedback();
-```
+import usePendoFeedback from '@redhat-cloud-services/frontend-components/usePendoFeedback';
 
-There is also a component usage that apps can use instead of the `useChrome()` hook. More information can be found [here](https://github.com/RedHatInsights/frontend-components/tree/master/packages/components/src/usePendoFeedback)
+const AppEntryPoint = () => {
+  usePendoFeedback()
+
+  ...
+}
+```
