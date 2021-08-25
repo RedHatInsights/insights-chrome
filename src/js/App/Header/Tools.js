@@ -63,7 +63,7 @@ SettingsButton.propTypes = {
   settingsMenuDropdownItems: PropTypes.array.isRequired,
 };
 
-const settingsPath = `${document.baseURI}settings/my-user-access`;
+const settingsPath = `/settings/my-user-access`;
 const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
 /* list out the items for the settings menu */
 const settingsMenuDropdownItems = [
@@ -71,6 +71,7 @@ const settingsMenuDropdownItems = [
     url: settingsPath,
     title: 'Settings',
     target: '_self',
+    appId: 'rbac',
   },
   {
     title: betaSwitcherTitle,
@@ -108,7 +109,8 @@ const Tools = () => {
     },
     {
       title: 'API documentation',
-      url: `${document.baseURI}docs/api`,
+      url: `/docs/api`,
+      appId: 'apiDocs',
     },
     {
       title: 'Demo mode',
