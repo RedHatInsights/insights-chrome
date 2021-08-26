@@ -23,3 +23,21 @@ const AppEntryPoint = () => {
   ...
 }
 ```
+
+### Toggle feedback modal via `useChrome`
+
+To open feedback form programmatically, we supply a toggle function through `useChrome` hook.
+
+```js
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+
+const Component = () => {
+  const { toggleFeedbackModal } = useChrome()
+  // open modal
+  toggleFeedbackModal(true)
+  // close modal
+  toggleFeedbackModal(false)
+
+  ...
+}
+```
