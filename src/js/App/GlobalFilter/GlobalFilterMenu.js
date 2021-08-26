@@ -12,7 +12,7 @@ export const groupType = {
   plain: 'plain',
 };
 
-const getMenuItems = (groups, filterValueRegex, onChange, calculateSelected) => {
+const getMenuItems = (groups, onChange, calculateSelected) => {
   const result = groups.map(({ value, label, id, type, items, ...group }) => ({
     label,
     value,
@@ -79,15 +79,7 @@ const GlobalFilterMenu = (props) => {
     [selectedTags]
   );
 
-  const sanitizedFilterRegex = useMemo(() => {
-    try {
-      return new RegExp(filterBy, 'i');
-    } catch (err) {
-      return new RegExp(filterBy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-    }
-  }, [filterBy]);
-
-  const menuItems = getMenuItems(groups, sanitizedFilterRegex, onChange, calculateSelected);
+  const menuItems = getMenuItems(groups, onChange, calculateSelected);
   const menu = [
     <div key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
       {menuItems.map(({ value, label, items }) => (
