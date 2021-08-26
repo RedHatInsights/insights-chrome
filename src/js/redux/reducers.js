@@ -115,3 +115,10 @@ export function setPendoFeedbackFlag(state, { payload }) {
     usePendoFeedback: payload,
   };
 }
+
+export function toggleFeedbackModal(state, { payload }) {
+  return {
+    ...state,
+    isFeedbackModalOpen: payload,
+  };
+}

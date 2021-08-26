@@ -12,6 +12,7 @@ import {
   loadModulesSchemaReducer,
   changeActiveModuleReducer,
   setPendoFeedbackFlag,
+  toggleFeedbackModal,
 } from './reducers';
 import {
   onGetAllTags,
@@ -45,6 +46,7 @@ import {
   LOAD_MODULES_SCHEMA,
   CHANGE_ACTIVE_MODULE,
   SET_PENDO_FEEDBACK_FLAG,
+  TOGGLE_FEEDBACK_MODAL,
 } from './action-types';
 
 const reducers = {
@@ -59,6 +61,7 @@ const reducers = {
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
   [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
   [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
+  [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
 };
 
 const globalFilter = {
