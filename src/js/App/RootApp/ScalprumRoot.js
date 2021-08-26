@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
 import cookie from 'js-cookie';
@@ -11,6 +11,7 @@ import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
+import { toggleFeedbackModal } from '../../redux/actions';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -23,6 +24,7 @@ const loaderWrapper = (Component, props = {}) => (
 
 const ScalprumRoot = ({ config, ...props }) => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
+  const dispatch = useDispatch();
   const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage('insights-quickstartId', '');
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
   const [quickStarts, setQuickStarts] = useState({});
@@ -78,6 +80,7 @@ const ScalprumRoot = ({ config, ...props }) => {
             experimentalApi: true,
             ...window.insights.chrome,
             usePendoFeedback,
+            toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
             quickStarts: {
               version: 1,
               set: updateQuickStarts,
