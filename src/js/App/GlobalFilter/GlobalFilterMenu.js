@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkbox } from '@patternfly/react-core';
+import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkbox, Bullseye, Spinner } from '@patternfly/react-core';
 
 import './global-filter-menu.scss';
+import { useSelector } from 'react-redux';
 
 export const groupType = {
   checkbox: 'checkbox',
@@ -44,6 +45,9 @@ const getMenuItems = (groups, onChange, calculateSelected) => {
 
 const GlobalFilterMenu = (props) => {
   const { filterBy, onFilter, groups = [], onChange, selectedTags } = props;
+  const isLoading = useSelector(
+    ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const calculateSelected = useCallback(
@@ -81,10 +85,19 @@ const GlobalFilterMenu = (props) => {
 
   const menuItems = getMenuItems(groups, onChange, calculateSelected);
   const menu = [
-    <div key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
-      {menuItems.map(({ value, label, items }) => (
-        <MenuGroup key={value} label={label} value={value}>
-          <MenuList>
+    <div onClick={(event) => event.stopPropagation()} key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
+      {isLoading ? (
+        <MenuList>
+          <MenuItem>
+            <Bullseye>
+              <Spinner size="md" />
+            </Bullseye>
+          </MenuItem>
+        </MenuList>
+      ) : (
+        menuItems.map(({ value, label, items }) => (
+          <MenuGroup key={value} label={label} value={value}>
+            <MenuList>
               {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
                 const isChecked =
                   // eslint-disable-next-line react/prop-types
@@ -95,10 +108,12 @@ const GlobalFilterMenu = (props) => {
                   <MenuItem key={value} onClick={onClick}>
                     <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
                   </MenuItem>
-            ))}
-          </MenuList>
-        </MenuGroup>
-      ))}
+                );
+              })}
+            </MenuList>
+          </MenuGroup>
+        ))
+      )}
     </div>,
   ];
 
