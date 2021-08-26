@@ -101,7 +101,7 @@ const GlobalFilterMenu = (props) => {
               {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
                 const isChecked =
                   // eslint-disable-next-line react/prop-types
-                  !!Object.values(selectedTags).find((tags) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
+                  !!Object.values(selectedTags).find((tags = {}) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
                   // eslint-disable-next-line react/prop-types
                   !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
                 return (
