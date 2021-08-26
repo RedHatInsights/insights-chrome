@@ -93,17 +93,16 @@ const GlobalFilterMenu = (props) => {
       {menuItems.map(({ value, label, items }) => (
         <MenuGroup key={value} label={label} value={value}>
           <MenuList>
-            {items.map(({ value, label, onClick, ...props }) => (
-              <MenuItem key={value} onClick={onClick}>
-                <Checkbox
-                  className="ins-c-global-filter__checkbox"
+              {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
+                const isChecked =
                   // eslint-disable-next-line react/prop-types
-                  id={props.id}
+                  !!Object.values(selectedTags).find((tags) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
                   // eslint-disable-next-line react/prop-types
-                  isChecked={!!Object.values(selectedTags).find((group = {}) => group[props.tagKey]?.isSelected)}
-                  label={label}
-                />
-              </MenuItem>
+                  !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
+                return (
+                  <MenuItem key={value} onClick={onClick}>
+                    <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
+                  </MenuItem>
             ))}
           </MenuList>
         </MenuGroup>
