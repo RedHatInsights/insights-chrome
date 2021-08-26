@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkbox } from '@patternfly/react-core';
+import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkbox, Bullseye, Spinner } from '@patternfly/react-core';
 
 import './global-filter-menu.scss';
+import { useSelector } from 'react-redux';
 
 export const groupType = {
   checkbox: 'checkbox',
@@ -12,7 +13,7 @@ export const groupType = {
   plain: 'plain',
 };
 
-const getMenuItems = (groups, filterValueRegex, onChange, calculateSelected) => {
+const getMenuItems = (groups, onChange, calculateSelected) => {
   const result = groups.map(({ value, label, id, type, items, ...group }) => ({
     label,
     value,
@@ -44,6 +45,9 @@ const getMenuItems = (groups, filterValueRegex, onChange, calculateSelected) => 
 
 const GlobalFilterMenu = (props) => {
   const { filterBy, onFilter, groups = [], onChange, selectedTags } = props;
+  const isLoading = useSelector(
+    ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const calculateSelected = useCallback(
@@ -79,35 +83,37 @@ const GlobalFilterMenu = (props) => {
     [selectedTags]
   );
 
-  const sanitizedFilterRegex = useMemo(() => {
-    try {
-      return new RegExp(filterBy, 'i');
-    } catch (err) {
-      return new RegExp(filterBy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-    }
-  }, [filterBy]);
-
-  const menuItems = getMenuItems(groups, sanitizedFilterRegex, onChange, calculateSelected);
+  const menuItems = getMenuItems(groups, onChange, calculateSelected);
   const menu = [
-    <div key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
-      {menuItems.map(({ value, label, items }) => (
-        <MenuGroup key={value} label={label} value={value}>
-          <MenuList>
-            {items.map(({ value, label, onClick, ...props }) => (
-              <MenuItem key={value} onClick={onClick}>
-                <Checkbox
-                  className="ins-c-global-filter__checkbox"
+    <div onClick={(event) => event.stopPropagation()} key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
+      {isLoading ? (
+        <MenuList>
+          <MenuItem>
+            <Bullseye>
+              <Spinner size="md" />
+            </Bullseye>
+          </MenuItem>
+        </MenuList>
+      ) : (
+        menuItems.map(({ value, label, items }) => (
+          <MenuGroup key={value} label={label} value={value}>
+            <MenuList>
+              {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
+                const isChecked =
                   // eslint-disable-next-line react/prop-types
-                  id={props.id}
+                  !!Object.values(selectedTags).find((tags) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
                   // eslint-disable-next-line react/prop-types
-                  isChecked={!!Object.values(selectedTags).find((group = {}) => group[props.tagKey]?.isSelected)}
-                  label={label}
-                />
-              </MenuItem>
-            ))}
-          </MenuList>
-        </MenuGroup>
-      ))}
+                  !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
+                return (
+                  <MenuItem key={value} onClick={onClick}>
+                    <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
+                  </MenuItem>
+                );
+              })}
+            </MenuList>
+          </MenuGroup>
+        ))
+      )}
     </div>,
   ];
 
