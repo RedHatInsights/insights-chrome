@@ -1,7 +1,6 @@
 import React, { useEffect, Fragment, useState, useCallback, memo, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
-import { GroupFilter } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
@@ -10,6 +9,7 @@ import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
 import { useHistory } from 'react-router-dom';
+import GlobalFilterMenu from './GlobalFilterMenu';
 
 const GlobalFilterDropdown = ({
   isAllowed,
@@ -43,7 +43,7 @@ const GlobalFilterDropdown = ({
                 position: 'right',
               })}
             >
-              <GroupFilter {...filter} isDisabled={!allowed || isDisabled} placeholder="Filter results" />
+              <GlobalFilterMenu {...filter} selectedTags={selectedTags} isDisabled={!allowed || isDisabled} placeholder="Filter results" />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />
@@ -124,7 +124,7 @@ GlobalFilterDropdown.propTypes = {
     })
   ),
   setValue: PropTypes.func.isRequired,
-  selectedTags: PropTypes.array,
+  selectedTags: PropTypes.object,
   isOpen: PropTypes.bool,
   filterTagsBy: PropTypes.string,
   filterScope: PropTypes.string,

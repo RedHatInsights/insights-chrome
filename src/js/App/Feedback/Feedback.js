@@ -4,18 +4,19 @@ import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-
-// This only works in prod and stage (api limitation)
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFeedbackModal } from '../../redux/actions';
 
 const Feedback = ({ user }) => {
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
+  const dispatch = useDispatch();
   const [textAreaValue, setTextAreaValue] = useState('');
   const env = window.insights.chrome.getEnvironment();
   const app = window.insights.chrome.getApp();
   const bundle = window.insights.chrome.getBundle();
   const isAvailable = env === 'prod' || env === 'stage';
+  const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
 
   const handleModalSubmission = () => {
     if (isAvailable) {
@@ -55,7 +56,7 @@ const Feedback = ({ user }) => {
       </Button>
       <Modal
         title="We would love your feedback!"
-        isOpen={isModalOpen}
+        isOpen={isOpen}
         variant={ModalVariant.medium}
         onClose={() => setIsModalOpen(false)}
         actions={[
