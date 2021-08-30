@@ -93,7 +93,7 @@ const useAppFilter = () => {
       if (subscriptionsLinks.length > 0) {
         extraLinks.subs = await subscriptionsLinks.filter(evaluateVisibility);
       }
-      if (subscriptionsLinks.length > 0 || costLinks.length > 0) {
+      if (rest.filterable !== true && (subscriptionsLinks.length > 0 || costLinks.length > 0)) {
         return;
       }
       const link = await evaluateVisibility(rest);

@@ -37,7 +37,7 @@ const App = ({ id, title, links = [] }) =>
         <SplitItem>
           <TextContent>
             <Text component="h4">{title}</Text>
-            {links.map(({ href, title, isHidden, ...rest }) =>
+            {links.map(({ filterable, href, title, isHidden, ...rest }) =>
               isHidden ? null : (
                 <Text component="p" key={`${id}-${href}`}>
                   <ChromeLink {...rest} title={title} href={href}>
