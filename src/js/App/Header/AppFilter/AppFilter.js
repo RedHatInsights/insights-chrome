@@ -96,7 +96,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                   <Flex className="search">
                     <SearchInput
                       data-ouia-component-id="app-filter-search"
-                      placeholder="Find application or service"
+                      placeholder="Find an app or service"
                       value={filterValue}
                       onChange={(val) => setFilterValue(val)}
                       onClear={() => setFilterValue('')}
