@@ -92,7 +92,6 @@ const ScalprumRoot = ({ config, ...props }) => {
       >
         <Switch>
           <Route exact path="/">
-            {!cookie.get('cs_jwt') ? <Banner /> : undefined}
             <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
           </Route>
           <Route path="/security">
