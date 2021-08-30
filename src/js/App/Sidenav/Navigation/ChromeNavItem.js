@@ -18,9 +18,11 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
     <NavItem
       className={classNames(className, { 'ins-c-navigation__additional-links': isExternal })}
       itemID={href}
+      data-quickstart-id={href}
       preventDefault
       isActive={active}
       to={href}
+      ouiaId={title}
       component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}

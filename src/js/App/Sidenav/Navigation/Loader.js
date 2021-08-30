@@ -7,7 +7,7 @@ const NavLoader = () => (
     <section className={'ins-c-app-switcher--loading'}>
       <Skeleton size={SkeletonSize.lg} className="ins-m-dark" />
     </section>
-    <Nav aria-label="Insights Global Navigation" data-ouia-safe="false">
+    <Nav aria-label="Insights Global Navigation" data-ouia-safe="false" ouiaId="SideNavigation">
       <NavList>
         {[...new Array(4)].map((_i, key) => (
           <NavItem key={key} preventDefault>

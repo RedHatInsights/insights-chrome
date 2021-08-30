@@ -1,39 +1,49 @@
-import React, { PureComponent, createRef } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
+import Deffered from '@redhat-cloud-services/frontend-components-utilities/Deffered';
 
-class RenderWrapper extends PureComponent {
-  ref = createRef();
-  remediationsRef = createRef();
+const RenderWrapper = ({ promise, onClose, ...props }) => {
+  const [isModalOpen, setIsModalOpen] = useState();
+  const [{ data, basePath }, setConfig] = useState({});
 
-  renderApp = () => {
-    const { cmp, onAppRender, ...props } = this.props;
-    const Component = cmp;
-    if (this.ref.current) {
-      onAppRender(this.remediationsRef);
-      ReactDOM.render(<Component {...props} ref={this.remediationsRef} />, this.ref.current);
-    }
-  };
-
-  componentDidMount() {
-    this.renderApp();
-  }
-
-  componentWillUnmount() {
-    if (this.ref.current) {
-      ReactDOM.unmountComponentAtNode(this.ref.current);
-    }
-  }
-
-  render() {
-    return <article ref={this.ref} />;
-  }
-}
+  useEffect(() => {
+    (async () => {
+      const config = await promise;
+      setConfig(config);
+      setIsModalOpen(true);
+    })();
+  }, []);
+  return (
+    <Fragment>
+      {isModalOpen && (
+        <AsyncComponent
+          setOpen={(isOpen) => {
+            setIsModalOpen(isOpen);
+            const deffered = new Deffered();
+            onClose(deffered);
+            (async () => {
+              const config = await deffered.promise;
+              setConfig(config);
+              setIsModalOpen(true);
+            })();
+          }}
+          appName="remediations"
+          module="./RemediationWizard"
+          data={data}
+          basePath={basePath}
+          {...props}
+        />
+      )}
+    </Fragment>
+  );
+};
 
 RenderWrapper.propTypes = {
-  cmp: PropTypes.any,
-  store: PropTypes.object,
-  onAppRender: PropTypes.func,
+  promise: PropTypes.shape({
+    then: PropTypes.func,
+  }),
+  onClose: PropTypes.func,
 };
 
 export default RenderWrapper;

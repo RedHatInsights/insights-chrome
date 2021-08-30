@@ -8,25 +8,37 @@ import Feedback from '../Feedback';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
+import { Route } from 'react-router-dom';
 
-const isFeedbackEnabled = localStorage.getItem('chrome:experimental:feedback') === 'true' || insights.chrome.getBundle() === 'insights';
+const FeedbackRoute = ({ user }) => {
+  const path = localStorage.getItem('chrome:experimental:feedback') === 'true' ? '*' : ['/insights', '/settings'];
+  return (
+    <Route path={path}>
+      <Feedback user={user} />
+    </Route>
+  );
+};
 
 export const Header = ({ logoClassName }) => {
   const user = useSelector(({ chrome }) => chrome?.user);
   return (
     <Fragment>
-      <a href="./" className={`ins-c-header-link${logoClassName ? ` ${logoClassName}` : ''}`}>
+      <a href="./" className={`ins-m-hide-on-md ins-c-header-link${logoClassName ? ` ${logoClassName}` : ''}`}>
         <Logo />
       </a>
       {user && <AppFilter />}
       {user && isContextSwitcherEnabled && <ContextSwitcher user={user} className="data-hj-suppress" />}
-      {user && isFeedbackEnabled && <Feedback user={user} />}
+      {user && <FeedbackRoute user={user} />}
     </Fragment>
   );
 };
 
 Header.propTypes = {
   logoClassName: PropTypes.string,
+};
+
+FeedbackRoute.propTypes = {
+  user: PropTypes.object.isRequired,
 };
 
 Header.defaultProps = {
