@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
-import cookie from 'js-cookie';
 
-import Banner from '../Banners/Banner';
 import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
