@@ -18,7 +18,7 @@ const plugins = [
     : []),
   new ModuleFederationPlugin({
     name: 'chrome',
-    filename: 'chrome.[hash].js',
+    filename: 'chrome.[contenthash].js',
     exposes: {
       './InventoryTable': resolve(__dirname, '../src/js/inventory/modules/InventoryTable.js'),
       './AppInfo': resolve(__dirname, '../src/js/inventory/modules/AppInfo.js'),
