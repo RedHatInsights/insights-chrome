@@ -69,16 +69,17 @@ const useAppFilter = () => {
   const existingSchemas = useSelector(({ chrome: { navigation } }) => navigation);
 
   const handleBundleData = async ({ data: { id, navItems, title } }) => {
-    let links = navItems
-      .reduce((acc, curr) => {
-        if (curr.groupId) {
-          return [...acc, ...curr.navItems?.map(({ groupId, navItems, ...rest }) => (groupId ? navItems : rest))];
-        }
-        return [...acc, curr];
-      }, [])
-      .flat()
-      .map(getBundleLink)
-      .filter(({ filterable }) => filterable !== false);
+    let links =
+      navItems
+        ?.reduce((acc, curr) => {
+          if (curr.groupId) {
+            return [...acc, ...curr.navItems?.map(({ groupId, navItems, ...rest }) => (groupId ? navItems : rest))];
+          }
+          return [...acc, curr];
+        }, [])
+        .flat()
+        .map(getBundleLink)
+        .filter(({ filterable }) => filterable !== false) || [];
     const bundleLinks = [];
     const extraLinks = {
       cost: [],
@@ -159,16 +160,24 @@ const useAppFilter = () => {
   };
 
   const filterApps = (data, filterValue = '') =>
-    Object.entries(data).reduce(
-      (acc, [key, { links, ...rest }]) => ({
+    Object.entries(data).reduce((acc, [key, { links, ...rest }]) => {
+      if (rest?.title?.toLowerCase().includes(filterValue.toLowerCase())) {
+        return {
+          ...acc,
+          [key]: {
+            ...rest,
+            links,
+          },
+        };
+      }
+      return {
         ...acc,
         [key]: {
           ...rest,
           links: links.filter(({ title, isHidden }) => !isHidden && title.toLowerCase().includes(filterValue.toLowerCase())),
         },
-      }),
-      {}
-    );
+      };
+    }, {});
 
   const filteredApps = filterApps(state.data, state.filterValue);
   return {
