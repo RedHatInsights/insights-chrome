@@ -86,6 +86,7 @@ const useAppFilter = () => {
       subs: [],
     };
     const promises = links.map(async ({ costLinks, subscriptionsLinks, ...rest }) => {
+      const nextIndex = bundleLinks.length;
       if (costLinks.length > 0) {
         extraLinks.cost = await costLinks.filter(evaluateVisibility);
       }
@@ -96,9 +97,14 @@ const useAppFilter = () => {
       if (rest.filterable !== true && (subscriptionsLinks.length > 0 || costLinks.length > 0)) {
         return;
       }
+
+      /**
+       * We have to create a placeholder for the link item, in order to preserver the links order
+       */
+      bundleLinks.push({ ...rest, isHidden: true });
       const link = await evaluateVisibility(rest);
 
-      bundleLinks.push(link);
+      bundleLinks[nextIndex] = link;
     });
     await Promise.all(promises);
 
