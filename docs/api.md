@@ -61,12 +61,12 @@ insights.chrome.updateDocumentTitle('New title')
 
 The following events can be observed:
 
-* `APP_NAVIGATION` - fired when the application navigation option is selected. `event.navId` can be used to access the id of the navigation option
+* `APP_NAVIGATION` - fired when the application navigation option is selected. `event.domEvent.href` can be used to access navigation link href and compute application route.
 * `GLOBAL_FILTER_UPDATE` - fired when user selects anything in global filter. Object with all selected tags is returned. Tags are groupped together under namespace in which there is another object with keys as tag key and additional meta information.
 
 ## Global actions
 
-* `insights.chrome.appNavClick({id: 'some-id'})` is deprecated and has no effect on the navigation highlight. Navigation highlight is based purely on the current browser location.
+* `insights.chrome.appNavClick({id: 'some-id'})` is deprecated and has no effect on the navigation highlight. Navigation highlight is based purely on the current browser location
 * ~~To activate certain app within your app (your app is using some kind of router and you want to activate certain part of navigation programatically) you can call function `insights.chrome.appNavClick({id: 'some-id'})` for first level nav and for second level navs you have to call `insights.chrome.appNavClick({id: 'ocp-on-aws', parentId: 'some-parent', secondaryNav: true})`~~
 
 * You can also use Chrome to update a page action and object ID for OUIA. You can use `insights.chrome.appAction('action')` to activate a certain action, and `insights.chrome.appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `insights.chrome.appAction('edit-name')` and then `insights.chrome.appObjectId(5)`. Once the user is done editing, you have to call `insights.chrome.appAction()` and `insights.chrome.appObjectId()` in order to indicate that the action is done.
