@@ -137,6 +137,7 @@ export function accessRequestsNotificationsReducer(state, { payload: { count, da
     accessRequests: {
       ...state.accessRequests,
       count,
+      hasUnseen: newData.length > 0,
       data: newData,
     },
   };
