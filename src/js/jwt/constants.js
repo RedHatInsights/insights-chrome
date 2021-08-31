@@ -1,7 +1,5 @@
 // Global Defaults
 
-export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
-
 export const DEFAULT_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
