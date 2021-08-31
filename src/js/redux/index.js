@@ -13,6 +13,8 @@ import {
   changeActiveModuleReducer,
   setPendoFeedbackFlag,
   toggleFeedbackModal,
+  accessRequestsNotificationsReducer,
+  markAccessRequestRequestReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -47,6 +49,8 @@ import {
   CHANGE_ACTIVE_MODULE,
   SET_PENDO_FEEDBACK_FLAG,
   TOGGLE_FEEDBACK_MODAL,
+  UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
+  MARK_REQUEST_NOTIFICATION_SEEN,
 } from './action-types';
 
 const reducers = {
@@ -62,6 +66,8 @@ const reducers = {
   [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
   [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
+  [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
+  [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
 };
 
 const globalFilter = {
@@ -84,6 +90,10 @@ export default function () {
     chrome: (
       state = {
         navigation: {},
+        accessRequests: {
+          count: 0,
+          data: [],
+        },
       },
       action
     ) => applyReducerHash(reducers)(state, action),
