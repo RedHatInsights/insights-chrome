@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
-import cookie from 'js-cookie';
 
-import Banner from '../Banners/Banner';
 import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
@@ -103,7 +101,6 @@ const ScalprumRoot = ({ config, ...props }) => {
       >
         <Switch>
           <Route exact path="/">
-            {!cookie.get('cs_jwt') ? <Banner /> : undefined}
             <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
           </Route>
           <Route path="/security">
