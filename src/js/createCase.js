@@ -81,11 +81,7 @@ export async function createSupportCase(userInfo, fields) {
       (data) =>
         data &&
         // eslint-disable-next-line max-len
-        window.open(
-          `${portalUrl}/support/cases/#/case/new/open-case/describe-issue?seSessionId=${
-            data.session.id
-          }`
-        ) &&
+        window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue?seSessionId=${data.session.id}`) &&
         createSupportSentry(data.session.id, fields)
     )
     .catch((err) => Sentry.captureException(err));
