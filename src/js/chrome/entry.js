@@ -4,7 +4,7 @@ import qe from './iqeEnablement';
 import consts from '../consts';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl, getEnv, isBeta, updateDocumentTitle } from '../utils';
+import { getUrl, getEnv, isBeta, updateDocumentTitle, getEnvDetails } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
@@ -103,6 +103,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       getBundle: () => getUrl('bundle'),
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),
+      getEnvironmentDetails: () => getEnvDetails(),
       createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,
