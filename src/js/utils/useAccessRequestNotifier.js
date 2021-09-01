@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, batch } from 'react-redux';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { markAccessRequestNotification, updateAccessRequestsNotifications } from '../redux/actions';
 
@@ -11,7 +11,15 @@ const useAccessRequestNotifier = () => {
   const dispatch = useDispatch();
 
   const markRead = (id) => {
-    dispatch(markAccessRequestNotification(id));
+    if (id === 'mark-all') {
+      batch(() => {
+        state.data.forEach(({ request_id }) => {
+          dispatch(markAccessRequestNotification(request_id));
+        });
+      });
+    } else {
+      dispatch(markAccessRequestNotification(id));
+    }
   };
 
   const notifier = () => {

@@ -22,14 +22,14 @@ const defaultNotificationConfig = {
 
 const DescriptionComponent = ({ id, markRead }) => (
   <span onClick={() => markRead(id)}>
-    <ChromeLink href={`/settings/rbac/access-requests/${id}`} appId="rbac">
+    <ChromeLink href={id === 'mark-all' ? '/settings/rbac/access-requests' : `/settings/rbac/access-requests/${id}`} appId="rbac">
       View request
     </ChromeLink>
   </span>
 );
 
 DescriptionComponent.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.string]).isRequired,
   markRead: PropTypes.func.isRequired,
 };
 
