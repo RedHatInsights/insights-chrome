@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Bullseye, ContextSelector, ContextSelectorItem, Spinner } from '@patternfly/react-core';
+import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, TextContent, Text } from '@patternfly/react-core';
+import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
+import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
@@ -22,6 +24,10 @@ const ContextSwitcher = ({ user, className }) => {
   };
 
   const handleItemClick = (target_account, request_id, end_date) => {
+    if (target_account === selectedAccountNumber) {
+      return;
+    }
+    localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
     setSelectedAccountNumber(target_account);
     Cookies.set('cross_access_account_number', target_account);
     /**
@@ -37,8 +43,20 @@ const ContextSwitcher = ({ user, className }) => {
         end_date,
       })
     );
+    localStorage.setItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, 'true');
     window.location.reload();
   };
+
+  const resetAccountRequest = () => {
+    if (user?.identity?.account_number === selectedAccountNumber) {
+      return;
+    }
+    setSelectedAccountNumber(user?.identity?.account_number);
+    Cookies.remove('cross_access_account_number');
+    localStorage.removeItem('chrome/active-remote-request');
+    window.location.reload();
+  };
+
   useEffect(() => {
     const initialAccount = localStorage.getItem('chrome/active-remote-request');
     if (initialAccount) {
@@ -51,10 +69,14 @@ const ContextSwitcher = ({ user, className }) => {
     axios
       .get('/api/rbac/v1/cross-account-requests/', {
         params: {
-          // status: 'approved',
+          approved_only: true,
+          order_by: '-created',
+          query_by: 'user_id',
         },
       })
-      .then(({ data: { data } }) => setData(data));
+      .then(({ data: { data } }) =>
+        setData(data.reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), []))
+      );
   }, []);
 
   const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
@@ -72,11 +94,29 @@ const ContextSwitcher = ({ user, className }) => {
       ouiaId="Account Switcher"
       searchInputPlaceholder="Search account"
     >
+      {user && user?.identity?.account_number.includes(searchValue) ? (
+        <ContextSelectorItem onClick={resetAccountRequest}>
+          <TextContent className="personal-account">
+            <Text className="account-label pf-u-mb-0">
+              <span>{user?.identity?.account_number}</span>
+              {user?.identity?.account_number === `${selectedAccountNumber}` && (
+                <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+              )}
+            </Text>
+            <Text component="small">Personal account</Text>
+          </TextContent>
+        </ContextSelectorItem>
+      ) : (
+        <Fragment />
+      )}
       {filteredData?.length === 0 ? <ContextSelectorItem>No results</ContextSelectorItem> : <Fragment />}
       {filteredData ? (
         filteredData.map(({ target_account, request_id, end_date }) => (
           <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date)} key={request_id}>
             {target_account}
+            {target_account === selectedAccountNumber && (
+              <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+            )}
           </ContextSelectorItem>
         ))
       ) : (

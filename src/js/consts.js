@@ -9,6 +9,7 @@ const obj = {
 };
 
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
+export const ACTIVE_ACCOUNT_SWITCH_NOTIFICATION = 'chrome:cross-account-requests:active-notification';
 
 const matcherMapper = {
   isEmpty,
