@@ -3,6 +3,8 @@ import { DropdownToggle, KebabToggle, DropdownItem, DropdownSeparator, DropdownP
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isBeta } from '../../utils';
+import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
   return [
@@ -35,16 +37,26 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     </DropdownItem>,
     <React.Fragment key="My user access wrapper">
       {accountNumber > -1 && window.insights.chrome.isBeta() && (
-        <DropdownItem key="My user access" href="./settings/my-user-access">
-          My User Access
-        </DropdownItem>
+        <DropdownItem
+          component={
+            <ChromeLink href="/settings/my-user-access" isBeta={isBeta()} appId="rbac">
+              My User Access
+            </ChromeLink>
+          }
+          key="My user access"
+        />
       )}
     </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
       {accountNumber > -1 && (
-        <DropdownItem key="User preferences" href="./user-preferences/email">
-          User Preferences
-        </DropdownItem>
+        <DropdownItem
+          component={
+            <ChromeLink href="/user-preferences/email" isBeta={isBeta()} appId="userPreferences">
+              User Preferences
+            </ChromeLink>
+          }
+          key="User preferences"
+        />
       )}
     </React.Fragment>,
     <React.Fragment key="internal wrapper">

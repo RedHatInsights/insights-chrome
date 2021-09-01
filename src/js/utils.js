@@ -138,6 +138,10 @@ export function getEnv() {
   return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
 
+export function getEnvDetails() {
+  return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[1];
+}
+
 export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
 }

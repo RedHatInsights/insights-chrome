@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadNavigationLandingPage } from '../../redux/actions';
 import NavLoader from './Navigation/Loader';
+import ChromeLink from './Navigation/ChromeLink';
 
 const LandingNav = () => {
   const isBetaEnv = isBeta();
@@ -44,8 +45,14 @@ const LandingNav = () => {
         <div className="ins-c-app-title">
           <b>Home</b>
         </div>
-        {schema.map(({ title, id, href }) => (
-          <NavItem className="ins-m-navigation-align" key={id} ouiaId={id} to={`${isBetaEnv ? '/beta' : ''}${href}`}>
+        {schema.map(({ title, id, href, appId }) => (
+          <NavItem
+            component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />}
+            className="ins-m-navigation-align"
+            key={id}
+            ouiaId={id}
+            to={href}
+          >
             {title}
           </NavItem>
         ))}

@@ -1,8 +1,8 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
 
 import DefaultLayout from './DefaultLayout';
@@ -10,6 +10,7 @@ import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
+import historyListener from '../../utils/historyListener';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -21,6 +22,7 @@ const loaderWrapper = (Component, props = {}) => (
 );
 
 const ScalprumRoot = ({ config, ...props }) => {
+  const history = useHistory();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage('insights-quickstartId', '');
@@ -62,6 +64,15 @@ const ScalprumRoot = ({ config, ...props }) => {
     setAllQuickStartStates,
     showCardFooters: false,
   };
+
+  useEffect(() => {
+    const unregister = history.listen(historyListener);
+    return () => {
+      if (typeof unregister === 'function') {
+        return unregister();
+      }
+    };
+  }, []);
 
   return (
     /**

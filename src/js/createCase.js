@@ -3,7 +3,8 @@ import * as Sentry from '@sentry/browser';
 import logger from './jwt/logger';
 const log = logger('createCase.js');
 
-import { getUrl } from './utils';
+import { getUrl, getEnvDetails } from './utils';
+import { HYDRA_ENDPOINT } from './consts';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -50,10 +51,12 @@ async function getProductHash() {
 export async function createSupportCase(userInfo, fields) {
   const currentProduct = registerProduct() || 'Other';
   const currentHash = await getProductHash();
+  const portalUrl = `${getEnvDetails().portal}`;
+  const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
 
   log('Creating a support case');
 
-  fetch(`https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/hydra/rest/se/sessions`, {
+  fetch(caseUrl, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -78,11 +81,7 @@ export async function createSupportCase(userInfo, fields) {
       (data) =>
         data &&
         // eslint-disable-next-line max-len
-        window.open(
-          `https://access.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/support/cases/#/case/new/open-case/describe-issue?seSessionId=${
-            data.session.id
-          }`
-        ) &&
+        window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue?seSessionId=${data.session.id}`) &&
         createSupportSentry(data.session.id, fields)
     )
     .catch((err) => Sentry.captureException(err));
