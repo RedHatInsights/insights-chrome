@@ -43,7 +43,13 @@ const GlobalFilterDropdown = ({
                 position: 'right',
               })}
             >
-              <GlobalFilterMenu {...filter} selectedTags={selectedTags} isDisabled={!allowed || isDisabled} placeholder="Filter results" />
+              <GlobalFilterMenu
+                setTagModalOpen={setIsOpen}
+                {...filter}
+                selectedTags={selectedTags}
+                isDisabled={!allowed || isDisabled}
+                placeholder="Filter results"
+              />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />

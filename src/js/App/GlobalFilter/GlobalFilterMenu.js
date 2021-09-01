@@ -5,6 +5,7 @@ import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkb
 
 import './global-filter-menu.scss';
 import { useSelector } from 'react-redux';
+import { Fragment } from 'react';
 
 export const groupType = {
   checkbox: 'checkbox',
@@ -95,24 +96,33 @@ const GlobalFilterMenu = (props) => {
           </MenuItem>
         </MenuList>
       ) : (
-        menuItems.map(({ value, label, items }) => (
-          <MenuGroup key={value} label={label} value={value}>
+        <Fragment>
+          {menuItems.map(({ value, label, items }) => (
+            <MenuGroup key={value} label={label} value={value}>
+              <MenuList>
+                {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
+                  const isChecked =
+                    // eslint-disable-next-line react/prop-types
+                    !!Object.values(selectedTags).find((tags = {}) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
+                    // eslint-disable-next-line react/prop-types
+                    !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
+                  return (
+                    <MenuItem key={value} onClick={onClick}>
+                      <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
+                    </MenuItem>
+                  );
+                })}
+              </MenuList>
+            </MenuGroup>
+          ))}
+          <MenuGroup>
             <MenuList>
-              {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
-                const isChecked =
-                  // eslint-disable-next-line react/prop-types
-                  !!Object.values(selectedTags).find((tags = {}) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
-                  // eslint-disable-next-line react/prop-types
-                  !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
-                return (
-                  <MenuItem key={value} onClick={onClick}>
-                    <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
-                  </MenuItem>
-                );
-              })}
+              <MenuItem onClick={() => props.setTagModalOpen(true)} isLoadButton>
+                Show more
+              </MenuItem>
             </MenuList>
           </MenuGroup>
-        ))
+        </Fragment>
       )}
     </div>,
   ];
@@ -166,6 +176,7 @@ GlobalFilterMenu.propTypes = {
   ),
   onChange: PropTypes.func.isRequired,
   selectedTags: PropTypes.shape({}),
+  setTagModalOpen: PropTypes.func.isRequired,
 };
 
 export default GlobalFilterMenu;
