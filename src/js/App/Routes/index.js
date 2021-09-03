@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
 import NotFoundRoute from './NotFoundRoute';
+import { isFedRamp } from '../../utils';
 
 const redirects = [
   {
@@ -16,7 +17,7 @@ const redirects = [
 const generateRoutesList = (modules) =>
   Object.entries(modules)
     .reduce(
-      (acc, [scope, { dynamic, manifestLocation, modules = [] }]) => [
+      (acc, [scope, { dynamic, manifestLocation, isFedramp, modules = [] }]) => [
         ...acc,
         ...modules
           .map(({ module, routes }) =>
@@ -24,6 +25,7 @@ const generateRoutesList = (modules) =>
             routes.map((route) => ({
               scope,
               module,
+              isFedramp,
               path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
@@ -39,10 +41,19 @@ const generateRoutesList = (modules) =>
 const Routes = ({ insightsContentRef }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
 
+  console.log('modules', modules);
+
   if (!modules) {
     return null;
   }
-  const list = generateRoutesList(modules);
+  let list = generateRoutesList(modules);
+
+  if(isFedRamp()) {
+    list = list.filter(list => list.isFedramp);
+  }
+
+  console.log('list', list);
+
   return (
     <Switch>
       {redirects.map(({ path, to }) => (
