@@ -6,14 +6,8 @@ export const userLogIn = (user) => ({
   payload: user,
 });
 
-export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
-
 export function appNavClick(item, event) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item && item.id, event } };
-}
-
-export function chromeNavSectionUpdate(newSection) {
-  return { type: actionTypes.CHROME_NAV_SECTION_UPDATE, payload: newSection };
 }
 
 export function appAction(action) {
