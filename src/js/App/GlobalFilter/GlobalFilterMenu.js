@@ -49,6 +49,7 @@ const GlobalFilterMenu = (props) => {
   const isLoading = useSelector(
     ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
   );
+  const isDisabled = useSelector(({ globalFilter }) => globalFilter.globalFilterHidden);
   const [isOpen, setIsOpen] = useState(false);
 
   const calculateSelected = useCallback(
@@ -129,11 +130,13 @@ const GlobalFilterMenu = (props) => {
 
   return (
     <Select
+      isDisabled={isDisabled}
       className={classNames('ins-c-global-filter__select', {
         expanded: isOpen,
       })}
       placeholderText={
         <TextInput
+          isDisabled={isDisabled}
           onClick={(event) => {
             if (isOpen) {
               event.stopPropagation();

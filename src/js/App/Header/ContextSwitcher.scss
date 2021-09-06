@@ -1,25 +1,32 @@
 @import '~@patternfly/patternfly/sass-utilities/_all';
 .ins-c-page__context-switcher-dropdown {
-  .pf-c-dropdown__toggle {
+  .personal-account {
+    width: 100%;
+    text-align: left;
+    .account-label {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+  .pf-c-context-selector__toggle {
     display: inline-block;
     position: relative;
     white-space: nowrap;
+    width: auto;
     &::before {
-      --pf-c-dropdown__toggle--before--BorderTopColor: var(--pf-global--disabled-color--100);
-      --pf-c-dropdown__toggle--before--BorderRightColor: var(--pf-global--disabled-color--100);
-      --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--disabled-color--100);
+      border-color: var(--pf-global--disabled-color--100);
+    }
+  }
+  .pf-c-context-selector__menu-list-item {
+    svg {
+      font-size: 9px;
     }
   }
   &.pf-m-expanded {
-    .pf-c-dropdown__menu {
+    .pf-c-context-selector__menu {
       top: 56px;
       z-index: unset;
-      .pf-c-search-input {
-        margin: 0 10px 0 10px;
-        .pf-c-search-input__text .pf-c-search-input__text-input{
-          color: var(--pf-global--Color--100);
-        }
-      }
       .viewing-as {
         z-index: -1000;
         left: 0;
@@ -61,13 +68,12 @@
 }
 
 .context-switcher-banner {
-  margin-bottom: 18px;
   transition: margin-bottom .3s;
 }
 
 @media screen and (max-width: $pf-global--breakpoint--xl) {
   .ins-c-page__context-switcher-dropdown {
-    .pf-c-dropdown__toggle {
+    .pf-c-context-selector__toggle {
       display: none;
     }
   }
