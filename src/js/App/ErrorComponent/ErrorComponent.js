@@ -72,7 +72,6 @@ const ErrorComponent = (props) => {
           </Flex>
         </EmptyStateBody>
         <EmptyStatePrimary>
-          {/* Try to reload the page or&nbsp; */}
           <Button
             component={(props) => (
               <ChromeLink {...props} appId="landing" href="/">
