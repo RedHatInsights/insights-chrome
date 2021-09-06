@@ -80,7 +80,7 @@ const ErrorComponent = (props) => {
               </ChromeLink>
             )}
             variant="primary"
-          ></Button>
+          />
         </EmptyStatePrimary>
       </EmptyState>
     </Bullseye>
