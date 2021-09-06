@@ -1,47 +1,135 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
-import { SearchInput } from '@patternfly/react-core';
-import classnames from 'classnames';
-
+import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, TextContent, Text } from '@patternfly/react-core';
+import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
+import axios from 'axios';
+
 import { onToggleContextSwitcher } from '../../redux/actions';
+
 import './ContextSwitcher.scss';
+import { Fragment } from 'react';
+import Cookies from 'js-cookie';
+import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
+  const [data, setData] = useState(undefined);
   const [searchValue, setSearchValue] = useState('');
+  const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
     dispatch(onToggleContextSwitcher());
   };
-  const dropdownItems = [
-    <SearchInput value={searchValue} onChange={(_, val) => setSearchValue(val.target.value)} key="Search account" placeholder="Search account" />,
-    <DropdownItem onClick={onSelect} key={user.identity.account_number} description="PERSONAL ACCOUNT">
-      {user.identity.account_number}
-    </DropdownItem>,
-    <DropdownItem onClick={onSelect} key="678909">
-      678909
-    </DropdownItem>,
-    <DropdownItem onClick={onSelect} key="678735">
-      678735
-    </DropdownItem>,
-    <DropdownItem onClick={onSelect} key="123456">
-      123456
-    </DropdownItem>,
-    <div key={`${user.identity.account_number}`} className="viewing-as">
-      Viewing as Account {user.identity.account_number}
-    </div>,
-  ];
+
+  const handleItemClick = (target_account, request_id, end_date) => {
+    if (target_account === selectedAccountNumber) {
+      return;
+    }
+    localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
+    setSelectedAccountNumber(target_account);
+    Cookies.set('cross_access_account_number', target_account);
+    /**
+     * We need to keep the request id somewhere to check if the request is still active after session start.
+     * If it is not active, we have to remove the cookie.
+     * This has to happen before ANY API call is made.
+     */
+    localStorage.setItem(
+      'chrome/active-remote-request',
+      JSON.stringify({
+        request_id,
+        target_account,
+        end_date,
+      })
+    );
+    localStorage.setItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, 'true');
+    window.location.reload();
+  };
+
+  const resetAccountRequest = () => {
+    if (user?.identity?.account_number === selectedAccountNumber) {
+      return;
+    }
+    setSelectedAccountNumber(user?.identity?.account_number);
+    Cookies.remove('cross_access_account_number');
+    localStorage.removeItem('chrome/active-remote-request');
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    const initialAccount = localStorage.getItem('chrome/active-remote-request');
+    if (initialAccount) {
+      try {
+        setSelectedAccountNumber(JSON.parse(initialAccount).target_account);
+      } catch {
+        console.log('Unable to parse initial account. Using default account');
+      }
+    }
+    axios
+      .get('/api/rbac/v1/cross-account-requests/', {
+        params: {
+          approved_only: true,
+          order_by: '-created',
+          query_by: 'user_id',
+        },
+      })
+      .then(({ data: { data } }) =>
+        setData(data.reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), []))
+      );
+  }, []);
+
+  const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
 
   return (
-    <Dropdown
-      className={classnames('ins-c-page__context-switcher-dropdown', className)}
-      ouiaId="Account Switcher"
-      toggle={<DropdownToggle onToggle={() => dispatch(onToggleContextSwitcher())}>Acct: {user.identity.account_number}</DropdownToggle>}
+    <ContextSelector
+      toggleText={`Acct: ${selectedAccountNumber}`}
+      className={classNames('ins-c-page__context-switcher-dropdown', className)}
+      onSearchInputChange={(val) => setSearchValue(val)}
       isOpen={isOpen}
-      dropdownItems={dropdownItems}
-    />
+      searchInputValue={searchValue}
+      onToggle={onSelect}
+      onSelect={onSelect}
+      screenReaderLabel="Selected account:`"
+      ouiaId="Account Switcher"
+      searchInputPlaceholder="Search account"
+    >
+      {user && user?.identity?.account_number.includes(searchValue) ? (
+        <ContextSelectorItem onClick={resetAccountRequest}>
+          <TextContent className="personal-account">
+            <Text className="account-label pf-u-mb-0">
+              <span>{user?.identity?.account_number}</span>
+              {user?.identity?.account_number === `${selectedAccountNumber}` && (
+                <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+              )}
+            </Text>
+            <Text component="small">Personal account</Text>
+          </TextContent>
+        </ContextSelectorItem>
+      ) : (
+        <Fragment />
+      )}
+      {filteredData?.length === 0 ? <ContextSelectorItem>No results</ContextSelectorItem> : <Fragment />}
+      {filteredData ? (
+        filteredData.map(({ target_account, request_id, end_date }) => (
+          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date)} key={request_id}>
+            {target_account}
+            {target_account === selectedAccountNumber && (
+              <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+            )}
+          </ContextSelectorItem>
+        ))
+      ) : (
+        <ContextSelectorItem>
+          <Bullseye>
+            <Spinner size="md" />
+          </Bullseye>
+        </ContextSelectorItem>
+      )}
+      <div className="viewing-as" index="5">
+        Viewing as Account {selectedAccountNumber}
+      </div>
+    </ContextSelector>
   );
 };
 
