@@ -9,6 +9,12 @@ const obj = {
 };
 
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
+/**
+ * Keys for storing acess reqeusts data
+ */
+export const REQUESTS_COUNT = 'chrome:cross-account-requests:pending:count';
+export const REQUESTS_DATA = 'chrome:cross-account-requests:pending:data';
+export const ACTIVE_ACCOUNT_SWITCH_NOTIFICATION = 'chrome:cross-account-requests:active-notification';
 
 const matcherMapper = {
   isEmpty,

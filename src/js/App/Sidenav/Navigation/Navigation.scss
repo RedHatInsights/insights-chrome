@@ -74,6 +74,16 @@
   svg { margin-left: var(--pf-global--spacer--sm); }
 }
 
+.pf-c-nav__item {
+  a.ins-c-navigation__with-notifier {
+    align-items: center;
+    .notifier-icon {
+      margin-left: auto;
+      margin-right: 8px;
+    }
+  }
+}
+
 .pf-c-nav__item .pf-c-nav__link .ins-c-navigation__beta-badge {
   float: right;
   margin-right: 0px;
