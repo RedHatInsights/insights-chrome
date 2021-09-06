@@ -11,7 +11,7 @@ import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
-import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
+import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, REQUESTS_COUNT, REQUESTS_DATA } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
@@ -28,6 +28,8 @@ const ContextSwitcher = ({ user, className }) => {
       return;
     }
     localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
+    localStorage.removeItem(REQUESTS_COUNT);
+    localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
     Cookies.set('cross_access_account_number', target_account);
     /**

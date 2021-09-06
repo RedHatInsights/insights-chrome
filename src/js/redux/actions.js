@@ -125,3 +125,13 @@ export const toggleFeedbackModal = (payload) => ({
   type: actionTypes.TOGGLE_FEEDBACK_MODAL,
   payload,
 });
+
+export const updateAccessRequestsNotifications = (payload) => ({
+  type: actionTypes.UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
+  payload,
+});
+
+export const markAccessRequestNotification = (payload) => ({
+  type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
+  payload,
+});
