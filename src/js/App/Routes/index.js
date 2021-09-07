@@ -48,8 +48,8 @@ const Routes = ({ insightsContentRef }) => {
   }
   let list = generateRoutesList(modules);
 
-  if(isFedRamp()) {
-    list = list.filter(list => list.isFedramp);
+  if (isFedRamp()) {
+    list = list.filter((list) => list.isFedramp);
   }
 
   return (
