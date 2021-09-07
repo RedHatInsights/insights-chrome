@@ -41,8 +41,6 @@ const generateRoutesList = (modules) =>
 const Routes = ({ insightsContentRef }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
 
-  console.log('modules', modules);
-
   if (!modules) {
     return null;
   }
