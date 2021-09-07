@@ -52,8 +52,6 @@ const Routes = ({ insightsContentRef }) => {
     list = list.filter(list => list.isFedramp);
   }
 
-  console.log('list', list);
-
   return (
     <Switch>
       {redirects.map(({ path, to }) => (
