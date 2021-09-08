@@ -7,6 +7,7 @@ import { isBeta, getUrl } from '../../utils';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems, appId) {
+  const bundle = getUrl('bundle');
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
@@ -51,7 +52,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       {accountNumber > -1 && (
         <DropdownItem
           component={
-            <ChromeLink href={`/user-preferences/email#bundle=${getUrl('bundle')}&appId=${appId}`} isBeta={isBeta()} appId="userPreferences">
+            <ChromeLink href={`/user-preferences/email#${bundle ? `bundle=${bundle}&` : ''}appId=${appId}`} isBeta={isBeta()} appId="userPreferences">
               User Preferences
             </ChromeLink>
           }
