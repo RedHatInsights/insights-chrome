@@ -6,6 +6,8 @@ import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
 import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
 import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
+import { useSelector } from 'react-redux';
+import { isFedRamp } from '../../../utils';
 
 const sectionTitleMapper = {
   wrench: <WrenchIcon />,
@@ -14,7 +16,12 @@ const sectionTitleMapper = {
 };
 
 const ChromeNavGroup = ({ navItems, isHidden, icon, title }) => {
-  if (isHidden) {
+  const modules = useSelector((state) => state.chrome.modules);
+  let filteredFedrampNavItems = navItems;
+  if (isFedRamp()) {
+  }
+
+  if (isHidden || filteredFedrampNavItems.length === 0) {
     return null;
   }
 
@@ -26,7 +33,7 @@ const ChromeNavGroup = ({ navItems, isHidden, icon, title }) => {
   );
   return (
     <NavGroup className="ins-c-section-nav" id={title} title={groupTitle}>
-      {navItems.map((item, index) => (
+      {filteredFedrampNavItems.map((item, index) => (
         <ChromeNavItemFactory key={index} {...item} />
       ))}
     </NavGroup>

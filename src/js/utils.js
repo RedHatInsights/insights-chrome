@@ -147,6 +147,7 @@ export function isBeta() {
 }
 
 export function isFedRamp() {
+  return true;
   return getEnv() === 'gov' || getEnv() === 'govStage';
 }
 
