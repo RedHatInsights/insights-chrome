@@ -136,9 +136,6 @@ const ContextSwitcher = ({ user, className }) => {
           </Bullseye>
         </ContextSelectorItem>
       )}
-      <div className="viewing-as" index="5">
-        Viewing as Account {selectedAccountNumber}
-      </div>
     </ContextSelector>
   );
 };

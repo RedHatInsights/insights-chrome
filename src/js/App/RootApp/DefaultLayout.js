@@ -7,17 +7,18 @@ import { useScalprum } from '@scalprum/react-core';
 import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { Header, HeaderTools } from '../Header/Header';
+import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../../redux/actions';
 import Routes from '../Routes';
 import useOuiaTags from '../../utils/useOuiaTags';
 
 import '../Sidenav/Navigation/Navigation.scss';
+import './DefaultLayout.scss';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
     const dispatch = useDispatch();
-    const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
     useEffect(() => {
       const navToggleElement = document.querySelector('button#nav-toggle');
       if (navToggleElement) {
@@ -29,25 +30,19 @@ const ShieldedRoot = memo(
       return null;
     }
 
+    const selectedAccountNumber = Cookie.get('cross_access_account_number');
     const hasBanner = false; // Update this later when we use feature flags
 
     return (
       <Page
         isManagedSidebar={!hideNav}
-        className={classnames({ 'ins-c-page__hasBanner': hasBanner })}
-        header={
-          <PageHeader
-            className={classnames({ 'context-switcher-banner': isOpen })}
-            logoComponent="div"
-            logo={<Header />}
-            showNavToggle={!hideNav}
-            headerTools={<HeaderTools />}
-          />
-        }
+        className={classnames({ 'ins-c-page__hasBanner': hasBanner, 'ins-c-page__account-banner': selectedAccountNumber })}
+        header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
         sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
+          {selectedAccountNumber && <div className="ins-c-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
           <Routes insightsContentRef={insightsContentRef} />
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
