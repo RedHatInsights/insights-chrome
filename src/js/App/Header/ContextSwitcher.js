@@ -16,7 +16,7 @@ import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, REQUESTS_COUNT, REQUESTS_DATA } fro
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
-  const [data, setData] = useState(undefined);
+  const [data, setData] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
@@ -84,6 +84,10 @@ const ContextSwitcher = ({ user, className }) => {
         )
       );
   }, []);
+
+  if (data.length === 0) {
+    return null;
+  }
 
   const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
 
