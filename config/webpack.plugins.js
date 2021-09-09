@@ -51,6 +51,12 @@ const plugins = [
     inject: 'body',
     filename: '../index.html',
   }),
+  new HtmlWebpackPlugin({
+    title: 'Authenticating - console.redhat.com',
+    filename: 'silent-check-sso.html',
+    chunks: [''],
+    template: path.resolve(__dirname, '../src/silent-check-sso.html'),
+  }),
 ];
 
 module.exports = plugins;
