@@ -137,7 +137,7 @@ export function accessRequestsNotificationsReducer(state, { payload: { count, da
     accessRequests: {
       ...state.accessRequests,
       count,
-      hasUnseen: newData.filter(({ seen }) => seen !== true).length > 0,
+      hasUnseen: newData.length > 0,
       data: newData,
     },
   };
@@ -150,7 +150,7 @@ export function markAccessRequestRequestReducer(state, { payload }) {
     ...state,
     accessRequests: {
       ...state.accessRequests,
-      hasUnseen: newData.filter(({ seen }) => seen !== true).length > 0,
+      hasUnseen: newData.length > 0,
       data: newData,
     },
   };
