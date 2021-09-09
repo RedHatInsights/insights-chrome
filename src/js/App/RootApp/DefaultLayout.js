@@ -15,6 +15,7 @@ import useOuiaTags from '../../utils/useOuiaTags';
 
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
+import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
@@ -30,7 +31,7 @@ const ShieldedRoot = memo(
       return null;
     }
 
-    const selectedAccountNumber = Cookie.get('cross_access_account_number');
+    const selectedAccountNumber = Cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER);
     const hasBanner = false; // Update this later when we use feature flags
 
     return (
