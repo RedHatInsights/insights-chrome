@@ -77,7 +77,11 @@ const ContextSwitcher = ({ user, className }) => {
         },
       })
       .then(({ data: { data } }) =>
-        setData(data.reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), []))
+        setData(
+          data
+            .reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), [])
+            .filter(({ target_account }) => target_account !== user.identity.account_number)
+        )
       );
   }, []);
 
