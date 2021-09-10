@@ -71,7 +71,7 @@ const ContextSwitcher = ({ user, className }) => {
     axios
       .get('/api/rbac/v1/cross-account-requests/', {
         params: {
-          approved_only: true,
+          status: 'approved',
           order_by: '-created',
           query_by: 'user_id',
         },
