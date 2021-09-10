@@ -3,11 +3,10 @@ import { DropdownToggle, KebabToggle, DropdownItem, DropdownSeparator, DropdownP
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isBeta, getUrl } from '../../utils';
+import { isBeta } from '../../utils';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
-function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems, appId) {
-  const bundle = getUrl('bundle');
+function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
@@ -52,7 +51,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       {accountNumber > -1 && (
         <DropdownItem
           component={
-            <ChromeLink href={`/user-preferences/email#${bundle ? `bundle=${bundle}&` : ''}appId=${appId}`} isBeta={isBeta()} appId="userPreferences">
+            <ChromeLink href="/user-preferences/email" isBeta={isBeta()} appId="userPreferences">
               User Preferences
             </ChromeLink>
           }
@@ -96,7 +95,7 @@ export class UserToggle extends Component {
 
   render() {
     const { isOpen } = this.state;
-    const { account, isSmall, extraItems, appId } = this.props;
+    const { account, isSmall, extraItems } = this.props;
     const toggle = isSmall ? (
       <KebabToggle onToggle={this.onToggle} className="data-hj-suppress" />
     ) : (
@@ -119,7 +118,7 @@ export class UserToggle extends Component {
         toggle={toggle}
         isPlain
         isOpen={isOpen}
-        dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems, appId)}
+        dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
       />
     );
   }
@@ -133,7 +132,6 @@ UserToggle.propTypes = {
     isOrgAdmin: PropTypes.bool,
     isInternal: PropTypes.bool,
   }),
-  appId: PropTypes.string,
   isSmall: PropTypes.bool,
   extraItems: PropTypes.arrayOf(PropTypes.node),
 };
@@ -158,7 +156,6 @@ export default connect(
           user: { username, first_name, last_name, is_org_admin, is_internal },
         },
       },
-      appId,
     },
   }) => ({
     account: {
@@ -168,7 +165,6 @@ export default connect(
       isInternal: is_internal,
       name: `${first_name} ${last_name}`,
     },
-    appId,
   })
 )(UserToggle);
 

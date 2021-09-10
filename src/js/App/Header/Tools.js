@@ -9,7 +9,7 @@ import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import './Tools.scss';
-import { isBeta } from '../../utils';
+import { getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 
@@ -63,7 +63,8 @@ SettingsButton.propTypes = {
   settingsMenuDropdownItems: PropTypes.array.isRequired,
 };
 
-const settingsPath = `/settings/my-user-access`;
+const bundle = getUrl('bundle');
+const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
 const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
 /* list out the items for the settings menu */
 const settingsMenuDropdownItems = [
