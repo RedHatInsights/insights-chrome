@@ -150,6 +150,7 @@ export function markAccessRequestRequestReducer(state, { payload }) {
     ...state,
     accessRequests: {
       ...state.accessRequests,
+      hasUnseen: newData.length > 0,
       data: newData,
     },
   };

@@ -1,11 +1,12 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import Portal from '@redhat-cloud-services/frontend-components-notifications/Portal';
-import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
+import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
 import useAccessRequestNotifier from '../../utils/useAccessRequestNotifier';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 const ACCOUNT_CHANGE_ID = 'account_change';
+const ACCOUNT_TIMEOUT_ID = 'account_timeout';
 
 const accountSwitchNotification = {
   id: ACCOUNT_CHANGE_ID,
@@ -19,6 +20,13 @@ const defaultNotificationConfig = {
   dismissable: true,
   title: 'You have a new access request that needs your review',
 };
+
+const createAccoutTimeoutNotification = (accountId) => ({
+  variant: 'danger',
+  id: ACCOUNT_TIMEOUT_ID,
+  title: `You no longer have access to account ${accountId}.`,
+  autoDismiss: false,
+});
 
 const DescriptionComponent = ({ id, markRead }) => (
   <span onClick={() => markRead(id)}>
@@ -46,6 +54,10 @@ const CrossRequestNotifier = () => {
        */
       return forceRender();
     }
+    if (id === ACCOUNT_TIMEOUT_ID) {
+      localStorage.removeItem(ACCOUNT_REQUEST_TIMEOUT);
+      return forceRender();
+    }
     markRead(id);
   };
 
@@ -64,6 +76,10 @@ const CrossRequestNotifier = () => {
         description: <DescriptionComponent markRead={markRead} id={request_id} />,
       }))
     );
+  }
+
+  if (localStorage.getItem(ACCOUNT_REQUEST_TIMEOUT)) {
+    notifications.unshift(createAccoutTimeoutNotification(localStorage.getItem(ACCOUNT_REQUEST_TIMEOUT)));
   }
   return <Portal removeNotification={removeNotification} notifications={notifications} />;
 };
