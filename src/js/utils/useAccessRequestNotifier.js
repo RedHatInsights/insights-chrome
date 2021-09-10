@@ -30,7 +30,7 @@ const useAccessRequestNotifier = () => {
           data,
         },
       }) => {
-        if (isMounted.current && state.count < count) {
+        if (isMounted.current) {
           dispatch(updateAccessRequestsNotifications({ count, data }));
         }
       }
