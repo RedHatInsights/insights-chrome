@@ -1,7 +1,8 @@
 meta(http-equiv="x-ua-compatible" content="ie=edge")
 meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
-base(href=`${ release === 'insights' ? '/' : '/beta/'}`)
+base(href=`${ release === 'insightsbeta' ? '/beta/' : '/'}`)
 link(rel="icon"  type="image/png" href="https://access.redhat.com/webassets/avalon/g/favicon.ico")
-link(rel='stylesheet', href=`./apps/chrome/${ chromeCSS }`)
+if chromeCSS
+    link(rel='stylesheet', href=`./apps/chrome/${ chromeCSS }`)
 //- temporary flag to identify chrome 2. This us used by the application to prevent ReactDOM.render in migrated apps.
 <script type="text/javascript"> window.insights = {chrome: { isChrome2: true }} </script>

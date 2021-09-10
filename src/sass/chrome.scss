@@ -1,5 +1,8 @@
 $pf-global--enable-reset: 'true';
-$pf-global--image-path: './assets/images/';
+$pf-global--font-path: "~@patternfly/patternfly/assets/fonts";
+$fa-font-path: "~@patternfly/patternfly/assets/fonts/webfonts";
+$pf-global--fonticon-path: "~@patternfly/patternfly/assets/pficon";
+$pf-global--image-path: '~@patternfly/patternfly/assets/images/';
 
 @import '~@patternfly/patternfly/patternfly-base.scss';
 
