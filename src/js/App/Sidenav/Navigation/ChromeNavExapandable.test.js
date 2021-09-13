@@ -31,7 +31,7 @@ describe('ChromeNavExapandable', () => {
     appId: 'testModule',
     href: '/foo',
     title: expandableTitle,
-    routes: [],
+    routes: [{ title: 'title', href: '/foo/bar' }],
     id: 'test-id',
   };
   const store = mockStore({
@@ -43,7 +43,7 @@ describe('ChromeNavExapandable', () => {
     },
   });
 
-  test('should not render nav item group', () => {
+  test('should not render nav item expandable', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavExapandable isHidden {...testProps} />
@@ -53,7 +53,7 @@ describe('ChromeNavExapandable', () => {
     expect(queryAllByText(expandableTitle)).toHaveLength(0);
   });
 
-  test('should render nav item group', () => {
+  test('should render nav item expandable', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavExapandable {...testProps} />
@@ -63,7 +63,7 @@ describe('ChromeNavExapandable', () => {
     expect(queryAllByText(expandableTitle)).toHaveLength(1);
   });
 
-  test('should render nav item group with items', () => {
+  test('should render nav item expandable with items', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavExapandable

@@ -9,11 +9,10 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {
   const modules = useSelector((state) => state.chrome.modules);
   let filteredFedrampRoutes = routes;
   if (isFedRamp()) {
-    filteredFedrampRoutes = routes.filter(({ appId, ...rest }) => {
+    filteredFedrampRoutes = routes.filter(({ appId }) => {
       return modules[appId]?.isFedramp === true;
     });
   }
-
   if (isHidden || filteredFedrampRoutes.length === 0) {
     return null;
   }
