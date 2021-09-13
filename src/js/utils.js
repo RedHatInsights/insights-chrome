@@ -146,6 +146,10 @@ export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
 }
 
+export function isFedRamp() {
+  return getEnv() === 'gov' || getEnv() === 'govStage';
+}
+
 export function updateDocumentTitle(title) {
   if (typeof title === 'undefined') {
     return;

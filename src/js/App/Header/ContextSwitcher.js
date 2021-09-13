@@ -11,12 +11,12 @@ import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
-import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, REQUESTS_COUNT, REQUESTS_DATA } from '../../consts';
+import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, REQUESTS_COUNT, REQUESTS_DATA } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
   const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
-  const [data, setData] = useState(undefined);
+  const [data, setData] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
@@ -31,14 +31,14 @@ const ContextSwitcher = ({ user, className }) => {
     localStorage.removeItem(REQUESTS_COUNT);
     localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
-    Cookies.set('cross_access_account_number', target_account);
+    Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, target_account);
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
      * If it is not active, we have to remove the cookie.
      * This has to happen before ANY API call is made.
      */
     localStorage.setItem(
-      'chrome/active-remote-request',
+      ACTIVE_REMOTE_REQUEST,
       JSON.stringify({
         request_id,
         target_account,
@@ -54,13 +54,13 @@ const ContextSwitcher = ({ user, className }) => {
       return;
     }
     setSelectedAccountNumber(user?.identity?.account_number);
-    Cookies.remove('cross_access_account_number');
-    localStorage.removeItem('chrome/active-remote-request');
+    Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
+    localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
     window.location.reload();
   };
 
   useEffect(() => {
-    const initialAccount = localStorage.getItem('chrome/active-remote-request');
+    const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
     if (initialAccount) {
       try {
         setSelectedAccountNumber(JSON.parse(initialAccount).target_account);
@@ -71,15 +71,23 @@ const ContextSwitcher = ({ user, className }) => {
     axios
       .get('/api/rbac/v1/cross-account-requests/', {
         params: {
-          approved_only: true,
+          status: 'approved',
           order_by: '-created',
           query_by: 'user_id',
         },
       })
       .then(({ data: { data } }) =>
-        setData(data.reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), []))
+        setData(
+          data
+            .reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), [])
+            .filter(({ target_account }) => target_account !== user.identity.account_number)
+        )
       );
   }, []);
+
+  if (data.length === 0) {
+    return null;
+  }
 
   const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
 
@@ -128,9 +136,6 @@ const ContextSwitcher = ({ user, className }) => {
           </Bullseye>
         </ContextSelectorItem>
       )}
-      <div className="viewing-as" index="5">
-        Viewing as Account {selectedAccountNumber}
-      </div>
     </ContextSelector>
   );
 };

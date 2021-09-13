@@ -2,9 +2,10 @@ const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const commonConfig = ({ publicPath, noHash }) => ({
-  entry: path.resolve(__dirname, '../src/js/chrome.js'),
+  entry: [path.resolve(__dirname, '../src/sass/chrome.scss'), path.resolve(__dirname, '../src/js/chrome.js')],
   output: {
     path: path.resolve(__dirname, '../build/js'),
     filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
@@ -42,7 +43,7 @@ const commonConfig = ({ publicPath, noHash }) => ({
       {
         test: /\.s?[ac]ss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'resolve-url-loader',
           {
@@ -54,13 +55,25 @@ const commonConfig = ({ publicPath, noHash }) => ({
         ],
       },
       {
-        test: /\.(jpg|png|svg)$/,
+        test: /\.(jpg|png|svg|gif)$/,
         use: [
           {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'fonts/',
+              outputPath: '../assets/images/',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(woff(2)?|ttf|jpg|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: '../assets/fonts/',
             },
           },
         ],

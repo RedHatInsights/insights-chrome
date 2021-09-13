@@ -1,6 +1,9 @@
 const webpack = require('webpack');
 const resolve = require('path').resolve;
 const { ModuleFederationPlugin } = require('webpack').container;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const deps = require('../package.json').dependencies;
 const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
@@ -16,6 +19,9 @@ const plugins = [
         }),
       ]
     : []),
+  new MiniCssExtractPlugin({
+    filename: '[name].css',
+  }),
   new ModuleFederationPlugin({
     name: 'chrome',
     filename: 'chrome.[contenthash].js',
@@ -40,6 +46,17 @@ const plugins = [
     ],
   }),
   ChunkMapper,
+  new HtmlWebpackPlugin({
+    template: path.resolve(__dirname, '../src/index.html'),
+    inject: 'body',
+    filename: '../index.html',
+  }),
+  new HtmlWebpackPlugin({
+    title: 'Authenticating - console.redhat.com',
+    filename: 'silent-check-sso.html',
+    chunks: [''],
+    template: path.resolve(__dirname, '../src/silent-check-sso.html'),
+  }),
 ];
 
 module.exports = plugins;
