@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isBeta, getEnv, isFedRamp } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
+import { computeFedrampResult } from '../../../utils/useRenderFedramp';
 
 export const requiredBundles = ['application-services', 'openshift', 'insights', ...(getEnv() !== 'prod' ? ['edge'] : []), 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
@@ -14,7 +15,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest },
   const subscriptionsLinks = [];
   let url = href;
   let appId = rest.appId;
-  let isFedramp = modules[appId]?.isFedramp;
+  let isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
       if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
@@ -33,7 +34,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest },
       if (!url && href.match(/^\//)) {
         url = isExternal ? href : href.split('/').slice(0, 3).join('/');
         appId = rest.appId ? rest.appId : appId;
-        isFedramp = modules[appId]?.isFedramp;
+        isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
       }
     });
   }
