@@ -39,7 +39,7 @@ describe('ChromeNavItemFactory', () => {
     id: 'test-id',
     title: expandableTitle,
     expandable: true,
-    routes: [],
+    routes: [{ title: linkTitle, href: '/foo/bar' }],
   };
   const groupItemProps = {
     groupId: 'group',
@@ -67,19 +67,19 @@ describe('ChromeNavItemFactory', () => {
     expect(queryAllByText(groupTitle)).toHaveLength(0);
   });
 
-  test('should render chrome nav item', () => {
+  test('should render chrome expandable nav item', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavItemFactory {...expandableItemProps} />
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
-    expect(queryAllByText(linkTitle)).toHaveLength(0);
+    expect(queryAllByText(linkTitle)).toHaveLength(1);
     expect(queryAllByText(expandableTitle)).toHaveLength(1);
     expect(queryAllByText(groupTitle)).toHaveLength(0);
   });
 
-  test('should render chrome nav item', () => {
+  test('should render chrome group nav item', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavItemFactory {...groupItemProps} />

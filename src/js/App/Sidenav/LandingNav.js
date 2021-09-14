@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
-import { isBeta } from '../../utils';
+import { isBeta, isFedRamp } from '../../utils';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -20,6 +20,7 @@ const LandingNav = () => {
       },
     }) => landingPage
   );
+  const modules = useSelector((state) => state.chrome.modules);
   useEffect(() => {
     if (showNav) {
       setElementReady(true);
@@ -45,17 +46,19 @@ const LandingNav = () => {
         <div className="ins-c-app-title">
           <b>Home</b>
         </div>
-        {schema.map(({ title, id, href, appId }) => (
-          <NavItem
-            component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />}
-            className="ins-m-navigation-align"
-            key={id}
-            ouiaId={id}
-            to={href}
-          >
-            {title}
-          </NavItem>
-        ))}
+        {schema
+          .filter(({ appId }) => isFedRamp() && modules[appId]?.isFedramp === true)
+          .map(({ title, id, href, appId }) => (
+            <NavItem
+              component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />}
+              className="ins-m-navigation-align"
+              key={id}
+              ouiaId={id}
+              to={href}
+            >
+              {title}
+            </NavItem>
+          ))}
       </NavList>
     </Nav>
   );

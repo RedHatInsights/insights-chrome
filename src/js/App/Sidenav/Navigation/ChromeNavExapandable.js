@@ -2,9 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavExpandable } from '@patternfly/react-core';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
+import { useSelector } from 'react-redux';
+import { isFedRamp } from '../../../utils';
 
 const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {
-  if (isHidden) {
+  const modules = useSelector((state) => state.chrome.modules);
+  let filteredFedrampRoutes = routes;
+  if (isFedRamp()) {
+    filteredFedrampRoutes = routes.filter(({ appId }) => {
+      return modules[appId]?.isFedramp === true;
+    });
+  }
+  if (isHidden || filteredFedrampRoutes.length === 0) {
     return null;
   }
 
@@ -18,7 +27,7 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {
       title={title}
       data-quickstart-id={quickStartHighlightId}
     >
-      {routes.map((item, index) => (
+      {filteredFedrampRoutes.map((item, index) => (
         <ChromeNavItemFactory key={index} {...item} />
       ))}
     </NavExpandable>

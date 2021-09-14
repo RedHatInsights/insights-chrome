@@ -1,27 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
-<div>
-  <li
-    class="pf-c-nav__item"
-    data-ouia-component-id="Foo"
-    data-ouia-component-type="PF4/NavItem"
-    data-ouia-safe="true"
-  >
-    <a
-      class="pf-c-nav__link"
-      data-quickstart-id="foo"
-      data-testid="router-link"
-      href="/foo"
-    >
-      Foo
-       
-    </a>
-  </li>
-</div>
-`;
-
-exports[`ChromeNavItemFactory should render chrome nav item 2`] = `
+exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
 <div>
   <li
     class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
@@ -66,13 +45,31 @@ exports[`ChromeNavItemFactory should render chrome nav item 2`] = `
       
       <ul
         class="pf-c-nav__list"
-      />
+      >
+        <li
+          class="pf-c-nav__item"
+          data-ouia-component-id="Foo"
+          data-ouia-component-type="PF4/NavItem"
+          data-ouia-safe="true"
+        >
+          <a
+            class="pf-c-nav__link"
+            data-quickstart-id="/foo/bar"
+            data-testid="native-link"
+            href="http://localhost/foo/bar"
+            itemid="/foo/bar"
+          >
+            Foo
+             
+          </a>
+        </li>
+      </ul>
     </section>
   </li>
 </div>
 `;
 
-exports[`ChromeNavItemFactory should render chrome nav item 3`] = `
+exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
 <div>
   <section
     aria-labelledby="group"
@@ -90,5 +87,26 @@ exports[`ChromeNavItemFactory should render chrome nav item 3`] = `
       class="pf-c-nav__list ins-c-section-nav"
     />
   </section>
+</div>
+`;
+
+exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
+<div>
+  <li
+    class="pf-c-nav__item"
+    data-ouia-component-id="Foo"
+    data-ouia-component-type="PF4/NavItem"
+    data-ouia-safe="true"
+  >
+    <a
+      class="pf-c-nav__link"
+      data-quickstart-id="foo"
+      data-testid="router-link"
+      href="/foo"
+    >
+      Foo
+       
+    </a>
+  </li>
 </div>
 `;
