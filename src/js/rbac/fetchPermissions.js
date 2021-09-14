@@ -27,12 +27,12 @@ const fetchPermissions = (userToken, app = '') => {
 
 export const createFetchPermissionsWatcher = () => {
   let currentCall = {};
-  return async (userToken, app = '') => {
+  return async (userToken, app = '', bypassCache) => {
     const user = await insights.chrome.auth.getUser();
     if (user?.identity && [undefined, -1].includes(user.identity.account_number)) {
       return Promise.resolve([]);
     }
-    if (typeof currentCall?.[app] === 'undefined') {
+    if (typeof currentCall?.[app] === 'undefined' || bypassCache) {
       currentCall[app] = await fetchPermissions(userToken, app);
     }
     return currentCall?.[app];
