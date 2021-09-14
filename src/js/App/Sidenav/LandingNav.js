@@ -47,7 +47,7 @@ const LandingNav = () => {
           <b>Home</b>
         </div>
         {schema
-          .filter(({ appId }) => isFedRamp() && modules[appId]?.isFedramp === true)
+          .filter(({ appId }) => (isFedRamp() ? modules[appId]?.isFedramp === true : true))
           .map(({ title, id, href, appId }) => (
             <NavItem
               component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />}
