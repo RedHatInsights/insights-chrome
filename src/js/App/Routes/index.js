@@ -25,7 +25,7 @@ const generateRoutesList = (modules) =>
             routes.map((route) => ({
               scope,
               module,
-              isFedramp,
+              isFedramp: typeof route === 'string' ? isFedramp : route.isFedramp,
               path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,

@@ -11,12 +11,12 @@ import { isBeta } from '../../../utils';
 import { betaBadge } from '../../Header/Tools';
 import ChromeLink from './ChromeLink';
 import { useSelector } from 'react-redux';
-import { isFedRamp } from '../../../utils';
+import useRenderFedramp from '../../../utils/useRenderFedramp';
 
 const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv, active, notifier = '' }) => {
   const hasNotifier = useSelector((state) => get(state, notifier));
-  const modules = useSelector((state) => state.chrome.modules);
-  if (isFedRamp() && modules[appId]?.isFedramp !== true) {
+  const renderFedramp = useRenderFedramp(appId, href);
+  if (renderFedramp !== true) {
     return null;
   }
 

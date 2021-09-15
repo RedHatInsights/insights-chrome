@@ -54,10 +54,9 @@ exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
         >
           <a
             class="pf-c-nav__link"
-            data-quickstart-id="/foo/bar"
-            data-testid="native-link"
-            href="http://localhost/foo/bar"
-            itemid="/foo/bar"
+            data-quickstart-id="foo"
+            data-testid="router-link"
+            href="/foo"
           >
             Foo
              

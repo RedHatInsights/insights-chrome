@@ -31,7 +31,7 @@ describe('ChromeNavExapandable', () => {
     appId: 'testModule',
     href: '/foo',
     title: expandableTitle,
-    routes: [{ title: 'title', href: '/foo/bar' }],
+    routes: [{ appId: 'bar', title: 'title', href: '/foo/bar' }],
     id: 'test-id',
   };
   const store = mockStore({

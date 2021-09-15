@@ -4,16 +4,18 @@ import { NavExpandable } from '@patternfly/react-core';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import { useSelector } from 'react-redux';
 import { isFedRamp } from '../../../utils';
+import { computeFedrampResult } from '../../../utils/useRenderFedramp';
 
 const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {
   const modules = useSelector((state) => state.chrome.modules);
   let filteredFedrampRoutes = routes;
   if (isFedRamp()) {
-    filteredFedrampRoutes = routes.filter(({ appId }) => {
-      return modules[appId]?.isFedramp === true;
+    filteredFedrampRoutes = routes.filter(({ appId, href }) => {
+      return computeFedrampResult(appId, href, modules[appId]);
     });
   }
-  if (isHidden || filteredFedrampRoutes.length === 0) {
+
+  if (isHidden || filteredFedrampRoutes.filter(({ appId }) => !!appId).length === 0) {
     return null;
   }
 
