@@ -11,7 +11,7 @@ const ACCOUNT_TIMEOUT_ID = 'account_timeout';
 const accountSwitchNotification = {
   id: ACCOUNT_CHANGE_ID,
   title: 'View has changed',
-  description: 'You are now viewing cloud.redhat.com as a customer, and will be interacting with real customer data.',
+  description: 'You are now viewing console.redhat.com as a customer, and will be interacting with real customer data.',
   variant: 'info',
 };
 
