@@ -49,6 +49,7 @@ const GlobalFilterMenu = (props) => {
   const isLoading = useSelector(
     ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
   );
+  const isDisabled = useSelector(({ globalFilter }) => globalFilter.globalFilterHidden);
   const [isOpen, setIsOpen] = useState(false);
 
   const calculateSelected = useCallback(
@@ -108,7 +109,13 @@ const GlobalFilterMenu = (props) => {
                     !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
                   return (
                     <MenuItem key={value} onClick={onClick}>
-                      <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
+                      <Checkbox
+                        className="ins-c-global-filter__checkbox"
+                        ouiaId="global-filter-checkbox"
+                        id={id}
+                        isChecked={isChecked}
+                        label={label}
+                      />
                     </MenuItem>
                   );
                 })}
@@ -129,11 +136,14 @@ const GlobalFilterMenu = (props) => {
 
   return (
     <Select
+      isDisabled={isDisabled}
       className={classNames('ins-c-global-filter__select', {
         expanded: isOpen,
       })}
+      ouiaId="global-filter-select"
       placeholderText={
         <TextInput
+          isDisabled={isDisabled}
           onClick={(event) => {
             if (isOpen) {
               event.stopPropagation();
@@ -143,6 +153,7 @@ const GlobalFilterMenu = (props) => {
           onChange={onFilter}
           placeholder="Filter by status"
           aria-label="Filter by status"
+          ouiaId="global-filter-by-status"
         />
       }
       variant={SelectVariant.typeahead}

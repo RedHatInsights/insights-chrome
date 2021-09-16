@@ -1,15 +1,23 @@
+import { crossAccountBouncer } from '../auth';
+
 let xhrResults = [];
 let fetchResults = {};
 let initted = false;
 let wafkey = null;
 
-function init() {
-  console.log('[iqe] initialized'); // eslint-disable-line no-console
+const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 
+function init() {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const oldFetch = window.fetch;
 
+  const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
+
+  if (iqeEnabled) {
+    wafkey = window.localStorage.getItem('iqe:wafkey');
+    console.log('[iqe] initialized'); // eslint-disable-line no-console
+  }
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
     // eslint-disable-line func-names
@@ -25,10 +33,21 @@ function init() {
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
     // eslint-disable-line func-names
-    xhrResults.push(this);
+    if (iqeEnabled) {
+      xhrResults.push(this);
+    }
+    this.onload = function () {
+      if (this.status === 403 && this.responseText.includes(DENINED_CROSS_CHECK)) {
+        crossAccountBouncer();
+      }
+    };
     return send.apply(this, arguments);
   };
 
+  /**
+   * Check response errors for cross_account requests.
+   * If we get error response with specific cross account error message, we kick the user out of the corss account session.
+   */
   window.fetch = function fetchReplacement(path, options, ...rest) {
     // eslint-disable-line func-names
     let tid = Math.random().toString(36);
@@ -38,21 +57,26 @@ function init() {
         ...(options || {}),
         headers: {
           ...((options && options.headers) || {}),
-          [wafkey]: 1,
+          ...(iqeEnabled ? { [wafkey]: 1 } : {}),
         },
       },
       ...rest,
     ]);
-    fetchResults[tid] = arguments[0];
-    prom
-      .then(function () {
-        delete fetchResults[tid];
-      })
-      .catch(function (err) {
-        delete fetchResults[tid];
-        throw err;
-      });
-    return prom;
+    if (iqeEnabled) {
+      fetchResults[tid] = arguments[0];
+      prom
+        .then(function () {
+          delete fetchResults[tid];
+        })
+        .catch(function (err) {
+          delete fetchResults[tid];
+          throw err;
+        });
+    }
+    return prom.catch((err) => {
+      console.log(err);
+      throw err;
+    });
   };
 }
 
@@ -60,10 +84,7 @@ export default {
   init: () => {
     if (!initted) {
       initted = true;
-      if (window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true') {
-        wafkey = window.localStorage.getItem('iqe:wafkey');
-        init();
-      }
+      init();
     }
   },
   hasPendingAjax: () => {

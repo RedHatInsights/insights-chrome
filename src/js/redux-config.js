@@ -15,6 +15,10 @@ const reduxRegistry = new ReducerRegistry(
   {
     chrome: {
       navigation: {},
+      accessRequests: {
+        count: 0,
+        data: [],
+      },
     },
   },
   [promise, middlewareListener.getMiddleware(), ...basicMiddlewares]

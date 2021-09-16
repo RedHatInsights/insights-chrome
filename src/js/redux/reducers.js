@@ -1,3 +1,4 @@
+import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { isBeta } from '../utils';
 
 export function contextSwitcherBannerReducer(state) {
@@ -120,5 +121,37 @@ export function toggleFeedbackModal(state, { payload }) {
   return {
     ...state,
     isFeedbackModalOpen: payload,
+  };
+}
+
+export function accessRequestsNotificationsReducer(state, { payload: { count, data } }) {
+  const newData = data.map(({ request_id, created, seen }) => ({
+    request_id,
+    created,
+    seen: seen === true || !!state.accessRequests.data.find((item) => request_id === item.request_id)?.seen || false,
+  }));
+  localStorage.setItem(REQUESTS_COUNT, newData.length);
+  localStorage.setItem(REQUESTS_DATA, JSON.stringify(newData));
+  return {
+    ...state,
+    accessRequests: {
+      ...state.accessRequests,
+      count,
+      hasUnseen: newData.length > 0,
+      data: newData,
+    },
+  };
+}
+
+export function markAccessRequestRequestReducer(state, { payload }) {
+  const newData = state.accessRequests.data.map((item) => (item.request_id === payload ? { ...item, seen: true } : item));
+  localStorage.setItem(REQUESTS_DATA, JSON.stringify(newData));
+  return {
+    ...state,
+    accessRequests: {
+      ...state.accessRequests,
+      hasUnseen: newData.length > 0,
+      data: newData,
+    },
   };
 }

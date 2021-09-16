@@ -1,26 +1,31 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta, getEnv } from '../../../utils';
+import { isBeta, getEnv, isFedRamp } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
+import { computeFedrampResult } from '../../../utils/useRenderFedramp';
 
 export const requiredBundles = ['application-services', 'openshift', 'insights', ...(getEnv() !== 'prod' ? ['edge'] : []), 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
 
-function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }) {
+const isFedrampEnv = isFedRamp();
+
+function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }, modules) {
   const costLinks = [];
   const subscriptionsLinks = [];
   let url = href;
   let appId = rest.appId;
+  let isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
       if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
-        costLinks.push({ ...rest, href, title });
+        costLinks.push({ ...rest, isFedramp: false, href, title });
       }
 
       if (rest.filterable !== false && (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions'))) {
         subscriptionsLinks.push({
           ...rest,
+          isFedramp: false, // openshift and subs are never visible on fedramp.
           href,
           title,
         });
@@ -29,12 +34,14 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest })
       if (!url && href.match(/^\//)) {
         url = isExternal ? href : href.split('/').slice(0, 3).join('/');
         appId = rest.appId ? rest.appId : appId;
+        isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
       }
     });
   }
 
   return {
     ...rest,
+    isFedramp,
     appId,
     isExternal,
     title,
@@ -67,6 +74,7 @@ const useAppFilter = () => {
     },
   });
   const existingSchemas = useSelector(({ chrome: { navigation } }) => navigation);
+  const modules = useSelector(({ chrome: { modules } }) => modules);
 
   const handleBundleData = async ({ data: { id, navItems, title } }) => {
     let links =
@@ -78,7 +86,8 @@ const useAppFilter = () => {
           return [...acc, curr];
         }, [])
         .flat()
-        .map(getBundleLink)
+        .map((link) => getBundleLink(link, modules))
+        .filter(({ isFedramp }) => (isFedrampEnv ? !!isFedramp : true))
         .filter(({ filterable }) => filterable !== false) || [];
     const bundleLinks = [];
     const extraLinks = {
@@ -146,7 +155,7 @@ const useAppFilter = () => {
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data })))
           .catch((err) => {
-            console.error('Unable to load appfilter bundle', err);
+            console.error('Unable to load appfilter bundle', err, fragment);
           })
       );
     }

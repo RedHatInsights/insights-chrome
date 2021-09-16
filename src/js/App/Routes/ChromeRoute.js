@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
 import { useDispatch } from 'react-redux';
-import { changeActiveModule } from '../../redux/actions';
+import { changeActiveModule, toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
 
 const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) => {
@@ -22,6 +22,13 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
         contentElement.style.display = 'initial';
       }
     }
+
+    return () => {
+      /**
+       * Reset global filter when switching application
+       */
+      dispatch(toggleGlobalFilter(false));
+    };
   }, []);
 
   if (dynamic === false) {

@@ -8,12 +8,12 @@ const perPage = 1000;
 const fetchPermissions = (userToken, app = '') => {
   const rbacApi = createRbacAPI(userToken);
   return rbacApi
-    .getPrincipalAccess(app, undefined, perPage)
+    .getPrincipalAccess(app, undefined, undefined, perPage)
     .then(({ data, meta }) => {
       if (meta.count > perPage) {
         return Promise.all(
           [...new Array(Math.ceil(meta.count / perPage))].map((_empty, key) =>
-            rbacApi.getPrincipalAccess(app, undefined, perPage, (key + 1) * perPage).then(({ data }) => data)
+            rbacApi.getPrincipalAccess(app, undefined, undefined, perPage, (key + 1) * perPage).then(({ data }) => data)
           )
         )
           .then((allAccess) => allAccess.reduce((acc, curr) => [...acc, ...curr], data))

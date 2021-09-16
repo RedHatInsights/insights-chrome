@@ -3,6 +3,11 @@ const log = logger('insights/url.js');
 
 // Parse through keycloak options routes
 export default (env) => {
+  if (window.SSO_URL) {
+    log('Env SSO_URL found! ', window.SSO_URL);
+    return window.SSO_URL;
+  }
+
   const ssoEnv = Object.entries(env).find(([, { url }]) => url.includes(location.hostname));
 
   if (ssoEnv) {
