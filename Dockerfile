@@ -1,7 +1,9 @@
-FROM nginx
+FROM docker.io/library/nginx
 
-ENV SSO_URL ${SSO_URL}
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./replace.sh /etc/nginx/replace.sh
-CMD sh -c "/etc/nginx/replace.sh $SSO_URL && nginx -g 'daemon off;'"
 COPY . /usr/share/nginx/html
+RUN chmod a+x /etc/nginx/replace.sh
+
+ENTRYPOINT ["/etc/nginx/replace.sh"]
+CMD ["nginx", "-g", "daemon off;"]
