@@ -3,6 +3,7 @@ const resolve = require('path').resolve;
 const { ModuleFederationPlugin } = require('webpack').container;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const { ProvidePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const deps = require('../package.json').dependencies;
@@ -32,6 +33,7 @@ const plugins = [
       './InventoryDetail': resolve(__dirname, '../src/js/inventory/modules/InventoryDetail.js'),
       './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
       './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
+      './DownloadButton': resolve(__dirname, '../src/js/pdf/DownloadButton.js'),
       './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.js'),
     },
     shared: [
@@ -56,6 +58,10 @@ const plugins = [
     filename: 'silent-check-sso.html',
     chunks: [''],
     template: path.resolve(__dirname, '../src/silent-check-sso.html'),
+  }),
+  new ProvidePlugin({
+    process: 'process/browser.js',
+    Buffer: ['buffer', 'Buffer'],
   }),
 ];
 
