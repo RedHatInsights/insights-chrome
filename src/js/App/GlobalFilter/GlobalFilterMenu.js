@@ -109,7 +109,13 @@ const GlobalFilterMenu = (props) => {
                     !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
                   return (
                     <MenuItem key={value} onClick={onClick}>
-                      <Checkbox className="ins-c-global-filter__checkbox" id={id} isChecked={isChecked} label={label} />
+                      <Checkbox
+                        className="ins-c-global-filter__checkbox"
+                        ouiaId="global-filter-checkbox"
+                        id={id}
+                        isChecked={isChecked}
+                        label={label}
+                      />
                     </MenuItem>
                   );
                 })}
@@ -134,6 +140,7 @@ const GlobalFilterMenu = (props) => {
       className={classNames('ins-c-global-filter__select', {
         expanded: isOpen,
       })}
+      ouiaId="global-filter-select"
       placeholderText={
         <TextInput
           isDisabled={isDisabled}
@@ -146,6 +153,7 @@ const GlobalFilterMenu = (props) => {
           onChange={onFilter}
           placeholder="Filter by status"
           aria-label="Filter by status"
+          ouiaId="global-filter-by-status"
         />
       }
       variant={SelectVariant.typeahead}

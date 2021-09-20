@@ -74,7 +74,7 @@ const GlobalFilterDropdown = ({
                   </ChipGroup>
                 ))}
                 {!isDisabled && (
-                  <Button variant="link" onClick={() => setValue(() => ({}))}>
+                  <Button variant="link" ouiaId="global-filter-clear" onClick={() => setValue(() => ({}))}>
                     Clear filters
                   </Button>
                 )}
