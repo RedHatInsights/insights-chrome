@@ -141,7 +141,7 @@
     "@redhat-cloud-services/entitlements-client": "^1.0.101",
     "@redhat-cloud-services/frontend-components": "^3.4.0",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.4",
-    "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.6",
+    "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.7",
     "@redhat-cloud-services/frontend-components-utilities": "^3.2.3",
     "@redhat-cloud-services/host-inventory-client": "^1.0.101",
     "@redhat-cloud-services/keycloak-js": "0.0.3",
