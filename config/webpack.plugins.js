@@ -45,6 +45,7 @@ const plugins = [
       { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
       { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
       { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
+      { '@redhat-cloud-services/frontend-components-pdf-generator': { singleton: true } },
     ],
   }),
   ChunkMapper,
