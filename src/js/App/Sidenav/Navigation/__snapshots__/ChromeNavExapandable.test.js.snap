@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ChromeNavExapandable should not render nav item group 1`] = `<div />`;
+exports[`ChromeNavExapandable should not render nav item expandable 1`] = `<div />`;
 
-exports[`ChromeNavExapandable should render nav item group 1`] = `
+exports[`ChromeNavExapandable should render nav item expandable 1`] = `
 <div>
   <li
     class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
@@ -47,13 +47,31 @@ exports[`ChromeNavExapandable should render nav item group 1`] = `
       
       <ul
         class="pf-c-nav__list"
-      />
+      >
+        <li
+          class="pf-c-nav__item"
+          data-ouia-component-id="title"
+          data-ouia-component-type="PF4/NavItem"
+          data-ouia-safe="true"
+        >
+          <a
+            class="pf-c-nav__link"
+            data-quickstart-id="/foo/bar"
+            data-testid="native-link"
+            href="http://localhost/foo/bar"
+            itemid="/foo/bar"
+          >
+            Title
+             
+          </a>
+        </li>
+      </ul>
     </section>
   </li>
 </div>
 `;
 
-exports[`ChromeNavExapandable should render nav item group with items 1`] = `
+exports[`ChromeNavExapandable should render nav item expandable with items 1`] = `
 <div>
   <li
     class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"

@@ -24,3 +24,5 @@ export const LOAD_MODULES_SCHEMA = '@@chrome/load-modules-schema';
 export const CHANGE_ACTIVE_MODULE = '@@chrome/change-active-module';
 export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
 export const TOGGLE_FEEDBACK_MODAL = '@@chrome/toggle-feedback-modal';
+export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requests-notifications';
+export const MARK_REQUEST_NOTIFICATION_SEEN = '@@chrome/mark-request-notification-seen';

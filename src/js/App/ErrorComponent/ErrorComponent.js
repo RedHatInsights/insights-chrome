@@ -19,6 +19,7 @@ import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclama
 import { getUrl } from '../../utils';
 
 import './ErrorComponent.scss';
+import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 const ErrorComponent = (props) => {
   useEffect(() => {
@@ -38,7 +39,7 @@ const ErrorComponent = (props) => {
         </Title>
         <EmptyStateBody>
           <p className="ins-c-error-component__text">
-            There was a problem processing the request. Please try again. If the problem persists, contact{' '}
+            There was a problem processing the request. Try reloading the page. If the problem persists, contact{' '}
             <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
               Red Hat support
             </a>{' '}
@@ -72,13 +73,13 @@ const ErrorComponent = (props) => {
         </EmptyStateBody>
         <EmptyStatePrimary>
           <Button
+            component={(props) => (
+              <ChromeLink {...props} appId="landing" href="/">
+                Return to home page
+              </ChromeLink>
+            )}
             variant="primary"
-            onClick={() => {
-              window.history.back();
-            }}
-          >
-            Return to last page.
-          </Button>
+          />
         </EmptyStatePrimary>
       </EmptyState>
     </Bullseye>

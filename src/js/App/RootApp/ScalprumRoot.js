@@ -11,6 +11,7 @@ import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
+import { isFedRamp } from '../../utils';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -88,6 +89,7 @@ const ScalprumRoot = ({ config, ...props }) => {
           chrome: {
             experimentalApi: true,
             ...window.insights.chrome,
+            isFedramp: isFedRamp(),
             usePendoFeedback,
             toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
             quickStarts: {

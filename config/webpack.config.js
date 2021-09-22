@@ -2,9 +2,24 @@ const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
+
+// call default generator then pair different variations of uri with each base
+const myGenerator = asGenerator((item, ...rest) => {
+  const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
+  if (item.uri.includes('./assets')) {
+    return defaultTuples.map(([base]) => {
+      if (base.includes('@patternfly/patternfly')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
+      }
+    });
+  }
+  return defaultTuples;
+});
 
 const commonConfig = ({ publicPath, noHash }) => ({
-  entry: path.resolve(__dirname, '../src/js/chrome.js'),
+  entry: [path.resolve(__dirname, '../src/sass/chrome.scss'), path.resolve(__dirname, '../src/js/chrome.js')],
   output: {
     path: path.resolve(__dirname, '../build/js'),
     filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
@@ -42,9 +57,14 @@ const commonConfig = ({ publicPath, noHash }) => ({
       {
         test: /\.s?[ac]ss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          'resolve-url-loader',
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
+            },
+          },
           {
             loader: 'sass-loader',
             options: {
@@ -54,13 +74,25 @@ const commonConfig = ({ publicPath, noHash }) => ({
         ],
       },
       {
-        test: /\.(jpg|png|svg)$/,
+        test: /\.(jpg|png|svg|gif)$/,
         use: [
           {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'fonts/',
+              outputPath: '../assets/images/',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(woff(2)?|ttf|jpg|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: '../assets/fonts/',
             },
           },
         ],
