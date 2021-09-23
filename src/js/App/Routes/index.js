@@ -12,6 +12,10 @@ const redirects = [
     path: '/insights',
     to: '/insights/dashboard',
   },
+  {
+    path: '/docs',
+    to: '/api/docs',
+  },
 ];
 
 const generateRoutesList = (modules) =>
