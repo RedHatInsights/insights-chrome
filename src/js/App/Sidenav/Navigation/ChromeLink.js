@@ -14,7 +14,9 @@ const useDynamicModule = (appId) => {
   }));
   useEffect(() => {
     const currentModule = modules[appId];
-    if (!currentModule) {
+    if (appId === 'dynamic') {
+      setIsDynamic(true);
+    } else if (!currentModule) {
       setIsDynamic(false);
     } else if (appId === activeModule) {
       setIsDynamic(true);
