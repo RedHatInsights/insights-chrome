@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
@@ -21,6 +22,13 @@ const loaderWrapper = (Component, props = {}) => (
     <Component {...props} />
   </Suspense>
 );
+
+const loadQS = async () => {
+  const {
+    data: { data },
+  } = await axios.get('/api/quickstarts/v1/quickstarts');
+  return data;
+};
 
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
@@ -69,6 +77,13 @@ const ScalprumRoot = ({ config, ...props }) => {
 
   useEffect(() => {
     const unregister = history.listen(historyListener);
+    loadQS().then((qs) => {
+      console.log({ qs });
+      updateQuickStarts(
+        'all',
+        qs.map(({ content }) => content)
+      );
+    });
     return () => {
       if (typeof unregister === 'function') {
         return unregister();
