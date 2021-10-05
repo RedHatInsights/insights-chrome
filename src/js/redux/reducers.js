@@ -172,3 +172,16 @@ export function storeInitialHashReducer(state, { payload }) {
     initialHash,
   };
 }
+
+export function populateQuickstartsReducer(state, { payload: { app, quickstarts } }) {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      quickstarts: {
+        ...state.quickstarts.quickstarts,
+        [app]: quickstarts,
+      },
+    },
+  };
+}

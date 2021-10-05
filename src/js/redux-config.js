@@ -19,6 +19,9 @@ const reduxRegistry = new ReducerRegistry(
         count: 0,
         data: [],
       },
+      quickstarts: {
+        quickstarts: {},
+      },
     },
   },
   [promise, middlewareListener.getMiddleware(), ...basicMiddlewares]

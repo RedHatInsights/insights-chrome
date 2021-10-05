@@ -143,3 +143,11 @@ export const storeInitialHash = (payload) => ({
   type: actionTypes.STORE_INITIAL_HASH,
   payload,
 });
+
+export const populateQuickstartsCatalog = (app, quickstarts) => ({
+  type: actionTypes.POPULATE_QUICKSTARTS_CATALOG,
+  payload: {
+    app,
+    quickstarts,
+  },
+});

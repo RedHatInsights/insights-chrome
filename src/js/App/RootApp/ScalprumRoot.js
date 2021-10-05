@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { Fragment, lazy, Suspense, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
-import { toggleFeedbackModal } from '../../redux/actions';
+import { populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 
@@ -27,16 +27,23 @@ const loadQS = async () => {
   const {
     data: { data },
   } = await axios.get('/api/quickstarts/v1/quickstarts');
-  return data;
+  return data.map(({ content }) => content);
 };
 
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
+  const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
   const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage('insights-quickstartId', '');
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
-  const [quickStarts, setQuickStarts] = useState({});
+  const quickStarts = useSelector(
+    ({
+      chrome: {
+        quickstarts: { quickstarts },
+      },
+    }) => Object.values(quickstarts).flat()
+  );
   /**
    * Updates the available quick starts
    *
@@ -48,25 +55,11 @@ const ScalprumRoot = ({ config, ...props }) => {
    * @param {array} qs Array of quick starts
    */
   const updateQuickStarts = (key, qs) => {
-    const mergedQuickStarts = {
-      ...quickStarts,
-      [key]: qs,
-    };
-    setQuickStarts(mergedQuickStarts);
+    dispatch(populateQuickstartsCatalog(key, qs));
   };
-  /**
-   * Combines the quick start arrays
-   * @returns Array of quick starts
-   */
-  const combinedQuickStarts = () => {
-    const combined = [];
-    for (const key in quickStarts) {
-      combined.push(...quickStarts[key]);
-    }
-    return combined;
-  };
+
   const quickStartProps = {
-    quickStarts: combinedQuickStarts(),
+    quickStarts,
     activeQuickStartID,
     allQuickStartStates,
     setActiveQuickStartID,
@@ -78,11 +71,8 @@ const ScalprumRoot = ({ config, ...props }) => {
   useEffect(() => {
     const unregister = history.listen(historyListener);
     loadQS().then((qs) => {
-      console.log({ qs });
-      updateQuickStarts(
-        'all',
-        qs.map(({ content }) => content)
-      );
+      dispatch(populateQuickstartsCatalog('all', qs));
+      setQuickstarsLoaded(true);
     });
     return () => {
       if (typeof unregister === 'function') {
@@ -91,6 +81,7 @@ const ScalprumRoot = ({ config, ...props }) => {
     };
   }, []);
 
+  const QSWrapper = quickstartsLoaded ? QuickStartContainer : ({ children }) => <Fragment>{children}</Fragment>;
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -98,7 +89,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QuickStartContainer className="inc-c-chrome__root-element" {...quickStartProps}>
+    <QSWrapper className="inc-c-chrome__root-element" {...quickStartProps}>
       <ScalprumProvider
         config={config}
         api={{
@@ -129,7 +120,7 @@ const ScalprumRoot = ({ config, ...props }) => {
           </Route>
         </Switch>
       </ScalprumProvider>
-    </QuickStartContainer>
+    </QSWrapper>
   );
 };
 
