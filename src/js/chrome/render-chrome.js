@@ -44,7 +44,7 @@ const App = () => {
 
 function renderChrome() {
   const { store } = spinUpStore();
-  const pageRoot = document.querySelector('.pf-c-page__drawer');
+  const pageRoot = document.getElementById('chrome-entry');
   if (pageRoot) {
     ReactDOM.render(
       <Provider store={store}>
