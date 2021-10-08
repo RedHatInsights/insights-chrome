@@ -101,7 +101,7 @@ export const init = (options) => {
 
   const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
 
-  options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/silent-check-sso.html`;
+  options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
 
   if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
     options.realm = 'short-session';
