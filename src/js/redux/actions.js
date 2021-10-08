@@ -151,3 +151,7 @@ export const populateQuickstartsCatalog = (app, quickstarts) => ({
     quickstarts,
   },
 });
+
+export const disableQuickstarts = () => ({
+  type: actionTypes.DISABLE_QUICKSTARTS,
+});

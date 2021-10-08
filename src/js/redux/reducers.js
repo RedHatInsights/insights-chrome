@@ -185,3 +185,13 @@ export function populateQuickstartsReducer(state, { payload: { app, quickstarts 
     },
   };
 }
+
+export function disableQuickstartsReducer(state) {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      disabled: true,
+    },
+  };
+}

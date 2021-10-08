@@ -30,4 +30,4 @@ export const MARK_REQUEST_NOTIFICATION_SEEN = '@@chrome/mark-request-notificatio
 export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
 
 export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catalog';
-export const UPDATE_QUICKSTARTS = '@@chrome/update-quickstarts';
+export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';

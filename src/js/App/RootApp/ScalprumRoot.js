@@ -10,7 +10,7 @@ import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
-import { populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
+import { disableQuickstarts, populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 
@@ -28,6 +28,14 @@ const loadQS = async () => {
     data: { data },
   } = await axios.get('/api/quickstarts/v1/quickstarts');
   return data.map(({ content }) => content);
+};
+
+const QSWrapper = ({ quickstartsLoaded, children, ...props }) =>
+  quickstartsLoaded ? <QuickStartContainer {...props}>{children}</QuickStartContainer> : <Fragment>{children}</Fragment>;
+
+QSWrapper.propTypes = {
+  children: PropTypes.node,
+  quickstartsLoaded: PropTypes.bool,
 };
 
 const ScalprumRoot = ({ config, ...props }) => {
@@ -70,10 +78,15 @@ const ScalprumRoot = ({ config, ...props }) => {
 
   useEffect(() => {
     const unregister = history.listen(historyListener);
-    loadQS().then((qs) => {
-      dispatch(populateQuickstartsCatalog('all', qs));
-      setQuickstarsLoaded(true);
-    });
+    loadQS()
+      .then((qs) => {
+        dispatch(populateQuickstartsCatalog('all', qs));
+        setQuickstarsLoaded(true);
+      })
+      .catch(() => {
+        dispatch(disableQuickstarts());
+        setQuickstarsLoaded(true);
+      });
     return () => {
       if (typeof unregister === 'function') {
         return unregister();
@@ -81,7 +94,6 @@ const ScalprumRoot = ({ config, ...props }) => {
     };
   }, []);
 
-  const QSWrapper = quickstartsLoaded ? QuickStartContainer : ({ children }) => <Fragment>{children}</Fragment>;
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -89,7 +101,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QSWrapper className="inc-c-chrome__root-element" {...quickStartProps}>
+    <QSWrapper quickstartsLoaded={quickstartsLoaded} className="inc-c-chrome__root-element" {...quickStartProps}>
       <ScalprumProvider
         config={config}
         api={{
