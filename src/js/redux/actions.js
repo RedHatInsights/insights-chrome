@@ -1,10 +1,12 @@
 import * as actionTypes from './action-types';
 import { getAllTags, getAllSIDs, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 
-export const userLogIn = (user) => ({
-  type: actionTypes.USER_LOGIN,
-  payload: user,
-});
+export function userLogIn(user) {
+  return {
+    type: actionTypes.USER_LOGIN,
+    payload: user,
+  };
+}
 
 export function appNavClick(item, event) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item && item.id, event } };
