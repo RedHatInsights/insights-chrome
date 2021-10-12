@@ -135,3 +135,8 @@ export const markAccessRequestNotification = (payload) => ({
   type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
   payload,
 });
+
+export const storeInitialHash = (payload) => ({
+  type: actionTypes.STORE_INITIAL_HASH,
+  payload,
+});

@@ -155,3 +155,11 @@ export function markAccessRequestRequestReducer(state, { payload }) {
     },
   };
 }
+
+export function storeInitialHashReducer(state, { payload }) {
+  const initialHash = typeof payload === 'string' ? payload.replace(/^#/, '') : undefined;
+  return {
+    ...state,
+    initialHash,
+  };
+}

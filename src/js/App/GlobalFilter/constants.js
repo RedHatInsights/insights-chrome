@@ -4,6 +4,8 @@ import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { SID_KEY } from '../../redux/globalFilterReducers';
+import { spinUpStore } from '../../redux-config';
+import { storeInitialHash } from '../../redux/actions';
 
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
@@ -52,7 +54,7 @@ export const createTagsFilter = (tags = []) =>
     };
   }, {});
 
-export const storeFilter = (tags, token, isEnabled, history) => {
+export const storeFilter = (tags, token, isEnabled, history, firstLoad) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
   if (isEnabled) {
     const searchParams = new URLSearchParams();
@@ -66,6 +68,10 @@ export const storeFilter = (tags, token, isEnabled, history) => {
     searchParams.append('SIDs', SIDs);
     searchParams.append('tags', mappedTags);
 
+    if (firstLoad && window.location.hash.length > 0) {
+      const { store } = spinUpStore();
+      store.dispatch(storeInitialHash(window.location.hash));
+    }
     history.push({
       ...history.location,
       hash: searchParams.toString(),
