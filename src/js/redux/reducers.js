@@ -1,5 +1,5 @@
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
-import { isBeta } from '../utils';
+import { isBeta, isFedRamp } from '../utils';
 
 export function contextSwitcherBannerReducer(state) {
   state = {
@@ -17,8 +17,13 @@ export function appNavClick(state, { payload }) {
 }
 
 export function loginReducer(state, { payload }) {
+  /**
+   * Flip the condition
+   */
+  const missingIDP = isFedRamp() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
   return {
     ...state,
+    missingIDP,
     user: payload,
   };
 }
