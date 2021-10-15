@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState, useCallback, memo, useMemo } from 'react';
+import React, { useEffect, Fragment, useState, useCallback, memo, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
@@ -139,6 +139,7 @@ GlobalFilterDropdown.propTypes = {
 
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
+  const firstLoad = useRef(true);
 
   const isAllowed = () => hasAccess;
   const history = useHistory();
@@ -161,8 +162,8 @@ const GlobalFilter = () => {
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope);
 
-  const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
-    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded, history);
+  const loadTags = (selectedTags, filterScope, filterTagsBy, token, firstLoad) => {
+    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded, history, firstLoad);
     batch(() => {
       dispatch(
         fetchAllTags({
@@ -216,13 +217,14 @@ const GlobalFilter = () => {
         setToken(() => currToken);
       })();
     } else if (userLoaded && token && isAllowed() && !isDisabled) {
-      loadTags(selectedTags, filterScope, filterTagsBy, token);
+      loadTags(selectedTags, filterScope, filterTagsBy, token, firstLoad.current);
+      firstLoad.current = false;
     }
   }, [selectedTags, filterScope, userLoaded, isAllowed(), isDisabled]);
 
   useEffect(() => {
     if (userLoaded && isAllowed()) {
-      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token);
+      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token, firstLoad.current);
     }
   }, [filterTagsBy]);
 
