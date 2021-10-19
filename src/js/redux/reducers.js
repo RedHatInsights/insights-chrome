@@ -17,9 +17,6 @@ export function appNavClick(state, { payload }) {
 }
 
 export function loginReducer(state, { payload }) {
-  /**
-   * Flip the condition
-   */
   const missingIDP = isFedRamp() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
   return {
     ...state,

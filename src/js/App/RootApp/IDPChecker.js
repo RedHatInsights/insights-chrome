@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux';
 import { isFedRamp } from '../../utils';
 import IDPError from '../IDPError/IDPError';
 
-const isFedrampEnv = isFedRamp();
-
 const IDPStatuses = {
   OK: 'OK',
   UNKNOWN: 'UNKNOWN',
@@ -16,6 +14,7 @@ const IDPStatuses = {
 };
 
 const IDPChecker = ({ children }) => {
+  const isFedrampEnv = isFedRamp();
   const missingIDP = useSelector(({ chrome }) => chrome?.missingIDP);
   const [status, setStatus] = useState(() => {
     if (isFedrampEnv) {
