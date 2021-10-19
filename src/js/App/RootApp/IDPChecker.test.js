@@ -87,30 +87,7 @@ describe('<IDPChecker />', () => {
         response: {
           status: 403,
         },
-      })
-    );
-    const store = mockStore(initialState);
-
-    await act(async () => {
-      render(
-        <Provider store={store}>
-          <IDPChecker>
-            <span data-testid="foo">OK</span>
-          </IDPChecker>
-        </Provider>
-      );
-    });
-
-    expect(screen.queryAllByTestId('foo')).toHaveLength(0);
-    expect(screen.getAllByText('Authorization failure')).toHaveLength(1);
-  });
-
-  test('should render error state if IDP test API returns 401', async () => {
-    getSpy.mockImplementationOnce(() =>
-      Promise.reject({
-        response: {
-          status: 401,
-        },
+        message: 'Insights authorization failed - account number not in allow list',
       })
     );
     const store = mockStore(initialState);

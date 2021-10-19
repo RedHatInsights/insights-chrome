@@ -34,7 +34,7 @@ const IDPChecker = ({ children }) => {
           allowStateChange.current && setStatus(IDPStatuses.OK);
         })
         .catch((err) => {
-          const authError = err.response.status === 401 || err.response.status === 403 || err.response.status === 404;
+          const authError = err.response.status === 403 && err.message === 'Insights authorization failed - account number not in allow list';
           allowStateChange.current && setStatus(authError ? IDPStatuses.ERROR : IDPStatuses.OK);
         });
     }
