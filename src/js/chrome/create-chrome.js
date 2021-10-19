@@ -24,10 +24,14 @@ const createChromeInstance = (jwt, insights) => {
     if (rootEl) {
       rootEl.setAttribute('data-ouia-safe', true);
     }
-    window.insights.chrome = {
+
+    const initializedChrome = {
       ...window.insights.chrome,
       ...chromeInit(),
     };
+    window.insights.chrome = initializedChrome;
+
+    return initializedChrome;
   };
 
   /**
