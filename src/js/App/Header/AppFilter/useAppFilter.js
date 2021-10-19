@@ -10,6 +10,13 @@ const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansi
 
 const isFedrampEnv = isFedRamp();
 
+function findModuleByLink(href, { modules } = { modules: [] }) {
+  const routes = modules
+    .flatMap(({ routes }) => routes.map((route) => (typeof route === 'string' ? route : route.pathname)))
+    .sort((a, b) => (a.length < b.length ? 1 : -1));
+  return routes.find((route) => href.includes(route)) || '';
+}
+
 function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }, modules) {
   const costLinks = [];
   const subscriptionsLinks = [];
@@ -32,7 +39,9 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest },
       }
 
       if (!url && href.match(/^\//)) {
-        url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+        const moduleRoute = isExternal ? '' : findModuleByLink(href, modules[rest.appId]);
+        const truncatedRoute = href.split('/').slice(0, 3).join('/');
+        url = isExternal ? href : moduleRoute.length > truncatedRoute.length ? moduleRoute : truncatedRoute;
         appId = rest.appId ? rest.appId : appId;
         isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
       }
