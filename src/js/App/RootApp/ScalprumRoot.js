@@ -64,6 +64,7 @@ const ScalprumRoot = ({ config, ...props }) => {
     setActiveQuickStartID,
     setAllQuickStartStates,
     showCardFooters: false,
+    language: 'en',
   };
 
   useEffect(() => {
