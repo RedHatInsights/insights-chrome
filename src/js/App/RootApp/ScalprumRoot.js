@@ -82,7 +82,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QuickStartContainer {...quickStartProps}>
+    <QuickStartContainer className="inc-c-chrome__root-element" {...quickStartProps}>
       <ScalprumProvider
         config={config}
         api={{

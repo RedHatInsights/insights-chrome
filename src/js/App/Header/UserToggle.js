@@ -7,6 +7,8 @@ import { isBeta } from '../../utils';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
+  const env = window.insights.chrome.getEnvironment();
+  const prefix = window.insights.chrome.isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="ins-c-dropdown-item__stack">
@@ -29,7 +31,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     <DropdownSeparator key="separator" />,
     <DropdownItem
       key="My Profile"
-      href={`https://www.${window.insights.chrome.isProd ? '' : 'qa.'}redhat.com/wapps/ugc/protected/personalInfo.html`}
+      href={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
       target="_blank"
       rel="noopener noreferrer"
     >

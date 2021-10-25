@@ -2,6 +2,7 @@ import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter, registerModu
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
+import chromeHistory from '../utils/chromeHistory';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getUrl, getEnv, isBeta, updateDocumentTitle, getEnvDetails } from '../utils';
@@ -56,7 +57,20 @@ export function chromeInit() {
     },
     appObjectId,
     globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-    hideGlobalFilter: (isHidden) => store.dispatch(toggleGlobalFilter(isHidden)),
+    hideGlobalFilter: (isHidden) => {
+      const initialHash = store.getState()?.chrome?.initialHash;
+      /**
+       * Restore app URL hash fragment after the global filter is disabled
+       */
+      if (initialHash) {
+        chromeHistory.replace({
+          ...chromeHistory.location,
+          hash: initialHash,
+        });
+        store.dispatch({ type: actionTypes.STORE_INITIAL_HASH });
+      }
+      store.dispatch(toggleGlobalFilter(isHidden));
+    },
     identifyApp: (_data, appTitle) => {
       updateDocumentTitle(appTitle);
       return Promise.resolve();

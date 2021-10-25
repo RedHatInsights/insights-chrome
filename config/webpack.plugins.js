@@ -55,8 +55,8 @@ const plugins = [
   }),
   new HtmlWebpackPlugin({
     title: 'Authenticating - console.redhat.com',
-    filename: 'silent-check-sso.html',
-    chunks: [''],
+    filename: '../silent-check-sso.html',
+    inject: false,
     template: path.resolve(__dirname, '../src/silent-check-sso.html'),
   }),
   new ProvidePlugin({
