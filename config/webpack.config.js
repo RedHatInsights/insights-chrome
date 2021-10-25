@@ -33,6 +33,8 @@ const commonConfig = ({ publicPath, noHash }) => ({
       customReact: path.resolve(__dirname, './react-external.js'),
       reactRedux: path.resolve(__dirname, './react-redux-external.js'),
       PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js'),
+      '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
+      '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
     },
     fallback: {
       path: require.resolve('path-browserify'),
