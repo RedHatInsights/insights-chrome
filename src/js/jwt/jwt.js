@@ -4,7 +4,6 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
-import { GLOBAL_FILTER_KEY } from '../App/GlobalFilter/constants';
 import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
 
@@ -14,6 +13,8 @@ import insightsUser from './insights/user';
 import urijs from 'urijs';
 import { DEFAULT_ROUTES, options as defaultOptions } from './constants';
 import Priv from './Priv';
+
+export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 
 const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
