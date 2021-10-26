@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import * as Sentry from '@sentry/browser';
 import logger from './jwt/logger';
+import URI from 'urijs';
 const log = logger('createCase.js');
 
 import { getUrl, getEnvDetails } from './utils';
@@ -61,16 +62,16 @@ async function getAppInfo(activeModule) {
   }
 }
 
-async function getProductHash() {
+async function getProductData() {
   const { store } = spinUpStore();
   const activeModule = store.getState()?.chrome?.activeModule;
-  const appData = getAppInfo(activeModule);
-  return appData ? `Current app: ${activeModule}, Current app hash: ${appData.src_hash}` : `Unknown app, filed on ${window.location.href}`;
+  const appData = await getAppInfo(activeModule);
+  return appData;
 }
 
 export async function createSupportCase(userInfo, fields) {
   const currentProduct = registerProduct() || 'Other';
-  const currentHash = await getProductHash();
+  const { src_hash, app_name } = await getProductData();
   const portalUrl = `${getEnvDetails().portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
 
@@ -90,20 +91,22 @@ export async function createSupportCase(userInfo, fields) {
       },
       sessionDetails: {
         createdBy: `${userInfo.user.username}`,
-        environment: `Production${window.insights.chrome.isBeta() ? ' Beta' : ''}, ${currentHash}`,
+        environment: `Production${window.insights.chrome.isBeta() ? ' Beta' : ''}, ${
+          src_hash ? `Current app: ${app_name}, Current app hash ${src_hash}` : `Unknown app, filed on ${window.location.href}`
+        }`,
         ...(currentProduct && { product: currentProduct }),
         ...fields?.caseFields,
       },
     }),
   })
     .then((response) => response.json())
-    .then(
-      (data) =>
-        data &&
-        // eslint-disable-next-line max-len
-        window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue?sessionId=${data.session.id}`) &&
-        createSupportSentry(data.session.id, fields)
-    )
+    .then((data) => {
+      if (data) {
+        const query = URI(`?seSessionId=${data.session.id}&product=${data.sessionDetails.product}&version=${src_hash}`).normalize();
+        window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue${query.readable()}`);
+        return createSupportSentry(data.session.id, fields);
+      }
+    })
     .catch((err) => Sentry.captureException(err));
 }
 
