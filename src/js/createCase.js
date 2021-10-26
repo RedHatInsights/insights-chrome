@@ -86,7 +86,7 @@ export async function createSupportCase(userInfo, fields) {
     body: JSON.stringify({
       session: {
         createdBy: `${userInfo.user.username}`,
-        userAgent: 'cloud.redhat.com',
+        userAgent: 'console.redhat.com',
       },
       sessionDetails: {
         createdBy: `${userInfo.user.username}`,
