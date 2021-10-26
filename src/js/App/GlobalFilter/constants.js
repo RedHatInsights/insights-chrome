@@ -1,5 +1,5 @@
 import { deleteLocalStorageItems } from '../../utils';
-import { decodeToken } from '../../jwt/jwt';
+import { decodeToken, GLOBAL_FILTER_KEY } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
@@ -7,7 +7,6 @@ import { SID_KEY } from '../../redux/globalFilterReducers';
 import { spinUpStore } from '../../redux-config';
 import { storeInitialHash } from '../../redux/actions';
 
-export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
   {
