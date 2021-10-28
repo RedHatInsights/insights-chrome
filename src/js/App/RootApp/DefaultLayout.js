@@ -4,14 +4,15 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
+import { Button, Masthead, MastheadToggle, Page, PageSidebar } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
-import { Header, HeaderTools } from '../Header/Header';
+import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../../redux/actions';
 import Routes from '../Routes';
 import useOuiaTags from '../../utils/useOuiaTags';
+import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -38,7 +39,17 @@ const ShieldedRoot = memo(
       <Page
         isManagedSidebar={!hideNav}
         className={classnames({ 'ins-c-page__hasBanner': hasBanner, 'ins-c-page__account-banner': selectedAccountNumber })}
-        header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
+        header={
+          <Masthead className="chr-c-masthead">
+            <MastheadToggle>
+              <Button variant="plain" onClick={() => {}} aria-label="Global navigation">
+                <BarsIcon />
+              </Button>
+            </MastheadToggle>
+            {<Header />}
+          </Masthead>
+        }
+        // header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
         sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>

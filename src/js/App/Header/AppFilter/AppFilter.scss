@@ -1,54 +1,32 @@
 @import '~@patternfly/patternfly/sass-utilities/_all';
-@media screen and (max-width: $pf-global--breakpoint--md) {
-  .pf-c-page__header {
-    &-tools-group {
-      margin-left: 0 !important;
-    }
-    &-tools {
-      padding-right: 0;
-    }
-  }
-}
-
-.pf-c-page__header {
-  .pf-c-backdrop {
-    z-index: -10;
-  }
-}
+// @media screen and (max-width: $pf-global--breakpoint--md) {
+//   .pf-c-page__header {
+//     &-tools-group {
+//       margin-left: 0 !important;
+//     }
+//     &-tools {
+//       padding-right: 0;
+//     }
+//   }
+// }
 
 .pf-c-dropdown {
   &.ins-c-page__app-filter-dropdown-toggle {
     .pf-c-dropdown__menu {
       display: none;
     }
-    .pf-c-dropdown__toggle {
-      display: inline-block;
-      margin-left: 30px;
-      margin-right: var(--pf-global--spacer--sm);
-      position: relative;
-      white-space: nowrap;
-      &::before {
-        --pf-c-dropdown__toggle--before--BorderTopColor: var(--pf-global--palette--black-700);
-        --pf-c-dropdown__toggle--before--BorderRightColor: var(--pf-global--palette--black-700);
-        --pf-c-dropdown__toggle--before--BorderLeftColor: var(--pf-global--palette--black-700);
-      }
-    }
-    @media screen and (max-width: $pf-global--breakpoint--md) { 
-        .pf-c-dropdown__toggle {
-          margin-left: var(--pf-global--spacer--md);
-        }
-    }
+
   }
   
   &.ins-c-page__app-filter-dropdown-menu {
     position: absolute;
   
     .pf-c-dropdown__menu::before {
-      z-index: -1;
+      z-index: -1000;
     }
     .pf-c-dropdown__menu {
       left: 0;
-      top: 78px;
+      top: 70px;
       overflow-y:scroll;
       overflow-x:hidden;
       position: fixed; // allows menu to go full width
@@ -106,6 +84,7 @@
     @media screen and (max-width: $pf-global--breakpoint--md) { 
       .pf-c-dropdown__menu {
         bottom:0; // allows scrolling
+        top: 140px;
         div.gallery {
           column-count: 1;
         }

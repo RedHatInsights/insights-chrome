@@ -11,19 +11,19 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
   const prefix = window.insights.chrome.isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   return [
     <DropdownItem key="Username" isDisabled>
-      <dl className="ins-c-dropdown-item__stack">
-        <dt className="ins-c-dropdown-item__stack--header">Username:</dt>
-        <dd className="ins-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
-        {isOrgAdmin && <dd className="ins-c-dropdown-item__stack--subValue">Org. Administrator</dd>}
+      <dl className="chr-c-dropdown-item__stack">
+        <dt className="chr-c-dropdown-item__stack--header">Username:</dt>
+        <dd className="chr-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
+        {isOrgAdmin && <dd className="chr-c-dropdown-item__stack--subValue">Org. Administrator</dd>}
       </dl>
     </DropdownItem>,
     <React.Fragment key="account wrapper">
       {accountNumber > -1 && (
         <DropdownItem key="Account" isDisabled>
-          <dl className="ins-c-dropdown-item__stack">
-            <dt className="ins-c-dropdown-item__stack--header">Account number:</dt>
-            <dd className="ins-c-dropdown-item__stack--value">{accountNumber}</dd>
-            {isInternal && <dd className="ins-c-dropdown-item__stack--subValue">Internal user</dd>}
+          <dl className="chr-c-dropdown-item__stack">
+            <dt className="chr-c-dropdown-item__stack--header">Account number:</dt>
+            <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
+            {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
           </dl>
         </DropdownItem>
       )}
@@ -104,7 +104,7 @@ export class UserToggle extends Component {
       <DropdownToggle
         id="UserMenu"
         icon={<UserIcon />}
-        className="ins-c-toolbar__menu-user data-hj-suppress"
+        className="data-hj-suppress"
         widget-type="UserMenu"
         onToggle={this.onToggle}
       >
@@ -118,7 +118,7 @@ export class UserToggle extends Component {
         ouiaId="chrome-user-menu"
         onSelect={this.onSelect}
         toggle={toggle}
-        isPlain
+        className="pf-m-expanded"
         isOpen={isOpen}
         dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
       />

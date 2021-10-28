@@ -1,6 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Flex, Badge, DropdownItem, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, Divider, Button } from '@patternfly/react-core';
+import {
+  Badge,
+  Button,
+  Divider,
+  DropdownItem,
+  ToolbarItem,
+} from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -8,7 +14,6 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import './Tools.scss';
 import { getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
@@ -46,10 +51,10 @@ const SettingsButton = ({ settingsMenuDropdownItems }) => (
   <ToolbarToggle
     key="Settings menu"
     icon={() => (
-      <Flex alignItems={{ default: 'alignItemsCenter' }}>
-        {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
+      <>
+        {isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}
         <CogIcon />
-      </Flex>
+      </>
     )}
     id="SettingsMenu"
     ouiaId="chrome-settings"
@@ -150,26 +155,21 @@ const Tools = () => {
   );
 
   return (
-    <PageHeaderTools widget-type="InsightsToolbar">
-      {/* Show tools on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
+    <div widget-type="InsightsToolbar">
+      <ToolbarItem>
         {isInternal && !window.insights.chrome.isProd && (
-          <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
+          <div isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</div>
         )}
-        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</PageHeaderToolsItem>}
-        <PageHeaderToolsItem>{<AboutButton />}</PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
+        {!isSettingsDisabled && <div>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</div>}
+        {<AboutButton />}
 
-      {/* Show full user dropdown on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
-        <PageHeaderToolsItem>
+        <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
           <UserToggle className="ins-c-dropdown__user" />
-        </PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
+        </ToolbarItem>
 
-      {/* Collapse tools and user dropdown to kebab on small screens  */}
-      <PageHeaderToolsGroup visibility={{ lg: 'hidden' }}>
-        <PageHeaderToolsItem>
+        {/* Collapse tools and user dropdown to kebab on small screens  */}
+
+        <ToolbarItem visibility={{ lg: 'hidden' }}>
           <UserToggle
             isSmall
             extraItems={mobileDropdownItems.map((action, key) => (
@@ -196,16 +196,15 @@ const Tools = () => {
               </React.Fragment>
             ))}
           />
-        </PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
-
+        </ToolbarItem>
+      </ToolbarItem>
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
           title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-    </PageHeaderTools>
+    </div>
   );
 };
 
