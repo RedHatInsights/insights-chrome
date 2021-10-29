@@ -138,8 +138,8 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 expect.objectContaining({
                   isHidden: true,
@@ -199,8 +199,8 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 expect.objectContaining({
                   isHidden: true,
@@ -265,8 +265,8 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 expect.objectContaining({
                   groupId: 'foo',
@@ -337,8 +337,8 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 expect.objectContaining({
                   expandable: true,
@@ -426,8 +426,8 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: ['/baz/bar/quaxx', '/baz/bar', '/foo/bar', '/baz', '/bar'],
               navItems: expect.any(Array),
             },
           },
@@ -480,11 +480,10 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 {
-                  active: true,
                   href: '/insights',
                   isHidden: false,
                   title: 'bar',
@@ -544,18 +543,16 @@ describe('useNavigatiom', () => {
           type: '@@chrome/load-navigation-segment',
           payload: {
             segment: 'insights',
+            pathName: '/insights/dashboard',
             schema: {
-              sortedLinks: expect.any(Array),
               navItems: [
                 {
-                  active: true,
                   expandable: true,
                   isHidden: false,
                   title: 'bar',
                   routes: [
                     {
                       href: '/insights/dashboard',
-                      active: true,
                       isHidden: false,
                     },
                   ],
