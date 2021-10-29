@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
@@ -9,8 +8,6 @@ import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import {
   Bullseye,
   Button,
-  ContextSelector,
-  ContextSelectorItem,
   Dropdown,
   DropdownToggle,
   EmptyState,

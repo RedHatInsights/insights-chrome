@@ -3,15 +3,14 @@ import PropTypes from 'prop-types';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
-import { 
-  MastheadMain, 
-  MastheadBrand, 
-  MastheadContent, 
-  MastheadToggle, 
-  Toolbar, 
-  ToolbarContent, 
-  ToolbarItem, 
-  ToolbarGroup 
+import {
+  MastheadMain,
+  MastheadBrand,
+  MastheadContent,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+  ToolbarGroup,
 } from '@patternfly/react-core';
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
@@ -35,17 +34,28 @@ export const Header = ({ logoClassName }) => {
   return (
     <Fragment>
       <MastheadMain>
-        <MastheadBrand  href="./">
+        <MastheadBrand href="./">
           <Logo />
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
         <Toolbar isFullHeight isStatic>
           <ToolbarContent>
-            {user && <ToolbarItem><AppFilter /></ToolbarItem>}
-            {user && isContextSwitcherEnabled && <ToolbarItem><ContextSwitcher user={user} className="data-hj-suppress" /></ToolbarItem>}
-{/*         {user && <ToolbarItem><FeedbackRoute user={user} /></ToolbarItem>}*/}
-            <ToolbarGroup className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md" alignment={{ default: 'alignRight' }} >
+            {user && (
+              <ToolbarItem>
+                <AppFilter />
+              </ToolbarItem>
+            )}
+            {user && isContextSwitcherEnabled && (
+              <ToolbarItem>
+                <ContextSwitcher user={user} className="data-hj-suppress" />
+              </ToolbarItem>
+            )}
+            {/*         {user && <ToolbarItem><FeedbackRoute user={user} /></ToolbarItem>}*/}
+            <ToolbarGroup
+              className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md"
+              alignment={{ default: 'alignRight' }}
+            >
               <HeaderTools />
             </ToolbarGroup>
           </ToolbarContent>
@@ -69,8 +79,8 @@ Header.defaultProps = {
 
 export const HeaderTools = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
-    if (!user) {
-      return <UnAuthtedHeader />;
-    }
+  if (!user) {
+    return <UnAuthtedHeader />;
+  }
   return <Tools />;
 };

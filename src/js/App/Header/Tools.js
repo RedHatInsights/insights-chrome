@@ -1,12 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Badge,
-  Button,
-  Divider,
-  DropdownItem,
-  ToolbarItem,
-} from '@patternfly/react-core';
+import { Badge, Button, Divider, DropdownItem, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';

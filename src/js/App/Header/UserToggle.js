@@ -101,13 +101,7 @@ export class UserToggle extends Component {
     const toggle = isSmall ? (
       <KebabToggle onToggle={this.onToggle} className="data-hj-suppress" />
     ) : (
-      <DropdownToggle
-        id="UserMenu"
-        icon={<UserIcon />}
-        className="data-hj-suppress"
-        widget-type="UserMenu"
-        onToggle={this.onToggle}
-      >
+      <DropdownToggle id="UserMenu" icon={<UserIcon />} className="data-hj-suppress" widget-type="UserMenu" onToggle={this.onToggle}>
         {account.name}
       </DropdownToggle>
     );
