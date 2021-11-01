@@ -160,7 +160,7 @@ const useAppFilter = () => {
       let bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
       bundles.map((fragment) =>
         axios
-          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json`)
+          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`)
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data })))
           .catch((err) => {
