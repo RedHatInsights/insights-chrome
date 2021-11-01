@@ -112,7 +112,7 @@ export class UserToggle extends Component {
         ouiaId="chrome-user-menu"
         onSelect={this.onSelect}
         toggle={toggle}
-        className="pf-m-expanded"
+        className="pf-m-expanded chr-c-dropdown-user-toggle"
         isOpen={isOpen}
         dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
       />

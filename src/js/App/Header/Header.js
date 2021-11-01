@@ -39,6 +39,9 @@ export const Header = ({ logoClassName }) => {
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
+        {user && 
+          <FeedbackRoute user={user} />
+        }
         <Toolbar isFullHeight isStatic>
           <ToolbarContent>
             {user && (
@@ -51,7 +54,6 @@ export const Header = ({ logoClassName }) => {
                 <ContextSwitcher user={user} className="data-hj-suppress" />
               </ToolbarItem>
             )}
-            {/*         {user && <ToolbarItem><FeedbackRoute user={user} /></ToolbarItem>}*/}
             <ToolbarGroup
               className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md"
               alignment={{ default: 'alignRight' }}
