@@ -93,6 +93,7 @@ class ToolbarToggle extends Component {
         dropdownItems={dropdownItems}
         onSelect={this.onSelect}
         ouiaId={this.props.ouiaId}
+        isPlain
       />
     );
   }

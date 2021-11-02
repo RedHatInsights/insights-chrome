@@ -3,15 +3,7 @@ import PropTypes from 'prop-types';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
-import {
-  MastheadMain,
-  MastheadBrand,
-  MastheadContent,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  ToolbarGroup,
-} from '@patternfly/react-core';
+import { MastheadMain, MastheadBrand, MastheadContent, Toolbar, ToolbarContent, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
@@ -39,10 +31,8 @@ export const Header = ({ logoClassName }) => {
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
-        {user && 
-          <FeedbackRoute user={user} />
-        }
-        <Toolbar isFullHeight isStatic>
+        {user && <FeedbackRoute user={user} />}
+        <Toolbar isFullHeight>
           <ToolbarContent>
             {user && (
               <ToolbarItem>
