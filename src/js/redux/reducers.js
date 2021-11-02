@@ -90,13 +90,13 @@ export function loadModulesSchemaReducer(state, { payload: { schema } }) {
       [name]: {
         name,
         module: `${name}#./RootApp`,
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}?ts=${Date.now()}`,
       },
     }),
     {
       chrome: {
         name: 'chrome',
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
       },
     }
   );
