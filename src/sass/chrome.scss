@@ -166,6 +166,19 @@ aside {
     grid-row-end: 4;
 }
 
+/**
+* patch for issue: https://github.com/patternfly/patternfly-react/issues/6540
+* navigation arrow is always looking as if the expandable section is expanded
+*/
+.pf-c-nav__item .pf-c-nav__toggle-icon {
+    transform: none !important;
+}
+
+.pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon, .pf-c-nav__item .pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon {
+    transform: rotate(var(--pf-c-nav__item--m-expanded__toggle-icon--Rotate)) !important;
+}
+
+
 // Page footer
 .ins-c-footer {
     grid-column-start: 1;
