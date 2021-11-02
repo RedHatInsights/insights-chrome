@@ -83,23 +83,25 @@ const useNavigation = () => {
   useEffect(() => {
     let observer;
     if (currentNamespace) {
-      axios.get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json`).then(async (response) => {
-        if (observer && typeof observer.disconnect === 'function') {
-          observer.disconnect();
-        }
+      axios
+        .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
+        .then(async (response) => {
+          if (observer && typeof observer.disconnect === 'function') {
+            observer.disconnect();
+          }
 
-        const data = response.data;
-        const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
-        const schema = {
-          ...data,
-          navItems,
-        };
-        observer = registerLocationObserver(pathname, schema);
-        observer.observe(document.querySelector('body'), {
-          childList: true,
-          subtree: true,
+          const data = response.data;
+          const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
+          const schema = {
+            ...data,
+            navItems,
+          };
+          observer = registerLocationObserver(pathname, schema);
+          observer.observe(document.querySelector('body'), {
+            childList: true,
+            subtree: true,
+          });
         });
-      });
     }
     return () => {
       if (observer && typeof observer.disconnect === 'function') {

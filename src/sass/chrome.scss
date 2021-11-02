@@ -1,6 +1,7 @@
 $pf-global--enable-reset: 'true';
 
-@import '~@patternfly/patternfly/patternfly-base.scss';
+@import '~@patternfly/patternfly/patternfly.scss';
+@import '~@patternfly/patternfly/patternfly-addons.scss';
 
 // Quick starts
 @import '~@patternfly/quickstarts/dist/quickstarts.min';
@@ -12,26 +13,6 @@ $pf-global--enable-reset: 'true';
 .pfext-page-layout__content.pfext-is-dark {
     background: unset;
 }
-
-// Components
-@import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
-@import '~@patternfly/patternfly/components/Page/page.scss';
-@import '~@patternfly/patternfly/components/BackgroundImage/background-image.scss';
-@import '~@patternfly/patternfly/components/Nav/nav.scss';
-@import '~@patternfly/patternfly/components/Button/button.scss';
-@import '~@patternfly/patternfly/components/Dropdown/dropdown.scss';
-@import '~@patternfly/patternfly/components/Avatar/avatar.scss';
-@import '~@patternfly/patternfly/components/Title/title.scss';
-@import '~@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
-@import '~@patternfly/patternfly/components/ModalBox/modal-box.scss';
-@import '~@patternfly/patternfly/components/Backdrop/backdrop.scss';
-@import '~@patternfly/patternfly/components/Switch/switch.scss';
-@import '~@patternfly/patternfly/components/Alert/alert.scss';
-
-// Layouts
-@import '~@patternfly/patternfly/layouts/Split/split.scss';
-@import '~@patternfly/patternfly/layouts/Flex/flex.scss';
-@import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
 // Accessibility
 @import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
@@ -153,6 +134,19 @@ aside {
 .pf-c-page__sidebar {
     grid-row-end: 4;
 }
+
+/**
+* patch for issue: https://github.com/patternfly/patternfly-react/issues/6540
+* navigation arrow is always looking as if the expandable section is expanded
+*/
+.pf-c-nav__item .pf-c-nav__toggle-icon {
+    transform: none !important;
+}
+
+.pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon, .pf-c-nav__item .pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon {
+    transform: rotate(var(--pf-c-nav__item--m-expanded__toggle-icon--Rotate)) !important;
+}
+
 
 // Page footer
 .ins-c-footer {
