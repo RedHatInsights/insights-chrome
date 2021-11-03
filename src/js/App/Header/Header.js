@@ -11,7 +11,8 @@ import Logo from './Logo';
 import { Route } from 'react-router-dom';
 
 const FeedbackRoute = ({ user }) => {
-  const path = localStorage.getItem('chrome:experimental:feedback') === 'true' ? '*' : ['/insights', '/settings'];
+  const path =
+    localStorage.getItem('chrome:experimental:feedback') === 'true' ? '*' : ['/insights', '/settings', '/openshift', '/application-services'];
   return (
     <Route path={path}>
       <Feedback user={user} />

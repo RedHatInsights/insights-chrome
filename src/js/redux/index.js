@@ -15,6 +15,7 @@ import {
   toggleFeedbackModal,
   accessRequestsNotificationsReducer,
   markAccessRequestRequestReducer,
+  storeInitialHashReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -51,6 +52,7 @@ import {
   TOGGLE_FEEDBACK_MODAL,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   MARK_REQUEST_NOTIFICATION_SEEN,
+  STORE_INITIAL_HASH,
 } from './action-types';
 
 const reducers = {
@@ -68,6 +70,7 @@ const reducers = {
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
+  [STORE_INITIAL_HASH]: storeInitialHashReducer,
 };
 
 const globalFilter = {

@@ -30,9 +30,17 @@ const App = () => {
   const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
   const dispatch = useDispatch();
   useEffect(() => {
-    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json`).then((response) => {
-      dispatch(loadModuesSchema(response.data));
-    });
+    axios
+      .get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      })
+      .then((response) => {
+        dispatch(loadModuesSchema(response.data));
+      });
   }, []);
 
   if (!modules || !scalprumConfig) {
@@ -44,7 +52,7 @@ const App = () => {
 
 function renderChrome() {
   const { store } = spinUpStore();
-  const pageRoot = document.querySelector('.pf-c-page__drawer');
+  const pageRoot = document.getElementById('chrome-entry');
   if (pageRoot) {
     ReactDOM.render(
       <Provider store={store}>

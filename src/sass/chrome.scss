@@ -1,6 +1,7 @@
 $pf-global--enable-reset: 'true';
 
-@import '~@patternfly/patternfly/patternfly-base.scss';
+@import '~@patternfly/patternfly/patternfly.scss';
+@import '~@patternfly/patternfly/patternfly-addons.scss';
 
 // Quick starts
 @import '~@patternfly/quickstarts/dist/quickstarts.min';
@@ -12,26 +13,6 @@ $pf-global--enable-reset: 'true';
 .pfext-page-layout__content.pfext-is-dark {
     background: unset;
 }
-
-// Components
-@import '~@patternfly/patternfly/components/Toolbar/toolbar.scss';
-@import '~@patternfly/patternfly/components/Page/page.scss';
-@import '~@patternfly/patternfly/components/BackgroundImage/background-image.scss';
-@import '~@patternfly/patternfly/components/Nav/nav.scss';
-@import '~@patternfly/patternfly/components/Button/button.scss';
-@import '~@patternfly/patternfly/components/Dropdown/dropdown.scss';
-@import '~@patternfly/patternfly/components/Avatar/avatar.scss';
-@import '~@patternfly/patternfly/components/Title/title.scss';
-@import '~@patternfly/patternfly/components/AboutModalBox/about-modal-box.scss';
-@import '~@patternfly/patternfly/components/ModalBox/modal-box.scss';
-@import '~@patternfly/patternfly/components/Backdrop/backdrop.scss';
-@import '~@patternfly/patternfly/components/Switch/switch.scss';
-@import '~@patternfly/patternfly/components/Alert/alert.scss';
-
-// Layouts
-@import '~@patternfly/patternfly/layouts/Split/split.scss';
-@import '~@patternfly/patternfly/layouts/Flex/flex.scss';
-@import '~@patternfly/patternfly/layouts/Bullseye/bullseye.scss';
 
 // Accessibility
 @import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
@@ -48,6 +29,10 @@ body {
 
 aside {
     overflow: auto !important;
+}
+
+.inc-c-chrome__root-element {
+    min-height: 100vh;
 }
 
 .pf-c-page.ins-c-page__hasBanner {
@@ -113,15 +98,6 @@ aside {
     }
 }
 
-#chrome-app-render-root {
-    /* https://github.com/RedHatInsights/insights-chrome/pull/1278/files#diff-e953d69488a613b49aa81408a3595bd7161bf7547cca09d3378351b6c4552502L93
-    * 100% heing is required to have the nav and app content to fill the page height even though there is not enough content.
-    * It will be cut off witout it.
-    * We will revisit this rule after all apps have adopted chrome 2 and we have only one required layout.
-    */
-    height: 100%;
-}
-
 // Landing page logout alert
 .pf-c-alert.ins-c-alert {
     position: absolute;
@@ -170,6 +146,19 @@ aside {
 .pf-c-page__sidebar {
     grid-row-end: 4;
 }
+
+/**
+* patch for issue: https://github.com/patternfly/patternfly-react/issues/6540
+* navigation arrow is always looking as if the expandable section is expanded
+*/
+.pf-c-nav__item .pf-c-nav__toggle-icon {
+    transform: none !important;
+}
+
+.pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon, .pf-c-nav__item .pf-c-nav__item.pf-m-expanded .pf-c-nav__toggle-icon {
+    transform: rotate(var(--pf-c-nav__item--m-expanded__toggle-icon--Rotate)) !important;
+}
+
 
 // Page footer
 .ins-c-footer {

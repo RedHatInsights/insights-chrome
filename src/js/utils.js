@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import { setupCache } from 'axios-cache-adapter';
 import { createCacheStore } from './utils/cache';
 import { DEFAULT_ROUTES } from './jwt/constants';
+import flatMap from 'lodash/flatMap';
 
 export function getWindow() {
   return window;
@@ -160,3 +161,77 @@ export function updateDocumentTitle(title) {
     console.warn(`Title is not a string. Got ${typeof title} instead.`);
   }
 }
+
+const activateChild = (hrefMatch, childRoutes) => {
+  let hasActiveChild = false;
+  const routes = childRoutes.map((item) => {
+    const active = item.href === hrefMatch;
+    if (active) {
+      hasActiveChild = true;
+    }
+    return {
+      ...item,
+      active,
+    };
+  });
+  return {
+    active: hasActiveChild,
+    routes,
+  };
+};
+
+function mutateSchema(hrefMatch, navItems) {
+  return navItems.map((item) => {
+    const { href, routes, navItems } = item;
+    if (!href && navItems) {
+      return {
+        ...item,
+        navItems: mutateSchema(hrefMatch, navItems),
+      };
+    }
+
+    if (!href && routes) {
+      return {
+        ...item,
+        ...activateChild(hrefMatch, routes),
+      };
+    }
+
+    if (href) {
+      return {
+        ...item,
+        active: item.href === hrefMatch,
+      };
+    }
+
+    return item;
+  });
+}
+
+export const highlightItems = (pathname, navItems, sortedLinks) => {
+  const cleanPathname = pathname.replace(/\/$/, '');
+  const segmentsCount = cleanPathname.split('/').length + 1;
+  const matchedLink = sortedLinks.find((href) => {
+    const segmentedHref = href.replace(/\/$/, '').split('/').slice(0, segmentsCount).join('/');
+    return cleanPathname.includes(segmentedHref);
+  });
+  return mutateSchema(matchedLink?.replace(/\/$/, ''), navItems);
+};
+
+export const levelArray = (navItems) => {
+  return flatMap(navItems, ({ href, routes, navItems }) => {
+    if (!href && navItems) {
+      return levelArray(navItems);
+    }
+
+    if (!href && routes) {
+      return levelArray(routes);
+    }
+
+    if (href) {
+      return [href];
+    }
+
+    return [];
+  });
+};

@@ -1,14 +1,18 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { isBeta } from '../../utils';
+import chromeHistory from '../../utils/chromeHistory';
 import CrossRequestNotifier from '../CrossRequestNotifier';
+import IDPChecker from './IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 
 const RootApp = (props) => (
-  <BrowserRouter basename={isBeta() ? '/beta' : '/'}>
-    <CrossRequestNotifier />
-    <ScalprumRoot {...props} />
-  </BrowserRouter>
+  <Router history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
+    <IDPChecker>
+      <CrossRequestNotifier />
+      <ScalprumRoot {...props} />
+    </IDPChecker>
+  </Router>
 );
 
 export default RootApp;

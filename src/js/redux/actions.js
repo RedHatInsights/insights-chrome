@@ -1,10 +1,12 @@
 import * as actionTypes from './action-types';
 import { getAllTags, getAllSIDs, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 
-export const userLogIn = (user) => ({
-  type: actionTypes.USER_LOGIN,
-  payload: user,
-});
+export function userLogIn(user) {
+  return {
+    type: actionTypes.USER_LOGIN,
+    payload: user,
+  };
+}
 
 export function appNavClick(item, event) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item && item.id, event } };
@@ -89,11 +91,12 @@ export const loadNavigationLandingPage = (schema) => ({
   payload: schema,
 });
 
-export const loadLeftNavSegment = (schema, segment) => ({
+export const loadLeftNavSegment = (schema, segment, pathName) => ({
   type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
   payload: {
     segment,
     schema,
+    pathName,
   },
 });
 
@@ -133,5 +136,10 @@ export const updateAccessRequestsNotifications = (payload) => ({
 
 export const markAccessRequestNotification = (payload) => ({
   type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
+  payload,
+});
+
+export const storeInitialHash = (payload) => ({
+  type: actionTypes.STORE_INITIAL_HASH,
   payload,
 });

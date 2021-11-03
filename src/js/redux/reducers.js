@@ -1,5 +1,6 @@
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
-import { isBeta } from '../utils';
+import { isBeta, highlightItems, isFedRamp, levelArray } from '../utils';
+import merge from 'lodash/merge';
 
 export function contextSwitcherBannerReducer(state) {
   state = {
@@ -17,8 +18,10 @@ export function appNavClick(state, { payload }) {
 }
 
 export function loginReducer(state, { payload }) {
+  const missingIDP = isFedRamp() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
   return {
     ...state,
+    missingIDP,
     user: payload,
   };
 }
@@ -64,12 +67,18 @@ export function loadNavigationLandingPageReducer(state, { payload }) {
   };
 }
 
-export function loadNavigationSegmentReducer(state, { payload: { segment, schema } }) {
+export function loadNavigationSegmentReducer(state, { payload: { segment, schema, pathName } }) {
+  const mergedSchema = merge(state.navigation?.[segment] || {}, schema);
+  const sortedLinks = levelArray(mergedSchema.navItems).sort((a, b) => (a.length < b.length ? 1 : -1));
   return {
     ...state,
     navigation: {
       ...state.navigation,
-      [segment]: schema,
+      [segment]: {
+        ...mergedSchema,
+        navItems: pathName ? highlightItems(pathName, mergedSchema.navItems, sortedLinks) : mergedSchema.navItems,
+        sortedLinks,
+      },
     },
   };
 }
@@ -81,13 +90,13 @@ export function loadModulesSchemaReducer(state, { payload: { schema } }) {
       [name]: {
         name,
         module: `${name}#./RootApp`,
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}?ts=${Date.now()}`,
       },
     }),
     {
       chrome: {
         name: 'chrome',
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json`,
+        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
       },
     }
   );
@@ -153,5 +162,13 @@ export function markAccessRequestRequestReducer(state, { payload }) {
       hasUnseen: newData.length > 0,
       data: newData,
     },
+  };
+}
+
+export function storeInitialHashReducer(state, { payload }) {
+  const initialHash = typeof payload === 'string' ? payload.replace(/^#/, '') : undefined;
+  return {
+    ...state,
+    initialHash,
   };
 }

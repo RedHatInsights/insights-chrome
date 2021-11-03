@@ -4,6 +4,7 @@ const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
+const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles')
 
 // call default generator then pair different variations of uri with each base
 const myGenerator = asGenerator((item, ...rest) => {
@@ -29,10 +30,9 @@ const commonConfig = ({ publicPath, noHash }) => ({
   devtool: false,
   resolve: {
     alias: {
-      PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
-      customReact: path.resolve(__dirname, './react-external.js'),
-      reactRedux: path.resolve(__dirname, './react-redux-external.js'),
-      PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js'),
+      ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+      '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
+      '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
     },
     fallback: {
       path: require.resolve('path-browserify'),
