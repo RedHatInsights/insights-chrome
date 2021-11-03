@@ -94,7 +94,7 @@ const ContextSwitcher = ({ user, className }) => {
   return (
     <ContextSelector
       toggleText={`Account: ${selectedAccountNumber}`}
-      className={classNames('ins-c-page__context-switcher-dropdown', className)}
+      className={classNames('chr-c-context-selector', className)}
       onSearchInputChange={(val) => setSearchValue(val)}
       isOpen={isOpen}
       searchInputValue={searchValue}
@@ -107,7 +107,7 @@ const ContextSwitcher = ({ user, className }) => {
     >
       {user && user?.identity?.account_number.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
-          <TextContent className="personal-account">
+          <TextContent className="chr-c-content-personal-account">
             <Text className="account-label pf-u-mb-0">
               <span>{user?.identity?.account_number}</span>
               {user?.identity?.account_number === `${selectedAccountNumber}` && (

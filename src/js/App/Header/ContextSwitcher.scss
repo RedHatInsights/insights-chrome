@@ -1,8 +1,7 @@
 @import '~@patternfly/patternfly/sass-utilities/_all';
-.ins-c-page__context-switcher-dropdown {
-  .personal-account {
-    width: 100%;
-    text-align: left;
+.chr-c-context-selector {
+  --pf-c-masthead--c-context-selector--Width: 224px;
+  .chr-c-content-personal-account {
     .account-label {
       display: flex;
       flex-direction: row;
@@ -12,14 +11,6 @@
   .pf-c-context-selector__menu-list-item {
     svg {
       font-size: 9px;
-    }
-  }
-}
-
-@media screen and (max-width: $pf-global--breakpoint--lg) {
-  .ins-c-page__context-switcher-dropdown {
-    .pf-c-context-selector__toggle {
-      display: none;
     }
   }
 }

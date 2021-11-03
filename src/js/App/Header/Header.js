@@ -40,7 +40,7 @@ export const Header = ({ logoClassName }) => {
               </ToolbarItem>
             )}
             {user && isContextSwitcherEnabled && (
-              <ToolbarItem>
+              <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
                 <ContextSwitcher user={user} className="data-hj-suppress" />
               </ToolbarItem>
             )}
