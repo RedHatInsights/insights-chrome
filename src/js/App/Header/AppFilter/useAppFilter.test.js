@@ -74,6 +74,9 @@ describe('useAppFilter', () => {
   });
 
   test('should create 6 API calls on the first dropdown open', async () => {
+    const dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
+      return 666;
+    });
     const axiosGetSpy = jest.spyOn(axios.default, 'get');
     axiosGetSpy.mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
@@ -96,9 +99,10 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(6);
     for (let index = 0; index < 6; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json`]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json?ts=666`]);
     }
     axiosGetSpy.mockReset();
+    dateSpy.mockRestore();
   });
 
   test('should flatten group navigation', async () => {
