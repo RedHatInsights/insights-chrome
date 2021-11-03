@@ -15,7 +15,7 @@ const DynamicNav = ({ dynamicNav }) => {
   const [appName] = dynamicNav.split('/');
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }) => navigation[currentNamespace]);
-  const { default: navigation } = useModule(appName, './Navigation', {});
+  const { default: navigation } = useModule(appName, './Navigation', {}) || {};
   useEffect(() => {
     if (navigation) {
       if (typeof navigation === 'function') {
