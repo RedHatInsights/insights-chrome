@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Button, Divider, DropdownItem, ToolbarItem } from '@patternfly/react-core';
+import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -46,7 +46,6 @@ const SettingsButton = ({ settingsMenuDropdownItems }) => (
     key="Settings menu"
     icon={() => (
       <>
-        {isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}
         <CogIcon />
       </>
     )}
@@ -149,19 +148,24 @@ const Tools = () => {
   );
 
   return (
-    <div widget-type="InsightsToolbar">
+    <ToolbarGroup
+      className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
+      alignment={{ default: 'alignRight' }}
+      spaceItems={{ default: 'spaceItemsNone' }}
+      widget-type="InsightsToolbar"
+    >
       <ToolbarItem>
-        {isInternal && !window.insights.chrome.isProd && (
-          <div>{<InternalButton />}</div>
-        )}
-        {!isSettingsDisabled && <div>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</div>}
+        {isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}
+      </ToolbarItem>
+      {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
+      {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
         {<AboutButton />}
 
-        <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
-          <UserToggle className="ins-c-dropdown__user" />
-        </ToolbarItem>
+      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
+        <UserToggle className="ins-c-dropdown__user" />
+      </ToolbarItem>
 
-        {/* Collapse tools and user dropdown to kebab on small screens  */}
+      {/* Collapse tools and user dropdown to kebab on small screens  */}
 
         <ToolbarItem visibility={{ lg: 'hidden' }}>
           <UserToggle
@@ -191,14 +195,14 @@ const Tools = () => {
             ))}
           />
         </ToolbarItem>
-      </ToolbarItem>
+
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
           title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-    </div>
+    </ToolbarGroup>
   );
 };
 

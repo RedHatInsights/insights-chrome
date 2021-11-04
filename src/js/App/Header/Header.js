@@ -21,7 +21,7 @@ const FeedbackRoute = ({ user }) => {
   );
 };
 
-export const Header = ({ logoClassName }) => {
+export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
   return (
     <Fragment>
@@ -34,22 +34,19 @@ export const Header = ({ logoClassName }) => {
         {user && <FeedbackRoute user={user} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
-            {user && (
-              <ToolbarItem>
-                <AppFilter />
-              </ToolbarItem>
-            )}
-            {user && isContextSwitcherEnabled && (
-              <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
-                <ContextSwitcher user={user} className="data-hj-suppress" />
-              </ToolbarItem>
-            )}
-            <ToolbarGroup
-              className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md"
-              alignment={{ default: 'alignRight' }}
-            >
-              <HeaderTools />
+            <ToolbarGroup variant="filter-group">
+              {user && (
+                <ToolbarItem>
+                  <AppFilter />
+                </ToolbarItem>
+              )}
+              {user && isContextSwitcherEnabled && (
+                <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
+                  <ContextSwitcher user={user} className="data-hj-suppress" />
+                </ToolbarItem>
+              )}
             </ToolbarGroup>
+            <HeaderTools />
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>

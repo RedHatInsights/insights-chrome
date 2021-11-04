@@ -96,8 +96,6 @@ aside {
 }
 
 // Header
-
-
 .chr-c-masthead {
   overflow: visible;
   .chr-c-dropdown-item__stack {
@@ -116,7 +114,6 @@ aside {
   .chr-c-badge-beta {
     background-color: var(--pf-global--palette--green-300);
     color: var(--pf-global--Color--dark-100);
-    margin-right: var(--pf-global--spacer--sm);
   }
   .chr-c-dropdown-user-toggle {
     --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: #151515;
