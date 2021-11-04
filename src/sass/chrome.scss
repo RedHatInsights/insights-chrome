@@ -109,14 +109,7 @@ aside {
     font-size: var(--pf-global--FontSize--xs);
   }
   .chr-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
-  .pf-c-page__header-brand-link img { @include rem('height', 30px); }
-  .pf-c-page__header-brand-toggle svg {
-    @include rem('height', 21px);
-    @include rem('width', 21px);
-  }
-  .pf-c-page__header-tools .pf-c-avatar {
-    height: var(--pf-global--FontSize--4xl);
-  }
+
   .chr-c-brand {
     width: 170px;
   }
