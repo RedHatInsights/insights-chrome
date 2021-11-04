@@ -152,7 +152,7 @@ const Tools = () => {
     <div widget-type="InsightsToolbar">
       <ToolbarItem>
         {isInternal && !window.insights.chrome.isProd && (
-          <div isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</div>
+          <div>{<InternalButton />}</div>
         )}
         {!isSettingsDisabled && <div>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</div>}
         {<AboutButton />}

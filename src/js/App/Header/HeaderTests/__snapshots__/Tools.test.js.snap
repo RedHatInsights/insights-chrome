@@ -2,37 +2,22 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-c-page__header-tools"
   widget-type="InsightsToolbar"
 >
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
+    class="pf-c-toolbar__item"
   >
-    <div
-      class="pf-c-page__header-tools-item"
-    >
+    <div>
       &lt;ToolbarToggle /&gt;
     </div>
+    &lt;ToolbarToggle /&gt;
     <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;ToolbarToggle /&gt;
-    </div>
-  </div>
-  <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
-  >
-    <div
-      class="pf-c-page__header-tools-item"
+      class="pf-c-toolbar__item pf-m-hidden pf-m-visible-on-lg"
     >
       &lt;UserToggle /&gt;
     </div>
-  </div>
-  <div
-    class="pf-c-page__header-tools-group pf-m-hidden-on-lg"
-  >
     <div
-      class="pf-c-page__header-tools-item"
+      class="pf-c-toolbar__item pf-m-hidden-on-lg"
     >
       &lt;UserToggle /&gt;
     </div>

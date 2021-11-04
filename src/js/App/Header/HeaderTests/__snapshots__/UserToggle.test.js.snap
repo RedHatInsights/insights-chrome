@@ -4,7 +4,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
 <div>
   <div
     aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right"
+    class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
     data-ouia-component-id="chrome-user-menu"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -12,7 +12,7 @@ exports[`ConnectedUserToggle -- not org admin should render correctly 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="true"
-      class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user data-hj-suppress"
+      class="pf-c-dropdown__toggle data-hj-suppress"
       data-ouia-component-id="OUIA-Generated-DropdownToggle-2"
       data-ouia-component-type="PF4/DropdownToggle"
       data-ouia-safe="true"
@@ -56,7 +56,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
 <div>
   <div
     aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right"
+    class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
     data-ouia-component-id="chrome-user-menu"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -64,7 +64,7 @@ exports[`ConnectedUserToggle -- org admin should render correctly 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="true"
-      class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user data-hj-suppress"
+      class="pf-c-dropdown__toggle data-hj-suppress"
       data-ouia-component-id="OUIA-Generated-DropdownToggle-3"
       data-ouia-component-type="PF4/DropdownToggle"
       data-ouia-safe="true"
@@ -108,7 +108,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
 <div>
   <div
     aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right"
+    class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
     data-ouia-component-id="chrome-user-menu"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -116,7 +116,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
     <button
       aria-expanded="false"
       aria-haspopup="true"
-      class="pf-c-dropdown__toggle pf-m-plain ins-c-toolbar__menu-user data-hj-suppress"
+      class="pf-c-dropdown__toggle data-hj-suppress"
       data-ouia-component-id="OUIA-Generated-DropdownToggle-1"
       data-ouia-component-type="PF4/DropdownToggle"
       data-ouia-safe="true"
@@ -160,7 +160,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
 <div>
   <div
     aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right"
+    class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
     data-ouia-component-id="chrome-user-menu"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -169,7 +169,7 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
       aria-expanded="false"
       aria-haspopup="true"
       aria-label="Actions"
-      class="pf-c-dropdown__toggle pf-m-plain data-hj-suppress"
+      class="pf-c-dropdown__toggle data-hj-suppress"
       id="pf-dropdown-toggle-id-0"
       type="button"
     >
