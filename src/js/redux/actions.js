@@ -91,12 +91,13 @@ export const loadNavigationLandingPage = (schema) => ({
   payload: schema,
 });
 
-export const loadLeftNavSegment = (schema, segment, pathName) => ({
+export const loadLeftNavSegment = (schema, segment, pathName, shouldMerge) => ({
   type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
   payload: {
     segment,
     schema,
     pathName,
+    shouldMerge,
   },
 });
 

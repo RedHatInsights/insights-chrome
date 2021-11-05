@@ -20,11 +20,25 @@ const DynamicNav = ({ dynamicNav }) => {
     if (navigation) {
       if (typeof navigation === 'function') {
         Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
-          schema.navItems = schema?.navItems?.map((item, key) => ({
-            ...item,
-            ...(key === schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav) && data),
-          }));
-          dispatch(loadLeftNavSegment(schema, currentNamespace, window.location.pathname));
+          const indexOfDynamicNav = schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav);
+          delete schema.navItems[indexOfDynamicNav].dynamicNav;
+          if (Array.isArray(data)) {
+            schema.navItems.splice(
+              indexOfDynamicNav,
+              1,
+              ...data.map((item) => ({
+                appId: dynamicNav.split('/')[0],
+                ...schema.navItems[indexOfDynamicNav],
+                ...item,
+              }))
+            );
+          } else {
+            schema.navItems = schema?.navItems?.map((item, key) => ({
+              ...item,
+              ...(key === indexOfDynamicNav && data),
+            }));
+          }
+          dispatch(loadLeftNavSegment(schema, currentNamespace, window.location.pathname, true));
         });
       }
     }
