@@ -19,27 +19,35 @@ const DynamicNav = ({ dynamicNav }) => {
   useEffect(() => {
     if (navigation) {
       if (typeof navigation === 'function') {
-        Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
-          const indexOfDynamicNav = schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav);
-          delete schema.navItems[indexOfDynamicNav].dynamicNav;
-          if (Array.isArray(data)) {
-            schema.navItems.splice(
-              indexOfDynamicNav,
-              1,
-              ...data.map((item) => ({
-                appId: dynamicNav.split('/')[0],
-                ...schema.navItems[indexOfDynamicNav],
-                ...item,
-              }))
+        const indexOfDynamicNav = schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav);
+        if (indexOfDynamicNav !== -1) {
+          const { dynamicNav: _dynamicNav, ...originalNav } = schema.navItems[indexOfDynamicNav];
+          Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
+            const newValue = Array.isArray(data)
+              ? data.map((item) => ({
+                  appId: dynamicNav.split('/')[0],
+                  ...originalNav,
+                  ...item,
+                }))
+              : [
+                  {
+                    ...originalNav,
+                    ...data,
+                  },
+                ];
+            dispatch(
+              loadLeftNavSegment(
+                {
+                  ...schema,
+                  navItems: schema.navItems.flatMap((item, key) => (key === indexOfDynamicNav ? newValue : item)),
+                },
+                currentNamespace,
+                window.location.pathname,
+                true
+              )
             );
-          } else {
-            schema.navItems = schema?.navItems?.map((item, key) => ({
-              ...item,
-              ...(key === indexOfDynamicNav && data),
-            }));
-          }
-          dispatch(loadLeftNavSegment(schema, currentNamespace, window.location.pathname, true));
-        });
+          });
+        }
       }
     }
   }, [navigation]);
