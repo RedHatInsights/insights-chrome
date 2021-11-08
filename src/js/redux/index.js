@@ -16,6 +16,8 @@ import {
   accessRequestsNotificationsReducer,
   markAccessRequestRequestReducer,
   storeInitialHashReducer,
+  populateQuickstartsReducer,
+  disableQuickstartsReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -53,6 +55,8 @@ import {
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   MARK_REQUEST_NOTIFICATION_SEEN,
   STORE_INITIAL_HASH,
+  POPULATE_QUICKSTARTS_CATALOG,
+  DISABLE_QUICKSTARTS,
 } from './action-types';
 
 const reducers = {
@@ -71,6 +75,8 @@ const reducers = {
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
   [STORE_INITIAL_HASH]: storeInitialHashReducer,
+  [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
+  [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
 };
 
 const globalFilter = {
@@ -96,6 +102,9 @@ export default function () {
         accessRequests: {
           count: 0,
           data: [],
+        },
+        quickstarts: {
+          quickstarts: {},
         },
       },
       action
