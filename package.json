@@ -35,7 +35,8 @@
     "watch:sass": "npm run build:sass -- -w",
     "watch:beta:js": "npm run build:js:beta -- --watch --mode=development --env noHash=true",
     "watch:beta:sass": "npm run build:sass -- -w",
-    "nightly": "npm run build"
+    "nightly": "npm run build",
+    "dev": "webpack serve --config config/webpack.config.js --mode=development"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
@@ -84,7 +85,7 @@
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.1",
-    "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.2",
+    "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.3",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.2",
     "assert": "^2.0.0",
@@ -128,6 +129,7 @@
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.4.0",
     "write-file-webpack-plugin": "^4.5.1"
   },
   "dependencies": {
