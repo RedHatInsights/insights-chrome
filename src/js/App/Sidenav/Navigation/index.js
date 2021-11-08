@@ -5,15 +5,17 @@ import NavContext from './navContext';
 import componentMapper from './componentMapper';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../BetaInfoModal';
-import { isBeta } from '../../../utils';
+import { getUrl, isBeta } from '../../../utils';
 
 import useNavigation from '../../../utils/useNavigation';
 import NavLoader from './Loader';
+import ChromeNavItem from './ChromeNavItem';
 
 const Navigation = () => {
   const { loaded, schema } = useNavigation();
   const [showBetaModal, setShowBetaModal] = useState();
   const deferedOnClickArgs = useRef([]);
+  const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
   const onLinkClick = (origEvent, href) => {
     if (!showBetaModal && !isBeta()) {
@@ -48,6 +50,7 @@ const Navigation = () => {
                 {schema.navItems.map((item, index) => (
                   <ChromeNavItemFactory key={index} {...item} />
                 ))}
+                {showBundleCatalog ? <ChromeNavItem title="Quickstarts" href={`/${getUrl('bundle')}/quickstarts`} appId="dynamic" /> : <Fragment />}
               </NavContext.Provider>
             )}
           </PageContextConsumer>
