@@ -154,12 +154,10 @@ const Tools = () => {
       spaceItems={{ default: 'spaceItemsNone' }}
       widget-type="InsightsToolbar"
     >
-      <ToolbarItem>
-        {isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}
-      </ToolbarItem>
+      <ToolbarItem>{isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}</ToolbarItem>
       {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
       {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
-        {<AboutButton />}
+      {<AboutButton />}
 
       <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
         <UserToggle className="ins-c-dropdown__user" />
@@ -167,34 +165,34 @@ const Tools = () => {
 
       {/* Collapse tools and user dropdown to kebab on small screens  */}
 
-        <ToolbarItem visibility={{ lg: 'hidden' }}>
-          <UserToggle
-            isSmall
-            extraItems={mobileDropdownItems.map((action, key) => (
-              <React.Fragment key={key}>
-                {action.title === 'separator' ? (
-                  <Divider component="li" />
-                ) : (
-                  <DropdownItem
-                    {...(action.onClick
-                      ? {
-                          component: 'button',
-                          onClick: action.onClick,
-                        }
-                      : {
-                          href: action.url,
-                          component: 'a',
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                        })}
-                  >
-                    {action.title}
-                  </DropdownItem>
-                )}
-              </React.Fragment>
-            ))}
-          />
-        </ToolbarItem>
+      <ToolbarItem visibility={{ lg: 'hidden' }}>
+        <UserToggle
+          isSmall
+          extraItems={mobileDropdownItems.map((action, key) => (
+            <React.Fragment key={key}>
+              {action.title === 'separator' ? (
+                <Divider component="li" />
+              ) : (
+                <DropdownItem
+                  {...(action.onClick
+                    ? {
+                        component: 'button',
+                        onClick: action.onClick,
+                      }
+                    : {
+                        href: action.url,
+                        component: 'a',
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                      })}
+                >
+                  {action.title}
+                </DropdownItem>
+              )}
+            </React.Fragment>
+          ))}
+        />
+      </ToolbarItem>
 
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
