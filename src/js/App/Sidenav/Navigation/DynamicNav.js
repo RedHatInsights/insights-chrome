@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useModule } from '@scalprum/react-core';
+import { useLoadModule } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { NavItem } from '@patternfly/react-core';
@@ -15,7 +15,7 @@ const DynamicNav = ({ dynamicNav }) => {
   const [appName] = dynamicNav.split('/');
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }) => navigation[currentNamespace]);
-  const { default: navigation } = useModule(appName, './Navigation', {}) || {};
+  const [{ default: navigation }] = useLoadModule({ appName, scope: appName, module: './Navigation' }, {});
   useEffect(() => {
     if (navigation) {
       if (typeof navigation === 'function') {
