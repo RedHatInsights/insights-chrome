@@ -5,6 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
+const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
 
 // call default generator then pair different variations of uri with each base
 const myGenerator = asGenerator((item, ...rest) => {
@@ -19,7 +20,7 @@ const myGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-const commonConfig = ({ publicPath, noHash }) => ({
+const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
   entry: [path.resolve(__dirname, '../src/sass/chrome.scss'), path.resolve(__dirname, '../src/js/chrome.js')],
   output: {
     path: path.resolve(__dirname, '../build/js'),
@@ -99,12 +100,32 @@ const commonConfig = ({ publicPath, noHash }) => ({
       },
     ],
   },
-  plugins,
-  devServer: {},
+  plugins: plugins(dev),
+  devServer: {
+    allowedHosts: 'all',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    },
+    historyApiFallback: {
+      index: `${publicPath}index.html`,
+    },
+    https: true,
+    port: 1337,
+    ...proxy({
+      env: 'stage-beta',
+      port: 1337,
+      appUrl: [/^\/*$/, /^\/beta\/*$/],
+      useProxy: true,
+      publicPath,
+      proxyVerbose: true,
+      isChrome: true,
+    }),
+  },
 });
 
 module.exports = function (env) {
-  const config = commonConfig({ publicPath: env.publicPath, noHash: env.noHash === 'true' });
+  const config = commonConfig({ dev: env.devServer === 'true', publicPath: env.publicPath, noHash: env.noHash === 'true' });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
   }
