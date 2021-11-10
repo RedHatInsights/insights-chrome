@@ -1,10 +1,10 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Button, Masthead, MastheadToggle, Page, PageSidebar } from '@patternfly/react-core';
+import { Button, Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
@@ -21,12 +21,7 @@ import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
     const dispatch = useDispatch();
-    useEffect(() => {
-      const navToggleElement = document.querySelector('button#nav-toggle');
-      if (navToggleElement) {
-        navToggleElement.onclick = () => dispatch(onToggle());
-      }
-    }, []);
+    const [isNavOpen, setIsNavOpen] = useState(true);
 
     if (!initialized) {
       return null;
@@ -37,19 +32,26 @@ const ShieldedRoot = memo(
 
     return (
       <Page
-        isManagedSidebar={!hideNav}
         className={classnames({ 'ins-c-page__hasBanner': hasBanner, 'ins-c-page__account-banner': selectedAccountNumber })}
         header={
           <Masthead className="chr-c-masthead">
             <MastheadToggle>
-              <Button variant="plain" onClick={() => {}} aria-label="Global navigation">
+              <PageToggleButton
+                variant="plain"
+                aria-label="Global navigation"
+                isNavOpen={isNavOpen}
+                onNavToggle={() => {
+                  setIsNavOpen((prev) => !prev);
+                  dispatch(onToggle());
+                }}
+              >
                 <BarsIcon />
-              </Button>
+              </PageToggleButton>
             </MastheadToggle>
             {<Header />}
           </Masthead>
         }
-        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={Sidebar} />}
+        sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="ins-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
