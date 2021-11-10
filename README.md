@@ -120,25 +120,13 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
     > npm install
     ```
 
-2. Run build command in watch mode
+2. Run dev command in watch mode
 
     ```bash
-    > npm run watch
+    > npm run dev
     ```
 
-3. Open new terminal, navigate to build directory
-
-    ```bash
-    cd ./build
-    ```
-
-4. Run the proxy
-
-    ```bash
-    SPANDX_CONFIG={path-to-app}/profiles/local-frontend.js \
-    LOCAL_CHROME=true \
-    bash {path-to-insights-proxy}/scripts/run.sh
-    ```
+3. Open browser at `https://stage.foo.redhat.com:1337/`.
 
 Where `SPANDX_CONFIG` can be any config for your application (here is an example for [insights-frontend-starter-app](https://github.com/RedHatInsights/insights-frontend-starter-app)), just make sure your application is running `npm start` in said application.
 
