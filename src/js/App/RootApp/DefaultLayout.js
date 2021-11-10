@@ -21,7 +21,38 @@ import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
     const dispatch = useDispatch();
-    const [isNavOpen, setIsNavOpen] = useState(true);
+    const [isMobileView, setIsMobileView] = useState(window.document.body.clientWidth < 1200);
+    const [isNavOpen, setIsNavOpen] = useState(!isMobileView);
+    /**
+     * Required for event listener to access the variables
+     */
+    const mutableStateRef = useRef({
+      isMobileView,
+    });
+    function navReziseListener() {
+      const internalMobile = window.document.body.clientWidth < 1200;
+      const { isMobileView } = mutableStateRef.current;
+      if (!isMobileView && internalMobile) {
+        setIsMobileView(true);
+        setIsNavOpen(false);
+        mutableStateRef.current = {
+          isMobileView: true,
+        };
+      } else if (isMobileView && !internalMobile) {
+        setIsMobileView(false);
+        setIsNavOpen(true);
+        mutableStateRef.current = {
+          isMobileView: false,
+        };
+      }
+    }
+
+    useEffect(() => {
+      window.addEventListener('resize', navReziseListener);
+      return () => {
+        window.removeEventListener('resize', navReziseListener);
+      };
+    }, []);
 
     if (!initialized) {
       return null;
