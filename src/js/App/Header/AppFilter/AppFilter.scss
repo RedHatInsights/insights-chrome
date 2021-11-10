@@ -47,12 +47,12 @@
       z-index: -1;
     }
     .pf-c-dropdown__menu {
+      bottom:0;
       left: 0;
       top: 78px;
       overflow-y:scroll;
       overflow-x:hidden;
       position: fixed; // allows menu to go full width
-      height: 100%;
       .content {
         display: flex;
         flex-direction: column;
@@ -105,7 +105,6 @@
     }
     @media screen and (max-width: $pf-global--breakpoint--md) { 
       .pf-c-dropdown__menu {
-        bottom:0; // allows scrolling
         div.gallery {
           column-count: 1;
         }
@@ -126,14 +125,12 @@
         width: calc( 350px * 3 );
       }
     }
-  
     @media screen and (min-width: 1550px) { 
       div.gallery {
         column-count: 4;
         width: calc( 350px * 4 );
       }
     }
-  
     .pf-c-empty-state {
       --pf-c-empty-state__body--Color: #6a6e73;
       h4 {
