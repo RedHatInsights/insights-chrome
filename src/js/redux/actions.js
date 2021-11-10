@@ -1,19 +1,15 @@
 import * as actionTypes from './action-types';
 import { getAllTags, getAllSIDs, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 
-export const userLogIn = (user) => ({
-  type: actionTypes.USER_LOGIN,
-  payload: user,
-});
-
-export const clickAction = (data) => ({ type: actionTypes.CLICK_ACTION, payload: data });
+export function userLogIn(user) {
+  return {
+    type: actionTypes.USER_LOGIN,
+    payload: user,
+  };
+}
 
 export function appNavClick(item, event) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item && item.id, event } };
-}
-
-export function chromeNavSectionUpdate(newSection) {
-  return { type: actionTypes.CHROME_NAV_SECTION_UPDATE, payload: newSection };
 }
 
 export function appAction(action) {
@@ -95,11 +91,12 @@ export const loadNavigationLandingPage = (schema) => ({
   payload: schema,
 });
 
-export const loadLeftNavSegment = (schema, segment) => ({
+export const loadLeftNavSegment = (schema, segment, pathName) => ({
   type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
   payload: {
     segment,
     schema,
+    pathName,
   },
 });
 
@@ -120,4 +117,41 @@ export const changeActiveModule = (module) => ({
  */
 export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
+});
+
+export const setPendoFeedbackFlag = (payload) => ({
+  type: actionTypes.SET_PENDO_FEEDBACK_FLAG,
+  payload,
+});
+
+export const toggleFeedbackModal = (payload) => ({
+  type: actionTypes.TOGGLE_FEEDBACK_MODAL,
+  payload,
+});
+
+export const updateAccessRequestsNotifications = (payload) => ({
+  type: actionTypes.UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
+  payload,
+});
+
+export const markAccessRequestNotification = (payload) => ({
+  type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
+  payload,
+});
+
+export const storeInitialHash = (payload) => ({
+  type: actionTypes.STORE_INITIAL_HASH,
+  payload,
+});
+
+export const populateQuickstartsCatalog = (app, quickstarts) => ({
+  type: actionTypes.POPULATE_QUICKSTARTS_CATALOG,
+  payload: {
+    app,
+    quickstarts,
+  },
+});
+
+export const disableQuickstarts = () => ({
+  type: actionTypes.DISABLE_QUICKSTARTS,
 });

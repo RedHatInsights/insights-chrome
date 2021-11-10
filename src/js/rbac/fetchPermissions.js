@@ -8,12 +8,12 @@ const perPage = 1000;
 const fetchPermissions = (userToken, app = '') => {
   const rbacApi = createRbacAPI(userToken);
   return rbacApi
-    .getPrincipalAccess(app, undefined, perPage)
+    .getPrincipalAccess(app, undefined, undefined, perPage)
     .then(({ data, meta }) => {
       if (meta.count > perPage) {
         return Promise.all(
           [...new Array(Math.ceil(meta.count / perPage))].map((_empty, key) =>
-            rbacApi.getPrincipalAccess(app, undefined, perPage, (key + 1) * perPage).then(({ data }) => data)
+            rbacApi.getPrincipalAccess(app, undefined, undefined, perPage, (key + 1) * perPage).then(({ data }) => data)
           )
         )
           .then((allAccess) => allAccess.reduce((acc, curr) => [...acc, ...curr], data))
@@ -27,12 +27,12 @@ const fetchPermissions = (userToken, app = '') => {
 
 export const createFetchPermissionsWatcher = () => {
   let currentCall = {};
-  return async (userToken, app = '') => {
+  return async (userToken, app = '', bypassCache) => {
     const user = await insights.chrome.auth.getUser();
     if (user?.identity && [undefined, -1].includes(user.identity.account_number)) {
       return Promise.resolve([]);
     }
-    if (typeof currentCall?.[app] === 'undefined') {
+    if (typeof currentCall?.[app] === 'undefined' || bypassCache) {
       currentCall[app] = await fetchPermissions(userToken, app);
     }
     return currentCall?.[app];

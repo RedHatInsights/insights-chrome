@@ -4,16 +4,19 @@ import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-
-// This only works in prod and stage (api limitation)
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFeedbackModal } from '../../redux/actions';
 
 const Feedback = ({ user }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
+  const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
+  const dispatch = useDispatch();
   const [textAreaValue, setTextAreaValue] = useState('');
   const env = window.insights.chrome.getEnvironment();
   const app = window.insights.chrome.getApp();
   const bundle = window.insights.chrome.getBundle();
   const isAvailable = env === 'prod' || env === 'stage';
+  const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
 
   const handleModalSubmission = () => {
     if (isAvailable) {
@@ -39,13 +42,21 @@ const Feedback = ({ user }) => {
 
   return (
     <React.Fragment>
-      <Button ouiaId="feedback-button" className="ins-c-button__feedback" onClick={() => setIsModalOpen(true)}>
+      <Button
+        ouiaId="feedback-button"
+        className="ins-c-button__feedback"
+        onClick={() => {
+          if (!usePendoFeedback) {
+            setIsModalOpen(true);
+          }
+        }}
+      >
         <OutlinedCommentsIcon />
         Feedback
       </Button>
       <Modal
         title="We would love your feedback!"
-        isOpen={isModalOpen}
+        isOpen={isOpen}
         variant={ModalVariant.medium}
         onClose={() => setIsModalOpen(false)}
         actions={[

@@ -15,10 +15,11 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import ErrorCircleOIcon from '@patternfly/react-icons/dist/js/icons/error-circle-o-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { getUrl } from '../../utils';
 
 import './ErrorComponent.scss';
+import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 const ErrorComponent = (props) => {
   useEffect(() => {
@@ -32,12 +33,22 @@ const ErrorComponent = (props) => {
   return (
     <Bullseye className="ins-c-error-component">
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ErrorCircleOIcon} />
+        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
           Something went wrong
         </Title>
         <EmptyStateBody>
-          Unexpected error occured.
+          <p className="ins-c-error-component__text">
+            There was a problem processing the request. Try reloading the page. If the problem persists, contact{' '}
+            <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
+              Red Hat support
+            </a>{' '}
+            or check our{' '}
+            <a href="https://status.redhat.com/" target="_blank" rel="noreferrer">
+              status page
+            </a>{' '}
+            for known outages.
+          </p>
           <Flex alignContent={{ default: 'alignContentCenter' }} direction={{ default: 'column' }}>
             <FlexItem>
               <ExpandableSection toggleTextExpanded="Show less" toggleTextCollapsed="Show more">
@@ -62,13 +73,13 @@ const ErrorComponent = (props) => {
         </EmptyStateBody>
         <EmptyStatePrimary>
           <Button
+            component={(props) => (
+              <ChromeLink {...props} appId="landing" href="/">
+                Return to home page
+              </ChromeLink>
+            )}
             variant="primary"
-            onClick={() => {
-              window.location.reload();
-            }}
-          >
-            Try reloading your browser.
-          </Button>
+          />
         </EmptyStatePrimary>
       </EmptyState>
     </Bullseye>

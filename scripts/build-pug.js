@@ -13,7 +13,7 @@ async function generate() {
   const noHash = process.argv[3] === 'nohash'; // look for CSS and JS with hashed name
   return Promise.all([getAssetPath('css', noHash), getAssetPath('js', noHash)]).then(([cssFileName, jsFileName]) => {
     const pugvars = `{release: '${release}', chromeCSS:'${cssFileName}', chromeJS:'${jsFileName}'}`;
-    exec(`pug src/pug -o build/snippets -O "${pugvars}"`, (err, stdout, stderr) => {
+    exec(`pug3 src/pug -o build/snippets -O "${pugvars}"`, (err, stdout, stderr) => {
       if (err) {
         throw err;
       }

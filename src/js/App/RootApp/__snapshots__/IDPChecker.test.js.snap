@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<IDPChecker /> should render children in non fedRamp env 1`] = `
+<div>
+  <span
+    data-testid="foo"
+  >
+    OK
+  </span>
+</div>
+`;

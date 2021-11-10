@@ -25,6 +25,7 @@ function buildUser(token) {
         identity: {
           account_number: token.account_number,
           type: token.type,
+          ...(token.idp && { idp: token.idp }),
           user: {
             username: token.username,
             email: token.email,

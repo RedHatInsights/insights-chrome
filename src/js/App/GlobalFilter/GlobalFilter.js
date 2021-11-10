@@ -1,7 +1,6 @@
-import React, { useEffect, Fragment, useState, useCallback, memo, useMemo } from 'react';
+import React, { useEffect, Fragment, useState, useCallback, memo, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
-import { GroupFilter } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
@@ -10,6 +9,7 @@ import TagsModal from './TagsModal';
 import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
 import { useHistory } from 'react-router-dom';
+import GlobalFilterMenu from './GlobalFilterMenu';
 
 const GlobalFilterDropdown = ({
   isAllowed,
@@ -43,7 +43,13 @@ const GlobalFilterDropdown = ({
                 position: 'right',
               })}
             >
-              <GroupFilter {...filter} isDisabled={!allowed || isDisabled} placeholder="Filter results" />
+              <GlobalFilterMenu
+                setTagModalOpen={setIsOpen}
+                {...filter}
+                selectedTags={selectedTags}
+                isDisabled={!allowed || isDisabled}
+                placeholder="Filter results"
+              />
             </GroupFilterWrapper>
           ) : (
             <Skeleton size={SkeletonSize.xl} />
@@ -68,7 +74,7 @@ const GlobalFilterDropdown = ({
                   </ChipGroup>
                 ))}
                 {!isDisabled && (
-                  <Button variant="link" onClick={() => setValue(() => ({}))}>
+                  <Button variant="link" ouiaId="global-filter-clear" onClick={() => setValue(() => ({}))}>
                     Clear filters
                   </Button>
                 )}
@@ -124,7 +130,7 @@ GlobalFilterDropdown.propTypes = {
     })
   ),
   setValue: PropTypes.func.isRequired,
-  selectedTags: PropTypes.array,
+  selectedTags: PropTypes.object,
   isOpen: PropTypes.bool,
   filterTagsBy: PropTypes.string,
   filterScope: PropTypes.string,
@@ -133,6 +139,7 @@ GlobalFilterDropdown.propTypes = {
 
 const GlobalFilter = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
+  const firstLoad = useRef(true);
 
   const isAllowed = () => hasAccess;
   const history = useHistory();
@@ -155,8 +162,8 @@ const GlobalFilter = () => {
   const userLoaded = useSelector(({ chrome: { user } }) => Boolean(user));
   const filterScope = useSelector(({ globalFilter: { scope } }) => scope);
 
-  const loadTags = (selectedTags, filterScope, filterTagsBy, token) => {
-    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded, history);
+  const loadTags = (selectedTags, filterScope, filterTagsBy, token, firstLoad) => {
+    storeFilter(selectedTags, token, isAllowed() && !isDisabled && userLoaded, history, firstLoad);
     batch(() => {
       dispatch(
         fetchAllTags({
@@ -210,13 +217,14 @@ const GlobalFilter = () => {
         setToken(() => currToken);
       })();
     } else if (userLoaded && token && isAllowed() && !isDisabled) {
-      loadTags(selectedTags, filterScope, filterTagsBy, token);
+      loadTags(selectedTags, filterScope, filterTagsBy, token, firstLoad.current);
+      firstLoad.current = false;
     }
   }, [selectedTags, filterScope, userLoaded, isAllowed(), isDisabled]);
 
   useEffect(() => {
     if (userLoaded && isAllowed()) {
-      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token);
+      debouncedLoadTags(selectedTags, filterScope, filterTagsBy, token, firstLoad.current);
     }
   }, [filterTagsBy]);
 

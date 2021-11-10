@@ -182,6 +182,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       selected={[tagsSelected, sidsSelected]}
       onApply={() => onApplyTags(tagsSelected, sidsSelected)}
       title="Select one or more tags/SAP IDs (SID)"
+      ouiaId="global-filter-tags-modal"
     />
   );
 };

@@ -2,9 +2,26 @@ const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
+const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
+const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
 
-const commonConfig = ({ publicPath, noHash }) => ({
-  entry: path.resolve(__dirname, '../src/js/chrome.js'),
+// call default generator then pair different variations of uri with each base
+const myGenerator = asGenerator((item, ...rest) => {
+  const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
+  if (item.uri.includes('./assets')) {
+    return defaultTuples.map(([base]) => {
+      if (base.includes('@patternfly/patternfly')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
+      }
+    });
+  }
+  return defaultTuples;
+});
+
+const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
+  entry: [path.resolve(__dirname, '../src/sass/chrome.scss'), path.resolve(__dirname, '../src/js/chrome.js')],
   output: {
     path: path.resolve(__dirname, '../build/js'),
     filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
@@ -14,10 +31,9 @@ const commonConfig = ({ publicPath, noHash }) => ({
   devtool: false,
   resolve: {
     alias: {
-      PFReactTable: path.resolve(__dirname, './patternfly-table-externals.js'),
-      customReact: path.resolve(__dirname, './react-external.js'),
-      reactRedux: path.resolve(__dirname, './react-redux-external.js'),
-      PFReactCore: path.resolve(__dirname, './patternfly-react-externals.js'),
+      ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+      '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
+      '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
     },
     fallback: {
       path: require.resolve('path-browserify'),
@@ -42,9 +58,14 @@ const commonConfig = ({ publicPath, noHash }) => ({
       {
         test: /\.s?[ac]ss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          'resolve-url-loader',
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
+            },
+          },
           {
             loader: 'sass-loader',
             options: {
@@ -54,27 +75,57 @@ const commonConfig = ({ publicPath, noHash }) => ({
         ],
       },
       {
-        test: /\.(jpg|png|svg)$/,
+        test: /\.(jpg|png|svg|gif)$/,
         use: [
           {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'fonts/',
+              outputPath: '../assets/images/',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(woff(2)?|ttf|jpg|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: '../assets/fonts/',
             },
           },
         ],
       },
     ],
   },
-  plugins,
+  plugins: plugins(dev),
   devServer: {
-    writeToDisk: true,
+    allowedHosts: 'all',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    },
+    historyApiFallback: {
+      index: `${publicPath}index.html`,
+    },
+    https: true,
+    port: 1337,
+    ...proxy({
+      env: 'stage-beta',
+      port: 1337,
+      appUrl: [/^\/*$/, /^\/beta\/*$/],
+      useProxy: true,
+      publicPath,
+      proxyVerbose: true,
+      isChrome: true,
+    }),
   },
 });
 
 module.exports = function (env) {
-  const config = commonConfig({ publicPath: env.publicPath, noHash: env.noHash === 'true' });
+  const config = commonConfig({ dev: env.devServer === 'true', publicPath: env.publicPath, noHash: env.noHash === 'true' });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
   }

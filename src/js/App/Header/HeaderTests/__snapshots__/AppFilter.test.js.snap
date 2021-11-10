@@ -21,7 +21,7 @@ exports[`<AppFilter /> should render correctly 1`] = `
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Find an app or service
+        All apps and services
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"
@@ -69,7 +69,7 @@ exports[`<AppFilter /> should render empty state on no filter match and clear ap
       <span
         class="pf-c-dropdown__toggle-text"
       >
-        Find an app or service
+        All apps and services
       </span>
       <span
         class="pf-c-dropdown__toggle-icon"

@@ -2,6 +2,7 @@ import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insigh
 import * as jwt from './jwt/jwt';
 import cookie from 'js-cookie';
 import { options as defaultOptions } from './jwt/constants';
+import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './consts';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 function bouncer() {
@@ -11,6 +12,13 @@ function bouncer() {
   }
 
   console.timeEnd(TIMER_STR); // eslint-disable-line no-console
+}
+
+export function crossAccountBouncer() {
+  localStorage.setItem(ACCOUNT_REQUEST_TIMEOUT, cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER));
+  localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
+  cookie.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
+  window.location.reload();
 }
 
 export default () => {

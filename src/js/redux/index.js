@@ -11,6 +11,13 @@ import {
   loadNavigationSegmentReducer,
   loadModulesSchemaReducer,
   changeActiveModuleReducer,
+  setPendoFeedbackFlag,
+  toggleFeedbackModal,
+  accessRequestsNotificationsReducer,
+  markAccessRequestRequestReducer,
+  storeInitialHashReducer,
+  populateQuickstartsReducer,
+  disableQuickstartsReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -43,6 +50,13 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
   CHANGE_ACTIVE_MODULE,
+  SET_PENDO_FEEDBACK_FLAG,
+  TOGGLE_FEEDBACK_MODAL,
+  UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
+  MARK_REQUEST_NOTIFICATION_SEEN,
+  STORE_INITIAL_HASH,
+  POPULATE_QUICKSTARTS_CATALOG,
+  DISABLE_QUICKSTARTS,
 } from './action-types';
 
 const reducers = {
@@ -56,6 +70,13 @@ const reducers = {
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
   [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
+  [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
+  [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
+  [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
+  [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
+  [STORE_INITIAL_HASH]: storeInitialHashReducer,
+  [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
+  [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
 };
 
 const globalFilter = {
@@ -78,6 +99,13 @@ export default function () {
     chrome: (
       state = {
         navigation: {},
+        accessRequests: {
+          count: 0,
+          data: [],
+        },
+        quickstarts: {
+          quickstarts: {},
+        },
       },
       action
     ) => applyReducerHash(reducers)(state, action),

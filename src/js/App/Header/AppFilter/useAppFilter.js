@@ -1,40 +1,56 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta, getEnv } from '../../../utils';
+import { isBeta, getEnv, isFedRamp } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
+import { computeFedrampResult } from '../../../utils/useRenderFedramp';
 
 export const requiredBundles = ['application-services', 'openshift', 'insights', ...(getEnv() !== 'prod' ? ['edge'] : []), 'ansible', 'settings'];
 const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
 
-function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }) {
+const isFedrampEnv = isFedRamp();
+
+function findModuleByLink(href, { modules } = { modules: [] }) {
+  const routes = modules
+    .flatMap(({ routes }) => routes.map((route) => (typeof route === 'string' ? route : route.pathname)))
+    .sort((a, b) => (a.length < b.length ? 1 : -1));
+  return routes.find((route) => href.includes(route)) || '';
+}
+
+function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }, modules) {
   const costLinks = [];
   const subscriptionsLinks = [];
   let url = href;
   let appId = rest.appId;
+  let isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
   if (expandable) {
     routes.forEach(({ href, title, ...rest }) => {
       if (href.includes('/openshift/cost-management') && rest.filterable !== false) {
-        costLinks.push({ ...rest, href, title });
+        costLinks.push({ ...rest, isFedramp: false, href, title });
       }
 
       if (rest.filterable !== false && (href.includes('/insights/subscriptions') || href.includes('/openshift/subscriptions'))) {
         subscriptionsLinks.push({
           ...rest,
+          isFedramp: false, // openshift and subs are never visible on fedramp.
           href,
           title,
         });
       }
 
       if (!url && href.match(/^\//)) {
-        url = isExternal ? href : href.split('/').slice(0, 3).join('/');
+        const moduleRoute = isExternal ? '' : findModuleByLink(href, modules[rest.appId]);
+        const truncatedRoute = href.split('/').slice(0, 3).join('/');
+        url = isExternal ? href : moduleRoute.length > truncatedRoute.length ? moduleRoute : truncatedRoute;
         appId = rest.appId ? rest.appId : appId;
+        isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
       }
     });
   }
 
   return {
     ...rest,
+    isFedramp,
     appId,
     isExternal,
     title,
@@ -67,24 +83,28 @@ const useAppFilter = () => {
     },
   });
   const existingSchemas = useSelector(({ chrome: { navigation } }) => navigation);
+  const modules = useSelector(({ chrome: { modules } }) => modules);
 
   const handleBundleData = async ({ data: { id, navItems, title } }) => {
-    let links = navItems
-      .reduce((acc, curr) => {
-        if (curr.groupId) {
-          return [...acc, ...curr.navItems?.map(({ groupId, navItems, ...rest }) => (groupId ? navItems : rest))];
-        }
-        return [...acc, curr];
-      }, [])
-      .flat()
-      .map(getBundleLink)
-      .filter(({ filterable }) => filterable !== false);
+    let links =
+      navItems
+        ?.reduce((acc, curr) => {
+          if (curr.groupId) {
+            return [...acc, ...curr.navItems?.map(({ groupId, navItems, ...rest }) => (groupId ? navItems : rest))];
+          }
+          return [...acc, curr];
+        }, [])
+        .flat()
+        .map((link) => getBundleLink(link, modules))
+        .filter(({ isFedramp }) => (isFedrampEnv ? !!isFedramp : true))
+        .filter(({ filterable }) => filterable !== false) || [];
     const bundleLinks = [];
     const extraLinks = {
       cost: [],
       subs: [],
     };
     const promises = links.map(async ({ costLinks, subscriptionsLinks, ...rest }) => {
+      const nextIndex = bundleLinks.length;
       if (costLinks.length > 0) {
         extraLinks.cost = await costLinks.filter(evaluateVisibility);
       }
@@ -92,12 +112,17 @@ const useAppFilter = () => {
       if (subscriptionsLinks.length > 0) {
         extraLinks.subs = await subscriptionsLinks.filter(evaluateVisibility);
       }
-      if (subscriptionsLinks.length > 0 || costLinks.length > 0) {
+      if (rest.filterable !== true && (subscriptionsLinks.length > 0 || costLinks.length > 0)) {
         return;
       }
+
+      /**
+       * We have to create a placeholder for the link item, in order to preserver the links order
+       */
+      bundleLinks.push({ ...rest, isHidden: true });
       const link = await evaluateVisibility(rest);
 
-      bundleLinks.push(link);
+      bundleLinks[nextIndex] = link;
     });
     await Promise.all(promises);
 
@@ -135,11 +160,11 @@ const useAppFilter = () => {
       let bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
       bundles.map((fragment) =>
         axios
-          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json`)
+          .get(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`)
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data })))
           .catch((err) => {
-            console.error('Unable to load appfilter bundle', err);
+            console.error('Unable to load appfilter bundle', err, fragment);
           })
       );
     }
@@ -159,16 +184,24 @@ const useAppFilter = () => {
   };
 
   const filterApps = (data, filterValue = '') =>
-    Object.entries(data).reduce(
-      (acc, [key, { links, ...rest }]) => ({
+    Object.entries(data).reduce((acc, [key, { links, ...rest }]) => {
+      if (rest?.title?.toLowerCase().includes(filterValue.toLowerCase())) {
+        return {
+          ...acc,
+          [key]: {
+            ...rest,
+            links,
+          },
+        };
+      }
+      return {
         ...acc,
         [key]: {
           ...rest,
           links: links.filter(({ title, isHidden }) => !isHidden && title.toLowerCase().includes(filterValue.toLowerCase())),
         },
-      }),
-      {}
-    );
+      };
+    }, {});
 
   const filteredApps = filterApps(state.data, state.filterValue);
   return {

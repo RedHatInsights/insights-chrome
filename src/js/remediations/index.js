@@ -1,22 +1,21 @@
 import React from 'react';
-import setDependencies from '../externalDependencies';
 import Deferred from '@redhat-cloud-services/frontend-components-utilities/Deffered';
 
-export default async function loadRemediation(dependencies) {
-  setDependencies(dependencies);
-
-  const remediationsData = await import(/* webpackChunkName: "remediations" */ '@redhat-cloud-services/frontend-components-remediations');
+export default async function loadRemediation() {
   const RenderWrapper = await import(/* webpackChunkName: "remediations-render-wrapper" */ './Wrapper');
-  const deferred = new Deferred();
+  let deferred = new Deferred();
   return {
-    ...remediationsData,
     openWizard: async (data, basePath) => {
-      const wizardRef = await deferred.promise;
-      remediationsData.openWizard(data, basePath, wizardRef);
+      deferred.resolve({ data, basePath });
     },
     // eslint-disable-next-line react/display-name
     RemediationWizard: () => (
-      <RenderWrapper.default cmp={remediationsData.RemediationWizard} onAppRender={(wizardRef) => deferred.resolve(wizardRef)} />
+      <RenderWrapper.default
+        promise={deferred.promise}
+        onClose={(newDeffered) => {
+          deferred = newDeffered;
+        }}
+      />
     ),
   };
 }

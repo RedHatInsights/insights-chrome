@@ -106,4 +106,96 @@ describe('Reducers', () => {
       });
     });
   });
+
+  describe.only('loadNavigationSegmentReducer', () => {
+    const navigation = { test: { navItems: [], sortedLinks: [] } };
+    it('should create new segment', () => {
+      const newNav = {
+        navItems: [
+          {
+            href: '/something',
+          },
+        ],
+      };
+      const result = reducers.loadNavigationSegmentReducer(
+        {
+          navigation: {},
+        },
+        {
+          payload: {
+            segment: 'test',
+            schema: newNav,
+          },
+        }
+      );
+      expect(result).toEqual({
+        navigation: {
+          ...navigation,
+          test: {
+            ...navigation.test,
+            navItems: newNav.navItems,
+            sortedLinks: ['/something'],
+          },
+        },
+      });
+    });
+
+    it('should merge two schema together', () => {
+      const newNav = { navItems: [{ href: '/another' }, { href: '/different' }] };
+      const result = reducers.loadNavigationSegmentReducer(
+        {
+          navigation: {
+            ...navigation,
+            test: {
+              ...navigation.test,
+              navItems: [{ href: '/something' }],
+              sortedLinks: ['/something'],
+            },
+          },
+        },
+        {
+          payload: {
+            segment: 'test',
+            schema: newNav,
+          },
+        }
+      );
+      expect(result).toEqual({
+        navigation: {
+          ...navigation,
+          test: {
+            ...navigation.test,
+            navItems: newNav.navItems,
+            sortedLinks: ['/different', '/another'],
+          },
+        },
+      });
+    });
+
+    it('should highlight items', () => {
+      const result = reducers.loadNavigationSegmentReducer(
+        {
+          navigation: {},
+        },
+        {
+          payload: {
+            segment: 'test',
+            schema: { navItems: [{ href: '/something' }] },
+            pathName: '/something',
+          },
+        }
+      );
+      console.log(result, 'this is result');
+      expect(result).toEqual({
+        navigation: {
+          ...navigation,
+          test: {
+            ...navigation.test,
+            navItems: [{ href: '/something', active: true }],
+            sortedLinks: ['/something'],
+          },
+        },
+      });
+    });
+  });
 });
