@@ -1,11 +1,12 @@
 import groupBy from 'lodash/groupBy';
 export const SID_KEY = 'SAP ID (SID)';
+export const AAP_KEY = 'Ansible Automation Platform';
 
 export const globalFilterDefaultState = {
   scope: 'insights',
   tags: { isLoaded: false, items: [], count: 0, total: 0 },
   sid: { isLoaded: false, items: [], count: 0, total: 0 },
-  workloads: { isLoaded: false, items: [], count: 0, total: 0, hasSap: 0 },
+  workloads: { isLoaded: false, items: [], count: 0, total: 0, hasSap: 0, hasAap: 0 },
 };
 
 export function onGetAllTags(state, { payload }) {
@@ -93,14 +94,13 @@ export function onGetAllSIDsPending(state) {
 }
 
 export function onGetAllWorkloads(state, { payload }) {
-  const count = payload?.results?.find(({ value } = {}) => value)?.count || 0;
+  const { SAP, AAP } = payload || {};
   return {
     ...state,
     workloads: {
       isLoaded: true,
-      count,
-      total: count,
-      hasSap: payload?.results?.find(({ value } = {}) => value)?.count || 0,
+      hasSap: SAP?.results?.find(({ value } = {}) => value)?.count || 0,
+      hasAap: AAP?.total || 0,
     },
   };
 }
