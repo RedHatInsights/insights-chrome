@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Button, Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
+import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
