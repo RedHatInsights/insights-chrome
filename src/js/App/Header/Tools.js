@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Flex, Badge, DropdownItem, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, Divider, Button } from '@patternfly/react-core';
+import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -8,7 +8,6 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import './Tools.scss';
 import { getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
@@ -45,12 +44,7 @@ const InternalButton = () => (
 const SettingsButton = ({ settingsMenuDropdownItems }) => (
   <ToolbarToggle
     key="Settings menu"
-    icon={() => (
-      <Flex alignItems={{ default: 'alignItemsCenter' }}>
-        {isBeta() ? <Badge className="ins-c-toolbar__beta-badge">beta</Badge> : null}
-        <CogIcon />
-      </Flex>
-    )}
+    icon={() => <CogIcon />}
     id="SettingsMenu"
     ouiaId="chrome-settings"
     hasToggleIndicator={null}
@@ -150,54 +144,55 @@ const Tools = () => {
   );
 
   return (
-    <PageHeaderTools widget-type="InsightsToolbar">
-      {/* Show tools on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
-        {isInternal && !window.insights.chrome.isProd && (
-          <PageHeaderToolsItem isSelected={window.insights.chrome.getBundle() === 'internal'}>{<InternalButton />}</PageHeaderToolsItem>
-        )}
-        {!isSettingsDisabled && <PageHeaderToolsItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</PageHeaderToolsItem>}
-        <PageHeaderToolsItem>{<AboutButton />}</PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
+    <ToolbarGroup
+      className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
+      alignment={{ default: 'alignRight' }}
+      spaceItems={{ default: 'spaceItemsNone' }}
+      widget-type="InsightsToolbar"
+    >
+      {isBeta() && (
+        <ToolbarItem>
+          <Badge className="chr-c-badge-beta">beta</Badge>
+        </ToolbarItem>
+      )}
+      {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
+      {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
+      <AboutButton />
 
-      {/* Show full user dropdown on medium and above screens */}
-      <PageHeaderToolsGroup visibility={{ default: 'hidden', lg: 'visible' }}>
-        <PageHeaderToolsItem>
-          <UserToggle className="ins-c-dropdown__user" />
-        </PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
+      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
+        <UserToggle className="ins-c-dropdown__user" />
+      </ToolbarItem>
 
       {/* Collapse tools and user dropdown to kebab on small screens  */}
-      <PageHeaderToolsGroup visibility={{ lg: 'hidden' }}>
-        <PageHeaderToolsItem>
-          <UserToggle
-            isSmall
-            extraItems={mobileDropdownItems.map((action, key) => (
-              <React.Fragment key={key}>
-                {action.title === 'separator' ? (
-                  <Divider component="li" />
-                ) : (
-                  <DropdownItem
-                    {...(action.onClick
-                      ? {
-                          component: 'button',
-                          onClick: action.onClick,
-                        }
-                      : {
-                          href: action.url,
-                          component: 'a',
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                        })}
-                  >
-                    {action.title}
-                  </DropdownItem>
-                )}
-              </React.Fragment>
-            ))}
-          />
-        </PageHeaderToolsItem>
-      </PageHeaderToolsGroup>
+
+      <ToolbarItem visibility={{ lg: 'hidden' }}>
+        <UserToggle
+          isSmall
+          extraItems={mobileDropdownItems.map((action, key) => (
+            <React.Fragment key={key}>
+              {action.title === 'separator' ? (
+                <Divider component="li" />
+              ) : (
+                <DropdownItem
+                  {...(action.onClick
+                    ? {
+                        component: 'button',
+                        onClick: action.onClick,
+                      }
+                    : {
+                        href: action.url,
+                        component: 'a',
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                      })}
+                >
+                  {action.title}
+                </DropdownItem>
+              )}
+            </React.Fragment>
+          ))}
+        />
+      </ToolbarItem>
 
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
@@ -205,7 +200,7 @@ const Tools = () => {
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-    </PageHeaderTools>
+    </ToolbarGroup>
   );
 };
 

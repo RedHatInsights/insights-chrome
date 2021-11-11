@@ -1,28 +1,27 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 
 import {
+  Bullseye,
+  Button,
+  Dropdown,
+  DropdownToggle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
   Flex,
   SearchInput,
+  Spinner,
   Split,
   SplitItem,
-  TextContent,
   Text,
+  TextContent,
   Title,
-  Spinner,
-  Bullseye,
-  EmptyStateIcon,
-  EmptyStateBody,
-  EmptyState,
-  EmptyStateVariant,
-  DropdownToggle,
-  Dropdown,
-  Button,
 } from '@patternfly/react-core';
 
 import './AppFilter.scss';
@@ -70,7 +69,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
 
   return (
     <Dropdown
-      className="ins-c-page__app-filter-dropdown-toggle"
+      className="pf-m-full-height ins-c-page__app-filter-dropdown-toggle"
       toggle={
         <DropdownToggle
           id="toggle-id"
@@ -163,7 +162,6 @@ const AppFilter = () => {
         setFilterValue={setFilterValue}
         filteredApps={filteredApps}
       />
-      <div className={classnames({ 'pf-c-backdrop': isOpen })} />
     </React.Fragment>
   );
 };
