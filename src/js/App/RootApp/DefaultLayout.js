@@ -79,7 +79,7 @@ const ShieldedRoot = memo(
                 <BarsIcon />
               </PageToggleButton>
             </MastheadToggle>
-            {<Header />}
+            <Header />
           </Masthead>
         }
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="ins-c-sidebar" nav={Sidebar} />}

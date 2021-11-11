@@ -44,11 +44,7 @@ const InternalButton = () => (
 const SettingsButton = ({ settingsMenuDropdownItems }) => (
   <ToolbarToggle
     key="Settings menu"
-    icon={() => (
-      <>
-        <CogIcon />
-      </>
-    )}
+    icon={() => <CogIcon />}
     id="SettingsMenu"
     ouiaId="chrome-settings"
     hasToggleIndicator={null}
@@ -154,10 +150,14 @@ const Tools = () => {
       spaceItems={{ default: 'spaceItemsNone' }}
       widget-type="InsightsToolbar"
     >
-      <ToolbarItem>{isBeta() ? <Badge className="chr-c-badge-beta">beta</Badge> : null}</ToolbarItem>
+      {isBeta() && (
+        <ToolbarItem>
+          <Badge className="chr-c-badge-beta">beta</Badge>
+        </ToolbarItem>
+      )}
       {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
       {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
-      {<AboutButton />}
+      <AboutButton />
 
       <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
         <UserToggle className="ins-c-dropdown__user" />
