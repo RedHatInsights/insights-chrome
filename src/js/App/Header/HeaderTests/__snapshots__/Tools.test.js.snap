@@ -7,9 +7,6 @@ exports[`Tools should render correctly 1`] = `
 >
   <div
     class="pf-c-toolbar__item"
-  />
-  <div
-    class="pf-c-toolbar__item"
   >
     &lt;ToolbarToggle /&gt;
   </div>
