@@ -1,17 +1,18 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Page, PageHeader, PageSidebar } from '@patternfly/react-core';
+import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
-import { Header, HeaderTools } from '../Header/Header';
+import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../../redux/actions';
 import Routes from '../Routes';
 import useOuiaTags from '../../utils/useOuiaTags';
+import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -20,11 +21,37 @@ import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
     const dispatch = useDispatch();
-    useEffect(() => {
-      const navToggleElement = document.querySelector('button#nav-toggle');
-      if (navToggleElement) {
-        navToggleElement.onclick = () => dispatch(onToggle());
+    const [isMobileView, setIsMobileView] = useState(window.document.body.clientWidth < 1200);
+    const [isNavOpen, setIsNavOpen] = useState(!isMobileView);
+    /**
+     * Required for event listener to access the variables
+     */
+    const mutableStateRef = useRef({
+      isMobileView,
+    });
+    function navReziseListener() {
+      const internalMobile = window.document.body.clientWidth < 1200;
+      const { isMobileView } = mutableStateRef.current;
+      if (!isMobileView && internalMobile) {
+        setIsMobileView(true);
+        setIsNavOpen(false);
+        mutableStateRef.current = {
+          isMobileView: true,
+        };
+      } else if (isMobileView && !internalMobile) {
+        setIsMobileView(false);
+        setIsNavOpen(true);
+        mutableStateRef.current = {
+          isMobileView: false,
+        };
       }
+    }
+
+    useEffect(() => {
+      window.addEventListener('resize', navReziseListener);
+      return () => {
+        window.removeEventListener('resize', navReziseListener);
+      };
     }, []);
 
     if (!initialized) {
@@ -36,10 +63,26 @@ const ShieldedRoot = memo(
 
     return (
       <Page
-        isManagedSidebar={!hideNav}
         className={classnames({ 'ins-c-page__hasBanner': hasBanner, 'ins-c-page__account-banner': selectedAccountNumber })}
-        header={<PageHeader logoComponent="div" logo={<Header />} showNavToggle={!hideNav} headerTools={<HeaderTools />} />}
-        sidebar={hideNav ? undefined : <PageSidebar id="ins-c-sidebar" nav={Sidebar} />}
+        header={
+          <Masthead className="chr-c-masthead">
+            <MastheadToggle>
+              <PageToggleButton
+                variant="plain"
+                aria-label="Global navigation"
+                isNavOpen={isNavOpen}
+                onNavToggle={() => {
+                  setIsNavOpen((prev) => !prev);
+                  dispatch(onToggle());
+                }}
+              >
+                <BarsIcon />
+              </PageToggleButton>
+            </MastheadToggle>
+            <Header />
+          </Masthead>
+        }
+        sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="ins-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
