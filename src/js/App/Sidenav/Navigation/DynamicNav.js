@@ -32,7 +32,7 @@ const DynamicNav = ({ dynamicNav }) => {
   return (
     <NavItem preventDefault>
       <a href="#">
-        <Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />
+        <Skeleton size={SkeletonSize.lg} isDark />
       </a>
     </NavItem>
   );
