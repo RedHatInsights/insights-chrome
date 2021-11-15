@@ -19,13 +19,35 @@ const DynamicNav = ({ dynamicNav }) => {
   useEffect(() => {
     if (navigation) {
       if (typeof navigation === 'function') {
-        Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
-          schema.navItems = schema?.navItems?.map((item, key) => ({
-            ...item,
-            ...(key === schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav) && data),
-          }));
-          dispatch(loadLeftNavSegment(schema, currentNamespace, window.location.pathname));
-        });
+        const indexOfDynamicNav = schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav);
+        if (indexOfDynamicNav !== -1) {
+          const { dynamicNav: _dynamicNav, ...originalNav } = schema.navItems[indexOfDynamicNav];
+          Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
+            const newValue = Array.isArray(data)
+              ? data.map((item) => ({
+                  appId: dynamicNav.split('/')[0],
+                  ...originalNav,
+                  ...item,
+                }))
+              : [
+                  {
+                    ...originalNav,
+                    ...data,
+                  },
+                ];
+            dispatch(
+              loadLeftNavSegment(
+                {
+                  ...schema,
+                  navItems: schema.navItems.flatMap((item, key) => (key === indexOfDynamicNav ? newValue : item)),
+                },
+                currentNamespace,
+                pathname,
+                true
+              )
+            );
+          });
+        }
       }
     }
   }, [navigation]);
