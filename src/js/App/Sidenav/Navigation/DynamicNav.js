@@ -42,7 +42,7 @@ const DynamicNav = ({ dynamicNav }) => {
                   navItems: schema.navItems.flatMap((item, key) => (key === indexOfDynamicNav ? newValue : item)),
                 },
                 currentNamespace,
-                window.location.pathname,
+                pathname,
                 true
               )
             );
