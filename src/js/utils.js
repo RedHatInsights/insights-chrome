@@ -148,7 +148,7 @@ export function isBeta() {
 }
 
 export function isFedRamp() {
-  return getEnv() === 'gov' || getEnv() === 'govStage';
+  return getEnv() === 'gov';
 }
 
 export function updateDocumentTitle(title) {
