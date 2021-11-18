@@ -31,6 +31,10 @@ aside {
     overflow: auto !important;
 }
 
+.quickstarts-open ._pendo-badge {
+  display:none !important;
+} 
+
 .inc-c-chrome__root-element {
     min-height: 100vh;
 }
