@@ -94,6 +94,11 @@ const ScalprumRoot = ({ config, ...props }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const body = document.getElementsByTagName('body')[0];
+    activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
+  }, [activeQuickStartID]);
+
   return (
     /**
      * Once all applications are migrated to chrome 2:
