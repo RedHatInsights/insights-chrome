@@ -151,7 +151,7 @@ exports[`Header should render correctly 1`] = `
             >
               <div
                 aria-label="Overflow actions"
-                class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
+                class="pf-c-dropdown pf-m-align-right chr-c-dropdown-user-toggle"
                 data-ouia-component-id="chrome-user-menu"
                 data-ouia-component-type="PF4/Dropdown"
                 data-ouia-safe="true"
@@ -206,7 +206,7 @@ exports[`Header should render correctly 1`] = `
             >
               <div
                 aria-label="Overflow actions"
-                class="pf-c-dropdown pf-m-align-right pf-m-expanded chr-c-dropdown-user-toggle"
+                class="pf-c-dropdown pf-m-align-right chr-c-dropdown-user-toggle"
                 data-ouia-component-id="chrome-user-menu"
                 data-ouia-component-type="PF4/Dropdown"
                 data-ouia-safe="true"
