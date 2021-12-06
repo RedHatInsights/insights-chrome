@@ -30,21 +30,23 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }) => 
       }));
       if (!isEqual(newValue, currNav)) {
         const currNavIndex = schema.navItems.findIndex((item) => item.dynamicNav === dynamicNav);
-        dispatch(
-          loadLeftNavSegment(
-            {
-              ...schema,
-              navItems: mergeArrays(
-                schema.navItems.filter((item) => !(item.dynamicNav && item.dynamicNav === dynamicNav)),
-                currNavIndex,
-                newValue
-              ),
-            },
-            currentNamespace,
-            pathname,
-            true
-          )
-        );
+        if (currNavIndex !== -1) {
+          dispatch(
+            loadLeftNavSegment(
+              {
+                ...schema,
+                navItems: mergeArrays(
+                  schema.navItems.filter((item) => !(item.dynamicNav && item.dynamicNav === dynamicNav)),
+                  currNavIndex,
+                  newValue
+                ),
+              },
+              currentNamespace,
+              pathname,
+              true
+            )
+          );
+        }
       }
       setIsLoaded(true);
     }
