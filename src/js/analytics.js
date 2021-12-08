@@ -91,6 +91,7 @@ export function getPendoConf(data) {
         }),
         {}
       ),
+      ...entitlements,
     },
     account: {
       // TODO add in customer name as name:
