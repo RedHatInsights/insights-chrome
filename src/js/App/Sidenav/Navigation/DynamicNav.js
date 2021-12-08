@@ -22,7 +22,7 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }) => 
   );
   const newNav = useNavigation({ schema, dynamicNav, currentNamespace, currNav });
   useEffect(() => {
-    if (newNav?.length > 0) {
+    if (newNav) {
       const newValue = toArray(newNav).map((item, key) => ({
         appId: dynamicNav.split('/')[0],
         ...(currNav?.[key] || currNav?.[0]),
