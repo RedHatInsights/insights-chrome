@@ -52,7 +52,7 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-function getPendoConf(data) {
+export function getPendoConf(data) {
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements = {};
