@@ -2,40 +2,24 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-c-page__header-tools"
+  class="pf-c-toolbar__group pf-m-align-right pf-m-space-items-none pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
   widget-type="InsightsToolbar"
 >
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
+    class="pf-c-toolbar__item"
   >
-    <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;ToolbarToggle /&gt;
-    </div>
-    <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;ToolbarToggle /&gt;
-    </div>
+    &lt;ToolbarToggle /&gt;
+  </div>
+  &lt;ToolbarToggle /&gt;
+  <div
+    class="pf-c-toolbar__item pf-m-hidden pf-m-visible-on-lg pf-u-mr-0"
+  >
+    &lt;UserToggle /&gt;
   </div>
   <div
-    class="pf-c-page__header-tools-group pf-m-hidden pf-m-visible-on-lg"
+    class="pf-c-toolbar__item pf-m-hidden-on-lg"
   >
-    <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;UserToggle /&gt;
-    </div>
-  </div>
-  <div
-    class="pf-c-page__header-tools-group pf-m-hidden-on-lg"
-  >
-    <div
-      class="pf-c-page__header-tools-item"
-    >
-      &lt;UserToggle /&gt;
-    </div>
+    &lt;UserToggle /&gt;
   </div>
 </div>
 `;
