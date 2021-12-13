@@ -16,7 +16,16 @@ describe('Header', () => {
       chrome: {
         activeTechnology: 'someTechnology',
         activeLocation: 'someLocation',
-        user: {},
+        user: {
+          identity: {
+            account_number: 666,
+            user: {
+              username: 'foo',
+              first_name: 'John',
+              last_name: 'Doe',
+            },
+          },
+        },
         navigation: {},
       },
     };

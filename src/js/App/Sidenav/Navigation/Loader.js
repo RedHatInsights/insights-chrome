@@ -4,15 +4,15 @@ import { Nav, NavList, NavItem } from '@patternfly/react-core';
 
 const NavLoader = () => (
   <Fragment>
-    <section className={'ins-c-app-switcher--loading'}>
-      <Skeleton size={SkeletonSize.lg} className="ins-m-dark" />
+    <section className="ins-c-app-switcher--loading">
+      <Skeleton isDark size={SkeletonSize.lg} />
     </section>
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="false" ouiaId="SideNavigation">
       <NavList>
         {[...new Array(4)].map((_i, key) => (
           <NavItem key={key} preventDefault>
             <a href="#">
-              <Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />
+              <Skeleton isDark size={SkeletonSize.lg} />
             </a>
           </NavItem>
         ))}

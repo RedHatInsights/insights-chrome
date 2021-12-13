@@ -31,8 +31,12 @@ aside {
     overflow: auto !important;
 }
 
+.quickstarts-open ._pendo-badge {
+  display:none !important;
+} 
+
 .inc-c-chrome__root-element {
-    min-height: 100vh;
+    height: 100vh !important;
 }
 
 .pf-c-page.ins-c-page__hasBanner {
@@ -41,18 +45,8 @@ aside {
                          "nav main";
 }
 
-.ins-c-header-link {
-    display: flex;
-}
-
 #no-access.pf-c-page__main {
     display: none;
-}
-
-.pf-c-page__header-tools[widget-type="InsightsToolbar"] {
-    .pf-l-toolbar, .pf-c-toolbar, .pf-l-toolbar__group, .pf-c-toolbar__group {
-        display: flex;
-    }
 }
 
 // Page temp styles
@@ -106,40 +100,28 @@ aside {
 }
 
 // Header
-.pf-c-page__header {
-    overflow: visible;
-    .ins-c-dropdown-item__stack {
-        white-space: nowrap;
-        * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
-    }
+.chr-c-masthead {
+  overflow: visible;
+  .chr-c-dropdown-item__stack {
+    white-space: nowrap;
+    * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
+  }
+  .chr-c-dropdown-item__stack--header,
+  .chr-c-dropdown-item__stack--subValue {
+    font-size: var(--pf-global--FontSize--xs);
+  }
+  .chr-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
 
-    .ins-c-dropdown-item__stack--header,
-    .ins-c-dropdown-item__stack--subValue {
-        font-size: var(--pf-global--FontSize--xs);
-    }
-
-    .ins-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
-
-    .pf-c-page__header-brand-link img { @include rem('height', 30px); }
-    .pf-c-page__header-brand-toggle svg {
-        @include rem('height', 21px);
-        @include rem('width', 21px);
-    }
-
-    .pf-c-page__header-tools .pf-c-avatar {
-        height: var(--pf-global--FontSize--4xl);
-    }
-}
-
-// Brand
-.pf-c-brand {
-    fill: #fff;
-    min-width: 200px;
-
-    @media screen and (min-width: $pf-global--breakpoint--md) {
-        width: 100%;
-        min-width: auto;
-    }
+  .chr-c-brand {
+    width: 170px;
+  }
+  .chr-c-badge-beta {
+    background-color: var(--pf-global--palette--green-300);
+    color: var(--pf-global--Color--dark-100);
+  }
+  .chr-c-dropdown-user-toggle {
+    --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: #151515;
+  }
 }
 
 // Page sidebar
@@ -187,10 +169,6 @@ section.ins-c-app-switcher--loading {
 .pf-m-user-skeleton {
     .ins-c-skeleton { width: 75px; }
     .pf-c-dropdown__toggle-icon { height: 1em; }
-}
-
-.ins-c-skeleton__link {
-    width: 100%;
 }
 
 // Pen testing

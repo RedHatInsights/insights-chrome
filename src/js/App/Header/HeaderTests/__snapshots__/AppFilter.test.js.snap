@@ -3,7 +3,7 @@
 exports[`<AppFilter /> should render correctly 1`] = `
 <div>
   <div
-    class="pf-c-dropdown ins-c-page__app-filter-dropdown-toggle"
+    class="pf-c-dropdown pf-m-full-height ins-c-page__app-filter-dropdown-toggle"
     data-ouia-component-id="App Filter"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -42,16 +42,13 @@ exports[`<AppFilter /> should render correctly 1`] = `
       </span>
     </button>
   </div>
-  <div
-    class=""
-  />
 </div>
 `;
 
 exports[`<AppFilter /> should render empty state on no filter match and clear app filters 1`] = `
 <div>
   <div
-    class="pf-c-dropdown pf-m-expanded ins-c-page__app-filter-dropdown-toggle"
+    class="pf-c-dropdown pf-m-expanded pf-m-full-height ins-c-page__app-filter-dropdown-toggle"
     data-ouia-component-id="App Filter"
     data-ouia-component-type="PF4/Dropdown"
     data-ouia-safe="true"
@@ -93,8 +90,5 @@ exports[`<AppFilter /> should render empty state on no filter match and clear ap
       class="pf-c-dropdown__menu"
     />
   </div>
-  <div
-    class="pf-c-backdrop"
-  />
 </div>
 `;

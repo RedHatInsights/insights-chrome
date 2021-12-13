@@ -11,7 +11,7 @@ const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-con
   modules: 'chrome',
 });
 
-const plugins = [
+const plugins = (dev = false) => [
   ...(process.env.SOURCEMAPS === 'true'
     ? [
         new webpack.SourceMapDevToolPlugin({
@@ -51,11 +51,11 @@ const plugins = [
   new HtmlWebpackPlugin({
     template: path.resolve(__dirname, '../src/index.html'),
     inject: 'body',
-    filename: '../index.html',
+    filename: dev ? 'index.html' : '../index.html',
   }),
   new HtmlWebpackPlugin({
     title: 'Authenticating - console.redhat.com',
-    filename: '../silent-check-sso.html',
+    filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
     inject: false,
     template: path.resolve(__dirname, '../src/silent-check-sso.html'),
   }),
