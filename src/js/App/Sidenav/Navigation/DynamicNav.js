@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useModule } from '@scalprum/react-core';
+import { useLoadModule } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { NavItem } from '@patternfly/react-core';
@@ -15,24 +15,46 @@ const DynamicNav = ({ dynamicNav }) => {
   const [appName] = dynamicNav.split('/');
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }) => navigation[currentNamespace]);
-  const { default: navigation } = useModule(appName, './Navigation', {}) || {};
+  const [{ default: navigation }] = useLoadModule({ appName, scope: appName, module: './Navigation' }, {});
   useEffect(() => {
     if (navigation) {
       if (typeof navigation === 'function') {
-        Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
-          schema.navItems = schema?.navItems?.map((item, key) => ({
-            ...item,
-            ...(key === schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav) && data),
-          }));
-          dispatch(loadLeftNavSegment(schema, currentNamespace, window.location.pathname));
-        });
+        const indexOfDynamicNav = schema.navItems.findIndex((nav) => nav.dynamicNav === dynamicNav);
+        if (indexOfDynamicNav !== -1) {
+          const { dynamicNav: _dynamicNav, ...originalNav } = schema.navItems[indexOfDynamicNav];
+          Promise.resolve(navigation({ schema, dynamicNav, currentNamespace })).then((data) => {
+            const newValue = Array.isArray(data)
+              ? data.map((item) => ({
+                  appId: dynamicNav.split('/')[0],
+                  ...originalNav,
+                  ...item,
+                }))
+              : [
+                  {
+                    ...originalNav,
+                    ...data,
+                  },
+                ];
+            dispatch(
+              loadLeftNavSegment(
+                {
+                  ...schema,
+                  navItems: schema.navItems.flatMap((item, key) => (key === indexOfDynamicNav ? newValue : item)),
+                },
+                currentNamespace,
+                pathname,
+                true
+              )
+            );
+          });
+        }
       }
     }
   }, [navigation]);
   return (
     <NavItem preventDefault>
       <a href="#">
-        <Skeleton size={SkeletonSize.lg} className="ins-m-dark ins-c-skeleton__link" />
+        <Skeleton size={SkeletonSize.lg} isDark />
       </a>
     </NavItem>
   );

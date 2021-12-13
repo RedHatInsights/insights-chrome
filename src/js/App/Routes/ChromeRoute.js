@@ -3,14 +3,25 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
+import { getPendoConf } from '../../analytics';
 
 const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) => {
   const dispatch = useDispatch();
+  const user = useSelector(({ chrome: { user } }) => user);
   useEffect(() => {
     dispatch(changeActiveModule(scope));
+    /**
+     * update pendo metadata on application change
+     */
+    try {
+      window.pendo.updateOptions(getPendoConf(user));
+    } catch (error) {
+      console.error('Unable to update pendo options');
+      console.error(error);
+    }
   }, [scope]);
 
   useEffect(() => {

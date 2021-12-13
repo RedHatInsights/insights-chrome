@@ -140,7 +140,7 @@ describe('Reducers', () => {
       });
     });
 
-    it('should merge two schema together', () => {
+    it('should replace schema', () => {
       const newNav = { navItems: [{ href: '/another' }, { href: '/different' }] };
       const result = reducers.loadNavigationSegmentReducer(
         {
@@ -157,6 +157,7 @@ describe('Reducers', () => {
           payload: {
             segment: 'test',
             schema: newNav,
+            shouldMerge: true,
           },
         }
       );
@@ -185,7 +186,6 @@ describe('Reducers', () => {
           },
         }
       );
-      console.log(result, 'this is result');
       expect(result).toEqual({
         navigation: {
           ...navigation,

@@ -27,9 +27,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
     class="ins-c-app-switcher--loading"
   >
     <div
-      class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
+      class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
     >
-       
+      <span
+        class="pf-u-screen-reader"
+      />
     </div>
   </section>
   <nav
@@ -53,9 +55,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
           href="#"
         >
           <div
-            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+            class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-             
+            <span
+              class="pf-u-screen-reader"
+            />
           </div>
         </a>
       </li>
@@ -70,9 +74,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
           href="#"
         >
           <div
-            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+            class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-             
+            <span
+              class="pf-u-screen-reader"
+            />
           </div>
         </a>
       </li>
@@ -87,9 +93,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
           href="#"
         >
           <div
-            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+            class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-             
+            <span
+              class="pf-u-screen-reader"
+            />
           </div>
         </a>
       </li>
@@ -104,9 +112,11 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
           href="#"
         >
           <div
-            class="ins-c-skeleton ins-c-skeleton__lg ins-m-dark ins-c-skeleton__link"
+            class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
-             
+            <span
+              class="pf-u-screen-reader"
+            />
           </div>
         </a>
       </li>

@@ -1,6 +1,5 @@
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { isBeta, highlightItems, isFedRamp, levelArray } from '../utils';
-import merge from 'lodash/merge';
 
 export function contextSwitcherBannerReducer(state) {
   state = {
@@ -67,8 +66,8 @@ export function loadNavigationLandingPageReducer(state, { payload }) {
   };
 }
 
-export function loadNavigationSegmentReducer(state, { payload: { segment, schema, pathName } }) {
-  const mergedSchema = merge(state.navigation?.[segment] || {}, schema);
+export function loadNavigationSegmentReducer(state, { payload: { segment, schema, pathName, shouldMerge } }) {
+  const mergedSchema = shouldMerge || !state.navigation?.[segment] ? schema : state.navigation?.[segment];
   const sortedLinks = levelArray(mergedSchema.navItems).sort((a, b) => (a.length < b.length ? 1 : -1));
   return {
     ...state,
@@ -170,5 +169,28 @@ export function storeInitialHashReducer(state, { payload }) {
   return {
     ...state,
     initialHash,
+  };
+}
+
+export function populateQuickstartsReducer(state, { payload: { app, quickstarts } }) {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      quickstarts: {
+        ...state.quickstarts.quickstarts,
+        [app]: quickstarts,
+      },
+    },
+  };
+}
+
+export function disableQuickstartsReducer(state) {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      disabled: true,
+    },
   };
 }

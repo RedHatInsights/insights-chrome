@@ -28,3 +28,6 @@ export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requ
 export const MARK_REQUEST_NOTIFICATION_SEEN = '@@chrome/mark-request-notification-seen';
 
 export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
+
+export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catalog';
+export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';

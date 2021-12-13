@@ -93,8 +93,8 @@ const ContextSwitcher = ({ user, className }) => {
 
   return (
     <ContextSelector
-      toggleText={`Acct: ${selectedAccountNumber}`}
-      className={classNames('ins-c-page__context-switcher-dropdown', className)}
+      toggleText={`Account: ${selectedAccountNumber}`}
+      className={classNames('chr-c-context-selector', className)}
       onSearchInputChange={(val) => setSearchValue(val)}
       isOpen={isOpen}
       searchInputValue={searchValue}
@@ -103,10 +103,11 @@ const ContextSwitcher = ({ user, className }) => {
       screenReaderLabel="Selected account:`"
       ouiaId="Account Switcher"
       searchInputPlaceholder="Search account"
+      isFullHeight
     >
       {user && user?.identity?.account_number.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
-          <TextContent className="personal-account">
+          <TextContent className="chr-c-content-personal-account">
             <Text className="account-label pf-u-mb-0">
               <span>{user?.identity?.account_number}</span>
               {user?.identity?.account_number === `${selectedAccountNumber}` && (

@@ -91,12 +91,13 @@ export const loadNavigationLandingPage = (schema) => ({
   payload: schema,
 });
 
-export const loadLeftNavSegment = (schema, segment, pathName) => ({
+export const loadLeftNavSegment = (schema, segment, pathName, shouldMerge) => ({
   type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
   payload: {
     segment,
     schema,
     pathName,
+    shouldMerge,
   },
 });
 
@@ -142,4 +143,16 @@ export const markAccessRequestNotification = (payload) => ({
 export const storeInitialHash = (payload) => ({
   type: actionTypes.STORE_INITIAL_HASH,
   payload,
+});
+
+export const populateQuickstartsCatalog = (app, quickstarts) => ({
+  type: actionTypes.POPULATE_QUICKSTARTS_CATALOG,
+  payload: {
+    app,
+    quickstarts,
+  },
+});
+
+export const disableQuickstarts = () => ({
+  type: actionTypes.DISABLE_QUICKSTARTS,
 });
