@@ -196,12 +196,6 @@
     "title-case": "^3.0.3",
     "urijs": "^1.19.11"
   },
-  "alias": {
-    "PFReactTable": "./config/patternfly-table-externals.js",
-    "reactRedux": "./config/react-redux-external.js",
-    "customReact": "./config/react-external.js",
-    "PFReactCore": "./config/pf-react-core-externals.js"
-  },
   "insights": {
     "appname": "chrome"
   }
