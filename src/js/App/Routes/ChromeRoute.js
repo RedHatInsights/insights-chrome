@@ -25,8 +25,9 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
   }, [scope]);
 
   useEffect(() => {
+    let contentElement;
     if (dynamic === false) {
-      const contentElement = document.getElementById('root');
+      contentElement = document.getElementById('root');
       if (contentElement && insightsContentRef) {
         insightsContentRef.current.appendChild(contentElement);
         contentElement.hidden = false;
@@ -39,6 +40,13 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
        * Reset global filter when switching application
        */
       dispatch(toggleGlobalFilter(false));
+      /**
+       * We need to preserve the chrome 1 element in case the route is destroyed re-created.
+       */
+      if (dynamic === false && contentElement) {
+        document.body.appendChild(contentElement);
+        insightsContentRef.current.id = 'root';
+      }
     };
   }, []);
 
