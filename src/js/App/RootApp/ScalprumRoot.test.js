@@ -55,6 +55,9 @@ describe('ScalprumRoot', () => {
         activeApp: 'some-app',
         activeLocation: 'some-location',
         appId: 'app-id',
+        quickstarts: {
+          quickstarts: {},
+        },
         navigation: {
           '/': {
             navItems: [],
