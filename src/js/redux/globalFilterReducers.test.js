@@ -226,16 +226,22 @@ describe('onGetAllWorkloads', () => {
       {},
       {
         payload: {
-          results: [
-            {
-              value: true,
-              count: 10,
-            },
-          ],
+          SAP: {
+            results: [
+              {
+                value: true,
+                count: 10,
+              },
+            ],
+          },
+          AAP: {
+            total: 5,
+          },
         },
       }
     );
     expect(workloads.hasSap).toBe(10);
+    expect(workloads.hasAap).toBe(5);
   });
 });
 
