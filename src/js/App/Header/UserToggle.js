@@ -8,7 +8,8 @@ import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
   const env = window.insights.chrome.getEnvironment();
-  const prefix = window.insights.chrome.isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
+  const isProd = window.insights.chrome.isProd;
+  const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -62,7 +63,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       )}
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
-      {isInternal && (
+      {isInternal && isProd && (
         <DropdownItem key="Internal" href="./internal">
           Internal
         </DropdownItem>
