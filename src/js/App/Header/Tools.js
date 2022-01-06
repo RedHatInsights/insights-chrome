@@ -108,6 +108,10 @@ const Tools = () => {
       appId: 'apiDocs',
     },
     {
+      title: 'Status page',
+      url: 'https://status.redhat.com/',
+    },
+    {
       title: 'Demo mode',
       onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
       isHidden: !isDemoAcc,
