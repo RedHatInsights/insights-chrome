@@ -44,7 +44,7 @@ const generateRoutesList = (modules) =>
     )
     .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
 
-const Routes = ({ insightsContentRef }) => {
+const Routes = ({ insightsContentRef, routesProps }) => {
   const modules = useSelector(({ chrome: { modules } }) => modules);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
@@ -72,7 +72,7 @@ const Routes = ({ insightsContentRef }) => {
         </Route>
       ))}
       {list.map((app) => (
-        <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...app} />
+        <ChromeRoute insightsContentRef={insightsContentRef} key={app.path} {...routesProps} {...app} />
       ))}
       <Route>
         <NotFoundRoute />
@@ -83,6 +83,7 @@ const Routes = ({ insightsContentRef }) => {
 
 Routes.propTypes = {
   insightsContentRef: PropTypes.object,
+  routesProps: PropTypes.object,
 };
 
 export default Routes;

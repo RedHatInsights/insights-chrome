@@ -87,7 +87,7 @@ const ShieldedRoot = memo(
         <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
           {selectedAccountNumber && <div className="ins-c-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
-          <Routes insightsContentRef={insightsContentRef} />
+          <Routes routesProps={{ scopeClass: 'ins-c-scope__default-layout' }} insightsContentRef={insightsContentRef} />
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
       </Page>
