@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
 import { getPendoConf } from '../../analytics';
+import classNames from 'classnames';
 
-const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) => {
+const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, ...props }) => {
   const dispatch = useDispatch();
   const user = useSelector(({ chrome: { user } }) => user);
   useEffect(() => {
@@ -56,7 +57,7 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, ...props }) =
 
   return (
     <Route key={props.path} {...props}>
-      <main role="main" className={scope}>
+      <main role="main" className={classNames(scopeClass, scope)}>
         <ScalprumComponent
           ErrorComponent={<ErrorComponent />}
           appName={scope}
@@ -77,6 +78,7 @@ ChromeRoute.propTypes = {
   exact: PropTypes.bool,
   dynamic: PropTypes.bool,
   insightsContentRef: PropTypes.object.isRequired,
+  scopeClass: PropTypes.string,
 };
 
 export default ChromeRoute;
