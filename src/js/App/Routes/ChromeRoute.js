@@ -18,7 +18,7 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, .
      * update pendo metadata on application change
      */
     try {
-      window.pendo.updateOptions(getPendoConf(user));
+      window?.pendo?.updateOptions(getPendoConf(user));
     } catch (error) {
       console.error('Unable to update pendo options');
       console.error(error);
