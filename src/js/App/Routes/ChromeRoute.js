@@ -12,14 +12,17 @@ import classNames from 'classnames';
 const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, ...props }) => {
   const dispatch = useDispatch();
   const user = useSelector(({ chrome: { user } }) => user);
+  /**
+   * If default title was not set, use module scope (appId)
+   */
+  const defaultTitle = useSelector(({ chrome: { modules } }) => modules?.[scope]?.defaultDocumentTitle || scope);
   useEffect(() => {
     batch(() => {
       dispatch(changeActiveModule(scope));
       /**
-       * Default document title update. If application won't update its title chrome sets a title using module scope
-       * TODO: add required module config to CSC set fallback document title
+       * Default document title update. If application won't update its title chrome sets a title using module config
        */
-      dispatch(updateDocumentTitle(scope));
+      dispatch(updateDocumentTitle(defaultTitle));
     });
     /**
      * update pendo metadata on application change
