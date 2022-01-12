@@ -26,6 +26,7 @@ export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
 export const TOGGLE_FEEDBACK_MODAL = '@@chrome/toggle-feedback-modal';
 export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requests-notifications';
 export const MARK_REQUEST_NOTIFICATION_SEEN = '@@chrome/mark-request-notification-seen';
+export const UPDATE_DOCUMENT_TITLE_REDUCER = '@@chrome/update-document-title';
 
 export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
 

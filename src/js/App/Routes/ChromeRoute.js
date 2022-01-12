@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeActiveModule, toggleGlobalFilter } from '../../redux/actions';
+import { useDispatch, useSelector, batch } from 'react-redux';
+import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
@@ -13,7 +13,14 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, .
   const dispatch = useDispatch();
   const user = useSelector(({ chrome: { user } }) => user);
   useEffect(() => {
-    dispatch(changeActiveModule(scope));
+    batch(() => {
+      dispatch(changeActiveModule(scope));
+      /**
+       * Default document title update. If application won't update its title chrome sets a title using module scope
+       * TODO: add required module config to CSC set fallback document title
+       */
+      dispatch(updateDocumentTitle(scope));
+    });
     /**
      * update pendo metadata on application change
      */

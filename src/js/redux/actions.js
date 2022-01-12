@@ -156,3 +156,8 @@ export const populateQuickstartsCatalog = (app, quickstarts) => ({
 export const disableQuickstarts = () => ({
   type: actionTypes.DISABLE_QUICKSTARTS,
 });
+
+export const updateDocumentTitle = (title) => ({
+  type: actionTypes.UPDATE_DOCUMENT_TITLE_REDUCER,
+  payload: title,
+});
