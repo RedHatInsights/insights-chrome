@@ -147,12 +147,13 @@ const GlobalFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();
   const dispatch = useDispatch();
-  const { isLoaded, count, total, sapCount, isDisabled } = useSelector(
+  const { isLoaded, count, total, sapCount, aapCount, isDisabled } = useSelector(
     ({ globalFilter: { tags, sid, workloads, globalFilterHidden }, chrome: { appId } }) => ({
       isLoaded: tags.isLoaded && sid.isLoaded && workloads.isLoaded,
       count: tags.count + sid.count + workloads.count,
       total: tags.total + sid.total + workloads.total,
       sapCount: workloads.hasSap,
+      aapCount: workloads.hasAap,
       isDisabled: globalFilterHidden || !appId,
     }),
     shallowEqual
@@ -240,6 +241,13 @@ const GlobalFilter = () => {
       sapTag.count = sapCount;
     }
   }, [sapCount]);
+
+  useEffect(() => {
+    const aapTag = workloads?.[0]?.tags?.[1];
+    if (typeof aapCount === 'number' && aapTag) {
+      aapTag.count = aapCount;
+    }
+  }, [aapCount]);
 
   const workloadsChip = chips?.splice(
     chips?.findIndex(({ key }) => key === 'Workloads'),
