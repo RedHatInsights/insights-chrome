@@ -28,7 +28,9 @@ window.insights.experimental.loadRemediations = () => {
 const App = () => {
   const modules = useSelector(({ chrome }) => chrome?.modules);
   const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
+  const documentTitle = useSelector(({ chrome }) => chrome?.documentTitle);
   const dispatch = useDispatch();
+
   useEffect(() => {
     axios
       .get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
@@ -42,6 +44,14 @@ const App = () => {
         dispatch(loadModuesSchema(response.data));
       });
   }, []);
+
+  useEffect(() => {
+    if (typeof documentTitle === 'string') {
+      document.title = `${documentTitle} | console.redhat.com`;
+    } else {
+      document.title = `console.redhat.com`;
+    }
+  }, [documentTitle]);
 
   if (!modules || !scalprumConfig) {
     return null;
