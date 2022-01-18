@@ -49,4 +49,15 @@ if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom ===
   registerUrlObserver(window._satellite.pageBottom);
 }
 
+const trustarcScript = document.createElement('script');
+trustarcScript.id = 'trustarc';
+
+if (location.host === 'console.redhat.com') {
+  trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
+} else {
+  trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.stage.js';
+}
+
+document.body.appendChild(trustarcScript);
+
 import('./bootstrap');
