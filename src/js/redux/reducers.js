@@ -194,3 +194,10 @@ export function disableQuickstartsReducer(state) {
     },
   };
 }
+
+export function documentTitleReducer(state, { payload }) {
+  return {
+    ...state,
+    documentTitle: payload,
+  };
+}

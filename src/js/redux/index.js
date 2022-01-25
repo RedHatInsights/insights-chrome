@@ -18,6 +18,7 @@ import {
   storeInitialHashReducer,
   populateQuickstartsReducer,
   disableQuickstartsReducer,
+  documentTitleReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -57,6 +58,7 @@ import {
   STORE_INITIAL_HASH,
   POPULATE_QUICKSTARTS_CATALOG,
   DISABLE_QUICKSTARTS,
+  UPDATE_DOCUMENT_TITLE_REDUCER,
 } from './action-types';
 
 const reducers = {
@@ -77,6 +79,7 @@ const reducers = {
   [STORE_INITIAL_HASH]: storeInitialHashReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
+  [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
 };
 
 const globalFilter = {

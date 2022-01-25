@@ -36,6 +36,11 @@ export const DEFAULT_ROUTES = {
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
+  dev: {
+    url: ['console.dev.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
 };
 
 export const options = {

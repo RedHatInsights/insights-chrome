@@ -212,3 +212,15 @@ section.ins-c-app-switcher--loading {
     }
 }
 
+/**
+* Cookies banner overrides
+*/
+#truste-consent-track {
+    /**
+    * has to be set because of PF page overlaps the banner
+    */
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
