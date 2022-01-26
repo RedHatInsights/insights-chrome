@@ -26,7 +26,7 @@
     "fixjs": "eslint src --fix",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
-    "test": "jest --forceExit --detectOpenHandles",
+    "test": "jest --forceExit --detectOpenHandles --no-cache",
     "test:update": "jest --updateSnapshot",
     "verify": "npm-run-all lint build test",
     "verify:beta": "npm-run-all lint build:beta test",
