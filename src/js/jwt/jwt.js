@@ -120,16 +120,18 @@ export const init = (options) => {
         // we still need to init async
         // so that the renewal times and such fire
         priv.initializeKeycloak(options);
-        return new Promise((resolve) => {
-          // Here we have an existing key
-          // We need to set up some of the keycloak state
-          // so that the reset of the methods that Chrome uses
-          // to check if things are good get faked out
-          // TODO reafctor the direct access to priv.keycloak
-          // away from the users
-          priv.setToken(options.token);
-          resolve();
-        });
+        // Here we have an existing key
+        // We need to set up some of the keycloak state
+        // so that the reset of the methods that Chrome uses
+        // to check if things are good get faked out
+        // TODO reafctor the direct access to priv.keycloak
+        // away from the users
+        priv.setToken(options.token);
+        return Promise.resolve();
+        // return new Promise((resolve) => {
+
+        //   resolve();
+        // });
       } else {
         delete options.token;
       }

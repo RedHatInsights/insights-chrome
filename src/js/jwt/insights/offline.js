@@ -36,7 +36,7 @@ export function wipePostbackParamsThatAreNotForUs() {
   }
 }
 
-export function getOfflineToken(realm, clientId) {
+export async function getOfflineToken(realm, clientId) {
   const postbackUrl = getPostbackUrl();
 
   if (priv.response) {
@@ -50,10 +50,12 @@ export function getOfflineToken(realm, clientId) {
     return Promise.reject('not available');
   }
 
-  return Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then((ssoUrl) => {
-    const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
-    const params = parseHashString(postbackUrl);
+  const ssoUrl = await insightsUrl(DEFAULT_ROUTES);
 
+  const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
+  const params = parseHashString(postbackUrl);
+
+  return () => {
     return axios({
       method: 'post',
       url: tokenURL,
@@ -63,7 +65,7 @@ export function getOfflineToken(realm, clientId) {
       priv.response = response;
       return response;
     });
-  });
+  };
 }
 
 function getWindow() {

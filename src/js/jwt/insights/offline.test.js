@@ -39,9 +39,10 @@ describe('Offline', () => {
       }
     });
 
-    test('POSTs to /token with the right parameters when input is good', () => {
+    test('POSTs to /token with the right parameters when input is good', async () => {
       offline.__set__('priv', { postbackUrl: 'https://test.com/?noauth=foo#test=bar&code=test123' });
-      offline.getOfflineToken('', 'test321');
+      const callback = await offline.getOfflineToken('', 'test321');
+      callback();
       expect(mockAxios).toHaveBeenCalledWith(
         expect.objectContaining({
           data: 'code=test123&grant_type=authorization_code&client_id=test321' + '&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
