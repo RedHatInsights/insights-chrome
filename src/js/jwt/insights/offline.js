@@ -50,17 +50,19 @@ export function getOfflineToken(realm, clientId) {
     return Promise.reject('not available');
   }
 
-  const tokenURL = `${insightsUrl(DEFAULT_ROUTES)}/realms/${realm}/protocol/openid-connect/token`;
-  const params = parseHashString(postbackUrl);
+  return Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then((ssoUrl) => {
+    const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
+    const params = parseHashString(postbackUrl);
 
-  return axios({
-    method: 'post',
-    url: tokenURL,
-    data: getPostDataString(getPostDataObject(postbackUrl, clientId, params.code)),
-    config: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
-  }).then((response) => {
-    priv.response = response;
-    return response;
+    return axios({
+      method: 'post',
+      url: tokenURL,
+      data: getPostDataString(getPostDataObject(postbackUrl, clientId, params.code)),
+      config: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
+    }).then((response) => {
+      priv.response = response;
+      return response;
+    });
   });
 }
 
