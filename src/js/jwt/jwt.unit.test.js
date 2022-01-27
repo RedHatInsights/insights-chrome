@@ -296,7 +296,7 @@ describe('JWT', () => {
         });
       });
 
-      xdescribe('token update passes', () => {
+      describe('token update passes', () => {
         const loginSpy = jest.spyOn(jwt, 'login');
         test('should *not* call login', () => {
           cookie.remove('cs_jwt');
