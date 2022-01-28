@@ -264,7 +264,7 @@ describe('JWT', () => {
         });
       });
 
-      xdescribe('token update fails', () => {
+      describe('token update fails', () => {
         const loginSpy = jest.spyOn(jwt, 'login');
         function doTest(url, expectedToWork) {
           isExistingValidMock.mockReturnValueOnce(false);

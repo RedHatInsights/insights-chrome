@@ -55,17 +55,14 @@ export async function getOfflineToken(realm, clientId) {
   const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
   const params = parseHashString(postbackUrl);
 
-  return () => {
-    return axios({
-      method: 'post',
-      url: tokenURL,
-      data: getPostDataString(getPostDataObject(postbackUrl, clientId, params.code)),
-      config: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
-    }).then((response) => {
+  return axios
+    .post(tokenURL, getPostDataObject(postbackUrl, clientId, params.code), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+    .then((response) => {
       priv.response = response;
       return response;
     });
-  };
 }
 
 function getWindow() {
@@ -97,12 +94,4 @@ function parseHashString(str) {
       result[parts[0]] = parts[1];
       return result;
     }, {});
-}
-
-function getPostDataString(obj) {
-  return Object.entries(obj)
-    .map((entry) => {
-      return `${entry[0]}=${entry[1]}`;
-    })
-    .join('&');
 }

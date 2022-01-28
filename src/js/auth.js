@@ -43,7 +43,7 @@ export default () => {
   const promise = jwt.init(options).then(bouncer);
 
   return {
-    getOfflineToken: async () => (await getOfflineToken(options.realm, options.clientId))(),
+    getOfflineToken: () => getOfflineToken(options.realm, options.clientId),
     jwt: jwt,
     initPromise: promise,
   };

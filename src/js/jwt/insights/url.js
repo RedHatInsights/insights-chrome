@@ -5,7 +5,6 @@ const ssoUrl = import(/* webpackChunkName: "sso-url" */ './ssoUrl').then((sso) =
 // Parse through keycloak options routes
 export default async (env) => {
   if (await ssoUrl) {
-    console.log('dynamic URL!');
     log('Using dynamic SSO_URL found! ', ssoUrl);
     return ssoUrl;
   }

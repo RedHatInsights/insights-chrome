@@ -101,7 +101,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
   return {
     chrome: {
       auth: {
-        getOfflineToken: async () => (await libjwt.getOfflineToken())(),
+        getOfflineToken: () => libjwt.getOfflineToken(),
         doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,

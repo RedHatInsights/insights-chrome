@@ -46,9 +46,7 @@ const useChromeAuth = () => {
   };
 
   return {
-    getOfflineToken: async () => {
-      return (await getOfflineToken(options.realm, options.clientId))();
-    },
+    getOfflineToken: () => getOfflineToken(options.realm, options.clientId),
     ...jwt,
   };
 };
