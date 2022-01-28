@@ -1,5 +1,17 @@
-const mockAxios = require('jest-mock-axios').default;
+import axios from 'axios';
 const offline = require('./offline');
+
+jest.mock('axios', () => {
+  return {
+    post: jest.fn(() => Promise.resolve()),
+    create: jest.fn(() => ({
+      interceptors: {
+        request: { use: jest.fn(), eject: jest.fn() },
+        response: { use: jest.fn(), eject: jest.fn() },
+      },
+    })),
+  };
+});
 
 const defaults = {
   location: {
@@ -39,13 +51,19 @@ describe('Offline', () => {
       }
     });
 
-    test('POSTs to /token with the right parameters when input is good', () => {
+    test('POSTs to /token with the right parameters when input is good', async () => {
       offline.__set__('priv', { postbackUrl: 'https://test.com/?noauth=foo#test=bar&code=test123' });
-      offline.getOfflineToken('', 'test321');
-      expect(mockAxios).toHaveBeenCalledWith(
+      await offline.getOfflineToken('', 'test321');
+      expect(axios.post).toHaveBeenCalledWith(
+        'https://sso.qa.redhat.com/auth/realms//protocol/openid-connect/token',
         expect.objectContaining({
-          data: 'code=test123&grant_type=authorization_code&client_id=test321' + '&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
-        })
+          client_id: 'test321',
+          code: 'test123',
+          grant_type: 'authorization_code',
+          redirect_uri: 'https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
+        }),
+        // 'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
     });
   });
@@ -101,14 +119,6 @@ describe('Offline', () => {
         bar: 'baz',
         foo: 'bar',
       });
-    });
-  });
-
-  describe('getPostDataString', () => {
-    const getPostDataString = offline.__get__('getPostDataString');
-    test('returns valid string', () => {
-      const o = { foo: 'bar', test: '123' };
-      expect(getPostDataString(o)).toBe('foo=bar&test=123');
     });
   });
 

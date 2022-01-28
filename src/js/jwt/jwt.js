@@ -68,17 +68,19 @@ export const doOffline = (key, val) => {
   url.removeSearch(key);
   url.addSearch(key, val);
 
-  const options = {
-    ...defaultOptions,
-    promiseType: 'native',
-    redirectUri: url.toString(),
-    url: insightsUrl(DEFAULT_ROUTES),
-  };
+  Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then((ssoUrl) => {
+    const options = {
+      ...defaultOptions,
+      promiseType: 'native',
+      redirectUri: url.toString(),
+      url: ssoUrl,
+    };
 
-  const kc = Keycloak(options);
-  kc.init(options).then(() => {
-    kc.login({
-      scope: 'offline_access',
+    const kc = Keycloak(options);
+    kc.init(options).then(() => {
+      kc.login({
+        scope: 'offline_access',
+      });
     });
   });
 };
@@ -90,33 +92,34 @@ export const init = (options) => {
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
 
   priv.setCookie({ cookieName });
-  //constructor for new Keycloak Object?
-  options.url = insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES);
-  options.clientId = 'cloud-services';
-  options.realm = 'redhat-external';
 
-  //options for keycloak.init method
-  options.promiseType = 'native';
-  options.onLoad = 'check-sso';
-  options.checkLoginIframe = false;
+  return Promise.resolve(insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES)).then((ssoUrl) => {
+    //constructor for new Keycloak Object?
+    options.url = ssoUrl;
+    options.clientId = 'cloud-services';
+    options.realm = 'redhat-external';
 
-  const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
+    //options for keycloak.init method
+    options.promiseType = 'native';
+    options.onLoad = 'check-sso';
+    options.checkLoginIframe = false;
 
-  options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
+    const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
 
-  if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
-    options.realm = 'short-session';
-  }
+    options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
 
-  //priv.keycloak = Keycloak(options);
-  priv.setKeycloak(options, updateToken, loginAllTabs, refreshTokens);
+    if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
+      options.realm = 'short-session';
+    }
 
-  if (options.token) {
-    if (isExistingValid(options.token)) {
-      // we still need to init async
-      // so that the renewal times and such fire
-      priv.initializeKeycloak(options);
-      return new Promise((resolve) => {
+    //priv.keycloak = Keycloak(options);
+    priv.setKeycloak(options, updateToken, loginAllTabs, refreshTokens);
+
+    if (options.token) {
+      if (isExistingValid(options.token)) {
+        // we still need to init async
+        // so that the renewal times and such fire
+        priv.initializeKeycloak(options);
         // Here we have an existing key
         // We need to set up some of the keycloak state
         // so that the reset of the methods that Chrome uses
@@ -124,14 +127,18 @@ export const init = (options) => {
         // TODO reafctor the direct access to priv.keycloak
         // away from the users
         priv.setToken(options.token);
-        resolve();
-      });
-    } else {
-      delete options.token;
-    }
-  }
+        return Promise.resolve();
+        // return new Promise((resolve) => {
 
-  return priv.initialize(options).then(initSuccess).catch(initError);
+        //   resolve();
+        // });
+      } else {
+        delete options.token;
+      }
+    }
+
+    return priv.initialize(options).then(initSuccess).catch(initError);
+  });
 };
 
 function isExistingValid(token) {
