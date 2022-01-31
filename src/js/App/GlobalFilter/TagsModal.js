@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import useFilterConfig from '@redhat-cloud-services/frontend-components-utilities/useTableTools/useFilterConfig';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
 import { fetchAllTags, fetchAllSIDs } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
+import { tagsFilters, sidFilters } from './filters';
 
 const useMetaSelector = (key) =>
   useSelector(
@@ -15,6 +17,26 @@ const useMetaSelector = (key) =>
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
   const [tagsSelected, setTagsSelected] = useState([]);
   const [sidsSelected, setSidsSelected] = useState([]);
+  const {
+    toolbarProps: tagsFilterToolbarProps,
+    filterString,
+    activeFilterValues,
+  } = useFilterConfig({
+    filters: {
+      filterConfig: tagsFilters,
+    },
+  });
+  const {
+    toolbarProps: sidFilterToolbarProps,
+    filterString: sidFS,
+    activeFilterValues: sidAFV,
+  } = useFilterConfig({
+    filters: {
+      filterConfig: sidFilters,
+    },
+  });
+  console.log(tagsFilterToolbarProps, filterString, activeFilterValues);
+
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
   const dispatch = useDispatch();
@@ -57,6 +79,10 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
     setFilterBy(filterTagsBy);
     setFilterSIDsBy(filterTagsBy);
   }, [filterTagsBy]);
+
+  useEffect(() => {
+    console.log(tagsFilterToolbarProps);
+  }, [activeFilterValues]);
 
   return (
     <TagModal
@@ -123,36 +149,6 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         setFilterSIDsBy('');
         toggleModal(isSubmit);
       }}
-      filters={[
-        [
-          {
-            label: 'Tags filter',
-            placeholder: 'Filter tags',
-            value: 'tags-filter',
-            filterValues: {
-              value: filterBy,
-              onChange: (_e, value) => {
-                setFilterBy(() => value);
-                debounceGetTags(value);
-              },
-            },
-          },
-        ],
-        [
-          {
-            label: 'SIDs filter',
-            placeholder: 'Filter SAP IDs',
-            value: 'sids-filter',
-            filterValues: {
-              value: filterSIDsBy,
-              onChange: (_e, value) => {
-                setFilterSIDsBy(() => value);
-                debounceGetSIDs(value);
-              },
-            },
-          },
-        ],
-      ]}
       onUpdateData={[
         (pagination) =>
           dispatch(
@@ -183,6 +179,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       onApply={() => onApplyTags(tagsSelected, sidsSelected)}
       title="Select one or more tags/SAP IDs (SID)"
       ouiaId="global-filter-tags-modal"
+      primaryToolbarProps={[{ ...tagsFilterToolbarProps }, { ...sidFilterToolbarProps }]}
     />
   );
 };
