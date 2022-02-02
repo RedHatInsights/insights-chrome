@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: insights-chrome
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: chrome
+    spec:
+      envName: ${ENV_NAME}
+      title: Chrome
+      image: ${IMAGE}:${IMAGE_TAG}
+      API:
+        versions:
+          - v1
+      frontend:
+        paths:
+          - /
+          - /config/chrome
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/cloudservices/insights-chrome
