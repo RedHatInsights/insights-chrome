@@ -26,7 +26,7 @@ const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
     path: path.resolve(__dirname, '../build/js'),
     filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
     publicPath,
-    chunkFilename: `[name]${noHash ? '' : '.[chunkhash]'}.js`,
+    chunkFilename: ({ chunk }) => (chunk.name === 'sso-url' ? '[name].js' : `[name]${noHash ? '' : '.[chunkhash]'}.js`),
   },
   devtool: false,
   resolve: {
