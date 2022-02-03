@@ -31,14 +31,14 @@ const ErrorComponent = (props) => {
     });
   }, []);
   return (
-    <Bullseye className="ins-c-error-component">
+    <Bullseye className="chr-c-error-component">
       <EmptyState>
         <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
           Something went wrong
         </Title>
         <EmptyStateBody>
-          <p className="ins-c-error-component__text">
+          <p className="chr-c-error-component__text">
             There was a problem processing the request. Try reloading the page. If the problem persists, contact{' '}
             <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
               Red Hat support

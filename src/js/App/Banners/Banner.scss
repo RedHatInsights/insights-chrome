@@ -1,4 +1,4 @@
-.ins-c-banner {
+.chr-banner {
     height: 72px;
     background: white;
     display: flex;
@@ -14,7 +14,7 @@
 }
 
 @media screen and (max-width: 768px) {
-    .ins-c-banner {
+    .chr-banner {
         height: auto;
         h3 { padding-bottom: 0; }
     }

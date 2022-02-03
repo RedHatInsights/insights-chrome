@@ -1,4 +1,4 @@
-.ins-c-global-filter__menu {
+.chr-c-menu-global-filter {
   max-height: 400px;
   overflow-y: auto;
   width: 450px;
@@ -6,7 +6,7 @@
   padding-bottom: 0;
   box-shadow: none !important;
 }
-.ins-c-global-filter__select {
+.chr-c-menu-global-filter__select {
   &.expanded {
     width: 450px;
   }
@@ -17,7 +17,7 @@
     }
   }
 }
-.ins-c-global-filter__checkbox {
+.chr-c-check-global-filter {
   .pf-c-check__label {
       width: 100%;
       display: flex;
