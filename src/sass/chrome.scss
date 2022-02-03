@@ -24,7 +24,7 @@ $pf-global--enable-reset: 'true';
 @import 'partials/_footer.scss';
 
 body {
-    position: relative;
+   position: relative;
 }
 
 aside {
@@ -35,11 +35,7 @@ aside {
   display:none !important;
 } 
 
-.inc-c-chrome__root-element {
-    height: 100vh !important;
-}
-
-.pf-c-page.ins-c-page__hasBanner {
+.pf-c-page.chr-c-page__hasBanner {
     grid-template-areas: "banner banner"
                          "header header"
                          "nav main";
@@ -53,8 +49,6 @@ aside {
 .pf-c-page {
     --pf-c-page__sidebar--Transition: all 500ms cubic-bezier(.42, 0, .58, 1);
     --pf-m-emphasis--FontSize: var(--pf-global--FontSize--xl);
-
-    .ins-m-full--height { height: 100%; }
 
     .ins-c-chrome__global-filter {
         padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
@@ -93,7 +87,7 @@ aside {
 }
 
 // Landing page logout alert
-.pf-c-alert.ins-c-alert {
+.pf-c-alert.chr-c-alert {
     position: absolute;
     top: var(--pf-c-page__header--MinHeight);
     right: var(--pf-c-page__header-tools--MarginRight);
@@ -129,15 +123,6 @@ aside {
     grid-row-end: 4;
 }
 
-// Page footer
-.ins-c-footer {
-    grid-column-start: 1;
-
-    @media screen and (min-width: $pf-global--breakpoint--md) {
-        grid-column-start: 2;
-    }
-}
-
 // Loading
 .ins-l-page__header--loading {
     .ins-c-skeleton { @include rem('height', 28px); }
@@ -159,18 +144,11 @@ section.ins-c-app-switcher--loading {
 }
 
 // Pen testing
-.ins-c-pen-test {
+.chr-pen-test {
     border-top: 3px solid #A18FFF;
 }
 
-// PF navigation text alignment fix
-.ins-m-navigation-align {
-    .pf-c-nav__link {
-        text-align: inherit;
-    }
-}
-
-.ins-c-render {
+.chr-render {
     display: flex;
     flex-direction: column;
     min-height: 100%;

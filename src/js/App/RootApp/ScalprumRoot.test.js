@@ -110,7 +110,7 @@ describe('ScalprumRoot', () => {
       );
       container = internalContainer;
     });
-    expect(container.querySelector('.ins-c-landing-nav')).toBeTruthy();
+    expect(container.querySelector('.chr-c-landing-nav')).toBeTruthy();
     /**
      * We have to clear the restore the mock to match the mocked module
      */

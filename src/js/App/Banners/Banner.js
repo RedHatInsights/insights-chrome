@@ -12,7 +12,7 @@ const bannerContent = {
 };
 
 const Banner = () => (
-  <div className="ins-c-banner">
+  <div className="chr-banner">
     <Text component={TextVariants.h3}>{bannerContent.title}</Text>
     <Button variant="link" isLarge component="a" href={bannerContent.link.href} target="_blank">
       {bannerContent.link.title} <ArrowRightIcon />

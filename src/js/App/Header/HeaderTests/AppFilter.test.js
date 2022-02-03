@@ -49,7 +49,7 @@ describe('<AppFilter />', () => {
       fireEvent.click(button);
     });
     const menuContainer = screen.getByTestId('ins-c__find-app-service');
-    expect(menuContainer.querySelectorAll('.content')).toHaveLength(1);
+    expect(menuContainer.querySelectorAll('.chr-app-filter-content')).toHaveLength(1);
   });
 
   test('should set and clear filter input value', async () => {

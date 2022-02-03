@@ -18,14 +18,14 @@ export const navLoader = () => {
       </Provider>,
       document.querySelector('aside#ins-c-sidebar')
     );
-  } else if (document.querySelector('aside#ins-c-landing-nav')) {
+  } else if (document.querySelector('aside#chr-c-landing-nav')) {
     render(
       <Provider store={store}>
         <Suspense fallback={<Fragment />}>
           <LandingNav />
         </Suspense>
       </Provider>,
-      document.querySelector('aside#ins-c-landing-nav')
+      document.querySelector('aside#chr-c-landing-nav')
     );
   }
 };

@@ -63,7 +63,7 @@ const ShieldedRoot = memo(
 
     return (
       <Page
-        className={classnames({ 'ins-c-page__hasBanner': hasBanner, 'ins-c-page__account-banner': selectedAccountNumber })}
+        className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
         header={
           <Masthead className="chr-c-masthead">
             <MastheadToggle>
@@ -84,10 +84,10 @@ const ShieldedRoot = memo(
         }
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="ins-c-sidebar" nav={Sidebar} />}
       >
-        <div ref={insightsContentRef} className={classnames('ins-c-render', { 'ins-m-full--height': !isGlobalFilterEnabled })}>
+        <div ref={insightsContentRef} className={classnames('chr-render', { 'pf-u-h-100': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}
-          {selectedAccountNumber && <div className="ins-c-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
-          <Routes routesProps={{ scopeClass: 'ins-c-scope__default-layout' }} insightsContentRef={insightsContentRef} />
+          {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
+          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
           <main className="pf-c-page__main" id="no-access"></main>
         </div>
       </Page>

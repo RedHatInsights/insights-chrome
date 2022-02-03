@@ -1,4 +1,4 @@
-.ins-c-viewing-as {
+.chr-viewing-as {
   left: 0;
   top: 76px;
   width: 100%;
@@ -10,7 +10,7 @@
   grid-area: banner;
 }
 
-.pf-c-page.ins-c-page__account-banner {
+.pf-c-page.chr-c-page__account-banner {
   grid-template-areas:
     "header header"
     "banner banner"
@@ -19,14 +19,14 @@
 }
 
 @media screen and (max-width: 1200px) {
-  .pf-c-page.ins-c-page__account-banner {
+  .pf-c-page.chr-c-page__account-banner {
     grid-template-areas:
       "header header"
       "main main";
   }
 }
 
-.ins-c-scope__default-layout {
+.chr-scope__default-layout {
   display: inherit;
   flex-direction: inherit;
 }

@@ -69,7 +69,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
 
   return (
     <Dropdown
-      className="pf-m-full-height ins-c-page__app-filter-dropdown-toggle"
+      className="pf-m-full-height"
       toggle={
         <DropdownToggle
           id="toggle-id"
@@ -87,12 +87,12 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
       ouiaId="App Filter"
     >
       {ReactDOM.createPortal(
-        <div ref={dropdownRef} className="pf-c-dropdown ins-c-page__app-filter-dropdown-menu" data-testid="ins-c__find-app-service">
+        <div ref={dropdownRef} className="pf-c-dropdown chr-c-page__app-filter-dropdown-menu" data-testid="ins-c__find-app-service">
           <div className="pf-c-dropdown__menu">
-            <div className="content">
+            <div className="chr-app-filter-content">
               {isLoaded ? (
                 <React.Fragment>
-                  <Flex className="search">
+                  <Flex className="chr-l-flex-app-filter-search">
                     <SearchInput
                       data-ouia-component-id="app-filter-search"
                       placeholder="Find an app or service"
