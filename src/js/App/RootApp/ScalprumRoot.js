@@ -106,7 +106,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QSWrapper quickstartsLoaded={quickstartsLoaded} className="inc-c-chrome__root-element" {...quickStartProps}>
+    <QSWrapper quickstartsLoaded={quickstartsLoaded} className="pf-u-h-100vh" {...quickStartProps}>
       <ScalprumProvider
         config={config}
         api={{

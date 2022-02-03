@@ -5,7 +5,7 @@ exports[`ChromeNavExapandable should not render nav item expandable 1`] = `<div 
 exports[`ChromeNavExapandable should render nav item expandable 1`] = `
 <div>
   <li
-    class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
+    class="pf-c-nav__item pf-m-expandable"
     data-ouia-component-id="OUIA-Generated-NavExpandable-1"
     data-ouia-component-type="PF4/NavExpandable"
     data-ouia-safe="true"
@@ -74,7 +74,7 @@ exports[`ChromeNavExapandable should render nav item expandable 1`] = `
 exports[`ChromeNavExapandable should render nav item expandable with items 1`] = `
 <div>
   <li
-    class="pf-c-nav__item pf-m-expandable ins-m-navigation-align"
+    class="pf-c-nav__item pf-m-expandable"
     data-ouia-component-id="OUIA-Generated-NavExpandable-2"
     data-ouia-component-type="PF4/NavExpandable"
     data-ouia-safe="true"

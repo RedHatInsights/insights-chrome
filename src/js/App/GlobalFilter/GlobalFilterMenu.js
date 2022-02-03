@@ -87,7 +87,7 @@ const GlobalFilterMenu = (props) => {
 
   const menuItems = getMenuItems(groups, onChange, calculateSelected);
   const menu = [
-    <div onClick={(event) => event.stopPropagation()} key="global-filter-menu" className="pf-c-menu ins-c-global-filter__menu">
+    <div onClick={(event) => event.stopPropagation()} key="global-filter-menu" className="pf-c-menu chr-c-menu-global-filter">
       {isLoading ? (
         <MenuList>
           <MenuItem>
@@ -109,13 +109,7 @@ const GlobalFilterMenu = (props) => {
                     !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
                   return (
                     <MenuItem key={value} onClick={onClick}>
-                      <Checkbox
-                        className="ins-c-global-filter__checkbox"
-                        ouiaId="global-filter-checkbox"
-                        id={id}
-                        isChecked={isChecked}
-                        label={label}
-                      />
+                      <Checkbox className="chr-c-check-global-filter" ouiaId="global-filter-checkbox" id={id} isChecked={isChecked} label={label} />
                     </MenuItem>
                   );
                 })}
@@ -137,7 +131,7 @@ const GlobalFilterMenu = (props) => {
   return (
     <Select
       isDisabled={isDisabled}
-      className={classNames('ins-c-global-filter__select', {
+      className={classNames('chr-c-menu-global-filter__select', {
         expanded: isOpen,
       })}
       ouiaId="global-filter-select"

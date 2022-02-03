@@ -40,7 +40,7 @@ exports[`Header should render correctly 1`] = `
               class="pf-c-toolbar__item"
             >
               <div
-                class="pf-c-dropdown pf-m-full-height ins-c-page__app-filter-dropdown-toggle"
+                class="pf-c-dropdown pf-m-full-height"
                 data-ouia-component-id="App Filter"
                 data-ouia-component-type="PF4/Dropdown"
                 data-ouia-safe="true"
