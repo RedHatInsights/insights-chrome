@@ -23,6 +23,6 @@ export const headerLoader = () => {
   }
 
   if (window.insights.chrome.isPenTest()) {
-    document.querySelector('header').classList.add('ins-c-pen-test');
+    document.querySelector('header').classList.add('chr-pen-test');
   }
 };

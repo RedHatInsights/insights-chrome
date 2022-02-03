@@ -41,7 +41,7 @@ const LandingNav = () => {
   }
 
   return (
-    <Nav className="ins-c-landing-nav" ouiaId="SideNavigation">
+    <Nav className="chr-c-landing-nav" ouiaId="SideNavigation">
       <NavList>
         <div className="ins-c-app-title">
           <b>Home</b>
@@ -49,13 +49,7 @@ const LandingNav = () => {
         {schema
           .filter(({ appId }) => (isFedRamp() ? modules[appId]?.isFedramp === true : true))
           .map(({ title, id, href, appId }) => (
-            <NavItem
-              component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />}
-              className="ins-m-navigation-align"
-              key={id}
-              ouiaId={id}
-              to={href}
-            >
+            <NavItem component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />} key={id} ouiaId={id} to={href}>
               {title}
             </NavItem>
           ))}

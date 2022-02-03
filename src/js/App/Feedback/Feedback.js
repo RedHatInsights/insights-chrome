@@ -44,7 +44,7 @@ const Feedback = ({ user }) => {
     <React.Fragment>
       <Button
         ouiaId="feedback-button"
-        className="ins-c-button__feedback"
+        className="chr-c-button-feedback"
         onClick={() => {
           if (!usePendoFeedback) {
             setIsModalOpen(true);
