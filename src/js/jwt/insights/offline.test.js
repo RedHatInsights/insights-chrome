@@ -56,13 +56,7 @@ describe('Offline', () => {
       await offline.getOfflineToken('', 'test321');
       expect(axios.post).toHaveBeenCalledWith(
         'https://sso.qa.redhat.com/auth/realms//protocol/openid-connect/token',
-        expect.objectContaining({
-          client_id: 'test321',
-          code: 'test123',
-          grant_type: 'authorization_code',
-          redirect_uri: 'https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
-        }),
-        // 'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
+        'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
     });
