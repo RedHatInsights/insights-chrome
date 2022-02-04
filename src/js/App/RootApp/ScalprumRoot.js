@@ -43,8 +43,9 @@ const ScalprumRoot = ({ config, ...props }) => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
-  const [activeQuickStartID, setActiveQuickStartID] = useLocalStorage('insights-quickstartId', '');
+  const [activeQuickStartID, setActiveQuickStartID] = useState(undefined);
   const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
+  console.log({ allQuickStartStates });
   const quickStarts = useSelector(
     ({
       chrome: {
