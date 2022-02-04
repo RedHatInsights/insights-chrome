@@ -56,7 +56,7 @@ export async function getOfflineToken(realm, clientId) {
   const params = parseHashString(postbackUrl);
 
   return axios
-    .post(tokenURL, getPostDataObject(postbackUrl, clientId, params.code), {
+    .post(tokenURL, getPostDataString(getPostDataObject(postbackUrl, clientId, params.code)), {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
     .then((response) => {
@@ -94,4 +94,12 @@ function parseHashString(str) {
       result[parts[0]] = parts[1];
       return result;
     }, {});
+}
+
+function getPostDataString(obj) {
+  return Object.entries(obj)
+    .map((entry) => {
+      return `${entry[0]}=${entry[1]}`;
+    })
+    .join('&');
 }
