@@ -1,13 +1,25 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocalStorage } from '@patternfly/quickstarts';
+import { getEnv } from '../../utils';
+
+const isStage = getEnv() === 'stage';
+
+const statePersistor = isStage ? useState : useLocalStorage;
+const initiStatesArgs = isStage ? ['insights-quickstarts', {}] : [{}];
+const initialIdArgs = isStage ? ['', ''] : [undefined];
 
 const useQuickstartsStates = () => {
   const accountId = useSelector(({ chrome }) => chrome?.user?.identity?.internal?.account_id);
-  const [allQuickStartStates, setAllQuickStartStatesInternal] = useState({});
-  const [activeQuickStartID, setActiveQuickStartIDInternal] = useState(undefined);
+  const [allQuickStartStates, setAllQuickStartStatesInternal] = statePersistor(...initiStatesArgs);
+  const [activeQuickStartID, setActiveQuickStartIDInternal] = statePersistor(...initialIdArgs);
 
-  function setAllQuickStartStates(value) {
+  function setAllQuickStartStates(...args) {
+    if (!isStage) {
+      return setAllQuickStartStatesInternal(...args);
+    }
+    const [value] = args;
     const valueToStore = typeof value === 'function' ? value(allQuickStartStates) : value;
     const activeState = valueToStore[activeQuickStartID];
     if (typeof activeState === 'object') {
@@ -24,7 +36,11 @@ const useQuickstartsStates = () => {
     setAllQuickStartStatesInternal(valueToStore);
   }
 
-  function setActiveQuickStartID(id) {
+  function setActiveQuickStartID(...args) {
+    if (!isStage) {
+      return setActiveQuickStartIDInternal(...args);
+    }
+    const [id] = args;
     setActiveQuickStartIDInternal(id);
   }
 
