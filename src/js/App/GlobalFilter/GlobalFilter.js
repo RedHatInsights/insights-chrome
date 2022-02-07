@@ -32,7 +32,7 @@ const GlobalFilterDropdown = ({
   );
   return (
     <Fragment>
-      <Split id="global-filter" hasGutter className="ins-c-chrome__global-filter">
+      <Split id="global-filter" hasGutter className="chr-c-global-filter">
         <SplitItem>
           {userLoaded && allowed !== undefined ? (
             <GroupFilterWrapper
@@ -60,7 +60,7 @@ const GlobalFilterDropdown = ({
             {chips?.length > 0 && (
               <Fragment>
                 {chips.map(({ category, chips }, key) => (
-                  <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'ins-m-sticky' : ''}>
+                  <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'chr-c-chip' : ''}>
                     {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
                       <Chip
                         key={chipKey}

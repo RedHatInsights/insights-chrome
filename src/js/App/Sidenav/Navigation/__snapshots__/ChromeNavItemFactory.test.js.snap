@@ -72,7 +72,7 @@ exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
 <div>
   <section
     aria-labelledby="group"
-    class="pf-c-nav__section ins-c-section-nav"
+    class="pf-c-nav__section chr-c-section-nav"
   >
     <h2
       class="pf-c-nav__section-title"
@@ -83,7 +83,7 @@ exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
       </div>
     </h2>
     <ul
-      class="pf-c-nav__list ins-c-section-nav"
+      class="pf-c-nav__list chr-c-section-nav"
     />
   </section>
 </div>

@@ -82,7 +82,7 @@ const ShieldedRoot = memo(
             <Header />
           </Masthead>
         }
-        sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="ins-c-sidebar" nav={Sidebar} />}
+        sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('chr-render', { 'pf-u-h-100': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter />}

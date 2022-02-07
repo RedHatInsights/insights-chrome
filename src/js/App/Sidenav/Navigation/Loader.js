@@ -4,7 +4,7 @@ import { Nav, NavList, NavItem } from '@patternfly/react-core';
 
 const NavLoader = () => (
   <Fragment>
-    <section className="ins-c-app-switcher--loading">
+    <section className="chr-c-app-switcher--loading">
       <Skeleton isDark size={SkeletonSize.lg} />
     </section>
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="false" ouiaId="SideNavigation">

@@ -27,7 +27,7 @@ const ChromeNavGroup = ({ navItems, isHidden, icon, title }) => {
     </div>
   );
   return (
-    <NavGroup className="ins-c-section-nav" id={title} title={groupTitle}>
+    <NavGroup className="chr-c-section-nav" id={title} title={groupTitle}>
       {filteredFedrampNavItems.map((item, index) => (
         <ChromeNavItemFactory key={index} {...item} />
       ))}

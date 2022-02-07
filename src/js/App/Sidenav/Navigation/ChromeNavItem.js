@@ -26,7 +26,7 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
 
   return (
     <NavItem
-      className={classNames(className, { 'ins-c-navigation__additional-links': isExternal, 'ins-c-navigation__with-notifier': hasNotifier })}
+      className={classNames(className, { 'chr-c-navigation__additional-links': isExternal, 'chr-c-navigation__with-notifier': hasNotifier })}
       itemID={href}
       data-quickstart-id={href}
       preventDefault
@@ -36,7 +36,7 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
       component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
-      {isBetaEnv && !isBeta() && !isExternal && betaBadge('ins-c-navigation__beta-badge')}
+      {isBetaEnv && !isBeta() && !isExternal && betaBadge('chr-c-navigation__beta-badge')}
       {hasNotifier && <BellIcon size="md" className="notifier-icon" color="var(--pf-global--default-color--200)" />}
     </NavItem>
   );
