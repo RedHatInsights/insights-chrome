@@ -4,7 +4,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { QuickStartContainer, useLocalStorage } from '@patternfly/quickstarts';
+import { QuickStartContainer } from '@patternfly/quickstarts';
 
 import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
@@ -13,6 +13,7 @@ import { usePendoFeedback } from '../Feedback';
 import { disableQuickstarts, populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
+import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -40,11 +41,12 @@ QSWrapper.propTypes = {
 
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
+  const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
-  const [activeQuickStartID, setActiveQuickStartID] = useState(undefined);
-  const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
+  // const [activeQuickStartID, setActiveQuickStartID] = useState(undefined);
+  // const [allQuickStartStates, setAllQuickStartStates] = useLocalStorage('insights-quickstarts', {});
   console.log({ allQuickStartStates });
   const quickStarts = useSelector(
     ({
