@@ -189,3 +189,11 @@ section.ins-c-app-switcher--loading {
     bottom: 0;
     width: 100%;
 }
+
+// centers modals when a quick start drawer is open
+.pfext-quick-start-drawer__body {
+    .pf-c-backdrop {
+      --pf-c-backdrop--Position: absolute;
+    }
+  }
+  
