@@ -87,7 +87,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
       ouiaId="App Filter"
     >
       {ReactDOM.createPortal(
-        <div ref={dropdownRef} className="pf-c-dropdown chr-c-page__app-filter-dropdown-menu" data-testid="ins-c__find-app-service">
+        <div ref={dropdownRef} className="pf-c-dropdown chr-c-page__app-filter-dropdown-menu" data-testid="chr-c__find-app-service">
           <div className="pf-c-dropdown__menu">
             <div className="chr-app-filter-content">
               {isLoaded ? (

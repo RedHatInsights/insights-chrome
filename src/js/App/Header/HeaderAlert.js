@@ -30,7 +30,7 @@ const HeaderAlert = ({ title, variant, onDismiss, dismissable, dismissDelay }) =
 
   return (
     <React.Fragment>
-      {alertVisible && <Alert variant={variant} title={title} className="ins-c-alert" actionClose={<AlertActionCloseButton onClose={onClose} />} />}
+      {alertVisible && <Alert variant={variant} title={title} className="chr-c-alert" actionClose={<AlertActionCloseButton onClose={onClose} />} />}
     </React.Fragment>
   );
 };
