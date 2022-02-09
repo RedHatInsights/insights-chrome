@@ -18,10 +18,10 @@
     color: var(--pf-global--Color--dark-100);
   }
   .chr-c-dropdown-user-toggle {
-    --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: #151515;
+    --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: var(--pf-global--palette--black-900);
   }
 }
 
 .chr-pen-test {
-  border-top: 3px solid #A18FFF;
+  border-top: 3px solid var(--pf-global--palette--purple-300);
 }
