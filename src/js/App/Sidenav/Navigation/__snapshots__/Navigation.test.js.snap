@@ -3,7 +3,7 @@
 exports[`ChromeNavItem should render navigation  1`] = `
 <div>
   <div
-    class="ins-c-app-title"
+    class="chr-c-app-title"
   >
     Nav title
   </div>
@@ -24,7 +24,7 @@ exports[`ChromeNavItem should render navigation  1`] = `
 exports[`ChromeNavItem should render navigation loader if schema was not loaded 1`] = `
 <div>
   <section
-    class="ins-c-app-switcher--loading"
+    class="chr-c-app-switcher--loading"
   >
     <div
       class="pf-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"

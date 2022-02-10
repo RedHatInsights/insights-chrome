@@ -1,3 +1,9 @@
+.chr-c-global-filter {
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+  .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
+  .chr-c-chip { background: var(--pf-global--palette--blue-50); }
+}
+
 .chr-c-menu-global-filter {
   max-height: 400px;
   overflow-y: auto;

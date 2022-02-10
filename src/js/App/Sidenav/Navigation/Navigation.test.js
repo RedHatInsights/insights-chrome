@@ -73,8 +73,8 @@ describe('ChromeNavItem', () => {
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
-    expect(container.querySelectorAll('.ins-c-app-switcher--loading')).toHaveLength(1);
-    expect(container.querySelectorAll('.ins-c-app-title')).toHaveLength(0);
+    expect(container.querySelectorAll('.chr-c-app-switcher--loading')).toHaveLength(1);
+    expect(container.querySelectorAll('.chr-c-app-title')).toHaveLength(0);
   });
 
   test('should render navigation ', async () => {
@@ -88,8 +88,8 @@ describe('ChromeNavItem', () => {
       container = iContainer;
     });
     expect(container).toMatchSnapshot();
-    expect(container.querySelectorAll('.ins-c-app-switcher--loading')).toHaveLength(0);
-    expect(container.querySelectorAll('.ins-c-app-title')).toHaveLength(1);
-    expect(container.querySelector('.ins-c-app-title').textContent).toEqual(navTitle);
+    expect(container.querySelectorAll('.chr-c-app-switcher--loading')).toHaveLength(0);
+    expect(container.querySelectorAll('.chr-c-app-title')).toHaveLength(1);
+    expect(container.querySelector('.chr-c-app-title').textContent).toEqual(navTitle);
   });
 });
