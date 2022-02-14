@@ -48,7 +48,7 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    const menuContainer = screen.getByTestId('chr-c__find-app-service');
     expect(menuContainer.querySelectorAll('.chr-app-filter-content')).toHaveLength(1);
   });
 
@@ -60,7 +60,7 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    const menuContainer = screen.getByTestId('chr-c__find-app-service');
     const input = menuContainer.querySelector('input');
     await act(async () => {
       fireEvent.change(input, { target: { value: 'foo' } });
@@ -82,7 +82,7 @@ describe('<AppFilter />', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    const menuContainer = screen.getByTestId('ins-c__find-app-service');
+    const menuContainer = screen.getByTestId('chr-c__find-app-service');
     const input = menuContainer.querySelector('input');
     await act(async () => {
       fireEvent.change(input, { target: { value: 'foo' } });

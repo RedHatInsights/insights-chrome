@@ -9,14 +9,14 @@ const Sidenav = lazy(() => import(/* webpackChunkName: "Sidenav" */ './Navigatio
 
 export const navLoader = () => {
   const { store } = spinUpStore();
-  if (document.querySelector('aside#ins-c-sidebar')) {
+  if (document.querySelector('aside#chr-c-sidebar')) {
     render(
       <Provider store={store}>
         <Suspense fallback={<NavLoader />}>
           <Sidenav />
         </Suspense>
       </Provider>,
-      document.querySelector('aside#ins-c-sidebar')
+      document.querySelector('aside#chr-c-sidebar')
     );
   } else if (document.querySelector('aside#chr-c-landing-nav')) {
     render(

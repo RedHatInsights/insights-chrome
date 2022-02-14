@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }) => (
   <Modal aria-label="Beta info modal" isOpen={isOpen} onClose={onCancel} variant={ModalVariant.medium}>
     <Bullseye>
-      <div className="ins-c-navigation__beta-info-modal">
+      <div className="chr-c-navigation__beta-info-modal">
         <InfoCircleIcon size="xl" className="info-icon" />
         <Title headingLevel="h4" size="xl">
           {`${menuItemClicked} is only available in our Beta Environment`}
