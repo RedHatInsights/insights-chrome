@@ -51,13 +51,13 @@ exports[`ChromeNavItem should render nav item with a node title 1`] = `
 exports[`ChromeNavItem should render nav item with an external icon 1`] = `
 <div>
   <li
-    class="pf-c-nav__item ins-c-navigation__additional-links"
+    class="pf-c-nav__item chr-c-navigation__additional-links"
     data-ouia-component-id="Foo"
     data-ouia-component-type="PF4/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link ins-c-navigation__additional-links"
+      class="pf-c-nav__link chr-c-navigation__additional-links"
       data-quickstart-id="/foo"
       data-testid="native-link"
       href="/foo"
@@ -102,7 +102,7 @@ exports[`ChromeNavItem should render nav item with beta badge 1`] = `
       Foo
        
       <span
-        class="pf-c-badge pf-m-unread ins-c-toolbar__beta-badge ins-c-navigation__beta-badge"
+        class="pf-c-badge pf-m-unread chr-c-toolbar__beta-badge chr-c-navigation__beta-badge"
       >
         beta
       </span>

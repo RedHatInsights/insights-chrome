@@ -37,7 +37,9 @@ export function pageAllowsUnentitled() {
     pathname.indexOf('/security') === 0 ||
     pathname.indexOf('/beta/security') === 0 ||
     pathname.indexOf('/application-services') === 0 ||
-    pathname.indexOf('/beta/application-services') === 0
+    pathname.indexOf('/beta/application-services') === 0 ||
+    pathname.indexOf('/hac') === 0 ||
+    pathname.indexOf('/beta/hac') === 0
   ) {
     return true;
   }

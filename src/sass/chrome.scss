@@ -2,33 +2,27 @@ $pf-global--enable-reset: 'true';
 
 @import '~@patternfly/patternfly/patternfly.scss';
 @import '~@patternfly/patternfly/patternfly-addons.scss';
+@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
+@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 // Quick starts
 @import '~@patternfly/quickstarts/dist/quickstarts.min';
 // TODO: Bring these quick starts overrides into the lib instead 
 .pfext-page-layout__title {
-    margin-top: 0;
-    padding-top: 23px;
+  margin-top: 0;
+  padding-top: 23px;
 }
 .pfext-page-layout__content.pfext-is-dark {
-    background: unset;
+  background: unset;
 }
 
-// Accessibility
-@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
-@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
-@import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
-
-@import 'helpers.scss';
-
-@import 'partials/_footer.scss';
-
 body {
-   position: relative;
+  position: relative;
 }
 
 aside {
-    overflow: auto !important;
+  overflow: auto !important;
 }
 
 .quickstarts-open ._pendo-badge {
@@ -36,9 +30,9 @@ aside {
 } 
 
 .pf-c-page.chr-c-page__hasBanner {
-    grid-template-areas: "banner banner"
-                         "header header"
-                         "nav main";
+  grid-template-areas: "banner banner"
+                       "header header"
+                       "nav main";
 }
 
 #no-access.pf-c-page__main {
@@ -47,145 +41,74 @@ aside {
 
 // Page temp styles
 .pf-c-page {
-    --pf-c-page__sidebar--Transition: all 500ms cubic-bezier(.42, 0, .58, 1);
-    --pf-m-emphasis--FontSize: var(--pf-global--FontSize--xl);
-
-    .ins-c-chrome__global-filter {
-        padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
-        background: var(--pf-global--BackgroundColor--100);
-
-        .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
-        .ins-m-sticky { background: var(--pf-global--palette--blue-50); }
-        .ins-m-permanent button { display: none; }
-        .pf-l-split__item:first-of-type { min-width: 150px;}
-
-        .ins-c-tagfilter {
-            width: 100%;
-
-            &.pf-m-expanded { width: 450px; }
-            .pf-c-select__menu {
-                max-height: 400px;
-                overflow: auto;
-            }
-
-            .pf-c-select__menu li button:hover label .pf-c-badge.pf-m-read {
-                background: var(--pf-global--Color--light-100);
-            }
-
-            .ins-c-tagfilter__option-value {
-                max-width: 360px;
-            }
-        }
-    }
+  --pf-m-emphasis--FontSize: var(--pf-global--FontSize--xl);
 }
 
 // Page root background color
 .pf-c-page__main {
-    &#root, &#no-access {
-        background: var(--pf-c-page__main-section--BackgroundColor);
-    }
+  &#root, &#no-access {
+    background: var(--pf-c-page__main-section--BackgroundColor);
+  }
 }
 
 // Landing page logout alert
 .pf-c-alert.chr-c-alert {
-    position: absolute;
-    top: var(--pf-c-page__header--MinHeight);
-    right: var(--pf-c-page__header-tools--MarginRight);
-}
-
-// Header
-.chr-c-masthead {
-  overflow: visible;
-  .chr-c-dropdown-item__stack {
-    white-space: nowrap;
-    * { color: var(--pf-c-dropdown__menu-item--disabled--Color); }
-  }
-  .chr-c-dropdown-item__stack--header,
-  .chr-c-dropdown-item__stack--subValue {
-    font-size: var(--pf-global--FontSize--xs);
-  }
-  .chr-c-dropdown-item__stack--subValue { padding-top: var(--pf-global--spacer--xs); }
-
-  .chr-c-brand {
-    width: 170px;
-  }
-  .chr-c-badge-beta {
-    background-color: var(--pf-global--palette--green-300);
-    color: var(--pf-global--Color--dark-100);
-  }
-  .chr-c-dropdown-user-toggle {
-    --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: #151515;
-  }
+  position: absolute;
+  top: var(--pf-c-page__header--MinHeight);
+  right: var(--pf-c-page__header-tools--MarginRight);
 }
 
 // Page sidebar
 .pf-c-page__sidebar {
-    grid-row-end: 4;
-}
-
-// Loading
-.ins-l-page__header--loading {
-    .ins-c-skeleton { @include rem('height', 28px); }
-}
-
-.ins-c-page__header-brand--loading {
-    .pf-c-button.pf-m-plain { top: 2px; }
-}
-
-section.ins-c-app-switcher--loading {
-    padding: calc(16px + var(--pf-global--spacer--sm)) 24px;
-    margin-top: 7px;
-    border-bottom: 3px solid #3c3f42;
-}
-
-.pf-m-user-skeleton {
-    .ins-c-skeleton { width: 75px; }
-    .pf-c-dropdown__toggle-icon { height: 1em; }
-}
-
-// Pen testing
-.chr-pen-test {
-    border-top: 3px solid #A18FFF;
+  grid-row-end: 4;
 }
 
 .chr-render {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    > main {
-        flex-grow: 1;
-    }
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  > main {
+      flex-grow: 1;
+  }
 }
 
 @media only screen and (max-width: $pf-global--breakpoint--md) {
-    .ins-m-hide-on-md {display: none;}
+  .ins-m-hide-on-md {display: none;}
 }
 
 @media only screen and (max-width: $pf-global--breakpoint--sm) {
-    .ins-m-hide-on-sm {display: none;}
+  .ins-m-hide-on-sm {display: none;}
 
-    .ins-c-table-empty-state.pf-m-grid-md.pf-c-table,
-    .ins-c-table-empty-state.pf-m-grid-lg.pf-c-table {
-        [data-label] {
-            --pf-c-table--cell--hidden-visible--Display: 0;
-        }
-        tr:first-of-type {
-            > td::before { 
-                display: none; 
-            }
-        }
-    }
+  .ins-c-table-empty-state.pf-m-grid-md.pf-c-table,
+  .ins-c-table-empty-state.pf-m-grid-lg.pf-c-table {
+      [data-label] {
+          --pf-c-table--cell--hidden-visible--Display: 0;
+      }
+      tr:first-of-type {
+          > td::before { 
+              display: none; 
+          }
+      }
+  }
 }
 
 /**
 * Cookies banner overrides
 */
 #truste-consent-track {
-    /**
-    * has to be set because of PF page overlaps the banner
-    */
-    z-index: 1000;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+  /**
+  * has to be set because of PF page overlaps the banner
+  */
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
+
+// centers modals when a quick start drawer is open
+.pfext-quick-start-drawer__body {
+    .pf-c-backdrop {
+      --pf-c-backdrop--Position: absolute;
+    }
+  }
+  

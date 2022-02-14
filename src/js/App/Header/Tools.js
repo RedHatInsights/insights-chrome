@@ -26,14 +26,14 @@ export const switchRelease = (isBeta, pathname) => {
   }
 };
 
-export const betaBadge = (css) => <Badge className={classnames('ins-c-toolbar__beta-badge', css)}>beta</Badge>;
+export const betaBadge = (css) => <Badge className={classnames('chr-c-toolbar__beta-badge', css)}>beta</Badge>;
 
 const InternalButton = () => (
   <Button
     variant="plain"
     aria-label="Go to internal tools"
     widget-type="InternalButton"
-    className="ins-c-toolbar__button-internal"
+    className="chr-c-toolbar__button-internal"
     href={`${document.baseURI}internal`}
     component="a"
   >
@@ -141,7 +141,6 @@ const Tools = () => {
       icon={QuestionCircleIcon}
       id="HelpMenu"
       ouiaId="chrome-help"
-      className="ins-c-toolbar__menu-help"
       hasToggleIndicator={null}
       dropdownItems={aboutMenuDropdownItems}
     />
@@ -164,7 +163,7 @@ const Tools = () => {
       <AboutButton />
 
       <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
-        <UserToggle className="ins-c-dropdown__user" />
+        <UserToggle />
       </ToolbarItem>
 
       {/* Collapse tools and user dropdown to kebab on small screens  */}

@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import { Route } from 'react-router-dom';
 
+import './Header.scss';
+
 const FeedbackRoute = ({ user }) => {
   const path =
     localStorage.getItem('chrome:experimental:feedback') === 'true'

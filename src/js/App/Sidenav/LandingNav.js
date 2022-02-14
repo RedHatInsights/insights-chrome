@@ -43,7 +43,7 @@ const LandingNav = () => {
   return (
     <Nav className="chr-c-landing-nav" ouiaId="SideNavigation">
       <NavList>
-        <div className="ins-c-app-title">
+        <div className="chr-c-app-title">
           <b>Home</b>
         </div>
         {schema
