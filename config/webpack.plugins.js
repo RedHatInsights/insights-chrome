@@ -45,6 +45,7 @@ const plugins = (dev = false) => [
       { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
       { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
       { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
+      { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
     ],
   }),
   ChunkMapper,
