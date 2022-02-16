@@ -237,11 +237,15 @@ describe('onGetAllWorkloads', () => {
           AAP: {
             total: 5,
           },
+          MSSQL: {
+            total: 5,
+          },
         },
       }
     );
     expect(workloads.hasSap).toBe(10);
     expect(workloads.hasAap).toBe(5);
+    expect(workloads.hasMssql).toBe(5);
   });
 });
 
