@@ -29,7 +29,7 @@ import useAppFilter from './useAppFilter';
 import ChromeLink from '../../Sidenav/Navigation/ChromeLink';
 import { useLocation } from 'react-router-dom';
 
-const App = ({ id, title, links = [] }) =>
+const App = ({ id, title, links = [], setIsOpen }) =>
   links.length > 0 ? (
     <div className="galleryItem">
       <Split>
@@ -39,7 +39,7 @@ const App = ({ id, title, links = [] }) =>
             {links.map(({ filterable, href, title, isHidden, ...rest }) =>
               isHidden ? null : (
                 <Text component="p" key={`${id}-${href}`}>
-                  <ChromeLink {...rest} title={title} href={href}>
+                  <ChromeLink {...rest} title={title} href={href} onLinkClick={() => setIsOpen?.(false)}>
                     {title}
                   </ChromeLink>
                 </Text>
@@ -55,6 +55,7 @@ App.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.node,
   links: PropTypes.arrayOf(PropTypes.shape({ href: PropTypes.string.isRequired, title: PropTypes.string.isRequired })).isRequired,
+  setIsOpen: PropTypes.func,
 };
 
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => {
@@ -104,7 +105,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                   {filteredApps?.length > 0 ? (
                     <div className="gallery">
                       {filteredApps.map((app) => (
-                        <App key={app.id} {...app} />
+                        <App key={app.id} {...app} setIsOpen={setIsOpen} />
                       ))}
                     </div>
                   ) : (
