@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -35,7 +36,7 @@ export const Header = () => {
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
-        {user && <FeedbackRoute user={user} />}
+        {user && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         <Toolbar isFullHeight>
           <ToolbarContent>
             <ToolbarGroup variant="filter-group">
