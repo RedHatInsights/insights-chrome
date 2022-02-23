@@ -7,7 +7,7 @@ import { getEnv } from '../../utils';
 const isStage = getEnv() === 'stage';
 
 const statePersistor = isStage ? useState : useLocalStorage;
-const initiStatesArgs = isStage ? ['insights-quickstarts', {}] : [{}];
+const initiStatesArgs = ['insights-quickstarts', {}];
 const initialIdArgs = isStage ? ['', ''] : [undefined];
 
 const useQuickstartsStates = () => {
