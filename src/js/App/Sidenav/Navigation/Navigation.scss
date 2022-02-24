@@ -110,3 +110,7 @@
 .chr-c-navigation__isHidden {
   display: none;
 }
+
+.chr-c-app-switcher--loading {
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg)
+}
