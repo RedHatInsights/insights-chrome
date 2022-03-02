@@ -4,11 +4,29 @@ import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavClick } from '../../../redux/actions';
-import NavContext from './navContext';
+import NavContext, { OnLinkClick } from './navContext';
+import { AnyObject } from '../../../types';
 
-const useDynamicModule = (appId) => {
-  const [isDynamic, setIsDynamic] = useState();
-  const { modules, activeModule } = useSelector(({ chrome: { modules = {}, activeModule } }) => ({
+
+interface RefreshLinkProps extends React.DetailedReactHTMLElement<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+  isExternal?: boolean,
+  onLinkClick?: OnLinkClick,
+  isBeta?: boolean,
+  href: string,
+  active?: boolean,
+  onClick?: () => void,
+  appId: string,
+  currAppId?: string,
+}
+
+interface LinkWrapperProps extends RefreshLinkProps {
+  className?: string,
+  tabIndex?: number
+}
+
+const useDynamicModule = (appId: string) => {
+  const [isDynamic, setIsDynamic] = useState<boolean | undefined>();
+  const { modules, activeModule } = useSelector(({ chrome: { modules = {}, activeModule } }: AnyObject) => ({
     modules,
     activeModule,
   }));
@@ -28,11 +46,11 @@ const useDynamicModule = (appId) => {
   return isDynamic;
 };
 
-const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
-  const linkRef = useRef();
+const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
-    actionId = actionId.split('/').pop();
+    actionId = actionId.split('/').pop() as string;
   }
   if (currAppId !== appId && href.split('/').length === 3) {
     actionId = '/';
@@ -43,7 +61,13 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
    * eg. /openshift/cost-management we don't want to send "/cost-management" but "/"
    * We are not in app sub route but in app root
    */
-  const domEvent = {
+  const domEvent: {
+    href: string,
+    id: string,
+    navId: string,
+    type: string,
+    target?: HTMLAnchorElement | null
+  } = {
     href,
     id: actionId,
     navId: actionId,
@@ -51,10 +75,10 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
      * @deprecated
      * Remove once nav overhaul is in all environments
      */
-    type: 'click',
+    type: 'click'
   };
   const dispatch = useDispatch();
-  const onClick = (event) => {
+  const onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     if (onLinkClick && isBeta) {
       if (!onLinkClick(event, href)) {
         return false;
@@ -88,22 +112,12 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
   );
 };
 
-LinkWrapper.propTypes = {
-  href: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  isBeta: PropTypes.bool,
-  onLinkClick: PropTypes.func,
-  currAppId: PropTypes.string,
-  appId: PropTypes.string.isRequired,
-  tabIndex: PropTypes.number,
-};
-
 const basepath = document.baseURI;
 
-const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }) => rest;
+const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
 
-const RefreshLink = (props) => {
+
+const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
   const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);
   return (
     <a
@@ -135,9 +149,9 @@ RefreshLink.propTypes = {
   currAppId: PropTypes.any,
 };
 
-const ChromeLink = ({ appId, children, ...rest }) => {
+const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {
   const { onLinkClick, isNavOpen, inPageLayout } = useContext(NavContext);
-  const currAppId = useSelector(({ chrome }) => chrome?.appId);
+  const currAppId = useSelector(({ chrome }: AnyObject) => chrome?.appId);
   const isDynamic = useDynamicModule(appId);
 
   if (!rest.isExternal && typeof isDynamic === 'undefined') {
@@ -150,11 +164,6 @@ const ChromeLink = ({ appId, children, ...rest }) => {
       {children}
     </LinkComponent>
   );
-};
-
-ChromeLink.propTypes = {
-  appId: PropTypes.string,
-  children: PropTypes.node.isRequired,
 };
 
 export default ChromeLink;
