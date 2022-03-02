@@ -65,7 +65,6 @@ const LinkWrapper = ({ href, isBeta, onLinkClick, className, currAppId, appId, c
      * Add reference to the DOM link element
      */
     domEvent.target = linkRef.current;
-    onLinkClick?.();
     dispatch(appNavClick({ id: actionId }, domEvent));
   };
 
