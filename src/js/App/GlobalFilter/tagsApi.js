@@ -28,12 +28,7 @@ const buildFilter = (workloads, SID) => ({
     ...(workloads?.SAP?.isSelected && { sap_system: true }),
     // enable once AAP filter is enabled
     ...(workloads?.[AAP_KEY]?.isSelected && {
-      ansible: {
-        controller_version: 'not_nil',
-        hub_version: 'not_nil',
-        catalog_worker_version: 'not_nil',
-        sso_version: 'not_nil',
-      },
+      ansible: 'not_nil',
     }),
     ...(workloads?.[MSSQL_KEY]?.isSelected && {
       mssql: { version: 'not_nil' },
