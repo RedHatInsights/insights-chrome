@@ -2,7 +2,7 @@
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { flatTags, INVENTORY_API_BASE } from './constants';
 import { TagsApi, SapSystemApi, HostsApi } from '@redhat-cloud-services/host-inventory-client';
-import { AAP_KEY } from '../../redux/globalFilterReducers';
+import { AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
 export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance);
 export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance);
 export const system = new HostsApi(undefined, INVENTORY_API_BASE, instance);
@@ -28,12 +28,10 @@ const buildFilter = (workloads, SID) => ({
     ...(workloads?.SAP?.isSelected && { sap_system: true }),
     // enable once AAP filter is enabled
     ...(workloads?.[AAP_KEY]?.isSelected && {
-      ansible: {
-        controller_version: 'not_nil',
-        hub_version: 'not_nil',
-        catalog_worker_version: 'not_nil',
-        sso_version: 'not_nil',
-      },
+      ansible: 'not_nil',
+    }),
+    ...(workloads?.[MSSQL_KEY]?.isSelected && {
+      mssql: { version: 'not_nil' },
     }),
     sap_sids: SID,
   },
@@ -77,7 +75,7 @@ export function getAllSIDs({ search, activeTags, registeredWith } = {}, paginati
 export async function getAllWorkloads({ activeTags, registeredWith } = {}, pagination = {}) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
-  const [SAP, AAP] = await Promise.all([
+  const [SAP, AAP, MSSQL] = await Promise.all([
     sap.apiSystemProfileGetSapSystem(
       selectedTags, // tags
       (pagination && pagination.perPage) || 10,
@@ -118,6 +116,35 @@ export async function getAllWorkloads({ activeTags, registeredWith } = {}, pagin
         ),
       }
     ),
+    system.apiHostGetHostList(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ['fresh', 'stale_warning'],
+      selectedTags,
+      registeredWith,
+      undefined,
+      undefined,
+      {
+        query: generateFilter(
+          buildFilter(
+            {
+              ...(workloads || {}),
+              [MSSQL_KEY]: { isSelected: true },
+            },
+            SID
+          )
+        ),
+      }
+    ),
   ]);
-  return { SAP, AAP };
+  return { SAP, AAP, MSSQL };
 }
