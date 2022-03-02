@@ -146,7 +146,7 @@ describe('ChromeLink', () => {
     ]);
   });
 
-  test('should not trigger onLinkClick callback', () => {
+  test('should trigger onLinkClick callback only once', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
       chrome: {
@@ -173,7 +173,7 @@ describe('ChromeLink', () => {
       fireEvent.click(buttton);
     });
 
-    expect(onLinkClickSpy).not.toHaveBeenCalled();
+    expect(onLinkClickSpy).toHaveBeenCalledTimes(1);
   });
 
   test('should trigger onLinkClick callback', () => {

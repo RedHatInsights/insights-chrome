@@ -7,7 +7,7 @@ import { getEnv } from '../../utils';
 const isStage = getEnv() === 'stage';
 
 const statePersistor = isStage ? useState : useLocalStorage;
-const initiStatesArgs = isStage ? ['insights-quickstarts', {}] : [{}];
+const initiStatesArgs = ['insights-quickstarts', {}];
 const initialIdArgs = isStage ? ['', ''] : [undefined];
 
 const useQuickstartsStates = () => {
@@ -40,7 +40,10 @@ const useQuickstartsStates = () => {
     if (!isStage) {
       return setActiveQuickStartIDInternal(...args);
     }
+
     const [id] = args;
+
+    id !== '' && typeof id !== 'function' ? document.body.classList.add('quickstarts-open') : document.body.classList.remove('quickstarts-open');
     setActiveQuickStartIDInternal(id);
   }
 

@@ -147,13 +147,14 @@ const GlobalFilter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [token, setToken] = useState();
   const dispatch = useDispatch();
-  const { isLoaded, count, total, sapCount, aapCount, isDisabled } = useSelector(
+  const { isLoaded, count, total, sapCount, aapCount, mssqlCount, isDisabled } = useSelector(
     ({ globalFilter: { tags, sid, workloads, globalFilterHidden }, chrome: { appId } }) => ({
       isLoaded: tags.isLoaded && sid.isLoaded && workloads.isLoaded,
       count: tags.count + sid.count + workloads.count,
       total: tags.total + sid.total + workloads.total,
       sapCount: workloads.hasSap,
       aapCount: workloads.hasAap,
+      mssqlCount: workloads.hasMssql,
       isDisabled: globalFilterHidden || !appId,
     }),
     shallowEqual
@@ -248,6 +249,13 @@ const GlobalFilter = () => {
       aapTag.count = aapCount;
     }
   }, [aapCount]);
+
+  useEffect(() => {
+    const mssqlTag = workloads?.[0]?.tags?.[2];
+    if (typeof mssqlCount === 'number' && mssqlTag) {
+      mssqlTag.count = mssqlCount;
+    }
+  }, [mssqlCount]);
 
   const workloadsChip = chips?.splice(
     chips?.findIndex(({ key }) => key === 'Workloads'),

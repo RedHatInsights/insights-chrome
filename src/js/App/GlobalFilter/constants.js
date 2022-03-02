@@ -3,7 +3,7 @@ import { decodeToken, GLOBAL_FILTER_KEY } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
-import { SID_KEY, AAP_KEY } from '../../redux/globalFilterReducers';
+import { SID_KEY, AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
 import { spinUpStore } from '../../redux-config';
 import { storeInitialHash } from '../../redux/actions';
 
@@ -18,6 +18,9 @@ export const workloads = [
       },
       {
         tag: { key: AAP_KEY },
+      },
+      {
+        tag: { key: MSSQL_KEY },
       },
     ],
     type: 'checkbox',

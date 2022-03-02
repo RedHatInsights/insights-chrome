@@ -153,6 +153,7 @@
     "@scalprum/core": "^0.1.2",
     "@scalprum/react-core": "^0.1.9",
     "@sentry/browser": "^6.12.0",
+    "@unleash/proxy-client-react": "^1.0.4",
     "abortcontroller-polyfill": "^1.7.3",
     "axios": "^0.21.4",
     "axios-cache-adapter": "^2.7.3",
@@ -176,7 +177,7 @@
     "redux": "^4.1.1",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.7"
+    "urijs": "^1.19.8"
   },
   "alias": {
     "PFReactTable": "./config/patternfly-table-externals.js",
