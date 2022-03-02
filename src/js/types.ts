@@ -3,5 +3,5 @@
  * Only use as placeholder
  */
 export type AnyObject = {
-    [key: string]: any
-}
+  [key: string]: any;
+};

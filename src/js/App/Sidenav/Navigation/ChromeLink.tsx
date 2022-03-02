@@ -7,21 +7,20 @@ import { appNavClick } from '../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
 
-
 interface RefreshLinkProps extends React.DetailedReactHTMLElement<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
-  isExternal?: boolean,
-  onLinkClick?: OnLinkClick,
-  isBeta?: boolean,
-  href: string,
-  active?: boolean,
-  onClick?: () => void,
-  appId: string,
-  currAppId?: string,
+  isExternal?: boolean;
+  onLinkClick?: OnLinkClick;
+  isBeta?: boolean;
+  href: string;
+  active?: boolean;
+  onClick?: () => void;
+  appId: string;
+  currAppId?: string;
 }
 
 interface LinkWrapperProps extends RefreshLinkProps {
-  className?: string,
-  tabIndex?: number
+  className?: string;
+  tabIndex?: number;
 }
 
 const useDynamicModule = (appId: string) => {
@@ -62,11 +61,11 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
    * We are not in app sub route but in app root
    */
   const domEvent: {
-    href: string,
-    id: string,
-    navId: string,
-    type: string,
-    target?: HTMLAnchorElement | null
+    href: string;
+    id: string;
+    navId: string;
+    type: string;
+    target?: HTMLAnchorElement | null;
   } = {
     href,
     id: actionId,
@@ -75,7 +74,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
      * @deprecated
      * Remove once nav overhaul is in all environments
      */
-    type: 'click'
+    type: 'click',
   };
   const dispatch = useDispatch();
   const onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -114,8 +113,8 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
 
 const basepath = document.baseURI;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
-
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
   const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);
