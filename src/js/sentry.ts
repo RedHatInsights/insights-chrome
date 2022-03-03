@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/browser';
+import { ChromeUser } from './types';
 
 function getAppDetails() {
   const pathName = window.location.pathname.split('/');
@@ -75,7 +76,7 @@ function initSentry() {
 // Sets up the tagging in sentry. This is stuff that can be filtered.
 // Any window variable needs to be declared *above* the configureScope
 /* eslint-disable camelcase */
-function sentryTags(user) {
+function sentryTags(user: ChromeUser) {
   const appDetails = getAppDetails();
   const browser_width = window.innerWidth + ' px';
 
@@ -95,7 +96,7 @@ function sentryTags(user) {
 }
 
 /* eslint-enable camelcase */
-export default (user) => {
+export default (user: ChromeUser) => {
   // this should only be enabled for prod and prod beta
   if (window.insights.chrome.isProd) {
     initSentry();
