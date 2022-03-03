@@ -20,6 +20,7 @@
     "build:pug:beta": "node ./scripts/build-pug.js insightsbeta",
     "build:sass": "node ./scripts/build-sass.js",
     "build:fonts": "mkdir -p build/assets/fonts && ncp node_modules/@patternfly/patternfly/assets/fonts build/assets/fonts",
+    "circular": "madge --circular ./src",
     "clean:chrome": "rimraf build/chrome.*.css",
     "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true --env publicPath=/apps/chrome/js/",
     "hash:chrome": "contentHash=$(md5-file build/chrome.css) && ncp build/chrome.css build/chrome.$contentHash.css && rimraf build/chrome.css",
@@ -57,7 +58,9 @@
       "<rootDir>/src/"
     ],
     "moduleFileExtensions": [
-      "js", "ts", "tsx"
+      "js",
+      "ts",
+      "tsx"
     ],
     "setupFiles": [
       "<rootDir>/config/setupTests.js"
@@ -115,6 +118,7 @@
     "jest-mock-axios": "^4.4.0",
     "jsdom": "^17.0.0",
     "jws": "^4.0.0",
+    "madge": "^5.0.1",
     "mkdir": "^0.0.2",
     "ncp": "^2.0.0",
     "node-sass-package-importer": "^5.3.2",

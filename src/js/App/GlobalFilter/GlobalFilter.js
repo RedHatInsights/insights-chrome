@@ -6,10 +6,11 @@ import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-componen
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { Button, Chip, ChipGroup, Divider, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, storeFilter, generateFilter } from './constants';
+import { workloads, updateSelected, generateFilter } from './constants';
 import debounce from 'lodash/debounce';
 import { useHistory } from 'react-router-dom';
 import GlobalFilterMenu from './GlobalFilterMenu';
+import { storeFilter } from './filterApi';
 
 const GlobalFilterDropdown = ({
   isAllowed,

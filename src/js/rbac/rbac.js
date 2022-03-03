@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AccessApi } from '@redhat-cloud-services/rbac-client';
-import { bootstrapCache } from '../utils';
+import { bootstrapCache } from '../utils/cache';
 const BASE_PATH = '/api/rbac/v1';
 
 export default (cachePrefix) => {
