@@ -12,6 +12,9 @@ install:
 - npm ci
 jobs:
   include:
+    - stage: Check circular dependencies
+      if: branch != nightly
+      script: npm run circular
     - stage: Lint
       if: branch != nightly
       script: npm run lint
