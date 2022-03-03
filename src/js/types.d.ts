@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    sendCustomEvent: (event: string) => void;
+  }
+}
+
 /**
  * @deprecated
  * Only use as placeholder
