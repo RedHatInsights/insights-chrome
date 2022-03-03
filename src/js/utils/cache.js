@@ -1,6 +1,7 @@
-import { lastActive, deleteLocalStorageItems } from '../utils';
-
+import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
+
+import { lastActive, deleteLocalStorageItems } from '../utils';
 
 export const createCacheStore = (endpoint, cacheKey) => {
   const name = lastActive(endpoint, cacheKey);
@@ -10,6 +11,14 @@ export const createCacheStore = (endpoint, cacheKey) => {
     name: name?.split('/')[0] || name,
   });
 };
+
+export function bootstrapCache(endpoint, cacheKey) {
+  const store = createCacheStore(endpoint, cacheKey);
+  return setupCache({
+    store,
+    maxAge: 10 * 60 * 1000, // 10 minutes
+  });
+}
 
 let store;
 
