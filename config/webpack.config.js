@@ -52,7 +52,12 @@ const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
   module: {
     rules: [
       {
-        test: /\.(jsx?|tsx?)$/,
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
