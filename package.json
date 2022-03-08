@@ -191,7 +191,7 @@
     "redux": "^4.1.1",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.9"
+    "urijs": "^1.19.10"
   },
   "alias": {
     "PFReactTable": "./config/patternfly-table-externals.js",
