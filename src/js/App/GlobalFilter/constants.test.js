@@ -1,4 +1,5 @@
-import { flatTags, updateSelected, storeFilter, createTagsFilter, escaper } from './constants';
+import { flatTags, updateSelected, createTagsFilter, escaper } from './constants';
+import { storeFilter } from './filterApi';
 const setItem = jest.fn();
 const getItem = jest.fn();
 Object.defineProperty(window, 'localStorage', {

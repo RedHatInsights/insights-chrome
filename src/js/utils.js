@@ -1,6 +1,4 @@
 import get from 'lodash/get';
-import { setupCache } from 'axios-cache-adapter';
-import { createCacheStore } from './utils/cache';
 import { DEFAULT_ROUTES } from './jwt/constants';
 import flatMap from 'lodash/flatMap';
 
@@ -112,14 +110,6 @@ export function lastActive(searchString, fallback) {
 
     return acc;
   }, fallback);
-}
-
-export function bootstrapCache(endpoint, cacheKey) {
-  const store = createCacheStore(endpoint, cacheKey);
-  return setupCache({
-    store,
-    maxAge: 10 * 60 * 1000, // 10 minutes
-  });
 }
 
 export const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
