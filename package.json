@@ -20,6 +20,7 @@
     "build:pug:beta": "node ./scripts/build-pug.js insightsbeta",
     "build:sass": "node ./scripts/build-sass.js",
     "build:fonts": "mkdir -p build/assets/fonts && ncp node_modules/@patternfly/patternfly/assets/fonts build/assets/fonts",
+    "circular": "madge --circular ./src",
     "clean:chrome": "rimraf build/chrome.*.css",
     "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true --env publicPath=/apps/chrome/js/",
     "hash:chrome": "contentHash=$(md5-file build/chrome.css) && ncp build/chrome.css build/chrome.$contentHash.css && rimraf build/chrome.css",
@@ -49,11 +50,17 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!@redhat-cloud-services).+(js|jsx)$"
     ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    },
     "roots": [
       "<rootDir>/src/"
     ],
     "moduleFileExtensions": [
-      "js"
+      "js",
+      "ts",
+      "tsx"
     ],
     "setupFiles": [
       "<rootDir>/config/setupTests.js"
@@ -88,9 +95,12 @@
     "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.4",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.2",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "assert": "^2.0.0",
     "babel-jest": "^27.1.0",
-    "babel-loader": "^8.2.2",
+    "babel-loader": "^8.2.3",
     "babel-plugin-lodash": "^3.3.4",
     "babel-plugin-rewire": "^1.2.0",
     "browserify-zlib": "^0.2.0",
@@ -108,6 +118,7 @@
     "jest-mock-axios": "^4.4.0",
     "jsdom": "^17.0.0",
     "jws": "^4.0.0",
+    "madge": "^5.0.1",
     "mkdir": "^0.0.2",
     "ncp": "^2.0.0",
     "node-sass-package-importer": "^5.3.2",
@@ -126,6 +137,9 @@
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^5.2.0",
+    "ts-jest": "^27.1.3",
+    "ts-loader": "^9.2.7",
+    "typescript": "^4.6.2",
     "url": "^0.11.0",
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
@@ -177,7 +191,7 @@
     "redux": "^4.1.1",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.8"
+    "urijs": "^1.19.10"
   },
   "alias": {
     "PFReactTable": "./config/patternfly-table-externals.js",

@@ -38,8 +38,8 @@ const App = ({ id, title, links = [], setIsOpen }) =>
             <Text component="h4">{title}</Text>
             {links.map(({ filterable, href, title, isHidden, ...rest }) =>
               isHidden ? null : (
-                <Text component="p" key={`${id}-${href}`}>
-                  <ChromeLink {...rest} title={title} href={href} onLinkClick={() => setIsOpen?.(false)}>
+                <Text component="p" key={`${id}-${href}`} onClick={() => setIsOpen?.(false)}>
+                  <ChromeLink {...rest} title={title} href={href}>
                     {title}
                   </ChromeLink>
                 </Text>

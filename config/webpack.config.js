@@ -28,8 +28,9 @@ const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
     publicPath,
     chunkFilename: ({ chunk }) => (chunk.name === 'sso-url' ? '[name].js' : `[name]${noHash ? '' : '.[chunkhash]'}.js`),
   },
-  devtool: false,
+  devtool: process.env.NODE_ENV === 'production' ? false : 'inline-source-map',
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     alias: {
       ...searchIgnoredStyles(path.resolve(__dirname, '../')),
       '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
@@ -51,9 +52,14 @@ const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
   module: {
     rules: [
       {
-        test: /src\/.*\.js$/,
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
         exclude: /node_modules/,
-        use: [{ loader: 'babel-loader' }],
+      },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.s?[ac]ss$/,
