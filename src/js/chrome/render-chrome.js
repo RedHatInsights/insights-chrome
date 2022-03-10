@@ -18,6 +18,9 @@ window.insights.loadInventory = () => {
     'Do not use `loadInventory` anymore! We have async inventory https://github.com/RedHatInsights/frontend-components/blob/master/packages/components/src/Inventory/InventoryTable.js '
   );
 };
+if (!window.insights.experimental) {
+  window.insights.experimental = {};
+}
 window.insights.experimental.loadRemediations = () => {
   console.log(
     'Do not use `loadRemediations` anymore! We have FED modules for it - https://github.com/RedHatInsights/frontend-components/blob/master/packages/remediations/doc/remediations.md#hot-loading-the-wizard-directly'
