@@ -2,13 +2,13 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalStorage } from '@patternfly/quickstarts';
-import { getEnv } from '../../utils';
+import { getEnv, isBeta } from '../../utils';
 
-const isStage = getEnv() === 'stage';
+const quickstartsSupported = getEnv() === 'stage' || (isBeta() && getEnv() === 'prod');
 
-const statePersistor = isStage ? useState : useLocalStorage;
+const statePersistor = quickstartsSupported ? useState : useLocalStorage;
 const initiStatesArgs = ['insights-quickstarts', {}];
-const initialIdArgs = isStage ? ['', ''] : [undefined];
+const initialIdArgs = quickstartsSupported ? ['', ''] : [undefined];
 
 const useQuickstartsStates = () => {
   const accountId = useSelector(({ chrome }) => chrome?.user?.identity?.internal?.account_id);
@@ -16,7 +16,7 @@ const useQuickstartsStates = () => {
   const [activeQuickStartID, setActiveQuickStartIDInternal] = statePersistor(...initialIdArgs);
 
   function setAllQuickStartStates(...args) {
-    if (!isStage) {
+    if (!quickstartsSupported) {
       return setAllQuickStartStatesInternal(...args);
     }
     const [value] = args;
@@ -37,7 +37,7 @@ const useQuickstartsStates = () => {
   }
 
   function setActiveQuickStartID(...args) {
-    if (!isStage) {
+    if (!quickstartsSupported) {
       return setActiveQuickStartIDInternal(...args);
     }
 
