@@ -44,8 +44,11 @@ const getMenuItems = (groups, onChange, calculateSelected) => {
   return result.filter(({ noFilter, items = [] }) => noFilter || items.length > 0);
 };
 
+/** Create unique hotjar event for selected tags */
+const generateGlobalFilterEvent = (isChecked, value) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
+
 const GlobalFilterMenu = (props) => {
-  const { filterBy, onFilter, groups = [], onChange, selectedTags } = props;
+  const { filterBy, onFilter, groups = [], onChange, selectedTags, hotjarEventEmitter } = props;
   const isLoading = useSelector(
     ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
   );
@@ -108,7 +111,13 @@ const GlobalFilterMenu = (props) => {
                     // eslint-disable-next-line react/prop-types
                     !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
                   return (
-                    <MenuItem key={value} onClick={onClick}>
+                    <MenuItem
+                      key={value}
+                      onClick={(...args) => {
+                        hotjarEventEmitter('event', generateGlobalFilterEvent(isChecked, value));
+                        return onClick(...args);
+                      }}
+                    >
                       <Checkbox className="chr-c-check-global-filter" ouiaId="global-filter-checkbox" id={id} isChecked={isChecked} label={label} />
                     </MenuItem>
                   );
@@ -182,6 +191,7 @@ GlobalFilterMenu.propTypes = {
   onChange: PropTypes.func.isRequired,
   selectedTags: PropTypes.shape({}),
   setTagModalOpen: PropTypes.func.isRequired,
+  hotjarEventEmitter: PropTypes.func.isRequired,
 };
 
 export default GlobalFilterMenu;
