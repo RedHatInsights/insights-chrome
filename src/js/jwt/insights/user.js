@@ -1,4 +1,4 @@
-import { pageAllowsUnentitled, isValidAccountNumber } from '../../utils';
+import { pageAllowsUnentitled, isValidAccountNumber, isBeta } from '../../utils';
 import servicesApi from './entitlements';
 import logger from '../logger';
 const log = logger('insights/user.js');
@@ -76,7 +76,11 @@ function tryBounceIfUnentitled(data, section) {
       log(`Entitled to: ${service}`);
     } else {
       log(`Not entitled to: ${service}`);
-      getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+      if (section !== 'ansible') {
+        getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+      } else {
+        getWindow().location.replace(`${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`);
+      }
     }
   }
 }

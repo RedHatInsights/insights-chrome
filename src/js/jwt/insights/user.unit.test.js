@@ -55,6 +55,9 @@ describe('User', () => {
 
       tryBounceIfUnentitled(ents, 'cost-management');
       expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=cost_management');
+
+      tryBounceIfUnentitled(ents, 'ansible');
+      expect(replaceMock).lastCalledWith('http://localhost/ansible/ansible-dashboard/trial');
     });
 
     test('should *not* bounce if entitled', () => {
