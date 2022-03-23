@@ -1,11 +1,13 @@
 import React from 'react';
-import { HelpTopicContainer, HelpTopicContainerProps } from '@patternfly/quickstarts';
+import { HelpTopic, HelpTopicContainer, HelpTopicContainerProps } from '@patternfly/quickstarts';
 
-import dataMock from './helpTopicDataMock.json';
+interface HelpTopicProviderProps {
+  helpTopics: HelpTopic[];
+}
 
-const HelpTopicProvider: React.FC = ({ children }) => {
+const HelpTopicProvider: React.FC<HelpTopicProviderProps> = ({ children, helpTopics }) => {
   const inContextHelpProps: HelpTopicContainerProps = {
-    helpTopics: dataMock,
+    helpTopics,
     loading: false,
   };
   return <HelpTopicContainer {...inContextHelpProps}>{children}</HelpTopicContainer>;

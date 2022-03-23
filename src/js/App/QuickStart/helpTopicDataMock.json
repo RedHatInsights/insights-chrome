@@ -1,6 +1,6 @@
 [
   {
-    "name": "chrome-data-mock",
+    "name": "chrome-data-mock-1",
     "tags": [
       "page-1"
     ],
@@ -12,7 +12,7 @@
     ]
   },
   {
-    "name": "workspace",
+    "name": "chrome-data-mock-2",
     "tags": [
       "page-1",
       "page-2",

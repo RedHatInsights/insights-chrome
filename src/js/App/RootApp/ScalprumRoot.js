@@ -15,6 +15,7 @@ import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import HelpTopicProvider from '../QuickStart/HelpTopicProvider';
+import useHelpTopicState from '../QuickStart/useHelpTopicState';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -43,6 +44,7 @@ QSWrapper.propTypes = {
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { helpTopics, updateHelpTopics } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
@@ -104,7 +106,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - add deprecation warning to the window functions
      */
     <QSWrapper quickstartsLoaded={quickstartsLoaded} className="pf-u-h-100vh" {...quickStartProps}>
-      <HelpTopicProvider>
+      <HelpTopicProvider helpTopics={helpTopics}>
         <ScalprumProvider
           config={config}
           api={{
@@ -119,6 +121,9 @@ const ScalprumRoot = ({ config, ...props }) => {
                 set: updateQuickStarts,
                 toggle: setActiveQuickStartID,
                 Catalog: LazyQuickStartCatalog,
+              },
+              helpTopics: {
+                updateHelpTopics,
               },
               chromeHistory: history,
             },
