@@ -14,6 +14,8 @@ import { disableQuickstarts, populateQuickstartsCatalog, toggleFeedbackModal } f
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
+import HelpTopicProvider from '../QuickStart/HelpTopicProvider';
+import useHelpTopicState from '../QuickStart/useHelpTopicState';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -42,6 +44,7 @@ QSWrapper.propTypes = {
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { helpTopics, updateHelpTopics } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
@@ -95,11 +98,6 @@ const ScalprumRoot = ({ config, ...props }) => {
     };
   }, []);
 
-  useEffect(() => {
-    // const body = document.getElementsByTagName('body')[0];
-    // activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
-  }, [activeQuickStartID]);
-
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -108,37 +106,42 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - add deprecation warning to the window functions
      */
     <QSWrapper quickstartsLoaded={quickstartsLoaded} className="pf-u-h-100vh" {...quickStartProps}>
-      <ScalprumProvider
-        config={config}
-        api={{
-          chrome: {
-            experimentalApi: true,
-            ...window.insights.chrome,
-            isFedramp: isFedRamp(),
-            usePendoFeedback,
-            toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
-            quickStarts: {
-              version: 1,
-              set: updateQuickStarts,
-              toggle: setActiveQuickStartID,
-              Catalog: LazyQuickStartCatalog,
+      <HelpTopicProvider helpTopics={helpTopics}>
+        <ScalprumProvider
+          config={config}
+          api={{
+            chrome: {
+              experimentalApi: true,
+              ...window.insights.chrome,
+              isFedramp: isFedRamp(),
+              usePendoFeedback,
+              toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+              quickStarts: {
+                version: 1,
+                set: updateQuickStarts,
+                toggle: setActiveQuickStartID,
+                Catalog: LazyQuickStartCatalog,
+              },
+              helpTopics: {
+                updateHelpTopics,
+              },
+              chromeHistory: history,
             },
-            chromeHistory: history,
-          },
-        }}
-      >
-        <Switch>
-          <Route exact path="/">
-            <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-          <Route path="/security">
-            <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-          <Route>
-            <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-        </Switch>
-      </ScalprumProvider>
+          }}
+        >
+          <Switch>
+            <Route exact path="/">
+              <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+            <Route path="/security">
+              <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+            <Route>
+              <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+          </Switch>
+        </ScalprumProvider>
+      </HelpTopicProvider>
     </QSWrapper>
   );
 };
