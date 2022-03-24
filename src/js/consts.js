@@ -8,6 +8,8 @@ const obj = {
   offlineToken: '2402500adeacc30eb5c5a8a5e2e0ec1f',
 };
 
+export const AVAILABLE_GLOBAL_FILTER_BUNDLES = ['insights', 'ansible'];
+
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
 /**
  * Keys for storing acess reqeusts data

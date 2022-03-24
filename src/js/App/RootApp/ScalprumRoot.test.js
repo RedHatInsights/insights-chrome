@@ -150,6 +150,11 @@ describe('ScalprumRoot', () => {
   it('should render GlobalFilter', async () => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
+    Object.defineProperty(window, 'location', {
+      value: {
+        pathname: '/insights',
+      },
+    });
     const store = mockStore({
       ...initialState,
       chrome: {
@@ -160,7 +165,7 @@ describe('ScalprumRoot', () => {
 
     const { container } = render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/']}>
+        <MemoryRouter initialEntries={['/insights']}>
           <ScalprumRoot config={config} globalFilterHidden={false} />
         </MemoryRouter>
       </Provider>
