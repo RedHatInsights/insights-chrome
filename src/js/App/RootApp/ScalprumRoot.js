@@ -28,7 +28,7 @@ const loaderWrapper = (Component, props = {}) => (
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
-  const { helpTopics, updateHelpTopics } = useHelpTopicState();
+  const { helpTopics, updateHelpTopics, updates } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const quickStarts = useSelector(
@@ -80,7 +80,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - add deprecation warning to the window functions
      */
     <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
-      <HelpTopicProvider helpTopics={helpTopics}>
+      <HelpTopicProvider key={updates.toString()} helpTopics={helpTopics}>
         <ScalprumProvider
           config={config}
           api={{
