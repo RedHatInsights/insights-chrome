@@ -1,6 +1,5 @@
-import React, { Fragment, lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
@@ -10,10 +9,12 @@ import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import { usePendoFeedback } from '../Feedback';
-import { disableQuickstarts, populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
+import { populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
+import HelpTopicProvider from '../QuickStart/HelpTopicProvider';
+import useHelpTopicState from '../QuickStart/useHelpTopicState';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -24,27 +25,12 @@ const loaderWrapper = (Component, props = {}) => (
   </Suspense>
 );
 
-const loadQS = async () => {
-  const {
-    data: { data },
-  } = await axios.get('/api/quickstarts/v1/quickstarts');
-  return data.map(({ content }) => content);
-};
-
-const QSWrapper = ({ quickstartsLoaded, children, ...props }) =>
-  quickstartsLoaded ? <QuickStartContainer {...props}>{children}</QuickStartContainer> : <Fragment>{children}</Fragment>;
-
-QSWrapper.propTypes = {
-  children: PropTypes.node,
-  quickstartsLoaded: PropTypes.bool,
-};
-
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { helpTopics, updateHelpTopics, updates } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
-  const [quickstartsLoaded, setQuickstarsLoaded] = useState(false);
   const quickStarts = useSelector(
     ({
       chrome: {
@@ -79,26 +65,12 @@ const ScalprumRoot = ({ config, ...props }) => {
 
   useEffect(() => {
     const unregister = history.listen(historyListener);
-    loadQS()
-      .then((qs) => {
-        dispatch(populateQuickstartsCatalog('all', qs));
-        setQuickstarsLoaded(true);
-      })
-      .catch(() => {
-        dispatch(disableQuickstarts());
-        setQuickstarsLoaded(true);
-      });
     return () => {
       if (typeof unregister === 'function') {
         return unregister();
       }
     };
   }, []);
-
-  useEffect(() => {
-    // const body = document.getElementsByTagName('body')[0];
-    // activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
-  }, [activeQuickStartID]);
 
   return (
     /**
@@ -107,39 +79,44 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <QSWrapper quickstartsLoaded={quickstartsLoaded} className="pf-u-h-100vh" {...quickStartProps}>
-      <ScalprumProvider
-        config={config}
-        api={{
-          chrome: {
-            experimentalApi: true,
-            ...window.insights.chrome,
-            isFedramp: isFedRamp(),
-            usePendoFeedback,
-            toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
-            quickStarts: {
-              version: 1,
-              set: updateQuickStarts,
-              toggle: setActiveQuickStartID,
-              Catalog: LazyQuickStartCatalog,
+    <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
+      <HelpTopicProvider key={updates.toString()} helpTopics={helpTopics}>
+        <ScalprumProvider
+          config={config}
+          api={{
+            chrome: {
+              experimentalApi: true,
+              ...window.insights.chrome,
+              isFedramp: isFedRamp(),
+              usePendoFeedback,
+              toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+              quickStarts: {
+                version: 1,
+                set: updateQuickStarts,
+                toggle: setActiveQuickStartID,
+                Catalog: LazyQuickStartCatalog,
+              },
+              helpTopics: {
+                updateHelpTopics,
+              },
+              chromeHistory: history,
             },
-            chromeHistory: history,
-          },
-        }}
-      >
-        <Switch>
-          <Route exact path="/">
-            <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-          <Route path="/security">
-            <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-          <Route>
-            <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
-          </Route>
-        </Switch>
-      </ScalprumProvider>
-    </QSWrapper>
+          }}
+        >
+          <Switch>
+            <Route exact path="/">
+              <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+            <Route path="/security">
+              <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+            <Route>
+              <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
+            </Route>
+          </Switch>
+        </ScalprumProvider>
+      </HelpTopicProvider>
+    </QuickStartContainer>
   );
 };
 
