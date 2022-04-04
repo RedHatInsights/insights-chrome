@@ -3,7 +3,7 @@ import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { QuickStartContainer } from '@patternfly/quickstarts';
+import { HelpTopicContainer, QuickStartContainer } from '@patternfly/quickstarts';
 
 import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
@@ -13,7 +13,6 @@ import { populateQuickstartsCatalog, toggleFeedbackModal } from '../../redux/act
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
-import HelpTopicProvider from '../QuickStart/HelpTopicProvider';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
@@ -28,7 +27,7 @@ const loaderWrapper = (Component, props = {}) => (
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
-  const { helpTopics, updateHelpTopics, updates } = useHelpTopicState();
+  const { helpTopics, updateHelpTopics } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const quickStarts = useSelector(
@@ -80,7 +79,7 @@ const ScalprumRoot = ({ config, ...props }) => {
      * - add deprecation warning to the window functions
      */
     <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
-      <HelpTopicProvider key={updates.toString()} helpTopics={helpTopics}>
+      <HelpTopicContainer helpTopics={helpTopics}>
         <ScalprumProvider
           config={config}
           api={{
@@ -115,7 +114,7 @@ const ScalprumRoot = ({ config, ...props }) => {
             </Route>
           </Switch>
         </ScalprumProvider>
-      </HelpTopicProvider>
+      </HelpTopicContainer>
     </QuickStartContainer>
   );
 };
