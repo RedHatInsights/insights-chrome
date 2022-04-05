@@ -16,7 +16,7 @@ import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
-import { CROSS_ACCESS_ACCOUNT_NUMBER, AVAILABLE_GLOBAL_FILTER_BUNDLES } from '../../consts';
+import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 import { getUrl } from '../../utils';
 
 const ShieldedRoot = memo(
@@ -112,6 +112,14 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
+const isGlobalFilterAllowed = () => {
+  if (getUrl('bundle') === 'insights') {
+    return true;
+  }
+
+  return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
+};
+
 const RootApp = ({ globalFilterHidden, Sidebar }) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
@@ -125,7 +133,7 @@ const RootApp = ({ globalFilterHidden, Sidebar }) => {
    */
   const isLanding = pathname === '/';
 
-  const globalFilterAllowed = !globalFilterHidden && AVAILABLE_GLOBAL_FILTER_BUNDLES.includes(getUrl('bundle'));
+  const globalFilterAllowed = !globalFilterHidden && isGlobalFilterAllowed();
 
   const isGlobalFilterEnabled = !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
