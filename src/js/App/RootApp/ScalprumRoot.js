@@ -27,7 +27,7 @@ const loaderWrapper = (Component, props = {}) => (
 const ScalprumRoot = ({ config, ...props }) => {
   const history = useHistory();
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
-  const { helpTopics, updateHelpTopics } = useHelpTopicState();
+  const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
   const quickStarts = useSelector(
@@ -96,7 +96,9 @@ const ScalprumRoot = ({ config, ...props }) => {
                 Catalog: LazyQuickStartCatalog,
               },
               helpTopics: {
-                updateHelpTopics,
+                addHelpTopics,
+                disableTopics,
+                enableTopics,
               },
               chromeHistory: history,
             },
