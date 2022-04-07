@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { ChromeUser } from './types';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 function getAppDetails() {
   const pathName = window.location.pathname.split('/');
@@ -84,7 +84,7 @@ function sentryTags(user: ChromeUser) {
   Sentry.configureScope((scope) => {
     scope.setUser({
       id: user.identity.account_number,
-      account_id: user.identity.internal.account_id,
+      account_id: user.identity.internal?.account_id,
     });
     scope.setTags({
       app_name: appDetails.app.name,
