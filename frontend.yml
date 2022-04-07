@@ -24,4 +24,4 @@ parameters:
   - name: IMAGE_TAG
     required: true
   - name: IMAGE
-    value: quay.io/cloudservices/insights-chrome
+    value: quay.io/cloudservices/insights-chrome-frontend
