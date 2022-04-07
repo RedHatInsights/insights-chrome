@@ -1,5 +1,6 @@
 import { HelpTopic } from '@patternfly/quickstarts';
-import { useState } from 'react';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useEffect, useState } from 'react';
 
 type HelpTopicsState = {
   topics?: {
@@ -50,8 +51,56 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     );
   }
 
-  function enableTopics(...topicsNames: string[]) {
-    batchToggleTopic(topicsNames, true);
+  function appendQueryArray(params: URLSearchParams, name: string, values: string[]) {
+    values.forEach((value) => {
+      params.append(name, value);
+    });
+    return params;
+  }
+
+  async function fetchHelpTopics({
+    bundles = [],
+    applications = [],
+    names = [],
+    enabled = true,
+  }: {
+    enabled?: boolean;
+    bundles?: string[];
+    applications?: string[];
+    names?: string[];
+  }) {
+    let params = new URLSearchParams('');
+    params = appendQueryArray(params, 'bundle', bundles);
+    params = appendQueryArray(params, 'application', applications);
+    params = appendQueryArray(params, 'name', names);
+
+    try {
+      const { data } = await instance.get<{ content: HelpTopic }[]>(`/api/quickstarts/v1/helptopics?${params.toString()}`);
+      addHelpTopics(
+        data.map(({ content }) => content),
+        enabled
+      );
+    } catch (error) {
+      console.error('Unable to fetch help topics', error);
+    }
+  }
+
+  async function enableTopics(...topicsNames: string[]) {
+    const newTopics: string[] = [];
+    const existingTopics: string[] = [];
+    topicsNames.forEach((name) => {
+      if (typeof helpTopics[name] === 'undefined') {
+        newTopics.push(name);
+      } else {
+        existingTopics.push(name);
+      }
+    });
+    const tasks = [];
+    if (newTopics.length > 0) {
+      tasks.push(fetchHelpTopics({ enabled: true, names: newTopics }));
+    }
+    batchToggleTopic(existingTopics, true);
+    return await Promise.all(tasks);
   }
 
   function disableTopics(...topicsNames: string[]) {

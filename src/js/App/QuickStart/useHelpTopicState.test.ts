@@ -3,7 +3,31 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import helpTopicDataMock from './helpTopicDataMock.json';
 import useHelpTopicState from './useHelpTopicState';
 
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+
+jest.mock('@redhat-cloud-services/frontend-components-utilities/interceptors', () => {
+  const instance = jest.requireActual('@redhat-cloud-services/frontend-components-utilities/interceptors');
+  return {
+    __esModule: true,
+    ...instance,
+    default: {
+      ...instance.default,
+      get: () =>
+        Promise.resolve({
+          data: [
+            {
+              name: 'foo',
+              content: {},
+            },
+          ],
+        }),
+    },
+  };
+});
+
 describe('useHelpTopicState', () => {
+  const getSpy = jest.spyOn(instance, 'get');
+
   const initialTopics = helpTopicDataMock.reduce(
     (acc, curr) => ({
       ...acc,
@@ -137,5 +161,16 @@ describe('useHelpTopicState', () => {
     });
 
     expect(result.current.helpTopics).toEqual([]);
+  });
+
+  test('should initialize topic asychronously', async () => {
+    const testTopicResponse = { name: 'test-topic', content: { name: 'test-topic', foo: 'bar' } };
+    getSpy.mockImplementationOnce(() => Promise.resolve({ data: [testTopicResponse] }));
+    const { result } = renderHook(() => useHelpTopicState());
+    await act(async () => {
+      result.current.enableTopics('test-topic');
+    });
+
+    expect(result.current.helpTopics).toEqual([testTopicResponse.content]);
   });
 });
