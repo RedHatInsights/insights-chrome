@@ -22,15 +22,18 @@ const loaderWrapper = (Component, props = {}) => (
 );
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
-  const { setActiveHelpTopicByName, helpTopics } = useContext(HelpTopicContext);
+  const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
   const [activeTopicName, setActiveTopicName] = useState();
+  const [prevActiveTopic, setPrevActiveTopic] = useState(activeHelpTopic?.name);
   const history = useHistory();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
   const dispatch = useDispatch();
 
   async function setActiveTopic(name) {
     setActiveTopicName(name);
-    helpTopicsAPI.enableTopics(name);
+    if (name?.length > 0) {
+      helpTopicsAPI.enableTopics(name);
+    }
   }
 
   useEffect(() => {
@@ -48,14 +51,21 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
      * The quickstarts module returns a undefined value
      * TODO: Fix it in the quickstarts repository
      */
-    if (activeTopicName?.length > 0) {
-      if (helpTopics.find(({ name }) => name === activeTopicName)) {
-        setActiveHelpTopicByName(activeTopicName);
-      }
+    if (prevActiveTopic && activeHelpTopic === null) {
+      setActiveTopic('');
+      setPrevActiveTopic();
     } else {
-      setActiveHelpTopicByName('');
+      if (activeTopicName?.length > 0) {
+        if (helpTopics.find(({ name }) => name === activeTopicName)) {
+          setActiveHelpTopicByName(activeTopicName);
+          setPrevActiveTopic(activeTopicName);
+        }
+      } else {
+        setActiveHelpTopicByName('');
+        setPrevActiveTopic();
+      }
     }
-  }, [activeTopicName, helpTopics]);
+  }, [activeTopicName, helpTopics, activeHelpTopic]);
 
   return (
     /**
@@ -77,6 +87,9 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
           helpTopics: {
             ...helpTopicsAPI,
             setActiveTopic,
+            closeHelpTopic: () => {
+              setActiveTopic('');
+            },
           },
           chromeHistory: history,
         },
