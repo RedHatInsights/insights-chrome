@@ -31,9 +31,13 @@ const testData = [
   { auth: false, path: '/404', sec: '404' },
 ];
 
-function doMockWindow(path) {
-  utils.__set__('getWindow', () => {
-    return { location: { pathname: path } };
+function mockLocation(path) {
+  global.window = Object.create(window);
+  Object.defineProperty(window, 'location', {
+    value: {
+      pathname: path,
+    },
+    writable: true,
   });
 }
 
@@ -41,16 +45,16 @@ describe('utils', () => {
   describe('pageRequiresAuthentication', () => {
     testData.map((item) => {
       test(`should return ${item.auth} for ${item.path}`, () => {
-        doMockWindow(item.path);
+        mockLocation(item.path);
         expect(utils.pageRequiresAuthentication()).toBe(item.auth);
       });
     });
   });
   describe('getSections', () => {
-    const getSection = utils.__get__('getSection');
+    const getSection = utils.getSection;
     testData.map((item) => {
       test(`should extract give you ${item.sec} from ${item.path}`, () => {
-        doMockWindow(item.path);
+        mockLocation(item.path);
         expect(getSection()).toBe(item.sec);
       });
     });
