@@ -6,22 +6,17 @@ const decodedToken = require('../../../testdata/decodedToken.json');
 const jwt = require('./jwt');
 
 jest.mock('@redhat-cloud-services/keycloak-js');
-// jest.mock('@redhat-cloud-services/keycloak-js', () => jest.fn().mockImplementation((options) => {
-//     const token = require('../../../testdata/encodedToken.json').data;
-//     return {
-//         ...options,
-//         token,
-//         refreshToken: token,
-//         init: () => new Promise(res => res()),
-//         login: () => {
-//             // document.cookie = `cs_jwt=${token};`;
-//             return new Promise(res => res());
-//         },
-//         clearToken: () => new Promise(res => res()),
-//         updateToken: () => new Promise(res => res())
-//     };
-// }));
 jest.mock('urijs');
+
+function mockLocation(path) {
+  global.window = Object.create(window);
+  Object.defineProperty(window, 'location', {
+    value: {
+      pathname: path,
+    },
+    writable: true,
+  });
+}
 
 describe('JWT', () => {
   beforeAll(() => {
@@ -227,16 +222,6 @@ describe('JWT', () => {
 
   describe('helper functions', () => {
     describe('getUserInfo', () => {
-      function doMockWindow(path) {
-        require('../utils').__set__('getWindow', () => {
-          return {
-            location: {
-              pathname: path,
-            },
-          };
-        });
-      }
-
       const updateTokenMock = jest.fn();
       const isExistingValidMock = jest.fn();
 
@@ -268,7 +253,7 @@ describe('JWT', () => {
         const loginSpy = jest.spyOn(jwt, 'login');
         function doTest(url, expectedToWork) {
           isExistingValidMock.mockReturnValueOnce(false);
-          doMockWindow(url);
+          mockLocation(url);
           jwt.login = jest.fn();
           updateTokenMock.mockReturnValue(
             new Promise((res, rej) => {
@@ -300,7 +285,7 @@ describe('JWT', () => {
         const loginSpy = jest.spyOn(jwt, 'login');
         test('should *not* call login', () => {
           cookie.remove('cs_jwt');
-          doMockWindow('/insights/foobar');
+          mockLocation('/insights/foobar');
           updateTokenMock.mockReturnValue(
             new Promise((res) => {
               res();
