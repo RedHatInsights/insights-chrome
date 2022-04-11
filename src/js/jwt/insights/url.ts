@@ -1,11 +1,12 @@
+import { DEFAULT_ROUTES } from '../constants';
 import logger from '../logger';
 const log = logger('insights/url.js');
 const ssoUrl = import(/* webpackChunkName: "sso-url" */ './ssoUrl').then((sso) => sso.default);
 
 // Parse through keycloak options routes
-export default async (env) => {
+export default async (env: typeof DEFAULT_ROUTES) => {
   if (await ssoUrl) {
-    log('Using dynamic SSO_URL found! ', ssoUrl);
+    log('Using dynamic SSO_URL found! ' + ssoUrl);
     return ssoUrl;
   }
 

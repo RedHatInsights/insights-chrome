@@ -1,10 +1,9 @@
 // Imports
-import Keycloak from '@redhat-cloud-services/keycloak-js';
+import Keycloak, { KeycloakInitOptions } from '@redhat-cloud-services/keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { pageRequiresAuthentication } from '../utils';
+import { pageRequiresAuthentication, deleteLocalStorageItems } from '../utils';
 import * as Sentry from '@sentry/browser';
-import { deleteLocalStorageItems } from '../utils';
 import logger from './logger';
 
 // Insights Specific
@@ -38,7 +37,11 @@ authChannel.onmessage = (e) => {
   }
 };
 
-export function decodeToken(str) {
+export type DecodedToken = {
+  exp: number;
+};
+
+export function decodeToken(str: string): DecodedToken {
   str = str.split('.')[1];
   str = str.replace('/-/g', '+');
   str = str.replace('/_/g', '/');
@@ -58,18 +61,18 @@ export function decodeToken(str) {
   str = (str + '===').slice(0, str.length + (str.length % 4));
   str = str.replace(/-/g, '+').replace(/_/g, '/');
   str = decodeURIComponent(escape(atob(str)));
-  str = JSON.parse(str);
+  const res = JSON.parse(str);
 
-  return str;
+  return res;
 }
 
-export const doOffline = (key, val) => {
+export const doOffline = (key: string, val: string) => {
   const url = urijs(window.location.href);
   url.removeSearch(key);
   url.addSearch(key, val);
 
-  Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then((ssoUrl) => {
-    const options = {
+  Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then(async (ssoUrl) => {
+    const options: KeycloakInitOptions & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
       redirectUri: url.toString(),
@@ -77,16 +80,28 @@ export const doOffline = (key, val) => {
     };
 
     const kc = Keycloak(options);
-    kc.init(options).then(() => {
-      kc.login({
-        scope: 'offline_access',
-      });
+
+    await kc.init(options);
+    kc.login({
+      scope: 'offline_access',
     });
   });
 };
 
+export interface JWTInitOptions extends KeycloakInitOptions {
+  cookieName: string;
+  routes: typeof DEFAULT_ROUTES;
+  url: string;
+  clientId: string;
+  realm: string;
+  promiseType: string;
+  checkLoginIframe: boolean;
+  silentCheckSsoRedirectUri: string;
+  token: string;
+}
+
 /*** Initialization ***/
-export const init = (options) => {
+export const init = (options: Partial<JWTInitOptions>) => {
   log('Initializing');
 
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
@@ -137,11 +152,11 @@ export const init = (options) => {
       }
     }
 
-    return priv.initialize(options).then(initSuccess).catch(initError);
+    return (priv.initialize(options) as unknown as Promise<unknown>).then(initSuccess).catch(initError);
   });
 };
 
-function isExistingValid(token) {
+export function isExistingValid(token?: string) {
   log('Checking validity of existing JWT');
   try {
     if (!token) {
@@ -158,7 +173,7 @@ function isExistingValid(token) {
     // we need to trim it down to valid seconds from epoch
     // because we compare to KC's exp which is seconds from epoch
     const now = Date.now().toString().substr(0, 10);
-    const exp = parsed.exp - now;
+    const exp = parsed.exp - parseInt(now);
 
     log(`Token expires in ${exp}`);
 
@@ -181,21 +196,21 @@ function isExistingValid(token) {
 
       return false;
     }
-  } catch (e) {
+  } catch (e: unknown) {
     log(e);
     return false;
   }
 }
 
 // keycloak init successful
-function initSuccess() {
+export function initSuccess() {
   log('JWT Initialized');
   setCookie(priv.getToken());
   setRefresh(priv.getRefershToken());
 }
 
 // keycloak init failed
-function initError() {
+export function initError() {
   log('JWT init error');
   logout();
 }
@@ -208,12 +223,15 @@ export function login() {
   return priv.login({ redirectUri: location.href });
 }
 
-function logout(bounce) {
+export function logout(bounce?: boolean) {
   log('Logging out');
 
   // Clear cookies and tokens
   priv.clearToken();
-  cookie.remove(priv.getCookie().cookieName);
+  const cookieName = priv.getCookie()?.cookieName;
+  if (cookieName) {
+    cookie.remove(cookieName);
+  }
   cookie.remove('cs_demo');
 
   const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
@@ -228,7 +246,7 @@ function logout(bounce) {
   deleteLocalStorageItems(keys);
   // Redirect to logout
   if (bounce) {
-    let eightSeconds = new Date(new Date().getTime() + 8 * 1000);
+    const eightSeconds = new Date(new Date().getTime() + 8 * 1000);
     cookie.set('cs_loggedOut', 'true', {
       expires: eightSeconds,
     });
@@ -238,7 +256,7 @@ function logout(bounce) {
   }
 }
 
-export const logoutAllTabs = (bounce) => {
+export const logoutAllTabs = (bounce?: boolean) => {
   authChannel.postMessage({ type: 'logout' });
   logout(bounce);
 };
@@ -289,9 +307,8 @@ function refreshTokens() {
 }
 
 // Actually update the token
-function updateToken() {
-  return priv
-    .updateToken()
+export function updateToken() {
+  return (priv.updateToken() as unknown as Promise<boolean>)
     .then((refreshed) => {
       // Important! after we update the token
       // we have to again populate the Cookie!
@@ -315,29 +332,35 @@ function updateToken() {
     });
 }
 
-function getCookieExpires(exp) {
+export function getCookieExpires(exp: number) {
   // we want the cookie to expire at the same time as the JWT session
   // so we take the exp and get a new GTMString from that
   const date = new Date(0);
   date.setUTCSeconds(exp);
-  return date.toGMTString();
+  return date.toUTCString();
 }
 
 // Set the cookie for 3scale
-function setCookie(token) {
+export function setCookie(token?: string) {
   log('Setting the cs_jwt cookie');
+  console.error('DO NOT CALL THIS SHIT')
   if (token && token.length > 10) {
-    setCookieWrapper(`${priv.getCookie().cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+    const cookieName = priv.getCookie()?.cookieName;
+    if (cookieName) {
+      setCookieWrapper(`${cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+    }
   }
 }
 
-function setRefresh(refreshToken) {
+function setRefresh(refreshToken?: string) {
   log('Setting the refresh token');
-  cookie.set('cs_jwt_refresh', refreshToken, { secure: true });
+  if (refreshToken) {
+    cookie.set('cs_jwt_refresh', refreshToken, { secure: true });
+  }
 }
 
 // do this so we can mock out for test
-function setCookieWrapper(str) {
+export function setCookieWrapper(str: string) {
   document.cookie = str;
 }
 
