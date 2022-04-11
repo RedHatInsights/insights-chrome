@@ -8,7 +8,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import { getUrl, isBeta } from '../../utils';
+import { getUrl, getSection, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 
@@ -110,6 +110,11 @@ const Tools = () => {
     {
       title: 'Status page',
       url: 'https://status.redhat.com/',
+    },
+    {
+      title: 'Insights for RHEL Documentation',
+      url: `https://access.redhat.com/documentation/en-us/red_hat_insights/2021`,
+      isHidden: getSection() !== 'insights',
     },
     {
       title: 'Demo mode',
