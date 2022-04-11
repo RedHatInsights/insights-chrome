@@ -9,6 +9,7 @@ objects:
       name: chrome
     spec:
       envName: ${ENV_NAME}
+      deploymentRepo: https://github.com/RedHatInsights/insights-chrome
       title: Chrome
       image: ${IMAGE}:${IMAGE_TAG}
       API:
