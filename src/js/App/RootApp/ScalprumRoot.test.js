@@ -41,6 +41,20 @@ describe('ScalprumRoot', () => {
   let initialState;
   let mockStore;
   let config;
+  const initialProps = {
+    helpTopicsAPI: {
+      addHelpTopics: jest.fn(),
+      disableTopics: jest.fn(),
+      enableTopics: jest.fn(),
+    },
+    quickstartsAPI: {
+      version: 1,
+      set: jest.fn(),
+      toggle: jest.fn(),
+      // eslint-disable-next-line react/display-name
+      Catalog: () => <div></div>,
+    },
+  };
 
   beforeEach(() => {
     config = {
@@ -104,7 +118,7 @@ describe('ScalprumRoot', () => {
       const { container: internalContainer } = await render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
-            <ScalprumRoot config={config} />
+            <ScalprumRoot config={config} {...initialProps} />
           </MemoryRouter>
         </Provider>
       );
@@ -138,7 +152,7 @@ describe('ScalprumRoot', () => {
       const { getByLabelText: internalGetByLabelText } = await render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
-            <ScalprumRoot globalFilterHidden config={config} />
+            <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
           </MemoryRouter>
         </Provider>
       );
@@ -150,6 +164,11 @@ describe('ScalprumRoot', () => {
   it('should render GlobalFilter', async () => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
+    Object.defineProperty(window, 'location', {
+      value: {
+        pathname: '/insights',
+      },
+    });
     const store = mockStore({
       ...initialState,
       chrome: {
@@ -160,8 +179,8 @@ describe('ScalprumRoot', () => {
 
     const { container } = render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/']}>
-          <ScalprumRoot config={config} globalFilterHidden={false} />
+        <MemoryRouter initialEntries={['/insights']}>
+          <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
         </MemoryRouter>
       </Provider>
     );

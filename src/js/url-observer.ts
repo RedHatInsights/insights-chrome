@@ -12,7 +12,7 @@ const registerUrlObserver = () => {
   let oldHref = document.location.href.replace(/#.*$/, '');
 
   window.onload = function () {
-    const bodyList = document.querySelector('body');
+    const bodyList = document.body;
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function () {
         const newLocation = document.location.href.replace(/#.*$/, '');

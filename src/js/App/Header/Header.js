@@ -10,6 +10,7 @@ import Feedback from '../Feedback';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
+import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { Route } from 'react-router-dom';
 
 import './Header.scss';
@@ -31,7 +32,7 @@ export const Header = () => {
   return (
     <Fragment>
       <MastheadMain>
-        <MastheadBrand href="./">
+        <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
       </MastheadMain>

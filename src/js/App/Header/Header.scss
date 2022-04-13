@@ -18,7 +18,12 @@
     color: var(--pf-global--Color--dark-100);
   }
   .chr-c-dropdown-user-toggle {
-    --pf-c-dropdown--m-expanded__toggle--before--BorderBottomColor: var(--pf-global--palette--black-900);
+    button::before {
+      border-color: var(--pf-global--palette--black-900)
+    }
+    &.pf-m-expanded button::before, button:hover::before {
+      border-bottom-color: var(--pf-global--primary-color--200)
+    }    
   }
 }
 
