@@ -154,14 +154,14 @@
   "dependencies": {
     "@data-driven-forms/pf4-component-mapper": "^3.12.0",
     "@data-driven-forms/react-form-renderer": "^3.12.0",
-    "@patternfly/patternfly": "^4.164.2",
+    "@patternfly/patternfly": "^4.185.1",
     "@patternfly/quickstarts": "2.2.1",
-    "@patternfly/react-core": "^4.181.1",
-    "@patternfly/react-icons": "^4.32.1",
-    "@patternfly/react-table": "^4.50.1",
-    "@patternfly/react-tokens": "^4.33.1",
+    "@patternfly/react-core": "^4.202.16",
+    "@patternfly/react-icons": "^4.53.16",
+    "@patternfly/react-table": "^4.71.16",
+    "@patternfly/react-tokens": "^4.54.16",
     "@redhat-cloud-services/entitlements-client": "^1.0.101",
-    "@redhat-cloud-services/frontend-components": "^3.5.0",
+    "@redhat-cloud-services/frontend-components": "^3.8.4",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.4",
     "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.7",
     "@redhat-cloud-services/frontend-components-utilities": "^3.2.13",
@@ -195,7 +195,7 @@
     "redux": "^4.1.1",
     "redux-promise-middleware": "^6.1.2",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.10"
+    "urijs": "^1.19.11"
   },
   "alias": {
     "PFReactTable": "./config/patternfly-table-externals.js",
