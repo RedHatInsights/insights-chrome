@@ -4,6 +4,23 @@ export type PrivCookie = {
   cookieName: string;
 };
 
+export type SSOParsedToken = KeycloakInstance['tokenParsed'] & {
+  account_number: string;
+  type: string;
+  idp: string;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  is_org_admin: boolean;
+  is_internal: boolean;
+  locale: string;
+  org_id: string;
+  account_id: string;
+  jti: string;
+};
+
 class Priv {
   _cookie?: string;
   _keycloak: KeycloakInstance;
@@ -48,7 +65,7 @@ class Priv {
   }
 
   getTokenParsed() {
-    return this._keycloak.tokenParsed;
+    return this._keycloak.tokenParsed as SSOParsedToken;
   }
 
   getToken() {

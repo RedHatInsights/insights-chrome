@@ -1,6 +1,13 @@
 import { pageAllowsUnentitled, isValidAccountNumber, isBeta } from '../../utils';
 import servicesApi from './entitlements';
 import logger from '../logger';
+import { SSOParsedToken } from './../Priv';
+
+export type SSOServiceDetails = {
+  is_entitled: boolean;
+  is_trial: boolean;
+};
+
 const log = logger('insights/user.js');
 const pathMapper = {
   'cost-management': 'cost_management',
@@ -14,7 +21,7 @@ const pathMapper = {
   internal: 'internal',
 };
 
-const unentitledPathMapper = (section, service) =>
+const unentitledPathMapper = (section: string, service: string) =>
   ({
     ansible: `${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`,
   }[section] || `${document.baseURI}?not_entitled=${service}`);
@@ -24,7 +31,7 @@ function getWindow() {
 }
 
 /* eslint-disable camelcase */
-function buildUser(token) {
+export function buildUser(token: SSOParsedToken) {
   const user = token
     ? {
         identity: {
@@ -53,7 +60,14 @@ function buildUser(token) {
 }
 /* eslint-enable camelcase */
 
-function tryBounceIfUnentitled(data, section) {
+export function tryBounceIfUnentitled(
+  data:
+    | boolean
+    | {
+        [key: string]: SSOServiceDetails;
+      },
+  section: string
+) {
   // only test this on the apps that are in valid sections
   // we need to keep /apps and other things functional
   if (
@@ -78,7 +92,7 @@ function tryBounceIfUnentitled(data, section) {
     getWindow().location.replace(redirectAddress);
   }
 
-  if (section && section !== '') {
+  if (section && typeof data === 'object') {
     if (data?.[service]?.is_entitled) {
       log(`Entitled to: ${service}`);
     } else {
@@ -88,8 +102,8 @@ function tryBounceIfUnentitled(data, section) {
   }
 }
 
-export default async (token) => {
-  let user = buildUser(token);
+export default async (token: SSOParsedToken) => {
+  const user = buildUser(token);
 
   const pathName = getWindow().location.pathname.split('/');
   pathName.shift();
@@ -140,7 +154,7 @@ export default async (token) => {
       return;
     }
 
-    tryBounceIfUnentitled(data, pathName[0]);
+    tryBounceIfUnentitled(data as unknown as { [key: string]: SSOServiceDetails }, pathName[0]);
 
     return {
       ...user,
