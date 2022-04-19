@@ -276,8 +276,8 @@ export const getUserInfo = () => {
 
   return updateToken()
     .then(() => {
-      insightsUser(priv.getTokenParsed());
       log('Successfully updated token');
+      return insightsUser(priv.getTokenParsed());
     })
     .catch(() => {
       if (pageRequiresAuthentication()) {
@@ -343,7 +343,6 @@ export function getCookieExpires(exp: number) {
 // Set the cookie for 3scale
 export function setCookie(token?: string) {
   log('Setting the cs_jwt cookie');
-  console.error('DO NOT CALL THIS SHIT')
   if (token && token.length > 10) {
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
@@ -361,7 +360,7 @@ function setRefresh(refreshToken?: string) {
 
 // do this so we can mock out for test
 export function setCookieWrapper(str: string) {
-  document.cookie = str;
+  window.document.cookie = str;
 }
 
 // Encoded WIP
