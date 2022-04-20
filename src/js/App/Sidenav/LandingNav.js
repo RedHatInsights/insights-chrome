@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
 import { isBeta, isFedRamp } from '../../utils';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadNavigationLandingPage } from '../../redux/actions';
 import NavLoader from './Navigation/Loader';
-import ChromeLink from './Navigation/ChromeLink';
+import ChromeNavItemFactory from './Navigation/ChromeNavItemFactory';
+import NavContext from './Navigation/navContext';
+import componentMapper from './Navigation/componentMapper';
 
 const LandingNav = () => {
-  const isBetaEnv = isBeta();
   const dispatch = useDispatch();
   const [elementReady, setElementReady] = useState(false);
   const showNav = useSelector(({ chrome: { user } }) => !!user);
@@ -46,13 +47,23 @@ const LandingNav = () => {
         <div className="chr-c-app-title">
           <b>Home</b>
         </div>
-        {schema
-          .filter(({ appId }) => (isFedRamp() ? modules[appId]?.isFedramp === true : true))
-          .map(({ title, id, href, appId }) => (
-            <NavItem component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} appId={appId} />} key={id} ouiaId={id} to={href}>
-              {title}
-            </NavItem>
-          ))}
+        <PageContextConsumer>
+          {({ isNavOpen }) => (
+            <NavContext.Provider
+              value={{
+                componentMapper,
+                inPageLayout: true,
+                isNavOpen,
+              }}
+            >
+              {schema
+                .filter(({ appId }) => (isFedRamp() ? modules[appId]?.isFedramp === true : true))
+                .map((item, index) => (
+                  <ChromeNavItemFactory key={index} {...item} />
+                ))}
+            </NavContext.Provider>
+          )}
+        </PageContextConsumer>
       </NavList>
     </Nav>
   );
