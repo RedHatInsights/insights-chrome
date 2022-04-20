@@ -11,7 +11,14 @@ import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
-import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, REQUESTS_COUNT, REQUESTS_DATA } from '../../consts';
+import {
+  ACTIVE_ACCOUNT_SWITCH_NOTIFICATION,
+  ACTIVE_REMOTE_REQUEST,
+  CROSS_ACCESS_ACCOUNT_NUMBER,
+  REQUESTS_COUNT,
+  REQUESTS_DATA,
+  TARGET_ORG,
+} from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
@@ -32,6 +39,8 @@ const ContextSwitcher = ({ user, className }) => {
     localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
     Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, target_account);
+    Cookies.set(TARGET_ORG, target_account);
+
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
      * If it is not active, we have to remove the cookie.
@@ -55,6 +64,7 @@ const ContextSwitcher = ({ user, className }) => {
     }
     setSelectedAccountNumber(user?.identity?.account_number);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
+    Cookies.remove(TARGET_ORG);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
     window.location.reload();
   };
