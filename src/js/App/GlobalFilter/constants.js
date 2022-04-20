@@ -3,6 +3,7 @@ import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { SID_KEY, AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
+import { getUrl } from '../../utils';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -58,6 +59,12 @@ export const createTagsFilter = (tags = []) =>
 
 export const generateFilter = async () => {
   const searchParams = new URLSearchParams(location.hash?.substring(1));
+
+  // Ansible bundle requires AAP to be active at all times
+  if (getUrl('bundle') === 'ansible') {
+    searchParams.set('workloads', AAP_KEY);
+  }
+
   const currToken = decodeToken(await insights.chrome.auth.getToken())?.session_state;
   let data;
   try {

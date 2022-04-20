@@ -1,5 +1,5 @@
 import { ScalprumComponent } from '@scalprum/react-core';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -8,9 +8,11 @@ import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
+import { HelpTopicContext } from '@patternfly/quickstarts';
 
 const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, ...props }) => {
   const dispatch = useDispatch();
+  const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
   const user = useSelector(({ chrome: { user } }) => user);
   /**
    * If default title was not set, use module scope (appId)
@@ -33,6 +35,12 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, .
       console.error('Unable to update pendo options');
       console.error(error);
     }
+
+    /**
+     * TODO: Discuss default close feature of topics
+     * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
+     */
+    setActiveHelpTopicByName && setActiveHelpTopicByName('');
   }, [scope]);
 
   useEffect(() => {

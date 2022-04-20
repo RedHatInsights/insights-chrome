@@ -17,6 +17,7 @@ import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
+import { getUrl } from '../../utils';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
@@ -111,12 +112,20 @@ ShieldedRoot.defaultProps = {
 };
 ShieldedRoot.displayName = 'ShieldedRoot';
 
+const isGlobalFilterAllowed = () => {
+  if (getUrl('bundle') === 'insights') {
+    return true;
+  }
+
+  return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
+};
+
 const RootApp = ({ globalFilterHidden, Sidebar }) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
   const { pathname } = useLocation();
   const hideNav = useSelector(({ chrome: { user } }) => !user || !Sidebar);
-  const activeLocation = pathname.split('/')[1];
+
   /**
    * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
    * We need the information before anything is rendered to determine if we use root module or render landing page.
@@ -124,8 +133,9 @@ const RootApp = ({ globalFilterHidden, Sidebar }) => {
    */
   const isLanding = pathname === '/';
 
-  const isGlobalFilterEnabled =
-    !isLanding && ((!globalFilterHidden && activeLocation === 'insights') || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
+  const globalFilterAllowed = !globalFilterHidden && isGlobalFilterAllowed();
+
+  const isGlobalFilterEnabled = !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
   const insightsContentRef = useRef(null);
 
   return (
