@@ -132,6 +132,7 @@ Available function:
 - `shortSession` - to enable short session in order to test automatic logouts
 - `forcePendo` - to force Pendo initializtion
 - `appFilter` - to enable new application filter in any environment
+- `trialPages` - to enable redirecting unentitled users to trial pages
 
 ## Futher reading
 

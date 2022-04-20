@@ -49,7 +49,20 @@ describe('User', () => {
       expect(replaceMock).not.toBeCalled();
     });
 
-    test('should bounce if unentitled', () => {
+    test('should bounce if unentitled with trial pages off', () => {
+      tryBounceIfUnentitled(ents, 'insights');
+      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
+
+      tryBounceIfUnentitled(ents, 'cost-management');
+      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=cost_management');
+
+      tryBounceIfUnentitled(ents, 'ansible');
+      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=ansible');
+    });
+
+    test('should bounce if unentitled with trial pages on', () => {
+      localStorage.setItem('chrome:experimental:trial-pages', true);
+
       tryBounceIfUnentitled(ents, 'insights');
       expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
 
@@ -58,6 +71,8 @@ describe('User', () => {
 
       tryBounceIfUnentitled(ents, 'ansible');
       expect(replaceMock).lastCalledWith('http://localhost/ansible/ansible-dashboard/trial');
+
+      localStorage.removeItem('chrome:experimental:trial-pages');
     });
 
     test('should *not* bounce if entitled', () => {
