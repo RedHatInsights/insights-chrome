@@ -30,8 +30,7 @@ const ContextSwitcher = ({ user, className }) => {
     dispatch(onToggleContextSwitcher());
   };
 
-  const handleItemClick = (target_account, request_id, end_date) => {
-    console.log('OMG HIIIIIIIIIIII');
+  const handleItemClick = (target_account, request_id, end_date, target_org) => {
     if (target_account === selectedAccountNumber) {
       return;
     }
@@ -40,7 +39,7 @@ const ContextSwitcher = ({ user, className }) => {
     localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
     Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, target_account);
-    // Cookies.set(CROSS_ACCESS_ORG_ID, target_org);
+    Cookies.set(CROSS_ACCESS_ORG_ID, target_org);
 
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
@@ -96,12 +95,6 @@ const ContextSwitcher = ({ user, className }) => {
       );
   }, []);
 
-  useEffect(() => {
-    console.log('Trying to see what is inside of my filteredData: ', data);
-    const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
-    console.log('TESTING: looking for filtered data: ', filteredData);
-  }, []);
-
   if (data.length === 0) {
     return null;
   }
@@ -139,9 +132,8 @@ const ContextSwitcher = ({ user, className }) => {
       )}
       {filteredData?.length === 0 ? <ContextSelectorItem>No results</ContextSelectorItem> : <Fragment />}
       {filteredData ? (
-        filteredData.map(({ target_account, request_id, end_date }) => (
-          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date)} key={request_id}>
-            {console.log('AAAAAAAAAAAYYAYAYAYAYAYYYYYYYYYY')}
+        filteredData.map(({ target_account, request_id, end_date, target_org }) => (
+          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
             {target_account}
             {target_account === selectedAccountNumber && (
               <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
