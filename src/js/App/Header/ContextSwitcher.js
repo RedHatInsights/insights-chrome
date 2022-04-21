@@ -17,7 +17,7 @@ import {
   CROSS_ACCESS_ACCOUNT_NUMBER,
   REQUESTS_COUNT,
   REQUESTS_DATA,
-  TARGET_ORG,
+  CROSS_ACCESS_ORG_ID,
 } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
@@ -31,6 +31,7 @@ const ContextSwitcher = ({ user, className }) => {
   };
 
   const handleItemClick = (target_account, request_id, end_date) => {
+    console.log('OMG HIIIIIIIIIIII');
     if (target_account === selectedAccountNumber) {
       return;
     }
@@ -39,7 +40,7 @@ const ContextSwitcher = ({ user, className }) => {
     localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
     Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, target_account);
-    Cookies.set(TARGET_ORG, target_account);
+    // Cookies.set(CROSS_ACCESS_ORG_ID, target_org);
 
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
@@ -64,7 +65,7 @@ const ContextSwitcher = ({ user, className }) => {
     }
     setSelectedAccountNumber(user?.identity?.account_number);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
-    Cookies.remove(TARGET_ORG);
+    Cookies.remove(CROSS_ACCESS_ORG_ID);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
     window.location.reload();
   };
@@ -93,6 +94,12 @@ const ContextSwitcher = ({ user, className }) => {
             .filter(({ target_account }) => target_account !== user.identity.account_number)
         )
       );
+  }, []);
+
+  useEffect(() => {
+    console.log('Trying to see what is inside of my filteredData: ', data);
+    const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
+    console.log('TESTING: looking for filtered data: ', filteredData);
   }, []);
 
   if (data.length === 0) {
@@ -134,6 +141,7 @@ const ContextSwitcher = ({ user, className }) => {
       {filteredData ? (
         filteredData.map(({ target_account, request_id, end_date }) => (
           <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date)} key={request_id}>
+            {console.log('AAAAAAAAAAAYYAYAYAYAYAYYYYYYYYYY')}
             {target_account}
             {target_account === selectedAccountNumber && (
               <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />

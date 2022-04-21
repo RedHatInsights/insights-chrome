@@ -18,7 +18,7 @@ export const ACTIVE_ACCOUNT_SWITCH_NOTIFICATION = 'chrome:cross-account-requests
 export const ACCOUNT_REQUEST_TIMEOUT = 'chrome:cross-account-requests:request-timeout';
 export const CROSS_ACCESS_ACCOUNT_NUMBER = 'cross_access_account_number';
 export const ACTIVE_REMOTE_REQUEST = 'chrome/active-remote-request';
-export const TARGET_ORG = 'cross_access_org_id';
+export const CROSS_ACCESS_ORG_ID = 'cross_access_org_id';
 
 const matcherMapper = {
   isEmpty,
