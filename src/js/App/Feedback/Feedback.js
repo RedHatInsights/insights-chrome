@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, Modal, ModalVariant, Form, FormGroup, TextArea, TextContent, Text, Label } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, Form, FormGroup, TextArea, Label } from '@patternfly/react-core';
 import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
@@ -69,15 +69,6 @@ const Feedback = ({ user }) => {
         ]}
       >
         <Form>
-          <Alert variant="info" isInline title="This form is to share feedback about your experience.">
-            <TextContent>
-              <Text className="pf-u-mb-0">The feedback you share below helps us to improve the user experience.</Text>
-              <Text>If you are experiencing an issue that requires support, open a support case instead.</Text>
-              <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
-                Open a support case
-              </Text>
-            </TextContent>
-          </Alert>
           <FormGroup label="Please leave us your feedback below." fieldId="horizontal-form-exp">
             <TextArea
               value={textAreaValue}

@@ -11,14 +11,7 @@ import { onToggleContextSwitcher } from '../../redux/actions';
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
-import {
-  ACTIVE_ACCOUNT_SWITCH_NOTIFICATION,
-  ACTIVE_REMOTE_REQUEST,
-  CROSS_ACCESS_ACCOUNT_NUMBER,
-  REQUESTS_COUNT,
-  REQUESTS_DATA,
-  CROSS_ACCESS_ORG_ID,
-} from '../../consts';
+import { ACTIVE_ACCOUNT_SWITCH_NOTIFICATION, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, REQUESTS_COUNT, REQUESTS_DATA } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();
@@ -30,7 +23,7 @@ const ContextSwitcher = ({ user, className }) => {
     dispatch(onToggleContextSwitcher());
   };
 
-  const handleItemClick = (target_account, request_id, end_date, target_org) => {
+  const handleItemClick = (target_account, request_id, end_date) => {
     if (target_account === selectedAccountNumber) {
       return;
     }
@@ -39,8 +32,6 @@ const ContextSwitcher = ({ user, className }) => {
     localStorage.removeItem(REQUESTS_DATA);
     setSelectedAccountNumber(target_account);
     Cookies.set(CROSS_ACCESS_ACCOUNT_NUMBER, target_account);
-    Cookies.set(CROSS_ACCESS_ORG_ID, target_org);
-
     /**
      * We need to keep the request id somewhere to check if the request is still active after session start.
      * If it is not active, we have to remove the cookie.
@@ -64,7 +55,6 @@ const ContextSwitcher = ({ user, className }) => {
     }
     setSelectedAccountNumber(user?.identity?.account_number);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
-    Cookies.remove(CROSS_ACCESS_ORG_ID);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
     window.location.reload();
   };
@@ -132,8 +122,8 @@ const ContextSwitcher = ({ user, className }) => {
       )}
       {filteredData?.length === 0 ? <ContextSelectorItem>No results</ContextSelectorItem> : <Fragment />}
       {filteredData ? (
-        filteredData.map(({ target_account, request_id, end_date, target_org }) => (
-          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
+        filteredData.map(({ target_account, request_id, end_date }) => (
+          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date)} key={request_id}>
             {target_account}
             {target_account === selectedAccountNumber && (
               <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
