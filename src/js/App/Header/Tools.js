@@ -113,7 +113,7 @@ const Tools = () => {
     },
     {
       title: 'Insights for RHEL Documentation',
-      url: `https://access.redhat.com/documentation/en-us/red_hat_insights/2021`,
+      url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
       isHidden: getSection() !== 'insights',
     },
     {
