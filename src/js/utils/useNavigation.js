@@ -69,13 +69,15 @@ const useNavigation = () => {
           dispatch(loadLeftNavSegment(schema, currentNamespace, prevPathname));
         }
 
-        if (activeQSId.current && shouldPreseverQuickstartSearch(window.location.search, activeQSId.current)) {
-          replace({
-            ...activeLocation.current,
-            pathname: newPathname.replace(/^\/beta\//, '/'),
-            search: appendQSSearch(window.location.search, activeQSId.current),
-          });
-        }
+        setTimeout(() => {
+          if (activeQSId.current && shouldPreseverQuickstartSearch(window.location.search, activeQSId.current)) {
+            replace({
+              ...activeLocation.current,
+              pathname: newPathname.replace(/^\/beta\//, '/'),
+              search: appendQSSearch(window.location.search, activeQSId.current),
+            });
+          }
+        });
       });
     });
   };
