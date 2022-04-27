@@ -17,4 +17,5 @@ export default {
   appFilter: () => functionBuilder('chrome:experimental:app-filter', true),
   contextSwitcher: () => functionBuilder('chrome:experimental:context-switcher', true),
   quickstartsDebug: () => functionBuilder('chrome:experimental:quickstarts', true),
+  trialPages: () => functionBuilder('chrome:experimental:trial-pages', true),
 };

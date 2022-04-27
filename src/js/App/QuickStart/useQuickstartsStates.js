@@ -64,6 +64,9 @@ const useQuickstartsStates = () => {
             {}
           );
           setAllQuickStartStates(states);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }
   }, [accountId]);
