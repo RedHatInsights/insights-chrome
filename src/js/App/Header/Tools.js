@@ -75,9 +75,10 @@ const settingsMenuDropdownItems = [
 ];
 
 const Tools = () => {
-  const [{ isDemoAcc, isInternal, isSettingsDisabled }, setState] = useState({
+  const [{ isDemoAcc, isInternal, isRhosakEntitled, isSettingsDisabled }, setState] = useState({
     isSettingsDisabled: true,
     isInternal: true,
+    isRhosakEntitled: false,
     isDemoAcc: false,
   });
 
@@ -87,6 +88,7 @@ const Tools = () => {
       setState({
         isSettingsDisabled: !user?.identity?.account_number,
         isInternal: !!user?.identity?.user?.is_internal,
+        isRhosakEntitled: !!user?.entitlements?.rhosak?.is_entitled,
         isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
       });
     });
@@ -101,6 +103,7 @@ const Tools = () => {
     {
       title: 'Open support case',
       onClick: () => window.insights.chrome.createCase(),
+      isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
     },
     {
       title: 'API documentation',
