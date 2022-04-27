@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 
-import helpTopicDataMock from './helpTopicDataMock.json';
+import helpTopicDataMock from './helpTopicDataMock';
 import useHelpTopicState from './useHelpTopicState';
 
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
