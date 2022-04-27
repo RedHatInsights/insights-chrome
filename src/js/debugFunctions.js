@@ -18,4 +18,5 @@ export default {
   contextSwitcher: () => functionBuilder('chrome:experimental:context-switcher', true),
   quickstartsDebug: () => functionBuilder('chrome:experimental:quickstarts', true),
   trialPages: () => functionBuilder('chrome:experimental:trial-pages', true),
+  darkMode: () => functionBuilder('chrome:darkmode', true),
 };
