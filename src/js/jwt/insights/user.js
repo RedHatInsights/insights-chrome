@@ -1,4 +1,4 @@
-import { pageAllowsUnentitled, isValidAccountNumber } from '../../utils';
+import { pageAllowsUnentitled, isValidAccountNumber, isBeta } from '../../utils';
 import servicesApi from './entitlements';
 import logger from '../logger';
 const log = logger('insights/user.js');
@@ -13,6 +13,13 @@ const pathMapper = {
   'user-preferences': 'user_preferences',
   internal: 'internal',
 };
+
+const unentitledPathMapper = (section, service) =>
+  (Boolean(localStorage.getItem('chrome:experimental:trial-pages')) &&
+    {
+      ansible: `${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`,
+    }[section]) ||
+  `${document.baseURI}?not_entitled=${service}`;
 
 function getWindow() {
   return window;
@@ -66,9 +73,11 @@ function tryBounceIfUnentitled(data, section) {
   }
 
   const service = pathMapper[section];
+  const redirectAddress = unentitledPathMapper(section, service);
+
   if (data === true) {
     // this is a force bounce scenario!
-    getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+    getWindow().location.replace(redirectAddress);
   }
 
   if (section && section !== '') {
@@ -76,7 +85,7 @@ function tryBounceIfUnentitled(data, section) {
       log(`Entitled to: ${service}`);
     } else {
       log(`Not entitled to: ${service}`);
-      getWindow().location.replace(`${document.baseURI}?not_entitled=${service}`);
+      getWindow().location.replace(redirectAddress);
     }
   }
 }

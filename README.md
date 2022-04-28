@@ -97,28 +97,6 @@ Where `SPANDX_CONFIG` can be any config for your application (here is an example
 
 After permorming these tasks you can access `ci.foo.redhat.com:1337/{bundle}/{app}`, where bundle and app are defined in your `local-frontend.js` and observe changes as you save them.
 
-### Shape of SPANDX_CONFIG
-
-You can have custom spandx config with all frontend apps specified if you want to, the `.js` file just have to export `routes` object with at least 2 paths
-
-`Example local-frontend.js file` (aka spandx config)
-
-```js
-/*global module*/
-
-const SECTION = 'insights';
-const APP_ID = 'starter';
-const FRONTEND_PORT = 8002;
-const routes = {};
-
-routes[`/beta/${SECTION}/${APP_ID}`] = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/${SECTION}/${APP_ID}`]      = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/beta/apps/${APP_ID}`]       = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/apps/${APP_ID}`]            = { host: `https://localhost:${FRONTEND_PORT}` };
-
-module.exports = { routes };
-```
-
 ## LocalStorage Debugging
 
 There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
@@ -132,6 +110,7 @@ Available function:
 - `shortSession` - to enable short session in order to test automatic logouts
 - `forcePendo` - to force Pendo initializtion
 - `appFilter` - to enable new application filter in any environment
+- `trialPages` - to enable redirecting unentitled users to trial pages
 
 ## Futher reading
 

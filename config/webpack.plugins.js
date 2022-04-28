@@ -41,7 +41,6 @@ const plugins = (dev = false) => [
       { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
       { 'react-router-dom': { requiredVersion: deps['react-router-dom'] } },
       { 'react-redux': { requiredVersion: deps['react-redux'] } },
-      { '@patternfly/react-table': { requiredVersion: deps['@patternfly/react-table'] } },
       { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
       { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
       { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },

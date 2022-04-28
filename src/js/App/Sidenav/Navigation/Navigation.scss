@@ -1,17 +1,17 @@
 .chr-c-app-title {
   color: white;
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
   width: 100%;
   border-bottom: var(--pf-global--spacer--xs) solid var(--pf-global--Color--300);
-  text-transform: capitalize;
   font-weight: var(--pf-global--FontWeight--semi-bold);
   white-space: normal;
   text-align: left;
-  font-size: var(--pf-global--FontSize--lg);
+  font-size: 17px;
 }
 
 .pf-c-nav__list {
   section.chr-c-section-nav {
+    margin-bottom: var(--pf-global--spacer--md);
     margin-top: 0 !important;
     h2.pf-c-nav__section-title {
       border: 0;
@@ -19,7 +19,7 @@
       color: var(--pf-global--palette--black-500);
       font-size: var(--pf-global--FontSize--xs);
       font-weight: var(--pf-global--FontWeight--medium);
-      padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+      padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
       svg {
         margin-left: var(--pf-global--spacer--none);
         margin-right: var(--pf-global--spacer--sm);
