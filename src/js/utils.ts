@@ -37,7 +37,9 @@ export function pageAllowsUnentitled() {
     pathname.indexOf('/application-services') === 0 ||
     pathname.indexOf('/beta/application-services') === 0 ||
     pathname.indexOf('/hac') === 0 ||
-    pathname.indexOf('/beta/hac') === 0
+    pathname.indexOf('/beta/hac') === 0 ||
+    pathname.indexOf('/ansible/ansible-dashboard/trial') === 0 ||
+    pathname.indexOf('/beta/ansible/ansible-dashboard/trial') === 0
   ) {
     return true;
   }

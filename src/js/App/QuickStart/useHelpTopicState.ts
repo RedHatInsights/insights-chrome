@@ -1,6 +1,6 @@
 import { HelpTopic } from '@patternfly/quickstarts';
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type HelpTopicsState = {
   topics?: {
