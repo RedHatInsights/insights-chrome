@@ -2,6 +2,7 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/inter
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
+import { unleashClient, getFeatureFlagsError } from './App/FeatureFlags/FeatureFlagsProvider';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -33,6 +34,8 @@ const matchValue = (value, matcher) => {
   const match = matcherMapper[matcher];
   return typeof match === 'function' ? match(value) : value;
 };
+
+const checkFeatureFLag = (flagName, expectedValue) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue;
 
 /**
  * Check if is permitted to see navigation link
@@ -112,6 +115,7 @@ export const visibilityFunctions = {
       return false;
     }
   },
+  featureFlag: checkFeatureFLag,
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
