@@ -35,8 +35,6 @@ const matchValue = (value, matcher) => {
   return typeof match === 'function' ? match(value) : value;
 };
 
-const checkFeatureFLag = (flagName, expectedValue) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue;
-
 /**
  * Check if is permitted to see navigation link
  * @param {array} permissions array checked user permissions
@@ -115,7 +113,7 @@ export const visibilityFunctions = {
       return false;
     }
   },
-  featureFlag: checkFeatureFLag,
+  featureFlag: (flagName, expectedValue) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
