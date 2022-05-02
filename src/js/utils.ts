@@ -1,21 +1,21 @@
 import get from 'lodash/get';
+import { Store } from 'redux';
 import { DEFAULT_ROUTES } from './jwt/constants';
 import flatMap from 'lodash/flatMap';
+import { NavItem } from './types';
 
 export function getWindow() {
   return window;
 }
 
-/* eslint-disable curly */
-export function isValidAccountNumber(num) {
+export function isValidAccountNumber(num?: number | string) {
   if (!num) return false;
   if (num === -1) return false;
   if (num === '-1') return false;
   return Number.isInteger(Number(num));
 }
-/* eslint-enable curly */
 
-function getSection() {
+export function getSection() {
   const sections = getWindow().location.pathname.split('/');
   if (sections[1] === 'beta') {
     return sections[2] || '';
@@ -37,7 +37,9 @@ export function pageAllowsUnentitled() {
     pathname.indexOf('/application-services') === 0 ||
     pathname.indexOf('/beta/application-services') === 0 ||
     pathname.indexOf('/hac') === 0 ||
-    pathname.indexOf('/beta/hac') === 0
+    pathname.indexOf('/beta/hac') === 0 ||
+    pathname.indexOf('/ansible/ansible-dashboard/trial') === 0 ||
+    pathname.indexOf('/beta/ansible/ansible-dashboard/trial') === 0
   ) {
     return true;
   }
@@ -72,8 +74,8 @@ export function pageRequiresAuthentication() {
  *
  * The function is called with two parameters: current state value on the path, store reference
  */
-export function createReduxListener(store, path, fn) {
-  let previous = undefined;
+export function createReduxListener(store: Store, path: string, fn: (current: any, store: Store) => void) {
+  let previous: any = undefined;
 
   return () => {
     const state = store.getState();
@@ -86,22 +88,23 @@ export function createReduxListener(store, path, fn) {
   };
 }
 
-export function deleteLocalStorageItems(keys) {
+export function deleteLocalStorageItems(keys: string[]) {
   keys.map((key) => localStorage.removeItem(key));
 }
 
-export function lastActive(searchString, fallback) {
-  return Object.keys(localStorage).reduce((acc, curr) => {
+export function lastActive(searchString: string, fallback: string) {
+  return Object.keys(localStorage).reduce<string | { expires: string }>((acc, curr) => {
     if (curr.includes(searchString)) {
       try {
         let accDate;
         try {
-          accDate = new Date(JSON.parse(localStorage.getItem(acc).expires));
+          const localStorageDate = localStorage.getItem(acc as string);
+          accDate = localStorageDate ? new Date(JSON.parse(localStorageDate)?.expires) : new Date();
         } catch {
           accDate = new Date();
         }
 
-        const currObj = JSON.parse(localStorage.getItem(curr));
+        const currObj = JSON.parse(localStorage.getItem(curr) || '');
         return accDate >= new Date(currObj.expires) ? acc : curr;
       } catch (e) {
         return acc;
@@ -112,9 +115,9 @@ export function lastActive(searchString, fallback) {
   }, fallback);
 }
 
-export const isAnsible = (sections) => sections.includes('ansible') && sections.includes('insights');
+export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
 
-export function getUrl(type) {
+export function getUrl(type?: string) {
   if (window.location.pathname === '/beta/' || window.location.pathname === '/') {
     return 'landing';
   }
@@ -143,7 +146,7 @@ export function isFedRamp() {
   return getEnv() === 'gov';
 }
 
-export function updateDocumentTitle(title) {
+export function updateDocumentTitle(title?: string) {
   if (typeof title === 'undefined') {
     return;
   }
@@ -154,7 +157,7 @@ export function updateDocumentTitle(title) {
   }
 }
 
-const activateChild = (hrefMatch, childRoutes) => {
+const activateChild = (hrefMatch: string, childRoutes: NavItem[]) => {
   let hasActiveChild = false;
   const routes = childRoutes.map((item) => {
     const active = item.href === hrefMatch;
@@ -172,7 +175,7 @@ const activateChild = (hrefMatch, childRoutes) => {
   };
 };
 
-function mutateSchema(hrefMatch, navItems) {
+function mutateSchema(hrefMatch: string, navItems: NavItem[]): NavItem[] {
   return navItems.map((item) => {
     const { href, routes, navItems } = item;
     if (!href && navItems) {
@@ -200,18 +203,18 @@ function mutateSchema(hrefMatch, navItems) {
   });
 }
 
-export const highlightItems = (pathname, navItems, sortedLinks) => {
+export const highlightItems = (pathname: string, navItems: NavItem[], sortedLinks: string[]) => {
   const cleanPathname = pathname.replace(/\/$/, '');
   const segmentsCount = cleanPathname.split('/').length + 1;
   const matchedLink = sortedLinks.find((href) => {
     const segmentedHref = href.replace(/\/$/, '').split('/').slice(0, segmentsCount).join('/');
     return cleanPathname.includes(segmentedHref);
   });
-  return mutateSchema(matchedLink?.replace(/\/$/, ''), navItems);
+  return mutateSchema(matchedLink?.replace(/\/$/, '') || '', navItems);
 };
 
-export const levelArray = (navItems) => {
-  return flatMap(navItems, ({ href, routes, navItems }) => {
+export const levelArray = (navItems: NavItem[]): string[] => {
+  return flatMap<NavItem, string>(navItems, ({ href, routes, navItems }) => {
     if (!href && navItems) {
       return levelArray(navItems);
     }

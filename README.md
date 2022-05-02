@@ -10,41 +10,6 @@ Insights Chrome provides:
 
 For more detailed information about chrome and what it provides, [look through the detailed documentation](https://github.com/redhatinsights/insights-chrome/tree/master/docs).
 
-## Beta usage
-
-You can include/use chrome in your development project by running the [insights-proxy](https://github.com/RedHatInsights/insights-proxy) in front of your application and using the following HTML template.
-
-```html
-<!doctype html>
-<html>
-  <head>
-    <!-- your own HEAD tags -->
-    <esi:include src="/@@env/chrome/snippets/head.html" />
-  </head>
-  <body>
-    <esi:include src="/@@env/chrome/snippets/body.html"/>
-  </body>
-</html>
-```
-
-Then, render your application to the "root" element. With React, for instance:
-
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
-import getBaseName from './Utilities/getBaseName';
-
-ReactDOM.render(
-    <Router basename={ getBaseName(window.location.pathname) }>
-        <App />
-    </Router>,
-
-    document.getElementById('root')
-);
-```
-
 ## Javascript API
 
 Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
@@ -132,28 +97,6 @@ Where `SPANDX_CONFIG` can be any config for your application (here is an example
 
 After permorming these tasks you can access `ci.foo.redhat.com:1337/{bundle}/{app}`, where bundle and app are defined in your `local-frontend.js` and observe changes as you save them.
 
-### Shape of SPANDX_CONFIG
-
-You can have custom spandx config with all frontend apps specified if you want to, the `.js` file just have to export `routes` object with at least 2 paths
-
-`Example local-frontend.js file` (aka spandx config)
-
-```js
-/*global module*/
-
-const SECTION = 'insights';
-const APP_ID = 'starter';
-const FRONTEND_PORT = 8002;
-const routes = {};
-
-routes[`/beta/${SECTION}/${APP_ID}`] = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/${SECTION}/${APP_ID}`]      = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/beta/apps/${APP_ID}`]       = { host: `https://localhost:${FRONTEND_PORT}` };
-routes[`/apps/${APP_ID}`]            = { host: `https://localhost:${FRONTEND_PORT}` };
-
-module.exports = { routes };
-```
-
 ## LocalStorage Debugging
 
 There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
@@ -167,6 +110,7 @@ Available function:
 - `shortSession` - to enable short session in order to test automatic logouts
 - `forcePendo` - to force Pendo initializtion
 - `appFilter` - to enable new application filter in any environment
+- `trialPages` - to enable redirecting unentitled users to trial pages
 
 ## Futher reading
 

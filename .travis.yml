@@ -12,15 +12,9 @@ install:
 - npm ci
 jobs:
   include:
-    - stage: Check circular dependencies
-      if: branch != nightly
-      script: npm run circular
-    - stage: Lint
-      if: branch != nightly
-      script: npm run lint
     - stage: Test
       if: branch != nightly
-      script: npm run test && npx codecov
+      script: npm run circular && npm run lint && npm run test && npx codecov
     - stage: Deploy Stable
       if: branch IN (master-stable, prod-stable, qa-stable, ci-stable) AND type != pull_request
       name: deploy:stable

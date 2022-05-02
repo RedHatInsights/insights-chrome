@@ -25,6 +25,12 @@ const GlobalFilterDropdown = ({
   filterScope,
   setIsOpen,
 }) => {
+  /**
+   * Hotjar API reference: https://help.hotjar.com/hc/en-us/articles/4405109971095-Events-API-Reference#the-events-api-call
+   * window.hj is only avaiable in console.redhat.com and console.redhat.com/beta
+   * We are unable to test it in any local development environment
+   * */
+  const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
   const allowed = isAllowed();
   const dispatch = useDispatch();
   const GroupFilterWrapper = useMemo(
@@ -46,6 +52,7 @@ const GlobalFilterDropdown = ({
             >
               <GlobalFilterMenu
                 setTagModalOpen={setIsOpen}
+                hotjarEventEmitter={hotjarEventEmitter}
                 {...filter}
                 selectedTags={selectedTags}
                 isDisabled={!allowed || isDisabled}
@@ -99,6 +106,7 @@ const GlobalFilterDropdown = ({
                 })
               );
             }
+            hotjarEventEmitter('event', 'global_filter_bulk_action');
             setIsOpen(false);
           }}
           onApplyTags={(selected, sidSelected) => {
