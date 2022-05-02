@@ -19,6 +19,17 @@ jest.mock('axios', () => {
 });
 
 import * as axios from 'axios';
+import FlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
+
+jest.mock('@unleash/proxy-client-react', () => {
+  const actual = jest.requireActual('@unleash/proxy-client-react');
+  return {
+    __esModule: true,
+    ...actual,
+    // unblock navigation loading
+    useFlagsStatus: () => ({ flagsReady: true }),
+  };
+});
 
 // eslint-disable-next-line react/prop-types
 const RouteDummy = ({ path, children }) => {
@@ -32,12 +43,23 @@ const RouteDummy = ({ path, children }) => {
     </Route>
   );
 };
+
+const testClient = new UnleashClient({
+  url: 'localhost:5000',
+  clientKey: 'foo',
+  appName: 'bar',
+  boostrap: [{}],
+  environment: 'dev',
+});
+
 // eslint-disable-next-line react/prop-types
 const RouterDummy = ({ store, children, path }) => (
   <MemoryRouter>
-    <Provider store={store}>
-      <RouteDummy path={path}>{children}</RouteDummy>
-    </Provider>
+    <FlagProvider unleashClient={testClient} startClient={false}>
+      <Provider store={store}>
+        <RouteDummy path={path}>{children}</RouteDummy>
+      </Provider>
+    </FlagProvider>
   </MemoryRouter>
 );
 

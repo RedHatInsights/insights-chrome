@@ -31,6 +31,16 @@ jest.mock('axios', () => {
 
 import * as axios from 'axios';
 
+jest.mock('@unleash/proxy-client-react', () => {
+  const actual = jest.requireActual('@unleash/proxy-client-react');
+  return {
+    __esModule: true,
+    ...actual,
+    // unblock navigation loading
+    useFlagsStatus: () => ({ flagsReady: true }),
+  };
+});
+
 const NavContextWrapper = ({ store, children, initialEntries = ['/insights/dashboard'] }) => (
   <MemoryRouter initialEntries={initialEntries}>
     <Provider store={store}>{children}</Provider>
