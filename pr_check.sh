@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# name of app-sre "application" folder this component lives in; needs to match for quay
-export COMPONENT="insights-chrome" 
+export COMPONENT="insights-chrome-frontend"
 export IMAGE="quay.io/cloudservices/$COMPONENT"
 export WORKSPACE=${WORKSPACE:-$APP_ROOT}  # if running in jenkins, use the build's workspace
 export APP_ROOT=$(pwd)
