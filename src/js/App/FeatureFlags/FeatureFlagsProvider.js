@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import UnleasFlagProvider from '@unleash/proxy-client-react';
+import UnleasFlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
 
 const config = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -11,7 +11,21 @@ const config = {
   metrcisInterval: 120000,
 };
 
-const FeatureFlagsProvider = ({ children }) => <UnleasFlagProvider config={config}>{children}</UnleasFlagProvider>;
+export const UNLEASH_ERROR_KEY = 'chrome:feature-flags:error';
+
+/**
+ * Clear error localstorage flag before initialization
+ */
+localStorage.setItem(UNLEASH_ERROR_KEY, false);
+
+export const unleashClient = new UnleashClient(config);
+export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
+
+unleashClient.on('error', () => {
+  localStorage.setItem(UNLEASH_ERROR_KEY, true);
+});
+
+const FeatureFlagsProvider = ({ children }) => <UnleasFlagProvider unleashClient={unleashClient}>{children}</UnleasFlagProvider>;
 
 FeatureFlagsProvider.propTypes = {
   children: PropTypes.node.isRequired,
