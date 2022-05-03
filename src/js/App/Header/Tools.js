@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
+import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup, Switch } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -154,6 +154,23 @@ const Tools = () => {
     />
   );
 
+  const ThemeToggle = () => {
+    const [darkmode, setDarkmode] = useState(darkmode, false);
+    return (
+      <Switch
+        id="no-label-switch-on"
+        isChecked={darkmode || false}
+        aria-label="Dark mode switch"
+        onChange={() => {
+          setDarkmode(!darkmode);
+          document.body.classList.contains('pf-theme-dark')
+            ? document.body.classList.remove('pf-theme-dark')
+            : document.body.classList.add('pf-theme-dark');
+        }}
+      />
+    );
+  };
+
   return (
     <ToolbarGroup
       className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
@@ -164,6 +181,11 @@ const Tools = () => {
       {isBeta() && (
         <ToolbarItem>
           <Badge className="chr-c-badge-beta">beta</Badge>
+        </ToolbarItem>
+      )}
+      {localStorage.getItem('chrome:darkmode') === 'true' && (
+        <ToolbarItem>
+          <ThemeToggle />
         </ToolbarItem>
       )}
       {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}

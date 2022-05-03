@@ -8,6 +8,7 @@ $pf-global--enable-reset: 'true';
 
 // Quick starts
 @import '~@patternfly/quickstarts/dist/quickstarts.min';
+@import '~@patternfly/patternfly/patternfly-theme-dark.scss';
 // TODO: Bring these quick starts overrides into the lib instead 
 .pfext-page-layout__title {
   margin-top: 0;
