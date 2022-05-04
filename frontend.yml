@@ -17,6 +17,7 @@ objects:
           - v1
       frontend:
         paths:
+          - /
           - /config/chrome
 parameters:
   - name: ENV_NAME
