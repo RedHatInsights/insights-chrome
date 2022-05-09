@@ -18,6 +18,16 @@ const Feedback = ({ user }) => {
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
 
+  const addFeedbackTag = () => {
+    if (window.insights.chrome.isProd) {
+      var path = new URL(window.location.href).pathname.split('/')[1];
+      console.log(path);
+      return path;
+    } else {
+      return '[PRE-PROD]';
+    }
+  }
+
   const handleModalSubmission = () => {
     if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
@@ -29,7 +39,7 @@ const Feedback = ({ user }) => {
         },
         body: JSON.stringify({
           description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
-          summary: `${window.insights.chrome.isProd ? '[PROD]' : '[PRE-PROD]'} App Feedback`,
+          summary: `${addFeedbackTag()} App Feedback`,
           labels: [app, bundle],
         }),
       }).then((response) => response.json());
