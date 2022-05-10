@@ -26,7 +26,7 @@ const Feedback = ({ user }) => {
     } else {
       return '[PRE-PROD]';
     }
-  }
+  };
 
   const handleModalSubmission = () => {
     if (isAvailable) {
