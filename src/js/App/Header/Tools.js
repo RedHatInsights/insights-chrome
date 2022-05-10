@@ -4,6 +4,7 @@ import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup, Switch
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
+import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
@@ -11,6 +12,7 @@ import cookie from 'js-cookie';
 import { getUrl, getSection, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
+import { useDispatch } from 'react-redux';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -81,6 +83,8 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     window.insights.chrome.auth.getUser().then((user) => {
@@ -178,6 +182,11 @@ const Tools = () => {
       spaceItems={{ default: 'spaceItemsNone' }}
       widget-type="InsightsToolbar"
     >
+      <ToolbarItem>
+        <Button onClick={() => dispatch({ type: 'toggle-notifications-drawer' })} variant="plain">
+          <BellIcon />
+        </Button>
+      </ToolbarItem>
       {isBeta() && (
         <ToolbarItem>
           <Badge className="chr-c-badge-beta">beta</Badge>

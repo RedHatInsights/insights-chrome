@@ -19,6 +19,8 @@ import {
   populateQuickstartsReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
+  notificationsDrawerReducer,
+  addNewNotificationReducer,
 } from './reducers';
 import {
   onGetAllTags,
@@ -80,6 +82,8 @@ const reducers = {
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
+  'toggle-notifications-drawer': notificationsDrawerReducer,
+  'add-notification': addNewNotificationReducer,
 };
 
 const globalFilter = {
@@ -109,6 +113,7 @@ export default function () {
         quickstarts: {
           quickstarts: {},
         },
+        notifications: [],
       },
       action
     ) => applyReducerHash(reducers)(state, action),

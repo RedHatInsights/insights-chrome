@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
@@ -21,7 +21,7 @@ const loaderWrapper = (Component, props = {}) => (
   </Suspense>
 );
 
-const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
+const ScalprumRoot = ({ registerEvent, config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
   const [activeTopicName, setActiveTopicName] = useState();
   const [prevActiveTopic, setPrevActiveTopic] = useState(activeHelpTopic?.name);
@@ -91,6 +91,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
               setActiveTopic('');
             },
           },
+          registerEvent,
           chromeHistory: history,
         },
       }}
@@ -123,6 +124,7 @@ ScalprumRoot.propTypes = {
     toggle: PropTypes.func.isRequired,
     Catalog: PropTypes.elementType.isRequired,
   }).isRequired,
+  registerEvent: PropTypes.func.isRequired,
 };
 
 export default ScalprumRoot;

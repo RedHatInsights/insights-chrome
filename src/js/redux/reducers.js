@@ -201,3 +201,17 @@ export function documentTitleReducer(state, { payload }) {
     documentTitle: payload,
   };
 }
+
+export function notificationsDrawerReducer(state) {
+  return {
+    ...state,
+    isNotificationsDrawerOpen: !state.isNotificationsDrawerOpen,
+  };
+}
+
+export function addNewNotificationReducer(state, { payload }) {
+  return {
+    ...state,
+    notifications: [...(state.notifications || []), payload],
+  };
+}

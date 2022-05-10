@@ -18,6 +18,7 @@ import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
 import { getUrl } from '../../utils';
+import Notifications from '../Notifications';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
@@ -85,12 +86,14 @@ const ShieldedRoot = memo(
         }
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
       >
-        <div ref={insightsContentRef} className={classnames('chr-render', { 'pf-u-h-100vh': !isGlobalFilterEnabled })}>
-          {isGlobalFilterEnabled && <GlobalFilter />}
-          {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
-          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
-          <main className="pf-c-page__main" id="no-access"></main>
-        </div>
+        <Notifications>
+          <div ref={insightsContentRef} className={classnames('chr-render', { 'pf-u-h-100vh': !isGlobalFilterEnabled })}>
+            {isGlobalFilterEnabled && <GlobalFilter />}
+            {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
+            <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
+            <main className="pf-c-page__main" id="no-access"></main>
+          </div>
+        </Notifications>
       </Page>
     );
   },
