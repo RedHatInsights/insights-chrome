@@ -20,9 +20,7 @@ const Feedback = ({ user }) => {
 
   const addFeedbackTag = () => {
     if (window.insights.chrome.isProd) {
-      var path = new URL(window.location.href).pathname.split('/')[1];
-      console.log(path);
-      return path;
+      return bundle;
     } else {
       return '[PRE-PROD]';
     }
