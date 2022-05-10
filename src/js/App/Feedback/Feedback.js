@@ -20,7 +20,7 @@ const Feedback = ({ user }) => {
 
   const addFeedbackTag = () => {
     if (window.insights.chrome.isProd) {
-      return bundle;
+      return `[${bundle}]`;
     } else {
       return '[PRE-PROD]';
     }
