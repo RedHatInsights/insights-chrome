@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Router } from 'react-router-dom';
 import { HelpTopicContainer, QuickStartContainer } from '@patternfly/quickstarts';
 
@@ -14,6 +14,10 @@ import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 
 const RootApp = (props) => {
+  useEffect(() => {
+    const x = new WebSocket('ws://localhost:8080/ws');
+    x.onmessage = console.log;
+  }, []);
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
