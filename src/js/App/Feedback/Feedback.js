@@ -18,7 +18,7 @@ const Feedback = ({ user }) => {
   const bundle = window.insights.chrome.getBundle();
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
-  const addFeedbackTag = () => isProd() ? `[${bundle}]` : '[PRE-PROD]';
+  const addFeedbackTag = () => (isProd() ? `[${bundle}]` : '[PRE-PROD]');
 
   const handleModalSubmission = () => {
     if (isAvailable) {

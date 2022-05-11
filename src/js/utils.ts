@@ -139,9 +139,7 @@ export function getEnvDetails() {
 }
 
 export function isProd() {
-  return location.host === 'cloud.redhat.com' ||
-    location.host === 'console.redhat.com' ||
-    location.host.includes('prod.foo.redhat.com');
+  return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
 }
 
 export function isBeta() {
