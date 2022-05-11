@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFeedbackModal } from '../../redux/actions';
+import { isProd } from '../utils.ts';
 
 const Feedback = ({ user }) => {
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
@@ -17,7 +18,7 @@ const Feedback = ({ user }) => {
   const bundle = window.insights.chrome.getBundle();
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
-  const addFeedbackTag = () => window.insights.chrome.isProd ? `[${bundle}]` : '[PRE-PROD]';
+  const addFeedbackTag = () => isProd() ? `[${bundle}]` : '[PRE-PROD]';
 
   const handleModalSubmission = () => {
     if (isAvailable) {
