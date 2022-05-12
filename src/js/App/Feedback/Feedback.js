@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFeedbackModal } from '../../redux/actions';
-import { isProd } from '../utils.ts';
+import { isProd } from '../../utils.ts';
 
 const Feedback = ({ user }) => {
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
