@@ -138,6 +138,10 @@ export function getEnvDetails() {
   return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[1];
 }
 
+export function isProd() {
+  return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
+}
+
 export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
 }
