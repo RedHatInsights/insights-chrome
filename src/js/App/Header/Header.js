@@ -19,7 +19,7 @@ const FeedbackRoute = ({ user }) => {
   const path =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? '*'
-      : ['/insights', '/settings', '/openshift', '/application-services', '/ansible'];
+      : ['/insights', '/settings', '/openshift', '/application-services', '/ansible', '/edge'];
   return (
     <Route path={path}>
       <Feedback user={user} />
