@@ -7,6 +7,7 @@ import AppFilter from './AppFilter';
 import { MastheadMain, MastheadBrand, MastheadContent, Toolbar, ToolbarContent, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
+import Activation from '../Activation';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
@@ -29,6 +30,8 @@ const FeedbackRoute = ({ user }) => {
 
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
+  const isActivationPath = (window.location.search === '?azure-openshift-activation');
+
   return (
     <Fragment>
       <MastheadMain>
@@ -38,6 +41,7 @@ export const Header = () => {
       </MastheadMain>
       <MastheadContent>
         {user && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
+        {user && isActivationPath && <Activation user={user}/>}
         <Toolbar isFullHeight>
           <ToolbarContent>
             <ToolbarGroup variant="filter-group">
