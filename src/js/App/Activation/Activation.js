@@ -5,8 +5,7 @@ import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 
 const Activation = ({ user }) => {
-
-  const [isModalOpen, setIsModalOpen] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const history = useHistory();
   const env = window.insights.chrome.getEnvironment();
   const isAvailable = env === 'prod';
@@ -23,7 +22,7 @@ const Activation = ({ user }) => {
         body: JSON.stringify({
           description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
           summary: `Activation Request - assign to rbernlei@redhat.com`,
-          labels: 'activation-request'
+          labels: 'activation-request',
         }),
       }).then((response) => response.json());
       console.log('Activation request sent');
@@ -31,7 +30,7 @@ const Activation = ({ user }) => {
       console.log('You must be in prod to request activation');
     }
   };
-  
+
   const onModalClose = () => {
     setIsModalOpen(false);
     history.push('/');
@@ -39,16 +38,13 @@ const Activation = ({ user }) => {
 
   useEffect(() => {
     user && handleActivationRequest();
-  }, [])
-  
+  }, []);
+
   return (
-      <Modal
-        title="Thank you for submitting your activation request"
-        isOpen={isModalOpen}
-        variant={ModalVariant.medium}
-        onClose={onModalClose}
-      > Red Hat will be in touch with you shortly to confirm your subscription benefits are ready to use
-      </Modal>
+    <Modal title="Thank you for submitting your activation request" isOpen={isModalOpen} variant={ModalVariant.medium} onClose={onModalClose}>
+      {' '}
+      Red Hat will be in touch with you shortly to confirm your subscription benefits are ready to use
+    </Modal>
   );
 };
 
