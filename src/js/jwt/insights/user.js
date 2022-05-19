@@ -15,11 +15,9 @@ const pathMapper = {
 };
 
 const unentitledPathMapper = (section, service) =>
-  (Boolean(localStorage.getItem('chrome:experimental:trial-pages')) &&
-    {
-      ansible: `${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`,
-    }[section]) ||
-  `${document.baseURI}?not_entitled=${service}`;
+  ({
+    ansible: `${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`,
+  }[section] || `${document.baseURI}?not_entitled=${service}`);
 
 function getWindow() {
   return window;
