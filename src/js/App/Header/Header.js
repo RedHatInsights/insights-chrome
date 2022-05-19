@@ -30,7 +30,8 @@ const FeedbackRoute = ({ user }) => {
 
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
-  const isActivationPath = window.location.search === '?azure-openshift-activation';
+  const search = new URLSearchParams(window.location.search);
+  const isActivationPath = search.has('azure-openshift-activation');
 
   return (
     <Fragment>

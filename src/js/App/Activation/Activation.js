@@ -3,12 +3,12 @@ import { useHistory } from 'react-router-dom';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
+import { getEnv } from '../../utils';
 
 const Activation = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const history = useHistory();
-  const env = window.insights.chrome.getEnvironment();
-  const isAvailable = env === 'prod';
+  const isAvailable = getEnv() === 'prod';
 
   const handleActivationRequest = () => {
     if (isAvailable) {
@@ -24,7 +24,7 @@ const Activation = ({ user }) => {
           summary: `Activation Request - assign to rbernlei@redhat.com`,
           labels: 'activation-request',
         }),
-      }).then((response) => response.json());
+      });
       console.log('Activation request sent');
     } else {
       console.log('You must be in prod to request activation');
