@@ -22,7 +22,7 @@ export const DEFAULT_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'env-stage.apps.crcs02ue1.urby.p1.openshiftapps.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },

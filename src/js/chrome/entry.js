@@ -5,7 +5,7 @@ import consts from '../consts';
 import chromeHistory from '../utils/chromeHistory';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl, getEnv, isBeta, updateDocumentTitle, getEnvDetails } from '../utils';
+import { getUrl, getEnv, isBeta, updateDocumentTitle, getEnvDetails, isProd } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
@@ -109,10 +109,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
         logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
         login: () => libjwt.jwt.login(),
       },
-      isProd:
-        window.location.host === 'cloud.redhat.com' ||
-        window.location.host === 'console.redhat.com' ||
-        window.location.host.includes('prod.foo.redhat.com'),
+      isProd: () => isProd(),
       isBeta,
       isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
       forceDemo: () => Cookies.set('cs_demo', 'true'),
