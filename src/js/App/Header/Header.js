@@ -7,6 +7,7 @@ import AppFilter from './AppFilter';
 import { MastheadMain, MastheadBrand, MastheadContent, Toolbar, ToolbarContent, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
+import Activation from '../Activation';
 import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
@@ -19,7 +20,7 @@ const FeedbackRoute = ({ user }) => {
   const path =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? '*'
-      : ['/insights', '/settings', '/openshift', '/application-services', '/ansible'];
+      : ['/insights', '/settings', '/openshift', '/application-services', '/ansible', '/edge'];
   return (
     <Route path={path}>
       <Feedback user={user} />
@@ -29,6 +30,9 @@ const FeedbackRoute = ({ user }) => {
 
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
+  const search = new URLSearchParams(window.location.search);
+  const isActivationPath = search.has('azure-openshift-activation');
+
   return (
     <Fragment>
       <MastheadMain>
@@ -38,6 +42,7 @@ export const Header = () => {
       </MastheadMain>
       <MastheadContent>
         {user && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
+        {user && isActivationPath && <Activation user={user} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
             <ToolbarGroup variant="filter-group">
