@@ -15,7 +15,9 @@
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",
-    "test": "jest --forceExit --detectOpenHandles"
+    "test": "jest --forceExit --detectOpenHandles",
+    "start": "NODE_ENV=development webpack --config config/webpack.config.js --watch  --mode=development",
+    "start:beta": "BETA=true npm run start"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
