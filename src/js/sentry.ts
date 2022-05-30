@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { isProd } from './utils';
 
 function getAppDetails() {
   const pathName = window.location.pathname.split('/');
@@ -98,8 +99,10 @@ function sentryTags(user: ChromeUser) {
 /* eslint-enable camelcase */
 export default (user: ChromeUser) => {
   // this should only be enabled for prod and prod beta
-  if (window.insights.chrome.isProd) {
+  if (isProd()) {
     initSentry();
     sentryTags(user);
+  } else {
+    console.log('Not initalizing sentry, on a pre-prod environment');
   }
 };
