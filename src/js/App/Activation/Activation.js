@@ -22,7 +22,7 @@ const Activation = ({ user }) => {
         body: JSON.stringify({
           description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
           summary: `Activation Request - assign to rbernlei@redhat.com`,
-          labels: 'activation-request',
+          labels: ['azure-openshift-activation'],
         }),
       });
       console.log('Activation request sent');
