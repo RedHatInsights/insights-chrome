@@ -49,7 +49,8 @@ function init() {
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
   window.fetch = function fetchReplacement(path, options, ...rest) {
-    // eslint-disable-line func-names
+    // check if fetch request is made agains the AppSRE sentry
+    const isAppSRESentry = path.includes('https://sentry.devshift.net/api');
     let tid = Math.random().toString(36);
     let prom = oldFetch.apply(this, [
       path,
@@ -57,7 +58,7 @@ function init() {
         ...(options || {}),
         headers: {
           ...((options && options.headers) || {}),
-          ...(iqeEnabled ? { [wafkey]: 1 } : {}),
+          ...(!isAppSRESentry && iqeEnabled && wafkey ? { [wafkey]: 1 } : {}),
         },
       },
       ...rest,
