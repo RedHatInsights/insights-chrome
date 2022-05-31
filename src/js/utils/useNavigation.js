@@ -6,6 +6,7 @@ import { loadLeftNavSegment } from '../redux/actions';
 import { isBeta } from '../utils';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
+import { useFlagsStatus } from '@unleash/proxy-client-react';
 
 function cleanNavItemsHref(navItem) {
   const result = { ...navItem };
@@ -40,6 +41,7 @@ const appendQSSearch = (currentSearch, activeQuickStartID) => {
 };
 
 const useNavigation = () => {
+  const { flagsReady } = useFlagsStatus();
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
   const { replace, location } = useHistory();
@@ -84,7 +86,7 @@ const useNavigation = () => {
 
   useEffect(() => {
     let observer;
-    if (currentNamespace) {
+    if (currentNamespace && flagsReady) {
       axios
         .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
         .then(async (response) => {
@@ -110,7 +112,7 @@ const useNavigation = () => {
         observer.disconnect();
       }
     };
-  }, [currentNamespace]);
+  }, [currentNamespace, flagsReady]);
 
   return {
     loaded: !!schema,

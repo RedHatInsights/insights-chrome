@@ -2,6 +2,7 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/inter
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
+import { unleashClient, getFeatureFlagsError } from './App/FeatureFlags/FeatureFlagsProvider';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -112,6 +113,7 @@ export const visibilityFunctions = {
       return false;
     }
   },
+  featureFlag: (flagName, expectedValue) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
 };
 
 export const isVisible = (limitedApps, app, visibility) => {
