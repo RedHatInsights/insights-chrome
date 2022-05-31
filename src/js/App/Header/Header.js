@@ -43,7 +43,7 @@ export const Header = () => {
       </MastheadMain>
       <MastheadContent>
         {user && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
-        {user && isActivationPath && <Activation user={user} request={isActivationPath && search.keys().next().value} />}
+        {user && isActivationPath && <Activation user={user} request={search.keys().next().value} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
             <ToolbarGroup variant="filter-group">
