@@ -31,7 +31,8 @@ const FeedbackRoute = ({ user }) => {
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
   const search = new URLSearchParams(window.location.search);
-  const isActivationPath = search.has('azure-openshift-activation');
+  const isActivationPath =
+    search.has('azure-openshift-activation') || search.has('aws-openshift-activation') || search.has('azure-ansible-activation');
 
   return (
     <Fragment>
@@ -42,7 +43,7 @@ export const Header = () => {
       </MastheadMain>
       <MastheadContent>
         {user && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
-        {user && isActivationPath && <Activation user={user} />}
+        {user && isActivationPath && <Activation user={user} request={search.keys().next().value} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
             <ToolbarGroup variant="filter-group">
