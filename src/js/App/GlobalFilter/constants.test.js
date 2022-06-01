@@ -121,13 +121,10 @@ describe('storeFilter', () => {
         },
       },
     });
-    expect(setItem).toHaveBeenCalled();
-    const [key, value] = setItem.mock.calls[0];
-    expect(value).toBe(
-      // eslint-disable-next-line max-len
+    expect(setItem).toHaveBeenLastCalledWith(
+      'chrome:global-filter/undefined',
       '{"someTag":{"someKey":{"isSelected":true,"item":{"tagKey":"someKey"},"group":{"groupValue":"something else"}},"key":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key"},"group":{"groupValue":"something else"}},"key2":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key2"},"group":{"groupValue":"something else"}}}}'
     );
-    expect(key).toBe('chrome:global-filter/undefined');
   });
 
   describe('global hash', () => {
