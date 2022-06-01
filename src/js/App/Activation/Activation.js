@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils';
 
-const Activation = ({ user }) => {
+const Activation = ({ user, request }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const history = useHistory();
   const isAvailable = getEnv() === 'prod';
@@ -22,7 +22,7 @@ const Activation = ({ user }) => {
         body: JSON.stringify({
           description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
           summary: `Activation Request - assign to rbernlei@redhat.com`,
-          labels: ['azure-openshift-activation'],
+          labels: [request],
         }),
       });
       console.log('Activation request sent');
@@ -50,6 +50,7 @@ const Activation = ({ user }) => {
 
 Activation.propTypes = {
   user: PropTypes.object,
+  request: PropTypes.string,
 };
 
 export default Activation;
