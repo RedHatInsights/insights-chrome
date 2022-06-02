@@ -3,7 +3,6 @@ import { crossAccountBouncer } from '../auth';
 let xhrResults = [];
 let fetchResults = {};
 let initted = false;
-let wafkey = null;
 
 const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 
@@ -14,18 +13,11 @@ function init() {
 
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
 
-  if (iqeEnabled) {
-    wafkey = window.localStorage.getItem('iqe:wafkey');
-    console.log('[iqe] initialized'); // eslint-disable-line no-console
-  }
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
     // eslint-disable-line func-names
     this._url = url;
     const req = open.apply(this, arguments);
-    if (wafkey) {
-      this.setRequestHeader(wafkey, 1);
-    }
 
     return req;
   };
@@ -61,7 +53,6 @@ function init() {
         ...(options || {}),
         headers: {
           ...((options && options.headers) || {}),
-          ...(!isAppSRESentry && iqeEnabled && wafkey ? { [wafkey]: 1 } : {}),
         },
       },
       ...rest,
