@@ -7,7 +7,7 @@ export const DEFAULT_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   qa: {
-    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com', 'fetest.stage.redhat.com'],
+    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
     portal: 'https://access.qa.redhat.com',
   },
