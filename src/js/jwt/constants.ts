@@ -7,7 +7,7 @@ export const DEFAULT_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   qa: {
-    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com'],
+    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com', 'fetest.stage.redhat.com'],
     sso: 'https://sso.qa.redhat.com/auth',
     portal: 'https://access.qa.redhat.com',
   },
@@ -22,7 +22,7 @@ export const DEFAULT_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'env-stage.apps.crcs02ue1.urby.p1.openshiftapps.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
