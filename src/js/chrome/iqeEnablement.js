@@ -45,11 +45,6 @@ function init() {
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
   window.fetch = function fetchReplacement(path = '', options, ...rest) {
-    // check if fetch request is made agains the AppSRE sentry
-    let isAppSRESentry = false;
-    if (path?.toString()) {
-      isAppSRESentry = path?.toString().includes('https://sentry.devshift.net/api');
-    }
     let tid = Math.random().toString(36);
     let prom = oldFetch.apply(this, [
       path,
