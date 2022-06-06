@@ -13,6 +13,10 @@ function init() {
 
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
 
+  if (iqeEnabled) {
+    console.log('[iqe] initialized'); // eslint-disable-line no-console
+  }
+
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
     // eslint-disable-line func-names
