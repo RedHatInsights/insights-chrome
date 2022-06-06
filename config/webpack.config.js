@@ -85,28 +85,8 @@ const commonConfig = ({ dev }) => {
           ],
         },
         {
-          test: /\.(jpg|png|svg|gif)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath: '../assets/images/',
-              },
-            },
-          ],
-        },
-        {
-          test: /\.(woff(2)?|ttf|jpg|eot)(\?v=\d+\.\d+\.\d+)?$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath: '../assets/fonts/',
-              },
-            },
-          ],
+          test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+          type: 'asset/resource',
         },
       ],
     },
