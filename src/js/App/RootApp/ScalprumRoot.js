@@ -11,6 +11,7 @@ import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
+import { SegmentContext } from '../analytics/segment-analytics';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -23,6 +24,7 @@ const loaderWrapper = (Component, props = {}) => (
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
+  const { analytics } = useContext(SegmentContext);
   const [activeTopicName, setActiveTopicName] = useState();
   const [prevActiveTopic, setPrevActiveTopic] = useState(activeHelpTopic?.name);
   const history = useHistory();
@@ -92,6 +94,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
             },
           },
           chromeHistory: history,
+          segmentAnalytics: analytics,
         },
       }}
     >
