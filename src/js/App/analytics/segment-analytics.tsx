@@ -3,7 +3,8 @@ import { AnalyticsBrowser } from '@segment/analytics-next';
 
 // TODO: Use real API keys and scope them by module
 function getAPIKey(env: string, bundle: string, activeModule: string) {
-  return `<YOUR_WRITE_KEY>/${env}/${bundle}/${activeModule}`;
+  // return `<YOUR_WRITE_KEY>/${env}/${bundle}/${activeModule}`;
+  return 'Aoak9IFNixtkZJRatfZG9cY1RHxbATW1';
 }
 
 const registerUrlObserver = (analytics: MutableRefObject<AnalyticsBrowser>) => {
@@ -18,10 +19,9 @@ const registerUrlObserver = (analytics: MutableRefObject<AnalyticsBrowser>) => {
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function () {
         const newLocation = document.location.href.replace(/#.*$/, '');
-        if (oldHref !== newLocation && analytics?.current?.page) {
+        if (oldHref !== newLocation) {
           oldHref = newLocation;
-          console.log(analytics);
-          analytics.current.page();
+          analytics?.current?.page();
         }
       });
     });
@@ -55,11 +55,11 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ env, bundle, a
   });
 
   useEffect(() => {
-    if (env && bundle && activeModule) {
-      analytics.current = AnalyticsBrowser.load({ writeKey: getAPIKey(env, bundle, activeModule) });
-      analytics.current.page();
+    if (!analytics.current && env && bundle && activeModule) {
+      analytics.current = AnalyticsBrowser.load({ writeKey: getAPIKey(env, bundle, activeModule) }, { initialPageview: true });
     }
-  }, [env, bundle, activeModule]);
+  }, [activeModule]);
+
   return (
     <SegmentContext.Provider
       value={{
