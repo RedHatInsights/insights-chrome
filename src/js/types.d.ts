@@ -25,5 +25,10 @@ declare global {
       chrome: ChromeAPI;
     };
     segment?: AnalyticsBrowser;
+    s?: {
+      visitor?: {
+        getMarketingCloudVisitorID: () => string;
+      };
+    };
   }
 }
