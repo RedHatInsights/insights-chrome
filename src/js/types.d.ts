@@ -1,4 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
+import { AnalyticsBrowser } from '@segment/analytics-next';
 /**
  * @deprecated
  * Only use as placeholder
@@ -23,5 +24,6 @@ declare global {
     insights: {
       chrome: ChromeAPI;
     };
+    segment?: AnalyticsBrowser;
   }
 }

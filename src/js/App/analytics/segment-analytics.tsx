@@ -7,7 +7,7 @@ function getAPIKey(env: string, bundle: string, activeModule: string) {
   return 'Aoak9IFNixtkZJRatfZG9cY1RHxbATW1';
 }
 
-const registerUrlObserver = (analytics: MutableRefObject<AnalyticsBrowser>) => {
+const registerUrlObserver = () => {
   /**
    * We ignore hash changes
    * Hashes only have frontend effect
@@ -21,7 +21,7 @@ const registerUrlObserver = (analytics: MutableRefObject<AnalyticsBrowser>) => {
         const newLocation = document.location.href.replace(/#.*$/, '');
         if (oldHref !== newLocation) {
           oldHref = newLocation;
-          analytics?.current?.page();
+          window.segment?.page();
         }
       });
     });
@@ -46,17 +46,14 @@ export type SegmentProviderProps = {
 
 export const SegmentProvider: React.FC<SegmentProviderProps> = ({ env, bundle, activeModule, children }) => {
   const analytics = useRef<AnalyticsBrowser>();
-  const obseverRegistered = useRef(false);
   useEffect(() => {
-    if (analytics.current && !obseverRegistered.current) {
-      obseverRegistered.current = true;
-      registerUrlObserver(analytics as MutableRefObject<AnalyticsBrowser>);
-    }
-  });
+    registerUrlObserver();
+  }, []);
 
   useEffect(() => {
     if (!analytics.current && env && bundle && activeModule) {
       analytics.current = AnalyticsBrowser.load({ writeKey: getAPIKey(env, bundle, activeModule) }, { initialPageview: true });
+      window.segment = analytics.current;
     }
   }, [activeModule]);
 
