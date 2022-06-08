@@ -2,7 +2,7 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import { HelpTopicContainer, QuickStartContainer } from '@patternfly/quickstarts';
 
-import { getEnv, getUrl, isBeta } from '../../utils';
+import { isBeta } from '../../utils';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from './IDPChecker';
@@ -66,7 +66,7 @@ const RootApp = (props) => {
   return (
     <Router history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
       <FeatureFlagsProvider>
-        <SegmentProvider activeModule={activeModule} bundle={getUrl('bundle')} env={getEnv()}>
+        <SegmentProvider activeModule={activeModule}>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
 
