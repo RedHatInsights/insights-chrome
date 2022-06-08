@@ -1,4 +1,4 @@
-import React, { createContext, MutableRefObject, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 
 // TODO: Use real API keys and scope them by module
@@ -21,7 +21,9 @@ const registerUrlObserver = () => {
         const newLocation = document.location.href.replace(/#.*$/, '');
         if (oldHref !== newLocation) {
           oldHref = newLocation;
-          window.segment?.page();
+          setTimeout(() => {
+            window.segment?.page();
+          });
         }
       });
     });
@@ -51,8 +53,9 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ env, bundle, a
   }, []);
 
   useEffect(() => {
-    if (!analytics.current && env && bundle && activeModule) {
-      analytics.current = AnalyticsBrowser.load({ writeKey: getAPIKey(env, bundle, activeModule) }, { initialPageview: true });
+    if (env && bundle && activeModule) {
+      window.segment = undefined;
+      analytics.current = AnalyticsBrowser.load({ writeKey: getAPIKey(env, bundle, activeModule) }, { initialPageview: false });
       window.segment = analytics.current;
     }
   }, [activeModule]);
