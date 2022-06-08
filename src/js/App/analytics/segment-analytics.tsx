@@ -45,6 +45,7 @@ const registerUrlObserver = () => {
         const newLocation = document.location.href.replace(/#.*$/, '');
         if (oldHref !== newLocation) {
           oldHref = newLocation;
+          window?.sendCustomEvent('pageBottom');
           setTimeout(() => {
             window.segment?.page();
           });
