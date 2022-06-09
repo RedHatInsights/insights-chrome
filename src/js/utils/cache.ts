@@ -3,16 +3,16 @@ import localforage from 'localforage';
 
 import { lastActive, deleteLocalStorageItems } from '../utils';
 
-export const createCacheStore = (endpoint, cacheKey) => {
+export const createCacheStore = (endpoint: string, cacheKey: string) => {
   const name = lastActive(endpoint, cacheKey);
 
   return localforage.createInstance({
     driver: [localforage.LOCALSTORAGE],
-    name: name?.split('/')[0] || name,
+    name: typeof name === 'string' ? name?.split('/')[0] : name.expires.split('/')[0],
   });
 };
 
-export function bootstrapCache(endpoint, cacheKey) {
+export function bootstrapCache(endpoint: string, cacheKey: string) {
   const store = createCacheStore(endpoint, cacheKey);
   return setupCache({
     store,
@@ -20,7 +20,7 @@ export function bootstrapCache(endpoint, cacheKey) {
   });
 }
 
-let store;
+let store: LocalForage;
 
 /**
  * Check if the app has switched between beta/non-beta envs.
@@ -37,19 +37,25 @@ const envSwap = () => {
 };
 
 export class CacheAdapter {
-  constructor(endpoint, cacheKey, maxAge = 10 * 60 * 1000) {
+  maxAge: number;
+  expires: number;
+  name?: string;
+  endpoint?: string;
+  cacheKey?: string;
+  constructor(endpoint: string, cacheKey: string, maxAge = 10 * 60 * 1000) {
     this.maxAge = maxAge;
     this.expires = new Date().getTime() + this.maxAge;
     envSwap();
     if (!store) {
       const name = lastActive(endpoint, cacheKey);
       let cached;
+      const cacheId = typeof name === 'string' ? name : name.expires;
       try {
-        cached = JSON.parse(localStorage.getItem(name));
+        cached = JSON.parse(localStorage.getItem(cacheId) || '');
       } catch (e) {
-        cached = localStorage.getItem(name);
+        cached = localStorage.getItem(cacheId);
       }
-      this.name = name;
+      this.name = cacheId;
       this.endpoint = endpoint;
       this.cacheKey = cacheKey;
       store = createCacheStore(endpoint, cacheKey);
@@ -62,37 +68,48 @@ export class CacheAdapter {
     }
   }
 
-  async setCache(expires, data) {
+  async setCache(expires: number, data: unknown) {
     this.expires = expires;
-    await store.setItem(this.endpoint, {
-      data,
-      expires,
-    });
+    if (this.endpoint) {
+      await store.setItem(this.endpoint, {
+        data,
+        expires,
+      });
+    }
   }
 
   async invalidateStore() {
     if (new Date(this.expires) <= new Date()) {
       deleteLocalStorageItems(Object.keys(localStorage).filter((item) => item.endsWith('/chrome')));
       await localforage.dropInstance();
-      store = createCacheStore(this.endpoint, this.cacheKey);
-      const cacheTime = new Date().getTime() + this.maxAge;
-      await this.setCache(cacheTime, {});
+      if (this.endpoint && this.cacheKey) {
+        store = createCacheStore(this.endpoint, this.cacheKey);
+        const cacheTime = new Date().getTime() + this.maxAge;
+        await this.setCache(cacheTime, {});
+      }
     }
   }
 
-  async setItem(key, data) {
+  async setItem<T = { data?: unknown }>(key: string, data: T) {
     await this.invalidateStore();
-    const cachedData = await store.getItem(this.endpoint);
-    cachedData.data = {
-      ...cachedData?.data,
-      [key]: data,
-    };
-    await store.setItem(this.endpoint, cachedData);
+    if (this.endpoint) {
+      const cachedData = await store.getItem<{ data?: Record<string, unknown> }>(this.endpoint);
+      if (cachedData != null) {
+        cachedData.data = {
+          ...cachedData?.data,
+          [key]: data,
+        };
+      }
+      await store.setItem(this.endpoint, cachedData);
+    }
   }
 
-  async getItem(key) {
+  async getItem<T = unknown>(key: string): Promise<T | unknown> {
     await this.invalidateStore();
-    const cachedData = await store.getItem(this.endpoint);
-    return cachedData?.data?.[key];
+    if (this.endpoint) {
+      const cachedData = await store.getItem<{ data?: Record<string, unknown> }>(this.endpoint);
+      return cachedData?.data?.[key];
+    }
+    return Promise.resolve();
   }
 }
