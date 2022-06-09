@@ -5,7 +5,7 @@ import { bootstrapCache } from '../../utils/cache';
 
 const BASE_PATH = '/api/entitlements/v1';
 
-export default (cachePrefix) => {
+export default (cachePrefix: string) => {
   const cache = bootstrapCache(BASE_PATH, `${cachePrefix}-entitlements`);
 
   const instance = axios.create({ adapter: cache.adapter });
