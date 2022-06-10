@@ -1,8 +1,8 @@
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
-import * as jwt from './jwt/jwt';
+import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
+
+import * as jwt from '../jwt';
 import cookie from 'js-cookie';
-import { options as defaultOptions } from './jwt/constants';
-import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './consts';
+import { options as defaultOptions } from '../constants';
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 function bouncer() {
@@ -14,16 +14,9 @@ function bouncer() {
   console.timeEnd(TIMER_STR); // eslint-disable-line no-console
 }
 
-export function crossAccountBouncer() {
-  localStorage.setItem(ACCOUNT_REQUEST_TIMEOUT, cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER));
-  localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
-  cookie.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
-  window.location.reload();
-}
-
-export default () => {
+export const initChromeAuth = () => {
   console.time(TIMER_STR); // eslint-disable-line no-console
-  let options = {
+  const options = {
     ...defaultOptions,
   };
 
@@ -43,8 +36,19 @@ export default () => {
   const promise = jwt.init(options).then(bouncer);
 
   return {
-    getOfflineToken: () => getOfflineToken(options.realm, options.clientId),
-    jwt: jwt,
     initPromise: promise,
   };
 };
+
+const useChromeAuth = () => {
+  const options = {
+    ...defaultOptions,
+  };
+
+  return {
+    getOfflineToken: () => getOfflineToken(options.realm, options.clientId),
+    ...jwt,
+  };
+};
+
+export default useChromeAuth;
