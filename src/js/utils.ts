@@ -150,12 +150,13 @@ export function isFedRamp() {
   return getEnv() === 'gov';
 }
 
-export function updateDocumentTitle(title?: string) {
+export function updateDocumentTitle(title?: string, noSuffix = false) {
+  const titleSuffix = '| console.redhat.com';
   if (typeof title === 'undefined') {
     return;
   }
   if (typeof title === 'string') {
-    document.title = title;
+    document.title = title.includes(titleSuffix) || noSuffix ? title : `${title} ${titleSuffix}`;
   } else {
     console.warn(`Title is not a string. Got ${typeof title} instead.`);
   }
