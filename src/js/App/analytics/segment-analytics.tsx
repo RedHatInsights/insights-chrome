@@ -38,26 +38,25 @@ const registerUrlObserver = () => {
    */
   let oldHref = document.location.href.replace(/#.*$/, '');
 
-  window.onload = function () {
-    const bodyList = document.body;
-    const observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function () {
-        const newLocation = document.location.href.replace(/#.*$/, '');
-        if (oldHref !== newLocation) {
-          oldHref = newLocation;
-          window?.sendCustomEvent('pageBottom');
-          setTimeout(() => {
-            window.segment?.page();
-          });
-        }
-      });
+  const bodyList = document.body;
+  const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function () {
+      const newLocation = document.location.href.replace(/#.*$/, '');
+      if (oldHref !== newLocation) {
+        oldHref = newLocation;
+        window?.sendCustomEvent('pageBottom');
+        setTimeout(() => {
+          window.segment?.page();
+        });
+      }
     });
-    const config = {
-      childList: true,
-      subtree: true,
-    };
-    observer.observe(bodyList, config);
+  });
+  const config = {
+    childList: true,
+    subtree: true,
   };
+  observer.observe(bodyList, config);
+  return observer.disconnect;
 };
 
 export const SegmentContext = createContext<{ ready: boolean; analytics?: AnalyticsBrowser }>({
@@ -73,7 +72,8 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: AnyObject) => user);
   useEffect(() => {
-    registerUrlObserver();
+    const disconnect = registerUrlObserver();
+    return () => disconnect();
   }, []);
 
   useEffect(() => {
