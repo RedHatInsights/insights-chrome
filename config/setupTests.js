@@ -9,6 +9,11 @@ global.MutationObserver = class {
 global.fetch = require('jest-fetch-mock');
 global.window = Object.create(window);
 
+Object.defineProperty(global.window.document, 'cookie', {
+  writable: true,
+  value: '',
+});
+
 global.window.insights = {
   ...(window.insights || {}),
   chrome: {

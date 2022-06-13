@@ -24,18 +24,18 @@ const Keycloak = (options) => {
     tokenParsed,
     refreshToken,
     scope,
-    init: () => {
-      return new Promise(() => {});
+    init: (options) => {
+      return Promise.resolve(options);
     },
     login: (data) => {
       redirectUri = data.redirectUri;
       cookie.set('cs_jwt', 'token1');
     },
     updateToken: () => {
-      return new Promise(() => {
+      return new Promise((res) => {
         cookie.remove('cs_jwt');
         cookie.set('cs_jwt', 'updatedToken');
-        return true;
+        return res(true);
       });
     },
     clearToken: () => {

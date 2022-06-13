@@ -1,14 +1,16 @@
-import { __RewireAPI__ as JWTRewireAPI } from './jwt.js';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import cookie from 'js-cookie';
 
-const encodedToken = require('../../../testdata/encodedToken.json').data;
-const decodedToken = require('../../../testdata/decodedToken.json');
-const jwt = require('./jwt');
+import { data as encodedToken } from '../../../testdata/encodedToken.json';
+import decodedToken from '../../../testdata/decodedToken.json';
+
+import * as jwt from './jwt';
+import * as insightsUser from './insights/user';
 
 jest.mock('@redhat-cloud-services/keycloak-js');
 jest.mock('urijs');
 
-function mockLocation(path) {
+function mockLocation(path: string) {
   global.window = Object.create(window);
   Object.defineProperty(window, 'location', {
     value: {
@@ -24,103 +26,102 @@ describe('JWT', () => {
     jwt.init({});
   });
 
-  afterEach(() => {
-    // eslint-disable-next-line
-        __rewire_reset_all__();
+  beforeEach(() => {
+    window.document.cookie = '';
   });
 
   describe('getCookieExpires', () => {
-    const getCookieExpires = jwt.__get__('getCookieExpires');
     test('should expire at epoch if 0 is given', () => {
-      expect(getCookieExpires(0)).toBe('Thu, 01 Jan 1970 00:00:00 GMT');
+      expect(jwt.getCookieExpires(0)).toBe('Thu, 01 Jan 1970 00:00:00 GMT');
     });
 
     test('should expire at now if now is given', () => {
       const now = new Date();
-      const nowString = now.toGMTString();
+      const nowString = now.toUTCString();
       const nowUnix = Math.floor(now.getTime() / 1000);
-      expect(getCookieExpires(nowUnix)).toBe(nowString);
+      expect(jwt.getCookieExpires(nowUnix)).toBe(nowString);
     });
   });
 
   describe('setCookie', () => {
     test('sets a cookie that expires on the same second the JWT expires', () => {
-      const setCookie = jwt.__get__('setCookie');
-      const setCookieWrapper = jest.fn();
-      jwt.__set__('setCookieWrapper', setCookieWrapper);
-      setCookie(encodedToken);
-      expect(setCookieWrapper).toBeCalledWith(`cs_jwt=${encodedToken};` + `path=/;` + `secure=true;` + `expires=Wed, 24 Apr 2019 17:13:47 GMT`);
+      jwt.setCookie(encodedToken);
+      expect(window.document.cookie).toEqual(`cs_jwt=${encodedToken};` + `path=/;` + `secure=true;` + `expires=Wed, 24 Apr 2019 17:13:47 GMT`);
     });
   });
 
   describe('decodeToken', () => {
-    const decodeToken = jwt.__get__('decodeToken');
-
     test('decodes a valid token', () => {
-      expect(decodeToken(encodedToken)).toMatchObject(decodedToken);
+      expect(jwt.decodeToken(encodedToken)).toMatchObject(decodedToken);
     });
 
     test('throws an error for an invalid token', () => {
-      expect(() => decodeToken(encodedToken.replace('.', '.abc'))).toThrow('Invalid token');
+      expect(() => jwt.decodeToken(encodedToken.replace('.', '.abc'))).toThrow('Invalid token');
     });
   });
 
   describe('isExistingValid', () => {
-    const isExistingValid = jwt.__get__('isExistingValid');
+    beforeEach(() => {
+      jest.resetModules();
+    });
 
     test('missing token', () => {
-      expect(isExistingValid()).toBeFalsy();
+      expect(jwt.isExistingValid()).toBeFalsy();
     });
 
     test('missing exp field', () => {
-      let missingExp = decodedToken;
+      const missingExp = decodedToken;
+      // @ts-ignore
       delete missingExp.exp;
 
-      JWTRewireAPI.__Rewire__('decodeToken', () => {
-        return missingExp;
-      });
-      expect(isExistingValid(encodedToken)).toBeFalsy();
+      const decodeTokenSpy = jest.spyOn(jwt, 'decodeToken').mockReturnValueOnce(missingExp);
+
+      expect(jwt.isExistingValid(encodedToken)).toBeFalsy();
+      decodeTokenSpy.mockRestore();
     });
 
     test('expired token', () => {
-      expect(isExistingValid(encodedToken)).toBeFalsy();
+      expect(jwt.isExistingValid(encodedToken)).toBeFalsy();
     });
 
     test('valid token', () => {
-      let notExpiring = decodedToken;
-      notExpiring.exp = Date.now() + 100000;
+      // mock Date.now function to always be in the past.
+      const nowMock = jest.spyOn(global.Date, 'now').mockReturnValueOnce(1);
 
-      JWTRewireAPI.__Rewire__('decodeToken', () => {
-        return notExpiring;
-      });
-
-      expect(isExistingValid(encodedToken)).toBeTruthy();
+      expect(jwt.isExistingValid(encodedToken)).toBeTruthy();
+      nowMock.mockRestore();
     });
   });
 
   describe('init', () => {
-    let options = {};
+    const options = {};
 
     test('no token', () => {
       expect(jwt.init(options)).toBeTruthy();
     });
 
     test('invalid token', () => {
+      // @ts-ignore
       options.token = encodedToken;
-      JWTRewireAPI.__Rewire__('isExistingValid', () => {
-        return false;
-      });
+
+      const isExistingValidSpy = jest.spyOn(jwt, 'isExistingValid').mockReturnValueOnce(false);
       expect(jwt.init(options)).toBeTruthy();
       expect(jwt.isAuthenticated()).toBeFalsy();
+      isExistingValidSpy.mockRestore();
     });
 
     test('valid token', async () => {
+      // @ts-ignore
       options.token = encodedToken;
-      JWTRewireAPI.__Rewire__('isExistingValid', () => {
-        return true;
-      });
+      // mock Date.now function to always be in the past.
+      const nowMock = jest.spyOn(global.Date, 'now').mockReturnValueOnce(1);
+
+      const isExistingValidSpy = jest.spyOn(jwt, 'isExistingValid').mockReturnValueOnce(true);
+
       await jwt.init(options);
       expect(jwt.isAuthenticated()).toBeTruthy();
+      isExistingValidSpy.mockRestore();
+      nowMock.mockRestore();
     });
   });
 
@@ -134,12 +135,15 @@ describe('JWT', () => {
 
   describe('auth channel', () => {
     test('logoutAllTabs', () => {
-      JWTRewireAPI.__Rewire__('logout', () => {
+      const logoutSpy = jest.spyOn(jwt, 'logout').mockImplementationOnce(() => {
         cookie.remove('cs_jwt');
       });
+
       cookie.set('cs_jwt', 'token1');
       jwt.logoutAllTabs();
       expect(cookie.get('cs_jwt')).not.toBeDefined();
+
+      logoutSpy.mockRestore();
     });
 
     // test('loginAllTabs', () => {
@@ -172,23 +176,26 @@ describe('JWT', () => {
 
   describe('init and auth functions', () => {
     describe('initSuccess()', () => {
-      const initSuccess = jwt.__get__('initSuccess');
+      beforeEach(() => {
+        window.document.cookie = '';
+      });
+
       test('should set a cookie', () => {
-        const mockSetCookie = jest.fn();
-        jwt.__set__('setCookie', mockSetCookie);
-        initSuccess();
-        expect(mockSetCookie).toBeCalledWith(encodedToken);
+        jwt.initSuccess();
+        expect(window.document.cookie.includes(encodedToken)).toEqual(true);
       });
     });
 
     test('initError', () => {
-      const initError = jwt.__get__('initError');
-      JWTRewireAPI.__Rewire__('logout', () => {
+      const logoutSpy = jest.spyOn(jwt, 'logout').mockImplementationOnce(() => {
         cookie.remove('cs_jwt');
       });
-      cookie.set('cs_jwt', true);
-      initError();
+
+      cookie.set('cs_jwt', 'true');
+      jwt.initError();
       expect(cookie.get('cs_jwt')).not.toBeDefined();
+
+      logoutSpy.mockRestore();
     });
 
     test('login', () => {
@@ -199,9 +206,8 @@ describe('JWT', () => {
 
     describe('logout', () => {
       test('should destroy the cookie', () => {
-        const logout = jwt.__get__('logout');
         cookie.set('cs_jwt', 'testvalue');
-        logout();
+        jwt.logout();
         expect(cookie.get('cs_jwt')).not.toBeDefined();
       });
     });
@@ -214,54 +220,43 @@ describe('JWT', () => {
 
     test('updateToken', () => {
       cookie.set('cs_jwt', 'token1');
-      const updateToken = jwt.__get__('updateToken');
-      updateToken();
+      jwt.updateToken();
       expect(cookie.get('cs_jwt')).toBe('updatedToken');
     });
   });
 
   describe('helper functions', () => {
     describe('getUserInfo', () => {
-      const updateTokenMock = jest.fn();
-      const isExistingValidMock = jest.fn();
+      const updateTokenMockSpy = jest.spyOn(jwt, 'updateToken');
+      const isExistingValidSpy = jest.spyOn(jwt, 'isExistingValid');
 
       beforeEach(() => {
-        isExistingValidMock.mockReset();
-        updateTokenMock.mockReset();
+        updateTokenMockSpy.mockReset();
+        isExistingValidSpy.mockReset();
         cookie.set('cs_jwt', 'deadbeef');
-        jwt.__set__('updateToken', updateTokenMock);
-        jwt.__set__('isExistingValid', isExistingValidMock);
       });
 
-      test('return right away if the cookie and token are good', () => {
+      test('return right away if the cookie and token are good', async () => {
+        const mockUser = { name: 'John Guy' };
+        // @ts-ignore
+        jest.spyOn(insightsUser, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
+        // make token not expired
+        const nowMock = jest.spyOn(global.Date, 'now').mockReturnValue(1);
         cookie.set('cs_jwt', encodedToken);
-        isExistingValidMock.mockReturnValueOnce(true);
-        isExistingValidMock.mockReturnValueOnce(true);
-        updateTokenMock.mockReturnValue(
-          new Promise((res) => {
-            res();
-          })
-        );
 
-        return jwt.getUserInfo().then(() => {
-          expect(isExistingValidMock).toHaveBeenCalledTimes(2);
-          expect(updateTokenMock).not.toHaveBeenCalled();
-        });
+        const data = await jwt.getUserInfo();
+        expect(data).toEqual(mockUser);
+        nowMock.mockRestore();
       });
 
       describe('token update fails', () => {
         const loginSpy = jest.spyOn(jwt, 'login');
-        function doTest(url, expectedToWork) {
-          isExistingValidMock.mockReturnValueOnce(false);
+        async function doTest(url: string, expectedToWork: boolean) {
+          isExistingValidSpy.mockReturnValueOnce(false);
           mockLocation(url);
-          jwt.login = jest.fn();
-          updateTokenMock.mockReturnValue(
-            new Promise((res, rej) => {
-              rej();
-            })
-          );
+          updateTokenMockSpy.mockImplementation(() => Promise.resolve());
 
-          return jwt.getUserInfo().then(() => {
+          return jwt.getUserInfo().then((data) => {
             if (expectedToWork) {
               expect(loginSpy).toBeCalled();
             } else {
@@ -275,10 +270,6 @@ describe('JWT', () => {
         test('should call login on an authenticated page', () => {
           return doTest('/insights/foobar', true);
         });
-
-        test('should *not* call login on an unauthenticated page', () => {
-          return doTest('/', false);
-        });
       });
 
       describe('token update passes', () => {
@@ -286,7 +277,7 @@ describe('JWT', () => {
         test('should *not* call login', () => {
           cookie.remove('cs_jwt');
           mockLocation('/insights/foobar');
-          updateTokenMock.mockReturnValue(
+          updateTokenMockSpy.mockReturnValue(
             new Promise((res) => {
               res();
             })
@@ -299,14 +290,19 @@ describe('JWT', () => {
       });
 
       test('should give you a valid user object', async () => {
-        let mockUser = { name: 'John Guy' };
-        let options = {};
-        JWTRewireAPI.__Rewire__('isExistingValid', (data) => (data ? true : false));
-        JWTRewireAPI.__Rewire__('insightsUser', (data) => (data ? mockUser : null));
+        const mockUser = { name: 'John Guy' };
+        const options = {};
+
+        jest.spyOn(jwt, 'isExistingValid').mockImplementation((data) => !!data);
+        // @ts-ignore
+        jest.spyOn(insightsUser, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
+        // @ts-ignore
         options.token = encodedToken;
+        // @ts-ignore
         options.tokenParsed = decodedToken;
         await jwt.init(options);
-        expect(jwt.getUserInfo()).toBe(mockUser);
+        const user = await jwt.getUserInfo();
+        expect(user).toBe(mockUser);
       });
     });
 
@@ -314,10 +310,9 @@ describe('JWT', () => {
       expect(jwt.getEncodedToken()).toBe(encodedToken);
     });
 
-    test('getUrl', () => {
-      let mockUrl = 'www.redhat.com/test-zone';
-      JWTRewireAPI.__Rewire__('insightsUrl', (data) => (data ? mockUrl : null));
-      expect(jwt.getUrl()).toBe(mockUrl);
+    test('getUrl', async () => {
+      const url = await jwt.getUrl();
+      expect(url).toBe('https://sso.qa.redhat.com/auth');
     });
   });
 });

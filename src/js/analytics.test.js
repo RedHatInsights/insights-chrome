@@ -6,10 +6,9 @@ const ibmToken = require('../../testdata/ibmToken.json');
 
 describe('User + Analytics', () => {
   const getPendoConf = analytics.__get__('getPendoConf');
-  const buildUser = user.__get__('buildUser');
   describe('buildUser + getPendoConf internal', () => {
     test('should build a valid internal Pendo config', () => {
-      const conf = getPendoConf(buildUser(token));
+      const conf = getPendoConf(user.buildUser(token));
       expect(conf).toMatchObject({
         account: {
           id: '540155',
@@ -23,7 +22,7 @@ describe('User + Analytics', () => {
     });
 
     test('should build a valid external Pendo config', () => {
-      const conf = getPendoConf(buildUser(externalToken));
+      const conf = getPendoConf(user.buildUser(externalToken));
       expect(conf).toMatchObject({
         account: {
           id: '540155',
@@ -37,7 +36,7 @@ describe('User + Analytics', () => {
     });
 
     test('should build a valid IBM pendo config', () => {
-      const conf = getPendoConf(buildUser(ibmToken));
+      const conf = getPendoConf(user.buildUser(ibmToken));
       expect(conf).toMatchObject({
         account: {
           id: '540155',
