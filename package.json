@@ -11,6 +11,7 @@
     "analyze": "NODE_ENV=production webpack --config config/webpack.config.js --env analyze=true --mode=production",
     "build": "NODE_ENV=production webpack --config config/webpack.config.js  --mode=production",
     "build:beta": "BETA=true npm run build",
+    "build:dev": "NODE_ENV=development webpack --config config/webpack.config.js  --mode=development",
     "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true",
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",

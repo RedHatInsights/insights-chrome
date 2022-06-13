@@ -12,6 +12,12 @@ if [ "${TRAVIS_BRANCH}" = "master" ]; then
         rm -rf ./build/.git
         .travis/release.sh "${env}-beta"
     done
+
+    echo
+    echo
+    echo "PUSHING dev-build"
+    rm -rf ./build/.git
+    .travis/release.sh "dev-beta"
 fi
 
 if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
@@ -23,6 +29,12 @@ if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
         rm -rf ./build/.git
         .travis/release.sh "${env}-stable"
     done
+
+    echo
+    echo
+    echo "PUSHING dev-build"
+    rm -rf ./build/.git
+    .travis/release.sh "dev-stable"
 fi
 
 if [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
