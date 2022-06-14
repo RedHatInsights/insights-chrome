@@ -25,6 +25,9 @@ declare global {
       chrome: ChromeAPI;
     };
     segment?: AnalyticsBrowser;
+    _segment?: {
+      pageOptions?: Record<string, unknown>;
+    };
     s?: {
       visitor?: {
         getMarketingCloudVisitorID: () => string;

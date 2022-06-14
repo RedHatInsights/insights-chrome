@@ -46,7 +46,7 @@ const registerUrlObserver = () => {
         oldHref = newLocation;
         window?.sendCustomEvent('pageBottom');
         setTimeout(() => {
-          window.segment?.page();
+          window.segment?.page(window?._segment?.pageOptions);
         });
       }
     });

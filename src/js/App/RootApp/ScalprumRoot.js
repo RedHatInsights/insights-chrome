@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
@@ -69,6 +69,13 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
     }
   }, [activeTopicName, helpTopics, activeHelpTopic]);
 
+  const setPageMetadata = useCallback((pageOptions) => {
+    window._segment = {
+      ...window._segment,
+      pageOptions,
+    };
+  }, []);
+
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -84,6 +91,9 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
           ...window.insights.chrome,
           isFedramp: isFedRamp(),
           usePendoFeedback,
+          segment: {
+            setPageMetadata,
+          },
           toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
           quickStarts: quickstartsAPI,
           helpTopics: {
