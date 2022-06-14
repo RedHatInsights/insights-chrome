@@ -34,7 +34,7 @@ const plugins = (dev = false) => [
       './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
       './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
       './DownloadButton': resolve(__dirname, '../src/js/pdf/DownloadButton.js'),
-      './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.js'),
+      './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.ts'),
     },
     shared: [
       { react: { singleton: true, eager: true, requiredVersion: deps.react } },

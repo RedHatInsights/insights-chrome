@@ -1,10 +1,14 @@
 import consts from '../../consts';
 import { DEFAULT_ROUTES } from '../constants';
 import insightsUrl from './url';
-import axios from 'axios';
-import urijs from 'urijs';
+import axios, { AxiosResponse } from 'axios';
 
-const priv = {};
+type Priv = {
+  postbackUrl?: string;
+  response?: AxiosResponse;
+};
+
+const priv: Priv = {};
 // note this function is not exposed
 // it is a run everytime and produce some side affect thing
 // if a special condition is encountered
@@ -30,13 +34,13 @@ export function wipePostbackParamsThatAreNotForUs() {
     getWindow().location.hash = '';
 
     // nuke the params so that people dont see the ugly
-    const url = urijs(getWindow().location.href);
-    url.removeQuery(consts.noAuthParam);
+    const url = new URL(getWindow().location.href);
+    url.searchParams.delete(consts.noAuthParam);
     getWindow().history.pushState('offlinePostback', '', url.toString());
   }
 }
 
-export async function getOfflineToken(realm, clientId) {
+export async function getOfflineToken(realm: string, clientId: string) {
   const postbackUrl = getPostbackUrl();
 
   if (priv.response) {
@@ -65,18 +69,18 @@ export async function getOfflineToken(realm, clientId) {
     });
 }
 
-function getWindow() {
+export function getWindow() {
   return window;
 }
 
-function getPostbackUrl() {
+export function getPostbackUrl() {
   // let folks only do this once
   const ret = priv.postbackUrl;
   delete priv.postbackUrl;
   return ret;
 }
 
-function getPostDataObject(url, clientId, code) {
+export function getPostDataObject(url: string, clientId: string, code: string) {
   return {
     code: code,
     grant_type: 'authorization_code', // eslint-disable-line camelcase
@@ -85,18 +89,18 @@ function getPostDataObject(url, clientId, code) {
   };
 }
 
-function parseHashString(str) {
+export function parseHashString(str: string) {
   return str
     .split('#')[1]
     .split('&')
-    .reduce((result, item) => {
+    .reduce<Record<string, string>>((result, item) => {
       const parts = item.split('=');
       result[parts[0]] = parts[1];
       return result;
     }, {});
 }
 
-function getPostDataString(obj) {
+function getPostDataString(obj: Record<string, string>) {
   return Object.entries(obj)
     .map((entry) => {
       return `${entry[0]}=${entry[1]}`;
