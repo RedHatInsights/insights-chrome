@@ -51,10 +51,9 @@ insights.chrome.identifyApp('advisor', 'App title');
 ```
 
 ### Using updateDocumentTitle function
-Can be used for changing app title in different app pages.
+Can be used for changing app title in different app pages with a ` | console.redhat.com` suffix added automatically if not disabled by a second param.
 ```js
-insights.chrome.updateDocumentTitle('New title')
-
+insights.chrome.updateDocumentTitle('New title without suffix', true)
 ```
 
 ## Global events

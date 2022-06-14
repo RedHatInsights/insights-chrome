@@ -15,14 +15,22 @@ jobs:
     - stage: Test
       if: branch != nightly
       script: npm run circular && npm run lint && npm run test && npx codecov
-    - stage: Deploy Stable
-      if: branch IN (master-stable, prod-stable, qa-stable, ci-stable) AND type != pull_request
-      name: deploy:stable
+    - stage: Deploy prod-stable
+      if: branch = prod-stable AND type != pull_request
+      name: deploy:prod-stable
       script: npm run build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
-    - stage: Deploy Beta
-      if: branch IN (master, prod-beta, qa-beta) AND type != pull_request
-      name: deploy:beta
+    - stage: Deploy prod-beta
+      if: branch = prod-beta AND type != pull_request
+      name: deploy:prod-beta
       script: npm run build:beta && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+    - stage: Deploy dev-stable
+      if: branch IN (master-stable, qa-stable, ci-stable) AND type != pull_request
+      name: deploy:dev-stable
+      script: npm run build:dev && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+    - stage: Deploy dev-beta
+      if: branch IN (master, qa-beta) AND type != pull_request
+      name: deploy:dev-beta
+      script: BETA=true npm run build:dev && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
   global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
