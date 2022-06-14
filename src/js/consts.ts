@@ -3,6 +3,8 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
 import { unleashClient, getFeatureFlagsError } from './App/FeatureFlags/FeatureFlagsProvider';
+import { isBeta, isProd } from './utils';
+import { AxiosRequestConfig } from 'axios';
 
 const obj = {
   noAuthParam: 'noauth',
@@ -23,14 +25,14 @@ export const CROSS_ACCESS_ORG_ID = 'cross_access_org_id';
 
 const matcherMapper = {
   isEmpty,
-  isNotEmpty: (value) => !isEmpty(value),
+  isNotEmpty: (value: any) => !isEmpty(value),
 };
 /**
  * returns true/false if value matches required criteria. If invalid or no matcher is provided it returns the original value.
  * @param {any} value variable to be matched with matcher function
  * @param {string} matcher id of matcher
  */
-const matchValue = (value, matcher) => {
+const matchValue = (value: any, matcher: keyof typeof matcherMapper) => {
   const match = matcherMapper[matcher];
   return typeof match === 'function' ? match(value) : value;
 };
@@ -41,60 +43,66 @@ const matchValue = (value, matcher) => {
  * @param {every|some} require type of permissions requirement
  * @returns {boolean}
  */
-const checkPermissions = async (permissions = [], require = 'every') => {
-  const userPermissions = await insights.chrome.getUserPermissions();
+const checkPermissions = async (permissions: string[] = [], require: 'every' | 'some' = 'every') => {
+  const userPermissions = await window.insights.chrome.getUserPermissions();
   return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
 };
 
 export const visibilityFunctions = {
   isOrgAdmin: async () => {
-    const data = await insights.chrome.auth.getUser();
+    const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user.is_org_admin;
+      return data.identity.user?.is_org_admin;
     } catch {
       return false;
     }
   },
   isActive: async () => {
-    const data = await insights.chrome.auth.getUser();
+    const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user.is_active;
+      return data.identity.user?.is_active;
     } catch {
       return false;
     }
   },
   isInternal: async () => {
-    const data = await insights.chrome.auth.getUser();
+    const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user.is_internal;
+      return data.identity.user?.is_internal;
     } catch {
       return false;
     }
   },
-  isEntitled: async (appName) => {
-    const data = await insights.chrome.auth.getUser();
+  isEntitled: async (appName: string) => {
+    const data = await window.insights.chrome.auth.getUser();
     const { entitlements } = data || {};
     return data.entitlements && appName
       ? Boolean(entitlements[appName] && entitlements[appName].is_entitled)
       : // eslint-disable-next-line camelcase
         Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
   },
-  isProd: () => insights.chrome.isProd,
-  isBeta: () => insights.chrome.isBeta(),
+  isProd: () => isProd(),
+  isBeta: () => isBeta(),
   isHidden: () => true,
-  withEmail: async (...toHave) => {
-    const data = await insights.chrome.auth.getUser();
+  withEmail: async (...toHave: string[]) => {
+    const data = await window.insights.chrome.auth.getUser();
     const {
       identity: { user },
     } = data || {};
     return toHave?.some((item) => user?.email?.includes(item));
   },
-  loosePermissions: (permissions) => checkPermissions(permissions, 'some'),
+  loosePermissions: (permissions: string[]) => checkPermissions(permissions, 'some'),
   hasPermissions: checkPermissions,
-  hasLocalStorage: (key, value) => localStorage.get(key) === value,
-  hasCookie: (cookieKey, cookieValue) => cookie.get(cookieKey) === cookieValue,
-  apiRequest: async ({ url, method = 'GET', accessor, matcher, ...options }) => {
-    const data = await insights.chrome.auth.getUser();
+  hasLocalStorage: (key: string, value: unknown) => localStorage.get(key) === value,
+  hasCookie: (cookieKey: string, cookieValue: string) => cookie.get(cookieKey) === cookieValue,
+  apiRequest: async ({
+    url,
+    method = 'GET',
+    accessor,
+    matcher,
+    ...options
+  }: AxiosRequestConfig & { accessor?: 'string'; matcher?: keyof typeof matcherMapper }) => {
+    const data = await window.insights.chrome.auth.getUser();
 
     // this will log a bunch of 403s if the account number isn't present
     if (data.identity.account_number) {
