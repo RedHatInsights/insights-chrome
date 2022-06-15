@@ -48,7 +48,7 @@ export const visibilityFunctions = {
   isOrgAdmin: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user?.is_org_admin;
+      return !!data.identity.user?.is_org_admin;
     } catch {
       return false;
     }
@@ -56,7 +56,7 @@ export const visibilityFunctions = {
   isActive: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user?.is_active;
+      return !!data.identity.user?.is_active;
     } catch {
       return false;
     }
@@ -64,7 +64,7 @@ export const visibilityFunctions = {
   isInternal: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return data.identity.user?.is_internal;
+      return !!data.identity.user?.is_internal;
     } catch {
       return false;
     }
