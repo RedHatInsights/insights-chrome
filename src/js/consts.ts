@@ -27,13 +27,9 @@ const matcherMapper = {
   isEmpty,
   isNotEmpty: (value: any) => !isEmpty(value),
 };
-/**
- * returns true/false if value matches required criteria. If invalid or no matcher is provided it returns the original value.
- * @param {any} value variable to be matched with matcher function
- * @param {string} matcher id of matcher
- */
-const matchValue = (value: any, matcher: keyof typeof matcherMapper) => {
-  const match = matcherMapper[matcher];
+
+const matchValue = (value: any, matcher?: keyof typeof matcherMapper) => {
+  const match = matcherMapper[matcher!];
   return typeof match === 'function' ? match(value) : value;
 };
 
@@ -101,7 +97,7 @@ export const visibilityFunctions = {
     accessor,
     matcher,
     ...options
-  }: AxiosRequestConfig & { accessor?: 'string'; matcher?: keyof typeof matcherMapper }) => {
+  }: Omit<AxiosRequestConfig, 'adapter'> & { accessor?: 'string'; matcher?: keyof typeof matcherMapper }) => {
     const data = await window.insights.chrome.auth.getUser();
 
     // this will log a bunch of 403s if the account number isn't present
@@ -121,11 +117,11 @@ export const visibilityFunctions = {
       return false;
     }
   },
-  featureFlag: (flagName, expectedValue) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
+  featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
 };
 
-export const isVisible = (limitedApps, app, visibility) => {
-  if (limitedApps && limitedApps.includes(app)) {
+export const isVisible = (limitedApps?: string[], app?: string, visibility?: Record<string, unknown>) => {
+  if (limitedApps && app && limitedApps.includes(app)) {
     if (visibility instanceof Object) {
       return Boolean(visibility[app]);
     }
