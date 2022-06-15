@@ -9,14 +9,14 @@ export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance as A
 export const system = new HostsApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);
 
 export type Workload = { isSelected?: boolean };
-type TagPagination = { perPage?: number; page?: number };
-type TagFilterOptions = { search?: string; registeredWith?: 'insights'; activeTags?: FlagTagsFilter };
+export type TagPagination = { perPage?: number; page?: number };
+export type TagFilterOptions = { search?: string; registeredWith?: 'insights'; activeTags?: FlagTagsFilter };
 
 /**
  * This has to be pulled out of FEC for a while until we split react and non react helper functions
  */
 export const generateFilter = (data: { [key: string]: any | Date | any[] }, path = 'filter', options?: { arrayEnhancer?: string }) =>
-  Object.entries(data || {}).reduce<any>((acc, [key, value]) => {
+  Object.entries(data || {}).reduce<any>((acc, [key, value]): any => {
     const newPath = `${path || ''}[${key}]${Array.isArray(value) ? `${options?.arrayEnhancer ? `[${options.arrayEnhancer}]` : ''}[]` : ''}`;
     if (value instanceof Function || (value as Date) instanceof Date) {
       return acc;
