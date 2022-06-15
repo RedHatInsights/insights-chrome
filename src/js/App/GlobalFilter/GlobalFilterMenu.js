@@ -154,8 +154,8 @@ const GlobalFilterMenu = (props) => {
           }}
           value={filterBy}
           onChange={onFilter}
-          placeholder="Filter by status"
-          aria-label="Filter by status"
+          placeholder="Filter by tags"
+          aria-label="Filter by tags"
           ouiaId="global-filter-by-status"
         />
       }
