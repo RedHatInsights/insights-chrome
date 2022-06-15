@@ -39,23 +39,22 @@ const registerUrlObserver = () => {
   let oldHref = document.location.href.replace(/#.*$/, '');
 
   const bodyList = document.body;
-  const observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function () {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(() => {
       const newLocation = document.location.href.replace(/#.*$/, '');
       if (oldHref !== newLocation) {
         oldHref = newLocation;
-        window?.sendCustomEvent('pageBottom');
+        window?.sendCustomEvent?.('pageBottom');
         setTimeout(() => {
           window.segment?.page(window?._segment?.pageOptions);
         });
       }
     });
   });
-  const config = {
+  observer.observe(bodyList, {
     childList: true,
     subtree: true,
-  };
-  observer.observe(bodyList, config);
+  });
   return observer.disconnect;
 };
 
