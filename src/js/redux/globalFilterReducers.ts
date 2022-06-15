@@ -4,11 +4,13 @@ export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
 
-export const globalFilterDefaultState = {
+export const globalFilterDefaultState: GlobalFilterState = {
   scope: 'insights',
   tags: { isLoaded: false, items: [], count: 0, total: 0 },
   sid: { isLoaded: false, items: [], count: 0, total: 0 },
   workloads: { isLoaded: false, items: [], count: 0, total: 0, hasSap: 0, hasAap: 0, hasMssql: 0 },
+  selectedTags: [],
+  globalFilterHidden: false,
 };
 
 export function onGetAllTags(

@@ -63,6 +63,9 @@ export type GlobalFilterWorkloads = {
   hasSap: number;
   hasAap: number;
   hasMssql: number;
+  items?: any[];
+  count?: number;
+  total?: number;
 };
 
 export type GlobalFilterSIDs = {
@@ -71,6 +74,7 @@ export type GlobalFilterSIDs = {
   count?: number;
   page?: number;
   perPage?: number;
+  items?: any[];
 };
 
 export type GlobalFilterTag = {
