@@ -104,7 +104,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
             },
           },
           chromeHistory: history,
-          segmentAnalytics: analytics,
+          analytics,
         },
       }}
     >
