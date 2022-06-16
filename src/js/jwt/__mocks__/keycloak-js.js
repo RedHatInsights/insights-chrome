@@ -1,5 +1,5 @@
 import cookie from 'js-cookie';
-import { data as encodedToken } from '../../../../../testdata/encodedToken.json';
+import { data as encodedToken } from '../../../../testdata/encodedToken.json';
 
 /* eslint-disable camelcase */
 const Keycloak = (options) => {
