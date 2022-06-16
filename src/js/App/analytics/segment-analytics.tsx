@@ -125,15 +125,17 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         cloud_user_id: user.identity.internal?.account_id,
         adobe_cloud_visitor_id: getAdobeVisitorId(),
       };
-      const groupOptions = {
+      const groupTraits = {
         account_number: user.identity.account_number,
         account_id: user.identity.internal?.org_id,
+        cloud_org_id: user.identity.internal?.org_id,
+        cloud_ebs_id: user.identity.account_number,
       };
       if (!analytics.current) {
         analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
-        analytics.current.group(user.identity.account_number, groupOptions);
+        analytics.current.group(user.identity.internal?.org_id, groupTraits);
         analytics.current.page();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
@@ -142,7 +144,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
-        analytics.current.group(user.identity.account_number, groupOptions);
+        analytics.current.group(user.identity.internal?.org_id, groupTraits);
       }
     }
   }, [activeModule, user]);
