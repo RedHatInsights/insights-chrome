@@ -22,6 +22,24 @@ function getAdobeVisitorId() {
   return -1;
 }
 
+const getPageEventOptions = () => {
+  const path = window.location.pathname.replace(/^\/beta\//, '/');
+  return [
+    {
+      path,
+      url: `${window.location.origin}${path}`,
+      isBeta: isBeta(),
+      module: window._segment?.activeModule,
+      ...window?._segment?.pageOptions,
+    },
+    {
+      context: {
+        groupId: window._segment?.groupId,
+      },
+    },
+  ];
+};
+
 const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules) =>
   ({
     prod: {
@@ -47,7 +65,7 @@ const registerUrlObserver = () => {
         oldHref = newLocation;
         window?.sendCustomEvent?.('pageBottom');
         setTimeout(() => {
-          window.segment?.page(window?._segment?.pageOptions);
+          window.segment?.page(...getPageEventOptions());
         });
       }
     });
@@ -116,6 +134,11 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
 
   useEffect(() => {
     if (activeModule && user) {
+      window._segment = {
+        ...window._segment,
+        groupId: user.identity.internal?.org_id,
+        activeModule,
+      };
       const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules);
       const identityTraits = getIdentityTrais(user, pathname, activeModule);
       const identityOptions = {
@@ -136,7 +159,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page();
+        analytics.current.page(...getPageEventOptions());
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (analytics.current?.instance?.settings.writeKey !== newKey) {

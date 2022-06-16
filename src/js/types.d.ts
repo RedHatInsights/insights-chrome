@@ -26,6 +26,8 @@ declare global {
     };
     segment?: AnalyticsBrowser;
     _segment?: {
+      activeModule?: string;
+      groupId?: string;
       pageOptions?: Record<string, unknown>;
     };
     s?: {
