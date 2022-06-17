@@ -7,7 +7,7 @@ import decodedToken from '../../../testdata/decodedToken.json';
 import * as jwt from './jwt';
 import * as insightsUser from './insights/user';
 
-jest.mock('@redhat-cloud-services/keycloak-js');
+jest.mock('keycloak-js');
 jest.mock('urijs');
 
 function mockLocation(path: string) {
@@ -20,10 +20,16 @@ function mockLocation(path: string) {
   });
 }
 
+const blankOptions = {
+  cookieName: '',
+  clientId: '',
+  realm: '',
+};
+
 describe('JWT', () => {
   beforeAll(() => {
     // Initialize mock keycloak in JWT
-    jwt.init({});
+    jwt.init(blankOptions);
   });
 
   beforeEach(() => {
@@ -94,31 +100,29 @@ describe('JWT', () => {
   });
 
   describe('init', () => {
-    const options = {};
-
     test('no token', () => {
-      expect(jwt.init(options)).toBeTruthy();
+      expect(jwt.init(blankOptions)).toBeTruthy();
     });
 
     test('invalid token', () => {
       // @ts-ignore
-      options.token = encodedToken;
+      blankOptions.token = encodedToken;
 
       const isExistingValidSpy = jest.spyOn(jwt, 'isExistingValid').mockReturnValueOnce(false);
-      expect(jwt.init(options)).toBeTruthy();
+      expect(jwt.init(blankOptions)).toBeTruthy();
       expect(jwt.isAuthenticated()).toBeFalsy();
       isExistingValidSpy.mockRestore();
     });
 
     test('valid token', async () => {
       // @ts-ignore
-      options.token = encodedToken;
+      blankOptions.token = encodedToken;
       // mock Date.now function to always be in the past.
       const nowMock = jest.spyOn(global.Date, 'now').mockReturnValueOnce(1);
 
       const isExistingValidSpy = jest.spyOn(jwt, 'isExistingValid').mockReturnValueOnce(true);
 
-      await jwt.init(options);
+      await jwt.init(blankOptions);
       expect(jwt.isAuthenticated()).toBeTruthy();
       isExistingValidSpy.mockRestore();
       nowMock.mockRestore();
@@ -291,7 +295,7 @@ describe('JWT', () => {
 
       test('should give you a valid user object', async () => {
         const mockUser = { name: 'John Guy' };
-        const options = {};
+        const options = blankOptions;
 
         jest.spyOn(jwt, 'isExistingValid').mockImplementation((data) => !!data);
         // @ts-ignore

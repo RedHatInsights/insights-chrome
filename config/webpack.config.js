@@ -42,6 +42,8 @@ const commonConfig = ({ dev }) => {
       alias: {
         ...searchIgnoredStyles(path.resolve(__dirname, '../')),
         ...imageNullLoader(),
+        // do not consume unfetch from nested dependencies
+        unfetch: path.resolve(__dirname, '../src/js/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
       },

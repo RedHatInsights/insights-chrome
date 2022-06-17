@@ -1,5 +1,4 @@
 import auth, { crossAccountBouncer } from './auth';
-import analytics from './analytics';
 import sentry from './sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './url-observer';
@@ -34,7 +33,6 @@ libjwt.initPromise.then(() => {
   libjwt.jwt
     .getUserInfo()
     .then((...data) => {
-      analytics(...data);
       sentry(...data);
     })
     .catch(noop);

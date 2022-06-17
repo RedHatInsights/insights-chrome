@@ -1,5 +1,5 @@
 // Imports
-import Keycloak, { KeycloakInitOptions } from '@redhat-cloud-services/keycloak-js';
+import Keycloak, { KeycloakInitOptions, KeycloakConfig } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { pageRequiresAuthentication, deleteLocalStorageItems } from '../utils';
@@ -73,14 +73,14 @@ export const doOffline = (key: string, val: string) => {
   url.addSearch(key, val);
 
   Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then(async (ssoUrl) => {
-    const options: KeycloakInitOptions & { promiseType: string; redirectUri: string; url: string } = {
+    const options: KeycloakInitOptions & KeycloakConfig & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
       redirectUri: url.toString(),
       url: ssoUrl,
     };
 
-    const kc = Keycloak(options);
+    const kc = new Keycloak(options);
 
     await kc.init(options);
     kc.login({
@@ -91,18 +91,18 @@ export const doOffline = (key: string, val: string) => {
 
 export interface JWTInitOptions extends KeycloakInitOptions {
   cookieName: string;
-  routes: typeof DEFAULT_ROUTES;
-  url: string;
+  routes?: typeof DEFAULT_ROUTES;
+  url?: string;
   clientId: string;
   realm: string;
-  promiseType: string;
-  checkLoginIframe: boolean;
-  silentCheckSsoRedirectUri: string;
-  token: string;
+  promiseType?: string;
+  checkLoginIframe?: boolean;
+  silentCheckSsoRedirectUri?: string;
+  token?: string;
 }
 
 /*** Initialization ***/
-export const init = (options: Partial<JWTInitOptions>) => {
+export const init = (options: JWTInitOptions) => {
   log('Initializing');
 
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
@@ -309,7 +309,7 @@ function refreshTokens() {
 
 // Actually update the token
 export function updateToken() {
-  return (priv.updateToken() as unknown as Promise<boolean>)
+  return (Promise.resolve(priv?.updateToken?.()) as unknown as Promise<boolean>)
     .then((refreshed) => {
       // Important! after we update the token
       // we have to again populate the Cookie!

@@ -99,7 +99,10 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                       placeholder="Find an app or service"
                       value={filterValue}
                       onChange={(val) => setFilterValue(val)}
-                      onClear={() => setFilterValue('')}
+                      onClear={(e) => {
+                        setFilterValue('');
+                        e.stopPropagation();
+                      }}
                     />
                   </Flex>
                   {filteredApps?.length > 0 ? (
@@ -115,7 +118,15 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                       <EmptyStateBody className="pf-u-mb-xl">
                         This filter criteria matches no applications or services. Try changing your input filter.
                       </EmptyStateBody>
-                      <Button ouiaId="app-filter-clear-input" className="pf-u-mt-lg" variant="link" onClick={() => setFilterValue('')}>
+                      <Button
+                        ouiaId="app-filter-clear-input"
+                        className="pf-u-mt-lg"
+                        variant="link"
+                        onClick={(e) => {
+                          setFilterValue('');
+                          e.stopPropagation();
+                        }}
+                      >
                         Clear all filters
                       </Button>
                     </EmptyState>
