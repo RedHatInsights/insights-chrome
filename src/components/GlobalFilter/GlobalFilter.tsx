@@ -3,20 +3,21 @@ import PropTypes from 'prop-types';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
-import { FlagTagsFilter, generateFilter } from './globalFilterApi';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown, GlobalFilterDropdownProps } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
 import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../redux/store';
+import { FlagTagsFilter, generateFilter } from './globalFilterApi';
 
 const useLoadTags = (hasAccess = false) => {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
   const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
   const dispatch = useDispatch();
   return useCallback(
     (activeTags, search) => {
-      storeFilter(activeTags, hasAccess && !isDisabled, history);
+      storeFilter(activeTags, hasAccess && !isDisabled, navigate, location);
       batch(() => {
         dispatch(
           fetchAllTags({
@@ -41,7 +42,7 @@ const useLoadTags = (hasAccess = false) => {
         );
       });
     },
-    [registeredWith, hasAccess, history]
+    [registeredWith, hasAccess]
   );
 };
 

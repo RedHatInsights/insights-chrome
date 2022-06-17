@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Router } from 'react-router-dom';
+import React from 'react';
+import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
 import chromeHistory from '../../utils/chromeHistory';
@@ -80,8 +80,8 @@ const RootApp = (props: RootAppProps) => {
     updateQuickStarts,
   };
   return (
-    <Router history={chromeHistory}>
-      <SegmentProvider activeModule={activeModule!}>
+    <HistoryRouter history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
+      <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
@@ -94,7 +94,7 @@ const RootApp = (props: RootAppProps) => {
           </IDPChecker>
         </FeatureFlagsProvider>
       </SegmentProvider>
-    </Router>
+    </HistoryRouter>
   );
 };
 

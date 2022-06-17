@@ -1,11 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import { useSelector } from 'react-redux';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import ChromeRoute from '../ChromeRoute/ChromeRoute';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import ChromeRoute from '../ChromeRoute';
 import NotFoundRoute from '../NotFoundRoute';
-import { isFedRamp } from '../../utils/common';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
+import { isFedRamp } from '../../utils/common';
 
 const QuickstartCatalogRoute = lazy(() => import('../QuickstartsCatalogRoute'));
 
@@ -24,7 +24,7 @@ export type RoutesProps = {
   routesProps?: { scopeClass?: string };
 };
 
-const Routes = ({ routesProps }: RoutesProps) => {
+const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const moduleRoutes = useSelector(({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
@@ -33,28 +33,30 @@ const Routes = ({ routesProps }: RoutesProps) => {
     list = list.filter((list) => list.isFedramp);
   }
 
+  console.log({ list });
+
   return (
-    <Switch>
+    <Routes>
       {showBundleCatalog && (
-        <Route exact path="/([^\/]+)/quickstarts">
-          <Suspense fallback={LoadingFallback}>
-            <QuickstartCatalogRoute />
-          </Suspense>
-        </Route>
+        <Route
+          exact
+          path="/([^\/]+)/quickstarts"
+          element={
+            <Suspense fallback={LoadingFallback}>
+              <QuickstartCatalogRoute />
+            </Suspense>
+          }
+        />
       )}
       {redirects.map(({ path, to }) => (
-        <Route key={path} exact path={path}>
-          <Redirect to={to} />
-        </Route>
+        <Route key={path} path={path} element={<Navigate replace to={to} />} />
       ))}
       {list.map((app) => (
-        <ChromeRoute key={app.path} {...routesProps} {...app} />
+        <Route key={app.path} path={`${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
       ))}
-      <Route>
-        <NotFoundRoute />
-      </Route>
-    </Switch>
+      <Route path="*" element={<NotFoundRoute />} />
+    </Routes>
   );
 };
 
-export default Routes;
+export default ChromeRoutes;

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useLoadModule } from '@scalprum/react-core';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { NavItem } from '@patternfly/react-core';
-import { useHistory } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import ChromeNavItem, { ChromeNavItemProps } from './ChromeNavItem';
@@ -80,9 +80,7 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }: Dyn
 };
 
 const DynamicNav = ({ dynamicNav, ...props }: DynamicNavProps) => {
-  const {
-    location: { pathname },
-  } = useHistory();
+  const { pathname } = useLocation();
   const [appName] = dynamicNav.split('/');
   // TODO make useLoadModule generic type
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

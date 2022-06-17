@@ -1,6 +1,5 @@
 import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
-import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
@@ -23,7 +22,7 @@ export type ChromeRouteProps = {
 
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
-  ({ scope, module, scopeClass, ...props }: ChromeRouteProps) => {
+  ({ scope, module, scopeClass }: ChromeRouteProps) => {
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }: ReduxState) => user);
@@ -68,18 +67,16 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
     return (
-      <Route key={props.path} {...props}>
-        <div className={classNames(scopeClass, scope)}>
-          <ScalprumComponent
-            ErrorComponent={<ErrorComponent />}
-            appName={scope}
-            fallback={LoadingFallback}
-            LoadingComponent={() => LoadingFallback}
-            scope={scope}
-            module={module}
-          />
-        </div>
-      </Route>
+      <div className={classNames(scopeClass, scope)}>
+        <ScalprumComponent
+          ErrorComponent={<ErrorComponent />}
+          appName={scope}
+          fallback={LoadingFallback}
+          // LoadingFallback={() => LoadingFallback}
+          scope={scope}
+          module={module}
+        />
+      </div>
     );
   },
   // prevent unecessary re-render that can trigger initialization phase of a module

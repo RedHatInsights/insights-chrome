@@ -1,9 +1,10 @@
 import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
+import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import NavLoader from '../Navigation/Loader';
 import { usePendoFeedback } from '../Feedback';
@@ -45,7 +46,6 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
   const { analytics } = useContext(SegmentContext);
   const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
   const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
-  const history = useHistory();
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
   const dispatch = useDispatch();
 
@@ -64,7 +64,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
   }
 
   useEffect(() => {
-    const unregister = history.listen(historyListener);
+    const unregister = chromeHistory.listen(historyListener);
     return () => {
       if (typeof unregister === 'function') {
         return unregister();
@@ -142,25 +142,21 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
      * - add deprecation warning to the window functions
      */
     <ScalprumProvider {...scalprumProviderProps}>
-      <Switch>
-        <Route exact path="/">
-          <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
-        </Route>
-        <Route exact path="/connect/products">
-          <Suspense fallback={LoadingFallback}>
-            <ProductSelection />
-          </Suspense>
-        </Route>
-        <Route path="/connect">
-          <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
-        </Route>
-        <Route path="/security">
-          <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
-        </Route>
-        <Route>
-          <DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />
-        </Route>
-      </Switch>
+
+      <Routes>
+        <Route index path="/" element={<DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />} />
+        <Route
+          path="/connect/products"
+          element={
+            <Suspense fallback={LoadingFallback}>
+              <ProductSelection />
+            </Suspense>
+          }
+        />
+        <Route path="/connect/*" element={<DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />} />
+        <Route path="/security" element={<DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />} />
+        <Route path="*" element={<DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} globalFilterRemoved={globalFilterRemoved} />} />
+      </Routes>
     </ScalprumProvider>
   );
 };

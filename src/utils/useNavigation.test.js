@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { MemoryRouter, Route, useHistory } from 'react-router-dom';
+import { MemoryRouter, Route, useNavigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 
@@ -33,9 +33,9 @@ jest.mock('@unleash/proxy-client-react', () => {
 
 // eslint-disable-next-line react/prop-types
 const RouteDummy = ({ path, children }) => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   useEffect(() => {
-    push(path);
+    navigate(path);
   }, [path]);
   return (
     <Route exact path={path}>

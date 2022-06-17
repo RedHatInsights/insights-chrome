@@ -1,7 +1,8 @@
-import { History } from 'history';
+import { Location } from 'history';
+import { NavigateFunction } from 'react-router-dom';
 import { FlagTagsFilter, GroupItem, flatTags } from './globalFilterApi';
 
-export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, history: History) => {
+export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: NavigateFunction, location: Location) => {
   if (isEnabled) {
     const searchParams = new URLSearchParams();
     const [, SIDs, mappedTags] = flatTags(tags, false, true);
@@ -13,9 +14,8 @@ export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, history: H
     }
     searchParams.append('SIDs', SIDs);
     searchParams.append('tags', mappedTags);
-
-    history.push({
-      ...history.location,
+    navigate({
+      ...location,
       hash: searchParams.toString(),
     });
   }
