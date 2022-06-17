@@ -1,4 +1,5 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
+import { AnalyticsBrowser } from '@segment/analytics-next';
 /**
  * @deprecated
  * Only use as placeholder
@@ -22,6 +23,17 @@ declare global {
     sendCustomEvent: (event: string) => void;
     insights: {
       chrome: ChromeAPI;
+    };
+    segment?: AnalyticsBrowser;
+    _segment?: {
+      activeModule?: string;
+      groupId?: string;
+      pageOptions?: Record<string, unknown>;
+    };
+    s?: {
+      visitor?: {
+        getMarketingCloudVisitorID: () => string;
+      };
     };
   }
 }
