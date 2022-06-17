@@ -22,7 +22,7 @@ export type ChromeRouteProps = {
 
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
-  ({ scope, module, scopeClass }: ChromeRouteProps) => {
+  ({ scope, module, scopeClass, path }: ChromeRouteProps) => {
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }: ReduxState) => user);
@@ -67,8 +67,10 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
     return (
-      <div className={classNames(scopeClass, scope)}>
+      <main role="main" className={classNames(scopeClass, scope)}>
         <ScalprumComponent
+          // TODO: fix in scalprum. The async loader is no triggred when module/scope changes. We had tp abuse the key
+          key={path}
           ErrorComponent={<ErrorComponent />}
           appName={scope}
           fallback={LoadingFallback}
@@ -76,7 +78,7 @@ const ChromeRoute = memo(
           scope={scope}
           module={module}
         />
-      </div>
+      </main>
     );
   },
   // prevent unecessary re-render that can trigger initialization phase of a module
