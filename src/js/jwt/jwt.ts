@@ -39,6 +39,7 @@ authChannel.onmessage = (e) => {
 
 export type DecodedToken = {
   exp: number;
+  session_state?: string;
 };
 
 export function decodeToken(str: string): DecodedToken {

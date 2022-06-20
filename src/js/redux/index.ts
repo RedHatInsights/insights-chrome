@@ -60,6 +60,8 @@ import {
   DISABLE_QUICKSTARTS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
 } from './action-types';
+import { ChromeState, GlobalFilterState } from './store';
+import { AnyAction } from 'redux';
 
 const reducers = {
   [APP_NAV_CLICK]: appNavClick,
@@ -95,7 +97,10 @@ const globalFilter = {
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
 };
 
-export default function () {
+export default function (): {
+  chrome: (state: ChromeState, action: AnyAction) => ChromeState;
+  globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
+} {
   // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
   return {
@@ -105,10 +110,14 @@ export default function () {
         accessRequests: {
           count: 0,
           data: [],
+          hasUnseen: false,
         },
         quickstarts: {
           quickstarts: {},
         },
+        contextSwitcherOpen: false,
+        modules: {},
+        scalprumConfig: {},
       },
       action
     ) => applyReducerHash(reducers)(state, action),
