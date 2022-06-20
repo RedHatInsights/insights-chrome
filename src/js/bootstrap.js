@@ -1,63 +1,89 @@
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { spinUpStore } from './redux-config';
+import RootApp from './App/RootApp';
+import { loadModulesSchema } from './redux/actions';
+import Cookies from 'js-cookie';
+import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './consts';
 import auth, { crossAccountBouncer } from './auth';
 import sentry from './sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './url-observer';
-import Cookies from 'js-cookie';
-import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './consts';
+import { loadFedModules, noop, trustarcScriptSetup } from './utils.ts';
 
-const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
-if (Cookies.get(CROSS_ACCESS_ACCOUNT_NUMBER) && initialAccount) {
-  try {
-    const { end_date } = JSON.parse(initialAccount);
-    /**
-     * Remove cross account request if it is expired
-     */
-    if (new Date(end_date).getTime() <= Date.now()) {
-      crossAccountBouncer();
+const initializeAccessRequestCookies = () => {
+  const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
+  if (Cookies.get(CROSS_ACCESS_ACCOUNT_NUMBER) && initialAccount) {
+    try {
+      const { end_date } = JSON.parse(initialAccount);
+      /**
+       * Remove cross account request if it is expired
+       */
+      if (new Date(end_date).getTime() <= Date.now()) {
+        crossAccountBouncer();
+      }
+    } catch {
+      console.log('Unable to parse initial account. Using default account');
+      Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
     }
-  } catch {
-    console.log('Unable to parse initial account. Using default account');
-    Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
   }
-}
+};
 
-// start auth asap
-const libjwt = auth();
+const libjwtSetup = () => {
+  const libjwt = auth();
 
-function noop() {}
+  libjwt.initPromise.then(() => {
+    libjwt.jwt
+      .getUserInfo()
+      .then((...data) => {
+        sentry(...data);
+      })
+      .catch(noop);
+  });
 
-//Add redhat font to body
-document.querySelector('body').classList.add('pf-m-redhat-font');
+  return libjwt;
+};
 
-libjwt.initPromise.then(() => {
-  libjwt.jwt
-    .getUserInfo()
-    .then((...data) => {
-      sentry(...data);
-    })
-    .catch(noop);
-});
+trustarcScriptSetup();
 
-window.insights = window.insights || {};
+const App = () => {
+  const modules = useSelector(({ chrome }) => chrome?.modules);
+  const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
+  const documentTitle = useSelector(({ chrome }) => chrome?.documentTitle);
+  const dispatch = useDispatch();
+  const [jwtState, setJwtState] = useState(false);
 
-window.insights = createChromeInstance(libjwt, window.insights);
+  useEffect(() => {
+    initializeAccessRequestCookies();
+    const libjwt = libjwtSetup();
+    libjwt.initPromise.then(() => setJwtState(true));
 
-if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
-  window._satellite.pageBottom();
-  registerUrlObserver(window._satellite.pageBottom);
-}
+    window.insights = createChromeInstance(libjwt, window.insights);
 
-const trustarcScript = document.createElement('script');
-trustarcScript.id = 'trustarc';
+    if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+      window._satellite.pageBottom();
+      registerUrlObserver(window._satellite.pageBottom);
+    }
 
-if (location.host === 'console.redhat.com') {
-  trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
-} else {
-  trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.stage.js';
-}
+    trustarcScriptSetup();
 
-document.body.appendChild(trustarcScript);
+    loadFedModules().then((response) => {
+      dispatch(loadModulesSchema(response.data));
+    });
+  }, []);
 
-import renderChrome from './chrome/render-chrome';
-// render root app
-renderChrome();
+  useEffect(() => {
+    const title = typeof documentTitle === 'string' ? `${documentTitle} | ` : '';
+    document.title = `${title}console.redhat.com`;
+  }, [documentTitle]);
+
+  return modules && scalprumConfig && jwtState ? <RootApp config={scalprumConfig} /> : null;
+};
+
+ReactDOM.render(
+  <Provider store={spinUpStore()?.store}>
+    <App />
+  </Provider>,
+  document.getElementById('chrome-entry')
+);
