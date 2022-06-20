@@ -16,16 +16,16 @@ export const UNLEASH_ERROR_KEY = 'chrome:feature-flags:error';
 /**
  * Clear error localstorage flag before initialization
  */
-localStorage.setItem(UNLEASH_ERROR_KEY, false);
+localStorage.setItem(UNLEASH_ERROR_KEY, 'false');
 
 export const unleashClient = new UnleashClient(config);
 export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
 
 unleashClient.on('error', () => {
-  localStorage.setItem(UNLEASH_ERROR_KEY, true);
+  localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
 });
 
-const FeatureFlagsProvider = ({ children }) => <UnleasFlagProvider unleashClient={unleashClient}>{children}</UnleasFlagProvider>;
+const FeatureFlagsProvider: React.FC = ({ children }) => <UnleasFlagProvider unleashClient={unleashClient}>{children}</UnleasFlagProvider>;
 
 FeatureFlagsProvider.propTypes = {
   children: PropTypes.node.isRequired,

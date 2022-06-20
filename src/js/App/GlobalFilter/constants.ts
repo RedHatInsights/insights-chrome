@@ -25,7 +25,14 @@ export const workloads = [
   },
 ];
 
-export const updateSelected = (original, namespace, key, value, isSelected, extra) => ({
+export const updateSelected = (
+  original: { [key: string]: { [key: string]: Record<string, unknown> } },
+  namespace: string,
+  key: string,
+  value: unknown,
+  isSelected: boolean,
+  extra: Record<string, unknown>
+) => ({
   ...original,
   [namespace]: {
     ...original?.[namespace],
@@ -38,8 +45,13 @@ export const updateSelected = (original, namespace, key, value, isSelected, extr
   },
 });
 
-export const createTagsFilter = (tags = []) =>
-  tags.reduce((acc, curr) => {
+export const createTagsFilter = (tags: string[] = []) =>
+  tags.reduce<
+    Record<
+      string,
+      Record<string, { isSelected?: boolean; item: { tagValue: string; tagKey: string; group?: { value: string; label: string; type: string } } }>
+    >
+  >((acc, curr) => {
     const [namespace, tag] = curr.split('/');
     const [tagKey, tagValue] = tag?.split('=') || [];
     return {
@@ -65,7 +77,7 @@ export const generateFilter = async () => {
     searchParams.set('workloads', AAP_KEY);
   }
 
-  const currToken = decodeToken(await insights.chrome.auth.getToken())?.session_state;
+  const currToken = decodeToken(await window.insights.chrome.auth.getToken())?.session_state;
   let data;
   try {
     data = JSON.parse(localStorage.getItem(`${GLOBAL_FILTER_KEY}/${currToken}`) || '{}');
@@ -111,10 +123,25 @@ export const generateFilter = async () => {
   ];
 };
 
-export const escaper = (value) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
+export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
+
+type Tag = {
+  isSelected?: boolean;
+  value: string;
+  item?: {
+    tagKey?: string;
+    tagValue?: string;
+  };
+};
+
+export type FlagTagsFilter = {
+  [key: string]: {
+    [key: string]: Tag;
+  };
+};
 
 export const flatTags = memoize(
-  (filter, encode = false, format = false) => {
+  (filter: FlagTagsFilter = {}, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries(item || {})
@@ -134,7 +161,7 @@ export const flatTags = memoize(
           Workloads,
           Object.entries(SID || {})
             .filter(([, { isSelected }]) => isSelected)
-            .reduce((acc, [key]) => [...acc, key], []),
+            .reduce<any>((acc, [key]) => [...acc, key], []),
           mappedTags,
         ]
       : mappedTags;
