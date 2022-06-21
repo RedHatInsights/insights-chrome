@@ -6,7 +6,6 @@ import { spinUpStore } from '../redux-config';
 import RootApp from '../App/RootApp';
 import { isBeta } from '../utils';
 
-import { headerLoader } from '../App/Header';
 import { loadModuesSchema } from '../redux/actions';
 
 const App = () => {
@@ -54,8 +53,6 @@ function renderChrome() {
       </Provider>,
       pageRoot
     );
-  } else if (['landing', undefined].includes(store.getState()?.chrome?.appId)) {
-    headerLoader();
   }
 }
 
