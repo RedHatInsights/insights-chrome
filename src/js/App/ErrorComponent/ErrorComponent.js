@@ -5,15 +5,15 @@ import {
   Bullseye,
   Button,
   EmptyState,
-  EmptyStatePrimary,
   EmptyStateBody,
   EmptyStateIcon,
+  EmptyStatePrimary,
   ExpandableSection,
-  Title,
-  Text,
-  TextContent,
   Flex,
   FlexItem,
+  Text,
+  TextContent,
+  Title
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { getUrl } from '../../utils';

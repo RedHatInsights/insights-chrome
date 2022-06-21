@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavGroup } from '@patternfly/react-core';
 
-import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
-import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
-import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
+import CloudIcon from '@patternfly/react-icons/dist/js/icons/cloud-upload-alt-icon';
 import CodeIcon from '@patternfly/react-icons/dist/js/icons/code-icon';
 import DatabaseIcon from '@patternfly/react-icons/dist/js/icons/database-icon';
-import CloudIcon from '@patternfly/react-icons/dist/js/icons/cloud-upload-alt-icon';
+import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
+import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
+import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
 
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 
