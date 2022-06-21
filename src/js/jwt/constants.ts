@@ -43,7 +43,14 @@ export const DEFAULT_ROUTES = {
   },
 };
 
-export const options = {
+export type ChromeAuthOptions = {
+  realm: string;
+  clientId: string;
+  cookieName: string;
+  refreshToken?: string;
+  token?: string;
+};
+export const options: ChromeAuthOptions = {
   realm: 'redhat-external',
   clientId: 'cloud-services',
   cookieName: 'cs_jwt',

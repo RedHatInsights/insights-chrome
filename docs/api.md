@@ -34,10 +34,6 @@ chrome: {
     init,
     updateDocumentTitle
 },
-loadInventory,
-experimental: {
-    loadRemediations,
-}
 ```
 
 ## Update document title

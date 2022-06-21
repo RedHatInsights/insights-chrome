@@ -73,21 +73,30 @@ describe('visibilityFunctions', () => {
   });
 
   test('isProd', async () => {
-    global.window.insights.chrome.isProd = true;
+    const { location } = window;
+    delete window.location;
+    window.location = {
+      pathname: '/insights/foo',
+      host: 'console.redhat.com',
+    };
 
     expect(visibilityFunctions.isProd()).toBe(true);
+    window.location = location;
   });
 
   test('isProd - false', async () => {
-    global.window.insights.chrome.isProd = false;
-
     expect(visibilityFunctions.isProd()).toBe(false);
   });
 
   test('isBeta', async () => {
-    global.window.insights.chrome.isBeta = () => true;
+    const { location } = window;
+    delete window.location;
+    window.location = {
+      pathname: '/beta/insights/foo',
+    };
 
     expect(visibilityFunctions.isBeta()).toBe(true);
+    window.location = location;
   });
 
   test('isProd - false', async () => {
