@@ -7,7 +7,7 @@ import {
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
   onSetGlobalFilterScope,
-  onTagSelect
+  onTagSelect,
 } from './globalFilterReducers';
 import { toggleGlobalFilter } from './actions';
 

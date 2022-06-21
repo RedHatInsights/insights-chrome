@@ -13,7 +13,7 @@ import {
   FlexItem,
   Text,
   TextContent,
-  Title
+  Title,
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { getUrl } from '../../utils';
