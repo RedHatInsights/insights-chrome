@@ -66,7 +66,7 @@ async function getAppInfo(activeModule: string) {
 async function getProductData() {
   const { store } = spinUpStore();
   const activeModule = store.getState()?.chrome?.activeModule;
-  const appData = await getAppInfo(activeModule);
+  const appData = await getAppInfo(activeModule!);
   return appData;
 }
 

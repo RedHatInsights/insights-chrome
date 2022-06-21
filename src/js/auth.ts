@@ -3,6 +3,14 @@ import * as jwt from './jwt/jwt';
 import cookie from 'js-cookie';
 import { options as defaultOptions } from './jwt/constants';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './consts';
+import { AxiosResponse } from 'axios';
+
+export type LibJWT = {
+  getOfflineToken: () => Promise<AxiosResponse<any>>;
+  jwt: typeof import('/home/martin/insights/insights-chrome/src/js/jwt/jwt');
+  initPromise: Promise<void>;
+};
+
 const TIMER_STR = '[JWT][jwt.js] Auth time';
 
 function bouncer() {
@@ -24,7 +32,7 @@ export function crossAccountBouncer() {
   window.location.reload();
 }
 
-export default ({ ssoUrl }: { ssoUrl?: string }) => {
+export default ({ ssoUrl }: { ssoUrl?: string }): LibJWT => {
   console.time(TIMER_STR); // eslint-disable-line no-console
   const options = {
     ...defaultOptions,

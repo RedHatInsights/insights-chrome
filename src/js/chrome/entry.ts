@@ -1,4 +1,5 @@
 import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
@@ -11,20 +12,30 @@ import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../App/GlobalFilter/constants';
 import debugFunctions from '../debugFunctions';
+import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
+import { LibJWT } from '../auth';
+import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 
-const PUBLIC_EVENTS = {
+const PUBLIC_EVENTS: {
+  APP_NAVIGATION: [(fn: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => Listener];
+  NAVIGATION_TOGGLE: [(callback: (...args: unknown[]) => void) => Listener];
+  GLOBAL_FILTER_UPDATE: [(callback: (...args: unknown[]) => void) => Listener, string];
+} = {
   APP_NAVIGATION: [
-    (fn) => ({
-      on: actionTypes.APP_NAV_CLICK,
-      callback: ({ data }) => {
-        if (data.id !== undefined || data.event) {
-          fn({ navId: data.id, domEvent: data.event });
-        }
-      },
-    }),
+    (fn: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
+      const appNavListener: Listener<{ event: NavDOMEvent; id?: string }> = {
+        on: actionTypes.APP_NAV_CLICK,
+        callback: ({ data }) => {
+          if (data.id !== undefined || data.event) {
+            fn({ navId: data.id, domEvent: data.event });
+          }
+        },
+      };
+      return appNavListener;
+    },
   ],
   NAVIGATION_TOGGLE: [
-    (callback) => {
+    (callback: (...args: unknown[]) => void) => {
       console.warn('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');
       return {
         on: 'NAVIGATION_TOGGLE',
@@ -33,7 +44,7 @@ const PUBLIC_EVENTS = {
     },
   ],
   GLOBAL_FILTER_UPDATE: [
-    (callback) => ({
+    (callback: (...args: unknown[]) => void) => ({
       on: actionTypes.GLOBAL_FILTER_UPDATE,
       callback,
     }),
@@ -49,15 +60,15 @@ export function chromeInit() {
 
   return {
     appAction,
-    appNavClick: ({ secondaryNav, ...payload }) => {
+    appNavClick: ({ secondaryNav, ...payload }: { id?: string; secondaryNav: unknown }) => {
       appNavClick({
         ...payload,
         custom: true,
       });
     },
     appObjectId,
-    globalFilterScope: (scope) => store.dispatch(globalFilterScope(scope)),
-    hideGlobalFilter: (isHidden) => {
+    globalFilterScope: (scope: string) => store.dispatch(globalFilterScope(scope)),
+    hideGlobalFilter: (isHidden: boolean) => {
       const initialHash = store.getState()?.chrome?.initialHash;
       /**
        * Restore app URL hash fragment after the global filter is disabled
@@ -71,33 +82,40 @@ export function chromeInit() {
       }
       store.dispatch(toggleGlobalFilter(isHidden));
     },
-    identifyApp: (_data, appTitle) => {
-      updateDocumentTitle(appTitle);
+    identifyApp: (_data: unknown, appTitle: string, noSuffix?: boolean) => {
+      updateDocumentTitle(appTitle, noSuffix);
       return Promise.resolve();
     },
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
-    on: (type, callback) => {
+    on: (type: keyof typeof PUBLIC_EVENTS, callback: (...args: unknown[]) => boolean) => {
       if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
         throw new Error(`Unknown event type: ${type}`);
       }
 
       const [listener, selector] = PUBLIC_EVENTS[type];
-      if (selector) {
+      if (typeof selector === 'string') {
         callback({
           data: get(store.getState(), selector) || {},
         });
       }
-      return middlewareListener.addNew(listener(callback));
+      if (typeof listener === 'function') {
+        return middlewareListener.addNew(listener(callback));
+      }
     },
-    registerModule: (...args) => store.dispatch(registerModule(...args)),
-    removeGlobalFilter: (isHidden) => store.dispatch(removeGlobalFilter(isHidden)),
+    registerModule: (module?: string, manifest?: string) => store.dispatch(registerModule(module, manifest)),
+    removeGlobalFilter: (isHidden: boolean) => store.dispatch(removeGlobalFilter(isHidden)),
     updateDocumentTitle,
     $internal: { store },
   };
 }
 
-export function bootstrap(libjwt, initFunc, getUser, globalConfig) {
+export function bootstrap(
+  libjwt: LibJWT,
+  initFunc: () => ChromeAPI,
+  getUser: () => Promise<ChromeUser>,
+  globalConfig: { chrome?: { ssoUrl?: string } }
+) {
   return {
     chrome: {
       auth: {
@@ -106,7 +124,7 @@ export function bootstrap(libjwt, initFunc, getUser, globalConfig) {
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
         qe: qe,
-        logout: (bounce) => libjwt.jwt.logoutAllTabs(bounce),
+        logout: (bounce?: boolean) => libjwt.jwt.logoutAllTabs(bounce),
         login: () => libjwt.jwt.login(),
       },
       isProd: () => isProd(),
@@ -118,7 +136,7 @@ export function bootstrap(libjwt, initFunc, getUser, globalConfig) {
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),
       getEnvironmentDetails: () => getEnvDetails(),
-      createCase: (fields) => insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
+      createCase: (fields?: any) => window.insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
       visibilityFunctions,
       init: initFunc,
       isChrome2: true,

@@ -16,7 +16,7 @@ export function userLogIn(user: ChromeUser) {
 /*
  *TODO: The event type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
  */
-export function appNavClick(item: { id?: string }, event: NavDOMEvent) {
+export function appNavClick(item: { id?: string; custom?: boolean }, event?: NavDOMEvent) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item?.id, event } };
 }
 

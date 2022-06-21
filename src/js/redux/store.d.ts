@@ -101,5 +101,5 @@ export type GlobalFilterState = {
   sid: GlobalFilterSIDs;
   selectedTags?: unknown;
   globalFilterHidden: boolean;
-  scope?: unknown;
+  scope?: string;
 };
