@@ -6,7 +6,7 @@ import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
 
-export function userLogIn(user: ChromeUser) {
+export function userLogIn(user: ChromeUser | boolean) {
   return {
     type: actionTypes.USER_LOGIN,
     payload: user,
