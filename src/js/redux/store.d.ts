@@ -63,9 +63,9 @@ export type ChromeState = {
 
 export type GlobalFilterWorkloads = {
   isLoaded: boolean;
-  hasSap: number;
-  hasAap: number;
-  hasMssql: number;
+  hasSap?: number;
+  hasAap?: number;
+  hasMssql?: number;
   items?: any[];
   count?: number;
   total?: number;
@@ -99,7 +99,7 @@ export type GlobalFilterState = {
   globalFilterRemoved?: boolean;
   workloads: GlobalFilterWorkloads;
   sid: GlobalFilterSIDs;
-  selectedTags: unknown;
+  selectedTags?: unknown;
   globalFilterHidden: boolean;
-  scope: unknown;
+  scope?: unknown;
 };
