@@ -35,9 +35,9 @@ export type ChromeState = {
   user?: ChromeUser;
   pageAction?: string;
   pageObjectId?: string;
-  modules: { [key: string]: ChromeModule };
+  modules?: { [key: string]: ChromeModule };
   navigation: InternalNavigation;
-  scalprumConfig: {
+  scalprumConfig?: {
     [key: string]: {
       name: string;
       manifestLocation: string;

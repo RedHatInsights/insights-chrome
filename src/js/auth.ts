@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios';
 
 export type LibJWT = {
   getOfflineToken: () => Promise<AxiosResponse<any>>;
-  jwt: typeof import('/home/martin/insights/insights-chrome/src/js/jwt/jwt');
+  jwt: typeof import('./jwt/jwt');
   initPromise: Promise<void>;
 };
 

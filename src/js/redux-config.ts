@@ -16,8 +16,6 @@ const reduxRegistry = new ReducerRegistry<{ chrome: ChromeState; globalFilter: G
   {
     chrome: {
       contextSwitcherOpen: false,
-      scalprumConfig: {},
-      modules: {},
       navigation: {},
       accessRequests: {
         hasUnseen: false,
