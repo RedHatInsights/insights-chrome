@@ -1,6 +1,7 @@
 import initializeJWT from './initialize-jwt';
+import encodedToken from '../../../testdata/encodedToken.json';
 
-jest.mock('../jwt/jwt');
+// jest.mock('../jwt/jwt.ts');
 
 describe('initializeJWT', () => {
   const initPromise = Promise.resolve();
@@ -8,7 +9,7 @@ describe('initializeJWT', () => {
     initPromise,
     jwt: {
       getUserInfo: () => Promise.resolve({ foo: 'bar' }),
-      getEncodedToken: () => 'foo',
+      getEncodedToken: () => encodedToken.data,
     },
   };
 

@@ -59,10 +59,11 @@ const createChromeInstance = (jwt: LibJWT, insights: Partial<ChromeAPI>, globalC
     if (chromeInstance.cache) {
       return fn;
     }
+
     /**
      * Wait for JWT initialization to happen and cache initialization in chrome instance
      */
-    return (...args: unknown[]) => jwtResolver.then(() => fn(...args));
+    return (...args: any[]) => jwtResolver.then(() => fn(...(args || [])));
   };
 
   const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher());

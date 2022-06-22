@@ -12,9 +12,9 @@ const initializeJWT = async (libjwt: LibJWT, chromeInstance: { cache?: CacheAdap
     if (user) {
       actions.userLogIn(user as ChromeUser);
     }
-    const decodedToken = libjwt.jwt.getEncodedToken();
-    if (decodedToken) {
-      chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(decodedToken).session_state}-chrome-store`);
+    const encodedToken = libjwt.jwt.getEncodedToken();
+    if (encodedToken) {
+      chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(encodedToken).session_state}-chrome-store`);
     }
   } catch {
     actions.userLogIn(false);

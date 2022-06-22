@@ -2,11 +2,11 @@ import cookie from 'js-cookie';
 import { data as encodedToken } from '../../../../testdata/encodedToken.json';
 
 /* eslint-disable camelcase */
-const Keycloak = (options) => {
-  let scope = options.scope || 'online';
-  let token = encodedToken;
-  let tokenParsed = options.tokenParsed;
-  let refreshToken = encodedToken;
+const Keycloak = (options: any) => {
+  const scope = options.scope || 'online';
+  const token = encodedToken;
+  const tokenParsed = options.tokenParsed;
+  const refreshToken = encodedToken;
   let redirectUri = options.redirectUri;
   return {
     callback_id: 0,
@@ -24,10 +24,10 @@ const Keycloak = (options) => {
     tokenParsed,
     refreshToken,
     scope,
-    init: (options) => {
+    init: (options: any) => {
       return Promise.resolve(options);
     },
-    login: (data) => {
+    login: (data: any) => {
       redirectUri = data.redirectUri;
       cookie.set('cs_jwt', 'token1');
     },
