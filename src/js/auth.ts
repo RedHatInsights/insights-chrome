@@ -1,4 +1,4 @@
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
+import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from './jwt/insights/offline';
 import * as jwt from './jwt/jwt';
 import cookie from 'js-cookie';
 import { options as defaultOptions } from './jwt/constants';

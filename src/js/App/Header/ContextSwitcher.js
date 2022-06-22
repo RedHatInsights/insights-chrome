@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, TextContent, Text } from '@patternfly/react-core';
+import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, Text, TextContent } from '@patternfly/react-core';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -15,9 +15,9 @@ import {
   ACTIVE_ACCOUNT_SWITCH_NOTIFICATION,
   ACTIVE_REMOTE_REQUEST,
   CROSS_ACCESS_ACCOUNT_NUMBER,
+  CROSS_ACCESS_ORG_ID,
   REQUESTS_COUNT,
   REQUESTS_DATA,
-  CROSS_ACCESS_ORG_ID,
 } from '../../consts';
 
 const ContextSwitcher = ({ user, className }) => {

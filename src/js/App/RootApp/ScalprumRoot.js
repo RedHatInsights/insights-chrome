@@ -1,7 +1,7 @@
-import React, { lazy, Suspense, useCallback, useContext, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 

@@ -1,4 +1,4 @@
-import { pageAllowsUnentitled, isValidAccountNumber, isBeta } from '../../utils';
+import { isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../../utils';
 import servicesApi from './entitlements';
 import logger from '../logger';
 import { SSOParsedToken } from './../Priv';

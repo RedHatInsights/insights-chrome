@@ -1,5 +1,5 @@
 import * as actionTypes from './action-types';
-import { getAllTags, getAllSIDs, getAllWorkloads, TagFilterOptions, TagPagination } from '../App/GlobalFilter/tagsApi';
+import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../types';
 import { AccessRequest, ChromeModule, Navigation } from './store';

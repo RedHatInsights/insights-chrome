@@ -1,8 +1,8 @@
-import { decodeToken, GLOBAL_FILTER_KEY } from '../../jwt/jwt';
+import { GLOBAL_FILTER_KEY, decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
-import { SID_KEY, AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
+import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../redux/globalFilterReducers';
 import { getUrl } from '../../utils';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';

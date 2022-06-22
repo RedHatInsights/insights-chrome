@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import * as axios from 'axios';

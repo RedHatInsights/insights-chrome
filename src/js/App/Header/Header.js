@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import AppFilter from './AppFilter';
-import { MastheadMain, MastheadBrand, MastheadContent, Toolbar, ToolbarContent, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
+import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
