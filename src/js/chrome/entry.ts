@@ -16,10 +16,13 @@ import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
 import { LibJWT } from '../auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 
+type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;
+type GenericCB = (...args: unknown[]) => void;
+
 const PUBLIC_EVENTS: {
-  APP_NAVIGATION: [(fn: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => Listener];
-  NAVIGATION_TOGGLE: [(callback: (...args: unknown[]) => void) => Listener];
-  GLOBAL_FILTER_UPDATE: [(callback: (...args: unknown[]) => void) => Listener, string];
+  APP_NAVIGATION: [(fn: AppNavigationCB) => Listener];
+  NAVIGATION_TOGGLE: [(callback: GenericCB) => Listener];
+  GLOBAL_FILTER_UPDATE: [(callback: GenericCB) => Listener, string];
 } = {
   APP_NAVIGATION: [
     (fn: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
@@ -82,7 +85,7 @@ export function chromeInit() {
       }
       store.dispatch(toggleGlobalFilter(isHidden));
     },
-    identifyApp: (_data: unknown, appTitle: string, noSuffix?: boolean) => {
+    identifyApp: (_data: any, appTitle?: string, noSuffix?: boolean) => {
       updateDocumentTitle(appTitle, noSuffix);
       return Promise.resolve();
     },
@@ -113,7 +116,7 @@ export function chromeInit() {
 export function bootstrap(
   libjwt: LibJWT,
   initFunc: () => ChromeAPI,
-  getUser: () => Promise<ChromeUser>,
+  getUser: () => Promise<ChromeUser | void>,
   globalConfig: { chrome?: { ssoUrl?: string } }
 ) {
   return {
