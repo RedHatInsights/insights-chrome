@@ -3,6 +3,11 @@ module.exports = {
   globals: {
     insights: 'writable',
   },
+  rules: {
+    'sort-imports': [2, {
+      'ignoreDeclarationSort': true,
+    }]
+  },
   overrides: [
     {
       files: ['src/**/*.ts', 'src/**/*.tsx'],
