@@ -133,3 +133,14 @@ export const isVisible = (limitedApps?: string[], app?: string, visibility?: Rec
 };
 
 export default Object.freeze(obj);
+
+export const activationRequestURLs = [
+  'azure-openshift-activation',
+  'azure-ocp-activation',
+  'azure-oke-activation',
+  'azure-opp-activation',
+  'aws-openshift-activation',
+  'aws-ocp-activation',
+  'aws-oke-activation',
+  'aws-opp-activation',
+];
