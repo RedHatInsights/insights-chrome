@@ -36,6 +36,7 @@ export function buildUser(token: SSOParsedToken) {
     ? {
         identity: {
           account_number: token.account_number,
+          org_id: token.org_id,
           type: token.type,
           ...(token.idp && { idp: token.idp }),
           user: {
