@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DropdownToggle, KebabToggle, DropdownItem, DropdownSeparator, DropdownPosition, Dropdown } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle } from '@patternfly/react-core';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

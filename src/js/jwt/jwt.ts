@@ -1,8 +1,8 @@
 // Imports
-import Keycloak, { KeycloakInitOptions, KeycloakConfig } from 'keycloak-js';
+import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { pageRequiresAuthentication, deleteLocalStorageItems } from '../utils';
+import { deleteLocalStorageItems, pageRequiresAuthentication } from '../utils';
 import * as Sentry from '@sentry/browser';
 import logger from './logger';
 

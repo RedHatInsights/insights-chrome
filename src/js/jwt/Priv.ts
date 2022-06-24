@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInitOptions, KeycloakConfig, KeycloakLoginOptions, KeycloakLogoutOptions } from 'keycloak-js';
+import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions, KeycloakLogoutOptions } from 'keycloak-js';
 
 export type PrivCookie = {
   cookieName: string;

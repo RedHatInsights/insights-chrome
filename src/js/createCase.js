@@ -4,7 +4,7 @@ import logger from './jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getUrl, getEnvDetails } from './utils';
+import { getEnvDetails, getUrl } from './utils';
 import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from './redux-config';
 

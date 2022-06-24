@@ -1,4 +1,4 @@
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
+import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from '../insights/offline';
 
 import * as jwt from '../jwt';
 import cookie from 'js-cookie';

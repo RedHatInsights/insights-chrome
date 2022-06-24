@@ -2,7 +2,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { render, act } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import createMockStore from 'redux-mock-store';
 import Navigation from './';
 
