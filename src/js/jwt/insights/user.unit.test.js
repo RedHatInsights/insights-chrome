@@ -23,7 +23,7 @@ describe('User', () => {
 
   describe('buildUser', () => {
     test('transforms a token into a User object', () => {
-      expect(user.buildUser(token)).toMatchObject(userOutput);
+      expect(user.buildUser(token)).toEqual(userOutput);
     });
   });
 
