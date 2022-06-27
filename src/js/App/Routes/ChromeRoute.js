@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
-import { useDispatch, useSelector, batch } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponent/ErrorComponent';
 import { getPendoConf } from '../../analytics';

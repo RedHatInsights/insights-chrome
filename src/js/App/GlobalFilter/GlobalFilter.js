@@ -1,12 +1,12 @@
-import React, { useEffect, Fragment, useState, useCallback, memo, useMemo, useRef } from 'react';
+import React, { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch, batch, shallowEqual } from 'react-redux';
+import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { Button, Chip, ChipGroup, Divider, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import TagsModal from './TagsModal';
-import { workloads, updateSelected, generateFilter } from './constants';
+import { generateFilter, updateSelected, workloads } from './constants';
 import debounce from 'lodash/debounce';
 import { useHistory } from 'react-router-dom';
 import GlobalFilterMenu from './GlobalFilterMenu';

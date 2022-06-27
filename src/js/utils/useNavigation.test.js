@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { MemoryRouter, Route, useHistory } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';

@@ -1,6 +1,6 @@
 import React from 'react';
 import Tools, { switchRelease } from '../Tools';
-import { render, act } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
 jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');

@@ -1,5 +1,5 @@
 import qe from './iqeEnablement';
-import { chromeInit, bootstrap } from './entry';
+import { bootstrap, chromeInit } from './entry';
 import initializeJWT from './initialize-jwt';
 import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
 

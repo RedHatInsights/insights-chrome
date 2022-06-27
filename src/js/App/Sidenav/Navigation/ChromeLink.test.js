@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render, act, fireEvent } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import createMockStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from './ChromeLink';

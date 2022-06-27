@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { DropdownToggle, DropdownItem, DropdownPosition, Dropdown } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { isBeta } from '../../utils';
