@@ -1,10 +1,10 @@
-import Keycloak, { KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions } from '@redhat-cloud-services/keycloak-js';
+import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions, KeycloakLogoutOptions } from 'keycloak-js';
 
 export type PrivCookie = {
   cookieName: string;
 };
 
-export type SSOParsedToken = KeycloakInstance['tokenParsed'] & {
+export type SSOParsedToken = Keycloak['tokenParsed'] & {
   account_number: string;
   type: string;
   idp: string;
@@ -23,12 +23,12 @@ export type SSOParsedToken = KeycloakInstance['tokenParsed'] & {
 
 class Priv {
   _cookie?: string;
-  _keycloak: KeycloakInstance;
+  _keycloak: Keycloak;
   cookie?: PrivCookie;
 
   constructor() {
     this._cookie;
-    this._keycloak = {} as KeycloakInstance;
+    this._keycloak = {} as Keycloak;
   }
 
   setCookie(cookie: PrivCookie) {
@@ -36,12 +36,12 @@ class Priv {
   }
 
   setKeycloak(
-    options?: string | Record<string, unknown>,
-    onTokenExpired?: KeycloakInstance['onTokenExpired'],
-    onAuthSuccess?: KeycloakInstance['onAuthSuccess'],
-    onAuthRefreshSuccess?: KeycloakInstance['onAuthRefreshSuccess']
+    options?: string | KeycloakConfig,
+    onTokenExpired?: Keycloak['onTokenExpired'],
+    onAuthSuccess?: Keycloak['onAuthSuccess'],
+    onAuthRefreshSuccess?: Keycloak['onAuthRefreshSuccess']
   ) {
-    this._keycloak = Keycloak(options);
+    this._keycloak = new Keycloak(options);
     this._keycloak.onTokenExpired = onTokenExpired;
     this._keycloak.onAuthSuccess = onAuthSuccess;
     this._keycloak.onAuthRefreshSuccess = onAuthRefreshSuccess;
@@ -60,7 +60,7 @@ class Priv {
     return this._keycloak.init(options);
   }
 
-  setTokenParsed(tokenParsed: KeycloakInstance['tokenParsed']) {
+  setTokenParsed(tokenParsed: Keycloak['tokenParsed']) {
     this._keycloak.tokenParsed = tokenParsed;
   }
 
@@ -88,7 +88,7 @@ class Priv {
     return this.cookie;
   }
 
-  logout(options: unknown) {
+  logout(options: KeycloakLogoutOptions) {
     return this._keycloak.logout(options);
   }
 

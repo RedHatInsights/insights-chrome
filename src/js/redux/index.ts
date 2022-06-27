@@ -1,65 +1,67 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 import {
+  accessRequestsNotificationsReducer,
   appNavClick,
+  changeActiveModuleReducer,
+  contextSwitcherBannerReducer,
+  disableQuickstartsReducer,
+  documentTitleReducer,
+  loadModulesSchemaReducer,
+  loadNavigationLandingPageReducer,
+  loadNavigationSegmentReducer,
   loginReducer,
+  markAccessRequestRequestReducer,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
-  contextSwitcherBannerReducer,
-  loadNavigationLandingPageReducer,
-  loadNavigationSegmentReducer,
-  loadModulesSchemaReducer,
-  changeActiveModuleReducer,
-  setPendoFeedbackFlag,
-  toggleFeedbackModal,
-  accessRequestsNotificationsReducer,
-  markAccessRequestRequestReducer,
-  storeInitialHashReducer,
   populateQuickstartsReducer,
-  disableQuickstartsReducer,
-  documentTitleReducer,
+  setPendoFeedbackFlag,
+  storeInitialHashReducer,
+  toggleFeedbackModal,
 } from './reducers';
 import {
-  onGetAllTags,
-  onGetAllTagsPending,
-  onSetGlobalFilterScope,
-  onGlobalFilterToggle,
-  onTagSelect,
+  globalFilterDefaultState,
   onGetAllSIDs,
   onGetAllSIDsPending,
+  onGetAllTags,
+  onGetAllTagsPending,
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
   onGlobalFilterRemove,
-  globalFilterDefaultState,
+  onGlobalFilterToggle,
+  onSetGlobalFilterScope,
+  onTagSelect,
 } from './globalFilterReducers';
 import {
   APP_NAV_CLICK,
-  USER_LOGIN,
+  CHANGE_ACTIVE_MODULE,
+  CHROME_GET_ALL_SIDS,
+  CHROME_GET_ALL_TAGS,
+  CHROME_GET_ALL_WORKLOADS,
   CHROME_PAGE_ACTION,
   CHROME_PAGE_OBJECT,
-  CHROME_GET_ALL_TAGS,
-  CHROME_GET_ALL_SIDS,
-  CHROME_GET_ALL_WORKLOADS,
+  DISABLE_QUICKSTARTS,
+  GLOBAL_FILTER_REMOVE,
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-  GLOBAL_FILTER_REMOVE,
-  REGISTER_MODULE,
-  TOGGLECONTEXTSWITCHER,
-  LOAD_NAVIGATION_LANDING_PAGE,
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
-  CHANGE_ACTIVE_MODULE,
+  LOAD_NAVIGATION_LANDING_PAGE,
+  MARK_REQUEST_NOTIFICATION_SEEN,
+  POPULATE_QUICKSTARTS_CATALOG,
+  REGISTER_MODULE,
   SET_PENDO_FEEDBACK_FLAG,
+  STORE_INITIAL_HASH,
+  TOGGLECONTEXTSWITCHER,
   TOGGLE_FEEDBACK_MODAL,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
-  MARK_REQUEST_NOTIFICATION_SEEN,
-  STORE_INITIAL_HASH,
-  POPULATE_QUICKSTARTS_CATALOG,
-  DISABLE_QUICKSTARTS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
+  USER_LOGIN,
 } from './action-types';
+import { ChromeState, GlobalFilterState } from './store';
+import { AnyAction } from 'redux';
 
 const reducers = {
   [APP_NAV_CLICK]: appNavClick,
@@ -95,7 +97,10 @@ const globalFilter = {
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
 };
 
-export default function () {
+export default function (): {
+  chrome: (state: ChromeState, action: AnyAction) => ChromeState;
+  globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
+} {
   // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
   return {
@@ -105,10 +110,14 @@ export default function () {
         accessRequests: {
           count: 0,
           data: [],
+          hasUnseen: false,
         },
         quickstarts: {
           quickstarts: {},
         },
+        contextSwitcherOpen: false,
+        modules: {},
+        scalprumConfig: {},
       },
       action
     ) => applyReducerHash(reducers)(state, action),

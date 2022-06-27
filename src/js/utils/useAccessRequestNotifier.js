@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector, batch } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { markAccessRequestNotification, updateAccessRequestsNotifications } from '../redux/actions';
 

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { LoadingBox } from '@patternfly/quickstarts';
 
 const QuickStartCatalog = lazy(() => import(/* webpackChunkName: "quick-start" */ './QuickStartCatalog'));

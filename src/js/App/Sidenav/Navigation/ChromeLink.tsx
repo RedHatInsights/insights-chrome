@@ -7,6 +7,14 @@ import { appNavClick } from '../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
 
+export type NavDOMEvent = {
+  href: string;
+  id: string;
+  navId: string;
+  type: string;
+  target?: HTMLAnchorElement | null;
+};
+
 interface RefreshLinkProps extends React.DetailedReactHTMLElement<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
   isExternal?: boolean;
   onLinkClick?: OnLinkClick;
@@ -60,13 +68,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
    * eg. /openshift/cost-management we don't want to send "/cost-management" but "/"
    * We are not in app sub route but in app root
    */
-  const domEvent: {
-    href: string;
-    id: string;
-    navId: string;
-    type: string;
-    target?: HTMLAnchorElement | null;
-  } = {
+  const domEvent: NavDOMEvent = {
     href,
     id: actionId,
     navId: actionId,

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from 'axios';
-const offline = require('./offline');
 
 jest.mock('axios', () => {
   return {
@@ -13,22 +13,36 @@ jest.mock('axios', () => {
   };
 });
 
-const defaults = {
+jest.mock('./offline', () => {
+  const actual = jest.requireActual('./offline');
+  return {
+    __esModule: true,
+    ...actual,
+    default: {
+      ...actual,
+    },
+  };
+});
+
+import * as offline from './offline';
+
+const defaults: Record<string, Record<string, string>> = {
   location: {
     hash: '#foo=bar',
     search: '?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f',
     href: 'https://test.com/some/path?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f#foo=bar',
     origin: 'https://test.com',
+    host: 'https://test.com',
     pathname: '/some/path',
   },
 };
 
-function getMockWindow(location) {
-  const loc = location || defaults.location;
+function getMockWindow(location = defaults.location) {
+  const loc = location;
   return {
     location: loc,
     history: {
-      pushState: (one, two, url) => {
+      pushState: (_one: unknown, _two: unknown, url: string) => {
         loc.__foo__ = url;
       },
     },
@@ -40,23 +54,35 @@ describe('Offline', () => {
     // this is really just to reach 100% for this module
     // getWindow was just introduced to allow for code to work
     // and test code too
-    expect(offline.__get__('getWindow')()).toBe(window);
+    expect(offline.getWindow()).toBe(window);
   });
   describe('getOfflineToken', () => {
+    beforeEach(() => {
+      global.window = Object.create(window);
+      Object.defineProperty(window, 'location', {
+        value: getMockWindow().location,
+        writable: true,
+      });
+      Object.defineProperty(window, 'history', {
+        value: getMockWindow().history,
+        writable: true,
+      });
+    });
     test('fails when there is no offline postbackUrl', async () => {
       try {
-        await offline.getOfflineToken();
+        await offline.getOfflineToken('foo', 'bar');
       } catch (e) {
         expect(e).toBe('not available');
       }
     });
 
     test('POSTs to /token with the right parameters when input is good', async () => {
-      offline.__set__('priv', { postbackUrl: 'https://test.com/?noauth=foo#test=bar&code=test123' });
+      window.location.hash = '#test=bar&code=test123';
+      offline.wipePostbackParamsThatAreNotForUs();
       await offline.getOfflineToken('', 'test321');
       expect(axios.post).toHaveBeenCalledWith(
         'https://sso.qa.redhat.com/auth/realms//protocol/openid-connect/token',
-        'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2F%3Fnoauth%3Dfoo',
+        'code=test123&grant_type=authorization_code&client_id=test321&redirect_uri=https%3A%2F%2Ftest.com%2Fsome%2Fpath%3Fnoauth%3D2402500adeacc30eb5c5a8a5e2e0ec1f',
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
     });
@@ -64,26 +90,22 @@ describe('Offline', () => {
 
   describe('wipePostbackParamsThatAreNotForUs', () => {
     describe('when no auth param is present', () => {
-      const getPostbackUrl = offline.__get__('getPostbackUrl');
-      let testWindow = {};
-
+      const getPostbackUrl = offline.getPostbackUrl;
       beforeEach(() => {
-        testWindow = getMockWindow();
-        // dirty hack to make the module loader work in test
-        // without this I can `rm node_modules/urijs/src/*js`
-        // and still the require in test mode loads some urijs from insights-components
-        // and that lib is causing issues
-        //
-        // this hack is only necessry in test mode
-        offline.__set__('urijs', require('../../../../node_modules/urijs/src/URI'));
-        offline.__set__('getWindow', () => {
-          return testWindow;
+        global.window = Object.create(window);
+        Object.defineProperty(window, 'location', {
+          value: getMockWindow().location,
+          writable: true,
+        });
+        Object.defineProperty(window, 'history', {
+          value: getMockWindow().history,
+          writable: true,
         });
         offline.wipePostbackParamsThatAreNotForUs();
       });
 
       test('strips hash', () => {
-        expect(testWindow.location.hash).toBe('');
+        expect(window.location.hash).toBe('');
       });
 
       test('sets postbackUrl', () => {
@@ -91,22 +113,21 @@ describe('Offline', () => {
       });
 
       test('removes noauth query param', () => {
-        expect(testWindow.location.__foo__).not.toMatch('noauth=2402500adeacc30eb5c5a8a5e2e0ec1');
+        // @ts-ignore
+        expect(window.location.__foo__).not.toMatch('noauth=2402500adeacc30eb5c5a8a5e2e0ec1');
       });
 
       test('removes noauth query param with others', () => {
-        const w = getMockWindow({ href: 'https://example.com?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f&test=bar&bar=baz' });
-        offline.__set__('getWindow', () => {
-          return w;
-        });
+        window.location.href = 'https://example.com?noauth=2402500adeacc30eb5c5a8a5e2e0ec1f&test=bar&bar=baz';
         offline.wipePostbackParamsThatAreNotForUs();
-        expect(w.location.__foo__).toMatch('https://example.com/?test=bar&bar=baz');
+        // @ts-ignore
+        expect(window.location.__foo__).toMatch('https://example.com/?test=bar&bar=baz');
       });
     });
   });
 
   describe('parseHashString', () => {
-    const parseHashString = offline.__get__('parseHashString');
+    const parseHashString = offline.parseHashString;
     test('can parse KC form data in hash', () => {
       const url = 'https://cloud.redhat.com/?foo=bar#bar=baz&foo=bar';
       expect(parseHashString(url)).toMatchObject({
@@ -117,7 +138,7 @@ describe('Offline', () => {
   });
 
   describe('getPostDataObject', () => {
-    const getPostDataObject = offline.__get__('getPostDataObject');
+    const getPostDataObject = offline.getPostDataObject;
     test('returns valid parameters', () => {
       const o = getPostDataObject('https://example.com', 'cloud-services', 'deadbeef');
       expect(o).toHaveProperty('code', 'deadbeef');
@@ -128,14 +149,14 @@ describe('Offline', () => {
   });
 
   describe('getPostbackUrl', () => {
-    const getPostbackUrl = offline.__get__('getPostbackUrl');
+    const getPostbackUrl = offline.getPostbackUrl;
     test('can get the URL once', () => {
-      offline.__set__('priv', { postbackUrl: 'foo' });
-      expect(getPostbackUrl()).toBe('foo');
+      offline.wipePostbackParamsThatAreNotForUs();
+      expect(getPostbackUrl()).toEqual(expect.any(String));
     });
     test('cannot get URL twice', () => {
-      offline.__set__('priv', { postbackUrl: 'foo' });
-      expect(getPostbackUrl()).toBe('foo');
+      offline.wipePostbackParamsThatAreNotForUs();
+      expect(getPostbackUrl()).toEqual(expect.any(String));
       expect(getPostbackUrl()).toBe(undefined);
     });
   });

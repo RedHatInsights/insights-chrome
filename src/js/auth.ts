@@ -1,4 +1,4 @@
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from './jwt/insights/offline';
+import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from './jwt/insights/offline';
 import * as jwt from './jwt/jwt';
 import cookie from 'js-cookie';
 import { options as defaultOptions } from './jwt/constants';
@@ -15,15 +15,18 @@ function bouncer() {
 }
 
 export function crossAccountBouncer() {
-  localStorage.setItem(ACCOUNT_REQUEST_TIMEOUT, cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER));
-  localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
+  const requestCookie = cookie.get(CROSS_ACCESS_ACCOUNT_NUMBER);
+  if (requestCookie) {
+    localStorage.setItem(ACCOUNT_REQUEST_TIMEOUT, requestCookie);
+    localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
+  }
   cookie.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
   window.location.reload();
 }
 
 export default () => {
   console.time(TIMER_STR); // eslint-disable-line no-console
-  let options = {
+  const options = {
     ...defaultOptions,
   };
 

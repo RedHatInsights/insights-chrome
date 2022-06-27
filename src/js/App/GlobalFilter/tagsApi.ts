@@ -1,19 +1,24 @@
 /* eslint-disable camelcase */
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-import { flatTags, INVENTORY_API_BASE } from './constants';
-import { TagsApi, SapSystemApi, HostsApi } from '@redhat-cloud-services/host-inventory-client';
+import { FlagTagsFilter, INVENTORY_API_BASE, flatTags } from './constants';
+import { HostsApi, SapSystemApi, TagsApi } from '@redhat-cloud-services/host-inventory-client';
 import { AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
-export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance);
-export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance);
-export const system = new HostsApi(undefined, INVENTORY_API_BASE, instance);
+import { AxiosInstance } from 'axios';
+export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);
+export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);
+export const system = new HostsApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);
+
+export type Workload = { isSelected?: boolean };
+export type TagPagination = { perPage?: number; page?: number };
+export type TagFilterOptions = { search?: string; registeredWith?: 'insights'; activeTags?: FlagTagsFilter };
 
 /**
  * This has to be pulled out of FEC for a while until we split react and non react helper functions
  */
-export const generateFilter = (data, path = 'filter', options) =>
-  Object.entries(data || {}).reduce((acc, [key, value]) => {
+export const generateFilter = (data: { [key: string]: any | Date | any[] }, path = 'filter', options?: { arrayEnhancer?: string }) =>
+  Object.entries(data || {}).reduce<any>((acc, [key, value]): any => {
     const newPath = `${path || ''}[${key}]${Array.isArray(value) ? `${options?.arrayEnhancer ? `[${options.arrayEnhancer}]` : ''}[]` : ''}`;
-    if (value instanceof Function || value instanceof Date) {
+    if (value instanceof Function || (value as Date) instanceof Date) {
       return acc;
     }
 
@@ -23,7 +28,7 @@ export const generateFilter = (data, path = 'filter', options) =>
     };
   }, {});
 
-const buildFilter = (workloads, SID) => ({
+const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => ({
   system_profile: {
     ...(workloads?.SAP?.isSelected && { sap_system: true }),
     // enable once AAP filter is enabled
@@ -37,14 +42,14 @@ const buildFilter = (workloads, SID) => ({
   },
 });
 
-export function getAllTags({ search, activeTags, registeredWith } = {}, pagination = {}) {
+export function getAllTags({ search, activeTags, registeredWith }: TagFilterOptions = {}, pagination?: TagPagination) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
   return tags.apiTagGetTags(
     selectedTags, // tag filer
     'tag',
     'ASC',
-    (pagination && pagination.perPage) || 10,
-    (pagination && pagination.page) || 1,
+    pagination?.perPage || 10,
+    pagination?.page || 1,
     undefined,
     search,
     registeredWith,
@@ -55,7 +60,7 @@ export function getAllTags({ search, activeTags, registeredWith } = {}, paginati
   );
 }
 
-export function getAllSIDs({ search, activeTags, registeredWith } = {}, pagination = {}) {
+export function getAllSIDs({ search, activeTags, registeredWith }: TagFilterOptions = {}, pagination: TagPagination = {}) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
   return sap.apiSystemProfileGetSapSids(
@@ -72,7 +77,7 @@ export function getAllSIDs({ search, activeTags, registeredWith } = {}, paginati
   );
 }
 
-export async function getAllWorkloads({ activeTags, registeredWith } = {}, pagination = {}) {
+export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterOptions = {}, pagination: TagPagination = {}) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
   const [SAP, AAP, MSSQL] = await Promise.all([

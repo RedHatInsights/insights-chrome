@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import Cookies from 'js-cookie';

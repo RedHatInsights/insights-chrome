@@ -1,4 +1,4 @@
-import { wipePostbackParamsThatAreNotForUs, getOfflineToken } from '../insights/offline';
+import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from '../insights/offline';
 
 import * as jwt from '../jwt';
 import cookie from 'js-cookie';
@@ -16,7 +16,7 @@ function bouncer() {
 
 export const initChromeAuth = () => {
   console.time(TIMER_STR); // eslint-disable-line no-console
-  let options = {
+  const options = {
     ...defaultOptions,
   };
 
@@ -41,7 +41,7 @@ export const initChromeAuth = () => {
 };
 
 const useChromeAuth = () => {
-  let options = {
+  const options = {
     ...defaultOptions,
   };
 

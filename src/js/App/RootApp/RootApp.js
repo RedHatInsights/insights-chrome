@@ -12,11 +12,13 @@ import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import { populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
+import { SegmentProvider } from '../analytics/segment-analytics';
 
 const RootApp = (props) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
+  const activeModule = useSelector(({ chrome: { activeModule } }) => activeModule);
   const quickStarts = useSelector(
     ({
       chrome: {
@@ -64,15 +66,17 @@ const RootApp = (props) => {
   return (
     <Router history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
       <FeatureFlagsProvider>
-        <IDPChecker>
-          {/* <CrossRequestNotifier /> */}
+        <SegmentProvider activeModule={activeModule}>
+          <IDPChecker>
+            {/* <CrossRequestNotifier /> */}
 
-          <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
-            <HelpTopicContainer helpTopics={helpTopics}>
-              <ScalprumRoot {...props} helpTopics={helpTopics} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
-            </HelpTopicContainer>
-          </QuickStartContainer>
-        </IDPChecker>
+            <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
+              <HelpTopicContainer helpTopics={helpTopics}>
+                <ScalprumRoot {...props} helpTopics={helpTopics} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+              </HelpTopicContainer>
+            </QuickStartContainer>
+          </IDPChecker>
+        </SegmentProvider>
       </FeatureFlagsProvider>
     </Router>
   );

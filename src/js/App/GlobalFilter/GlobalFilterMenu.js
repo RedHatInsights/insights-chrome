@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { TextInput, MenuList, MenuItem, Select, SelectVariant, MenuGroup, Checkbox, Bullseye, Spinner } from '@patternfly/react-core';
+import { Bullseye, Checkbox, MenuGroup, MenuItem, MenuList, Select, SelectVariant, Spinner, TextInput } from '@patternfly/react-core';
 
 import './global-filter-menu.scss';
 import { useSelector } from 'react-redux';
@@ -154,8 +154,8 @@ const GlobalFilterMenu = (props) => {
           }}
           value={filterBy}
           onChange={onFilter}
-          placeholder="Filter by status"
-          aria-label="Filter by status"
+          placeholder="Filter by tags"
+          aria-label="Filter by tags"
           ouiaId="global-filter-by-status"
         />
       }

@@ -23,7 +23,7 @@ describe('User', () => {
 
   describe('buildUser', () => {
     test('transforms a token into a User object', () => {
-      expect(user.buildUser(token)).toMatchObject(userOutput);
+      expect(user.buildUser(token)).toEqual(userOutput);
     });
   });
 
@@ -49,13 +49,13 @@ describe('User', () => {
 
     test('should bounce if unentitled', () => {
       user.tryBounceIfUnentitled(ents, 'insights');
-      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
+      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=insights');
 
       user.tryBounceIfUnentitled(ents, 'cost-management');
-      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=cost_management');
+      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=cost_management');
 
       user.tryBounceIfUnentitled(ents, 'ansible');
-      expect(replaceMock).lastCalledWith('http://localhost/ansible/ansible-dashboard/trial');
+      expect(replaceMock).lastCalledWith('https://test.com/ansible/ansible-dashboard/trial');
     });
 
     test('should *not* bounce if entitled', () => {
