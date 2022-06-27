@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Button, Divider, DropdownItem, ToolbarItem, ToolbarGroup, Switch } from '@patternfly/react-core';
+import { Badge, Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -8,7 +8,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import { getUrl, getSection, isBeta } from '../../utils';
+import { getSection, getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 

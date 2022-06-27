@@ -1,7 +1,7 @@
-import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
@@ -11,6 +11,7 @@ import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
+import { SegmentContext } from '../analytics/segment-analytics';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -23,6 +24,7 @@ const loaderWrapper = (Component, props = {}) => (
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
+  const { analytics } = useContext(SegmentContext);
   const [activeTopicName, setActiveTopicName] = useState();
   const [prevActiveTopic, setPrevActiveTopic] = useState(activeHelpTopic?.name);
   const history = useHistory();
@@ -67,6 +69,13 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
     }
   }, [activeTopicName, helpTopics, activeHelpTopic]);
 
+  const setPageMetadata = useCallback((pageOptions) => {
+    window._segment = {
+      ...window._segment,
+      pageOptions,
+    };
+  }, []);
+
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -82,6 +91,9 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
           ...window.insights.chrome,
           isFedramp: isFedRamp(),
           usePendoFeedback,
+          segment: {
+            setPageMetadata,
+          },
           toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
           quickStarts: quickstartsAPI,
           helpTopics: {
@@ -92,6 +104,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
             },
           },
           chromeHistory: history,
+          analytics,
         },
       }}
     >

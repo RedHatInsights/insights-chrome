@@ -1,13 +1,13 @@
 import {
-  onGlobalFilterToggle,
-  onGetAllTags,
-  onGetAllTagsPending,
-  onSetGlobalFilterScope,
-  onTagSelect,
   onGetAllSIDs,
   onGetAllSIDsPending,
+  onGetAllTags,
+  onGetAllTagsPending,
   onGetAllWorkloads,
   onGetAllWorkloadsPending,
+  onGlobalFilterToggle,
+  onSetGlobalFilterScope,
+  onTagSelect,
 } from './globalFilterReducers';
 import { toggleGlobalFilter } from './actions';
 

@@ -24,57 +24,26 @@ Insights Chrome comes with a Javacript API that allows applications to control n
 
 ## Running the build
 
-There is numerous of task for building this application. You can run individual tasks or run them in batch to build the
-entire app or to watch files.
+There are a few scripts for building this application.
 
-### Individual tasks
+To run a script you have to install dependencies `npm install`. Then you are free to use any task you want.
 
-To run each task you have to first install dependencies `npm install` and then you are free to use any task as you wish.
-If you want to watch file changes for each build just pass `-- -w` to specific task (this is not applicable to
-`npm run build:js:watch` because it's somewhat specific).
-
-1. Building of styles
-
-    ```bash
-    > npm run build:sass
-    ```
-
-2. Building of javascripts
-
-    ```bash
-    > npm run build:js
-    ```
-
-3. Building of javascripts and watching files when they change
-
-    ```bash
-    > npm run watch:js
-    ```
-
-4. Building of HTML partials
-
-    ```bash
-    > npm run build:pug
-    ```
-
-5. Running tests
-
-    ```bash
-    > npm run test
-    ```
-
-### Specific tasks
-
-1. Run build of whole application just once
+1. Building assets
 
     ```bash
     > npm run build
     ```
 
-2. Watching file changes and trigger build every time something changes
+2. Building assets and watching files when they change
 
     ```bash
-    > npm run start
+    > npm run build --watch
+    ```
+
+3. Running tests
+
+    ```bash
+    > npm run test
     ```
 
 ## Running chrome locally
@@ -93,9 +62,9 @@ If you want to watch file changes for each build just pass `-- -w` to specific t
 
 3. Open browser at `https://stage.foo.redhat.com:1337/`.
 
-Where `SPANDX_CONFIG` can be any config for your application (here is an example for [insights-frontend-starter-app](https://github.com/RedHatInsights/insights-frontend-starter-app)), just make sure your application is running `npm start` in said application.
+### Running chrome as a host application.
 
-After permorming these tasks you can access `ci.foo.redhat.com:1337/{bundle}/{app}`, where bundle and app are defined in your `local-frontend.js` and observe changes as you save them.
+As with any application, chrome can be a host application for others. You can configure the `routes` object in the `webpack.config.js` file as described in the proxy config [docs](https://github.com/RedHatInsights/frontend-components/tree/master/packages/config#routes).
 
 ## LocalStorage Debugging
 

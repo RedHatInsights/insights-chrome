@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import './HeaderAlert.scss';

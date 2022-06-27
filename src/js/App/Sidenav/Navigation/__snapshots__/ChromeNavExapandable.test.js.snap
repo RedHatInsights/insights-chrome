@@ -58,7 +58,7 @@ exports[`ChromeNavExapandable should render nav item expandable 1`] = `
             class="pf-c-nav__link"
             data-quickstart-id="/foo/bar"
             data-testid="native-link"
-            href="http://localhost/foo/bar"
+            href="https://test.com/foo/bar"
             itemid="/foo/bar"
           >
             Title

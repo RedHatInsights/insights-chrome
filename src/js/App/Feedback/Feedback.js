@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, Modal, ModalVariant, Form, FormGroup, TextArea, TextContent, Text, Label } from '@patternfly/react-core';
+import { Alert, Button, Form, FormGroup, Label, Modal, ModalVariant, Text, TextArea, TextContent } from '@patternfly/react-core';
 import { OutlinedCommentsIcon } from '@patternfly/react-icons';
 import './Feedback.scss';
 import Cookies from 'js-cookie';

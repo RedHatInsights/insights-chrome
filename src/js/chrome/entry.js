@@ -1,11 +1,11 @@
-import { globalFilterScope, toggleGlobalFilter, removeGlobalFilter, registerModule } from '../redux/actions';
+import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
 import chromeHistory from '../utils/chromeHistory';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getUrl, getEnv, isBeta, updateDocumentTitle, getEnvDetails, isProd } from '../utils';
+import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';
