@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
-import { fetchAllTags, fetchAllSIDs } from '../../redux/actions';
+import { fetchAllSIDs, fetchAllTags } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 

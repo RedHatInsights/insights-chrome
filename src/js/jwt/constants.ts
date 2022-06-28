@@ -22,7 +22,7 @@ export const DEFAULT_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'env-stage.apps.crcs02ue1.urby.p1.openshiftapps.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
@@ -43,7 +43,14 @@ export const DEFAULT_ROUTES = {
   },
 };
 
-export const options = {
+export type ChromeAuthOptions = {
+  realm: string;
+  clientId: string;
+  cookieName: string;
+  refreshToken?: string;
+  token?: string;
+};
+export const options: ChromeAuthOptions = {
   realm: 'redhat-external',
   clientId: 'cloud-services',
   cookieName: 'cs_jwt',

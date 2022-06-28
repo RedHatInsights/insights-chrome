@@ -20,17 +20,15 @@ describe('User', () => {
   afterAll(() => {
     window.location = location;
   });
-  const buildUser = user.__get__('buildUser');
 
   describe('buildUser', () => {
     test('transforms a token into a User object', () => {
-      expect(buildUser(token)).toMatchObject(userOutput);
+      expect(user.buildUser(token)).toEqual(userOutput);
     });
   });
 
   /* eslint-disable camelcase */
   describe('tryBounceIfUnentitled', () => {
-    const tryBounceIfUnentitled = user.__get__('tryBounceIfUnentitled');
     const ents = {
       insights: { is_entitled: false },
       openshift: { is_entitled: false },
@@ -43,26 +41,26 @@ describe('User', () => {
 
     test('should *not* bounce if the section is unkown', () => {
       ents.insights.is_entitled = false;
-      tryBounceIfUnentitled(ents, 'apps');
-      tryBounceIfUnentitled(ents, 'foo');
-      tryBounceIfUnentitled(ents, 'test');
+      user.tryBounceIfUnentitled(ents, 'apps');
+      user.tryBounceIfUnentitled(ents, 'foo');
+      user.tryBounceIfUnentitled(ents, 'test');
       expect(replaceMock).not.toBeCalled();
     });
 
     test('should bounce if unentitled', () => {
-      tryBounceIfUnentitled(ents, 'insights');
-      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=insights');
+      user.tryBounceIfUnentitled(ents, 'insights');
+      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=insights');
 
-      tryBounceIfUnentitled(ents, 'cost-management');
-      expect(replaceMock).lastCalledWith('http://localhost/?not_entitled=cost_management');
+      user.tryBounceIfUnentitled(ents, 'cost-management');
+      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=cost_management');
 
-      tryBounceIfUnentitled(ents, 'ansible');
-      expect(replaceMock).lastCalledWith('http://localhost/ansible/ansible-dashboard/trial');
+      user.tryBounceIfUnentitled(ents, 'ansible');
+      expect(replaceMock).lastCalledWith('https://test.com/ansible/ansible-dashboard/trial');
     });
 
     test('should *not* bounce if entitled', () => {
       ents.insights.is_entitled = true;
-      tryBounceIfUnentitled(ents, 'insights');
+      user.tryBounceIfUnentitled(ents, 'insights');
       expect(replaceMock).not.toBeCalled();
     });
   });

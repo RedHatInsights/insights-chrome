@@ -21,11 +21,11 @@ const plugins = (dev = false) => [
       ]
     : []),
   new MiniCssExtractPlugin({
-    filename: '[name].css',
+    filename: '[name].[fullhash].css',
   }),
   new ModuleFederationPlugin({
     name: 'chrome',
-    filename: 'chrome.[contenthash].js',
+    filename: 'chrome.[fullhash].js',
     exposes: {
       './InventoryTable': resolve(__dirname, '../src/js/inventory/modules/InventoryTable.js'),
       './AppInfo': resolve(__dirname, '../src/js/inventory/modules/AppInfo.js'),
@@ -34,7 +34,7 @@ const plugins = (dev = false) => [
       './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
       './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
       './DownloadButton': resolve(__dirname, '../src/js/pdf/DownloadButton.js'),
-      './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.js'),
+      './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.ts'),
     },
     shared: [
       { react: { singleton: true, eager: true, requiredVersion: deps.react } },
@@ -51,12 +51,14 @@ const plugins = (dev = false) => [
   new HtmlWebpackPlugin({
     template: path.resolve(__dirname, '../src/index.html'),
     inject: 'body',
+    minify: false,
     filename: dev ? 'index.html' : '../index.html',
   }),
   new HtmlWebpackPlugin({
     title: 'Authenticating - console.redhat.com',
     filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
     inject: false,
+    minify: false,
     template: path.resolve(__dirname, '../src/silent-check-sso.html'),
   }),
   new ProvidePlugin({

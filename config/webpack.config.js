@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
+const imageNullLoader = require('./image-null-loader');
 
 // call default generator then pair different variations of uri with each base
 const myGenerator = asGenerator((item, ...rest) => {
@@ -20,102 +21,109 @@ const myGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-const commonConfig = ({ dev, publicPath = '/', noHash }) => ({
-  entry: [path.resolve(__dirname, '../src/sass/chrome.scss'), path.resolve(__dirname, '../src/js/chrome.js')],
-  output: {
-    path: path.resolve(__dirname, '../build/js'),
-    filename: `chrome-root${noHash ? '' : '.[chunkhash]'}.js`,
-    publicPath,
-    chunkFilename: ({ chunk }) => (chunk.name === 'sso-url' ? '[name].js' : `[name]${noHash ? '' : '.[chunkhash]'}.js`),
-  },
-  devtool: process.env.NODE_ENV === 'production' ? false : 'inline-source-map',
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    alias: {
-      ...searchIgnoredStyles(path.resolve(__dirname, '../')),
-      '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
-      '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
-    },
-    fallback: {
-      path: require.resolve('path-browserify'),
-      stream: require.resolve('stream-browserify'),
-      zlib: require.resolve('browserify-zlib'),
-      assert: require.resolve('assert/'),
-      buffer: require.resolve('buffer/'),
-      url: require.resolve('url/'),
-    },
-  },
-  optimization: {
-    minimizer: [new TerserPlugin()],
-    concatenateModules: false,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.s?[ac]ss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          {
-            loader: 'resolve-url-loader',
-            options: {
-              join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
-      },
-    ],
-  },
-  plugins: plugins(dev),
-  devServer: {
-    allowedHosts: 'all',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-    },
-    historyApiFallback: {
-      index: `${publicPath}index.html`,
-    },
-    https: true,
-    port: 1337,
-    ...proxy({
-      env: 'stage-beta',
-      port: 1337,
-      appUrl: [/^\/*$/, /^\/beta\/*$/],
-      useProxy: true,
+const commonConfig = ({ dev }) => {
+  const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
+  return {
+    entry: path.resolve(__dirname, '../src/js/chrome.js'),
+    output: {
+      path: path.resolve(__dirname, '../build/js'),
+      filename: 'chrome-root.[fullhash].js',
       publicPath,
-      proxyVerbose: true,
-      isChrome: true,
-    }),
-  },
-});
+      chunkFilename: ({ chunk }) => {
+        /**
+         * The sso-url.js chunk is required by ephemeral env config map
+         */
+        return chunk.name === 'sso-url' ? '[name].js' : `[name].[fullhash].js`;
+      },
+    },
+    devtool: false,
+    resolve: {
+      extensions: ['.js', '.ts', '.tsx'],
+      alias: {
+        ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+        ...imageNullLoader(),
+        // do not consume unfetch from nested dependencies
+        unfetch: path.resolve(__dirname, '../src/js/unfetch'),
+        '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
+        '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
+      },
+      fallback: {
+        path: require.resolve('path-browserify'),
+        stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
+        assert: require.resolve('assert/'),
+        buffer: require.resolve('buffer/'),
+        url: require.resolve('url/'),
+      },
+    },
+    optimization: {
+      minimizer: [new TerserPlugin()],
+      concatenateModules: false,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.s?[ac]ss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'resolve-url-loader',
+              options: {
+                join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
+              },
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+          type: 'asset/resource',
+        },
+      ],
+    },
+    plugins: plugins(dev),
+    devServer: {
+      allowedHosts: 'all',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+      },
+      historyApiFallback: {
+        index: `${publicPath}index.html`,
+      },
+      https: true,
+      port: 1337,
+      ...proxy({
+        env: 'stage-beta',
+        port: 1337,
+        appUrl: [/^\/*$/, /^\/beta\/*$/],
+        useProxy: true,
+        publicPath,
+        proxyVerbose: true,
+        isChrome: true,
+      }),
+    },
+  };
+};
 
 module.exports = function (env) {
-  const config = commonConfig({ dev: env.devServer === 'true', publicPath: env.publicPath, noHash: env.noHash === 'true' });
+  const config = commonConfig({ dev: env.devServer === 'true', publicPath: env.publicPath });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
   }

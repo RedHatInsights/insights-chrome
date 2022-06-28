@@ -1,6 +1,6 @@
 import React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
-import { Button, Bullseye, Modal, ModalVariant, Title } from '@patternfly/react-core';
+import { Bullseye, Button, Modal, ModalVariant, Title } from '@patternfly/react-core';
 
 import PropTypes from 'prop-types';
 
