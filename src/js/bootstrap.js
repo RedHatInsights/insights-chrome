@@ -68,9 +68,7 @@ const App = () => {
 
     trustarcScriptSetup();
 
-    loadFedModules().then((response) => {
-      dispatch(loadModulesSchema(response.data));
-    });
+    loadFedModules().then(({ data }) => dispatch(loadModulesSchema(data)));
   }, []);
 
   useEffect(() => {
