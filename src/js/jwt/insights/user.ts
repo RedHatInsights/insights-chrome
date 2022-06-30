@@ -118,7 +118,7 @@ export default async (token: SSOParsedToken) => {
   if (user) {
     log(`Account Number: ${user.identity.account_number}, Org ID: ${user.identity.org_id}`);
     let data;
-    const accNumber =  user.identity.account_number;
+    const accNumber = user.identity.account_number;
     const orgId = user.identity.org_id;
 
     try {
