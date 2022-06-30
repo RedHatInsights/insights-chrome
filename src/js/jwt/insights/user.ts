@@ -125,7 +125,7 @@ export default async (token: SSOParsedToken) => {
       if (accNumber || orgId) {
         data = await servicesApi(token.jti).servicesGet();
       } else {
-        console.log(`Cannot call entitlements API. Org ID or Account Number not found.`);
+        console.log(`Cannot call entitlements API. Org ID and Account Number not found.`);
       }
     } catch {
       // let's swallow error from services API
