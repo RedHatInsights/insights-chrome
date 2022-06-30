@@ -31,7 +31,6 @@ const FeedbackRoute = ({ user }) => {
 
 export const Header = () => {
   const user = useSelector(({ chrome }) => chrome?.user);
-  console.log('user', user);
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
 
