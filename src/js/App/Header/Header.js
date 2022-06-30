@@ -42,7 +42,7 @@ export const Header = () => {
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
-        {user.identity.account_number && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
+        {user?.identity?.account_number && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
