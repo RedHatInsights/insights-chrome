@@ -9,7 +9,6 @@ import { toggleFeedbackModal } from '../../redux/actions';
 import { isProd } from '../../utils.ts';
 
 const Feedback = ({ user }) => {
-  console.log('USER', user);
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
