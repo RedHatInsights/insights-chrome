@@ -9,6 +9,7 @@ import { toggleFeedbackModal } from '../../redux/actions';
 import { isProd } from '../../utils.ts';
 
 const Feedback = ({ user }) => {
+  console.log('USER', user);
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const Feedback = ({ user }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
+          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Org ID: ${user.identity.org_id}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
           summary: `${addFeedbackTag()} App Feedback`,
           labels: [app, bundle],
         }),

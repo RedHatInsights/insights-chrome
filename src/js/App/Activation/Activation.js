@@ -20,7 +20,7 @@ const Activation = ({ user, request }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
+          description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Org ID: ${user.identity.org_id}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
           summary: `Activation Request - assign to rbernlei@redhat.com`,
           labels: [request],
         }),
