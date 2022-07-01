@@ -116,16 +116,13 @@ export default async (token: SSOParsedToken) => {
   }
 
   if (user) {
-    log(`Account Number: ${user.identity.account_number}, Org ID: ${user.identity.org_id}`);
+    log(`Account Number: ${user.identity.account_number}`);
     let data;
-    const accNumber = user.identity.account_number;
-    const orgId = user.identity.org_id;
-
     try {
-      if (accNumber || orgId) {
+      if (user.identity.account_number) {
         data = await servicesApi(token.jti).servicesGet();
       } else {
-        console.log(`Cannot call entitlements API. Org ID and Account Number not found.`);
+        console.log('Cannot call entitlements API, no account number');
       }
     } catch {
       // let's swallow error from services API
