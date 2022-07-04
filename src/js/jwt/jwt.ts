@@ -226,9 +226,6 @@ export function login() {
 
 export function logout(bounce?: boolean) {
   log('Logging out');
-
-  // Clear cookies and tokens
-  priv.clearToken();
   const cookieName = priv.getCookie()?.cookieName;
   if (cookieName) {
     cookie.remove(cookieName);
@@ -254,6 +251,9 @@ export function logout(bounce?: boolean) {
     priv.logout({
       redirectUri: `https://${window.location.host}${isBeta}`,
     });
+
+    // Clear cookies and tokens
+    priv.clearToken();
   }
 }
 
