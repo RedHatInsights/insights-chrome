@@ -20,17 +20,17 @@ type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => 
 type GenericCB = (...args: unknown[]) => void;
 
 const PUBLIC_EVENTS: {
-  APP_NAVIGATION: [(fn: AppNavigationCB) => Listener];
+  APP_NAVIGATION: [(callback: AppNavigationCB) => Listener];
   NAVIGATION_TOGGLE: [(callback: GenericCB) => Listener];
   GLOBAL_FILTER_UPDATE: [(callback: GenericCB) => Listener, string];
 } = {
   APP_NAVIGATION: [
-    (fn: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
+    (callback: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
       const appNavListener: Listener<{ event: NavDOMEvent; id?: string }> = {
         on: actionTypes.APP_NAV_CLICK,
         callback: ({ data }) => {
           if (data.id !== undefined || data.event) {
-            fn({ navId: data.id, domEvent: data.event });
+            callback({ navId: data.id, domEvent: data.event });
           }
         },
       };
@@ -91,19 +91,19 @@ export function chromeInit() {
     },
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
-    on: (type: keyof typeof PUBLIC_EVENTS, callback: (...args: unknown[]) => boolean) => {
+    on: (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
       if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
         throw new Error(`Unknown event type: ${type}`);
       }
 
       const [listener, selector] = PUBLIC_EVENTS[type];
-      if (typeof selector === 'string') {
-        callback({
+      if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+        (callback as GenericCB)({
           data: get(store.getState(), selector) || {},
         });
       }
       if (typeof listener === 'function') {
-        return middlewareListener.addNew(listener(callback));
+        return middlewareListener.addNew(listener(callback as GenericCB));
       }
     },
     registerModule: (module?: string, manifest?: string) => store.dispatch(registerModule(module, manifest)),
