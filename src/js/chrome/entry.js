@@ -97,12 +97,12 @@ export function chromeInit() {
   };
 }
 
-export function bootstrap(libjwt, initFunc, getUser) {
+export function bootstrap(libjwt, initFunc, getUser, globalConfig) {
   return {
     chrome: {
       auth: {
         getOfflineToken: () => libjwt.getOfflineToken(),
-        doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken),
+        doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl),
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
         qe: qe,
@@ -123,6 +123,7 @@ export function bootstrap(libjwt, initFunc, getUser) {
       init: initFunc,
       isChrome2: true,
       enable: debugFunctions,
+      globalConfig,
     },
     experimental: {},
   };
