@@ -4,6 +4,7 @@ import { getUrl, isBeta, isProd } from '../../utils';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
+import { ChromeState } from '../../redux/store';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'openshift';
@@ -27,7 +28,7 @@ const getPageEventOptions = () => {
   return [
     {
       path,
-      url: `${window.location.origin}${path}`,
+      url: `${window.location.origin}${path}${window.location.search}`,
       isBeta: isBeta(),
       module: window._segment?.activeModule,
       ...window?._segment?.pageOptions,
@@ -40,15 +41,17 @@ const getPageEventOptions = () => {
   ];
 };
 
-const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules) =>
-  ({
+const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string) =>
+  moduleAPIKey ||
+  {
     prod: {
       openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
     },
     dev: {
       openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
     },
-  }[env]?.[module] || KEY_FALLBACK[env]);
+  }[env]?.[module] ||
+  KEY_FALLBACK[env];
 
 const registerUrlObserver = () => {
   /**
@@ -126,6 +129,7 @@ export type SegmentProviderProps = {
 export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
+  const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
   useEffect(() => {
     const disconnect = registerUrlObserver();
@@ -134,12 +138,15 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
 
   useEffect(() => {
     if (activeModule && user) {
+      /**
+       * Clean up custom page event data after module change
+       */
       window._segment = {
-        ...window._segment,
         groupId: user.identity.internal?.org_id,
         activeModule,
       };
-      const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules);
+      const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules, moduleAPIKey);
+      console.log({ newKey });
       const identityTraits = getIdentityTrais(user, pathname, activeModule);
       const identityOptions = {
         context: {
