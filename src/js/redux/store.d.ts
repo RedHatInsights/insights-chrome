@@ -4,6 +4,9 @@ import { NavItem } from '../types';
 
 export type ChromeModule = {
   manifestLocation: string;
+  analytics?: {
+    APIKey?: string;
+  };
 };
 
 // TODO: Update once navigation is mgrated to TS

@@ -112,7 +112,7 @@ export const loadLeftNavSegment = (schema: Navigation, segment: string, pathName
   },
 });
 
-export const loadModuesSchema = (schema: { [key: string]: ChromeModule }) => ({
+export const loadModulesSchema = (schema: { [key: string]: ChromeModule }) => ({
   type: actionTypes.LOAD_MODULES_SCHEMA,
   payload: {
     schema,

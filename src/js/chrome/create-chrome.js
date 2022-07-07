@@ -8,7 +8,7 @@ import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
  * @param {object} jwt JWT auth functions
  * @param {object} insights existing insights instance
  */
-const createChromeInstance = (jwt, insights) => {
+const createChromeInstance = (jwt, insights, globalConfig) => {
   const libjwt = jwt;
   const chromeInstance = {
     cache: undefined,
@@ -65,7 +65,7 @@ const createChromeInstance = (jwt, insights) => {
 
   const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
 
-  const chromeFunctions = bootstrap(libjwt, init, getUser);
+  const chromeFunctions = bootstrap(libjwt, init, getUser, globalConfig);
 
   chromeFunctions.chrome.getUserPermissions = async (app = '', bypassCache) => {
     await getUser();
