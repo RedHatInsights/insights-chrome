@@ -134,8 +134,10 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
 
   useEffect(() => {
     if (activeModule && user) {
+      /**
+       * Clean up custom page event data after module change
+       */
       window._segment = {
-        ...window._segment,
         groupId: user.identity.internal?.org_id,
         activeModule,
       };
