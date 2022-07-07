@@ -67,12 +67,12 @@ export function decodeToken(str: string): DecodedToken {
   return res;
 }
 
-export const doOffline = (key: string, val: string) => {
+export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
   const url = urijs(window.location.href);
   url.removeSearch(key);
   url.addSearch(key, val);
 
-  Promise.resolve(insightsUrl(DEFAULT_ROUTES)).then(async (ssoUrl) => {
+  Promise.resolve(insightsUrl(DEFAULT_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
     const options: KeycloakInitOptions & KeycloakConfig & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
@@ -102,14 +102,14 @@ export interface JWTInitOptions extends KeycloakInitOptions {
 }
 
 /*** Initialization ***/
-export const init = (options: JWTInitOptions) => {
+export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
   log('Initializing');
 
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
 
   priv.setCookie({ cookieName });
 
-  return Promise.resolve(insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES)).then((ssoUrl) => {
+  return Promise.resolve(insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES, configSsoUrl)).then((ssoUrl) => {
     //constructor for new Keycloak Object?
     options.url = ssoUrl;
     options.clientId = 'cloud-services';
@@ -226,9 +226,6 @@ export function login() {
 
 export function logout(bounce?: boolean) {
   log('Logging out');
-
-  // Clear cookies and tokens
-  priv.clearToken();
   const cookieName = priv.getCookie()?.cookieName;
   if (cookieName) {
     cookie.remove(cookieName);
@@ -254,6 +251,9 @@ export function logout(bounce?: boolean) {
     priv.logout({
       redirectUri: `https://${window.location.host}${isBeta}`,
     });
+
+    // Clear cookies and tokens
+    priv.clearToken();
   }
 }
 
@@ -377,6 +377,6 @@ export const getEncodedToken = () => {
 };
 
 // Keycloak server URL
-export const getUrl = () => {
-  return insightsUrl(DEFAULT_ROUTES);
+export const getUrl = (ssoUrl?: string) => {
+  return insightsUrl(DEFAULT_ROUTES, ssoUrl);
 };

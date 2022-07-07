@@ -3,6 +3,7 @@ import { Store } from 'redux';
 import { DEFAULT_ROUTES } from './jwt/constants';
 import flatMap from 'lodash/flatMap';
 import { NavItem } from './types';
+import axios from 'axios';
 
 export function getWindow() {
   return window;
@@ -235,3 +236,28 @@ export const levelArray = (navItems: NavItem[]): string[] => {
     return [];
   });
 };
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function noop() {}
+
+export const trustarcScriptSetup = () => {
+  const trustarcScript = document.createElement('script');
+  trustarcScript.id = 'trustarc';
+
+  if (location.host === 'console.redhat.com') {
+    trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
+  } else {
+    trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.stage.js';
+  }
+
+  document.body.appendChild(trustarcScript);
+};
+
+export const loadFedModules = () =>
+  axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
+  });

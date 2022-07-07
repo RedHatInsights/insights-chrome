@@ -40,7 +40,7 @@ export function wipePostbackParamsThatAreNotForUs() {
   }
 }
 
-export async function getOfflineToken(realm: string, clientId: string) {
+export async function getOfflineToken(realm: string, clientId: string, configSsoUrl?: string) {
   const postbackUrl = getPostbackUrl();
 
   if (priv.response) {
@@ -54,7 +54,7 @@ export async function getOfflineToken(realm: string, clientId: string) {
     return Promise.reject('not available');
   }
 
-  const ssoUrl = await insightsUrl(DEFAULT_ROUTES);
+  const ssoUrl = await insightsUrl(DEFAULT_ROUTES, configSsoUrl);
 
   const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
   const params = parseHashString(postbackUrl);

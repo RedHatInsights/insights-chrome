@@ -318,5 +318,10 @@ describe('JWT', () => {
       const url = await jwt.getUrl();
       expect(url).toBe('https://sso.qa.redhat.com/auth');
     });
+
+    test('getUrl with custom URL', async () => {
+      const url = await jwt.getUrl('https://custom-url.com/auth');
+      expect(url).toBe('https://custom-url.com/auth');
+    });
   });
 });
