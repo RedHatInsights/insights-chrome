@@ -27,7 +27,7 @@ const getPageEventOptions = () => {
   return [
     {
       path,
-      url: `${window.location.origin}${path}`,
+      url: `${window.location.origin}${path}${window.location.search}`,
       isBeta: isBeta(),
       module: window._segment?.activeModule,
       ...window?._segment?.pageOptions,
