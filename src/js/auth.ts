@@ -24,7 +24,7 @@ export function crossAccountBouncer() {
   window.location.reload();
 }
 
-export default () => {
+export default ({ ssoUrl }: { ssoUrl?: string }) => {
   console.time(TIMER_STR); // eslint-disable-line no-console
   const options = {
     ...defaultOptions,
@@ -43,10 +43,10 @@ export default () => {
     options.token = token;
   }
 
-  const promise = jwt.init(options).then(bouncer);
+  const promise = jwt.init(options, ssoUrl).then(bouncer);
 
   return {
-    getOfflineToken: () => getOfflineToken(options.realm, options.clientId),
+    getOfflineToken: () => getOfflineToken(options.realm, options.clientId, ssoUrl),
     jwt: jwt,
     initPromise: promise,
   };

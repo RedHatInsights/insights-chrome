@@ -30,8 +30,8 @@ const initializeAccessRequestCookies = () => {
   }
 };
 
-const libjwtSetup = () => {
-  const libjwt = auth();
+const libjwtSetup = (chromeConfig) => {
+  const libjwt = auth(chromeConfig || {});
 
   libjwt.initPromise.then(() => {
     libjwt.jwt
@@ -55,20 +55,21 @@ const App = () => {
   const [jwtState, setJwtState] = useState(false);
 
   useEffect(() => {
-    initializeAccessRequestCookies();
-    const libjwt = libjwtSetup();
-    libjwt.initPromise.then(() => setJwtState(true));
+    loadFedModules().then(({ data }) => {
+      const { chrome: chromeConfig } = data;
+      dispatch(loadModulesSchema(data));
+      initializeAccessRequestCookies();
+      const libjwt = libjwtSetup(chromeConfig);
+      libjwt.initPromise.then(() => setJwtState(true));
 
-    window.insights = createChromeInstance(libjwt, window.insights);
-
+      window.insights = createChromeInstance(libjwt, window.insights, data);
+    });
     if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
       registerUrlObserver(window._satellite.pageBottom);
     }
 
     trustarcScriptSetup();
-
-    loadFedModules().then(({ data }) => dispatch(loadModulesSchema(data)));
   }, []);
 
   useEffect(() => {
