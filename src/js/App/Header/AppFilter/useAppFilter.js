@@ -1,12 +1,21 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta, isFedRamp } from '../../../utils';
+import { isBeta, isFedRamp, isProd } from '../../../utils';
 import { evaluateVisibility } from '../../../utils/isNavItemVisible';
 import { computeFedrampResult } from '../../../utils/useRenderFedramp';
 
-export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings'];
-const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions'];
+export const requiredBundles = [
+  'application-services',
+  'openshift',
+  'insights',
+  'edge',
+  'ansible',
+  'settings',
+  ...(isBeta() && !isProd() ? ['iam'] : []),
+];
+
+const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions', 'iam'];
 
 const isFedrampEnv = isFedRamp();
 
