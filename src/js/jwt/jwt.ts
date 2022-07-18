@@ -355,7 +355,7 @@ export function setCookie(token?: string) {
 function setRefresh(refreshToken?: string) {
   log('Setting the refresh token');
   if (refreshToken) {
-    cookie.set('cs_jwt_refresh', refreshToken, { secure: true });
+    localStorage.setItem('cs_jwt_refresh', refreshToken);
   }
 }
 
