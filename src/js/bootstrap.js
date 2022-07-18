@@ -45,8 +45,6 @@ const libjwtSetup = (chromeConfig) => {
   return libjwt;
 };
 
-trustarcScriptSetup();
-
 const App = () => {
   const modules = useSelector(({ chrome }) => chrome?.modules);
   const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
