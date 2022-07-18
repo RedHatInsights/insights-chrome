@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils';
@@ -41,9 +41,10 @@ const Activation = ({ user, request }) => {
   }, []);
 
   return (
-    <Modal title="Thank you for submitting your activation request" isOpen={isModalOpen} variant={ModalVariant.medium} onClose={onModalClose}>
-      {' '}
-      Red Hat will be in touch with you shortly to confirm your subscription benefits are ready to use
+    <Modal isOpen={isModalOpen} onClose={onModalClose} title="Thank you for submitting your activation request" variant={ModalVariant.medium}>
+      <TextContent>
+        <Text>Red Hat will be in touch within 1 business day to confirm your subscription benefits are ready to be activated.</Text>
+      </TextContent>
     </Modal>
   );
 };

@@ -22,7 +22,7 @@ export const initChromeAuth = () => {
 
   wipePostbackParamsThatAreNotForUs();
   const token = cookie.get(options.cookieName);
-  const refreshToken = cookie.get('cs_jwt_refresh');
+  const refreshToken = localStorage.getItem('cs_jwt_refresh');
 
   // If we find an existing token, use it
   // so that we dont auth even when a valid token is present
