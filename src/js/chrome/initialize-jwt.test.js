@@ -1,8 +1,6 @@
 import initializeJWT from './initialize-jwt';
 import encodedToken from '../../../testdata/encodedToken.json';
 
-// jest.mock('../jwt/jwt.ts');
-
 describe('initializeJWT', () => {
   const initPromise = Promise.resolve();
   const libJWT = {
