@@ -20,8 +20,8 @@ const Activation = ({ user, request }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, Send to rbernlei@redhat.com`, //eslint-disable-line
-          summary: `Activation Request - assign to rbernlei@redhat.com`,
+          description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}`, //eslint-disable-line
+          summary: `Activation Request - for cloud-marketplace-enablement team`,
           labels: [request],
         }),
       });
