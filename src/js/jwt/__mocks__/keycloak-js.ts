@@ -6,7 +6,7 @@ class Keycloak {
   tokenParsed: any;
   refreshToken: any;
   redirectUri: any;
-  callback_id;
+  callback_id: any;
   authenticated: any;
   useNativePromise: any;
   responseMode: any;
