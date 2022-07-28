@@ -14,6 +14,8 @@ const KEY_FALLBACK = {
   dev: 'Aoak9IFNixtkZJRatfZG9cY1RHxbATW1',
 };
 
+const DEV_ENV = localStorage.getItem('chrome:analytics:dev') === 'true' || !isProd();
+
 function getAdobeVisitorId() {
   const visitor = window?.s?.visitor;
   if (visitor) {
@@ -146,7 +148,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         groupId: user.identity.internal?.org_id,
         activeModule,
       };
-      const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules, moduleAPIKey);
+      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
       const identityTraits = getIdentityTrais(user, pathname, activeModule);
       const identityOptions = {
         context: {
