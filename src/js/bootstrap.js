@@ -30,14 +30,16 @@ const initializeAccessRequestCookies = () => {
   }
 };
 
-const libjwtSetup = (chromeConfig) => {
+const libjwtSetup = (chromeConfig, setReadyState) => {
   const libjwt = auth(chromeConfig || {});
 
   libjwt.initPromise.then(() => {
-    libjwt.jwt
+    return libjwt.jwt
       .getUserInfo()
       .then((...data) => {
+        console.log('sentry step');
         sentry(...data);
+        setReadyState(true);
       })
       .catch(noop);
   });
@@ -57,8 +59,7 @@ const App = () => {
       const { chrome: chromeConfig } = data;
       dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
-      const libjwt = libjwtSetup(chromeConfig);
-      libjwt.initPromise.then(() => setJwtState(true));
+      const libjwt = libjwtSetup(chromeConfig, setJwtState);
 
       window.insights = createChromeInstance(libjwt, window.insights, data);
     });
