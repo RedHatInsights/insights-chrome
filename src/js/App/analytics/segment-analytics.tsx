@@ -147,7 +147,6 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         activeModule,
       };
       const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules, moduleAPIKey);
-      console.log({ newKey });
       const identityTraits = getIdentityTrais(user, pathname, activeModule);
       const identityOptions = {
         context: {
