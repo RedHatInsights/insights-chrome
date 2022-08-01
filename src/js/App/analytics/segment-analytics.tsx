@@ -14,6 +14,8 @@ const KEY_FALLBACK = {
   dev: 'Aoak9IFNixtkZJRatfZG9cY1RHxbATW1',
 };
 
+const DEV_ENV = localStorage.getItem('chrome:analytics:dev') === 'true' || !isProd();
+
 function getAdobeVisitorId() {
   const visitor = window?.s?.visitor;
   if (visitor) {
@@ -127,6 +129,7 @@ export type SegmentProviderProps = {
 };
 
 export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
+  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => modules?.[activeModule]?.analytics?.APIKey);
@@ -137,7 +140,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
   }, []);
 
   useEffect(() => {
-    if (activeModule && user) {
+    if (!isDisabled && activeModule && user) {
       /**
        * Clean up custom page event data after module change
        */
@@ -145,8 +148,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         groupId: user.identity.internal?.org_id,
         activeModule,
       };
-      const newKey = getAPIKey(isProd() ? 'prod' : 'dev', activeModule as SegmentModules, moduleAPIKey);
-      console.log({ newKey });
+      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
       const identityTraits = getIdentityTrais(user, pathname, activeModule);
       const identityOptions = {
         context: {
@@ -169,7 +171,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         analytics.current.page(...getPageEventOptions());
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-      } else if (analytics.current?.instance?.settings.writeKey !== newKey) {
+      } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
         window.segment = undefined;
         analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
         window.segment = analytics.current;

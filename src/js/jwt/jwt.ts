@@ -207,7 +207,6 @@ export function isExistingValid(token?: string) {
 export function initSuccess() {
   log('JWT Initialized');
   setCookie(priv.getToken());
-  setRefresh(priv.getRefershToken());
 }
 
 // keycloak init failed
@@ -349,13 +348,6 @@ export function setCookie(token?: string) {
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${token};` + `path=/;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
-  }
-}
-
-function setRefresh(refreshToken?: string) {
-  log('Setting the refresh token');
-  if (refreshToken) {
-    localStorage.setItem('cs_jwt_refresh', refreshToken);
   }
 }
 

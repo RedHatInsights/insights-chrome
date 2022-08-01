@@ -41,7 +41,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
     role="menu"
   >
     <li
-      role="menuitem"
+      role="none"
     >
       <a
         aria-disabled="false"
@@ -51,6 +51,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
         data-ouia-safe="true"
         href="url1"
         rel="noopener noreferrer"
+        role="menuitem"
         tabindex="-1"
         target="_blank"
       >
@@ -58,7 +59,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
       </a>
     </li>
     <li
-      role="menuitem"
+      role="none"
     >
       <button
         aria-disabled="false"
@@ -66,6 +67,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
         data-ouia-component-id="title2"
         data-ouia-component-type="PF4/DropdownItem"
         data-ouia-safe="true"
+        role="menuitem"
         tabindex="-1"
         type="button"
       >
