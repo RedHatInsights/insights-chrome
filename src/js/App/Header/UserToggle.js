@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
   const env = window.insights.chrome.getEnvironment();
   const isProd = window.insights.chrome.isProd;
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
+  const accountNumberTooltip = "Use this number when contacting Red hat for support. If you don’t have any active subscriptions, you will not have an account number.";
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -20,10 +22,11 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     </DropdownItem>,
     <React.Fragment key="account wrapper">
       {accountNumber > -1 && (
-        <DropdownItem key="Account" isDisabled>
+        <DropdownItem key="Account" isPlainText>
           <dl className="chr-c-dropdown-item__stack">
             <dt className="chr-c-dropdown-item__stack--header">Account number:</dt>
-            <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
+            <dd className="chr-c-dropdown-item__stack--value">
+              {accountNumber} <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip} isVisible="true"> <QuestionCircleIcon /> </Tooltip></dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
           </dl>
         </DropdownItem>
