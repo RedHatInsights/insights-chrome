@@ -146,7 +146,7 @@ export const updateAccessRequestsNotifications = (payload: { count: number; data
   payload,
 });
 
-export const markAccessRequestNotification = (payload: string) => ({
+export const markAccessRequestNotification = (payload: string | number) => ({
   type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
   payload,
 });
