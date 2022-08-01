@@ -6,7 +6,7 @@ import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
 
-export function userLogIn(user: ChromeUser) {
+export function userLogIn(user: ChromeUser | boolean) {
   return {
     type: actionTypes.USER_LOGIN,
     payload: user,
@@ -16,7 +16,7 @@ export function userLogIn(user: ChromeUser) {
 /*
  *TODO: The event type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
  */
-export function appNavClick(item: { id?: string }, event: NavDOMEvent) {
+export function appNavClick(item: { id?: string; custom?: boolean }, event?: NavDOMEvent) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item?.id, event } };
 }
 

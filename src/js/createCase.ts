@@ -7,6 +7,7 @@ const log = logger('createCase.js');
 import { getEnvDetails, getUrl } from './utils';
 import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from './redux-config';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -41,7 +42,7 @@ function registerProduct() {
   return product?.name;
 }
 
-async function getAppInfo(activeModule) {
+async function getAppInfo(activeModule: string) {
   let path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${activeModule}/app.info.json`;
   try {
     return activeModule && (await (await fetch(path)).json());
@@ -64,15 +65,20 @@ async function getAppInfo(activeModule) {
 
 async function getProductData() {
   const { store } = spinUpStore();
-  const activeModule = store.getState()?.chrome?.activeModule;
+  const activeModule = store.getState().chrome.activeModule || '';
   const appData = await getAppInfo(activeModule);
   return appData;
 }
 
-export async function createSupportCase(userInfo, fields) {
+export async function createSupportCase(
+  userInfo: ChromeUser['identity'],
+  fields?: {
+    caseFields: Record<string, unknown>;
+  }
+) {
   const currentProduct = registerProduct() || 'Other';
   const { src_hash, app_name } = await getProductData();
-  const portalUrl = `${getEnvDetails().portal}`;
+  const portalUrl = `${getEnvDetails()?.portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
 
   log('Creating a support case');
@@ -86,11 +92,11 @@ export async function createSupportCase(userInfo, fields) {
     },
     body: JSON.stringify({
       session: {
-        createdBy: `${userInfo.user.username}`,
+        createdBy: `${userInfo.user?.username}`,
         userAgent: 'console.redhat.com',
       },
       sessionDetails: {
-        createdBy: `${userInfo.user.username}`,
+        createdBy: `${userInfo.user?.username}`,
         environment: `Production${window.insights.chrome.isBeta() ? ' Beta' : ''}, ${
           src_hash
             ? `Current app: ${app_name}, Current app hash: ${src_hash}, Current URL: ${window.location.href}`
@@ -112,7 +118,7 @@ export async function createSupportCase(userInfo, fields) {
     .catch((err) => Sentry.captureException(err));
 }
 
-function createSupportSentry(session, fields) {
+function createSupportSentry(session: string, fields?: any) {
   if (window.insights.chrome.isProd) {
     log('Capturing support case information in Sentry');
     // this should capture the app information anyway, so no need to pass extra data
