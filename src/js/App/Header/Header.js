@@ -8,7 +8,6 @@ import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, 
 import ContextSwitcher from './ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
-import { isContextSwitcherEnabled } from '../../utils/isAppNavEnabled';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
@@ -52,7 +51,7 @@ export const Header = () => {
                   <AppFilter />
                 </ToolbarItem>
               )}
-              {user && isContextSwitcherEnabled && (
+              {user && (
                 <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
                   <ContextSwitcher user={user} className="data-hj-suppress" />
                 </ToolbarItem>
