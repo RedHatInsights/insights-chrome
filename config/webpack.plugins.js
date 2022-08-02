@@ -11,7 +11,7 @@ const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-con
   modules: 'chrome',
 });
 
-const plugins = (dev = false) => [
+const plugins = (dev = false, beta = false) => [
   ...(process.env.SOURCEMAPS === 'true'
     ? [
         new webpack.SourceMapDevToolPlugin({
@@ -53,6 +53,7 @@ const plugins = (dev = false) => [
     inject: 'body',
     minify: false,
     filename: dev ? 'index.html' : '../index.html',
+    base: beta ? '/beta' : '/',
   }),
   new HtmlWebpackPlugin({
     title: 'Authenticating - console.redhat.com',
