@@ -70,7 +70,7 @@ const RootApp = (props) => {
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
 
-            <QuickStartContainer className="pf-u-h-100vh" {...quickStartProps}>
+            <QuickStartContainer {...quickStartProps}>
               <HelpTopicContainer helpTopics={helpTopics}>
                 <ScalprumRoot {...props} helpTopics={helpTopics} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
               </HelpTopicContainer>
