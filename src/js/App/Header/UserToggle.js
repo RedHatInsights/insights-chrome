@@ -25,10 +25,11 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       {accountNumber > -1 && (
         <DropdownItem key="Account" isPlainText>
           <dl className="chr-c-dropdown-item__stack">
-            <dt className="chr-c-dropdown-item__stack--header">Account number:
+            <dt className="chr-c-dropdown-item__stack--header">
+              Account number:
               <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip} distance="30">
-                  <QuestionCircleIcon />
-                </Tooltip>
+                <QuestionCircleIcon />
+              </Tooltip>
             </dt>
             <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
