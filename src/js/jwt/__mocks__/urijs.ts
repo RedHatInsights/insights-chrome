@@ -1,13 +1,13 @@
-const urijs = (inputUrl) => {
-  let url = inputUrl;
-  let searchMap = {
+const urijs = (inputUrl: string) => {
+  const url = inputUrl;
+  const searchMap: { [key: string]: any } = {
     foo: 'bar',
   };
   return {
-    removeSearch: (key) => {
+    removeSearch: (key: string) => {
       delete searchMap[key];
     },
-    addSearch: (key, val) => {
+    addSearch: (key: string, val: any) => {
       searchMap[key] = val;
     },
     toString: () => {
