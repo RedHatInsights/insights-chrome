@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
@@ -11,7 +11,8 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
   const env = window.insights.chrome.getEnvironment();
   const isProd = window.insights.chrome.isProd;
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
-  const accountNumberTooltip = "Use this number when contacting Red hat for support. If you don’t have any active subscriptions, you will not have an account number.";
+  const accountNumberTooltip =
+    "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number.";
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -24,9 +25,12 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       {accountNumber > -1 && (
         <DropdownItem key="Account" isPlainText>
           <dl className="chr-c-dropdown-item__stack">
-            <dt className="chr-c-dropdown-item__stack--header">Account number:</dt>
-            <dd className="chr-c-dropdown-item__stack--value">
-              {accountNumber} <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip} isVisible="true"> <QuestionCircleIcon /> </Tooltip></dd>
+            <dt className="chr-c-dropdown-item__stack--header">Account number:
+              <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip} distance="30">
+                  <QuestionCircleIcon />
+                </Tooltip>
+            </dt>
+            <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
           </dl>
         </DropdownItem>
