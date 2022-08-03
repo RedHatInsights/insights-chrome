@@ -27,7 +27,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
           <dl className="chr-c-dropdown-item__stack">
             <dt className="chr-c-dropdown-item__stack--header">
               Account number:
-              <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip} distance="30">
+              <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
                 <QuestionCircleIcon />
               </Tooltip>
             </dt>
