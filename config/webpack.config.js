@@ -97,7 +97,7 @@ const commonConfig = ({ dev }) => {
         },
       ],
     },
-    plugins: plugins(dev),
+    plugins: plugins(dev, process.env.BETA === 'true'),
     devServer: {
       allowedHosts: 'all',
       headers: {

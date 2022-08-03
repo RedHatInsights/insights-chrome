@@ -2,13 +2,15 @@ import qe from './iqeEnablement';
 import { bootstrap, chromeInit } from './entry';
 import initializeJWT from './initialize-jwt';
 import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
+import { LibJWT } from '../auth';
+import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 
 /**
  * Create a chrome API instance
  * @param {object} jwt JWT auth functions
  * @param {object} insights existing insights instance
  */
-const createChromeInstance = (jwt, insights, globalConfig) => {
+const createChromeInstance = (jwt: LibJWT, insights: Partial<ChromeAPI>, globalConfig: { chrome?: { ssoUrl?: string } }) => {
   const libjwt = jwt;
   const chromeInstance = {
     cache: undefined,
@@ -22,10 +24,10 @@ const createChromeInstance = (jwt, insights, globalConfig) => {
      */
     const rootEl = document.getElementById('root');
     if (rootEl) {
-      rootEl.setAttribute('data-ouia-safe', true);
+      rootEl.setAttribute('data-ouia-safe', 'true');
     }
 
-    const initializedChrome = {
+    const initializedChrome: ChromeAPI = {
       ...window.insights.chrome,
       ...chromeInit(),
     };
@@ -41,7 +43,7 @@ const createChromeInstance = (jwt, insights, globalConfig) => {
    * this only does something if the correct localstorage
    * vars are set
    */
-  const getUser = () => {
+  const getUser = (): Promise<ChromeUser | undefined | void> => {
     qe.init();
     return libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
       libjwt.jwt.logoutAllTabs();
@@ -53,23 +55,29 @@ const createChromeInstance = (jwt, insights, globalConfig) => {
    * @param {function} fn function that requires global chrome cache
    * @returns {Promise}
    */
-  const bufferAsyncFunction = (fn) => {
+  const bufferAsyncFunction = (fn: (...args: any[]) => any) => {
     if (chromeInstance.cache) {
       return fn;
     }
+
     /**
      * Wait for JWT initialization to happen and cache initialization in chrome instance
      */
-    return (...args) => jwtResolver.then(() => fn(...args));
+    return (...args: any[]) => jwtResolver.then(() => fn(...(args || [])));
   };
 
-  const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher(chromeInstance));
+  const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher());
 
-  const chromeFunctions = bootstrap(libjwt, init, getUser, globalConfig);
-
-  chromeFunctions.chrome.getUserPermissions = async (app = '', bypassCache) => {
-    await getUser();
-    return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
+  const bootstrapFunctions = bootstrap(libjwt, init, getUser, globalConfig);
+  const chromeFunctions = {
+    ...bootstrapFunctions,
+    chrome: {
+      ...bootstrapFunctions.chrome,
+      getUserPermissions: async (app = '', bypassCache?: boolean) => {
+        await getUser();
+        return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
+      },
+    },
   };
 
   return {
