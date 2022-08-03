@@ -46,6 +46,7 @@ const SettingsButton = ({ settingsMenuDropdownItems }) => (
     key="Settings menu"
     icon={() => <CogIcon />}
     id="SettingsMenu"
+    ariaLabel="Settings menu"
     ouiaId="chrome-settings"
     hasToggleIndicator={null}
     widget-type="SettingsMenu"
@@ -149,6 +150,7 @@ const Tools = () => {
       icon={QuestionCircleIcon}
       id="HelpMenu"
       ouiaId="chrome-help"
+      ariaLabel="Help menu"
       hasToggleIndicator={null}
       dropdownItems={aboutMenuDropdownItems}
     />
@@ -188,7 +190,7 @@ const Tools = () => {
           <ThemeToggle />
         </ToolbarItem>
       )}
-      {isInternal && !window.insights.chrome.isProd && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
+      {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
       {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
       <AboutButton />
 

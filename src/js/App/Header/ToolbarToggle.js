@@ -81,6 +81,7 @@ class ToolbarToggle extends Component {
         ouiaId={this.props.id}
         toggleIndicator={this.props.hasToggleIndicator}
         onToggle={this.onToggle}
+        aria-label={this.props.ariaLabel}
       >
         {this.props.icon && <this.props.icon />}
       </DropdownToggle>
@@ -109,6 +110,7 @@ ToolbarToggle.propTypes = {
   hasToggleIndicator: PropTypes.bool,
   ouiaId: PropTypes.string,
   isHidden: PropTypes.bool,
+  ariaLabel: PropTypes.string,
 };
 
 export default ToolbarToggle;
