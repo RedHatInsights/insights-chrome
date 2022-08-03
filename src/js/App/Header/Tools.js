@@ -8,7 +8,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import { getSection, getUrl, isBeta, isProd } from '../../utils';
+import { getSection, getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 
@@ -188,7 +188,7 @@ const Tools = () => {
           <ThemeToggle />
         </ToolbarItem>
       )}
-      {isInternal && !isProd() && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
+      {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
       {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
       <AboutButton />
 
