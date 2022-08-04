@@ -86,7 +86,7 @@ const ShieldedRoot = memo(
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
       >
         <div ref={insightsContentRef} className={classnames('chr-render', { 'pf-u-h-100vh': !isGlobalFilterEnabled })}>
-          {isGlobalFilterEnabled && <GlobalFilter />}
+          {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
           {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
           <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
           <main className="pf-c-page__main" id="no-access"></main>
