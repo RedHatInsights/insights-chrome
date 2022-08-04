@@ -23,13 +23,15 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     </DropdownItem>,
     <React.Fragment key="account wrapper">
       {accountNumber > -1 && (
-        <DropdownItem key="Account" isPlainText>
+        <DropdownItem key="Account" isPlainText className="disabled-pointer">
           <dl className="chr-c-dropdown-item__stack">
             <dt className="chr-c-dropdown-item__stack--header">
               Account number:
-              <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
+              <span className="visible-pointer">
+                <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
+                  <QuestionCircleIcon />
+                </Tooltip>
+              </span>
             </dt>
             <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}

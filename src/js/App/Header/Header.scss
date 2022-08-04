@@ -30,3 +30,12 @@
 .chr-pen-test {
   border-top: 3px solid var(--pf-global--palette--purple-300);
 }
+
+.disabled-pointer {
+  pointer-events: none;
+}
+
+.visible-pointer {
+  margin-left: 5px;
+  pointer-events: auto;
+}
