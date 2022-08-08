@@ -49,7 +49,7 @@ describe('DefaultLayout', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
+    expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
 
   it('should render correctly', () => {
@@ -61,7 +61,7 @@ describe('DefaultLayout', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
+    expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
 
   it('should render correctly with pageAction', () => {
@@ -79,7 +79,7 @@ describe('DefaultLayout', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
+    expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
 
   it('should render correctly with pageObjectId', () => {
@@ -96,7 +96,7 @@ describe('DefaultLayout', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
+    expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
 
   it('should render correctly with pageObjectId and pageAction', () => {
@@ -114,6 +114,6 @@ describe('DefaultLayout', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(container.querySelector('.pf-c-drawer__content')).toMatchSnapshot();
+    expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
 });

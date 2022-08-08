@@ -1,2 +1,2 @@
-export { default } from './Feedback';
+export { default } from './FeedbackModal';
 export { default as usePendoFeedback } from './usePendoFeedback';
