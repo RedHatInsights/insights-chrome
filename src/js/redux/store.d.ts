@@ -103,3 +103,8 @@ export type GlobalFilterState = {
   globalFilterHidden: boolean;
   scope?: string;
 };
+
+export type ReduxState = {
+  chrome: ChromeState;
+  globalFilter: GlobalFilterState;
+};

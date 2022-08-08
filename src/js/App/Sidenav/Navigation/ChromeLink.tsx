@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,7 +14,7 @@ export type NavDOMEvent = {
   target?: HTMLAnchorElement | null;
 };
 
-interface RefreshLinkProps extends React.DetailedReactHTMLElement<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
   onLinkClick?: OnLinkClick;
   isBeta?: boolean;
@@ -140,14 +139,6 @@ const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
       {...rest}
     />
   );
-};
-
-RefreshLink.propTypes = {
-  href: PropTypes.string.isRequired,
-  isExternal: PropTypes.bool,
-  onLinkClick: PropTypes.func,
-  isBeta: PropTypes.bool,
-  currAppId: PropTypes.any,
 };
 
 const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {
