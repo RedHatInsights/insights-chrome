@@ -10,7 +10,7 @@ import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
-const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, ...props }) => {
+const ChromeRoute = ({ scope, module, insightsContentRef, scopeClass, ...props }) => {
   const dispatch = useDispatch();
   const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
   const user = useSelector(({ chrome: { user } }) => user);
@@ -41,41 +41,18 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, .
      * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
      */
     setActiveHelpTopicByName && setActiveHelpTopicByName('');
-  }, [scope]);
-
-  useEffect(() => {
-    let contentElement;
-    if (dynamic === false) {
-      contentElement = document.getElementById('root');
-      if (contentElement && insightsContentRef) {
-        insightsContentRef.current.appendChild(contentElement);
-        contentElement.hidden = false;
-        contentElement.style.display = 'initial';
-      }
-    }
 
     return () => {
       /**
        * Reset global filter when switching application
        */
       dispatch(toggleGlobalFilter(false));
-      /**
-       * We need to preserve the chrome 1 element in case the route is destroyed re-created.
-       */
-      if (dynamic === false && contentElement) {
-        document.body.appendChild(contentElement);
-        insightsContentRef.current.id = 'root';
-      }
     };
-  }, []);
-
-  if (dynamic === false) {
-    return null;
-  }
+  }, [scope]);
 
   return (
     <Route key={props.path} {...props}>
-      <main role="main" className={classNames(scopeClass, scope)}>
+      <div className={classNames(scopeClass, scope)}>
         <ScalprumComponent
           ErrorComponent={<ErrorComponent />}
           appName={scope}
@@ -84,7 +61,7 @@ const ChromeRoute = ({ scope, module, insightsContentRef, dynamic, scopeClass, .
           scope={scope}
           module={module}
         />
-      </main>
+      </div>
     </Route>
   );
 };
@@ -94,7 +71,6 @@ ChromeRoute.propTypes = {
   module: PropTypes.string,
   path: PropTypes.string.isRequired,
   exact: PropTypes.bool,
-  dynamic: PropTypes.bool,
   insightsContentRef: PropTypes.object.isRequired,
   scopeClass: PropTypes.string,
 };
