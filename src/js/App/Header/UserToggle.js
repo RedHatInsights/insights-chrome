@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,6 +11,8 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
   const env = window.insights.chrome.getEnvironment();
   const isProd = window.insights.chrome.isProd;
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
+  const accountNumberTooltip =
+    "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number.";
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -20,9 +23,16 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     </DropdownItem>,
     <React.Fragment key="account wrapper">
       {accountNumber > -1 && (
-        <DropdownItem key="Account" isDisabled>
+        <DropdownItem key="Account" isPlainText className="disabled-pointer">
           <dl className="chr-c-dropdown-item__stack">
-            <dt className="chr-c-dropdown-item__stack--header">Account number:</dt>
+            <dt className="chr-c-dropdown-item__stack--header">
+              Account number:
+              <span className="visible-pointer pf-u-ml-sm">
+                <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
+                  <QuestionCircleIcon />
+                </Tooltip>
+              </span>
+            </dt>
             <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
           </dl>

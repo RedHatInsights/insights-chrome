@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable prefer-rest-params */
 import { crossAccountBouncer } from '../auth';
 
-let xhrResults = [];
-let fetchResults = {};
+// TODO: Refactor this file to use modern JS
+
+let xhrResults: XMLHttpRequest[] = [];
+const fetchResults: Record<string, unknown> = {};
 let initted = false;
 
 const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
@@ -19,8 +23,9 @@ function init() {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
-    // eslint-disable-line func-names
+    // @ts-ignore
     this._url = url;
+    // @ts-ignore
     const req = open.apply(this, arguments);
 
     return req;
@@ -37,6 +42,7 @@ function init() {
         crossAccountBouncer();
       }
     };
+    // @ts-ignore
     return send.apply(this, arguments);
   };
 
@@ -45,8 +51,8 @@ function init() {
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
   window.fetch = function fetchReplacement(path = '', options, ...rest) {
-    let tid = Math.random().toString(36);
-    let prom = oldFetch.apply(this, [
+    const tid = Math.random().toString(36);
+    const prom = oldFetch.apply(this, [
       path,
       {
         ...(options || {}),
@@ -84,13 +90,15 @@ export default {
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
     xhrResults = xhrResults.filter((result) => result.readyState !== 4 && result.readyState !== 0);
-    xhrRemoved.map((e) => console.log(`[iqe] xhr complete:   ${e._url}`)); // eslint-disable-line no-console
-    xhrResults.map((e) => console.log(`[iqe] xhr incomplete: ${e._url}`)); // eslint-disable-line no-console
-    Object.values(fetchResults).map((e) => console.log(`[iqe] fetch incomplete: ${e}`)); // eslint-disable-line no-console
+    // @ts-ignore
+    xhrRemoved.map((e) => console.log(`[iqe] xhr complete:   ${e._url}`));
+    // @ts-ignore
+    xhrResults.map((e) => console.log(`[iqe] xhr incomplete: ${e._url}`));
+    Object.values(fetchResults).map((e) => console.log(`[iqe] fetch incomplete: ${e}`));
 
     return xhrResults.length > 0 || Object.values(fetchResults).length > 0;
   },
-  isPageSafe: () => !document.querySelectorAll('[data-ouia-safe=false]').length !== 0,
+  isPageSafe: () => document.querySelectorAll('[data-ouia-safe=false]').length === 0,
   xhrResults: () => {
     return xhrResults;
   },

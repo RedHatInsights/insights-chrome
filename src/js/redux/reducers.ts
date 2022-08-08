@@ -54,7 +54,7 @@ export function onRegisterModule(
     };
   }
 ): ChromeState {
-  const isModuleLoaded = state.modules[payload.module];
+  const isModuleLoaded = state.modules?.[payload.module];
   if (!isModuleLoaded) {
     return {
       ...state,

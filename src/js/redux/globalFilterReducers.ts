@@ -54,7 +54,7 @@ export function onGetAllTagsPending(state: GlobalFilterState): GlobalFilterState
   };
 }
 
-export function onSetGlobalFilterScope(state: GlobalFilterState, { payload }: { payload: unknown }): GlobalFilterState {
+export function onSetGlobalFilterScope(state: GlobalFilterState, { payload }: { payload: string }): GlobalFilterState {
   return {
     ...state,
     scope: payload,

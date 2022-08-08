@@ -1,5 +1,5 @@
-const functionBuilder = (key, value) => {
-  window.localStorage && window.localStorage.setItem(key, value);
+const functionBuilder = (key: string, value: boolean | number | string) => {
+  window.localStorage && window.localStorage.setItem(key, value.toString());
   return () => window.localStorage && window.localStorage.removeItem(key);
 };
 

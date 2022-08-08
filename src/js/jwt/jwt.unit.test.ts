@@ -260,7 +260,7 @@ describe('JWT', () => {
           mockLocation(url);
           updateTokenMockSpy.mockImplementation(() => Promise.resolve());
 
-          return jwt.getUserInfo().then((data) => {
+          return jwt.getUserInfo().then(() => {
             if (expectedToWork) {
               expect(loginSpy).toBeCalled();
             } else {

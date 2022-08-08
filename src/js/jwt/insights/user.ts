@@ -2,6 +2,7 @@ import { isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../../utils'
 import servicesApi from './entitlements';
 import logger from '../logger';
 import { SSOParsedToken } from './../Priv';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 export type SSOServiceDetails = {
   is_entitled: boolean;
@@ -103,7 +104,7 @@ export function tryBounceIfUnentitled(
   }
 }
 
-export default async (token: SSOParsedToken) => {
+export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
   const user = buildUser(token);
 
   const pathName = getWindow().location.pathname.split('/');
@@ -117,10 +118,15 @@ export default async (token: SSOParsedToken) => {
 
   if (user) {
     log(`Account Number: ${user.identity.account_number}`);
-    let data;
+    let data: {
+      [key: string]: {
+        is_entitled: boolean;
+        is_trial: boolean;
+      };
+    } = {};
     try {
       if (user.identity.account_number) {
-        data = await servicesApi(token.jti).servicesGet();
+        data = (await servicesApi(token.jti).servicesGet()) as unknown as typeof data;
       } else {
         console.log('Cannot call entitlements API, no account number');
       }
@@ -138,7 +144,7 @@ export default async (token: SSOParsedToken) => {
     if (pageAllowsUnentitled()) {
       return {
         ...user,
-        entitlements: data || {}, // if the services returned error, use empty object
+        entitlements: data,
       };
     }
 

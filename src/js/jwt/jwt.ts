@@ -12,6 +12,7 @@ import insightsUser from './insights/user';
 import urijs from 'urijs';
 import { DEFAULT_ROUTES, options as defaultOptions } from './constants';
 import Priv from './Priv';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 
@@ -267,7 +268,7 @@ function loginAllTabs() {
 
 /*** User Functions ***/
 // Get user information
-export const getUserInfo = () => {
+export const getUserInfo = (): Promise<ChromeUser | void | undefined> => {
   log('Getting User Information');
   const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
   if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.getToken())) {
