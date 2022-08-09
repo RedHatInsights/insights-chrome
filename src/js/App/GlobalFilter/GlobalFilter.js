@@ -11,6 +11,8 @@ import debounce from 'lodash/debounce';
 import { useHistory } from 'react-router-dom';
 import GlobalFilterMenu from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const GlobalFilterDropdown = ({
   isAllowed,
@@ -31,6 +33,7 @@ const GlobalFilterDropdown = ({
    * We are unable to test it in any local development environment
    * */
   const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
+  const intl = useIntl();
   const allowed = isAllowed();
   const dispatch = useDispatch();
   const GroupFilterWrapper = useMemo(
@@ -45,8 +48,8 @@ const GlobalFilterDropdown = ({
             <GroupFilterWrapper
               {...((!allowed || isDisabled) && {
                 content: !allowed
-                  ? 'You do not have the required inventory permissions to perform this action'
-                  : 'Global filter is not applicable for this page',
+                  ? `${intl.formatMessage(messages.noInventoryPermissions)}`
+                  : `${intl.formatMessage(messages.globalFilterNotApplicable)}`,
                 position: 'right',
               })}
             >
@@ -56,7 +59,7 @@ const GlobalFilterDropdown = ({
                 {...filter}
                 selectedTags={selectedTags}
                 isDisabled={!allowed || isDisabled}
-                placeholder="Filter results"
+                placeholder={intl.formatMessage(messages.filterResults)}
               />
             </GroupFilterWrapper>
           ) : (
@@ -83,7 +86,7 @@ const GlobalFilterDropdown = ({
                 ))}
                 {!isDisabled && (
                   <Button variant="link" ouiaId="global-filter-clear" onClick={() => setValue(() => ({}))}>
-                    Clear filters
+                    {intl.formatMessage(messages.clearFilters)}
                   </Button>
                 )}
               </Fragment>

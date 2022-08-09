@@ -12,6 +12,8 @@ import cookie from 'js-cookie';
 import { getSection, getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -59,23 +61,6 @@ SettingsButton.propTypes = {
   settingsMenuDropdownItems: PropTypes.array.isRequired,
 };
 
-const bundle = getUrl('bundle');
-const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
-const betaSwitcherTitle = `${isBeta() ? 'Stop using' : 'Use'} the beta release`;
-/* list out the items for the settings menu */
-const settingsMenuDropdownItems = [
-  {
-    url: settingsPath,
-    title: 'Settings',
-    target: '_self',
-    appId: 'rbac',
-  },
-  {
-    title: betaSwitcherTitle,
-    onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
-  },
-];
-
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled, isSettingsDisabled }, setState] = useState({
     isSettingsDisabled: true,
@@ -84,6 +69,25 @@ const Tools = () => {
     isDemoAcc: false,
   });
   const user = useSelector(({ chrome: { user } }) => user);
+  const intl = useIntl();
+  const bundle = getUrl('bundle');
+  const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
+  const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
+    messages.betaRelease
+  )}`;
+  /* list out the items for the settings menu */
+  const settingsMenuDropdownItems = [
+    {
+      url: settingsPath,
+      title: 'Settings',
+      target: '_self',
+      appId: 'rbac',
+    },
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
+    },
+  ];
 
   useEffect(() => {
     if (user) {
@@ -99,30 +103,30 @@ const Tools = () => {
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
-      title: 'Support options',
+      title: `${intl.formatMessage(messages.supportOptions)}`,
       url: 'https://access.redhat.com/support',
     },
     {
-      title: 'Open support case',
+      title: `${intl.formatMessage(messages.openSupportCase)}`,
       onClick: () => window.insights.chrome.createCase(),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
     },
     {
-      title: 'API documentation',
+      title: `${intl.formatMessage(messages.apiDocumentation)}`,
       url: `/docs/api`,
       appId: 'apiDocs',
     },
     {
-      title: 'Status page',
+      title: `${intl.formatMessage(messages.statusPage)}`,
       url: 'https://status.redhat.com/',
     },
     {
-      title: 'Insights for RHEL Documentation',
+      title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
       url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
       isHidden: getSection() !== 'insights',
     },
     {
-      title: 'Demo mode',
+      title: `${intl.formatMessage(messages.demoMode)}`,
       onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
       isHidden: !isDemoAcc,
     },

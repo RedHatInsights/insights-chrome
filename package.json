@@ -22,6 +22,10 @@
     "start:beta": "BETA=true npm run start",
     "test": "jest --forceExit --detectOpenHandles",
     "test:ct": "node ./cypress/run-test.js",
+    "translations": "npm-run-all translations:*",
+    "translations:extract": "npx formatjs extract ./src/js/*.{js,jsx,ts,tsx} --ignore='**/*.d.ts' --out-file ./locales/translation-template.json",
+    "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
+    "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test"
   },
   "jest": {
@@ -174,6 +178,7 @@
     "axios-mock-adapter": "^1.20.0",
     "broadcast-channel": "^4.2.0",
     "classnames": "^2.3.1",
+    "@formatjs/cli": "4.2.33",
     "history": "^4.10.0",
     "js-cookie": "^3.0.1",
     "js-yaml": "^4.1.0",
@@ -185,7 +190,7 @@
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-intl": "^5.20.10",
+    "react-intl": "^5.25.1",
     "react-redux": "^7.2.4",
     "react-router-dom": "5.2.1",
     "react-test-renderer": "^17.0.2",
