@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
-import { Alert, Button, Form, FormGroup, Label, Modal, ModalVariant, Text, TextArea, TextContent } from '@patternfly/react-core';
-import { OutlinedCommentsIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  Checkbox,
+  Form,
+  FormGroup,
+  Panel,
+  PanelMain,
+  PanelMainBody,
+  Text,
+  TextArea,
+  TextContent,
+  TextVariants,
+} from '@patternfly/react-core';
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleFeedbackModal } from '../../redux/actions';
-import { isProd } from '../../utils.ts';
+import { getEnv, getUrl, isProd } from '../../utils.ts';
 
-const Feedback = ({ user }) => {
-  const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
-  const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
-  const dispatch = useDispatch();
+const Feedback = ({ user, onCloseModal, onSubmit }) => {
   const [textAreaValue, setTextAreaValue] = useState('');
-  const env = window.insights.chrome.getEnvironment();
-  const app = window.insights.chrome.getApp();
-  const bundle = window.insights.chrome.getBundle();
+  const [checked, setChecked] = useState(false);
+  const env = getEnv();
+  const app = getUrl('app');
+  const bundle = getUrl('bundle');
   const isAvailable = env === 'prod' || env === 'stage';
-  const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
   const addFeedbackTag = () => (isProd() ? `[${bundle}]` : '[PRE-PROD]');
 
   const handleModalSubmission = () => {
@@ -30,7 +36,7 @@ const Feedback = ({ user }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}, URL: ${window.location.href}`, //eslint-disable-line
+          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`, //eslint-disable-line
           summary: `${addFeedbackTag()} App Feedback`,
           labels: [app, bundle],
         }),
@@ -39,64 +45,63 @@ const Feedback = ({ user }) => {
       console.log('Submitting feedback only works in prod and stage');
     }
 
-    setIsModalOpen(false);
+    onSubmit();
   };
 
   return (
-    <React.Fragment>
-      <Button
-        ouiaId="feedback-button"
-        className="chr-c-button-feedback"
-        onClick={() => {
-          if (!usePendoFeedback) {
-            setIsModalOpen(true);
-          }
-        }}
-      >
-        <OutlinedCommentsIcon />
-        Feedback
-      </Button>
-      <Modal
-        title="We would love your feedback!"
-        isOpen={isOpen}
-        variant={ModalVariant.medium}
-        onClose={() => setIsModalOpen(false)}
-        actions={[
-          <Button ouiaId="submit-feedback" key="confirm" variant="primary" onClick={handleModalSubmission}>
-            Submit feedback
-          </Button>,
-          <Button ouiaId="cancel-feedback" key="cancel" variant="link" onClick={() => setIsModalOpen(false)}>
-            Cancel
-          </Button>,
-        ]}
-      >
-        <Form>
-          <Alert variant="info" isInline title="This form is to share feedback about your experience.">
-            <TextContent>
-              <Text className="pf-u-mb-0">The feedback you share below helps us to improve the user experience.</Text>
-              <Text>If you are experiencing an issue that requires support, open a support case instead.</Text>
-              <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
-                Open a support case
-              </Text>
-            </TextContent>
-          </Alert>
-          <FormGroup label="Please leave us your feedback below." fieldId="horizontal-form-exp">
-            <TextArea
-              value={textAreaValue}
-              onChange={(value) => setTextAreaValue(value)}
-              name="feedback-description-text"
-              id="feedback-description-text"
-            />
-          </FormGroup>
-        </Form>
-        {!isAvailable && <Label color="red"> Submitting feedback only works in prod and stage </Label>}
-      </Modal>
-    </React.Fragment>
+    <div className="chr-c-feedback-content">
+      <TextContent>
+        <Text component={TextVariants.h1}>Share your feedback with us!</Text>
+      </TextContent>
+      <Form>
+        <FormGroup label="Enter your feedback" fieldId="horizontal-form-exp">
+          <TextArea
+            value={textAreaValue}
+            onChange={(value) => setTextAreaValue(value)}
+            name="feedback-description-text"
+            id="feedback-description-text"
+          />
+        </FormGroup>
+        <FormGroup className="pf-u-mt-20">
+          <Checkbox
+            id="feedback-checkbox"
+            isChecked={checked}
+            onChange={() => setChecked(!checked)}
+            label="Yes, I would like to hear about research opportunities"
+            description="Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time."
+          />
+        </FormGroup>
+      </Form>
+      {checked ? (
+        <>
+          <div className="pf-u-font-family-heading-sans-serif chr-c-feedback-email">Email</div>
+          <Panel variant="raised" className="chr-c-feedback-panel">
+            <PanelMain>
+              <PanelMainBody className="chr-c-feedback-panel__body">{user.identity.user.email}</PanelMainBody>
+            </PanelMain>
+          </Panel>
+        </>
+      ) : (
+        ''
+      )}
+      <div className="chr-c-feedback-buttons">
+        <Button ouiaId="submit-feedback" key="confirm" variant="primary" onClick={handleModalSubmission}>
+          Submit feedback
+        </Button>
+        <Button ouiaId="cancel-feedback" key="cancel" variant="link" onClick={onCloseModal}>
+          Cancel
+        </Button>
+      </div>
+    </div>
   );
 };
 
 Feedback.propTypes = {
   user: PropTypes.object,
+  modalPage: PropTypes.string,
+  setModalPage: PropTypes.func,
+  onCloseModal: PropTypes.func,
+  onSubmit: PropTypes.func,
 };
 
 export default Feedback;

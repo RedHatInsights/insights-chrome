@@ -30,6 +30,10 @@ aside {
   display:none !important;
 } 
 
+#chrome-app-render-root {
+  min-height: 100vh;
+}
+
 .pf-c-page.chr-c-page__hasBanner {
   grid-template-areas: "banner banner"
                        "header header"
@@ -100,7 +104,7 @@ aside {
   /**
   * has to be set because of PF page overlaps the banner
   */
-  z-index: 1000;
+  z-index: 19001;
   position: fixed;
   bottom: 0;
   width: 100%;

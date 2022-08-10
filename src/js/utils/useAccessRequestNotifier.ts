@@ -3,14 +3,15 @@ import { useEffect, useRef } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { markAccessRequestNotification, updateAccessRequestsNotifications } from '../redux/actions';
+import { ReduxState } from '../redux/store';
 
-const useAccessRequestNotifier = () => {
-  const user = useSelector(({ chrome }) => chrome?.user);
+const useAccessRequestNotifier = (): [ReduxState['chrome']['accessRequests'], (id: string | number) => void] => {
+  const user = useSelector(({ chrome }: ReduxState) => chrome?.user);
   const isMounted = useRef(false);
-  const state = useSelector(({ chrome: { accessRequests } }) => accessRequests);
+  const state = useSelector(({ chrome: { accessRequests } }: ReduxState) => accessRequests);
   const dispatch = useDispatch();
 
-  const markRead = (id) => {
+  const markRead = (id: string | number) => {
     if (id === 'mark-all') {
       batch(() => {
         state.data.forEach(({ request_id }) => {
@@ -41,7 +42,7 @@ const useAccessRequestNotifier = () => {
     isMounted.current = true;
     dispatch(
       updateAccessRequestsNotifications({
-        count: parseInt(localStorage.getItem(REQUESTS_COUNT) || 0),
+        count: parseInt(localStorage.getItem(REQUESTS_COUNT) || '0'),
         data: JSON.parse(localStorage.getItem(REQUESTS_DATA) || '[]'),
       })
     );
@@ -54,8 +55,8 @@ const useAccessRequestNotifier = () => {
     /**
      * register notifier only for org admin
      */
-    let interval;
-    if (user?.identity?.user?.is_org_admin && !interval) {
+    let interval: NodeJS.Timer | undefined = undefined;
+    if (user?.identity?.user?.is_org_admin && interval) {
       try {
         notifier();
         interval = setInterval(notifier, 20000);

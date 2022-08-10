@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { DeepRequired } from 'utility-types';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils';
 
-const Activation = ({ user, request }) => {
+const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const history = useHistory();
   const isAvailable = getEnv() === 'prod';
