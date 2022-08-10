@@ -1,10 +1,11 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
 import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
+
 import { useLocation } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
@@ -48,10 +49,15 @@ const ShieldedRoot = memo(
       }
     }
 
+    const sidebar = useMemo(
+      () => (hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />),
+      [isNavOpen, hideNav, Sidebar]
+    );
+
     useEffect(() => {
-      window.addEventListener('resize', navReziseListener);
+      // window.addEventListener('resize', navReziseListener);
       return () => {
-        window.removeEventListener('resize', navReziseListener);
+        // window.removeEventListener('resize', navReziseListener);
       };
     }, []);
 
@@ -83,12 +89,12 @@ const ShieldedRoot = memo(
             <Header />
           </Masthead>
         }
-        sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
+        sidebar={sidebar}
       >
         <div ref={insightsContentRef} className={classnames('chr-render')}>
-          {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
-          {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
-          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
+          {/* {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />} */}
+          {/* {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>} */}
+          {/* <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} /> */}
         </div>
       </Page>
     );

@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
 
 import NavContext from './navContext';
@@ -16,6 +16,10 @@ const Navigation = () => {
   const [showBetaModal, setShowBetaModal] = useState();
   const deferedOnClickArgs = useRef([]);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
+
+  useEffect(() => {
+    console.log('Re-mount');
+  }, []);
 
   const onLinkClick = (origEvent, href) => {
     if (!showBetaModal && !isBeta()) {
