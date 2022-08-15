@@ -8,13 +8,13 @@ const defaultOptions = {
   updateSnapshots: false,
 };
 
-const defaultCommand = 'npm run cypress run -- --component';
+const defaultCommand = 'npm run cypress run -- --component --browser chrome';
 
 if (argv.u || argv.update) {
   defaultOptions.updateSnapshots = true;
 }
 
-const options = Object.entries(defaultOptions).reduce((acc, [name, val]) => `${acc} -- --${name}=${val}`, '');
+const options = Object.entries(defaultOptions).reduce((acc, [name, val]) => `${acc} --env ${name}=${val}`, '');
 
 const testProcess = exec(`${defaultCommand} ${options}`, (error, stdout, stderr) => {
   if (error) {
