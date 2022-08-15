@@ -52,4 +52,6 @@ To run the tests in interactive env use
 npx cypress open
 ```
 
+**Visual snapshots are not accurate when setting the viewport size manually!**
+
 **If a snapshot is mismatched, the interactive mode will not show/store the diff!**
