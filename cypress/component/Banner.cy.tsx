@@ -3,6 +3,7 @@ import Banner from '../../src/js/App/Banners/Banner'
 
 describe('<Banner />', () => {
   it('mounts', () => {
-    cy.mount(<Banner />)
+    const elem = cy.mount(<Banner />).get('html')
+    elem.matchImageSnapshot()
   })
 })

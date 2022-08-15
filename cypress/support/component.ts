@@ -21,6 +21,9 @@ import '../../src/sass/chrome.scss'
 // require('./commands')
 
 import { mount } from 'cypress/react'
+const { addMatchImageSnapshotCommand,  } = require('@simonsmith/cypress-image-snapshot/command');
+
+addMatchImageSnapshotCommand();
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -30,6 +33,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount
+      matchImageSnapshot: () => void
     }
   }
 }
