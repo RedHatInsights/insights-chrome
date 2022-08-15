@@ -23,7 +23,13 @@ import '../../src/sass/chrome.scss'
 import { mount } from 'cypress/react'
 const { addMatchImageSnapshotCommand,  } = require('@simonsmith/cypress-image-snapshot/command');
 
-addMatchImageSnapshotCommand();
+// configure the matcher to be less precise to adjust between the headless and normal browser rendering differences
+addMatchImageSnapshotCommand({
+  failureThreshold: 0.03, // threshold for entire image
+  failureThresholdType: 'percent', // percent of image or number of pixels
+  customDiffConfig: { threshold: 0.1 }, // threshold for each pixel
+  capture: 'viewport', // capture viewport in screenshot
+});
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
