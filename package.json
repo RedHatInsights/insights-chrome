@@ -12,6 +12,7 @@
     "build": "NODE_ENV=production webpack --config config/webpack.config.js  --mode=production",
     "build:beta": "BETA=true npm run build",
     "build:dev": "NODE_ENV=development webpack --config config/webpack.config.js  --mode=development",
+    "cypress": "cypress",
     "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true",
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",
@@ -20,6 +21,7 @@
     "start": "NODE_ENV=development webpack --config config/webpack.config.js --watch  --mode=development",
     "start:beta": "BETA=true npm run start",
     "test": "jest --forceExit --detectOpenHandles",
+    "test:ct": "node ./cypress/run-test.js",
     "verify": "npm-run-all lint build test"
   },
   "jest": {
@@ -80,6 +82,7 @@
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.1",
     "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.15",
     "@redhat-cloud-services/types": "^0.0.9",
+    "@simonsmith/cypress-image-snapshot": "^5.0.4",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/jest": "^27.4.1",
@@ -136,7 +139,8 @@
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-dev-server": "^4.4.0",
+    "yargs": "^17.5.1"
   },
   "dependencies": {
     "@data-driven-forms/pf4-component-mapper": "^3.12.0",
