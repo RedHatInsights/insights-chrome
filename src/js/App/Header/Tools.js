@@ -7,6 +7,7 @@ import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
+import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 import { getSection, getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
@@ -82,18 +83,18 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+  const user = useSelector(({ chrome: { user } }) => user);
 
   useEffect(() => {
-    window.insights.chrome.auth.getUser().then((user) => {
-      /* Disable settings/cog icon when a user doesn't have an account number */
+    if (user) {
       setState({
         isSettingsDisabled: !user?.identity?.account_number,
         isInternal: !!user?.identity?.user?.is_internal,
         isRhosakEntitled: !!user?.entitlements?.rhosak?.is_entitled,
         isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
       });
-    });
-  }, []);
+    }
+  }, [user]);
 
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [

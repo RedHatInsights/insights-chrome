@@ -21,3 +21,6 @@ Session.vim
 .idea/
 .vscode/
 coverage/
+
+# cypress diff snapshots
+cypress/**/*.diff.png

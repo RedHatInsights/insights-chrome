@@ -117,7 +117,7 @@ export const visibilityFunctions = {
       return false;
     }
   },
-  featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
+  featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && unleashClient?.isEnabled(flagName) === expectedValue,
 };
 
 export const isVisible = (limitedApps?: string[], app?: string, visibility?: Record<string, unknown>) => {
