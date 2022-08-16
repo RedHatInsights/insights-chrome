@@ -60,7 +60,7 @@ import {
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
 } from './action-types';
-import { ChromeState, GlobalFilterState } from './store';
+import { ChromeState, GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
 
 const reducers = {
@@ -95,6 +95,34 @@ const globalFilter = {
   [GLOBAL_FILTER_TOGGLE]: onGlobalFilterToggle,
   [GLOBAL_FILTER_REMOVE]: onGlobalFilterRemove,
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
+};
+
+export const chromeInitialState: ReduxState = {
+  chrome: {
+    contextSwitcherOpen: false,
+    navigation: {},
+    accessRequests: {
+      hasUnseen: false,
+      count: 0,
+      data: [],
+    },
+    quickstarts: {
+      quickstarts: {},
+    },
+  },
+  globalFilter: {
+    tags: {
+      isLoaded: false,
+      items: [],
+    },
+    workloads: {
+      isLoaded: false,
+    },
+    sid: {
+      isLoaded: false,
+    },
+    globalFilterHidden: false,
+  },
 };
 
 export default function (): {

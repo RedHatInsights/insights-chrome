@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
-    "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "esnext",
     "target": "esnext",
     "jsx": "react",
-    "allowJs": true,
     "moduleResolution": "node",
     "removeComments": false,
     "strict": true,
@@ -14,8 +12,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["node", "jest"],
-  },
-  "include": ["src/**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx"]
+    "baseUrl": "./",
+    "types": ["cypress", "node"]
+  }
 }
