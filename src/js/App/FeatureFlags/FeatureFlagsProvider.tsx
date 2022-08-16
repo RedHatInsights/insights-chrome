@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import UnleasFlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
+import UnleasFlagProvider, { FlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -48,7 +48,8 @@ const FeatureFlagsProvider: React.FC = ({ children }) => {
 
   // fallback to render the chrome withouth the feature flags if the provider is not initialized properly
   if (getFeatureFlagsError() || !unleashClientInternal.current) {
-    return <Fragment>{children}</Fragment>;
+    // Fallback to handle errored client. The default flags provides has silent error handling if the client fails to initialize
+    return <FlagProvider config={config}>{children}</FlagProvider>;
   }
 
   return <UnleasFlagProvider unleashClient={unleashClientInternal.current}>{children}</UnleasFlagProvider>;
