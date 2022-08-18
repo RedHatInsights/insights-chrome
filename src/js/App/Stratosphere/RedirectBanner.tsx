@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { ReduxState } from '../../redux/store';
 
 // TODO: Figure out what param chrome should expect
-const BANNER_PARAM_NAME = 'from-aws';
+export const STRATOSPHERE_BANNER_NAME = 'from-aws';
 
 const RedirectBanner = () => {
   const {
@@ -17,8 +17,7 @@ const RedirectBanner = () => {
 
   const handleClose = () => {
     // remove only the flag search param
-    params.delete(BANNER_PARAM_NAME);
-
+    params.delete(STRATOSPHERE_BANNER_NAME);
     // only change the search params
     replace({
       pathname,
@@ -27,11 +26,10 @@ const RedirectBanner = () => {
       state,
     });
   };
-
   // show the banner only if correct search param exists
-  return params.has(BANNER_PARAM_NAME) ? (
+  return params.has(STRATOSPHERE_BANNER_NAME) ? (
     <Alert
-      actionClose={<AlertActionCloseButton onClose={handleClose} />}
+      actionClose={<AlertActionCloseButton data-testid="stratosphere-banner-close" onClose={handleClose} />}
       isInline
       variant="success"
       title="Congratulations, your Red Hat and AWS accounts are linked"
