@@ -12,6 +12,7 @@ import {
   loadNavigationSegmentReducer,
   loginReducer,
   markAccessRequestRequestReducer,
+  markActiveProduct,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
@@ -49,6 +50,7 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
+  MARK_ACTIVE_PRODUCT,
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
@@ -82,6 +84,7 @@ const reducers = {
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
+  [MARK_ACTIVE_PRODUCT]: markActiveProduct,
 };
 
 const globalFilter = {
