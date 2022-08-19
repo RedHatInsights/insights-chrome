@@ -1,10 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { appNavClick } from '../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
+import useModulePreload from '../../../utils/usePreloadModule';
+import { ReduxState, RouteDefinition } from '../../../redux/store';
 
 export type NavDOMEvent = {
   href: string;
@@ -54,6 +56,9 @@ const useDynamicModule = (appId: string) => {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
+  const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
+  const preloadModule = useModulePreload(moduleEntry);
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop() as string;
@@ -99,6 +104,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
     .join('_');
   return (
     <NavLink
+      onMouseEnter={() => {
+        preloadModule();
+      }}
       tabIndex={tabIndex}
       ref={linkRef}
       data-testid="router-link"
