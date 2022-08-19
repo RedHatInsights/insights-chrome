@@ -4,6 +4,7 @@ import { DEFAULT_ROUTES } from './jwt/constants';
 import flatMap from 'lodash/flatMap';
 import { NavItem } from './types';
 import axios from 'axios';
+import { ChromeModule, RouteDefinition } from './redux/store';
 
 export function getWindow() {
   return window;
@@ -261,3 +262,27 @@ export const loadFedModules = () =>
       Expires: '0',
     },
   });
+
+export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
+  Object.entries(modules)
+    .reduce<RouteDefinition[]>(
+      (acc, [scope, { dynamic, manifestLocation, isFedramp, modules = [] }]) => [
+        ...acc,
+        ...modules
+          .map(({ module, routes }) =>
+            /**Clean up this map function */
+            routes.map((route) => ({
+              scope,
+              module,
+              isFedramp: typeof route === 'string' ? isFedramp : route.isFedramp,
+              path: typeof route === 'string' ? route : route.pathname,
+              manifestLocation,
+              dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
+              exact: typeof route === 'string' ? false : route.exact,
+            }))
+          )
+          .flat(),
+      ],
+      []
+    )
+    .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
