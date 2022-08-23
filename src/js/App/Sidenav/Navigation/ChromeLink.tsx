@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { preloadModule } from '@scalprum/core';
 
 import { appNavClick } from '../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
-import useModulePreload from '../../../utils/usePreloadModule';
 import { ReduxState, RouteDefinition } from '../../../redux/store';
 
 export type NavDOMEvent = {
@@ -58,7 +58,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
   const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
-  const preloadModule = useModulePreload(moduleEntry);
+  // const preloadModule = useModulePreload(moduleEntry);
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop() as string;
@@ -105,7 +105,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
   return (
     <NavLink
       onMouseEnter={() => {
-        preloadModule();
+        if (moduleEntry) {
+          preloadModule(moduleEntry?.scope, moduleEntry?.module);
+        }
       }}
       tabIndex={tabIndex}
       ref={linkRef}
