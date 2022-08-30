@@ -1,10 +1,10 @@
 const program = require('commander');
-// const path = require('path');
+const path = require('path');
 const fs = require('fs');
 const { sync: globSync } = require('glob');
 const last = require('lodash/last');
 
-let LANG_DIR = 'src/locales/';
+let LANG_DIR = path.normalize('src/locales/');
 let LANG_PATTERN = '';
 let IGNORED = ['data'];
 
@@ -51,4 +51,4 @@ const mergedTranslations = globSync(`${rootFolder}${LANG_PATTERN}`)
 
 // Merge aggregated default messages with the translated json files and
 // write the messages to this directory
-fs.writeFileSync(`${rootFolder}${LANG_DIR}data.json`, JSON.stringify({ ...mergedTranslations }, null, 2));
+fs.writeFileSync(`${rootFolder}${LANG_DIR}data.json`, JSON.stringify(mergedTranslations, null, 2));
