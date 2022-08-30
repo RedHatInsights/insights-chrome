@@ -67,19 +67,21 @@ const ShieldedRoot = memo(
         className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadToggle>
-              <PageToggleButton
-                variant="plain"
-                aria-label="Global navigation"
-                isNavOpen={isNavOpen}
-                onNavToggle={() => {
-                  setIsNavOpen((prev) => !prev);
-                  dispatch(onToggle());
-                }}
-              >
-                <BarsIcon />
-              </PageToggleButton>
-            </MastheadToggle>
+            {!hideNav && (
+              <MastheadToggle>
+                <PageToggleButton
+                  variant="plain"
+                  aria-label="Global navigation"
+                  isNavOpen={isNavOpen}
+                  onNavToggle={() => {
+                    setIsNavOpen((prev) => !prev);
+                    dispatch(onToggle());
+                  }}
+                >
+                  <BarsIcon />
+                </PageToggleButton>
+              </MastheadToggle>
+            )}
             <Header />
           </Masthead>
         }
