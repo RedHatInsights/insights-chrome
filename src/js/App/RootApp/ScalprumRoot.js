@@ -13,7 +13,6 @@ import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import { SegmentContext } from '../analytics/segment-analytics';
-import StratosphereLayout from '../Stratosphere/StratosphereLayout';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -117,7 +116,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
         </Route>
         {enableStratosphere && (
           <Route path="/connect">
-            <StratosphereLayout />
+            <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
           </Route>
         )}
         <Route path="/security">
