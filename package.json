@@ -178,6 +178,7 @@
     "axios-mock-adapter": "^1.20.0",
     "broadcast-channel": "^4.2.0",
     "classnames": "^2.3.1",
+    "commander": "^8.3.0",
     "@formatjs/cli": "4.2.33",
     "history": "^4.10.0",
     "js-cookie": "^3.0.1",
