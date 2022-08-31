@@ -173,7 +173,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
         window.segment = undefined;
-        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
+        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
