@@ -262,3 +262,10 @@ export function documentTitleReducer(state: ChromeState, { payload }: { payload:
     documentTitle: payload,
   };
 }
+
+export function markActiveProduct(state: ChromeState, { payload }: { payload?: string }): ChromeState {
+  return {
+    ...state,
+    activeProduct: payload,
+  };
+}
