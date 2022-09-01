@@ -58,7 +58,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
   const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
-  // const preloadModule = useModulePreload(moduleEntry);
+  const preloadTimeout = useRef<NodeJS.Timeout>();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop() as string;
@@ -106,7 +106,14 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
     <NavLink
       onMouseEnter={() => {
         if (moduleEntry) {
-          preloadModule(moduleEntry?.scope, moduleEntry?.module);
+          preloadTimeout.current = setTimeout(() => {
+            preloadModule(moduleEntry?.scope, moduleEntry?.module);
+          }, 250);
+        }
+      }}
+      onMouseLeave={() => {
+        if (preloadTimeout.current) {
+          clearTimeout(preloadTimeout.current);
         }
       }}
       tabIndex={tabIndex}
