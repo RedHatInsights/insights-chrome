@@ -1,0 +1,103 @@
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+$cards: 0, 1, 2, 3;
+
+.chr-c-product-card {
+  &__link {
+    white-space: nowrap;
+  }
+
+  &__title {
+    background-color: var(--pf-global--BackgroundColor--100);
+    border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+    @each $card in $cards {
+      &.title-#{$card} {
+        grid-column: $card + 1;
+        grid-row: 1;
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--xl) {
+      @each $card in $cards {
+        &.title-#{$card} {
+          @if $card > 1 {
+            margin-top: var(--pf-global--spacer--lg);
+            grid-column: $card - 1;
+            grid-row: 4;
+          }
+        }
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--md) {
+      @each $card in $cards {
+        &.title-#{$card} {
+            margin-top: var(--pf-global--spacer--lg);
+            grid-column: 1;
+            grid-row: ($card * 3) + 1;
+        }
+      }
+    }
+  }
+
+  &__body {
+    background-color: var(--pf-global--BackgroundColor--100);
+    border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    padding: 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
+    @each $card in $cards {
+      &.body-#{$card} {
+        grid-column: $card + 1;
+        grid-row: 2;
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--xl) {
+      @each $card in $cards {
+        &.body-#{$card} {
+          @if $card > 1 {
+            grid-column: $card - 1;
+            grid-row: 5;
+          }
+        }
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--md) {
+      @each $card in $cards {
+        &.body-#{$card} {
+            grid-column: 1;
+            grid-row: ($card * 3) + 2;
+        }
+      }
+    }
+  }
+  &__footer {
+    background-color: var(--pf-global--BackgroundColor--100);
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    border-top: none;
+    padding: 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
+    @each $card in $cards {
+      &.footer-#{$card} {
+        grid-column: $card + 1;
+        grid-row: 3;
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--xl) {
+      @each $card in $cards {
+        &.footer-#{$card} {
+          @if $card > 1 {
+            grid-column: $card - 1;
+            grid-row: 6;
+          }
+        }
+      }
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--md) {
+      @each $card in $cards {
+        &.footer-#{$card} {
+            grid-column: 1;
+            grid-row: ($card * 3) + 3;
+        }
+      }
+    }
+  }
+}
