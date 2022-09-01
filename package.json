@@ -12,6 +12,7 @@
     "build": "NODE_ENV=production webpack --config config/webpack.config.js  --mode=production",
     "build:beta": "BETA=true npm run build",
     "build:dev": "NODE_ENV=development webpack --config config/webpack.config.js  --mode=development",
+    "cypress": "cypress",
     "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true",
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",
@@ -20,6 +21,7 @@
     "start": "NODE_ENV=development webpack --config config/webpack.config.js --watch  --mode=development",
     "start:beta": "BETA=true npm run start",
     "test": "jest --forceExit --detectOpenHandles",
+    "test:ct": "node ./cypress/run-test.js",
     "verify": "npm-run-all lint build test"
   },
   "jest": {
@@ -52,6 +54,9 @@
     "setupFiles": [
       "<rootDir>/config/setupTests.js"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/config/jest.scripts.js"
+    ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js"
@@ -80,13 +85,17 @@
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.1",
     "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.15",
     "@redhat-cloud-services/types": "^0.0.9",
+    "@simonsmith/cypress-image-snapshot": "^5.0.4",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.2",
+    "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.4.1",
     "@types/js-cookie": "^3.0.1",
     "@types/lodash": "^4.14.179",
     "@types/react-router-dom": "^5.3.3",
     "@types/redux-logger": "^3.0.9",
+    "@types/redux-mock-store": "^1.0.3",
     "@types/urijs": "^1.19.19",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
@@ -99,6 +108,7 @@
     "buffer": "^6.0.3",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.2.0",
+    "cypress": "^10.4.0",
     "eslint": "^7.32.0",
     "git-revision-webpack-plugin": "^5.0.0",
     "glob": "^7.2.0",
@@ -135,7 +145,8 @@
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-dev-server": "^4.4.0",
+    "yargs": "^17.5.1"
   },
   "dependencies": {
     "@data-driven-forms/pf4-component-mapper": "^3.12.0",

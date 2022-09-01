@@ -3,7 +3,7 @@ button.pf-c-button.chr-c-button-feedback {
     margin-right: var(--pf-global--spacer--sm);
   }
   position: fixed;
-  z-index: 19000;
+  z-index: 100;
   right: -45px;
   bottom: 150px;
   transform: rotate(270deg);

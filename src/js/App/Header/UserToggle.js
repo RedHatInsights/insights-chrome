@@ -4,12 +4,12 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-c
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isBeta } from '../../utils';
+import { getEnv, isBeta, isProd as isProdEnv } from '../../utils';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
-  const env = window.insights.chrome.getEnvironment();
-  const isProd = window.insights.chrome.isProd;
+  const env = getEnv();
+  const isProd = isProdEnv();
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip =
     "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number.";
@@ -49,7 +49,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       My profile
     </DropdownItem>,
     <React.Fragment key="My user access wrapper">
-      {accountNumber > -1 && window.insights.chrome.isBeta() && (
+      {accountNumber > -1 && isBeta() && (
         <DropdownItem
           component={
             <ChromeLink href="/settings/my-user-access" isBeta={isBeta()} appId="rbac">

@@ -12,6 +12,7 @@ import isEqual from 'lodash/isEqual';
 import { onToggle } from '../../redux/actions';
 import Routes from '../Routes';
 import useOuiaTags from '../../utils/useOuiaTags';
+import RedirectBanner from '../Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 
 import '../Sidenav/Navigation/Navigation.scss';
@@ -67,19 +68,21 @@ const ShieldedRoot = memo(
         className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadToggle>
-              <PageToggleButton
-                variant="plain"
-                aria-label="Global navigation"
-                isNavOpen={isNavOpen}
-                onNavToggle={() => {
-                  setIsNavOpen((prev) => !prev);
-                  dispatch(onToggle());
-                }}
-              >
-                <BarsIcon />
-              </PageToggleButton>
-            </MastheadToggle>
+            {!hideNav && (
+              <MastheadToggle>
+                <PageToggleButton
+                  variant="plain"
+                  aria-label="Global navigation"
+                  isNavOpen={isNavOpen}
+                  onNavToggle={() => {
+                    setIsNavOpen((prev) => !prev);
+                    dispatch(onToggle());
+                  }}
+                >
+                  <BarsIcon />
+                </PageToggleButton>
+              </MastheadToggle>
+            )}
             <Header />
           </Masthead>
         }
@@ -88,6 +91,7 @@ const ShieldedRoot = memo(
         <div ref={insightsContentRef} className={classnames('chr-render')}>
           {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
           {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
+          <RedirectBanner />
           <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
         </div>
       </Page>
