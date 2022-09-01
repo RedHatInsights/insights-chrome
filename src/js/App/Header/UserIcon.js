@@ -7,7 +7,7 @@ export class UserIcon extends Component {
     super(props);
     this.state = {
       account: this.props.account,
-      avatar: 'apps/chrome/assets/images/img_avatar.svg',
+      avatar: `${window.location.host}/apps/chrome/assets/images/img_avatar.svg`,
     };
   }
 
