@@ -12,10 +12,21 @@ export const requiredBundles = [
   'edge',
   'ansible',
   'settings',
-  ...(isBeta() && !isProd() ? ['iam'] : []),
+  ...(isBeta() && !isProd() ? ['iam', 'business-services'] : []),
 ];
 
-const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions', 'iam'];
+const bundlesOrder = [
+  'application-services',
+  'openshift',
+  'rhel',
+  'edge',
+  'ansible',
+  'settings',
+  'cost-management',
+  'subscriptions',
+  'iam',
+  'business-services',
+];
 
 const isFedrampEnv = isFedRamp();
 
