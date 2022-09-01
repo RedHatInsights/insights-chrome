@@ -4,7 +4,7 @@ exports[`Connected User Icon should render correctly with initial state 1`] = `
 <img
   alt="User Avatar"
   class="pf-c-avatar"
-  src="test.com/apps/chrome/assets/images/img_avatar.svg"
+  src="/apps/chrome/assets/images/img_avatar.svg"
 />
 `;
 
@@ -12,6 +12,6 @@ exports[`User Icon should render correctly with initial state 1`] = `
 <img
   alt="User Avatar"
   class="pf-c-avatar"
-  src="test.com/apps/chrome/assets/images/img_avatar.svg"
+  src="/apps/chrome/assets/images/img_avatar.svg"
 />
 `;
