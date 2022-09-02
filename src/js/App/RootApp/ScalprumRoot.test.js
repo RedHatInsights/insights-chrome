@@ -81,6 +81,7 @@ describe('ScalprumRoot', () => {
         quickstarts: {
           quickstarts: {},
         },
+        moduleRoutes: [],
         navigation: {
           '/': {
             navItems: [],

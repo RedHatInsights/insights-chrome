@@ -36,6 +36,7 @@ describe('ChromeLink', () => {
         modules: {
           testModule: {},
         },
+        moduleRoutes: [],
       },
     });
     const { getAllByTestId } = render(
@@ -51,6 +52,7 @@ describe('ChromeLink', () => {
     const store = mockStore({
       chrome: {
         activeModule: 'differentModule',
+        moduleRoutes: [],
         modules: {
           differentModule: {
             dynamic: false,
@@ -71,6 +73,7 @@ describe('ChromeLink', () => {
   test('should dispatch appNavClick with correct actionId for top level route', () => {
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -109,6 +112,7 @@ describe('ChromeLink', () => {
   test('should dispatch appNavClick with correct actionId for nested route', () => {
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -150,6 +154,7 @@ describe('ChromeLink', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -180,6 +185,7 @@ describe('ChromeLink', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'differentModule',
         modules: {
           differentModule: {},
