@@ -1,12 +1,16 @@
 import React, { Suspense, lazy } from 'react';
 import { LoadingBox } from '@patternfly/quickstarts';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const QuickStartCatalog = lazy(() => import(/* webpackChunkName: "quick-start" */ './QuickStartCatalog'));
 
 export const LazyQuickStartCatalog = ({ ...props }) => {
+  const intl = useIntl();
+
   const propsWithDefaults = {
-    title: 'Quick starts',
-    hint: 'Learn how to create, import, and run applications with step-by-step instructions and tasks.',
+    title: `${intl.formatMessage(messages.quickStarts)}`,
+    hint: `${intl.formatMessage(messages.learnHowTo)}`,
     showFilter: true,
     ...props,
   };

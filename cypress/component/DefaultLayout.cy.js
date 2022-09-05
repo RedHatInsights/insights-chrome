@@ -7,13 +7,16 @@ import DefaultLayout from '../../src/js/App/RootApp/DefaultLayout';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { Nav, NavList } from '@patternfly/react-core';
 import ChromeNavItem from '../../src/js/App/Sidenav/Navigation/ChromeNavItem';
+import { IntlProvider } from 'react-intl';
 
 const Wrapper = ({ children, store }) => (
-  <ScalprumProvider config={{}}>
-    <Provider store={store}>
-      <BrowserRouter>{children}</BrowserRouter>
-    </Provider>
-  </ScalprumProvider>
+  <IntlProvider locale="en">
+    <ScalprumProvider config={{}}>
+      <Provider store={store}>
+        <BrowserRouter>{children}</BrowserRouter>
+      </Provider>
+    </ScalprumProvider>
+  </IntlProvider>
 );
 
 const testUser = {

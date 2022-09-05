@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import { ChromeState } from '../../redux/store';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'openshift';
@@ -194,9 +196,10 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
 };
 
 export function useSegment() {
+  const intl = useIntl();
   const ctx = useContext(SegmentContext);
   if (!ctx) {
-    throw new Error('Context used outside of its Provider!');
+    throw new Error(`${intl.formatMessage(messages.segmentError)}`);
   }
   return ctx;
 }
