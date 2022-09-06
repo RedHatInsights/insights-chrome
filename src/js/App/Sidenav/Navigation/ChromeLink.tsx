@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { preloadModule } from '@scalprum/core';
 
 import { appNavClick } from '../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
+import { ReduxState, RouteDefinition } from '../../../redux/store';
 
 export type NavDOMEvent = {
   href: string;
@@ -15,7 +16,7 @@ export type NavDOMEvent = {
   target?: HTMLAnchorElement | null;
 };
 
-interface RefreshLinkProps extends React.DetailedReactHTMLElement<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
   onLinkClick?: OnLinkClick;
   isBeta?: boolean;
@@ -55,6 +56,9 @@ const useDynamicModule = (appId: string) => {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
+  const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
+  const preloadTimeout = useRef<NodeJS.Timeout>();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
     actionId = actionId.split('/').pop() as string;
@@ -100,6 +104,18 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
     .join('_');
   return (
     <NavLink
+      onMouseEnter={() => {
+        if (moduleEntry) {
+          preloadTimeout.current = setTimeout(() => {
+            preloadModule(moduleEntry?.scope, moduleEntry?.module);
+          }, 250);
+        }
+      }}
+      onMouseLeave={() => {
+        if (preloadTimeout.current) {
+          clearTimeout(preloadTimeout.current);
+        }
+      }}
       tabIndex={tabIndex}
       ref={linkRef}
       data-testid="router-link"
@@ -140,14 +156,6 @@ const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
       {...rest}
     />
   );
-};
-
-RefreshLink.propTypes = {
-  href: PropTypes.string.isRequired,
-  isExternal: PropTypes.bool,
-  onLinkClick: PropTypes.func,
-  isBeta: PropTypes.bool,
-  currAppId: PropTypes.any,
 };
 
 const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
+import { IntlProvider } from 'react-intl';
 import { spinUpStore } from './redux-config';
 import RootApp from './App/RootApp';
 import { loadModulesSchema } from './redux/actions';
@@ -11,6 +12,9 @@ import sentry from './sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './url-observer';
 import { loadFedModules, noop, trustarcScriptSetup } from './utils.ts';
+import messages from '../locales/data.json';
+
+const language = navigator.language.slice(0, 2) || 'en';
 
 const initializeAccessRequestCookies = () => {
   const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
@@ -80,8 +84,10 @@ const App = () => {
 };
 
 ReactDOM.render(
-  <Provider store={spinUpStore()?.store}>
-    <App />
-  </Provider>,
+  <IntlProvider locale={language} messages={messages[language]}>
+    <Provider store={spinUpStore()?.store}>
+      <App />
+    </Provider>
+  </IntlProvider>,
   document.getElementById('chrome-entry')
 );

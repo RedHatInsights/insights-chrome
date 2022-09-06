@@ -26,6 +26,15 @@ jest.mock('react-router-dom', () => {
   };
 });
 
+jest.mock('@unleash/proxy-client-react', () => {
+  const unleash = jest.requireActual('@unleash/proxy-client-react');
+  return {
+    __esModule: true,
+    ...unleash,
+    useFlag: () => false,
+  };
+});
+
 window.ResizeObserver =
   window.ResizeObserver ||
   jest.fn().mockImplementation(() => ({
@@ -72,6 +81,7 @@ describe('ScalprumRoot', () => {
         quickstarts: {
           quickstarts: {},
         },
+        moduleRoutes: [],
         navigation: {
           '/': {
             navItems: [],

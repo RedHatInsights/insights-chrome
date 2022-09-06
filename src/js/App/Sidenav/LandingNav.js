@@ -9,9 +9,12 @@ import NavLoader from './Navigation/Loader';
 import ChromeNavItemFactory from './Navigation/ChromeNavItemFactory';
 import NavContext from './Navigation/navContext';
 import componentMapper from './Navigation/componentMapper';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const LandingNav = () => {
   const dispatch = useDispatch();
+  const intl = useIntl();
   const [elementReady, setElementReady] = useState(false);
   const showNav = useSelector(({ chrome: { user } }) => !!user);
   const schema = useSelector(
@@ -45,7 +48,7 @@ const LandingNav = () => {
     <Nav className="chr-c-landing-nav" ouiaId="SideNavigation">
       <NavList>
         <div className="chr-c-app-title">
-          <b>Home</b>
+          <b>{intl.formatMessage(messages.home)}</b>
         </div>
         <PageContextConsumer>
           {({ isNavOpen }) => (

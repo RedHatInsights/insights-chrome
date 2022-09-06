@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NavItem } from '@patternfly/react-core';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
@@ -10,12 +10,19 @@ import get from 'lodash/get';
 import { isBeta } from '../../../utils';
 import { betaBadge } from '../../Header/Tools';
 import ChromeLink from './ChromeLink';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../../utils/useRenderFedramp';
+import { markActiveProduct } from '../../../redux/actions';
 
-const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv, active, notifier = '' }) => {
+const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv, active, product, notifier = '' }) => {
   const hasNotifier = useSelector((state) => get(state, notifier));
   const renderFedramp = useRenderFedramp(appId, href);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (active) {
+      dispatch(markActiveProduct(product));
+    }
+  }, [active]);
   if (renderFedramp !== true) {
     return null;
   }
@@ -53,6 +60,7 @@ ChromeNavItem.propTypes = {
   active: PropTypes.bool,
   appId: PropTypes.string,
   notifier: PropTypes.string,
+  product: PropTypes.string,
 };
 
 export default ChromeNavItem;
