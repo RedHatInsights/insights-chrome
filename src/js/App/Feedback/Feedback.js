@@ -15,9 +15,12 @@ import {
 import './Feedback.scss';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 import { getEnv, getUrl, isProd } from '../../utils.ts';
 
 const Feedback = ({ user, onCloseModal, onSubmit }) => {
+  const intl = useIntl();
   const [textAreaValue, setTextAreaValue] = useState('');
   const [checked, setChecked] = useState(false);
   const env = getEnv();
@@ -36,7 +39,9 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`, //eslint-disable-line
+          description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${
+            checked ? user.identity.user.email : ''
+          }, URL: ${window.location.href}`, //eslint-disable-line
           summary: `${addFeedbackTag()} App Feedback`,
           labels: [app, bundle],
         }),
@@ -51,10 +56,10 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
   return (
     <div className="chr-c-feedback-content">
       <TextContent>
-        <Text component={TextVariants.h1}>Share your feedback with us!</Text>
+        <Text component={TextVariants.h1}>{intl.formatMessage(messages.shareYourFeedback)}</Text>
       </TextContent>
       <Form>
-        <FormGroup label="Enter your feedback" fieldId="horizontal-form-exp">
+        <FormGroup label={intl.formatMessage(messages.enterFeedback)} fieldId="horizontal-form-exp">
           <TextArea
             value={textAreaValue}
             onChange={(value) => setTextAreaValue(value)}
@@ -67,14 +72,14 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
             id="feedback-checkbox"
             isChecked={checked}
             onChange={() => setChecked(!checked)}
-            label="Yes, I would like to hear about research opportunities"
-            description="Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time."
+            label={intl.formatMessage(messages.researchOpportunities)}
+            description={intl.formatMessage(messages.learnAboutResearchOpportunities)}
           />
         </FormGroup>
       </Form>
       {checked ? (
         <>
-          <div className="pf-u-font-family-heading-sans-serif chr-c-feedback-email">Email</div>
+          <div className="pf-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
           <Panel variant="raised" className="chr-c-feedback-panel">
             <PanelMain>
               <PanelMainBody className="chr-c-feedback-panel__body">{user.identity.user.email}</PanelMainBody>
@@ -86,10 +91,10 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
       )}
       <div className="chr-c-feedback-buttons">
         <Button ouiaId="submit-feedback" key="confirm" variant="primary" onClick={handleModalSubmission}>
-          Submit feedback
+          {intl.formatMessage(messages.submitFeedback)}
         </Button>
         <Button ouiaId="cancel-feedback" key="cancel" variant="link" onClick={onCloseModal}>
-          Cancel
+          {intl.formatMessage(messages.cancel)}
         </Button>
       </div>
     </div>

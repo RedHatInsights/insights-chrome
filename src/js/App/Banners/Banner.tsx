@@ -1,23 +1,25 @@
 import React from 'react';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 import { Button, Text, TextVariants } from '@patternfly/react-core';
 import ArrowRightIcon from '@patternfly/react-icons/dist/js/icons/arrow-right-icon';
 import './Banner.scss';
 
-const bannerContent = {
-  title: 'Changes are coming to cloud.redhat.com on July 29.',
-  link: {
-    title: 'Learn more on our blog.',
-    href: 'https://www.openshift.com/blog/check-out-our-new-look',
-  },
+const Banner = () => {
+  const intl = useIntl();
+  const bannerContent = {
+    link: {
+      href: 'https://www.openshift.com/blog/check-out-our-new-look',
+    },
+  };
+  return (
+    <div className="chr-banner">
+      <Text component={TextVariants.h3}>{intl.formatMessage(messages.changesComing)}</Text>
+      <Button variant="link" isLarge component="a" href={bannerContent.link.href} target="_blank">
+        {intl.formatMessage(messages.learnMore)} <ArrowRightIcon />
+      </Button>
+    </div>
+  );
 };
-
-const Banner = () => (
-  <div className="chr-banner">
-    <Text component={TextVariants.h3}>{bannerContent.title}</Text>
-    <Button variant="link" isLarge component="a" href={bannerContent.link.href} target="_blank">
-      {bannerContent.link.title} <ArrowRightIcon />
-    </Button>
-  </div>
-);
 
 export default Banner;

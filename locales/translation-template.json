@@ -1,0 +1,354 @@
+{
+  "SIDsFilter": {
+    "defaultMessage": "SIDs Filter",
+    "description": "SIDs Filter"
+  },
+  "accessRestricted": {
+    "defaultMessage": "Access to this page is reserved for third party IDP token from users on authorized accounts.",
+    "description": "Access to this page is reserved for third party IDP token from users on authorized accounts."
+  },
+  "accountNumber": {
+    "defaultMessage": "Account number:",
+    "description": "Account number:"
+  },
+  "activationDescription": {
+    "defaultMessage": "Red Hat will be in touch within 1 business day to confirm your subscription benefits are ready to be activated.",
+    "description": "Red Hat will be in touch within 1 business day to confirm your subscription benefits are ready to be activated."
+  },
+  "activationTitle": {
+    "defaultMessage": "Thank you for submitting your activation request",
+    "description": "Thank you for submitting your activation request"
+  },
+  "afterBetaUse": {
+    "defaultMessage": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar.",
+    "description": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar."
+  },
+  "apiDocumentation": {
+    "defaultMessage": "API documentation",
+    "description": "API documentation"
+  },
+  "authFailure": {
+    "defaultMessage": "Authorization failure",
+    "description": "Authorization failure"
+  },
+  "betaRelease": {
+    "defaultMessage": "the beta release",
+    "description": "the beta release"
+  },
+  "cancel": {
+    "defaultMessage": "Cancel",
+    "description": "Cancel"
+  },
+  "changesComing": {
+    "defaultMessage": "Changes are coming to cloud.redhat.com on July 29.",
+    "description": "Changes are coming to cloud.redhat.com on July 29."
+  },
+  "checkOur": {
+    "defaultMessage": "or check our",
+    "description": "or check our"
+  },
+  "clearFilters": {
+    "defaultMessage": "Clear filters",
+    "description": "Clear filters"
+  },
+  "close": {
+    "defaultMessage": "Close",
+    "description": "Close"
+  },
+  "demoMode": {
+    "defaultMessage": "Demo mode",
+    "description": "Demo mode"
+  },
+  "describeBug": {
+    "defaultMessage": "Describe the bug you encountered. For urgent issues, open a support case instead.",
+    "description": "Describe the bug you encountered. For urgent issues, open a support case instead."
+  },
+  "email": {
+    "defaultMessage": "Email",
+    "description": "Email"
+  },
+  "enterFeedback": {
+    "defaultMessage": "Enter your feedback",
+    "description": "Enter your feedback"
+  },
+  "feedback": {
+    "defaultMessage": "Feedback",
+    "description": "Feedback"
+  },
+  "feedbackSent": {
+    "defaultMessage": "Feedback Sent",
+    "description": "Feedback Sent"
+  },
+  "filterResults": {
+    "defaultMessage": "Filter results",
+    "description": "Filter results"
+  },
+  "filterSAPIDs": {
+    "defaultMessage": "Filter SAP IDs",
+    "description": "Filter SAP IDs"
+  },
+  "filterTags": {
+    "defaultMessage": "Filter tags",
+    "description": "Filter tags"
+  },
+  "findAppOrService": {
+    "defaultMessage": "Find an app or service",
+    "description": "Find an app or service"
+  },
+  "getSupport": {
+    "defaultMessage": "Get help from Red Hat support.",
+    "description": "Get help from Red Hat support."
+  },
+  "globalFilterNotApplicable": {
+    "defaultMessage": "Global filter is not applicable for this page",
+    "description": "Global filter is not applicable for this page"
+  },
+  "helpUsImproveHCC": {
+    "defaultMessage": "Help us improve the Red Hat Hybrid Cloud Console.",
+    "description": "Help us improve the Red Hat Hybrid Cloud Console."
+  },
+  "home": {
+    "defaultMessage": "Message",
+    "description": "Home"
+  },
+  "insightsRhelDocumentation": {
+    "defaultMessage": "Insights for RHEL Documentation",
+    "description": "Insights for RHEL Documentation"
+  },
+  "internal": {
+    "defaultMessage": "Internal",
+    "description": "Internal"
+  },
+  "internalUser": {
+    "defaultMessage": "Internal user",
+    "description": "Internal user"
+  },
+  "knownOutages": {
+    "defaultMessage": "for known outages.",
+    "description": "for known outages."
+  },
+  "learnAboutResearchOpportunities": {
+    "defaultMessage": "Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time.",
+    "description": "Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time."
+  },
+  "learnHowTo": {
+    "defaultMessage": "Learn how to create, import, and run applications with step-by-step instructions and tasks.",
+    "description": "Learn how to create, import, and run applications with step-by-step instructions and tasks."
+  },
+  "learnMore": {
+    "defaultMessage": "Learn more on our blog.",
+    "description": "Learn more on our blog."
+  },
+  "learnMoreABoutBeta": {
+    "defaultMessage": "Learn more about Beta Environment",
+    "description": "Learn more about Beta Environment"
+  },
+  "loggedOut": {
+    "defaultMessage": "You have successfully logged out.",
+    "description": "You have successfully logged out."
+  },
+  "login": {
+    "defaultMessage": "Log in",
+    "description": "Log in"
+  },
+  "logout": {
+    "defaultMessage": "Log out",
+    "description": "Log out"
+  },
+  "myProfile": {
+    "defaultMessage": "My profile",
+    "description": "My profile"
+  },
+  "myUserAccess": {
+    "defaultMessage": "MyUserAccess",
+    "description": "My User Access"
+  },
+  "name": {
+    "defaultMessage": "Name",
+    "description": "Name"
+  },
+  "newRequestReview": {
+    "defaultMessage": "You have a new access request that needs your review",
+    "description": "You have a new access request that needs your review"
+  },
+  "noInventoryPermissions": {
+    "defaultMessage": "You do not have the required inventory permissions to perform this action",
+    "description": "You do not have the required inventory permissions to perform this action"
+  },
+  "noLongerHaveAccess": {
+    "defaultMessage": "You no longer have access to account {accountId}.",
+    "description": "You no longer have access to account {accountId}."
+  },
+  "noMatchingAppsFound": {
+    "defaultMessage": "No matching applications or services found.",
+    "description": "No matching applications or services found."
+  },
+  "noResults": {
+    "defaultMessage": "No results",
+    "description": "No results"
+  },
+  "openSupportCase": {
+    "defaultMessage": "Open a support case",
+    "description": "Open a support case "
+  },
+  "orShareIdeas": {
+    "defaultMessage": "or share your ideas.",
+    "description": "or share your ideas."
+  },
+  "orgAdministrator": {
+    "defaultMessage": "Org. Administrator",
+    "description": "Org. Administrator"
+  },
+  "personalAccount": {
+    "defaultMessage": "Personal account",
+    "description": "Personal account"
+  },
+  "problemProcessingRequest": {
+    "defaultMessage": "There was a problem processing the request. Try reloading the page. If the problem persists, contact",
+    "description": "There was a problem processing the request. Try reloading the page. If the problem persists, contact"
+  },
+  "quickStarts": {
+    "defaultMessage": "Quick starts",
+    "description": "Quick starts"
+  },
+  "redHatSupport": {
+    "defaultMessage": "Red Hat support",
+    "description": "Red Hat support"
+  },
+  "reportBug": {
+    "defaultMessage": "Report a bug",
+    "description": "Report a bug"
+  },
+  "researchOpportunities": {
+    "defaultMessage": "Yes, I would like to hear about research opportunities",
+    "description": "Yes, I would like to hear about research opportunities"
+  },
+  "returnToHomepage": {
+    "defaultMessage": "Return to home page",
+    "description": "Return to home page"
+  },
+  "searchAccount": {
+    "defaultMessage": "Search account",
+    "description": "Search account"
+  },
+  "segmentError": {
+    "defaultMessage": "Context used outside of its Provider!",
+    "description": "Context used outside of its Provider!"
+  },
+  "selectTagsOrSIDs": {
+    "defaultMessage": "Select one or more tags/SAP IDs (SID)",
+    "description": "Select one or more tags/SAP IDs (SID)"
+  },
+  "shareFeedback": {
+    "defaultMessage": "Share feedback",
+    "description": "Share feedback"
+  },
+  "shareYourFeedback": {
+    "defaultMessage": "Share your feedback with us!",
+    "description": "Share your feedback with us!"
+  },
+  "showMore": {
+    "defaultMessage": "Show more",
+    "description": "Show more"
+  },
+  "somethingWentWrong": {
+    "defaultMessage": "Something went wrong",
+    "description": "Something went wrong"
+  },
+  "statusPage": {
+    "defaultMessage": "status page",
+    "description": "status page"
+  },
+  "stopUsing": {
+    "defaultMessage": "stop using",
+    "description": "stop using"
+  },
+  "submitFeedback": {
+    "defaultMessage": "Submit feedback",
+    "description": "Submit feedback"
+  },
+  "submitOnlyInStageProd": {
+    "defaultMessage": "Submitting feedback only works in prod and stage",
+    "description": "Submitting feedback only works in prod and stage"
+  },
+  "supportOptions": {
+    "defaultMessage": "Support options",
+    "description": "Support options"
+  },
+  "tagSources": {
+    "defaultMessage": "Tag sources",
+    "description": "Tag sources"
+  },
+  "tagsFilter": {
+    "defaultMessage": "Tags filter",
+    "description": "Tags filter"
+  },
+  "tellAboutExperience": {
+    "defaultMessage": "Tell us about your experience",
+    "description": "Tell us about your experience"
+  },
+  "thankYouForFeedback": {
+    "defaultMessage": "Thank you, we appreciate your feedback.",
+    "description": "Thank you, we appreciate your feedback."
+  },
+  "thereWillBeACatalgPage": {
+    "defaultMessage": "There will be a catalog page for {bundle} bundle",
+    "description": "There will be a catalog page for {bundle} bundle"
+  },
+  "tryChangingSearch": {
+    "defaultMessage": "This filter criteria matches no applications or services. Try changing your input filter.",
+    "description": "This filter criteria matches no applications or services. Try changing your input filter."
+  },
+  "tryThisFeatureInBeta": {
+    "defaultMessage": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.",
+    "description": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance."
+  },
+  "tryUsingDifferentAccount": {
+    "defaultMessage": "Try using different account",
+    "description": "Try using different account"
+  },
+  "unableToLoadQuickstartsContent": {
+    "defaultMessage": "Unable to load the quickstarts content.",
+    "description": "Unable to load the quickstarts content."
+  },
+  "use": {
+    "defaultMessage": "Use",
+    "description": "Use"
+  },
+  "useAccountNumber": {
+    "defaultMessage": "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number.",
+    "description": "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number."
+  },
+  "useFeatureInBeta": {
+    "defaultMessage": "Use feature in beta",
+    "description": "Use feature in beta"
+  },
+  "userPreferences": {
+    "defaultMessage": "User Preferences",
+    "description": "User Preferences"
+  },
+  "username": {
+    "defaultMessage": "Username:",
+    "description": "Username:"
+  },
+  "value": {
+    "defaultMessage": "Value",
+    "description": "Value"
+  },
+  "viewAsCustomer": {
+    "defaultMessage": "You are now viewing console.redhat.com as a customer, and will be interacting with real customer data.",
+    "description": "You are now viewing console.redhat.com as a customer, and will be interacting with real customer data."
+  },
+  "viewChanged": {
+    "defaultMessage": "View has changed",
+    "description": "View has changed"
+  },
+  "viewRequest": {
+    "defaultMessage": "View request",
+    "description": "View request"
+  },
+  "viewingAsAccount": {
+    "defaultMessage": "Viewing as Account {selectedAccountNumber}",
+    "description": "Viewing as Account {selectedAccountNumber}"
+  }
+}

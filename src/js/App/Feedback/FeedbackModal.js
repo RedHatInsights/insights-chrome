@@ -21,8 +21,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFeedbackModal } from '../../redux/actions';
 import FeedbackSuccess from './FeedbackSuccess';
 import './Feedback.scss';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const FeedbackModal = ({ user }) => {
+  const intl = useIntl();
   const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
@@ -40,32 +43,32 @@ const FeedbackModal = ({ user }) => {
         return (
           <div className="chr-c-feedback-content">
             <TextContent>
-              <Text component={TextVariants.h1}>Tell us about your experience</Text>
-              <Text>Help us improve the Red Hat Hybrid Cloud Console.</Text>
+              <Text component={TextVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Text>
+              <Text>{intl.formatMessage(messages.helpUsImproveHCC)}</Text>
             </TextContent>
             <div className="chr-c-feedback-cards">
               <Card isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
-                <CardTitle className="chr-c-feedback-card-title">Share feedback</CardTitle>
-                <CardBody>Tell us about your experience or share your ideas.</CardBody>
+                <CardTitle className="chr-c-feedback-card-title">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
+                <CardBody>{`${intl.formatMessage(messages.tellAboutExperience)} ${intl.formatMessage(messages.orShareIdeas)}`}</CardBody>
               </Card>
               <br />
               {/*  Add when bug report is ready
             <Card isSelectableRaised isCompact onClick={() => setModalPage('bugReport1')}>
-              <CardTitle className="chr-c-feedback-card-title">Report a bug</CardTitle>
-              <CardBody>Describe the bug you encountered. For urgent issues, open a support case instead.</CardBody>
+              <CardTitle className="chr-c-feedback-card-title">{intl.formatMessage(messages.reportBug)}</CardTitle>
+              <CardBody>{intl.formatMessage(messages.describeBug)}</CardBody>
             </Card>
             <br /> */}
               <Card isSelectableRaised isCompact href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
                 <CardTitle className="chr-c-feedback-card-title">
                   <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
-                    Open a support case <ExternalLinkAltIcon />
+                    {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
                   </Text>
                 </CardTitle>
-                <CardBody>Get help from Red Hat support.</CardBody>
+                <CardBody>{intl.formatMessage(messages.getSupport)}</CardBody>
               </Card>
             </div>
             <Button className="chr-c-feedback-button" ouiaId="cancel-feedback" key="cancel" variant="link" onClick={handleCloseModal}>
-              Cancel
+              {intl.formatMessage(messages.cancel)}
             </Button>
           </div>
         );
@@ -92,7 +95,7 @@ const FeedbackModal = ({ user }) => {
         }}
       >
         <OutlinedCommentsIcon />
-        Feedback
+        {intl.formatMessage(messages.feedback)}
       </Button>
       <Modal isOpen={isOpen} className="chr-c-feedback-modal" variant={ModalVariant.medium} onClose={handleCloseModal}>
         <Grid>
@@ -103,7 +106,7 @@ const FeedbackModal = ({ user }) => {
             <img className="chr-c-feedback-image" src={feedbackIllo} />
           </GridItem>
         </Grid>
-        {!isAvailable && <Label color="red"> Submitting feedback only works in prod and stage </Label>}
+        {!isAvailable && <Label color="red"> {intl.formatMessage(messages.submitOnlyInStageProd)} </Label>}
       </Modal>
     </React.Fragment>
   );
