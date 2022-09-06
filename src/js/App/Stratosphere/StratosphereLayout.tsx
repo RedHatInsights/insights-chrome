@@ -1,15 +1,12 @@
-import { ScalprumComponent, useScalprum } from '@scalprum/react-core';
-import React, { VoidFunctionComponent } from 'react';
+import React, { Suspense } from 'react';
 
-const StratosphereLayout: VoidFunctionComponent = () => {
-  // Will be handling the connection between third party marketplaces and
-  const initialized = useScalprum(({ initialized }) => initialized);
+import LoadingFallback from '../../utils/loading-fallback';
+import ProductSelection from './ProductSelection';
 
-  if (!initialized) {
-    return null;
-  }
-  // TODO: Use the actual StratoSphere module. Sources is just a test
-  return <ScalprumComponent scope="sources" appName="sources" module="./RootApp" />;
-};
+const StratosphereLayout = () => (
+  <Suspense fallback={LoadingFallback}>
+    <ProductSelection />
+  </Suspense>
+);
 
 export default StratosphereLayout;

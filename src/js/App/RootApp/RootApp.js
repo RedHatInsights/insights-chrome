@@ -65,8 +65,8 @@ const RootApp = (props) => {
   };
   return (
     <Router history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
-      <FeatureFlagsProvider>
-        <SegmentProvider activeModule={activeModule}>
+      <SegmentProvider activeModule={activeModule}>
+        <FeatureFlagsProvider>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
 
@@ -76,8 +76,8 @@ const RootApp = (props) => {
               </HelpTopicContainer>
             </QuickStartContainer>
           </IDPChecker>
-        </SegmentProvider>
-      </FeatureFlagsProvider>
+        </FeatureFlagsProvider>
+      </SegmentProvider>
     </Router>
   );
 };

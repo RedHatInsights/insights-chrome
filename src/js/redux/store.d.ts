@@ -2,11 +2,38 @@ import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../types';
 
+export type RouteDefinition = {
+  scope: string;
+  module: string;
+  isFedramp?: boolean;
+  path: string;
+  manifestLocation: string;
+  dynamic?: boolean;
+  exact?: boolean;
+};
+
+export type ModuleRoute =
+  | {
+      isFedramp?: boolean;
+      pathname: string;
+      exact?: boolean;
+      dynamic?: boolean;
+    }
+  | string;
+
+export type RemoteModule = {
+  module: string;
+  routes: ModuleRoute[];
+};
+
 export type ChromeModule = {
   manifestLocation: string;
   analytics?: {
     APIKey?: string;
   };
+  dynamic?: boolean;
+  isFedramp?: boolean;
+  modules?: RemoteModule[];
 };
 
 // TODO: Update once navigation is mgrated to TS
@@ -26,6 +53,7 @@ export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
   activeModule?: string;
+  activeProduct?: string;
   /**
    * @deprecated
    * App id is replaced by active module. It is still required until we completely remove usage of main.yml
@@ -44,6 +72,7 @@ export type ChromeState = {
       module?: string;
     };
   };
+  moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
   accessRequests: {
