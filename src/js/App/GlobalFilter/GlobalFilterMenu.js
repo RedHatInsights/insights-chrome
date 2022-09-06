@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Bullseye, Checkbox, MenuGroup, MenuItem, MenuList, Select, SelectVariant, Spinner, TextInput } from '@patternfly/react-core';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 import './global-filter-menu.scss';
 import { useSelector } from 'react-redux';
@@ -48,6 +50,7 @@ const getMenuItems = (groups, onChange, calculateSelected) => {
 const generateGlobalFilterEvent = (isChecked, value) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
 
 const GlobalFilterMenu = (props) => {
+  const intl = useIntl();
   const { filterBy, onFilter, groups = [], onChange, selectedTags, hotjarEventEmitter } = props;
   const isLoading = useSelector(
     ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
@@ -128,7 +131,7 @@ const GlobalFilterMenu = (props) => {
           <MenuGroup>
             <MenuList>
               <MenuItem onClick={() => props.setTagModalOpen(true)} isLoadButton>
-                Show more
+                {intl.formatMessage(messages.showMore)}
               </MenuItem>
             </MenuList>
           </MenuGroup>

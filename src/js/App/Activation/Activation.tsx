@@ -6,8 +6,11 @@ import { DeepRequired } from 'utility-types';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
+  const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useState(true);
   const history = useHistory();
   const isAvailable = getEnv() === 'prod';
@@ -43,9 +46,9 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
   }, []);
 
   return (
-    <Modal isOpen={isModalOpen} onClose={onModalClose} title="Thank you for submitting your activation request" variant={ModalVariant.medium}>
+    <Modal isOpen={isModalOpen} onClose={onModalClose} title={intl.formatMessage(messages.activationTitle)} variant={ModalVariant.medium}>
       <TextContent>
-        <Text>Red Hat will be in touch within 1 business day to confirm your subscription benefits are ready to be activated.</Text>
+        <Text>{intl.formatMessage(messages.activationDescription)}</Text>
       </TextContent>
     </Modal>
   );

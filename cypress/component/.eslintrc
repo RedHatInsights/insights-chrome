@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "cy": "readonly"
+  },
+  "rules": {
+    "react/prop-types": "off"
+  }
+}
