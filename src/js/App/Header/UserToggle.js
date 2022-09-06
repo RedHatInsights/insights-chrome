@@ -84,7 +84,7 @@ const buildItems = (username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout(true)}>
       {intl.formatMessage(messages.logout)}
     </DropdownItem>,
-    { extraItems },
+    extraItems,
   ];
 };
 
