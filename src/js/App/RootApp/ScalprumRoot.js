@@ -35,8 +35,6 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const dispatch = useDispatch();
   const enableStratosphere = useFlag('platform.chrome.stratosphere.enabled');
 
-  console.log({ enableStratosphere });
-
   async function setActiveTopic(name) {
     setActiveTopicName(name);
     if (name?.length > 0) {
