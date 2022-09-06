@@ -12,16 +12,16 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { useIntl } from 'react-intl';
-
-import messages from '../../locales/Messages';
-import { getEnv, getUrl, isProd } from '../../utils/common';
-
 import './Feedback.scss';
+import PropTypes from 'prop-types';
+import { getEnv, getUrl, isProd } from '../../utils';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
-export type FeedbackProps = {
+export type ReportBugProps = {
   user: DeepRequired<ChromeUser>;
   onCloseModal: () => void;
   onSubmit: () => void;
@@ -29,10 +29,10 @@ export type FeedbackProps = {
   handleFeedbackError: () => void;
 };
 
-const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackError }: FeedbackProps) => {
-  const intl = useIntl();
+const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackError }: ReportBugProps) => {
   const [textAreaValue, setTextAreaValue] = useState('');
   const [checked, setChecked] = useState(false);
+  const intl = useIntl();
   const env = getEnv();
   const app = getUrl('app');
   const bundle = getUrl('bundle');
@@ -51,9 +51,8 @@ const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackErr
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            description: `Feedback: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${
-              checked ? user.identity.user.email : ''
-            }, URL: ${window.location.href}`, //eslint-disable-line
+            description: `Bug: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, 
+          Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`,
             summary: `${addFeedbackTag()} App Feedback`,
             labels: [app, bundle],
           }),
@@ -73,16 +72,23 @@ const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackErr
   return (
     <div className="chr-c-feedback-content">
       <TextContent>
-        <Text component={TextVariants.h1}>{intl.formatMessage(messages.shareYourFeedback)}</Text>
+        <Text component={TextVariants.h1}>{intl.formatMessage(messages.reportABug)}</Text>
+        <Text>
+          {intl.formatMessage(messages.describeReportBug)}{' '}
+          <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
+            {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
+          </Text>
+        </Text>
       </TextContent>
       <Form>
-        <FormGroup label={intl.formatMessage(messages.enterFeedback)} fieldId="horizontal-form-exp">
+        <FormGroup fieldId="horizontal-form-exp">
           <TextArea
             value={textAreaValue}
             onChange={(value) => setTextAreaValue(value)}
             className="chr-c-feedback-text-area"
             name="feedback-description-text"
-            id="feedback-description-text"
+            id="bug-report-description-text"
+            placeholder={intl.formatMessage(messages.addDescription)}
           />
         </FormGroup>
         <FormGroup className="pf-u-mt-20">
@@ -91,7 +97,9 @@ const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackErr
             isChecked={checked}
             onChange={() => setChecked(!checked)}
             label={intl.formatMessage(messages.researchOpportunities)}
-            description={intl.formatMessage(messages.learnAboutResearchOpportunities)}
+            description={`${intl.formatMessage(messages.learnAboutResearchOpportunities)} ${intl.formatMessage(
+              messages.weNeverSharePersonalInformation
+            )}`}
           />
         </FormGroup>
       </Form>
@@ -110,10 +118,10 @@ const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackErr
       <div className="chr-c-feedback-buttons">
         <Button
           ouiaId="submit-feedback"
+          isDisabled={textAreaValue.length > 1 ? false : true}
           className="chr-c-feedback-footer-button"
           key="confirm"
           variant="primary"
-          isDisabled={textAreaValue.length > 1 ? false : true}
           onClick={handleModalSubmission}
         >
           {intl.formatMessage(messages.submitFeedback)}
@@ -129,4 +137,12 @@ const Feedback = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackErr
   );
 };
 
-export default Feedback;
+ReportBug.propTypes = {
+  user: PropTypes.object,
+  modalPage: PropTypes.string,
+  setModalPage: PropTypes.func,
+  onCloseModal: PropTypes.func,
+  onSubmit: PropTypes.func,
+};
+
+export default ReportBug;
