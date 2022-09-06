@@ -1,10 +1,57 @@
-.chr-c-landing-nav {
-  height: 100%;
+  @media only screen and (min-width: 769px) {
+    .pf-c-menu {
+      width: 500px;
+      padding: 28px;
+      .favorite.pf-c-menu__list-item {
+        &::before {
+          color: gray;
+        }
+      }
+      li.pf-c-menu__list-item {
+        &::before {
+          content: "\2606";
+          color: transparent;
+          padding-top: 16px;
+          padding-right: 12px;
+          pointer-events: none;
+        }
+        &:hover {
+          background: none !important;
+        }
+        .pf-c-menu__item {
+          &:hover {
+            background-color: #3c3f42;
+          }
+          &::before {
+            border-bottom: none !important; 
+          }
+        }
+        padding-bottom: 20px;
+        }
+      }
+    }
 
-  .chr-c-app-title {
-    border: 0;
+
+  @media only screen and (max-width: 768px) {
+    .pf-c-menu {
+      width: 200px;
+      white-space: wrap;
+      .favorite .pf-c-menu__item-text {
+        &::before {
+          content: "\2606";
+          color: transparent;
+          padding-top: 16px;
+          padding-right: 4px;
+          pointer-events: none;
+          color: gray;
+        }
+      }
+    }
   }
-}
+  .pf-c-menu__item-description {
+    color: #06c;
+    white-space: normal;
+  }
 
 /**
 * There is a transition of background color on first landing page nav render
