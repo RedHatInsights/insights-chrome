@@ -91,6 +91,9 @@ export type ChromeState = {
 };
 
 export type GlobalFilterWorkloads = {
+  selected?: boolean;
+  page?: number;
+  perPage?: number;
   isLoaded: boolean;
   hasSap?: number;
   hasAap?: number;
@@ -100,18 +103,35 @@ export type GlobalFilterWorkloads = {
   total?: number;
 };
 
+export type CommonTag = {
+  key?: string;
+  namespace?: string;
+  value?: string | number | boolean;
+};
+
+export type SID = {
+  id?: string;
+  name?: string;
+  tags?: {
+    tag: CommonTag;
+  }[];
+};
+
 export type GlobalFilterSIDs = {
   isLoaded: boolean;
   total?: number;
   count?: number;
   page?: number;
   perPage?: number;
-  items?: any[];
+  items?: SID[];
 };
 
 export type GlobalFilterTag = {
-  name: string;
-  tags: unknown;
+  id?: string;
+  name?: string;
+  tags?: {
+    tag: CommonTag;
+  }[];
 };
 
 export type GlobalFilterTags = {
@@ -130,7 +150,7 @@ export type GlobalFilterState = {
   sid: GlobalFilterSIDs;
   selectedTags?: unknown;
   globalFilterHidden: boolean;
-  scope?: string;
+  scope?: 'insights';
 };
 
 export type ReduxState = {
