@@ -84,6 +84,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
   };
   const dispatch = useDispatch();
   const onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (event.ctrlKey || event.shiftKey) {
+      return false;
+    }
     if (onLinkClick && isBeta) {
       if (!onLinkClick(event, href)) {
         return false;
