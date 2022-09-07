@@ -20,4 +20,5 @@ export default {
   quickstartsDebug: () => functionBuilder('chrome:experimental:quickstarts', true),
   darkMode: () => functionBuilder('chrome:darkmode', true),
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
+  intlDebug: () => functionBuilder('chrome:intl:debug', true),
 };
