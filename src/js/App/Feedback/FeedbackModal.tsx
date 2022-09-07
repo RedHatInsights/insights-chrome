@@ -14,30 +14,40 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedCommentsIcon } from '@patternfly/react-icons';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
+import { DeepRequired } from 'utility-types';
+
 import feedbackIllo from '../../../../static/images/feedback_illo.svg';
 import Feedback from './Feedback';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import { toggleFeedbackModal } from '../../redux/actions';
+import { ReduxState } from '../../redux/store';
 import FeedbackSuccess from './FeedbackSuccess';
-import './Feedback.scss';
-import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 
-const FeedbackModal = ({ user }) => {
+import './Feedback.scss';
+
+export type FeedbackModalProps = {
+  user: DeepRequired<ChromeUser>;
+};
+
+export type FeedbackPages = 'feedbackHome' | 'feedbackOne' | 'feedbackSuccess';
+
+const FeedbackModal = ({ user }: FeedbackModalProps) => {
   const intl = useIntl();
-  const usePendoFeedback = useSelector(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
-  const isOpen = useSelector(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
+  const usePendoFeedback = useSelector<ReduxState, boolean | undefined>(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
+  const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
-  const [modalPage, setModalPage] = useState('feedbackHome');
+  const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const env = window.insights.chrome.getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
-  const setIsModalOpen = (...args) => dispatch(toggleFeedbackModal(...args));
+  const setIsModalOpen = (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen));
   const handleCloseModal = () => {
     setIsModalOpen(false), setModalPage('feedbackHome');
   };
 
-  const ModalDescription = ({ modalPage }) => {
+  const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
     switch (modalPage) {
       case 'feedbackHome':
         return (
@@ -79,10 +89,6 @@ const FeedbackModal = ({ user }) => {
     }
   };
 
-  ModalDescription.propTypes = {
-    modalPage: PropTypes.string,
-  };
-
   return (
     <React.Fragment>
       <Button
@@ -110,10 +116,6 @@ const FeedbackModal = ({ user }) => {
       </Modal>
     </React.Fragment>
   );
-};
-
-FeedbackModal.propTypes = {
-  user: PropTypes.object,
 };
 
 export default FeedbackModal;
