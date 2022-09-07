@@ -4,9 +4,12 @@ module.exports = {
     insights: 'writable',
   },
   rules: {
-    'sort-imports': [2, {
-      'ignoreDeclarationSort': true,
-    }]
+    'sort-imports': [
+      2,
+      {
+        ignoreDeclarationSort: true,
+      },
+    ],
   },
   overrides: [
     {
@@ -16,7 +19,7 @@ module.exports = {
       extends: ['plugin:@typescript-eslint/recommended'],
       rules: {
         'react/prop-types': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+        '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used' }],
       },
     },
   ],

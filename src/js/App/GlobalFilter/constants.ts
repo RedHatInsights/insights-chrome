@@ -132,6 +132,9 @@ type Tag = {
     tagKey?: string;
     tagValue?: string;
   };
+  group?: {
+    items?: unknown;
+  };
 };
 
 export type FlagTagsFilter = {
