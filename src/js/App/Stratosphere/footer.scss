@@ -1,0 +1,16 @@
+.chr-c-footer {
+  background-color: var(--pf-global--BackgroundColor--dark-100);
+  padding: var(--pf-global--spacer--md);
+  padding-left: var(--pf-global--spacer--xl);
+  &__logo {
+    height: var(--pf-global--FontSize--4xl);
+  }
+
+  &__link {
+    color: var(--pf-c-content--small--Color) !important;
+  }
+
+  &__divider::after {
+    background-color: var(--pf-global--Color--200);
+  }
+}

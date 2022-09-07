@@ -13,6 +13,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+    "types": ["node", "jest",  "@testing-library/jest-dom"],
+  },
+  "include": ["src/**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx"]
 }

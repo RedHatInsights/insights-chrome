@@ -36,6 +36,7 @@ describe('ChromeLink', () => {
         modules: {
           testModule: {},
         },
+        moduleRoutes: [],
       },
     });
     const { getAllByTestId } = render(
@@ -51,6 +52,7 @@ describe('ChromeLink', () => {
     const store = mockStore({
       chrome: {
         activeModule: 'differentModule',
+        moduleRoutes: [],
         modules: {
           differentModule: {
             dynamic: false,
@@ -71,6 +73,7 @@ describe('ChromeLink', () => {
   test('should dispatch appNavClick with correct actionId for top level route', () => {
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -109,6 +112,7 @@ describe('ChromeLink', () => {
   test('should dispatch appNavClick with correct actionId for nested route', () => {
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -150,6 +154,7 @@ describe('ChromeLink', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'testModule',
         modules: {
           testModule: {},
@@ -176,10 +181,43 @@ describe('ChromeLink', () => {
     expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
   });
 
+  test('should not trigger onLinkClick callback on ctrl-click or shift-click', () => {
+    const onLinkClickSpy = jest.fn();
+    const store = mockStore({
+      chrome: {
+        moduleRoutes: [],
+        activeModule: 'testModule',
+        modules: {
+          testModule: {},
+        },
+      },
+    });
+    const {
+      container: { firstElementChild: buttton },
+    } = render(
+      <LinkContext
+        store={store}
+        providerValue={{
+          onLinkClick: onLinkClickSpy,
+        }}
+      >
+        <ChromeLink {...testProps}>Test module link</ChromeLink>
+      </LinkContext>
+    );
+
+    act(() => {
+      fireEvent(buttton, new MouseEvent('ctrlKey'));
+      fireEvent(buttton, new MouseEvent('shiftKey'));
+    });
+
+    expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
+  });
+
   test('should trigger onLinkClick callback', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
       chrome: {
+        moduleRoutes: [],
         activeModule: 'differentModule',
         modules: {
           differentModule: {},

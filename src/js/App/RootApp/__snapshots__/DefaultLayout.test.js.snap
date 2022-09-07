@@ -2,7 +2,6 @@
 
 exports[`DefaultLayout should render correctly - no data 1`] = `
 <div
-  class="pf-c-drawer__content"
   data-ouia-bundle=""
   data-ouia-safe="true"
   id="chrome-app-render-root"
@@ -12,7 +11,6 @@ exports[`DefaultLayout should render correctly - no data 1`] = `
 
 exports[`DefaultLayout should render correctly 1`] = `
 <div
-  class="pf-c-drawer__content"
   data-ouia-app-id="app-id"
   data-ouia-bundle="some-location"
   data-ouia-safe="true"
@@ -23,7 +21,6 @@ exports[`DefaultLayout should render correctly 1`] = `
 
 exports[`DefaultLayout should render correctly with pageAction 1`] = `
 <div
-  class="pf-c-drawer__content"
   data-ouia-app-id="app-id"
   data-ouia-bundle="some-location"
   data-ouia-page-type="some-action"
@@ -35,7 +32,6 @@ exports[`DefaultLayout should render correctly with pageAction 1`] = `
 
 exports[`DefaultLayout should render correctly with pageObjectId 1`] = `
 <div
-  class="pf-c-drawer__content"
   data-ouia-app-id="app-id"
   data-ouia-bundle="some-location"
   data-ouia-page-object-id="some-object-id"
@@ -47,7 +43,6 @@ exports[`DefaultLayout should render correctly with pageObjectId 1`] = `
 
 exports[`DefaultLayout should render correctly with pageObjectId and pageAction 1`] = `
 <div
-  class="pf-c-drawer__content"
   data-ouia-app-id="app-id"
   data-ouia-bundle="some-location"
   data-ouia-page-object-id="some-object-id"

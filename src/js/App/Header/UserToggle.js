@@ -1,24 +1,26 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isBeta } from '../../utils';
+import { getEnv, isBeta, isProd as isProdEnv } from '../../utils';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
-function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) {
-  const env = window.insights.chrome.getEnvironment();
-  const isProd = window.insights.chrome.isProd;
+const buildItems = (username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) => {
+  const env = getEnv();
+  const isProd = isProdEnv();
+  const intl = useIntl();
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
-  const accountNumberTooltip =
-    "Use this number when contacting Red hat for support. If you don't have any active subscriptions, you will not have an account number.";
+  const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
-        <dt className="chr-c-dropdown-item__stack--header">Username:</dt>
+        <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.username)}</dt>
         <dd className="chr-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
-        {isOrgAdmin && <dd className="chr-c-dropdown-item__stack--subValue">Org. Administrator</dd>}
+        {isOrgAdmin && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.orgAdministrator)}</dd>}
       </dl>
     </DropdownItem>,
     <React.Fragment key="account wrapper">
@@ -26,7 +28,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
         <DropdownItem key="Account" isPlainText className="disabled-pointer">
           <dl className="chr-c-dropdown-item__stack">
             <dt className="chr-c-dropdown-item__stack--header">
-              Account number:
+              {intl.formatMessage(messages.accountNumber)}
               <span className="visible-pointer pf-u-ml-sm">
                 <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
                   <QuestionCircleIcon />
@@ -34,7 +36,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
               </span>
             </dt>
             <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
-            {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">Internal user</dd>}
+            {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
           </dl>
         </DropdownItem>
       )}
@@ -46,14 +48,14 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
       target="_blank"
       rel="noopener noreferrer"
     >
-      My profile
+      {intl.formatMessage(messages.myProfile)}
     </DropdownItem>,
     <React.Fragment key="My user access wrapper">
-      {accountNumber > -1 && window.insights.chrome.isBeta() && (
+      {accountNumber > -1 && isBeta() && (
         <DropdownItem
           component={
             <ChromeLink href="/settings/my-user-access" isBeta={isBeta()} appId="rbac">
-              My User Access
+              {intl.formatMessage(messages.myUserAccess)}
             </ChromeLink>
           }
           key="My user access"
@@ -65,7 +67,7 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
         <DropdownItem
           component={
             <ChromeLink href="/user-preferences/email" isBeta={isBeta()} appId="userPreferences">
-              User Preferences
+              {intl.formatMessage(messages.userPreferences)}
             </ChromeLink>
           }
           key="User preferences"
@@ -75,61 +77,48 @@ function buildItems(username, isOrgAdmin, accountNumber = -1, isInternal, extraI
     <React.Fragment key="internal wrapper">
       {isInternal && isProd && (
         <DropdownItem key="Internal" href="./internal">
-          Internal
+          {intl.formatMessage(messages.internal)}
         </DropdownItem>
       )}
     </React.Fragment>,
     <DropdownItem key="logout" component="button" onClick={() => window.insights.chrome.auth.logout(true)}>
-      Log out
+      {intl.formatMessage(messages.logout)}
     </DropdownItem>,
-    [...extraItems],
+    extraItems,
   ];
-}
+};
 
-export class UserToggle extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-    };
-    this.onSelect = this.onSelect.bind(this);
-    this.onToggle = this.onToggle.bind(this);
-  }
+export const UserToggle = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  onSelect() {
-    this.setState({ isOpen: !this.state.isOpen });
-  }
+  const onSelect = () => {
+    setIsOpen(!isOpen);
+  };
 
-  onToggle(isOpen) {
-    this.setState({
-      isOpen,
-    });
-  }
-
-  render() {
-    const { isOpen } = this.state;
-    const { account, isSmall, extraItems } = this.props;
-    const toggle = isSmall ? (
-      <KebabToggle onToggle={this.onToggle} className="data-hj-suppress" />
-    ) : (
-      <DropdownToggle id="UserMenu" icon={<UserIcon />} className="data-hj-suppress" widget-type="UserMenu" onToggle={this.onToggle}>
-        {account.name}
-      </DropdownToggle>
-    );
-    return (
-      <Dropdown
-        position={DropdownPosition.right}
-        aria-label="Overflow actions"
-        ouiaId="chrome-user-menu"
-        onSelect={this.onSelect}
-        toggle={toggle}
-        className="chr-c-dropdown-user-toggle"
-        isOpen={isOpen}
-        dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
-      />
-    );
-  }
-}
+  const onToggle = (isOpen) => {
+    setIsOpen(isOpen);
+  };
+  const { account, isSmall, extraItems } = props;
+  const toggle = isSmall ? (
+    <KebabToggle onToggle={onToggle} className="data-hj-suppress" />
+  ) : (
+    <DropdownToggle id="UserMenu" icon={<UserIcon />} className="data-hj-suppress" widget-type="UserMenu" onToggle={onToggle}>
+      {account.name}
+    </DropdownToggle>
+  );
+  return (
+    <Dropdown
+      position={DropdownPosition.right}
+      aria-label="Overflow actions"
+      ouiaId="chrome-user-menu"
+      onSelect={onSelect}
+      toggle={toggle}
+      className="chr-c-dropdown-user-toggle"
+      isOpen={isOpen}
+      dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
+    />
+  );
+};
 
 UserToggle.propTypes = {
   account: PropTypes.shape({

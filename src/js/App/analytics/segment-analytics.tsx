@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import { ChromeState } from '../../redux/store';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'openshift';
@@ -173,7 +175,7 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
         window.segment = undefined;
-        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
+        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
@@ -194,9 +196,10 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
 };
 
 export function useSegment() {
+  const intl = useIntl();
   const ctx = useContext(SegmentContext);
   if (!ctx) {
-    throw new Error('Context used outside of its Provider!');
+    throw new Error(`${intl.formatMessage(messages.segmentError)}`);
   }
   return ctx;
 }
