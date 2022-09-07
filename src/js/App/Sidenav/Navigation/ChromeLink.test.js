@@ -181,6 +181,38 @@ describe('ChromeLink', () => {
     expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
   });
 
+  test('should not trigger onLinkClick callback on ctrl-click or shift-click', () => {
+    const onLinkClickSpy = jest.fn();
+    const store = mockStore({
+      chrome: {
+        moduleRoutes: [],
+        activeModule: 'testModule',
+        modules: {
+          testModule: {},
+        },
+      },
+    });
+    const {
+      container: { firstElementChild: buttton },
+    } = render(
+      <LinkContext
+        store={store}
+        providerValue={{
+          onLinkClick: onLinkClickSpy,
+        }}
+      >
+        <ChromeLink {...testProps}>Test module link</ChromeLink>
+      </LinkContext>
+    );
+
+    act(() => {
+      fireEvent(buttton, new MouseEvent('ctrlKey'));
+      fireEvent(buttton, new MouseEvent('shiftKey'));
+    });
+
+    expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
+  });
+
   test('should trigger onLinkClick callback', () => {
     const onLinkClickSpy = jest.fn();
     const store = mockStore({
