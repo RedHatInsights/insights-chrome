@@ -12,14 +12,23 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
-import './Feedback.scss';
+import { DeepRequired } from 'utility-types';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import Cookies from 'js-cookie';
-import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
-import { getEnv, getUrl, isProd } from '../../utils.ts';
 
-const Feedback = ({ user, onCloseModal, onSubmit }) => {
+import messages from '../../Messages';
+import { getEnv, getUrl, isProd } from '../../utils';
+
+import './Feedback.scss';
+
+export type FeedbackProps = {
+  user: DeepRequired<ChromeUser>;
+  onCloseModal: () => void;
+  onSubmit: () => void;
+};
+
+const Feedback = ({ user, onCloseModal, onSubmit }: FeedbackProps) => {
   const intl = useIntl();
   const [textAreaValue, setTextAreaValue] = useState('');
   const [checked, setChecked] = useState(false);
@@ -99,14 +108,6 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
       </div>
     </div>
   );
-};
-
-Feedback.propTypes = {
-  user: PropTypes.object,
-  modalPage: PropTypes.string,
-  setModalPage: PropTypes.func,
-  onCloseModal: PropTypes.func,
-  onSubmit: PropTypes.func,
 };
 
 export default Feedback;
