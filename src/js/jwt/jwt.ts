@@ -43,6 +43,18 @@ export type DecodedToken = {
   session_state?: string;
 };
 
+function getPartnerScope(pathname: string) {
+  // replace beta and leading "/"
+  const sanitizedPathname = pathname.replace(/^\/beta\//, '/').replace(/^\//, '');
+  // check if the pathname is connect/:partner
+  if (sanitizedPathname.match(/^connect\/.+/)) {
+    // return :partner param
+    return `api.partner_link.${sanitizedPathname.split('/')[1]}`;
+  }
+
+  return undefined;
+}
+
 export function decodeToken(str: string): DecodedToken {
   str = str.split('.')[1];
   str = str.replace('/-/g', '+');
@@ -84,8 +96,9 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
     const kc = new Keycloak(options);
 
     await kc.init(options);
+    const partnerScope = getPartnerScope(window.location.pathname);
     kc.login({
-      scope: 'offline_access',
+      scope: `offline_access${partnerScope ? ` ${partnerScope}` : ''}`,
     });
   });
 };
@@ -221,7 +234,7 @@ export function login() {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
-  return priv.login({ redirectUri: location.href });
+  return priv.login({ redirectUri: location.href, scope: getPartnerScope(window.location.pathname) });
 }
 
 export function logout(bounce?: boolean) {
