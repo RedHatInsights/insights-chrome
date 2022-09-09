@@ -13,9 +13,11 @@ import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import { SegmentContext } from '../analytics/segment-analytics';
+import LoadingFallback from '../../utils/loading-fallback';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
+const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
 const loaderWrapper = (Component, props = {}) => (
   <Suspense fallback={<NavLoader />}>
@@ -114,6 +116,13 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
         <Route exact path="/">
           <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
         </Route>
+        {enableStratosphere && (
+          <Route exact path="/connect/products">
+            <Suspense fallback={LoadingFallback}>
+              <ProductSelection />
+            </Suspense>
+          </Route>
+        )}
         {enableStratosphere && (
           <Route path="/connect">
             <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />

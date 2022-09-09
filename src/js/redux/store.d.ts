@@ -2,11 +2,38 @@ import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../types';
 
+export type RouteDefinition = {
+  scope: string;
+  module: string;
+  isFedramp?: boolean;
+  path: string;
+  manifestLocation: string;
+  dynamic?: boolean;
+  exact?: boolean;
+};
+
+export type ModuleRoute =
+  | {
+      isFedramp?: boolean;
+      pathname: string;
+      exact?: boolean;
+      dynamic?: boolean;
+    }
+  | string;
+
+export type RemoteModule = {
+  module: string;
+  routes: ModuleRoute[];
+};
+
 export type ChromeModule = {
   manifestLocation: string;
   analytics?: {
     APIKey?: string;
   };
+  dynamic?: boolean;
+  isFedramp?: boolean;
+  modules?: RemoteModule[];
 };
 
 // TODO: Update once navigation is mgrated to TS
@@ -45,6 +72,7 @@ export type ChromeState = {
       module?: string;
     };
   };
+  moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
   accessRequests: {

@@ -4,42 +4,46 @@ import { AlertVariant } from '@patternfly/react-core';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
 import useAccessRequestNotifier from '../../utils/useAccessRequestNotifier';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const ACCOUNT_CHANGE_ID = 'account_change';
 const ACCOUNT_TIMEOUT_ID = 'account_timeout';
-
-const accountSwitchNotification: PortalNotificationConfig = {
-  id: ACCOUNT_CHANGE_ID,
-  title: 'View has changed',
-  description: 'You are now viewing console.redhat.com as a customer, and will be interacting with real customer data.',
-  variant: 'info',
-};
-
-const defaultNotificationConfig: Omit<PortalNotificationConfig, 'id'> = {
-  variant: 'info',
-  dismissable: true,
-  title: 'You have a new access request that needs your review',
-};
-
-const createAccoutTimeoutNotification = (accountId: string) => ({
-  variant: AlertVariant.danger,
-  id: ACCOUNT_TIMEOUT_ID,
-  title: `You no longer have access to account ${accountId}.`,
-  autoDismiss: false,
-});
-
-const DescriptionComponent = ({ id, markRead }: { id: string; markRead: (id: string) => void }) => (
-  <span onClick={() => markRead(id)}>
-    <ChromeLink href={id === 'mark-all' ? '/settings/rbac/access-requests' : `/settings/rbac/access-requests/${id}`} appId="rbac">
-      View request
-    </ChromeLink>
-  </span>
-);
 
 const CrossRequestNotifier = () => {
   const [, forceRender] = useReducer((state) => state + 1, 0);
   const [{ data }, markRead] = useAccessRequestNotifier();
   const crossAccountNotifications = data.filter(({ seen }) => !seen);
+
+  const intl = useIntl();
+
+  const accountSwitchNotification: PortalNotificationConfig = {
+    id: ACCOUNT_CHANGE_ID,
+    title: `${intl.formatMessage(messages.viewChanged)}`,
+    description: `${intl.formatMessage(messages.viewAsCustomer)}`,
+    variant: 'info',
+  };
+
+  const defaultNotificationConfig: Omit<PortalNotificationConfig, 'id'> = {
+    variant: 'info',
+    dismissable: true,
+    title: `${intl.formatMessage(messages.newRequestReview)}`,
+  };
+
+  const createAccoutTimeoutNotification = (accountId: string) => ({
+    variant: AlertVariant.danger,
+    id: ACCOUNT_TIMEOUT_ID,
+    title: `${intl.formatMessage(messages.noLongerHaveAccess, { accountId })}`,
+    autoDismiss: false,
+  });
+
+  const DescriptionComponent = ({ id, markRead }: { id: string; markRead: (id: string) => void }) => (
+    <span onClick={() => markRead(id)}>
+      <ChromeLink href={id === 'mark-all' ? '/settings/rbac/access-requests' : `/settings/rbac/access-requests/${id}`} appId="rbac">
+        {intl.formatMessage(messages.viewRequest)}
+      </ChromeLink>
+    </span>
+  );
 
   const removeNotification = (id: string | number) => {
     if (id === ACCOUNT_CHANGE_ID) {

@@ -17,11 +17,14 @@ import {
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { getUrl } from '../../utils';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 import './ErrorComponent.scss';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 const ErrorComponent = (props) => {
+  const intl = useIntl();
   useEffect(() => {
     Sentry.captureException(new Error('Unhandled UI runtime error'), {
       bundle: getUrl('bundle'),
@@ -35,19 +38,19 @@ const ErrorComponent = (props) => {
       <EmptyState>
         <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
-          Something went wrong
+          {intl.formatMessage(messages.somethingWentWrong)}
         </Title>
         <EmptyStateBody>
           <p className="chr-c-error-component__text">
-            There was a problem processing the request. Try reloading the page. If the problem persists, contact{' '}
+            {intl.formatMessage(messages.problemProcessingRequest)}{' '}
             <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
-              Red Hat support
+              {intl.formatMessage(messages.redHatSupport)}
             </a>{' '}
-            or check our{' '}
+            {intl.formatMessage(messages.checkOur)}{' '}
             <a href="https://status.redhat.com/" target="_blank" rel="noreferrer">
-              status page
+              {intl.formatMessage(messages.statusPage)}
             </a>{' '}
-            for known outages.
+            {intl.formatMessage(messages.knownOutages)}
           </p>
           <Flex alignContent={{ default: 'alignContentCenter' }} direction={{ default: 'column' }}>
             <FlexItem>
@@ -75,7 +78,7 @@ const ErrorComponent = (props) => {
           <Button
             component={(props) => (
               <ChromeLink {...props} appId="landing" href="/">
-                Return to home page
+                {intl.formatMessage(messages.returnToHomepage)}
               </ChromeLink>
             )}
             variant="primary"

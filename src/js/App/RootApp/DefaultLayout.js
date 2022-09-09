@@ -14,6 +14,8 @@ import Routes from '../Routes';
 import useOuiaTags from '../../utils/useOuiaTags';
 import RedirectBanner from '../Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -49,6 +51,8 @@ const ShieldedRoot = memo(
       }
     }
 
+    const intl = useIntl();
+
     useEffect(() => {
       window.addEventListener('resize', navReziseListener);
       return () => {
@@ -66,6 +70,7 @@ const ShieldedRoot = memo(
     return (
       <Page
         className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
+        onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
           <Masthead className="chr-c-masthead">
             {!hideNav && (
@@ -90,7 +95,7 @@ const ShieldedRoot = memo(
       >
         <div ref={insightsContentRef} className={classnames('chr-render')}>
           {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
-          {selectedAccountNumber && <div className="chr-viewing-as">Viewing as Account {selectedAccountNumber}</div>}
+          {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
           <RedirectBanner />
           <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
         </div>

@@ -139,7 +139,7 @@ export function bootstrap(
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),
       getEnvironmentDetails: () => getEnvDetails(),
-      createCase: (fields?: any) => window.insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
+      createCase: (fields?: any) => window.insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, libjwt, fields)),
       visibilityFunctions,
       init: initFunc,
       isChrome2: true,

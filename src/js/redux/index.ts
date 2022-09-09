@@ -112,6 +112,7 @@ export const chromeInitialState: ReduxState = {
     quickstarts: {
       quickstarts: {},
     },
+    moduleRoutes: [],
   },
   globalFilter: {
     tags: {
@@ -149,6 +150,7 @@ export default function (): {
         contextSwitcherOpen: false,
         modules: {},
         scalprumConfig: {},
+        moduleRoutes: [],
       },
       action
     ) => applyReducerHash(reducers)(state, action),

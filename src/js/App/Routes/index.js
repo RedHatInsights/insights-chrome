@@ -20,39 +20,11 @@ const redirects = [
   },
 ];
 
-const generateRoutesList = (modules) =>
-  Object.entries(modules)
-    .reduce(
-      (acc, [scope, { dynamic, manifestLocation, isFedramp, modules = [] }]) => [
-        ...acc,
-        ...modules
-          .map(({ module, routes }) =>
-            /**Clean up this map function */
-            routes.map((route) => ({
-              scope,
-              module,
-              isFedramp: typeof route === 'string' ? isFedramp : route.isFedramp,
-              path: typeof route === 'string' ? route : route.pathname,
-              manifestLocation,
-              dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
-              exact: typeof route === 'string' ? false : route.exact,
-            }))
-          )
-          .flat(),
-      ],
-      []
-    )
-    .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
-
 const Routes = ({ insightsContentRef, routesProps }) => {
-  const modules = useSelector(({ chrome: { modules } }) => modules);
+  const moduleRoutes = useSelector(({ chrome: { moduleRoutes } }) => moduleRoutes);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
-  if (!modules) {
-    return null;
-  }
-  let list = generateRoutesList(modules);
-
+  let list = moduleRoutes;
   if (isFedRamp()) {
     list = list.filter((list) => list.isFedramp);
   }

@@ -5,6 +5,8 @@ import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
 import { fetchAllSIDs, fetchAllTags } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
+import { useIntl } from 'react-intl';
+import messages from '../../Messages';
 
 const useMetaSelector = (key) =>
   useSelector(
@@ -13,6 +15,7 @@ const useMetaSelector = (key) =>
   );
 
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
+  const intl = useIntl();
   const [tagsSelected, setTagsSelected] = useState([]);
   const [sidsSelected, setSidsSelected] = useState([]);
   const [filterBy, setFilterBy] = useState('');
@@ -126,8 +129,8 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       filters={[
         [
           {
-            label: 'Tags filter',
-            placeholder: 'Filter tags',
+            label: `${intl.formatMessage(messages.tagsFilter)}`,
+            placeholder: `${intl.formatMessage(messages.filterTags)}`,
             value: 'tags-filter',
             filterValues: {
               value: filterBy,
@@ -140,8 +143,8 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         ],
         [
           {
-            label: 'SIDs filter',
-            placeholder: 'Filter SAP IDs',
+            label: `${intl.formatMessage(messages.SIDsFilter)}`,
+            placeholder: `${intl.formatMessage(messages.filterSAPIDs)}`,
             value: 'sids-filter',
             filterValues: {
               value: filterSIDsBy,
@@ -177,11 +180,18 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             )
           ),
       ]}
-      columns={[[{ title: 'Name' }, { title: 'Value' }, { title: 'Tag sources' }], [{ title: 'Value' }]]}
+      columns={[
+        [
+          { title: `${intl.formatMessage(messages.name)}` },
+          { title: `${intl.formatMessage(messages.value)}` },
+          { title: `${intl.formatMessage(messages.tagSources)}` },
+        ],
+        [{ title: `${intl.formatMessage(messages.value)}` }],
+      ]}
       onSelect={[setTagsSelected, setSidsSelected]}
       selected={[tagsSelected, sidsSelected]}
       onApply={() => onApplyTags(tagsSelected, sidsSelected)}
-      title="Select one or more tags/SAP IDs (SID)"
+      title={intl.formatMessage(messages.selectTagsOrSIDs)}
       ouiaId="global-filter-tags-modal"
     />
   );
