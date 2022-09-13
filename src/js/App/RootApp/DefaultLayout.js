@@ -70,6 +70,7 @@ const ShieldedRoot = memo(
     return (
       <Page
         className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
+        onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
           <Masthead className="chr-c-masthead">
             {!hideNav && (

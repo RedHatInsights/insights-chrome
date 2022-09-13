@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { IntlProvider } from 'react-intl';
+import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { spinUpStore } from './redux-config';
 import RootApp from './App/RootApp';
 import { loadModulesSchema } from './redux/actions';
@@ -13,6 +13,7 @@ import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './url-observer';
 import { loadFedModules, noop, trustarcScriptSetup } from './utils.ts';
 import messages from '../locales/data.json';
+import { getEnv } from './utils';
 
 const language = navigator.language.slice(0, 2) || 'en';
 
@@ -84,7 +85,19 @@ const App = () => {
 };
 
 ReactDOM.render(
-  <IntlProvider locale={language} messages={messages[language]}>
+  <IntlProvider
+    locale={language}
+    messages={messages[language]}
+    onError={(error) => {
+      if (
+        (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+        localStorage.getItem('chrome:intl:debug') === 'true' ||
+        !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+      ) {
+        console.error(error);
+      }
+    }}
+  >
     <Provider store={spinUpStore()?.store}>
       <App />
     </Provider>
