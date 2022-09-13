@@ -1,30 +1,76 @@
-import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { Bullseye, Checkbox, MenuGroup, MenuItem, MenuList, Select, SelectVariant, Spinner, TextInput } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
+
 import messages from '../../Messages';
 
 import './global-filter-menu.scss';
-import { useSelector } from 'react-redux';
-import { Fragment } from 'react';
+import { ReduxState } from '../../redux/store';
 
 export const groupType = {
   checkbox: 'checkbox',
   radio: 'radio',
   button: 'button',
   plain: 'plain',
+} as const;
+
+export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
+export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
+
+export type FulterMenuItem = {
+  value: string;
+  label: React.ReactNode;
+  onClick: (event: Event) => void;
+  id: string;
+  tagKey: string;
+  tagValue: string;
+  items: unknown[];
 };
 
-const getMenuItems = (groups, onChange, calculateSelected) => {
+export type FilterMenuGroup = {
+  noFilter?: boolean;
+  value: string;
+  label: string;
+  id: string;
+  type: GlobalFilterMenuGroupValues;
+  items: FulterMenuItem[];
+};
+
+export type FilterMenuItemOnChange = (
+  event: Event,
+  selected: unknown,
+  selectedItem: {
+    value: string;
+    label: string;
+    id: string;
+    type: unknown;
+    items: FulterMenuItem[];
+  },
+  item: {
+    id?: string;
+    value?: string;
+  },
+  value: string,
+  itemValue: string
+) => void;
+type CalculateSelected = (type: GlobalFilterMenuGroupValues, value: string, itemValue: string) => void;
+
+const getMenuItems = (
+  groups: FilterMenuGroup[],
+  onChange: FilterMenuItemOnChange,
+  calculateSelected: CalculateSelected
+): { noFilter?: boolean; label: string; value: string; items: FulterMenuItem[] }[] => {
   const result = groups.map(({ value, label, id, type, items, ...group }) => ({
     label,
     value,
+    noFilter: group.noFilter,
     items: items.map((item, index) => ({
       ...item,
       key: item.id || item.value || index,
       value: String(item.value || item.id || index),
-      onClick: (event) => {
+      onClick: (event: Event) => {
         onChange(
           event,
           calculateSelected(type, value, item.value),
@@ -47,22 +93,43 @@ const getMenuItems = (groups, onChange, calculateSelected) => {
 };
 
 /** Create unique hotjar event for selected tags */
-const generateGlobalFilterEvent = (isChecked, value) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
+const generateGlobalFilterEvent = (isChecked: boolean, value: string) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
 
-const GlobalFilterMenu = (props) => {
+export type GlobalFilterMenuProps = {
+  setTagModalOpen: (isOpen: boolean) => void;
+  hotjarEventEmitter: ((eventType: string, eventName: string) => void) | (() => void);
+  filterBy?: string | number;
+  onFilter?: (value: string) => void;
+  groups?: FilterMenuGroup[];
+  onChange: FilterMenuItemOnChange;
+  selectedTags: {
+    [key: string]: {
+      [key: string]:
+        | string
+        | boolean
+        | number
+        | {
+            isSelected: boolean;
+          };
+    };
+  };
+};
+
+const GlobalFilterMenu = (props: GlobalFilterMenuProps) => {
   const intl = useIntl();
   const { filterBy, onFilter, groups = [], onChange, selectedTags, hotjarEventEmitter } = props;
-  const isLoading = useSelector(
+  const isLoading = useSelector<ReduxState, boolean | undefined>(
     ({ globalFilter }) => !(globalFilter?.sid?.isLoaded && globalFilter?.tags?.isLoaded && globalFilter?.workloads?.isLoaded)
   );
-  const isDisabled = useSelector(({ globalFilter }) => globalFilter.globalFilterHidden);
+  const isDisabled = useSelector<ReduxState, boolean>(({ globalFilter }) => globalFilter.globalFilterHidden);
   const [isOpen, setIsOpen] = useState(false);
 
   const calculateSelected = useCallback(
-    (type, groupKey, itemKey) => {
+    (type: GlobalFilterMenuGroupValues, groupKey: string, itemKey: string) => {
       const activeGroup = selectedTags[groupKey];
       if (activeGroup) {
-        if (type !== groupType.radio && (activeGroup[itemKey] instanceof Object ? activeGroup[itemKey].isSelected : Boolean(activeGroup[itemKey]))) {
+        const activeGroupItem = activeGroup[itemKey];
+        if (type !== groupType.radio && (activeGroupItem instanceof Object ? activeGroupItem.isSelected : Boolean(activeGroupItem))) {
           return {
             ...selectedTags,
             [groupKey]: {
@@ -110,9 +177,15 @@ const GlobalFilterMenu = (props) => {
                 {items.map(({ value, label, onClick, id, tagKey, tagValue }) => {
                   const isChecked =
                     // eslint-disable-next-line react/prop-types
-                    !!Object.values(selectedTags).find((tags = {}) => tags[`${tagKey}=${tagValue}`]?.isSelected) ||
+                    !!Object.values(selectedTags).find((tags = {}) => {
+                      const tag = tags[`${tagKey}=${tagValue}`];
+                      return typeof tag === 'object' && tag?.isSelected;
+                    }) ||
                     // eslint-disable-next-line react/prop-types
-                    !!Object.values(selectedTags).find((group = {}) => group[tagKey]?.isSelected);
+                    !!Object.values(selectedTags).find((group = {}) => {
+                      const tagGroup = group[tagKey];
+                      return typeof tagGroup === 'object' && group?.isSelected;
+                    });
                   return (
                     <MenuItem
                       key={value}
@@ -174,27 +247,6 @@ const GlobalFilterMenu = (props) => {
       {menu}
     </Select>
   );
-};
-
-GlobalFilterMenu.propTypes = {
-  filterBy: PropTypes.string,
-  onFilter: PropTypes.func.isRequired,
-  groups: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.string,
-      label: PropTypes.node,
-      items: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string,
-          tagKey: PropTypes.string,
-        })
-      ),
-    })
-  ),
-  onChange: PropTypes.func.isRequired,
-  selectedTags: PropTypes.shape({}),
-  setTagModalOpen: PropTypes.func.isRequired,
-  hotjarEventEmitter: PropTypes.func.isRequired,
 };
 
 export default GlobalFilterMenu;

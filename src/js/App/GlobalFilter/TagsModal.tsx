@@ -7,27 +7,38 @@ import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
+import { GlobalFilterTag, ReduxState, SID } from '../../redux/store';
+import { FlagTagsFilter } from './constants';
+import { TagPagination } from './tagsApi';
 
-const useMetaSelector = (key) =>
-  useSelector(
-    ({ globalFilter: { [key]: selected } }) => [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10],
-    shallowEqual
-  );
+export type TagsModalProps = {
+  isOpen?: boolean;
+  filterTagsBy: string;
+  toggleModal: (isSubmit: boolean) => void;
+  selectedTags?: FlagTagsFilter;
+  onApplyTags: (tags: GlobalFilterTag[], sids: SID[]) => void;
+};
 
-const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }) => {
+const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
+  useSelector<ReduxState, [boolean | unknown, number, number, number]>(({ globalFilter }) => {
+    const selected = globalFilter[key];
+    return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];
+  }, shallowEqual);
+
+const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }: TagsModalProps) => {
   const intl = useIntl();
-  const [tagsSelected, setTagsSelected] = useState([]);
-  const [sidsSelected, setSidsSelected] = useState([]);
+  const [tagsSelected, setTagsSelected] = useState<GlobalFilterTag[]>([]);
+  const [sidsSelected, setSidsSelected] = useState<SID[]>([]);
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
   const dispatch = useDispatch();
   const [tagsLoaded, tagsCount, tagsPage, tagsPerPage] = useMetaSelector('tags');
   const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
-  const tags = useSelector(({ globalFilter: { tags } }) => tags?.items || []);
-  const sids = useSelector(({ globalFilter: { sid } }) => sid?.items || []);
-  const filterScope = useSelector(({ globalFilter: { scope } }) => scope || undefined);
+  const tags = useSelector<ReduxState, GlobalFilterTag[]>(({ globalFilter: { tags } }) => tags?.items || []);
+  const sids = useSelector<ReduxState, SID[]>(({ globalFilter: { sid } }) => sid?.items || []);
+  const filterScope = useSelector<ReduxState, 'insights' | undefined>(({ globalFilter: { scope } }) => scope || undefined);
   const debounceGetTags = useCallback(
-    debounce((search) => {
+    debounce((search?: string) => {
       dispatch(
         fetchAllTags(
           {
@@ -42,7 +53,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
     []
   );
   const debounceGetSIDs = useCallback(
-    debounce((search) => {
+    debounce((search?: string) => {
       dispatch(
         fetchAllSIDs(
           {
@@ -119,7 +130,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       loaded={[tagsLoaded, sidLoaded]}
       width="50%"
       isOpen={isOpen}
-      toggleModal={(_e, isSubmit) => {
+      toggleModal={(_e: unknown, isSubmit: boolean) => {
         setSidsSelected([]);
         setTagsSelected([]);
         setFilterBy('');
@@ -134,7 +145,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             value: 'tags-filter',
             filterValues: {
               value: filterBy,
-              onChange: (_e, value) => {
+              onChange: (_e: unknown, value: string) => {
                 setFilterBy(() => value);
                 debounceGetTags(value);
               },
@@ -148,7 +159,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             value: 'sids-filter',
             filterValues: {
               value: filterSIDsBy,
-              onChange: (_e, value) => {
+              onChange: (_e: unknown, value: string) => {
                 setFilterSIDsBy(() => value);
                 debounceGetSIDs(value);
               },
@@ -157,7 +168,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         ],
       ]}
       onUpdateData={[
-        (pagination) =>
+        (pagination: TagPagination) =>
           dispatch(
             fetchAllTags(
               {
@@ -168,7 +179,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
               pagination
             )
           ),
-        (pagination) =>
+        (pagination: TagPagination) =>
           dispatch(
             fetchAllSIDs(
               {

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 import {
   Bullseye,
@@ -23,14 +22,23 @@ import messages from '../../Messages';
 import './ErrorComponent.scss';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
-const ErrorComponent = (props) => {
+export type ErrorComponentProps = {
+  error?: string | Error;
+  errorInfo?: {
+    componentStack?: string;
+  };
+};
+
+const ErrorComponent = (props: ErrorComponentProps) => {
   const intl = useIntl();
   useEffect(() => {
     Sentry.captureException(new Error('Unhandled UI runtime error'), {
-      bundle: getUrl('bundle'),
-      app: getUrl('app'),
-      error: props.error,
-      trace: props.errorInfo?.componentStack,
+      tags: {
+        bundle: getUrl('bundle'),
+        app: getUrl('app'),
+        error: typeof props.error === 'string' ? props.error : props?.error?.message,
+        trace: props.errorInfo?.componentStack,
+      },
     });
   }, []);
   return (
@@ -61,7 +69,7 @@ const ErrorComponent = (props) => {
                     <Text className="error-text">{props.error.message}</Text>
                   )}
                   {typeof props.errorInfo?.componentStack === 'string' && (
-                    <Text className="error-text" component="code">
+                    <Text className="error-text" component="pre">
                       {props.errorInfo?.componentStack.split('\n').map((content, index) => (
                         <div className="error-line" key={index}>
                           {content}
@@ -87,11 +95,6 @@ const ErrorComponent = (props) => {
       </EmptyState>
     </Bullseye>
   );
-};
-
-ErrorComponent.propTypes = {
-  error: PropTypes.any,
-  errorInfo: PropTypes.object,
 };
 
 export default ErrorComponent;

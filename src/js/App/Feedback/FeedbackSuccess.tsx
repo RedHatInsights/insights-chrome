@@ -1,12 +1,17 @@
 import React from 'react';
 import { Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import './Feedback.scss';
-import PropTypes from 'prop-types';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useIntl } from 'react-intl';
+
 import messages from '../../Messages';
 
-const FeedbackSuccess = ({ onCloseModal }) => {
+import './Feedback.scss';
+
+export type FeedbackSuccessProps = {
+  onCloseModal: () => void;
+};
+
+const FeedbackSuccess = ({ onCloseModal }: FeedbackSuccessProps) => {
   const intl = useIntl();
   return (
     <div className="chr-c-feedback-success-content">
@@ -20,10 +25,6 @@ const FeedbackSuccess = ({ onCloseModal }) => {
       </Button>
     </div>
   );
-};
-
-FeedbackSuccess.propTypes = {
-  onCloseModal: PropTypes.func,
 };
 
 export default FeedbackSuccess;

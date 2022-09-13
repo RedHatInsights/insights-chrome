@@ -1,10 +1,11 @@
+import { History } from 'history';
 import { GLOBAL_FILTER_KEY } from '../../jwt/jwt';
 import { spinUpStore } from '../../redux-config';
 import { storeInitialHash } from '../../redux/actions';
 import { deleteLocalStorageItems } from '../../utils';
-import { flatTags } from './constants';
+import { FlagTagsFilter, flatTags } from './constants';
 
-export const storeFilter = (tags, token, isEnabled, history, firstLoad) => {
+export const storeFilter = (tags: FlagTagsFilter, token: string, isEnabled: boolean, history: History, firstLoad?: boolean) => {
   deleteLocalStorageItems(Object.keys(localStorage).filter((key) => key.startsWith(GLOBAL_FILTER_KEY)));
   if (isEnabled) {
     const searchParams = new URLSearchParams();
@@ -36,11 +37,8 @@ export const storeFilter = (tags, token, isEnabled, history, firstLoad) => {
           ...acc,
           [key]: {
             ...Object.entries(value || {}).reduce(
-              (
-                currValue,
-                // eslint-disable-next-line no-unused-vars
-                [itemKey, { item, value: tagValue, group: { items, ...group } = {}, ...rest }]
-              ) => ({
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              (currValue, [itemKey, { item, value: tagValue, group: { items = undefined, ...group } = {}, ...rest }]) => ({
                 ...currValue,
                 [itemKey]: {
                   ...rest,

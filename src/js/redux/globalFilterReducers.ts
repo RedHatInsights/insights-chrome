@@ -1,5 +1,5 @@
 import groupBy from 'lodash/groupBy';
-import { GlobalFilterState } from './store';
+import { CommonTag, GlobalFilterState } from './store';
 export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
@@ -19,7 +19,7 @@ export function onGetAllTags(
     payload,
   }: {
     payload: {
-      results?: { tag: { namespace: unknown } }[];
+      results?: { tag: CommonTag }[];
       total?: number;
       count?: number;
       page?: number;
@@ -54,7 +54,7 @@ export function onGetAllTagsPending(state: GlobalFilterState): GlobalFilterState
   };
 }
 
-export function onSetGlobalFilterScope(state: GlobalFilterState, { payload }: { payload: string }): GlobalFilterState {
+export function onSetGlobalFilterScope(state: GlobalFilterState, { payload }: { payload?: 'insights' }): GlobalFilterState {
   return {
     ...state,
     scope: payload,
