@@ -10,7 +10,11 @@ import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
  * @param {object} jwt JWT auth functions
  * @param {object} insights existing insights instance
  */
-const createChromeInstance = (jwt: LibJWT, insights: Partial<ChromeAPI>, globalConfig: { chrome?: { ssoUrl?: string } }) => {
+const createChromeInstance = (
+  jwt: LibJWT,
+  insights: Partial<ChromeAPI>,
+  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } }
+) => {
   const libjwt = jwt;
   const chromeInstance = {
     cache: undefined,

@@ -117,13 +117,14 @@ export function bootstrap(
   libjwt: LibJWT,
   initFunc: () => ChromeAPI,
   getUser: () => Promise<ChromeUser | void>,
-  globalConfig: { chrome?: { ssoUrl?: string } }
+  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } }
 ) {
   return {
     chrome: {
       auth: {
         getOfflineToken: () => libjwt.getOfflineToken(),
-        doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl),
+        doOffline: () =>
+          libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
         qe: qe,
