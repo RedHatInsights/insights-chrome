@@ -64,7 +64,7 @@ const App = () => {
       const { chrome: chromeConfig } = data;
       dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
-      const libjwt = libjwtSetup(chromeConfig.config || chromeConfig, setJwtState);
+      const libjwt = libjwtSetup(chromeConfig?.config || chromeConfig, setJwtState);
 
       window.insights = createChromeInstance(libjwt, window.insights, data);
     });
