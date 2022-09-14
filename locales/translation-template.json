@@ -260,8 +260,8 @@
     "description": "status page"
   },
   "stopUsing": {
-    "defaultMessage": "stop using",
-    "description": "stop using"
+    "defaultMessage": "Stop using",
+    "description": "Stop using"
   },
   "submitFeedback": {
     "defaultMessage": "Submit feedback",
