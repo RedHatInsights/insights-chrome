@@ -286,8 +286,8 @@ export default defineMessages({
   },
   stopUsing: {
     id: 'stopUsing',
-    description: 'stop using',
-    defaultMessage: 'stop using',
+    description: 'Stop using',
+    defaultMessage: 'Stop using',
   },
   use: {
     id: 'use',
