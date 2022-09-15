@@ -29,12 +29,7 @@ const commonConfig = ({ dev }) => {
       path: path.resolve(__dirname, '../build/js'),
       filename: 'chrome-root.[fullhash].js',
       publicPath,
-      chunkFilename: ({ chunk }) => {
-        /**
-         * The sso-url.js chunk is required by ephemeral env config map
-         */
-        return chunk.name === 'sso-url' ? '[name].js' : `[name].[fullhash].js`;
-      },
+      chunkFilename: '[name].[fullhash].js',
     },
     devtool: false,
     resolve: {
