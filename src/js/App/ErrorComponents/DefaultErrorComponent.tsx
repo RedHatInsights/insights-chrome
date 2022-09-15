@@ -33,14 +33,15 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
   useEffect(() => {
     Sentry.captureException(new Error('Unhandled UI runtime error'), {
-      tags: {
-        bundle: getUrl('bundle'),
-        app: getUrl('app'),
-        error: typeof props.error === 'string' ? props.error : props?.error?.message,
-        trace: props.errorInfo?.componentStack,
-      },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bundle: getUrl('bundle'),
+      app: getUrl('app'),
+      error: (props.error instanceof Error && props.error?.message) || props.error,
+      trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
     });
   }, []);
+  const stack = props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error;
   return (
     <Bullseye className="chr-c-error-component">
       <EmptyState>
@@ -68,9 +69,9 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
                   {typeof props?.error === 'object' && typeof props?.error?.message === 'string' && (
                     <Text className="error-text">{props.error.message}</Text>
                   )}
-                  {typeof props.errorInfo?.componentStack === 'string' && (
+                  {typeof stack === 'string' && (
                     <Text className="error-text" component="pre">
-                      {props.errorInfo?.componentStack.split('\n').map((content, index) => (
+                      {stack.split('\n').map((content, index) => (
                         <div className="error-line" key={index}>
                           {content}
                         </div>
