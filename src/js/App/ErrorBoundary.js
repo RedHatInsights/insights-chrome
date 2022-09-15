@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as Sentry from '@sentry/browser';
+
+import ErrorComponent from './ErrorComponents/DefaultErrorComponent';
 
 class ErrorBoundary extends React.Component {
   state = {
@@ -13,17 +14,16 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Chrome encountered an error!', error);
-    this.setState(() => ({
-      errorId: Sentry.captureException(new Error('Support case created'), {
-        error,
-        errorInfo,
-      }),
+    this.setState((prev) => ({
+      ...prev,
+      error,
+      errorInfo,
     }));
   }
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong. Error ID: {this.state.errorId}</h1>;
+      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} />;
     }
 
     return this.props.children;
