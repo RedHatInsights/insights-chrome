@@ -13,7 +13,6 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import './Feedback.scss';
-import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
@@ -29,13 +28,14 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
   const isAvailable = env === 'prod' || env === 'stage';
   const addFeedbackTag = () => (isProd() ? `[${bundle}]` : '[PRE-PROD]');
 
-  const handleModalSubmission = () => {
+  async function handleModalSubmission() {
+    const token = await window.insights.chrome.auth.getToken();
     if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -51,7 +51,7 @@ const Feedback = ({ user, onCloseModal, onSubmit }) => {
     }
 
     onSubmit();
-  };
+  }
 
   return (
     <div className="chr-c-feedback-content">
