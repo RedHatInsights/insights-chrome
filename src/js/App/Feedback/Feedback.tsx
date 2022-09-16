@@ -14,7 +14,6 @@ import {
 } from '@patternfly/react-core';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import Cookies from 'js-cookie';
 import { useIntl } from 'react-intl';
 
 import messages from '../../Messages';
@@ -38,13 +37,14 @@ const Feedback = ({ user, onCloseModal, onSubmit }: FeedbackProps) => {
   const isAvailable = env === 'prod' || env === 'stage';
   const addFeedbackTag = () => (isProd() ? `[${bundle}]` : '[PRE-PROD]');
 
-  const handleModalSubmission = () => {
+  async function handleModalSubmission() {
+    const token = await window.insights.chrome.auth.getToken();
     if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -60,7 +60,7 @@ const Feedback = ({ user, onCloseModal, onSubmit }: FeedbackProps) => {
     }
 
     onSubmit();
-  };
+  }
 
   return (
     <div className="chr-c-feedback-content">
