@@ -139,6 +139,7 @@ export const activationRequestURLs = [
   'azure-ocp-activation',
   'azure-oke-activation',
   'azure-opp-activation',
+  'azure-ansible-activation',
   'aws-openshift-activation',
   'aws-ocp-activation',
   'aws-oke-activation',
