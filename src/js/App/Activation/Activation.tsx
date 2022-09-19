@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
-import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils';
 import { useIntl } from 'react-intl';
@@ -15,13 +14,14 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
   const history = useHistory();
   const isAvailable = getEnv() === 'prod';
 
-  const handleActivationRequest = () => {
+  async function handleActivationRequest() {
+    const token = await window.insights.chrome.auth.getToken();
     if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -34,7 +34,7 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
     } else {
       console.log('You must be in prod to request activation');
     }
-  };
+  }
 
   const onModalClose = () => {
     setIsModalOpen(false);
