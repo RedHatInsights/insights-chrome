@@ -144,4 +144,7 @@ export const activationRequestURLs = [
   'aws-ocp-activation',
   'aws-oke-activation',
   'aws-opp-activation',
+  'gcp-opp-activation',
+  'gcp-oke-activation',
+  'gcp-ocp-activation',
 ];
