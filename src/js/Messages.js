@@ -366,7 +366,7 @@ export default defineMessages({
   home: {
     id: 'home',
     description: 'Home',
-    defaultMessage: 'Message',
+    defaultMessage: 'Home',
   },
   viewingAsAccount: {
     id: 'viewingAsAccount',
