@@ -4,6 +4,7 @@ import initializeJWT from './initialize-jwt';
 import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
 import { LibJWT } from '../auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
+import { Store } from 'redux';
 
 /**
  * Create a chrome API instance
@@ -13,12 +14,15 @@ import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 const createChromeInstance = (
   jwt: LibJWT,
   insights: Partial<ChromeAPI>,
-  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } }
+  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } },
+  store: Store
 ) => {
   const libjwt = jwt;
   const chromeInstance = {
     cache: undefined,
   };
+  // initialize qe instance globally
+  qe.init(store);
 
   const jwtResolver = initializeJWT(libjwt, chromeInstance);
   const init = () => {
@@ -48,7 +52,6 @@ const createChromeInstance = (
    * vars are set
    */
   const getUser = (): Promise<ChromeUser | undefined | void> => {
-    qe.init();
     return libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
       libjwt.jwt.logoutAllTabs();
     });

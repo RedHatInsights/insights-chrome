@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useContext, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { loadLeftNavSegment } from '../redux/actions';
+import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { isBeta } from '../utils';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
@@ -68,7 +68,13 @@ const useNavigation = () => {
         const newPathname = window.location.pathname;
         if (newPathname !== prevPathname) {
           prevPathname = newPathname;
-          dispatch(loadLeftNavSegment(schema, currentNamespace, prevPathname));
+          batch(() => {
+            dispatch(loadLeftNavSegment(schema, currentNamespace, prevPathname));
+            /**
+             * Clean gateway error on URL change
+             */
+            dispatch(setGatewayError());
+          });
         }
 
         setTimeout(() => {

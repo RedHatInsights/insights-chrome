@@ -5,10 +5,11 @@ import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
-import ErrorComponent from '../ErrorComponent/ErrorComponent';
+import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
+import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
@@ -16,6 +17,7 @@ const ChromeRoute = memo(
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }) => user);
+    const gatewayError = useSelector(({ chrome: { gatewayError } }) => gatewayError);
     /**
      * If default title was not set, use module scope (appId)
      */
@@ -52,6 +54,9 @@ const ChromeRoute = memo(
       };
     }, [scope]);
 
+    if (gatewayError) {
+      return <GatewayErrorComponent error={gatewayError} />;
+    }
     return (
       <Route key={props.path} {...props}>
         <div className={classNames(scopeClass, scope)}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { spinUpStore } from './redux-config';
 import RootApp from './App/RootApp';
@@ -42,7 +42,6 @@ const libjwtSetup = (chromeConfig, setReadyState) => {
     return libjwt.jwt
       .getUserInfo()
       .then((...data) => {
-        console.log('sentry step');
         sentry(...data);
         setReadyState(true);
       })
@@ -58,6 +57,7 @@ const App = () => {
   const documentTitle = useSelector(({ chrome }) => chrome?.documentTitle);
   const dispatch = useDispatch();
   const [jwtState, setJwtState] = useState(false);
+  const store = useStore();
 
   useEffect(() => {
     loadFedModules().then(({ data }) => {
@@ -66,7 +66,7 @@ const App = () => {
       initializeAccessRequestCookies();
       const libjwt = libjwtSetup(chromeConfig?.config || chromeConfig, setJwtState);
 
-      window.insights = createChromeInstance(libjwt, window.insights, data);
+      window.insights = createChromeInstance(libjwt, window.insights, data, store);
     });
     if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();

@@ -17,6 +17,7 @@ import {
   onPageObjectId,
   onRegisterModule,
   populateQuickstartsReducer,
+  setGatewayError,
   setPendoFeedbackFlag,
   storeInitialHashReducer,
   toggleFeedbackModal,
@@ -54,6 +55,7 @@ import {
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
+  SET_GATEWAY_ERROR,
   SET_PENDO_FEEDBACK_FLAG,
   STORE_INITIAL_HASH,
   TOGGLECONTEXTSWITCHER,
@@ -85,6 +87,7 @@ const reducers = {
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
+  [SET_GATEWAY_ERROR]: setGatewayError,
 };
 
 const globalFilter = {

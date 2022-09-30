@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
+import type { Store } from 'redux';
 import { crossAccountBouncer } from '../auth';
-
+import { setGatewayError } from '../redux/actions';
+import { get3scaleError } from '../utils/responseInterceptors';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
-const fetchResults: Record<string, unknown> = {};
-let initted = false;
+let fetchResults: Record<string, unknown> = {};
 
 const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 
-function init() {
+function init(store: Store) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const oldFetch = window.fetch;
+  fetchResults = {};
 
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
 
@@ -38,8 +40,14 @@ function init() {
       xhrResults.push(this);
     }
     this.onload = function () {
-      if (this.status === 403 && this.responseText.includes(DENINED_CROSS_CHECK)) {
-        crossAccountBouncer();
+      if (this.status >= 400) {
+        const gatewayError = get3scaleError(this.response);
+        if (this.status === 403 && this.responseText.includes(DENINED_CROSS_CHECK)) {
+          crossAccountBouncer();
+          // check for 3scale error
+        } else if (gatewayError) {
+          store.dispatch(setGatewayError(gatewayError));
+        }
       }
     };
     // @ts-ignore
@@ -73,19 +81,39 @@ function init() {
           throw err;
         });
     }
-    return prom.catch((err) => {
-      console.log(err);
-      throw err;
-    });
+    return prom
+      .then(async (res) => {
+        if (!res.ok) {
+          try {
+            const isJson = res?.headers?.get('content-type')?.includes('application/json');
+            const data = isJson ? await res.json() : await res.text();
+            const gatewayError = get3scaleError(data);
+            if (gatewayError) {
+              store.dispatch(setGatewayError(gatewayError));
+            }
+
+            return {
+              ...res,
+              headers: res.headers,
+              ...(isJson ? { json: () => Promise.resolve(data) } : { text: () => Promise.resolve(data) }),
+            };
+          } catch (error) {
+            console.error('unable to check unauthotized response', error);
+            return res;
+          }
+        }
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw err;
+      });
   };
 }
 
 export default {
-  init: () => {
-    if (!initted) {
-      initted = true;
-      init();
-    }
+  init: (store: Store) => {
+    init(store);
   },
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
