@@ -81,7 +81,7 @@ const GlobalFilterMenu = (props: GlobalFilterMenuProps) => {
           ...item,
           onClick: (e: Event, selected: any, group: unknown, currItem: unknown, groupName: string, itemName: string) => {
             generateGlobalFilterEvent(selected?.[groupName]?.[itemName]?.isSelected, item.value);
-            item.onClick(e, selected, group, currItem, groupName, itemName);
+            item.onClick?.(e, selected, group, currItem, groupName, itemName);
           },
         })),
       }))}

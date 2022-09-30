@@ -152,11 +152,6 @@ export const markAccessRequestNotification = (payload: string | number) => ({
   payload,
 });
 
-export const storeInitialHash = (payload?: string) => ({
-  type: actionTypes.STORE_INITIAL_HASH,
-  payload,
-});
-
 export const populateQuickstartsCatalog = (app: string, quickstarts: QuickStart[]) => ({
   type: actionTypes.POPULATE_QUICKSTARTS_CATALOG,
   payload: {

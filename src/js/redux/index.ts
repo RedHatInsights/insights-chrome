@@ -19,7 +19,6 @@ import {
   populateQuickstartsReducer,
   setGatewayError,
   setPendoFeedbackFlag,
-  storeInitialHashReducer,
   toggleFeedbackModal,
 } from './reducers';
 import {
@@ -82,7 +81,6 @@ const reducers = {
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
-  [STORE_INITIAL_HASH]: storeInitialHashReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
@@ -117,19 +115,7 @@ export const chromeInitialState: ReduxState = {
     },
     moduleRoutes: [],
   },
-  globalFilter: {
-    tags: {
-      isLoaded: false,
-      items: [],
-    },
-    workloads: {
-      isLoaded: false,
-    },
-    sid: {
-      isLoaded: false,
-    },
-    globalFilterHidden: false,
-  },
+  globalFilter: globalFilterDefaultState,
 };
 
 export default function (): {

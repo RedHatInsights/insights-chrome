@@ -8,7 +8,28 @@ export const globalFilterDefaultState: GlobalFilterState = {
   scope: 'insights',
   tags: { isLoaded: false, items: [], count: 0, total: 0 },
   sid: { isLoaded: false, items: [], count: 0, total: 0 },
-  workloads: { isLoaded: false, items: [], count: 0, total: 0, hasSap: 0, hasAap: 0, hasMssql: 0 },
+  workloads: {
+    isLoaded: false,
+    items: [],
+    count: 0,
+    total: 0,
+    name: 'Workloads',
+    noFilter: true,
+    tags: [
+      {
+        tag: { key: 'SAP' },
+        count: 0,
+      },
+      {
+        tag: { key: AAP_KEY },
+        count: 0,
+      },
+      {
+        tag: { key: MSSQL_KEY },
+        count: 0,
+      },
+    ],
+  },
   selectedTags: [],
   globalFilterHidden: false,
 };
@@ -142,10 +163,22 @@ export function onGetAllWorkloads(state: GlobalFilterState, { payload = {} }: { 
   return {
     ...state,
     workloads: {
+      ...state.workloads,
       isLoaded: true,
-      hasSap: SAP?.results?.find(({ value } = {}) => value)?.count || 0,
-      hasAap: AAP?.total || 0,
-      hasMssql: MSSQL?.total || 0,
+      tags: [
+        {
+          ...(state.workloads?.tags?.[0] || {}),
+          count: SAP?.results?.find(({ value } = {}) => value)?.count || 0,
+        },
+        {
+          ...(state.workloads?.tags?.[1] || {}),
+          count: AAP?.total || 0,
+        },
+        {
+          ...(state.workloads?.tags?.[2] || {}),
+          count: MSSQL?.total || 0,
+        },
+      ],
     },
   };
 }
