@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -24,6 +24,11 @@ const loaderWrapper = (Component, props = {}) => (
     <Component {...props} />
   </Suspense>
 );
+
+const useGlobalFilter = (callback) => {
+  const selectedTags = useSelector(({ globalFilter: { selectedTags } }) => selectedTags, shallowEqual);
+  return callback(selectedTags);
+};
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
@@ -109,6 +114,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
           },
           chromeHistory: history,
           analytics,
+          useGlobalFilter,
         },
       }}
     >
