@@ -97,7 +97,7 @@ export type GlobalFilterWorkloads = {
   page?: number;
   perPage?: number;
   isLoaded: boolean;
-  name?: 'Workloads';
+  name: 'Workloads';
   noFilter?: true;
   tags?: { tag?: CommonTag; count: number }[];
   items?: any[];
@@ -109,6 +109,12 @@ export type CommonTag = {
   key?: string;
   namespace?: string;
   value?: string | number | boolean;
+};
+
+export type CommonSelectedTag = CommonTag & {
+  id: string;
+  cells: [string, string, string];
+  selected?: boolean;
 };
 
 export type SID = {

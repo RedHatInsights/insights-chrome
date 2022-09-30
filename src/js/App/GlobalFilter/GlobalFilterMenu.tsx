@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { GroupFilter, groupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
 import messages from '../../Messages';
 
 import './global-filter-menu.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Chip, ChipGroup, Divider, Skeleton, Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { FlagTagsFilter, updateSelected } from './constants';
+import TagsModal from './TagsModal';
+import { fetchAllTags } from '../../redux/actions';
+import { CommonSelectedTag } from '../../redux/store';
 
 export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
 export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
@@ -49,54 +55,167 @@ export type FilterMenuItemOnChange = (
 /** Create unique hotjar event for selected tags */
 const generateGlobalFilterEvent = (isChecked: boolean, value: string) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
 
-export type GlobalFilterMenuProps = {
-  setTagModalOpen: (isOpen: boolean) => void;
-  hotjarEventEmitter: ((eventType: string, eventName: string) => void) | (() => void);
-  filterBy?: string | number;
-  onFilter?: (value: string) => void;
-  groups?: FilterMenuGroup[];
-  onChange: FilterMenuItemOnChange;
-  selectedTags: {
-    [key: string]: {
-      [key: string]:
-        | string
-        | boolean
-        | number
-        | {
-            isSelected: boolean;
-          };
-    };
+export type SelectedTags = {
+  [key: string]: {
+    [key: string]:
+      | string
+      | boolean
+      | number
+      | {
+          isSelected: boolean;
+        };
   };
 };
 
-const GlobalFilterMenu = (props: GlobalFilterMenuProps) => {
+export type GlobalFilterDropdownProps = {
+  allowed: boolean;
+  isDisabled: boolean;
+  filter: {
+    filterBy?: string | number;
+    onFilter?: (value: string) => void;
+    groups?: FilterMenuGroup[];
+    onChange: FilterMenuItemOnChange;
+  };
+  chips: { category: string; chips: { key: string; tagKey: string; value: string }[] }[];
+  filterTagsBy: string;
+  setValue: (callback?: () => unknown) => void;
+  setIsOpen: (callback?: ((origValue?: boolean) => void) | boolean) => void;
+  isOpen: boolean;
+  hotjarEventEmitter: ((eventType: string, eventName: string) => void) | (() => void);
+  selectedTags: FlagTagsFilter;
+};
+
+export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownProps> = ({
+  allowed,
+  isDisabled,
+  filter,
+  chips,
+  setValue,
+  selectedTags,
+  isOpen,
+  filterTagsBy,
+  setIsOpen,
+}) => {
+  /**
+   * Hotjar API reference: https://help.hotjar.com/hc/en-us/articles/4405109971095-Events-API-Reference#the-events-api-call
+   * window.hj is only avaiable in console.redhat.com and console.redhat.com/beta
+   * We are unable to test it in any local development environment
+   * */
+  const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
+  const registeredWith = useSelector<{ globalFilter: { scope?: string } }>(({ globalFilter: { scope } }) => scope);
+  const userLoaded = useSelector<{ chrome: { user: unknown } }>(({ chrome: { user } }) => Boolean(user));
   const intl = useIntl();
+  const dispatch = useDispatch();
+  const GroupFilterWrapper = useMemo(
+    () => (!allowed || isDisabled ? Tooltip : ({ children }: { children: any }) => <Fragment>{children}</Fragment>),
+    [allowed, isDisabled]
+  );
   return (
-    <GroupFilter
-      className="chr-c-menu-global-filter__select"
-      selected={props.selectedTags}
-      groups={props.groups?.map((group) => ({
-        ...group,
-        items: group.items.map((item) => ({
-          ...item,
-          onClick: (e: Event, selected: any, group: unknown, currItem: unknown, groupName: string, itemName: string) => {
-            generateGlobalFilterEvent(selected?.[groupName]?.[itemName]?.isSelected, item.value);
-            item.onClick?.(e, selected, group, currItem, groupName, itemName);
-          },
-        })),
-      }))}
-      onChange={props.onChange}
-      placeholder={intl.formatMessage(messages.filterByTags)}
-      isFilterable
-      onFilter={props.onFilter}
-      filterBy={props.filterBy as string}
-      showMoreTitle={intl.formatMessage(messages.showMore)}
-      onShowMore={() => props.setTagModalOpen(true)}
-      showMoreOptions={{
-        isLoadButton: true,
-      }}
-    />
+    <Fragment>
+      <Split id="global-filter" hasGutter className="chr-c-global-filter">
+        <SplitItem>
+          {userLoaded && allowed !== undefined ? (
+            <GroupFilterWrapper
+              content={
+                !allowed || isDisabled
+                  ? !allowed
+                    ? `${intl.formatMessage(messages.noInventoryPermissions)}`
+                    : `${intl.formatMessage(messages.globalFilterNotApplicable)}`
+                  : ''
+              }
+              position="right"
+            >
+              <GroupFilter
+                className="chr-c-menu-global-filter__select"
+                selected={selectedTags}
+                groups={filter.groups?.map((group) => ({
+                  ...group,
+                  items: group.items.map((item) => ({
+                    ...item,
+                    onClick: (e: Event, selected: any, group: unknown, currItem: unknown, groupName: string, itemName: string) => {
+                      generateGlobalFilterEvent(selected?.[groupName]?.[itemName]?.isSelected, item.value);
+                      item.onClick?.(e, selected, group, currItem, groupName, itemName);
+                    },
+                  })),
+                }))}
+                onChange={filter.onChange}
+                placeholder={intl.formatMessage(messages.filterByTags)}
+                isFilterable
+                onFilter={filter.onFilter}
+                filterBy={filter.filterBy as string}
+                showMoreTitle={intl.formatMessage(messages.showMore)}
+                onShowMore={() => setIsOpen(true)}
+                showMoreOptions={{
+                  isLoadButton: true,
+                }}
+              />
+            </GroupFilterWrapper>
+          ) : (
+            <Skeleton fontSize={'xl'} />
+          )}
+        </SplitItem>
+        {allowed && (
+          <SplitItem isFilled>
+            {chips?.length > 0 && (
+              <Fragment>
+                {chips.map(({ category, chips }, key) => (
+                  <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'chr-c-chip' : ''}>
+                    {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
+                      <Chip
+                        key={chipKey}
+                        onClick={() => setValue(() => updateSelected(selectedTags, category, chipName, value, false, {}))}
+                        isReadOnly={isDisabled}
+                      >
+                        {tagKey}
+                        {value ? `=${value}` : ''}
+                      </Chip>
+                    ))}
+                  </ChipGroup>
+                ))}
+                {!isDisabled && (
+                  <Button variant="link" ouiaId="global-filter-clear" onClick={() => setValue(() => ({}))}>
+                    {intl.formatMessage(messages.clearFilters)}
+                  </Button>
+                )}
+              </Fragment>
+            )}
+          </SplitItem>
+        )}
+      </Split>
+      {isOpen && (
+        <TagsModal
+          isOpen={isOpen}
+          filterTagsBy={filterTagsBy}
+          selectedTags={selectedTags}
+          toggleModal={(isSubmit) => {
+            if (!isSubmit) {
+              dispatch(
+                fetchAllTags({
+                  registeredWith: registeredWith as 'insights',
+                  activeTags: selectedTags,
+                  search: filterTagsBy,
+                })
+              );
+            }
+            hotjarEventEmitter('event', 'global_filter_bulk_action');
+            setIsOpen(false);
+          }}
+          onApplyTags={(selected: CommonSelectedTag[], sidSelected: CommonSelectedTag[]) => {
+            setValue(() =>
+              [...(selected || []), ...(sidSelected || [])].reduce(
+                (acc: { [key: string]: { [key: string]: Record<string, unknown> } }, { key, value, namespace }: CommonSelectedTag) =>
+                  updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value, true, {
+                    item: { tagKey: key },
+                  }),
+                selectedTags
+              )
+            );
+          }}
+        />
+      )}
+      <Divider />
+    </Fragment>
   );
 };
 
-export default GlobalFilterMenu;
+export default GlobalFilterDropdown;

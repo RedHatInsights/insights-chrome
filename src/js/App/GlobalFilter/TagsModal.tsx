@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
-import { CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
+import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter } from './constants';
 import { TagFilterOptions, TagPagination } from './tagsApi';
 import { Action } from 'redux';
@@ -17,7 +17,7 @@ export type TagsModalProps = {
   filterTagsBy: string;
   toggleModal: (isSubmit: boolean) => void;
   selectedTags?: FlagTagsFilter;
-  onApplyTags: (tags: GlobalFilterTag[], sids: SID[]) => void;
+  onApplyTags: (tags: CommonSelectedTag[], sids: CommonSelectedTag[]) => void;
 };
 
 export type IDMapper = (tag: CommonTag) => string;
@@ -89,8 +89,8 @@ const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: F
 
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }: TagsModalProps) => {
   const intl = useIntl();
-  const [tagsSelected, setTagsSelected] = useState<GlobalFilterTag[]>([]);
-  const [sidsSelected, setSidsSelected] = useState<SID[]>([]);
+  const [tagsSelected, setTagsSelected] = useState<CommonSelectedTag[]>([]);
+  const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
   const dispatch = useDispatch();
@@ -122,6 +122,8 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
     ({ key }) => [key],
     sidsSelected
   );
+
+  console.log(tagsSelected, sidsSelected, 'mmmmm');
 
   return (
     <TagModal
