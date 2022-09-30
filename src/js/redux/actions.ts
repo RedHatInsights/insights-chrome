@@ -5,6 +5,7 @@ import { NavItem } from '../types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
+import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -176,4 +177,9 @@ export const updateDocumentTitle = (title: string) => ({
 export const markActiveProduct = (product: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
+});
+
+export const setGatewayError = (error?: ThreeScaleError) => ({
+  type: actionTypes.SET_GATEWAY_ERROR,
+  payload: error,
 });

@@ -442,4 +442,13 @@ export default defineMessages({
     description: 'Learn more about Beta Environment',
     defaultMessage: 'Learn more about Beta Environment',
   },
+  permissionErrorDescription: {
+    id: 'permissionErrorDescription',
+    defaultMessage:
+      'Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions.',
+  },
+  permissionErrorDetail: {
+    id: 'permissionErrorDetail',
+    defaultMessage: 'Detail: {message}.',
+  },
 });

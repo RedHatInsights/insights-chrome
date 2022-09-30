@@ -33,3 +33,5 @@ export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
 
 export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catalog';
 export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';
+
+export const SET_GATEWAY_ERROR = '@@chrome/set-gateway-error';

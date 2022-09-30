@@ -119,6 +119,7 @@ export function bootstrap(
   getUser: () => Promise<ChromeUser | void>,
   globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } }
 ) {
+  const { store } = spinUpStore();
   return {
     chrome: {
       auth: {
@@ -127,7 +128,10 @@ export function bootstrap(
           libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
-        qe: qe,
+        qe: {
+          ...qe,
+          init: () => qe.init(store),
+        },
         logout: (bounce?: boolean) => libjwt.jwt.logoutAllTabs(bounce),
         login: () => libjwt.jwt.login(),
       },

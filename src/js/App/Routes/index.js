@@ -1,8 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Route, Switch } from 'react-router';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
 import NotFoundRoute from './NotFoundRoute';
 import { isFedRamp } from '../../utils';
