@@ -22,14 +22,14 @@ import messages from '../../Messages';
 import './ErrorComponent.scss';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
-export type ErrorComponentProps = {
+export type DefaultErrorComponentProps = {
   error?: string | Error;
   errorInfo?: {
     componentStack?: string;
   };
 };
 
-const ErrorComponent = (props: ErrorComponentProps) => {
+const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
   useEffect(() => {
     Sentry.captureException(new Error('Unhandled UI runtime error'), {
@@ -97,4 +97,4 @@ const ErrorComponent = (props: ErrorComponentProps) => {
   );
 };
 
-export default ErrorComponent;
+export default DefaultErrorComponent;
