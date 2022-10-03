@@ -33,8 +33,6 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
     list = list.filter((list) => list.isFedramp);
   }
 
-  console.log({ list });
-
   return (
     <Routes>
       {showBundleCatalog && (

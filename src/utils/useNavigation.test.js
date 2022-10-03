@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { MemoryRouter, Route, useNavigate } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 
@@ -38,9 +38,9 @@ const RouteDummy = ({ path, children }) => {
     navigate(path);
   }, [path]);
   return (
-    <Route exact path={path}>
-      {children}
-    </Route>
+    <Routes>
+      <Route path={path} element={<Fragment>{children}</Fragment>} />
+    </Routes>
   );
 };
 

@@ -23,7 +23,6 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
       : ['insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*'];
-  console.log({ paths });
   return (
     <Routes>
       {paths.map((path) => (
