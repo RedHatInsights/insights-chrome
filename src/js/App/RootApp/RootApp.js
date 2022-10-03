@@ -13,6 +13,7 @@ import { populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import { SegmentProvider } from '../analytics/segment-analytics';
+import validateQuickstart from '../QuickStart/quickstartValidation';
 
 const RootApp = (props) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
@@ -40,6 +41,10 @@ const RootApp = (props) => {
     dispatch(populateQuickstartsCatalog(key, qs));
   };
 
+  const addQuickstart = (key, qs) => {
+    return validateQuickstart(key, qs) ? !!dispatch(addQuickstart(key, qs)) : false;
+  };
+
   const quickStartProps = {
     quickStarts,
     activeQuickStartID,
@@ -60,6 +65,7 @@ const RootApp = (props) => {
   const quickstartsAPI = {
     version: 1,
     set: updateQuickStarts,
+    add: addQuickstart,
     toggle: setActiveQuickStartID,
     Catalog: LazyQuickStartCatalog,
   };

@@ -31,4 +31,5 @@ export const UPDATE_DOCUMENT_TITLE_REDUCER = '@@chrome/update-document-title';
 export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
 
 export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catalog';
+export const ADD_QUICKSTARTS_TO_APP = '@@chrome/add-quickstart';
 export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';

@@ -246,6 +246,19 @@ export function populateQuickstartsReducer(
   };
 }
 
+export function addQuickstartstoApp(state: ChromeState, { app, quickstart }: { app: string; quickstart: QuickStart }) {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      quickstarts: {
+        ...state.quickstarts.quickstarts,
+        [app]: [...(state.quickstarts?.quickstarts?.[app] ? state.quickstarts?.quickstarts?.[app] : []), quickstart],
+      },
+    },
+  };
+}
+
 export function disableQuickstartsReducer(state: ChromeState): ChromeState {
   return {
     ...state,
