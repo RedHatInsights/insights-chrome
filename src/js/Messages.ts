@@ -426,9 +426,9 @@ export default defineMessages({
   tryThisFeatureInBeta: {
     id: 'tryThisFeatureInBeta',
     description:
-      'Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Beta Environment on console.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
     defaultMessage:
-      'Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Beta Environment on console.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
   },
   afterBetaUse: {
     id: 'afterBetaUse',
@@ -442,8 +442,8 @@ export default defineMessages({
     description: 'Use feature in beta',
     defaultMessage: 'Use feature in beta',
   },
-  learnMoreABoutBeta: {
-    id: 'learnMoreABoutBeta',
+  learnMoreAboutBeta: {
+    id: 'learnMoreAboutBeta',
     description: 'Learn more about Beta Environment',
     defaultMessage: 'Learn more about Beta Environment',
   },
@@ -460,5 +460,11 @@ export default defineMessages({
     id: 'filterByTags',
     description: 'Placeholder to indicate ',
     defaultMessage: 'Filter by tags',
+  },
+  betaBannerPopover: {
+    id: 'betaBannerPopover',
+    description: 'Content of Popover in beta banner describing purpose of beta environments',
+    defaultMessage:
+      'Beta releases provide early access to a limited set of features that might not be fully tested. Users should not use beta software in production or for business-critical workloads.',
   },
 });

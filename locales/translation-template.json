@@ -31,6 +31,10 @@
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
   },
+  "betaBannerPopover": {
+    "defaultMessage": "Beta releases provide early access to a limited set of features that might not be fully tested. Users should not use beta software in production or for business-critical workloads.",
+    "description": "Content of Popover in beta banner describing purpose of beta environments"
+  },
   "betaRelease": {
     "defaultMessage": "the beta release",
     "description": "the beta release"
@@ -139,7 +143,7 @@
     "defaultMessage": "Learn more on our blog.",
     "description": "Learn more on our blog."
   },
-  "learnMoreABoutBeta": {
+  "learnMoreAboutBeta": {
     "defaultMessage": "Learn more about Beta Environment",
     "description": "Learn more about Beta Environment"
   },
@@ -198,6 +202,12 @@
   "orgAdministrator": {
     "defaultMessage": "Org. Administrator",
     "description": "Org. Administrator"
+  },
+  "permissionErrorDescription": {
+    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions."
+  },
+  "permissionErrorDetail": {
+    "defaultMessage": "Detail: {message}."
   },
   "personalAccount": {
     "defaultMessage": "Personal account",
@@ -300,8 +310,8 @@
     "description": "This filter criteria matches no applications or services. Try changing your input filter."
   },
   "tryThisFeatureInBeta": {
-    "defaultMessage": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.",
-    "description": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance."
+    "defaultMessage": "Try this feature in our Beta Environment on console.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.",
+    "description": "Try this feature in our Beta Environment on console.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance."
   },
   "tryUsingDifferentAccount": {
     "defaultMessage": "Try using different account",

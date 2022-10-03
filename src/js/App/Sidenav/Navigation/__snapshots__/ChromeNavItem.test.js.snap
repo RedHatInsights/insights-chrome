@@ -104,7 +104,7 @@ exports[`ChromeNavItem should render nav item with beta badge 1`] = `
       <span
         class="pf-c-badge pf-m-unread chr-c-toolbar__beta-badge chr-c-navigation__beta-badge"
       >
-        beta
+        Beta
       </span>
     </a>
   </li>

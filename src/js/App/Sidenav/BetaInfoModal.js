@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 
 import PropTypes from 'prop-types';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }) => {
   const intl = useIntl();
@@ -24,7 +25,9 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }) => {
             </Button>
           </div>
           <div>
-            <a href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">{intl.formatMessage(messages.learnMoreABoutBeta)}</a>
+            <a href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle" target="_blank" rel="noreferrer">
+              {intl.formatMessage(messages.learnMoreAboutBeta)} <ExternalLinkAltIcon />
+            </a>
           </div>
         </div>
       </Bullseye>

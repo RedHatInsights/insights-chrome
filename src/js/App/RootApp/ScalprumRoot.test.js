@@ -11,6 +11,7 @@ jest.mock('../../utils', () => {
     __esModule: true,
     ...utils,
     isBeta: jest.fn().mockReturnValue(false),
+    isProd: jest.fn().mockReturnValue(false),
     getEnv: jest.fn().mockReturnValue('qa'),
   };
 });

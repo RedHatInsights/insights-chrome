@@ -30,7 +30,7 @@ export const switchRelease = (isBeta, pathname) => {
   }
 };
 
-export const betaBadge = (css) => <Badge className={classnames('chr-c-toolbar__beta-badge', css)}>beta</Badge>;
+export const betaBadge = (css) => <Badge className={classnames('chr-c-toolbar__beta-badge', css)}>Beta</Badge>;
 
 const InternalButton = () => (
   <Button
@@ -114,6 +114,13 @@ const Tools = () => {
     }
   }, [user]);
 
+  const betaBadgeDropdownItems = [
+    {
+      title: betaSwitcherTitle,
+      onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),
+    },
+  ];
+
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
@@ -192,6 +199,18 @@ const Tools = () => {
     );
   };
 
+  const BetaBadgeWithDropdown = () => (
+    <ToolbarToggle
+      key="Beta badge"
+      icon={() => <Badge className="chr-c-badge-beta">Beta</Badge>}
+      id="BetaBadge"
+      ouiaId="beta-badge"
+      ariaLabel="Beta badge"
+      hasToggleIndicator={null}
+      dropdownItems={betaBadgeDropdownItems}
+    />
+  );
+
   return (
     <ToolbarGroup
       className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
@@ -201,7 +220,7 @@ const Tools = () => {
     >
       {isBeta() && (
         <ToolbarItem>
-          <Badge className="chr-c-badge-beta">beta</Badge>
+          <BetaBadgeWithDropdown />
         </ToolbarItem>
       )}
       {localStorage.getItem('chrome:darkmode') === 'true' && (

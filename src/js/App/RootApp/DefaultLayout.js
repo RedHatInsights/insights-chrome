@@ -1,10 +1,10 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
+import { Banner, Bullseye, Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton, Popover } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import Cookie from 'js-cookie';
@@ -20,7 +20,8 @@ import messages from '../../Messages';
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
-import { getUrl } from '../../utils';
+import { getUrl, isBeta, isProd } from '../../utils';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
@@ -95,6 +96,30 @@ const ShieldedRoot = memo(
       >
         <div ref={insightsContentRef} className={classnames('chr-render')}>
           {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
+          {isProd() && isBeta() && (
+            <Banner variant="info">
+              <Bullseye>
+                <Popover
+                  bodyContent={
+                    <Fragment>
+                      <p>{intl.formatMessage(messages.betaBannerPopover)}</p>
+                      <br />
+                      <a
+                        target="_blank"
+                        href="https://access.redhat.com/support/policy/updates/red-hat-insights/lifecycle"
+                        rel="noreferrer"
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        {intl.formatMessage(messages.learnMoreAboutBeta)} <ExternalLinkAltIcon />
+                      </a>
+                    </Fragment>
+                  }
+                >
+                  <a>Beta</a>
+                </Popover>
+              </Bullseye>
+            </Banner>
+          )}
           {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
           <RedirectBanner />
           <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
