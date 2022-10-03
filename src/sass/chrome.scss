@@ -117,3 +117,7 @@ aside {
     }
   }
   
+// fix quickstarts drawer overflow for long quickstart/helptopic content
+#chrome-entry {
+  height: 100vh;
+}
