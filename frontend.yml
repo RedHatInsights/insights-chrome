@@ -16,7 +16,7 @@ objects:
         versions:
           - v1
       module:
-        manifestLocation: "/apps/chrome/fed-modules.json"
+        manifestLocation: "/apps/chrome/js/fed-mods.json"
         config:
           ssoUrl: ${SSO_URL}
       frontend:
