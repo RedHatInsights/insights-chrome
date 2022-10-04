@@ -109,7 +109,7 @@ const GlobalFilterWrapper = () => {
   const [hasAccess, setHasAccess] = useState(undefined);
   useEffect(() => {
     const fetchPermissions = async () => {
-      const permissions = await window.insights?.chrome?.getUserPermissions('inventory');
+      const permissions = await window.insights?.chrome?.getUserPermissions?.('inventory');
       setHasAccess(permissions?.some((item) => ['inventory:*:*', 'inventory:*:read', 'inventory:hosts:read'].includes(item?.permission || item)));
     };
     fetchPermissions();

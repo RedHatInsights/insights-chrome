@@ -64,7 +64,7 @@ const useRow = (
       );
     }
     return [];
-  }, [resource, selected]);
+  }, [resource, loaded, selected]);
 };
 
 const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: FlagTagsFilter) => {
@@ -122,8 +122,6 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
     ({ key }) => [key],
     sidsSelected
   );
-
-  console.log(tagsSelected, sidsSelected, 'mmmmm');
 
   return (
     <TagModal
