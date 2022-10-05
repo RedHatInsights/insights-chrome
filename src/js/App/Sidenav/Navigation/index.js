@@ -5,7 +5,7 @@ import NavContext from './navContext';
 import componentMapper from './componentMapper';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../BetaInfoModal';
-import { getUrl, isBeta } from '../../../utils';
+import { getUrl, isBeta } from '../../../../utils/common';
 
 import useNavigation from '../../../../utils/useNavigation';
 import NavLoader from './Loader';

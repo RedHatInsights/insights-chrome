@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { loadLeftNavSegment, setGatewayError } from '../js/redux/actions';
-import { isBeta } from '../js/utils';
+import { isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';

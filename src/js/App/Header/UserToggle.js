@@ -4,7 +4,7 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-c
 import UserIcon from './UserIcon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getEnv, isBeta, isProd as isProdEnv } from '../../utils';
+import { getEnv, isBeta, isProd as isProdEnv } from '../../../utils/common';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';

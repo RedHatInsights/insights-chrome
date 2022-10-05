@@ -17,7 +17,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
 
 import messages from '../../Messages';
-import { getEnv, getUrl, isProd } from '../../utils';
+import { getEnv, getUrl, isProd } from '../../../utils/common';
 
 import './Feedback.scss';
 

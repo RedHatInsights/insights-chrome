@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { NavExpandable } from '@patternfly/react-core';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import { useSelector } from 'react-redux';
-import { isFedRamp } from '../../../utils';
+import { isFedRamp } from '../../../../utils/common';
 import { computeFedrampResult } from '../../../../utils/useRenderFedramp';
 
 const ChromeNavExapandable = ({ title, routes, active, isHidden, id }) => {

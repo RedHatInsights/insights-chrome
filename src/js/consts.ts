@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
 import { getFeatureFlagsError, unleashClient } from './App/FeatureFlags/FeatureFlagsProvider';
-import { isBeta, isProd } from './utils';
+import { isBeta, isProd } from '../utils/common';
 import { AxiosRequestConfig } from 'axios';
 
 const obj = {

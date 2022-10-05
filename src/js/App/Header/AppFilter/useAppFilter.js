@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { isBeta, isFedRamp, isProd } from '../../../utils';
+import { isBeta, isFedRamp, isProd } from '../../../../utils/common';
 import { evaluateVisibility } from '../../../../utils/isNavItemVisible';
 import { computeFedrampResult } from '../../../../utils/useRenderFedramp';
 

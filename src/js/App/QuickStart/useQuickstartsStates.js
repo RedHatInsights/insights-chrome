@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalStorage } from '@patternfly/quickstarts';
-import { getEnv, isBeta } from '../../utils';
+import { getEnv, isBeta } from '../../../utils/common';
 
 const quickstartsSupported = getEnv() === 'stage' || (isBeta() && getEnv() === 'prod');
 

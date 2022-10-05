@@ -2,7 +2,7 @@
 
 import logger from './jwt/logger';
 import get from 'lodash/get';
-import { isBeta } from './utils';
+import { isBeta } from '../utils/common';
 
 const log = logger('Analytics.js');
 

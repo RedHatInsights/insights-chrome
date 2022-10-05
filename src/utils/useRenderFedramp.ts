@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { matchPath } from 'react-router-dom';
 
 import { ChromeModule, ReduxState } from '../js/redux/store';
-import { isFedRamp } from '../js/utils';
+import { isFedRamp } from './common';
 const isFedrampEnv = isFedRamp();
 
 export const computeFedrampResult = (

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-import { isFedRamp } from '../../utils';
+import { isFedRamp } from '../../../utils/common';
 import IDPError from '../IDPError/IDPError';
 
 const IDPStatuses = {

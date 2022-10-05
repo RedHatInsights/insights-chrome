@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
 import NotFoundRoute from './NotFoundRoute';
-import { isFedRamp } from '../../utils';
+import { isFedRamp } from '../../../utils/common';
 import LoadingFallback from '../../../utils/loading-fallback';
 const QuickstartCatalogRoute = lazy(() => import('./QuickstartsCatalogRoute'));
 

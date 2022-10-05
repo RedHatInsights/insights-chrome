@@ -6,7 +6,7 @@ import consts from '../consts';
 import chromeHistory from '../../utils/chromeHistory';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
-import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils';
+import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../../utils/common';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../redux/action-types';

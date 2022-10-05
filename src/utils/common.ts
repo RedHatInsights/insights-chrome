@@ -1,10 +1,10 @@
 import get from 'lodash/get';
 import { Store } from 'redux';
-import { DEFAULT_ROUTES } from './jwt/constants';
+import { DEFAULT_ROUTES } from '../js/jwt/constants';
 import flatMap from 'lodash/flatMap';
-import { NavItem } from './types';
+import { NavItem } from '../js/types';
 import axios from 'axios';
-import { ChromeModule, RouteDefinition } from './redux/store';
+import { ChromeModule, RouteDefinition } from '../js/redux/store';
 
 export function getWindow() {
   return window;

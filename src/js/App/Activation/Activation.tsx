@@ -4,7 +4,7 @@ import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 import PropTypes from 'prop-types';
-import { getEnv } from '../../utils';
+import { getEnv } from '../../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 

@@ -2,7 +2,7 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { deleteLocalStorageItems, pageRequiresAuthentication } from '../utils';
+import { deleteLocalStorageItems, pageRequiresAuthentication } from '../../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
 

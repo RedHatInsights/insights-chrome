@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
-import { isBeta } from '../../utils';
+import { isBeta } from '../../../utils/common';
 
 class ToolbarToggle extends Component {
   constructor(props) {

@@ -20,7 +20,7 @@ import messages from '../../Messages';
 import '../Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
-import { getUrl } from '../../utils';
+import { getUrl } from '../../../utils/common';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {

@@ -7,7 +7,7 @@ import { titleCase } from 'title-case';
 import classNames from 'classnames';
 import get from 'lodash/get';
 
-import { isBeta } from '../../../utils';
+import { isBeta } from '../../../../utils/common';
 import { betaBadge } from '../../Header/Tools';
 import ChromeLink from './ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';

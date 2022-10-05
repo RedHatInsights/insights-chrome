@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { isProd } from './utils';
+import { isProd } from '../utils/common';
 
 function getAppDetails() {
   const pathName = window.location.pathname.split('/');

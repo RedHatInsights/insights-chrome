@@ -15,7 +15,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { getUrl } from '../../utils';
+import { getUrl } from '../../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 

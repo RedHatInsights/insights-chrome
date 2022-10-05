@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { ReduxState } from '../js/redux/store';
-import { isAnsible } from '../js/utils';
+import { isAnsible } from './common';
 
 export type OuiaTags = {
   landing?: 'true' | 'false';

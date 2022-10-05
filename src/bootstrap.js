@@ -11,7 +11,7 @@ import auth, { crossAccountBouncer } from './js/auth';
 import sentry from './js/sentry';
 import createChromeInstance from './js/chrome/create-chrome';
 import registerUrlObserver from './js/url-observer';
-import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './js/utils.ts';
+import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './js/App/ErrorBoundary';
 

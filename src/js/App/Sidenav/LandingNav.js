@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
-import { isBeta, isFedRamp } from '../../utils';
+import { isBeta, isFedRamp } from '../../../utils/common';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
