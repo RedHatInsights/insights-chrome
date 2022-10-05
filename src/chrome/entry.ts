@@ -12,7 +12,7 @@ import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../js/App/GlobalFilter/globalFilterApi';
 import debugFunctions from '../js/debugFunctions';
 import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';
-import { LibJWT } from '../js/auth';
+import { LibJWT } from '../auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 
 type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;

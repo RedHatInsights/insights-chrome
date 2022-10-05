@@ -7,7 +7,7 @@ import RootApp from './js/App/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
-import auth, { crossAccountBouncer } from './js/auth';
+import auth, { crossAccountBouncer } from './auth';
 import sentry from './js/sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './js/url-observer';

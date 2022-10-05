@@ -1,4 +1,4 @@
-const utils = require('./utils');
+const utils = require('./common');
 
 const testData = [
   { auth: true, path: '/insights', sec: 'insights' },

@@ -7,7 +7,7 @@ import { getEnvDetails, getUrl } from '../utils/common';
 import { HYDRA_ENDPOINT } from '../utils/consts';
 import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { LibJWT } from './auth';
+import { LibJWT } from '../auth';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [

@@ -1,6 +1,6 @@
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../auth';
-import { decodeToken } from './jwt';
+import { decodeToken } from '../jwt/jwt';
 import { spinUpStore } from '../redux/redux-config';
 import { CacheAdapter } from '../utils/cache';
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
 import type { Store } from 'redux';
-import { crossAccountBouncer } from '../js/auth';
+import { crossAccountBouncer } from '../auth';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
 // TODO: Refactor this file to use modern JS
