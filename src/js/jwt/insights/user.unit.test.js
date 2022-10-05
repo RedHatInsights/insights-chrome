@@ -4,6 +4,7 @@ const mockedEntitlements = require('./entitlements');
 const token = require('../../../../testdata/token.json');
 const userOutput = require('../../../../testdata/user.json');
 const user = require('./user');
+const { setAnsibleTrialFlag, ANSIBLE_TRIAL_FLAG } = require('../../utils/isAnsibleTrialFlagActive');
 const replaceMock = jest.fn();
 
 describe('User', () => {
@@ -56,6 +57,37 @@ describe('User', () => {
 
       user.tryBounceIfUnentitled(ents, 'ansible');
       expect(replaceMock).lastCalledWith('https://test.com/ansible/ansible-dashboard/trial');
+    });
+
+    test('should properly bounce if unentitled user with ansible trial locastorage flags', () => {
+      jest.useFakeTimers();
+      // enable ansible trial flag
+      setAnsibleTrialFlag(Date.now());
+      // advance time by one minute. user should not be bounced
+      jest.advanceTimersByTime(1 * 60 * 1000);
+      user.tryBounceIfUnentitled(ents, 'ansible');
+      expect(replaceMock).not.toBeCalled();
+
+      // advace time by additional 10 minutes. user should be bounced to /trial/expired
+      jest.advanceTimersByTime(10 * 60 * 1000);
+      user.tryBounceIfUnentitled(ents, 'ansible');
+      expect(replaceMock).toBeCalledTimes(1);
+      expect(replaceMock).toHaveBeenLastCalledWith('https://test.com/ansible/ansible-dashboard/trial/expired');
+      replaceMock.mockClear();
+
+      // should not be bounced at all if entitled to ansible
+      user.tryBounceIfUnentitled(
+        {
+          ansible: {
+            is_entitled: true,
+          },
+        },
+        'ansible'
+      );
+      expect(replaceMock).not.toBeCalled();
+
+      // clear the ansible trial flag
+      localStorage.removeItem(ANSIBLE_TRIAL_FLAG);
     });
 
     test('should *not* bounce if entitled', () => {

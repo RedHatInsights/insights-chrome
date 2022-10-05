@@ -13,6 +13,7 @@ import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import { SegmentContext } from '../analytics/segment-analytics';
 import LoadingFallback from '../../utils/loading-fallback';
+import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -105,6 +106,9 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
               setActiveTopic('');
             },
           },
+          clearAnsibleTrialFlag,
+          isAnsibleTrialFlagActive,
+          setAnsibleTrialFlag,
           chromeHistory: history,
           analytics,
         },
