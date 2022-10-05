@@ -1,4 +1,4 @@
-import { ChromeAPI } from '@redhat-cloud-services/types';
+import { ChromeAPI, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 /**
  * @deprecated
@@ -8,14 +8,23 @@ export type AnyObject = {
   [key: string]: any;
 };
 
+export type NavItemPermission<T extends keyof VisibilityFunctions = 'isOrgAdmin'> = {
+  method: T;
+  args: Parameters<VisibilityFunctions[T]>;
+};
+
 /**
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
+  groupId?: string;
+  expandable?: boolean;
   href?: string;
   routes?: NavItem[];
   navItems?: NavItem[];
   active?: boolean;
+  isHidden?: boolean;
+  permissions?: NavItemPermission[] | NavItemPermission;
 };
 
 declare global {

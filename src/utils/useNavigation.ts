@@ -7,16 +7,18 @@ import { isBeta } from '../js/utils';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
+import { NavItem } from '../js/types';
+import { Navigation, ReduxState } from '../js/redux/store';
 
-function cleanNavItemsHref(navItem) {
+function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
 
   if (typeof result.groupId !== 'undefined') {
-    result.navItems = result.navItems.map(cleanNavItemsHref);
+    result.navItems = result.navItems?.map(cleanNavItemsHref);
   }
 
   if (result.expandable === true) {
-    result.routes = result.routes.map(cleanNavItemsHref);
+    result.routes = result.routes?.map(cleanNavItemsHref);
   }
 
   if (typeof result.href === 'string') {
@@ -29,12 +31,12 @@ function cleanNavItemsHref(navItem) {
   return result;
 }
 
-const shouldPreseverQuickstartSearch = (prevSearch, activeQuickStartID) => {
+const shouldPreseverQuickstartSearch = (prevSearch: string, activeQuickStartID: string) => {
   const prevParams = new URLSearchParams(prevSearch);
   return activeQuickStartID !== prevParams.get('quickstart');
 };
 
-const appendQSSearch = (currentSearch, activeQuickStartID) => {
+const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
   const search = new URLSearchParams(currentSearch);
   search.set('quickstart', activeQuickStartID);
   return search.toString();
@@ -48,19 +50,19 @@ const useNavigation = () => {
   const { pathname } = location;
   const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
-  const [schema] = useSelector(({ chrome: { navigation, activeApp } }) => [navigation[currentNamespace], activeApp]);
+  const [schema] = useSelector(({ chrome: { navigation, activeApp } }: ReduxState) => [navigation[currentNamespace], activeApp]);
 
   /**
    * We need a side effect to get the value into the mutation observer closure
    */
-  const activeQSId = useRef('');
+  const activeQSId = useRef<undefined | string>('');
   const activeLocation = useRef({});
   useEffect(() => {
     activeQSId.current = activeQuickStartID;
     activeLocation.current = location;
   }, [activeQuickStartID]);
 
-  const registerLocationObserver = (initialPathname, schema) => {
+  const registerLocationObserver = (initialPathname: string, schema: Navigation) => {
     let prevPathname = initialPathname;
     dispatch(loadLeftNavSegment(schema, currentNamespace, initialPathname));
     return new MutationObserver((mutations) => {
@@ -91,7 +93,7 @@ const useNavigation = () => {
   };
 
   useEffect(() => {
-    let observer;
+    let observer: MutationObserver | undefined;
     if (currentNamespace && flagsReady) {
       axios
         .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
@@ -107,7 +109,7 @@ const useNavigation = () => {
             navItems,
           };
           observer = registerLocationObserver(pathname, schema);
-          observer.observe(document.querySelector('body'), {
+          observer.observe(document.querySelector('body')!, {
             childList: true,
             subtree: true,
           });

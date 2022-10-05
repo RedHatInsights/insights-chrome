@@ -1,20 +1,31 @@
 import { useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { ReduxState } from '../js/redux/store';
 import { isAnsible } from '../js/utils';
 
+export type OuiaTags = {
+  landing?: 'true' | 'false';
+  'data-ouia-safe': 'true' | 'false';
+  'data-ouia-bundle'?: string;
+  'data-ouia-app-id'?: string;
+  'data-ouia-subnav'?: string;
+  'data-ouia-page-object-id'?: string;
+  'data-ouia-page-type'?: string;
+};
+
 const useOuiaTags = () => {
-  const [state, setState] = useState({
+  const [state, setState] = useState<OuiaTags>({
     'data-ouia-safe': 'true',
   });
   const { pathname } = useLocation();
   const { pageAction, pageObjectId, activeApp } = useSelector(
-    ({ chrome: { pageAction, pageObjectId, activeApp } }) => ({ pageAction, pageObjectId, activeApp }),
+    ({ chrome: { pageAction, pageObjectId, activeApp } }: ReduxState) => ({ pageAction, pageObjectId, activeApp }),
     shallowEqual
   );
   useEffect(() => {
     setState(() => {
-      const result = {
+      const result: OuiaTags = {
         'data-ouia-safe': 'true',
       };
       const sections = pathname.split('/');

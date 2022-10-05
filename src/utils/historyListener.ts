@@ -1,10 +1,12 @@
+import { Action, Location } from 'history';
+
 /**
  * Maximum SPA application switches
  */
 const SWITCHES_LIMIT = 20;
 let contextSwitches = 0;
 let prevApp = '';
-const historyListener = (location, action) => {
+const historyListener = (location: Location, action: Action) => {
   const app = location.pathname.split('/').filter((s) => s.length > 0)[1];
 
   /**

@@ -1,17 +1,16 @@
 import flatMap from 'lodash/flatMap';
 import { visibilityFunctions } from '../js/consts';
+import { NavItem, NavItemPermission } from '../js/types';
 
-export const isNavItemVisible = (permissions) =>
-  Promise.all(
-    flatMap(
-      Array.isArray(permissions) ? permissions : [permissions],
-      async ({ method, args } = {}) =>
-        // (null, undefined, true) !== false
-        (await visibilityFunctions?.[method]?.(...(args || []))) !== false
-    )
-  ).then((visibility) => visibility.every(Boolean));
+const visibilityHandler = async ({ method, args }: NavItemPermission) => {
+  // (null, undefined, true) !== false
+  return (await visibilityFunctions[method]?.(...args)) !== false;
+};
 
-export const evaluateVisibility = async (navItem) => {
+export const isNavItemVisible = (permissions: NavItemPermission | NavItemPermission[]) =>
+  Promise.all(flatMap(Array.isArray(permissions) ? permissions : [permissions], visibilityHandler)).then((visibility) => visibility.every(Boolean));
+
+export const evaluateVisibility = async (navItem: NavItem) => {
   /**
    * Skip evaluation for hidden items
    */
@@ -41,14 +40,14 @@ export const evaluateVisibility = async (navItem) => {
     /**
      * Evalute group items
      */
-    result.navItems = await Promise.all(result.navItems.map(evaluateVisibility));
+    result.navItems = await Promise.all(result.navItems!.map(evaluateVisibility));
   }
 
   if (result.expandable === true) {
     /**
      * Evaluate sub routes
      */
-    result.routes = await Promise.all(result.routes.map(evaluateVisibility));
+    result.routes = await Promise.all(result.routes!.map(evaluateVisibility));
   }
 
   return result;
