@@ -2,7 +2,7 @@
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { FlagTagsFilter, INVENTORY_API_BASE, flatTags } from './constants';
 import { HostsApi, SapSystemApi, TagsApi } from '@redhat-cloud-services/host-inventory-client';
-import { AAP_KEY, MSSQL_KEY } from '../../redux/globalFilterReducers';
+import { AAP_KEY, MSSQL_KEY } from '../../../redux/globalFilterReducers';
 import { AxiosInstance } from 'axios';
 export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);
 export const sap = new SapSystemApi(undefined, INVENTORY_API_BASE, instance as AxiosInstance);

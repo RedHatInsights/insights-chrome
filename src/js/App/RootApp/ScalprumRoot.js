@@ -8,7 +8,7 @@ import { HelpTopicContext } from '@patternfly/quickstarts';
 import DefaultLayout from '../../../layouts/DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { usePendoFeedback } from '../Feedback';
-import { toggleFeedbackModal } from '../../redux/actions';
+import { toggleFeedbackModal } from '../../../redux/actions';
 import historyListener from '../../../utils/historyListener';
 import { isFedRamp } from '../../../utils/common';
 import SegmentContext from '../../../analytics/SegmentContext';

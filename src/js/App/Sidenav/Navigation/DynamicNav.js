@@ -7,7 +7,7 @@ import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import ChromeNavItem from './ChromeNavItem';
-import { loadLeftNavSegment } from '../../../redux/actions';
+import { loadLeftNavSegment } from '../../../../redux/actions';
 
 const toArray = (value) => (Array.isArray(value) ? value : [value]);
 const mergeArrays = (orig, index, value) => [...orig.slice(0, index), ...toArray(value), ...orig.slice(index)];

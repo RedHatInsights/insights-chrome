@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { preloadModule } from '@scalprum/core';
 
-import { appNavClick } from '../../../redux/actions';
+import { appNavClick } from '../../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
 import { AnyObject } from '../../../types';
-import { ReduxState, RouteDefinition } from '../../../redux/store';
+import { ReduxState, RouteDefinition } from '../../../../redux/store';
 
 export type NavDOMEvent = {
   href: string;

@@ -21,7 +21,7 @@ import {
   setGatewayError,
   setPendoFeedbackFlag,
   toggleFeedbackModal,
-} from './reducers';
+} from './chromeReducers';
 import {
   globalFilterDefaultState,
   onGetAllSIDs,

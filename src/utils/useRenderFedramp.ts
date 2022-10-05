@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { matchPath } from 'react-router-dom';
 
-import { ChromeModule, ReduxState } from '../js/redux/store';
+import { ChromeModule, ReduxState } from '../redux/store';
 import { isFedRamp } from './common';
 const isFedrampEnv = isFedRamp();
 

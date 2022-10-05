@@ -4,7 +4,7 @@ import { getUrl, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
-import { ChromeState } from '../js/redux/store';
+import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 
 type SegmentEnvs = 'dev' | 'prod';

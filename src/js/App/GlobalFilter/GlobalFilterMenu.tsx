@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Chip, ChipGroup, Divider, Skeleton, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { FlagTagsFilter, updateSelected } from './constants';
 import TagsModal from './TagsModal';
-import { fetchAllTags } from '../../redux/actions';
-import { CommonSelectedTag } from '../../redux/store';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
+import { CommonSelectedTag, ReduxState } from '../../../redux/store';
+import { fetchAllTags } from '../../../redux/actions';
 
 export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
 export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
@@ -85,8 +85,8 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
    * We are unable to test it in any local development environment
    * */
   const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
-  const registeredWith = useSelector<{ globalFilter: { scope?: string } }>(({ globalFilter: { scope } }) => scope);
-  const userLoaded = useSelector<{ chrome: { user: unknown } }>(({ chrome: { user } }) => Boolean(user));
+  const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
+  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
   const intl = useIntl();
   const dispatch = useDispatch();
   const GroupFilterWrapper = useMemo(

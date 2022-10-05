@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { ReduxState } from '../js/redux/store';
+import { ReduxState } from '../redux/store';
 import { isAnsible } from './common';
 
 export type OuiaTags = {

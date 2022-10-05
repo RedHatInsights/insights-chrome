@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import UnleasFlagProvider, { FlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { useSelector } from 'react-redux';
-import { ReduxState } from '../../redux/store';
+import { ReduxState } from '../../../redux/store';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
 const config = {

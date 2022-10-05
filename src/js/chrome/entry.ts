@@ -1,6 +1,6 @@
-import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilter } from '../../redux/actions';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
-import { spinUpStore } from '../redux-config';
+import { spinUpStore } from '../../redux/redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
 import chromeHistory from '../../utils/chromeHistory';
@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../../utils/common';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
-import * as actionTypes from '../redux/action-types';
+import * as actionTypes from '../../redux/action-types';
 import { flatTags } from '../App/GlobalFilter/constants';
 import debugFunctions from '../debugFunctions';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';

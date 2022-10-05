@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
-import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
+import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../../redux/actions';
 import { generateFilter } from './constants';
 import { useHistory } from 'react-router-dom';
 import { GlobalFilterDropdown } from './GlobalFilterMenu';

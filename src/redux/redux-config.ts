@@ -1,10 +1,10 @@
-import * as actionTemplates from './redux/actions';
-import chromeReducer, { chromeInitialState } from './redux';
+import * as actionTemplates from './actions';
+import chromeReducer, { chromeInitialState } from '.';
 import ReducerRegistry, { dispatchActionsToStore } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import MiddlewareListener from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import logger from 'redux-logger';
 import promise from 'redux-promise-middleware';
-import { ReduxState } from './redux/store';
+import { ReduxState } from './store';
 
 const basicMiddlewares = [];
 if (process.env.NODE_ENV === 'development' || (window && window.localStorage.getItem('chrome:redux:debug') === 'true')) {

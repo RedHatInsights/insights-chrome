@@ -9,7 +9,7 @@ import IDPChecker from './IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
-import { populateQuickstartsCatalog } from '../../redux/actions';
+import { populateQuickstartsCatalog } from '../../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';

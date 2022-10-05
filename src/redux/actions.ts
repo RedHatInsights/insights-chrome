@@ -1,11 +1,11 @@
 import * as actionTypes from './action-types';
-import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../App/GlobalFilter/tagsApi';
+import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../js/App/GlobalFilter/tagsApi';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem } from '../types';
+import { NavItem } from '../js/types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
-import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
-import { ThreeScaleError } from '../../utils/responseInterceptors';
+import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';
+import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {

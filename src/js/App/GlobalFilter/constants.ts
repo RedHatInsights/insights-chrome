@@ -1,8 +1,8 @@
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
-import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../redux/globalFilterReducers';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../../redux/globalFilterReducers';
 import { getUrl } from '../../../utils/common';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';

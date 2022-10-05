@@ -21,8 +21,8 @@ import { DeepRequired } from 'utility-types';
 
 import feedbackIllo from '../../../../static/images/feedback_illo.svg';
 import Feedback from './Feedback';
-import { toggleFeedbackModal } from '../../redux/actions';
-import { ReduxState } from '../../redux/store';
+import { toggleFeedbackModal } from '../../../redux/actions';
+import { ReduxState } from '../../../redux/store';
 import FeedbackSuccess from './FeedbackSuccess';
 import messages from '../../Messages';
 

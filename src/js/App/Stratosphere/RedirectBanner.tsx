@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, AlertActionCloseButton, Text, TextContent } from '@patternfly/react-core';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { ReduxState } from '../../redux/store';
+import { ReduxState } from '../../../redux/store';
 
 // TODO: Figure out what param chrome should expect
 export const STRATOSPHERE_BANNER_NAME = 'from-aws';

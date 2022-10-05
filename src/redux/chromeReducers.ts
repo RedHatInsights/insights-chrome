@@ -1,9 +1,9 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
-import { NavItem } from '../types';
-import { generateRoutesList, highlightItems, isBeta, isFedRamp, levelArray } from '../../utils/common';
-import { ThreeScaleError } from '../../utils/responseInterceptors';
+import { REQUESTS_COUNT, REQUESTS_DATA } from '../js/consts';
+import { NavItem } from '../js/types';
+import { generateRoutesList, highlightItems, isBeta, isFedRamp, levelArray } from '../utils/common';
+import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeModule, ChromeState, Navigation } from './store';
 
 export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import LoadingFallback from '../../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
+import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../../analytics';
 import classNames from 'classnames';

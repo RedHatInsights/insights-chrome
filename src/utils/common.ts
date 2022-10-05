@@ -4,7 +4,7 @@ import { DEFAULT_ROUTES } from '../jwt/constants';
 import flatMap from 'lodash/flatMap';
 import { NavItem } from '../js/types';
 import axios from 'axios';
-import { ChromeModule, RouteDefinition } from '../js/redux/store';
+import { ChromeModule, RouteDefinition } from '../redux/store';
 
 export function getWindow() {
   return window;

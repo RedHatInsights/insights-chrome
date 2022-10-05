@@ -2,13 +2,13 @@ import axios from 'axios';
 import { useContext, useEffect, useRef } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { loadLeftNavSegment, setGatewayError } from '../js/redux/actions';
+import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { NavItem } from '../js/types';
-import { Navigation, ReduxState } from '../js/redux/store';
+import { Navigation, ReduxState } from '../redux/store';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };

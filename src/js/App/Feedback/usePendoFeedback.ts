@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { spinUpStore } from '../../redux-config';
-import { setPendoFeedbackFlag } from '../../redux/actions';
+import { spinUpStore } from '../../../redux/redux-config';
+import { setPendoFeedbackFlag } from '../../../redux/actions';
 
 const usePendoFeedback = () => {
   /**

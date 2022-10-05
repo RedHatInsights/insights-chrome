@@ -12,7 +12,7 @@ import { betaBadge } from '../../Header/Tools';
 import ChromeLink from './ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../../../utils/useRenderFedramp';
-import { markActiveProduct } from '../../../redux/actions';
+import { markActiveProduct } from '../../../../redux/actions';
 
 const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, isExternal, isBeta: isBetaEnv, active, product, notifier = '' }) => {
   const hasNotifier = useSelector((state) => get(state, notifier));

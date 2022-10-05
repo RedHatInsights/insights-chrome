@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 
-import { onToggleContextSwitcher } from '../../redux/actions';
+import { onToggleContextSwitcher } from '../../../redux/actions';
 
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';

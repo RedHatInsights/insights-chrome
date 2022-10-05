@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 import { Header } from '../js/App/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
-import { onToggle } from '../js/redux/actions';
+import { onToggle } from '../redux/actions';
 import Routes from '../js/App/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../js/App/Stratosphere/RedirectBanner';

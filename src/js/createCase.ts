@@ -5,7 +5,7 @@ const log = logger('createCase.js');
 
 import { getEnvDetails, getUrl } from '../utils/common';
 import { HYDRA_ENDPOINT } from './consts';
-import { spinUpStore } from './redux-config';
+import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from './auth';
 

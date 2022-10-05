@@ -3,7 +3,7 @@ import NotAuthorized from '@redhat-cloud-services/frontend-components/NotAuthori
 import { useSelector } from 'react-redux';
 import sanitizeHtml from 'sanitize-html';
 
-import type { ReduxState } from '../../redux/store';
+import type { ReduxState } from '../../../redux/store';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { Text, TextContent } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';

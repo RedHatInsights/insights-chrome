@@ -10,7 +10,7 @@ import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 import { getSection, getUrl, isBeta } from '../../../utils/common';
-import { spinUpStore } from '../../redux-config';
+import { spinUpStore } from '../../../redux/redux-config';
 import classnames from 'classnames';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';

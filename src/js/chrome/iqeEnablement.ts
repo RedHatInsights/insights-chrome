@@ -2,7 +2,7 @@
 /* eslint-disable prefer-rest-params */
 import type { Store } from 'redux';
 import { crossAccountBouncer } from '../auth';
-import { setGatewayError } from '../redux/actions';
+import { setGatewayError } from '../../redux/actions';
 import { get3scaleError } from '../../utils/responseInterceptors';
 // TODO: Refactor this file to use modern JS
 
