@@ -3,8 +3,8 @@ import logger from '../jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getEnvDetails, getUrl } from '../utils/common';
-import { HYDRA_ENDPOINT } from '../utils/consts';
+import { getEnvDetails, getUrl } from './common';
+import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../auth';

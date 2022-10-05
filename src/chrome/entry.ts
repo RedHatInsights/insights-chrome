@@ -7,7 +7,7 @@ import chromeHistory from '../utils/chromeHistory';
 import Cookies from 'js-cookie';
 import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils/common';
 import get from 'lodash/get';
-import { createSupportCase } from '../js/createCase';
+import { createSupportCase } from '../utils/createCase';
 import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../js/App/GlobalFilter/globalFilterApi';
 import debugFunctions from '../utils/debugFunctions';
