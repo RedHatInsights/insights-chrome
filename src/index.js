@@ -1,3 +1,3 @@
 import './sass/chrome.scss';
 
-import('./js/bootstrap');
+import('./bootstrap');
