@@ -11,7 +11,7 @@ import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../../redux/actions';
 import Routes from '../Routes';
-import useOuiaTags from '../../utils/useOuiaTags';
+import useOuiaTags from '../../../utils/useOuiaTags';
 import RedirectBanner from '../Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useIntl } from 'react-intl';

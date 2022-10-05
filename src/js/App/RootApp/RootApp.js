@@ -3,7 +3,7 @@ import { Router } from 'react-router-dom';
 import { HelpTopicContainer, QuickStartContainer } from '@patternfly/quickstarts';
 
 import { isBeta } from '../../utils';
-import chromeHistory from '../../utils/chromeHistory';
+import chromeHistory from '../../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from './IDPChecker';
 import ScalprumRoot from './ScalprumRoot';

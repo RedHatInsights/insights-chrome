@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 import Portal, { PortalNotificationConfig } from '@redhat-cloud-services/frontend-components-notifications/Portal';
 import { AlertVariant } from '@patternfly/react-core';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../consts';
-import useAccessRequestNotifier from '../../utils/useAccessRequestNotifier';
+import useAccessRequestNotifier from '../../../utils/useAccessRequestNotifier';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';

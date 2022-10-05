@@ -1,7 +1,7 @@
 import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
 
-import { deleteLocalStorageItems, lastActive } from '../utils';
+import { deleteLocalStorageItems, lastActive } from '../js/utils';
 
 export const createCacheStore = (endpoint: string, cacheKey: string) => {
   const name = lastActive(endpoint, cacheKey);

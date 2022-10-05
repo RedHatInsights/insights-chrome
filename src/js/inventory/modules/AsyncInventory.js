@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoadingFallback from '../../utils/loading-fallback';
+import LoadingFallback from '../../../utils/loading-fallback';
 import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 
 // TODO: remove me once every app uses new loader

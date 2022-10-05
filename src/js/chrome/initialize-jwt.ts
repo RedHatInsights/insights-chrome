@@ -2,7 +2,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../auth';
 import { decodeToken } from '../jwt/jwt';
 import { spinUpStore } from '../redux-config';
-import { CacheAdapter } from '../utils/cache';
+import { CacheAdapter } from '../../utils/cache';
 
 const initializeJWT = async (libjwt: LibJWT, chromeInstance: { cache?: CacheAdapter }) => {
   const { actions } = spinUpStore();

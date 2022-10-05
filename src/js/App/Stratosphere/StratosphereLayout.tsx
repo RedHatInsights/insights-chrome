@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-import LoadingFallback from '../../utils/loading-fallback';
+import LoadingFallback from '../../../utils/loading-fallback';
 import ProductSelection from './ProductSelection';
 
 const StratosphereLayout = () => (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { isAnsible } from '../utils';
+import { isAnsible } from '../js/utils';
 
 const useOuiaTags = () => {
   const [state, setState] = useState({

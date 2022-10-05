@@ -2,7 +2,7 @@ import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
-import LoadingFallback from '../../utils/loading-fallback';
+import LoadingFallback from '../../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';

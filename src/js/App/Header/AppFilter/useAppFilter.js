@@ -2,8 +2,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isBeta, isFedRamp, isProd } from '../../../utils';
-import { evaluateVisibility } from '../../../utils/isNavItemVisible';
-import { computeFedrampResult } from '../../../utils/useRenderFedramp';
+import { evaluateVisibility } from '../../../../utils/isNavItemVisible';
+import { computeFedrampResult } from '../../../../utils/useRenderFedramp';
 
 export const requiredBundles = [
   'application-services',

@@ -1,5 +1,5 @@
 import { createBrowserHistory } from 'history';
-import { isBeta } from '../utils';
+import { isBeta } from '../js/utils';
 
 const history = createBrowserHistory({
   basename: isBeta() ? '/beta' : '/',

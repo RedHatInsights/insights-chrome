@@ -7,7 +7,7 @@ import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../BetaInfoModal';
 import { getUrl, isBeta } from '../../../utils';
 
-import useNavigation from '../../../utils/useNavigation';
+import useNavigation from '../../../../utils/useNavigation';
 import NavLoader from './Loader';
 import ChromeNavItem from './ChromeNavItem';
 

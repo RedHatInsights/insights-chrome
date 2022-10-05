@@ -5,7 +5,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import ChromeRoute from './ChromeRoute';
 import NotFoundRoute from './NotFoundRoute';
 import { isFedRamp } from '../../utils';
-import LoadingFallback from '../../utils/loading-fallback';
+import LoadingFallback from '../../../utils/loading-fallback';
 const QuickstartCatalogRoute = lazy(() => import('./QuickstartsCatalogRoute'));
 
 const redirects = [

@@ -9,11 +9,11 @@ import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
-import historyListener from '../../utils/historyListener';
+import historyListener from '../../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import { SegmentContext } from '../analytics/segment-analytics';
-import LoadingFallback from '../../utils/loading-fallback';
-import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
+import LoadingFallback from '../../../utils/loading-fallback';
+import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../../utils/isAnsibleTrialFlagActive';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));

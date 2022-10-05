@@ -3,7 +3,7 @@ import { Listener } from '@redhat-cloud-services/frontend-components-utilities/M
 import { spinUpStore } from '../redux-config';
 import qe from './iqeEnablement';
 import consts from '../consts';
-import chromeHistory from '../utils/chromeHistory';
+import chromeHistory from '../../utils/chromeHistory';
 import { visibilityFunctions } from '../consts';
 import Cookies from 'js-cookie';
 import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils';

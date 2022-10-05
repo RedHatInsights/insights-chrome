@@ -1,5 +1,5 @@
 import flatMap from 'lodash/flatMap';
-import { visibilityFunctions } from '../consts';
+import { visibilityFunctions } from '../js/consts';
 
 export const isNavItemVisible = (permissions) =>
   Promise.all(

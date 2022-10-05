@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { matchPath } from 'react-router-dom';
 
-import { isFedRamp } from '../utils';
+import { isFedRamp } from '../js/utils';
 const isFedrampEnv = isFedRamp();
 
 export const computeFedrampResult = (isFedrampEnv, linkHref = '', { modules, isFedramp } = { modules: [] }) => {

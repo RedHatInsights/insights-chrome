@@ -5,7 +5,7 @@ import { NavItem } from '../types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
-import { ThreeScaleError } from '../utils/responseInterceptors';
+import { ThreeScaleError } from '../../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
