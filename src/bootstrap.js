@@ -8,7 +8,7 @@ import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
 import auth, { crossAccountBouncer } from './auth';
-import sentry from './js/sentry';
+import sentry from './utils/sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
