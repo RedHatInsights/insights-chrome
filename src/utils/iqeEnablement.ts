@@ -3,7 +3,7 @@
 import type { Store } from 'redux';
 import { crossAccountBouncer } from '../js/auth';
 import { setGatewayError } from '../redux/actions';
-import { get3scaleError } from '../utils/responseInterceptors';
+import { get3scaleError } from './responseInterceptors';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];

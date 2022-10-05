@@ -1,7 +1,7 @@
 import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import { spinUpStore } from '../redux/redux-config';
-import qe from './iqeEnablement';
+import qe from '../utils/iqeEnablement';
 import consts, { visibilityFunctions } from '../utils/consts';
 import chromeHistory from '../utils/chromeHistory';
 import Cookies from 'js-cookie';
