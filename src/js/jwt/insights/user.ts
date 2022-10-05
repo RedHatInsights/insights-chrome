@@ -3,6 +3,7 @@ import servicesApi from './entitlements';
 import logger from '../logger';
 import { SSOParsedToken } from './../Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { isAnsibleTrialFlagActive } from '../../utils/isAnsibleTrialFlagActive';
 
 export type SSOServiceDetails = {
   is_entitled: boolean;
@@ -22,10 +23,12 @@ const pathMapper = {
   internal: 'internal',
 };
 
-const unentitledPathMapper = (section: string, service: string) =>
+const REDIRECT_BASE = `${document.location.origin}${isBeta() ? 'beta/' : '/'}`;
+
+const unentitledPathMapper = (section: string, service: string, expired = false) =>
   ({
-    ansible: `${document.baseURI}${isBeta() ? 'beta/' : ''}ansible/ansible-dashboard/trial`,
-  }[section] || `${document.baseURI}?not_entitled=${service}`);
+    ansible: `${REDIRECT_BASE}ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
+  }[section] || `${REDIRECT_BASE}?not_entitled=${service}`);
 
 function getWindow() {
   return window;
@@ -86,8 +89,15 @@ export function tryBounceIfUnentitled(
     return;
   }
 
+  const ansibleActive = isAnsibleTrialFlagActive();
+  // test temporary ansible trial flag
+  if (section === 'ansible' && ansibleActive) {
+    return;
+  }
+
   const service = pathMapper[section];
-  const redirectAddress = unentitledPathMapper(section, service);
+  // ansibleActive can be true/false/undefined
+  const redirectAddress = unentitledPathMapper(section, service, ansibleActive === false);
 
   if (data === true) {
     // this is a force bounce scenario!

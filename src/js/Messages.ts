@@ -52,6 +52,11 @@ export default defineMessages({
     description: 'Something went wrong',
     defaultMessage: 'Something went wrong',
   },
+  globalRuntimeErrorId: {
+    id: 'globalRuntimeErrorId',
+    description: 'Global runtime error Id',
+    defaultMessage: 'Sentry error ID: {errorId}',
+  },
   problemProcessingRequest: {
     id: 'problemProcessingRequest',
     description: 'There was a problem processing the request. Try reloading the page. If the problem persists, contact',
