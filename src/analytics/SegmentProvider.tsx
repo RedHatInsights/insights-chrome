@@ -58,7 +58,7 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   }[env]?.[module] ||
   KEY_FALLBACK[env];
 
-const registerUrlObserver = () => {
+const registerAnalyticsObserver = () => {
   /**
    * We ignore hash changes
    * Hashes only have frontend effect
@@ -133,7 +133,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
   useEffect(() => {
-    const disconnect = registerUrlObserver();
+    const disconnect = registerAnalyticsObserver();
     return () => disconnect();
   }, []);
 

@@ -4,7 +4,7 @@
  * which are not using history go, push, pop functions that trigger popstate event.
  * @param {Function} observeCallback callback that will be triggered after URL change
  */
-const registerUrlObserver = () => {
+const registerAnalyticsObserver = () => {
   /**
    * We ignore hash changes
    * Hashes only have frontend effect
@@ -30,4 +30,4 @@ const registerUrlObserver = () => {
   };
 };
 
-export default registerUrlObserver;
+export default registerAnalyticsObserver;

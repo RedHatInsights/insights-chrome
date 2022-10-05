@@ -10,7 +10,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { crossAccountBouncer } from './auth';
 import sentry from './js/sentry';
 import createChromeInstance from './chrome/create-chrome';
-import registerUrlObserver from './js/url-observer';
+import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './js/App/ErrorBoundary';
@@ -70,7 +70,7 @@ const App = () => {
     });
     if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
-      registerUrlObserver(window._satellite.pageBottom);
+      registerAnalyticsObserver(window._satellite.pageBottom);
     }
 
     trustarcScriptSetup();
