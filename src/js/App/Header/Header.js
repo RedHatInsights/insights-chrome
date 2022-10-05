@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { Route } from 'react-router-dom';
-import { activationRequestURLs } from '../../consts';
+import { activationRequestURLs } from '../../../utils/consts';
 
 import './Header.scss';
 

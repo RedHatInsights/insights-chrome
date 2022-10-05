@@ -1,5 +1,5 @@
 import flatMap from 'lodash/flatMap';
-import { visibilityFunctions } from '../js/consts';
+import { visibilityFunctions } from './consts';
 import { NavItem, NavItemPermission } from '../js/types';
 
 const visibilityHandler = async ({ method, args }: NavItemPermission) => {

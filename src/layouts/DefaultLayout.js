@@ -16,7 +16,7 @@ import RedirectBanner from '../js/App/Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
-import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../js/consts';
+import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
 import { getUrl } from '../utils/common';
 
 import '../js/App/Sidenav/Navigation/Navigation.scss';

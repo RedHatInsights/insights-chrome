@@ -10,10 +10,9 @@ import logger from './logger';
 import platformUrl from './url';
 import platformUser from './user';
 import urijs from 'urijs';
-import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY, options as defaultOptions } from './constants';
+import { DEFAULT_SSO_ROUTES, GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, defaultAuthOptions as defaultOptions } from '../utils/consts';
 import Priv from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { GLOBAL_FILTER_KEY } from '../js/consts';
 
 const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
@@ -92,7 +91,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
     localStorage.setItem(OFFLINE_REDIRECT_STORAGE_KEY, redirectUri);
   }
 
-  Promise.resolve(platformUrl(DEFAULT_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
+  Promise.resolve(platformUrl(DEFAULT_SSO_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
     const options: KeycloakInitOptions & KeycloakConfig & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
@@ -112,7 +111,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
 
 export interface JWTInitOptions extends KeycloakInitOptions {
   cookieName: string;
-  routes?: typeof DEFAULT_ROUTES;
+  routes?: typeof DEFAULT_SSO_ROUTES;
   url?: string;
   clientId: string;
   realm: string;
@@ -130,7 +129,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
 
   priv.setCookie({ cookieName });
 
-  return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_ROUTES, configSsoUrl)).then((ssoUrl) => {
+  return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_SSO_ROUTES, configSsoUrl)).then((ssoUrl) => {
     //constructor for new Keycloak Object?
     options.url = ssoUrl;
     options.clientId = 'cloud-services';
@@ -392,5 +391,5 @@ export const getEncodedToken = () => {
 
 // Keycloak server URL
 export const getUrl = (ssoUrl?: string) => {
-  return platformUrl(DEFAULT_ROUTES, ssoUrl);
+  return platformUrl(DEFAULT_SSO_ROUTES, ssoUrl);
 };

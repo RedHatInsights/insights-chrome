@@ -1,9 +1,9 @@
-import { DEFAULT_ROUTES } from './constants';
+import { DEFAULT_SSO_ROUTES } from '../utils/consts';
 import logger from './logger';
 const log = logger('insights/url.js');
 
 // Parse through keycloak options routes
-export default async (env: typeof DEFAULT_ROUTES, configSsoUrl?: string) => {
+export default async (env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) => {
   if (configSsoUrl) {
     return configSsoUrl;
   }

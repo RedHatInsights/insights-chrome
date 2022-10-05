@@ -2,15 +2,13 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/inter
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
-import { getFeatureFlagsError, unleashClient } from './App/FeatureFlags/FeatureFlagsProvider';
-import { isBeta, isProd } from '../utils/common';
+import { getFeatureFlagsError, unleashClient } from '../js/App/FeatureFlags/FeatureFlagsProvider';
+import { isBeta, isProd } from './common';
 import { AxiosRequestConfig } from 'axios';
+import { ChromeAuthOptions } from '../js/types';
 
-const obj = {
-  noAuthParam: 'noauth',
-  offlineToken: '2402500adeacc30eb5c5a8a5e2e0ec1f',
-};
-
+export const noAuthParam = 'noauth';
+export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
 /**
@@ -23,6 +21,11 @@ export const ACCOUNT_REQUEST_TIMEOUT = 'chrome:cross-account-requests:request-ti
 export const CROSS_ACCESS_ACCOUNT_NUMBER = 'cross_access_account_number';
 export const ACTIVE_REMOTE_REQUEST = 'chrome/active-remote-request';
 export const CROSS_ACCESS_ORG_ID = 'cross_access_org_id';
+
+const obj = {
+  noAuthParam,
+  offlineToken,
+};
 
 const matcherMapper = {
   isEmpty,
@@ -149,3 +152,56 @@ export const activationRequestURLs = [
   'gcp-oke-activation',
   'gcp-ocp-activation',
 ];
+
+// Global Defaults
+
+export const DEFAULT_SSO_ROUTES = {
+  prod: {
+    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
+  qa: {
+    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com'],
+    sso: 'https://sso.qa.redhat.com/auth',
+    portal: 'https://access.qa.redhat.com',
+  },
+  ci: {
+    url: ['ci.foo.redhat.com', 'ci.cloud.redhat.com', 'ci.console.redhat.com'],
+    sso: 'https://sso.qa.redhat.com/auth',
+    portal: 'https://access.qa.redhat.com',
+  },
+  qaprodauth: {
+    url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com', 'qaprodauth.console.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
+  stage: {
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
+    sso: 'https://sso.stage.redhat.com/auth',
+    portal: 'https://access.stage.redhat.com',
+  },
+  gov: {
+    url: ['gov.cloud.redhat.com', 'gov.console.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
+  govStage: {
+    url: ['gov.cloud.stage.redhat.com', 'gov.console.stage.redhat.com'],
+    sso: 'https://sso.stage.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
+  dev: {
+    url: ['console.dev.redhat.com'],
+    sso: 'https://sso.redhat.com/auth',
+    portal: 'https://access.redhat.com',
+  },
+};
+
+export const defaultAuthOptions: ChromeAuthOptions = {
+  realm: 'redhat-external',
+  clientId: 'cloud-services',
+  cookieName: 'cs_jwt',
+};
+
+export const OFFLINE_REDIRECT_STORAGE_KEY = 'chrome.offline.redirectUri';

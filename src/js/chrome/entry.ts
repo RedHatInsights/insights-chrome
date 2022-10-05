@@ -2,15 +2,15 @@ import { globalFilterScope, registerModule, removeGlobalFilter, toggleGlobalFilt
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import { spinUpStore } from '../../redux/redux-config';
 import qe from './iqeEnablement';
-import consts from '../consts';
+import consts from '../../utils/consts';
 import chromeHistory from '../../utils/chromeHistory';
-import { visibilityFunctions } from '../consts';
+import { visibilityFunctions } from '../../utils/consts';
 import Cookies from 'js-cookie';
 import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../../utils/common';
 import get from 'lodash/get';
 import { createSupportCase } from '../createCase';
 import * as actionTypes from '../../redux/action-types';
-import { flatTags } from '../App/GlobalFilter/constants';
+import { flatTags } from '../App/GlobalFilter/globalFilterApi';
 import debugFunctions from '../debugFunctions';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
 import { LibJWT } from '../auth';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../../redux/actions';
-import { generateFilter } from './constants';
+import { generateFilter } from './globalFilterApi';
 import { useHistory } from 'react-router-dom';
 import { GlobalFilterDropdown } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';

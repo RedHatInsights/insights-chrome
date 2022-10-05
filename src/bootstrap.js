@@ -6,7 +6,7 @@ import { spinUpStore } from './redux/redux-config';
 import RootApp from './js/App/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
-import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './js/consts';
+import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
 import auth, { crossAccountBouncer } from './js/auth';
 import sentry from './js/sentry';
 import createChromeInstance from './js/chrome/create-chrome';

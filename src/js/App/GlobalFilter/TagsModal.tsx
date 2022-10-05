@@ -8,11 +8,11 @@ import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
 import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../../redux/store';
 import messages from '../../../locales/Messages';
-import { FlagTagsFilter } from './constants';
 import { TagFilterOptions, TagPagination } from './tagsApi';
 import { Action } from 'redux';
 import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-components/TagModal/TableWithFilter';
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
+import { FlagTagsFilter } from './globalFilterApi';
 
 export type TagsModalProps = {
   isOpen?: boolean;

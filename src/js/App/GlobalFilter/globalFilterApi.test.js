@@ -1,4 +1,4 @@
-import { createTagsFilter, escaper, flatTags, updateSelected } from './constants';
+import { createTagsFilter, escaper, flatTags, updateSelected } from './globalFilterApi';
 import { storeFilter } from './filterApi';
 const setItem = jest.fn();
 const getItem = jest.fn();

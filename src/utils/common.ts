@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { Store } from 'redux';
-import { DEFAULT_ROUTES } from '../jwt/constants';
+import { DEFAULT_SSO_ROUTES } from '../utils/consts';
 import flatMap from 'lodash/flatMap';
 import { NavItem } from '../js/types';
 import axios from 'axios';
@@ -135,11 +135,11 @@ export function getUrl(type?: string) {
 }
 
 export function getEnv() {
-  return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
+  return Object.entries(DEFAULT_SSO_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
 
 export function getEnvDetails() {
-  return Object.entries(DEFAULT_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[1];
+  return Object.entries(DEFAULT_SSO_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[1];
 }
 
 export function isProd() {

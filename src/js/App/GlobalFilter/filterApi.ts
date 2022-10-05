@@ -1,5 +1,5 @@
 import { History } from 'history';
-import { FlagTagsFilter, GroupItem, flatTags } from './constants';
+import { FlagTagsFilter, GroupItem, flatTags } from './globalFilterApi';
 
 export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, history: History) => {
   if (isEnabled) {

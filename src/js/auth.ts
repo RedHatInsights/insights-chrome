@@ -1,8 +1,8 @@
 import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from '../jwt/offline';
 import * as jwt from '../jwt/jwt';
 import cookie from 'js-cookie';
-import { options as defaultOptions } from '../jwt/constants';
-import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from './consts';
+import { defaultAuthOptions as defaultOptions } from '../utils/consts';
+import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import { AxiosResponse } from 'axios';
 
 export type LibJWT = {

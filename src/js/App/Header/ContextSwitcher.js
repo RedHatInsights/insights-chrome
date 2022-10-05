@@ -20,7 +20,7 @@ import {
   CROSS_ACCESS_ORG_ID,
   REQUESTS_COUNT,
   REQUESTS_DATA,
-} from '../../consts';
+} from '../../../utils/consts';
 
 const ContextSwitcher = ({ user, className }) => {
   const dispatch = useDispatch();

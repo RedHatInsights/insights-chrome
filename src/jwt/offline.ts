@@ -1,5 +1,4 @@
-import consts from '../js/consts';
-import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from './constants';
+import consts, { DEFAULT_SSO_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
 
@@ -56,7 +55,7 @@ export async function getOfflineToken(realm: string, clientId: string, configSso
     return Promise.reject('not available');
   }
 
-  const ssoUrl = await insightsUrl(DEFAULT_ROUTES, configSsoUrl);
+  const ssoUrl = await insightsUrl(DEFAULT_SSO_ROUTES, configSsoUrl);
 
   const tokenURL = `${ssoUrl}/realms/${realm}/protocol/openid-connect/token`;
   const params = parseHashString(postbackUrl);

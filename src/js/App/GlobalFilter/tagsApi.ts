@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-import { FlagTagsFilter, INVENTORY_API_BASE, flatTags } from './constants';
+import { FlagTagsFilter, INVENTORY_API_BASE, flatTags } from './globalFilterApi';
 import { HostsApi, SapSystemApi, TagsApi } from '@redhat-cloud-services/host-inventory-client';
 import { AAP_KEY, MSSQL_KEY } from '../../../redux/globalFilterReducers';
 import { AxiosInstance } from 'axios';
