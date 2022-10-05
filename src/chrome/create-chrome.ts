@@ -1,8 +1,8 @@
 import qe from './iqeEnablement';
 import { bootstrap, chromeInit } from './entry';
 import initializeJWT from './initialize-jwt';
-import { createFetchPermissionsWatcher } from '../rbac/fetchPermissions';
-import { LibJWT } from '../auth';
+import { createFetchPermissionsWatcher } from '../js/rbac/fetchPermissions';
+import { LibJWT } from '../js/auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 

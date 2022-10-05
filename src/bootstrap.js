@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
 import auth, { crossAccountBouncer } from './js/auth';
 import sentry from './js/sentry';
-import createChromeInstance from './js/chrome/create-chrome';
+import createChromeInstance from './chrome/create-chrome';
 import registerUrlObserver from './js/url-observer';
 import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
