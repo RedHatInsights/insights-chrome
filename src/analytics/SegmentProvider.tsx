@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
-import { getUrl, isBeta, isProd } from '../../../utils/common';
+import { getUrl, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
-import { ChromeState } from '../../redux/store';
-import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import { ChromeState } from '../js/redux/store';
+import SegmentContext from './SegmentContext';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift';
@@ -123,16 +122,11 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
   };
 };
 
-export const SegmentContext = createContext<{ ready: boolean; analytics?: AnalyticsBrowser }>({
-  ready: false,
-  analytics: undefined,
-});
-
 export type SegmentProviderProps = {
   activeModule: string;
 };
 
-export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
+const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
@@ -197,11 +191,4 @@ export const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, 
   );
 };
 
-export function useSegment() {
-  const intl = useIntl();
-  const ctx = useContext(SegmentContext);
-  if (!ctx) {
-    throw new Error(`${intl.formatMessage(messages.segmentError)}`);
-  }
-  return ctx;
-}
+export default SegmentProvider;

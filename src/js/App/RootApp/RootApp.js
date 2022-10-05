@@ -12,8 +12,8 @@ import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import { populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
-import { SegmentProvider } from '../analytics/segment-analytics';
 import validateQuickstart from '../QuickStart/quickstartValidation';
+import SegmentProvider from '../../../analytics/SegmentProvider';
 
 const RootApp = (props) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();

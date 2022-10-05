@@ -6,7 +6,7 @@ import LoadingFallback from '../../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
-import { getPendoConf } from '../../analytics';
+import { getPendoConf } from '../../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';

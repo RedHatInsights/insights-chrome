@@ -11,7 +11,7 @@ import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../../utils/historyListener';
 import { isFedRamp } from '../../../utils/common';
-import { SegmentContext } from '../analytics/segment-analytics';
+import SegmentContext from '../../../analytics/SegmentContext';
 import LoadingFallback from '../../../utils/loading-fallback';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../../utils/isAnsibleTrialFlagActive';
 
