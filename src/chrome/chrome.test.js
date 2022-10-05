@@ -1,6 +1,5 @@
-import './test';
-import { chromeInit } from './chrome/entry';
-import * as actions from './redux/actions';
+import { chromeInit } from './entry';
+import * as actions from '../redux/actions';
 
 const mockedPromis = new Promise(() => {});
 const mockedJwt = {
