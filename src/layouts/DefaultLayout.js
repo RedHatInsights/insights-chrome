@@ -2,25 +2,25 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import GlobalFilter from '../GlobalFilter/GlobalFilter';
+import GlobalFilter from '../js/App/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
 import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
-import { Header } from '../Header/Header';
+import { Header } from '../js/App/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
-import { onToggle } from '../../redux/actions';
-import Routes from '../Routes';
-import useOuiaTags from '../../../utils/useOuiaTags';
-import RedirectBanner from '../Stratosphere/RedirectBanner';
+import { onToggle } from '../js/redux/actions';
+import Routes from '../js/App/Routes';
+import useOuiaTags from '../utils/useOuiaTags';
+import RedirectBanner from '../js/App/Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../js/Messages';
+import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../js/consts';
+import { getUrl } from '../utils/common';
 
-import '../Sidenav/Navigation/Navigation.scss';
+import '../js/App/Sidenav/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
-import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../../consts';
-import { getUrl } from '../../../utils/common';
 
 const ShieldedRoot = memo(
   ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {

@@ -5,7 +5,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
-import DefaultLayout from './DefaultLayout';
+import DefaultLayout from '../../../layouts/DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
 import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
