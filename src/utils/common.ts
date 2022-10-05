@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import { Store } from 'redux';
 import { DEFAULT_SSO_ROUTES } from '../utils/consts';
 import flatMap from 'lodash/flatMap';
-import { NavItem } from '../js/types';
+import { NavItem } from '../@types/types';
 import axios from 'axios';
 import { ChromeModule, RouteDefinition } from '../redux/store';
 

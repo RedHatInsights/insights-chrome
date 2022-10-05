@@ -1,7 +1,7 @@
 import * as actionTypes from './action-types';
 import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../js/App/GlobalFilter/tagsApi';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem } from '../js/types';
+import { NavItem } from '../@types/types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';

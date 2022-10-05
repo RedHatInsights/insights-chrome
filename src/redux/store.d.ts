@@ -1,6 +1,6 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem } from '../js/types';
+import { NavItem } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type RouteDefinition = {

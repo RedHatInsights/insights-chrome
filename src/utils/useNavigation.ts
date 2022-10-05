@@ -7,7 +7,7 @@ import { isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
-import { NavItem } from '../js/types';
+import { NavItem } from '../@types/types';
 import { Navigation, ReduxState } from '../redux/store';
 
 function cleanNavItemsHref(navItem: NavItem) {

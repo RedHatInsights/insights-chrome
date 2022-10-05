@@ -5,7 +5,7 @@ import { preloadModule } from '@scalprum/core';
 
 import { appNavClick } from '../../../../redux/actions';
 import NavContext, { OnLinkClick } from './navContext';
-import { AnyObject } from '../../../types';
+import { AnyObject } from '../../../../@types/types';
 import { ReduxState, RouteDefinition } from '../../../../redux/store';
 
 export type NavDOMEvent = {
