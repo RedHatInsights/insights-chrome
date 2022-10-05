@@ -14,6 +14,7 @@ import registerUrlObserver from './url-observer';
 import { loadFedModules, noop, trustarcScriptSetup } from './utils.ts';
 import messages from '../locales/data.json';
 import { getEnv } from './utils';
+import ErrorBoundary from './App/ErrorBoundary';
 
 const language = navigator.language.slice(0, 2) || 'en';
 
@@ -99,7 +100,9 @@ ReactDOM.render(
     }}
   >
     <Provider store={spinUpStore()?.store}>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </Provider>
   </IntlProvider>,
   document.getElementById('chrome-entry')
