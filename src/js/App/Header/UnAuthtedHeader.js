@@ -3,7 +3,7 @@ import Login from './Login';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 function Unauthed() {
   const intl = useIntl();

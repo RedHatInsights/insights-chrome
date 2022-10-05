@@ -5,7 +5,7 @@ import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../
 import useAccessRequestNotifier from '../../../utils/useAccessRequestNotifier';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const ACCOUNT_CHANGE_ID = 'account_change';
 const ACCOUNT_TIMEOUT_ID = 'account_timeout';

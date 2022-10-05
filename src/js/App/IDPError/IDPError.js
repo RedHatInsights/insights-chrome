@@ -3,7 +3,7 @@ import { Bullseye, Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } f
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { logoutAllTabs } from '../../../jwt/jwt';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const IDPError = () => {
   const intl = useIntl();

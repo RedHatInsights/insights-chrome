@@ -2,7 +2,7 @@ import React, { FormEvent, Fragment, MouseEventHandler, useMemo } from 'react';
 import { Group, GroupFilter, groupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 import './global-filter-menu.scss';
 import { useDispatch, useSelector } from 'react-redux';

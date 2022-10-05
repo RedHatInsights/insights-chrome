@@ -24,7 +24,7 @@ import Feedback from './Feedback';
 import { toggleFeedbackModal } from '../../../redux/actions';
 import { ReduxState } from '../../../redux/store';
 import FeedbackSuccess from './FeedbackSuccess';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 import './Feedback.scss';
 

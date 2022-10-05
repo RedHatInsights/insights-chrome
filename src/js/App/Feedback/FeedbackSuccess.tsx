@@ -3,7 +3,7 @@ import { Button, Text, TextContent, TextVariants } from '@patternfly/react-core'
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useIntl } from 'react-intl';
 
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 import './Feedback.scss';
 

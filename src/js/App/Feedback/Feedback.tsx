@@ -16,7 +16,7 @@ import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
 
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 import { getEnv, getUrl, isProd } from '../../../utils/common';
 
 import './Feedback.scss';

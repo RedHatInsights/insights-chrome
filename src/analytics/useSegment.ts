@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
-import messages from '../js/Messages';
+import messages from '../locales/Messages';
 import SegmentContext from './SegmentContext';
 
 export function useSegment() {

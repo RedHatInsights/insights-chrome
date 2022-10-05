@@ -13,8 +13,8 @@ import { getSection, getUrl, isBeta } from '../../../utils/common';
 import { spinUpStore } from '../../../redux/redux-config';
 import classnames from 'classnames';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
 import { useFlag } from '@unleash/proxy-client-react';
+import messages from '../../../locales/Messages';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');

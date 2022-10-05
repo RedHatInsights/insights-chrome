@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 import { onToggleContextSwitcher } from '../../../redux/actions';
 

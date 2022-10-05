@@ -6,7 +6,7 @@ import { DeepRequired } from 'utility-types';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../../utils/common';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
   const intl = useIntl();

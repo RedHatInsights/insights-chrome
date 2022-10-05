@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import messages from '../../../Messages';
+import messages from '../../../../locales/Messages';
 
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';

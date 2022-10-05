@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { getUrl } from '../../../utils/common';
 import QuickStartCatalog from '../QuickStart/QuickStartCatalog';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const QuickstartCatalogRoute = () => {
   const intl = useIntl();

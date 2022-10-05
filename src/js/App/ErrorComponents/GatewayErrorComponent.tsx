@@ -7,7 +7,7 @@ import type { ReduxState } from '../../../redux/store';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { Text, TextContent } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
-import Messages from '../../Messages';
+import Messages from '../../../locales/Messages';
 import { ThreeScaleError } from '../../../utils/responseInterceptors';
 
 export type GatewayErrorComponentProps = {

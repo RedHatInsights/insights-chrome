@@ -10,7 +10,7 @@ import ChromeNavItemFactory from './Navigation/ChromeNavItemFactory';
 import NavContext from './Navigation/navContext';
 import componentMapper from './Navigation/componentMapper';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const LandingNav = () => {
   const dispatch = useDispatch();

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { getEnv, isBeta, isProd as isProdEnv } from '../../../utils/common';
 import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
+import messages from '../../../locales/Messages';
 
 const buildItems = (username, isOrgAdmin, accountNumber = -1, isInternal, extraItems) => {
   const env = getEnv();
