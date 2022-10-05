@@ -10,7 +10,7 @@ import get from 'lodash/get';
 import { createSupportCase } from '../js/createCase';
 import * as actionTypes from '../redux/action-types';
 import { flatTags } from '../js/App/GlobalFilter/globalFilterApi';
-import debugFunctions from '../js/debugFunctions';
+import debugFunctions from '../utils/debugFunctions';
 import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';
 import { LibJWT } from '../auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
