@@ -1,7 +1,7 @@
-import { isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../../../utils/common';
+import { isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
 import servicesApi from './entitlements';
-import logger from '../logger';
-import { SSOParsedToken } from './../Priv';
+import logger from './logger';
+import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isAnsibleTrialFlagActive } from '../../../utils/isAnsibleTrialFlagActive';
 

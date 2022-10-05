@@ -1,5 +1,5 @@
-import { DEFAULT_ROUTES } from '../constants';
-import logger from '../logger';
+import { DEFAULT_ROUTES } from './constants';
+import logger from './logger';
 const log = logger('insights/url.js');
 
 // Parse through keycloak options routes

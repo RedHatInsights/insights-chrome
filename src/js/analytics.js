@@ -1,6 +1,6 @@
 'use strict';
 
-import logger from './jwt/logger';
+import logger from '../jwt/logger';
 import get from 'lodash/get';
 import { isBeta } from '../utils/common';
 

@@ -11,6 +11,7 @@ const obj = {
   offlineToken: '2402500adeacc30eb5c5a8a5e2e0ec1f',
 };
 
+export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
 /**
  * Keys for storing acess reqeusts data

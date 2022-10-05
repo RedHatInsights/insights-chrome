@@ -1,5 +1,7 @@
 // Global Defaults
 
+import { ChromeAuthOptions } from '../js/types';
+
 export const DEFAULT_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
@@ -43,13 +45,6 @@ export const DEFAULT_ROUTES = {
   },
 };
 
-export type ChromeAuthOptions = {
-  realm: string;
-  clientId: string;
-  cookieName: string;
-  refreshToken?: string;
-  token?: string;
-};
 export const options: ChromeAuthOptions = {
   realm: 'redhat-external',
   clientId: 'cloud-services',

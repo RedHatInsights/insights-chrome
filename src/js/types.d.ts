@@ -46,3 +46,11 @@ declare global {
     };
   }
 }
+
+export type ChromeAuthOptions = {
+  realm: string;
+  clientId: string;
+  cookieName: string;
+  refreshToken?: string;
+  token?: string;
+};

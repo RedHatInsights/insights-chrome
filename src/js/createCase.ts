@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import logger from './jwt/logger';
+import logger from '../jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 

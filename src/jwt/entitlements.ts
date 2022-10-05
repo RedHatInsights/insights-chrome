@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ServicesApi } from '@redhat-cloud-services/entitlements-client';
-import { deleteLocalStorageItems, lastActive } from '../../../utils/common';
-import { bootstrapCache } from '../../../utils/cache';
+import { deleteLocalStorageItems, lastActive } from '../utils/common';
+import { bootstrapCache } from '../utils/cache';
 
 const BASE_PATH = '/api/entitlements/v1';
 

@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { Store } from 'redux';
-import { DEFAULT_ROUTES } from '../js/jwt/constants';
+import { DEFAULT_ROUTES } from '../jwt/constants';
 import flatMap from 'lodash/flatMap';
 import { NavItem } from '../js/types';
 import axios from 'axios';

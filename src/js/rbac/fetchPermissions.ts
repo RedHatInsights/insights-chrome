@@ -1,6 +1,6 @@
 import { Access, AccessPagination } from '@redhat-cloud-services/rbac-client';
 import createRbacAPI from './rbac';
-import logger from '../jwt/logger';
+import logger from '../../jwt/logger';
 
 const log = logger('fetchPermissions.ts');
 

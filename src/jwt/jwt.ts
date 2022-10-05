@@ -2,19 +2,18 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { deleteLocalStorageItems, pageRequiresAuthentication } from '../../utils/common';
+import { deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
 
 // Insights Specific
-import insightsUrl from './insights/url';
-import insightsUser from './insights/user';
+import platformUrl from './url';
+import platformUser from './user';
 import urijs from 'urijs';
 import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY, options as defaultOptions } from './constants';
 import Priv from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
-
-export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
+import { GLOBAL_FILTER_KEY } from '../js/consts';
 
 const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
@@ -93,7 +92,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
     localStorage.setItem(OFFLINE_REDIRECT_STORAGE_KEY, redirectUri);
   }
 
-  Promise.resolve(insightsUrl(DEFAULT_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
+  Promise.resolve(platformUrl(DEFAULT_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
     const options: KeycloakInitOptions & KeycloakConfig & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
@@ -131,7 +130,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
 
   priv.setCookie({ cookieName });
 
-  return Promise.resolve(insightsUrl(options.routes ? options.routes : DEFAULT_ROUTES, configSsoUrl)).then((ssoUrl) => {
+  return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_ROUTES, configSsoUrl)).then((ssoUrl) => {
     //constructor for new Keycloak Object?
     options.url = ssoUrl;
     options.clientId = 'cloud-services';
@@ -294,13 +293,13 @@ export const getUserInfo = (): Promise<ChromeUser | void | undefined> => {
   log('Getting User Information');
   const jwtCookie = cookie.get(DEFAULT_COOKIE_NAME);
   if (jwtCookie && isExistingValid(jwtCookie) && isExistingValid(priv.getToken())) {
-    return insightsUser(priv.getTokenParsed());
+    return platformUser(priv.getTokenParsed());
   }
 
   return updateToken()
     .then(() => {
       log('Successfully updated token');
-      return insightsUser(priv.getTokenParsed());
+      return platformUser(priv.getTokenParsed());
     })
     .catch(() => {
       if (pageRequiresAuthentication()) {
@@ -393,5 +392,5 @@ export const getEncodedToken = () => {
 
 // Keycloak server URL
 export const getUrl = (ssoUrl?: string) => {
-  return insightsUrl(DEFAULT_ROUTES, ssoUrl);
+  return platformUrl(DEFAULT_ROUTES, ssoUrl);
 };

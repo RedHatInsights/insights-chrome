@@ -1,5 +1,5 @@
-import consts from '../../consts';
-import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from '../constants';
+import consts from '../js/consts';
+import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from './constants';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
 

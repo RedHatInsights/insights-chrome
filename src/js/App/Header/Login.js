@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@patternfly/react-core';
-import { login } from '../../jwt/jwt';
+import { login } from '../../../jwt/jwt';
 import { PageHeaderTools } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';

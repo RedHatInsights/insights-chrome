@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import cookie from 'js-cookie';
 
-import { data as encodedToken } from '../../../testdata/encodedToken.json';
-import decodedToken from '../../../testdata/decodedToken.json';
+import { data as encodedToken } from '../../testdata/encodedToken.json';
+import decodedToken from '../../testdata/decodedToken.json';
 
 import * as jwt from './jwt';
-import * as insightsUser from './insights/user';
+import * as user from './user';
 
 jest.mock('keycloak-js');
 jest.mock('urijs');
@@ -243,7 +243,7 @@ describe('JWT', () => {
       test('return right away if the cookie and token are good', async () => {
         const mockUser = { name: 'John Guy' };
         // @ts-ignore
-        jest.spyOn(insightsUser, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
+        jest.spyOn(user, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
         // make token not expired
         const nowMock = jest.spyOn(global.Date, 'now').mockReturnValue(1);
         cookie.set('cs_jwt', encodedToken);
@@ -299,7 +299,7 @@ describe('JWT', () => {
 
         jest.spyOn(jwt, 'isExistingValid').mockImplementation((data) => !!data);
         // @ts-ignore
-        jest.spyOn(insightsUser, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
+        jest.spyOn(user, 'default').mockImplementation((data: unknown) => (data ? mockUser : null));
         // @ts-ignore
         options.token = encodedToken;
         // @ts-ignore
