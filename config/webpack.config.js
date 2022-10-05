@@ -27,10 +27,10 @@ const commonConfig = ({ dev }) => {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
         {
-          main: path.resolve(__dirname, '../src/js/chrome.js'),
+          main: path.resolve(__dirname, '../src/index.js'),
           vendors: ['react', 'react-dom', 'react-refresh/runtime'],
         }
-      : path.resolve(__dirname, '../src/js/chrome.js'),
+      : path.resolve(__dirname, '../src/index.js'),
     output: {
       path: path.resolve(__dirname, '../build/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
