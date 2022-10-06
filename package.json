@@ -172,7 +172,7 @@
     "@scalprum/core": "^0.2.3",
     "@scalprum/react-core": "^0.2.3",
     "@segment/analytics-next": "^1.38.0",
-    "@sentry/browser": "^6.12.0",
+    "@sentry/browser": "^7.14.1",
     "@unleash/proxy-client-react": "^3.0.0",
     "abortcontroller-polyfill": "^1.7.3",
     "axios": "^0.21.4",
