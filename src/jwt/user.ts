@@ -3,7 +3,7 @@ import servicesApi from './entitlements';
 import logger from './logger';
 import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { isAnsibleTrialFlagActive } from '../../../utils/isAnsibleTrialFlagActive';
+import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
 
 export type SSOServiceDetails = {
   is_entitled: boolean;

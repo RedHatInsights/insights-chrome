@@ -4,7 +4,7 @@ const mockedEntitlements = require('./entitlements');
 const token = require('../../testdata/token.json');
 const userOutput = require('../../testdata/user.json');
 const user = require('./user');
-const { setAnsibleTrialFlag, ANSIBLE_TRIAL_FLAG } = require('../../utils/isAnsibleTrialFlagActive');
+const { setAnsibleTrialFlag, ANSIBLE_TRIAL_FLAG } = require('../utils/isAnsibleTrialFlagActive');
 const replaceMock = jest.fn();
 
 describe('User', () => {

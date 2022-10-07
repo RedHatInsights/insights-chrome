@@ -1,4 +1,4 @@
-import logger from '../js/jwt/logger';
+import logger from '../jwt/logger';
 
 export const ANSIBLE_TRIAL_FLAG = 'chrome.ansible.trial';
 const TRIAL_DURATION = 10 * 60 * 1000; // 10 minutes

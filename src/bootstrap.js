@@ -13,7 +13,7 @@ import createChromeInstance from './chrome/create-chrome';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
-import ErrorBoundary from './js/App/ErrorBoundary';
+import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
 
 const language = navigator.language.slice(0, 2) || 'en';
