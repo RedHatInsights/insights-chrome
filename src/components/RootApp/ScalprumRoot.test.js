@@ -5,8 +5,8 @@ import { act, render, waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
-jest.mock('../../utils', () => {
-  const utils = jest.requireActual('../../utils');
+jest.mock('../../utils/common', () => {
+  const utils = jest.requireActual('../../utils/common');
   return {
     __esModule: true,
     ...utils,
@@ -44,7 +44,7 @@ window.ResizeObserver =
     unobserve: jest.fn(),
   }));
 
-import * as utils from '../../utils';
+import * as utils from '../../utils/common';
 import * as routerDom from 'react-router-dom';
 
 describe('ScalprumRoot', () => {

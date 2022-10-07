@@ -1,7 +1,7 @@
-import mockedRbac from '../../../testdata/rbacAccess.json';
+import mockedRbac from '../../testdata/rbacAccess.json';
 
 jest.mock('./rbac', () => () => {
-  const mockedRbac = require('../../../testdata/rbacAccess.json');
+  const mockedRbac = require('../../testdata/rbacAccess.json');
   return {
     getPrincipalAccess: () => {
       global.rbacApiCalled++;

@@ -6,7 +6,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
 import DefaultLayout from '../../layouts/DefaultLayout';
-import NavLoader from '../../js/App/Sidenav/Navigation/Loader';
+import NavLoader from '../Navigation/Loader';
 import { usePendoFeedback } from '../../components/Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
@@ -15,8 +15,8 @@ import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
 
-const Navigation = lazy(() => import('../../js/App/Sidenav/Navigation'));
-const LandingNav = lazy(() => import('../../js/App/Sidenav/LandingNav'));
+const Navigation = lazy(() => import('../Navigation'));
+const LandingNav = lazy(() => import('../LandingNav'));
 const ProductSelection = lazy(() => import('../../components/Stratosphere/ProductSelection'));
 
 const loaderWrapper = (Component, props = {}) => (

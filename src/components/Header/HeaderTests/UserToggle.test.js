@@ -2,44 +2,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
-import ConnectedUserToggle, { UserToggle } from '../UserToggle';
+import UserToggle from '../UserToggle';
 import { Provider } from 'react-redux';
 
 jest.mock('../UserIcon', () => () => '<UserIcon />');
 
 describe('UserToggle', () => {
-  it('should render correctly with isSmall false', () => {
-    const props = {
-      isOpen: false,
-      account: {
-        number: 'someNumber',
-        name: 'someName',
-      },
-      isSmall: false,
-      extraItems: [],
-    };
-    const mockSelect = jest.fn();
-    const { container } = render(<UserToggle {...props} onSelect={mockSelect} />);
-    container.querySelector(`[data-ouia-component-id='chrome-user-menu']`).click();
-    expect(container).toMatchSnapshot();
-  });
-  it('should render correctly with isSmall true', () => {
-    const props = {
-      isOpen: false,
-      account: {
-        number: 'someNumber',
-        name: 'someName',
-      },
-      isSmall: true,
-      extraItems: [],
-    };
-    const mockSelect = jest.fn();
-    const { container } = render(<UserToggle {...props} onSelect={mockSelect} />);
-    expect(container).toMatchSnapshot();
-  });
-});
-
-describe('ConnectedUserToggle -- not org admin', () => {
   let initialState;
   let mockStore;
 
@@ -61,46 +29,47 @@ describe('ConnectedUserToggle -- not org admin', () => {
       },
     };
   });
-
-  it('should render correctly', () => {
+  it('should render correctly with isSmall false', () => {
     const store = mockStore(initialState);
     const { container } = render(
       <Provider store={store}>
-        <ConnectedUserToggle />
+        <UserToggle />
+      </Provider>
+    );
+    container.querySelector(`[data-ouia-component-id='chrome-user-menu']`).click();
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should render correctly with isSmall true', () => {
+    const store = mockStore(initialState);
+    const { container } = render(
+      <Provider store={store}>
+        <UserToggle isSmall />
       </Provider>
     );
     expect(container).toMatchSnapshot();
   });
-});
 
-describe('ConnectedUserToggle -- org admin', () => {
-  let initialState;
-  let mockStore;
-
-  beforeEach(() => {
-    mockStore = configureStore();
-    initialState = {
+  it('should render correctly as org admin', () => {
+    const store = mockStore({
+      ...initialState,
       chrome: {
+        ...initialState.chrome,
         user: {
+          ...initialState.chrome.user,
           identity: {
-            account_number: 'some accountNumber',
+            ...initialState.chrome.user.identity,
             user: {
-              username: 'someUsername',
-              first_name: 'someFirstName',
-              last_name: 'someLastName',
+              ...initialState.chrome.user.identity.user,
               is_org_admin: true,
             },
           },
         },
       },
-    };
-  });
-
-  it('should render correctly', () => {
-    const store = mockStore(initialState);
+    });
     const { container } = render(
       <Provider store={store}>
-        <ConnectedUserToggle />
+        <UserToggle />
       </Provider>
     );
     expect(container).toMatchSnapshot();

@@ -1,10 +1,10 @@
 import React from 'react';
-import ConnectedUserIcon, { UserIcon } from '../UserIcon';
+import UserIcon from '../UserIcon';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 
-describe('Connected User Icon', () => {
+describe('<UserIcon />', () => {
   let initialState;
   let mockStore;
   beforeEach(() => {
@@ -26,20 +26,9 @@ describe('Connected User Icon', () => {
     const store = mockStore(initialState);
     const { container } = render(
       <Provider store={store}>
-        <ConnectedUserIcon />
+        <UserIcon />
       </Provider>
     );
-    expect(container.querySelector('img')).toMatchSnapshot();
-  });
-});
-
-describe('User Icon', () => {
-  it('should render correctly with initial state', () => {
-    const account = {
-      username: 'test',
-    };
-    const mockGetImage = jest.fn();
-    const { container } = render(<UserIcon account={account} getImage={mockGetImage} />);
     expect(container.querySelector('img')).toMatchSnapshot();
   });
 });

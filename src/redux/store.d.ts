@@ -4,8 +4,8 @@ import { NavItem } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type RouteDefinition = {
-  appId: string;
-  href: string;
+  appId?: string;
+  href?: string;
   scope: string;
   module: string;
   isFedramp?: boolean;

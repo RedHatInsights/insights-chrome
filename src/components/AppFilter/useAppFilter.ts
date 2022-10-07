@@ -38,7 +38,7 @@ const bundlesOrder = [
 
 const isFedrampEnv = isFedRamp();
 
-function findModuleByLink(href: string, { modules }: ChromeModule) {
+function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules'> = { modules: [] }) {
   const routes = (modules || [])
     .flatMap(({ routes }) => routes.map((route) => (typeof route === 'string' ? route : route.pathname)))
     .sort((a, b) => (a.length < b.length ? 1 : -1));

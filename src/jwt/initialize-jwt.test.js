@@ -1,5 +1,5 @@
 import initializeJWT from './initialize-jwt';
-import encodedToken from '../../../testdata/encodedToken.json';
+import encodedToken from '../../testdata/encodedToken.json';
 
 describe('initializeJWT', () => {
   const initPromise = Promise.resolve();

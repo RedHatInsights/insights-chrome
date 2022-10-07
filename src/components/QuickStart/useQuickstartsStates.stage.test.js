@@ -19,7 +19,7 @@ jest.mock('axios', () => {
   };
 });
 
-jest.mock('../../utils', () => {
+jest.mock('../../utils/common', () => {
   return {
     __esModule: true,
     getEnv: jest.fn().mockReturnValue('stage'),

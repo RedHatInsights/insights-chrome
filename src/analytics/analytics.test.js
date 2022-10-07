@@ -1,5 +1,5 @@
-const analytics = require('./analytics');
-const user = require('./jwt/insights/user');
+const analytics = require('./');
+const user = require('../jwt/user');
 const token = require('../../testdata/token.json');
 const externalToken = require('../../testdata/externalToken.json');
 const ibmToken = require('../../testdata/ibmToken.json');

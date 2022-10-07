@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
 
-import ScalprumRoot from '../../src/js/App/RootApp/ScalprumRoot';
-import chromeReducer from '../../src/js/redux';
-import { FeatureFlagsProvider } from '../../src/js/App/FeatureFlags';
-import { loadModulesSchema } from '../../src/js/redux/actions';
-import qe from '../../src/js/chrome/iqeEnablement';
-import { COMPLIACE_ERROR_CODES } from '../../src/js/utils/responseInterceptors';
+import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
+import chromeReducer from '../../src/redux';
+import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
+import { loadModulesSchema } from '../../src/redux/actions';
+import qe from '../../src/utils/iqeEnablement';
+import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 
 function createEnv(code) {
   if (!code) {

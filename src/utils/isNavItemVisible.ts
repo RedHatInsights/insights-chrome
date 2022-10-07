@@ -4,7 +4,7 @@ import { NavItem, NavItemPermission } from '../@types/types';
 
 const visibilityHandler = async ({ method, args }: NavItemPermission) => {
   // (null, undefined, true) !== false
-  return (await visibilityFunctions[method]?.(...args)) !== false;
+  return (await visibilityFunctions[method]?.(...(args || []))) !== false;
 };
 
 export const isNavItemVisible = (permissions: NavItemPermission | NavItemPermission[]) =>

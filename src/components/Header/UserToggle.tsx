@@ -100,7 +100,7 @@ export type UserToggleProps = {
   extraItems?: React.ReactNode[];
 };
 
-export const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
+const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const account = useSelector(({ chrome }: ReduxState) => {
     return {

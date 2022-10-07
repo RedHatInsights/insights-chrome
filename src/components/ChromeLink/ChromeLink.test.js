@@ -5,8 +5,8 @@ import { act, fireEvent, render } from '@testing-library/react';
 import createMockStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from './ChromeLink';
-import NavContext from './navContext';
-import { APP_NAV_CLICK } from '../../../redux/action-types';
+import NavContext from '../Navigation/navContext';
+import { APP_NAV_CLICK } from '../../redux/action-types';
 
 const LinkContext = ({
   store,

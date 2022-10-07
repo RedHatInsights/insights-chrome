@@ -305,8 +305,8 @@ describe('JWT', () => {
         // @ts-ignore
         options.tokenParsed = decodedToken;
         await jwt.init(options);
-        const user = await jwt.getUserInfo();
-        expect(user).toBe(mockUser);
+        const userResult = await jwt.getUserInfo();
+        expect(userResult).toBe(mockUser);
       });
     });
 

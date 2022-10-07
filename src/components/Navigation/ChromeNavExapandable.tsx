@@ -19,7 +19,7 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }: ChromeNav
   let filteredFedrampRoutes = routes;
   if (isFedRamp()) {
     filteredFedrampRoutes = routes.filter(({ appId, href }) => {
-      return computeFedrampResult(appId, href, modules![appId]);
+      return appId && computeFedrampResult(appId, href, modules![appId]);
     });
   }
 

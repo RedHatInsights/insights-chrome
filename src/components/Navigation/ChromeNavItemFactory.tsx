@@ -11,7 +11,7 @@ export type ChromeNavItemFactoryProps = {
   dynamicNav?: string;
 };
 
-const isNavExpandableProps = (props: Record<string, any>): props is ChromeNavExapandableProps => props.expandable === true;
+const isNavExpandableProps = (props: Record<string, any>, expandable?: boolean): props is ChromeNavExapandableProps => expandable === true;
 const isNavGroupProps = (props: Record<string, any>, groupId?: string): props is ChromeNavGroupProps => typeof groupId === 'string';
 const isDynamicNavProps = (props: Record<string, any>, dynamicNav?: string): props is DynamicNavProps => typeof dynamicNav === 'string';
 
@@ -20,7 +20,7 @@ const ChromeNavItemFactory = ({ groupId, expandable, dynamicNav, ...rest }: Chro
   const props = rest;
   if (isNavGroupProps(props, groupId)) {
     return <componentMapper.group {...props} />;
-  } else if (isNavExpandableProps(props)) {
+  } else if (isNavExpandableProps(props, expandable)) {
     return <componentMapper.expandable {...props} />;
   } else if (isDynamicNavProps(props, dynamicNav)) {
     return <componentMapper.dynamicNav {...props} dynamicNav={dynamicNav!} />;

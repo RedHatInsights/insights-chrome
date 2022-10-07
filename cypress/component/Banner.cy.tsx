@@ -1,5 +1,5 @@
 import React from 'react';
-import Banner from '../../src/js/App/Banners/Banner';
+import Banner from '../../src/components/Banners/Banner';
 import { IntlProvider } from 'react-intl';
 
 describe('<Banner />', () => {
