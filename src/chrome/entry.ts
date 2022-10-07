@@ -9,9 +9,9 @@ import { getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } fr
 import get from 'lodash/get';
 import { createSupportCase } from '../utils/createCase';
 import * as actionTypes from '../redux/action-types';
-import { flatTags } from '../js/App/GlobalFilter/globalFilterApi';
+import { flatTags } from '../components/GlobalFilter/globalFilterApi';
 import debugFunctions from '../utils/debugFunctions';
-import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';
+import { NavDOMEvent } from '../components/ChromeLink/ChromeLink';
 import { LibJWT } from '../auth';
 import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
 

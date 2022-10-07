@@ -17,6 +17,11 @@ export type NavItemPermission<T extends keyof VisibilityFunctions = 'isOrgAdmin'
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
+  filterable?: boolean;
+  isExternal?: boolean;
+  isFedramp?: boolean;
+  title?: string;
+  appId?: string;
   groupId?: string;
   expandable?: boolean;
   href?: string;
@@ -25,10 +30,20 @@ export type NavItem = {
   active?: boolean;
   isHidden?: boolean;
   permissions?: NavItemPermission[] | NavItemPermission;
+  dynamicNav?: string;
+};
+
+export type BundleNavigation = {
+  id: string;
+  title: string;
+  navItems: NavItem[];
 };
 
 declare global {
   interface Window {
+    pendo?: {
+      updateOptions: (...args: any[]) => void;
+    };
     sendCustomEvent: (event: string) => void;
     insights: {
       chrome: ChromeAPI;

@@ -4,6 +4,8 @@ import { NavItem } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type RouteDefinition = {
+  appId: string;
+  href: string;
   scope: string;
   module: string;
   isFedramp?: boolean;
@@ -35,15 +37,18 @@ export type ChromeModule = {
   dynamic?: boolean;
   isFedramp?: boolean;
   modules?: RemoteModule[];
+  defaultDocumentTitle?: string;
 };
 
 // TODO: Update once navigation is mgrated to TS
 export type Navigation = {
+  id?: string;
+  title?: string;
   navItems: NavItem[];
   sortedLinks: string[];
 };
 
-type InternalNavigation = {
+export type InternalNavigation = {
   [key: string]: Navigation | NavItem[] | undefined;
   landingPage?: NavItem[];
 };

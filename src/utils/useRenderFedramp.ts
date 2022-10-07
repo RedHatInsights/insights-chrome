@@ -7,7 +7,7 @@ import { isFedRamp } from './common';
 const isFedrampEnv = isFedRamp();
 
 export const computeFedrampResult = (
-  isFedrampEnv: boolean,
+  isFedrampEnv: boolean | string,
   linkHref = '',
   { modules, isFedramp }: Omit<ChromeModule, 'manifestLocation'> = { modules: [] }
 ) => {

@@ -1,10 +1,10 @@
 import * as actionTypes from './action-types';
-import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../js/App/GlobalFilter/tagsApi';
+import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../@types/types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
-import { NavDOMEvent } from '../js/App/Sidenav/Navigation/ChromeLink';
+import { NavDOMEvent } from '../components/ChromeLink/ChromeLink';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
@@ -177,7 +177,7 @@ export const updateDocumentTitle = (title: string) => ({
   payload: title,
 });
 
-export const markActiveProduct = (product: string) => ({
+export const markActiveProduct = (product?: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
 });

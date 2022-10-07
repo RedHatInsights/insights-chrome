@@ -2,24 +2,24 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import GlobalFilter from '../js/App/GlobalFilter/GlobalFilter';
+import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
 import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
-import { Header } from '../js/App/Header/Header';
+import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
-import Routes from '../js/App/Routes';
+import Routes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
-import RedirectBanner from '../js/App/Stratosphere/RedirectBanner';
+import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
 import { getUrl } from '../utils/common';
 
-import '../js/App/Sidenav/Navigation/Navigation.scss';
+import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 
 const ShieldedRoot = memo(

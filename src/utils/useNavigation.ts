@@ -50,7 +50,7 @@ const useNavigation = () => {
   const { pathname } = location;
   const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
-  const [schema] = useSelector(({ chrome: { navigation, activeApp } }: ReduxState) => [navigation[currentNamespace], activeApp]);
+  const schema = useSelector(({ chrome: { navigation } }: ReduxState) => navigation[currentNamespace] as Navigation);
 
   /**
    * We need a side effect to get the value into the mutation observer closure

@@ -2,7 +2,7 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/inter
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
-import { getFeatureFlagsError, unleashClient } from '../js/App/FeatureFlags/FeatureFlagsProvider';
+import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
 import { isBeta, isProd } from './common';
 import { AxiosRequestConfig } from 'axios';
 import { ChromeAuthOptions } from '../@types/types';

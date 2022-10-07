@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider, useDispatch, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { spinUpStore } from './redux/redux-config';
-import RootApp from './js/App/RootApp';
+import RootApp from './components/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
@@ -14,6 +14,7 @@ import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './js/App/ErrorBoundary';
+import LibtJWTContext from './components/LibJWTContext';
 
 const language = navigator.language.slice(0, 2) || 'en';
 
@@ -57,6 +58,7 @@ const App = () => {
   const documentTitle = useSelector(({ chrome }) => chrome?.documentTitle);
   const dispatch = useDispatch();
   const [jwtState, setJwtState] = useState(false);
+  const [libjwt, setLibjwt] = useState();
   const store = useStore();
 
   useEffect(() => {
@@ -65,6 +67,7 @@ const App = () => {
       dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
       const libjwt = libjwtSetup(chromeConfig?.config || chromeConfig, setJwtState);
+      setLibjwt(libjwt);
 
       window.insights = createChromeInstance(libjwt, window.insights, data, store);
     });
@@ -81,7 +84,11 @@ const App = () => {
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
 
-  return modules && scalprumConfig && jwtState ? <RootApp config={scalprumConfig} /> : null;
+  return modules && scalprumConfig && jwtState ? (
+    <LibtJWTContext.Provider value={libjwt}>
+      <RootApp config={scalprumConfig} />{' '}
+    </LibtJWTContext.Provider>
+  ) : null;
 };
 
 ReactDOM.render(
