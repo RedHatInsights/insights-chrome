@@ -59,12 +59,12 @@ export type GlobalFilterDropdownProps = {
     groups?: Group[];
     onChange: FilterMenuItemOnChange;
   };
-  chips: { category: string; chips: { key: string; tagKey: string; value: string }[] }[];
+  chips: { category: string; key?: string; chips: { key: string; tagKey: string; value: string }[] }[];
   filterTagsBy: string;
   setValue: (callback?: () => unknown) => void;
   setIsOpen: (callback?: ((origValue?: boolean) => void) | boolean) => void;
   isOpen: boolean;
-  hotjarEventEmitter: ((eventType: string, eventName: string) => void) | (() => void);
+  hotjarEventEmitter?: ((eventType: string, eventName: string) => void) | (() => void);
   selectedTags: FlagTagsFilter;
 };
 

@@ -6,6 +6,7 @@ import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../components/ChromeLink/ChromeLink';
 import { ThreeScaleError } from '../utils/responseInterceptors';
+import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -57,10 +58,7 @@ export function globalFilterScope(scope: string) {
   };
 }
 
-/*
- *TODO: SelectedTags type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
- */
-export function globalFilterChange(selectedTags: Record<string, Date>) {
+export function globalFilterChange(selectedTags: FlagTagsFilter) {
   return {
     type: actionTypes.GLOBAL_FILTER_UPDATE,
     payload: selectedTags,
