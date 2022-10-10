@@ -14,6 +14,7 @@ import { spinUpStore } from '../../redux-config';
 import classnames from 'classnames';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
+import { useFlag } from '@unleash/proxy-client-react';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -72,9 +73,12 @@ const Tools = () => {
   const intl = useIntl();
   const bundle = getUrl('bundle');
   const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
+  const identityAndAccessManagmentPath = '/iam/authentication-policy/authentication-factors';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
+  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
     {
@@ -83,6 +87,16 @@ const Tools = () => {
       target: '_self',
       appId: 'rbac',
     },
+    ...(enableAuthDropdownOption
+      ? [
+          {
+            url: identityAndAccessManagmentPath,
+            title: 'Identity & Access Management',
+            target: '_self',
+            appId: 'iam',
+          },
+        ]
+      : []),
     {
       title: betaSwitcherTitle,
       onClick: () => (window.location = switchRelease(isBeta(), window.location.pathname)),

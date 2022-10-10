@@ -8,12 +8,15 @@ import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilitie
 import { Nav, NavList } from '@patternfly/react-core';
 import ChromeNavItem from '../../src/js/App/Sidenav/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
+import FeatureFlagsProvider from '../../src/js/App/FeatureFlags/FeatureFlagsProvider';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
     <ScalprumProvider config={{}}>
       <Provider store={store}>
-        <BrowserRouter>{children}</BrowserRouter>
+        <FeatureFlagsProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </FeatureFlagsProvider>
       </Provider>
     </ScalprumProvider>
   </IntlProvider>
@@ -63,6 +66,10 @@ describe('<Default layout />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('GET', '/api/featureflags/*', {
+      toggles: [],
+    });
+    cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
   });
 
   it('render correctly with few nav items', () => {
