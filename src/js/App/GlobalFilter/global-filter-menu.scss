@@ -14,7 +14,12 @@
   box-shadow: none !important;
 }
 .chr-c-menu-global-filter__select {
-  &.expanded {
+  padding-top: 0;
+  padding-bottom: 0;
+  input {
+    border: 0;
+  }
+  &.expanded, &.pf-m-expanded {
     width: 450px;
   }
   .pf-c-select__toggle-text {
@@ -23,15 +28,14 @@
       border: none;
     }
   }
-}
-.chr-c-check-global-filter {
+
   .pf-c-check__label {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      .pf-c-badge {
-          margin-left: 8px;
-          padding-top: 3px;
-      }
-  }
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .pf-c-badge {
+        margin-left: 8px;
+        padding-top: 3px;
+    }
+}
 }

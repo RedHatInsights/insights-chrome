@@ -226,14 +226,6 @@ export function markAccessRequestRequestReducer(state: ChromeState, { payload }:
   };
 }
 
-export function storeInitialHashReducer(state: ChromeState, { payload }: { payload?: string }): ChromeState {
-  const initialHash = typeof payload === 'string' ? payload.replace(/^#/, '') : undefined;
-  return {
-    ...state,
-    initialHash,
-  };
-}
-
 export function populateQuickstartsReducer(
   state: ChromeState,
   { payload: { app, quickstarts } }: { payload: { app: string; quickstarts: QuickStart[] } }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
@@ -7,28 +7,90 @@ import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
-import { GlobalFilterTag, ReduxState, SID } from '../../redux/store';
+import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter } from './constants';
-import { TagPagination } from './tagsApi';
+import { TagFilterOptions, TagPagination } from './tagsApi';
+import { Action } from 'redux';
 
 export type TagsModalProps = {
   isOpen?: boolean;
   filterTagsBy: string;
   toggleModal: (isSubmit: boolean) => void;
   selectedTags?: FlagTagsFilter;
-  onApplyTags: (tags: GlobalFilterTag[], sids: SID[]) => void;
+  onApplyTags: (tags: CommonSelectedTag[], sids: CommonSelectedTag[]) => void;
 };
 
-const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
+export type IDMapper = (tag: CommonTag) => string;
+export type CellsMapper = (tag: CommonTag) => (string | number | boolean | undefined)[];
+export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => Action;
+
+export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
   useSelector<ReduxState, [boolean | unknown, number, number, number]>(({ globalFilter }) => {
     const selected = globalFilter[key];
     return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];
   }, shallowEqual);
 
+const usePagination = (loaded: boolean | unknown, perPage?: number, page?: number, count?: number) => {
+  return useMemo(() => {
+    if (loaded) {
+      return {
+        perPage: perPage,
+        page: page,
+        count: count,
+      };
+    }
+    return {};
+  }, [loaded, perPage, page, count]);
+};
+
+const useRow = (
+  resource: SID[] | GlobalFilterTag[],
+  loaded: boolean | unknown,
+  idMapper: IDMapper,
+  cellsMapper: CellsMapper,
+  selected?: GlobalFilterTag[]
+) => {
+  return useMemo(() => {
+    if (loaded) {
+      return flatMap(resource, ({ tags }) =>
+        tags?.map(({ tag }) => ({
+          id: idMapper(tag),
+          namespace: tag.namespace,
+          key: tag.key,
+          value: tag.value,
+          selected: selected?.find?.(({ id }) => id === idMapper(tag)),
+          cells: cellsMapper(tag),
+        }))
+      );
+    }
+    return [];
+  }, [resource, loaded, selected]);
+};
+
+const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: FlagTagsFilter) => {
+  const registeredWith = useSelector<ReduxState, 'insights' | undefined>(({ globalFilter: { scope } }) => scope || undefined);
+  const dispatch = useDispatch();
+  return useCallback(
+    debounce((search?: string) => {
+      dispatch(
+        callback(
+          {
+            registeredWith,
+            activeTags,
+            search,
+          },
+          { page: 1, perPage }
+        )
+      );
+    }, 800),
+    [perPage, registeredWith, activeTags]
+  );
+};
+
 const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }: TagsModalProps) => {
   const intl = useIntl();
-  const [tagsSelected, setTagsSelected] = useState<GlobalFilterTag[]>([]);
-  const [sidsSelected, setSidsSelected] = useState<SID[]>([]);
+  const [tagsSelected, setTagsSelected] = useState<CommonSelectedTag[]>([]);
+  const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
   const dispatch = useDispatch();
@@ -37,40 +99,29 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
   const tags = useSelector<ReduxState, GlobalFilterTag[]>(({ globalFilter: { tags } }) => tags?.items || []);
   const sids = useSelector<ReduxState, SID[]>(({ globalFilter: { sid } }) => sid?.items || []);
   const filterScope = useSelector<ReduxState, 'insights' | undefined>(({ globalFilter: { scope } }) => scope || undefined);
-  const debounceGetTags = useCallback(
-    debounce((search?: string) => {
-      dispatch(
-        fetchAllTags(
-          {
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search,
-          },
-          { page: tagsPage, perPage: tagsPerPage }
-        )
-      );
-    }, 800),
-    []
-  );
-  const debounceGetSIDs = useCallback(
-    debounce((search?: string) => {
-      dispatch(
-        fetchAllSIDs(
-          {
-            registeredWith: filterScope,
-            activeTags: selectedTags,
-            search,
-          },
-          { page: sidPage, perPage: sidPerPage }
-        )
-      );
-    }, 800),
-    []
-  );
+  const debounceGetTags = useDebounce(fetchAllTags, tagsPerPage, selectedTags);
+  const debounceGetSIDs = useDebounce(fetchAllSIDs, sidPerPage, selectedTags);
   useEffect(() => {
     setFilterBy(filterTagsBy);
     setFilterSIDsBy(filterTagsBy);
   }, [filterTagsBy]);
+
+  const tagsPagination = usePagination(tagsLoaded, tagsPerPage, tagsPage, tagsCount);
+  const sidPagination = usePagination(sidLoaded, sidPerPage, sidPage, sidCount);
+  const tagsRows = useRow(
+    tags,
+    tagsLoaded,
+    ({ key, value, namespace }) => `${namespace}/${key}=${value}`,
+    ({ key, value, namespace }) => [key, value, namespace],
+    tagsSelected
+  );
+  const sidRows = useRow(
+    sids,
+    sidLoaded,
+    ({ key }) => key as string,
+    ({ key }) => [key],
+    sidsSelected
+  );
 
   return (
     <TagModal
@@ -78,55 +129,8 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       tableProps={{
         canSelectAll: false,
       }}
-      pagination={[
-        ...(tagsLoaded
-          ? [
-              {
-                perPage: tagsPerPage,
-                page: tagsPage,
-                count: tagsCount,
-              },
-            ]
-          : [{}]),
-        ...(sidLoaded
-          ? [
-              {
-                perPage: sidPerPage,
-                page: sidPage,
-                count: sidCount,
-              },
-            ]
-          : [{}]),
-      ]}
-      rows={[
-        ...(tagsLoaded
-          ? [
-              flatMap(tags, ({ tags }) =>
-                tags?.map(({ tag: { key, value, namespace } } = { tag: {} }) => ({
-                  id: `${namespace}/${key}=${value}`,
-                  namespace,
-                  key,
-                  value,
-                  selected: tagsSelected?.find?.(({ id } = {}) => id === `${namespace}/${key}=${value}`),
-                  cells: [key, value, namespace],
-                }))
-              ),
-            ]
-          : [[]]),
-        ...(sidLoaded
-          ? [
-              flatMap(sids, ({ tags }) =>
-                tags?.map(({ tag: { key, namespace } } = { tag: {} }) => ({
-                  namespace,
-                  id: key,
-                  key,
-                  selected: sidsSelected?.find?.(({ id } = {}) => id === key),
-                  cells: [key],
-                }))
-              ),
-            ]
-          : [[]]),
-      ]}
+      pagination={[tagsPagination, sidPagination]}
+      rows={[tagsRows, sidRows]}
       loaded={[tagsLoaded, sidLoaded]}
       width="50%"
       isOpen={isOpen}

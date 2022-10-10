@@ -243,9 +243,9 @@ describe('onGetAllWorkloads', () => {
         },
       }
     );
-    expect(workloads.hasSap).toBe(10);
-    expect(workloads.hasAap).toBe(5);
-    expect(workloads.hasMssql).toBe(5);
+    expect(workloads.tags[0].count).toBe(10);
+    expect(workloads.tags[1].count).toBe(5);
+    expect(workloads.tags[2].count).toBe(5);
   });
 });
 

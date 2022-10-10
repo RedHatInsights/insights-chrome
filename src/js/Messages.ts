@@ -456,4 +456,9 @@ export default defineMessages({
     id: 'permissionErrorDetail',
     defaultMessage: 'Detail: {message}.',
   },
+  filterByTags: {
+    id: 'filterByTags',
+    description: 'Placeholder to indicate ',
+    defaultMessage: 'Filter by tags',
+  },
 });
