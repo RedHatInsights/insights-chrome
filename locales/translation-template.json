@@ -31,6 +31,10 @@
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
   },
+  "beta": {
+    "defaultMessage": "Beta",
+    "description": "Label indicating beta environment"
+  },
   "betaBannerPopover": {
     "defaultMessage": "Beta releases provide early access to a limited set of features that might not be fully tested. Users should not use beta software in production or for business-critical workloads.",
     "description": "Content of Popover in beta banner describing purpose of beta environments"
@@ -83,6 +87,10 @@
     "defaultMessage": "Feedback Sent",
     "description": "Feedback Sent"
   },
+  "filterByTags": {
+    "defaultMessage": "Filter by tags",
+    "description": "Placeholder to indicate "
+  },
   "filterResults": {
     "defaultMessage": "Filter results",
     "description": "Filter results"
@@ -106,6 +114,10 @@
   "globalFilterNotApplicable": {
     "defaultMessage": "Global filter is not applicable for this page",
     "description": "Global filter is not applicable for this page"
+  },
+  "globalRuntimeErrorId": {
+    "defaultMessage": "Sentry error ID: {errorId}",
+    "description": "Global runtime error Id"
   },
   "helpUsImproveHCC": {
     "defaultMessage": "Help us improve the Red Hat Hybrid Cloud Console.",

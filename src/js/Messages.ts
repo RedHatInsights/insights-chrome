@@ -423,6 +423,11 @@ export default defineMessages({
     description: 'There will be a catalog page for {bundle} bundle',
     defaultMessage: 'There will be a catalog page for {bundle} bundle',
   },
+  beta: {
+    id: 'beta',
+    description: 'Label indicating beta environment',
+    defaultMessage: 'Beta',
+  },
   tryThisFeatureInBeta: {
     id: 'tryThisFeatureInBeta',
     description:

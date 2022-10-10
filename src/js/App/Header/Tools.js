@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -11,10 +11,10 @@ import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 import { getSection, getUrl, isBeta } from '../../utils';
 import { spinUpStore } from '../../redux-config';
-import classnames from 'classnames';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 import { useFlag } from '@unleash/proxy-client-react';
+import BetaBadge from './BetaBadge';
 
 export const switchRelease = (isBeta, pathname) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -29,8 +29,6 @@ export const switchRelease = (isBeta, pathname) => {
     return document.baseURI.concat(path.join('/'));
   }
 };
-
-export const betaBadge = (css) => <Badge className={classnames('chr-c-toolbar__beta-badge', css)}>Beta</Badge>;
 
 const InternalButton = () => (
   <Button
@@ -202,7 +200,7 @@ const Tools = () => {
   const BetaBadgeWithDropdown = () => (
     <ToolbarToggle
       key="Beta badge"
-      icon={() => <Badge className="chr-c-badge-beta">Beta</Badge>}
+      icon={() => <BetaBadge className="chr-c-badge-beta" />}
       id="BetaBadge"
       ouiaId="beta-badge"
       ariaLabel="Beta badge"

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import get from 'lodash/get';
 
 import { isBeta } from '../../../utils';
-import { betaBadge } from '../../Header/Tools';
+import BetaBadge from '../../Header/BetaBadge';
 import ChromeLink from './ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../../utils/useRenderFedramp';
@@ -43,7 +43,7 @@ const ChromeNavItem = ({ appId, className, href, isHidden, ignoreCase, title, is
       component={(props) => <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />}
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
-      {isBetaEnv && !isBeta() && !isExternal && betaBadge('chr-c-navigation__beta-badge')}
+      {isBetaEnv && !isBeta() && !isExternal && <BetaBadge className="chr-c-navigation__beta-badge" />}
       {hasNotifier && <BellIcon size="md" className="notifier-icon" color="var(--pf-global--default-color--200)" />}
     </NavItem>
   );
