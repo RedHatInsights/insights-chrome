@@ -74,8 +74,8 @@ export default defineMessages({
   },
   statusPage: {
     id: 'statusPage',
-    description: 'status page',
-    defaultMessage: 'status page',
+    description: 'Status page',
+    defaultMessage: 'Status page',
   },
   knownOutages: {
     id: 'knownOutages',

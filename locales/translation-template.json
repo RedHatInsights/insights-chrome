@@ -256,8 +256,8 @@
     "description": "Something went wrong"
   },
   "statusPage": {
-    "defaultMessage": "status page",
-    "description": "status page"
+    "defaultMessage": "Status page",
+    "description": "Status page"
   },
   "stopUsing": {
     "defaultMessage": "Stop using",
