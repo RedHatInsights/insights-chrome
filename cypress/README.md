@@ -41,7 +41,7 @@ npm run test:ct
 #### Update outdated snapshots
 
 ```sh
-npm run test:ct -u
+npm run test:ct -- -u
 ```
 
 ### Interactive
