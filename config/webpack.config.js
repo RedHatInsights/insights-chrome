@@ -83,6 +83,7 @@ const commonConfig = ({ dev }) => {
     },
     module: {
       rules: [
+        // we need babel loadr because of the PDF/Charts override
         {
           test: /\.jsx?$/,
           use: 'babel-loader',
