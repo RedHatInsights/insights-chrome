@@ -11,6 +11,8 @@ import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '
 import { FlagTagsFilter } from './constants';
 import { TagFilterOptions, TagPagination } from './tagsApi';
 import { Action } from 'redux';
+import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-components/TagModal/TableWithFilter';
+import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 
 export type TagsModalProps = {
   isOpen?: boolean;
@@ -129,17 +131,17 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       tableProps={{
         canSelectAll: false,
       }}
-      pagination={[tagsPagination, sidPagination]}
+      pagination={[tagsPagination, sidPagination] as TableWithFilterPagination[]}
       rows={[tagsRows, sidRows]}
-      loaded={[tagsLoaded, sidLoaded]}
+      loaded={[tagsLoaded as boolean, sidLoaded as boolean]}
       width="50%"
-      isOpen={isOpen}
-      toggleModal={(_e: unknown, isSubmit: boolean) => {
+      isOpen={isOpen as boolean}
+      toggleModal={(_e?: any, open?: boolean) => {
         setSidsSelected([]);
         setTagsSelected([]);
         setFilterBy('');
         setFilterSIDsBy('');
-        toggleModal(isSubmit);
+        toggleModal(open as boolean);
       }}
       filters={[
         [
@@ -147,9 +149,10 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             label: `${intl.formatMessage(messages.tagsFilter)}`,
             placeholder: `${intl.formatMessage(messages.filterTags)}`,
             value: 'tags-filter',
+            type: 'checkbox',
             filterValues: {
               value: filterBy,
-              onChange: (_e: unknown, value: string) => {
+              onChange: (_e: any, value?: any) => {
                 setFilterBy(() => value);
                 debounceGetTags(value);
               },
@@ -161,9 +164,10 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             label: `${intl.formatMessage(messages.SIDsFilter)}`,
             placeholder: `${intl.formatMessage(messages.filterSAPIDs)}`,
             value: 'sids-filter',
+            type: 'checkbox',
             filterValues: {
               value: filterSIDsBy,
-              onChange: (_e: unknown, value: string) => {
+              onChange: (_e: any, value: any) => {
                 setFilterSIDsBy(() => value);
                 debounceGetSIDs(value);
               },
@@ -171,30 +175,34 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
           },
         ],
       ]}
-      onUpdateData={[
-        (pagination: TagPagination) =>
-          dispatch(
-            fetchAllTags(
-              {
-                registeredWith: filterScope,
-                activeTags: selectedTags,
-                search: filterBy,
-              },
-              pagination
-            )
-          ),
-        (pagination: TagPagination) =>
-          dispatch(
-            fetchAllSIDs(
-              {
-                registeredWith: filterScope,
-                activeTags: selectedTags,
-                search: filterSIDsBy,
-              },
-              pagination
-            )
-          ),
-      ]}
+      onUpdateData={
+        [
+          (pagination: TagPagination) => {
+            dispatch(
+              fetchAllTags(
+                {
+                  registeredWith: filterScope,
+                  activeTags: selectedTags,
+                  search: filterBy,
+                },
+                pagination
+              )
+            );
+          },
+          (pagination: TagPagination) => {
+            dispatch(
+              fetchAllSIDs(
+                {
+                  registeredWith: filterScope,
+                  activeTags: selectedTags,
+                  search: filterSIDsBy,
+                },
+                pagination
+              )
+            );
+          },
+        ] as OnUpdateData[]
+      }
       columns={[
         [
           { title: `${intl.formatMessage(messages.name)}` },
@@ -203,7 +211,12 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         ],
         [{ title: `${intl.formatMessage(messages.value)}` }],
       ]}
-      onSelect={[setTagsSelected, setSidsSelected]}
+      onSelect={
+        [
+          (selected) => setTagsSelected(selected as CommonSelectedTag[]),
+          (selected) => setSidsSelected(selected as CommonSelectedTag[]),
+        ] as OnSelectRow[]
+      }
       selected={[tagsSelected, sidsSelected]}
       onApply={() => onApplyTags(tagsSelected, sidsSelected)}
       title={intl.formatMessage(messages.selectTagsOrSIDs)}

@@ -33,6 +33,11 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    .ins-c-tagfilter__option-value {
+      text-overflow: ellipsis;
+      max-width: 340px;
+      overflow: hidden;
+    }
     .pf-c-badge {
         margin-left: 8px;
         padding-top: 3px;
