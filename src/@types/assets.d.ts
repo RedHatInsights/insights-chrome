@@ -4,6 +4,6 @@ declare module '*.svg' {
   export default content;
 }
 
-declare interface Window {
-  hj: any;
+declare module '@redhat-cloud-services/frontend-components-pdf-generator' {
+  export const DownloadButtonWrapper: React.ComponentType;
 }

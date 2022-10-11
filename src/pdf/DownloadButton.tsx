@@ -3,6 +3,6 @@ import React from 'react';
 
 import { DownloadButtonWrapper } from '@redhat-cloud-services/frontend-components-pdf-generator';
 
-const ProxyDownloadButton = (props) => <DownloadButtonWrapper {...props} />;
+const ProxyDownloadButton = (props: Record<string, any>) => <DownloadButtonWrapper {...props} />;
 
 export default ProxyDownloadButton;

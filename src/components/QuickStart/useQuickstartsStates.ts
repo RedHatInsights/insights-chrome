@@ -1,48 +1,33 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocalStorage } from '@patternfly/quickstarts';
-import { getEnv, isBeta } from '../../utils/common';
-
-const quickstartsSupported = getEnv() === 'stage' || (isBeta() && getEnv() === 'prod');
-
-const statePersistor = quickstartsSupported ? useState : useLocalStorage;
-const initiStatesArgs = ['insights-quickstarts', {}];
-const initialIdArgs = quickstartsSupported ? ['', ''] : [undefined];
+import { QuickStartState } from '@patternfly/quickstarts';
+import { ReduxState } from '../../redux/store';
 
 const useQuickstartsStates = () => {
-  const accountId = useSelector(({ chrome }) => chrome?.user?.identity?.internal?.account_id);
-  const [allQuickStartStates, setAllQuickStartStatesInternal] = statePersistor(...initiStatesArgs);
-  const [activeQuickStartID, setActiveQuickStartIDInternal] = statePersistor(...initialIdArgs);
+  const accountId = useSelector(({ chrome }: ReduxState) => chrome?.user?.identity?.internal?.account_id);
+  const [allQuickStartStates, setAllQuickStartStatesInternal] = useState<{ [key: string | number]: QuickStartState }>({});
+  const [activeQuickStartID, setActiveQuickStartIDInternal] = useState('');
 
-  function setAllQuickStartStates(...args) {
-    if (!quickstartsSupported) {
-      return setAllQuickStartStatesInternal(...args);
-    }
-    const [value] = args;
+  function setAllQuickStartStates(value: QuickStartState | ((states: typeof allQuickStartStates) => QuickStartState)) {
     const valueToStore = typeof value === 'function' ? value(allQuickStartStates) : value;
     const activeState = valueToStore[activeQuickStartID];
+
     if (typeof activeState === 'object') {
       axios
         .post('/api/quickstarts/v1/progress', {
           quickstartName: activeQuickStartID,
-          accountId: parseInt(accountId),
+          accountId: parseInt(accountId!),
           progress: activeState,
         })
         .catch((err) => {
           console.error(`Unable to persis quickstart progress! ${activeQuickStartID}`, err);
         });
     }
-    setAllQuickStartStatesInternal(valueToStore);
+    setAllQuickStartStatesInternal(value as unknown as typeof allQuickStartStates);
   }
 
-  function setActiveQuickStartID(...args) {
-    if (!quickstartsSupported) {
-      return setActiveQuickStartIDInternal(...args);
-    }
-
-    const [id] = args;
-
+  function setActiveQuickStartID(id: string) {
     id !== '' && typeof id !== 'function' ? document.body.classList.add('quickstarts-open') : document.body.classList.remove('quickstarts-open');
     setActiveQuickStartIDInternal(id);
   }
@@ -50,7 +35,7 @@ const useQuickstartsStates = () => {
   useEffect(() => {
     if (accountId) {
       axios
-        .get('/api/quickstarts/v1/progress', {
+        .get<{ data: { quickstartName: string; progress: QuickStartState }[] }>('/api/quickstarts/v1/progress', {
           params: {
             account: accountId,
           },

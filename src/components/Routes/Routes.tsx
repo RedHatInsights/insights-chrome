@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import ChromeRoute, { ChromeRouteProps } from '../ChromeRoute/ChromeRoute';
+import ChromeRoute from '../ChromeRoute/ChromeRoute';
 import NotFoundRoute from '../NotFoundRoute';
 import { isFedRamp } from '../../utils/common';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -21,7 +21,7 @@ const redirects = [
 ];
 
 export type RoutesProps = {
-  routesProps?: Omit<ChromeRouteProps, 'insightsContentRef'>;
+  routesProps?: { scopeClass?: string };
 };
 
 const Routes = ({ routesProps }: RoutesProps) => {

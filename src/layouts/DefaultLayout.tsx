@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
@@ -21,9 +20,17 @@ import { getUrl } from '../utils/common';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
+import { ReduxState } from '../redux/store';
+
+type ShieldedRootProps = {
+  hideNav?: boolean;
+  isGlobalFilterEnabled?: boolean;
+  initialized?: boolean;
+  Sidebar?: React.ReactNode;
+};
 
 const ShieldedRoot = memo(
-  ({ hideNav, insightsContentRef, isGlobalFilterEnabled, initialized, Sidebar }) => {
+  ({ hideNav = false, isGlobalFilterEnabled = false, initialized = false, Sidebar }: ShieldedRootProps) => {
     const dispatch = useDispatch();
     const [isMobileView, setIsMobileView] = useState(window.document.body.clientWidth < 1200);
     const [isNavOpen, setIsNavOpen] = useState(!isMobileView);
@@ -93,11 +100,11 @@ const ShieldedRoot = memo(
         }
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
       >
-        <div ref={insightsContentRef} className={classnames('chr-render')}>
+        <div className={classnames('chr-render')}>
           {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
           {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
           <RedirectBanner />
-          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} insightsContentRef={insightsContentRef} />
+          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         </div>
       </Page>
     );
@@ -105,19 +112,6 @@ const ShieldedRoot = memo(
   (prevProps, nextProps) => isEqual(prevProps, nextProps)
 );
 
-ShieldedRoot.propTypes = {
-  hideNav: PropTypes.bool,
-  insightsContentRef: PropTypes.object.isRequired,
-  isGlobalFilterEnabled: PropTypes.bool.isRequired,
-  initialized: PropTypes.bool,
-  Sidebar: PropTypes.element,
-};
-ShieldedRoot.defaultProps = {
-  useLandingNav: false,
-  hideNav: false,
-  isGlobalFilterEnabled: false,
-  initialized: false,
-};
 ShieldedRoot.displayName = 'ShieldedRoot';
 
 const isGlobalFilterAllowed = () => {
@@ -128,11 +122,17 @@ const isGlobalFilterAllowed = () => {
   return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
 };
 
-const RootApp = ({ globalFilterHidden, Sidebar }) => {
+export type RootAppProps = {
+  globalFilterHidden?: boolean;
+  Sidebar?: React.ReactNode;
+  globalFilterRemoved?: boolean;
+};
+
+const RootApp = ({ globalFilterHidden, Sidebar, globalFilterRemoved }: RootAppProps) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
   const { pathname } = useLocation();
-  const hideNav = useSelector(({ chrome: { user } }) => !user || !Sidebar);
+  const hideNav = useSelector(({ chrome: { user } }: ReduxState) => !user || !Sidebar);
 
   /**
    * Using the chrome landing flag is not going to work because the appId is initialized inside the app.
@@ -141,31 +141,15 @@ const RootApp = ({ globalFilterHidden, Sidebar }) => {
    */
   const isLanding = pathname === '/';
 
-  const globalFilterAllowed = !globalFilterHidden && isGlobalFilterAllowed();
+  const globalFilterAllowed = (!globalFilterHidden && isGlobalFilterAllowed()) || globalFilterRemoved;
 
   const isGlobalFilterEnabled = !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  const insightsContentRef = useRef(null);
 
   return (
     <div id="chrome-app-render-root" {...ouiaTags}>
-      <ShieldedRoot
-        isGlobalFilterEnabled={isGlobalFilterEnabled}
-        hideNav={hideNav}
-        insightsContentRef={insightsContentRef}
-        initialized={initialized}
-        Sidebar={Sidebar}
-      />
+      <ShieldedRoot isGlobalFilterEnabled={isGlobalFilterEnabled} hideNav={hideNav} initialized={initialized} Sidebar={Sidebar} />
     </div>
   );
-};
-
-RootApp.propTypes = {
-  activeApp: PropTypes.string,
-  pageAction: PropTypes.string,
-  pageObjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  globalFilterHidden: PropTypes.bool,
-  config: PropTypes.any,
-  Sidebar: PropTypes.element,
 };
 
 export default RootApp;

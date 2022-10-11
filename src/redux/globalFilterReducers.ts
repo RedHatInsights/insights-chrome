@@ -1,4 +1,5 @@
 import groupBy from 'lodash/groupBy';
+import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
 import { CommonTag, GlobalFilterState } from './store';
 export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
@@ -30,7 +31,7 @@ export const globalFilterDefaultState: GlobalFilterState = {
       },
     ],
   },
-  selectedTags: [],
+  selectedTags: {},
   globalFilterHidden: false,
 };
 
@@ -89,7 +90,7 @@ export function onGlobalFilterToggle(state: GlobalFilterState, { payload }: { pa
   };
 }
 
-export function onTagSelect(state: GlobalFilterState, { payload }: { payload: unknown }): GlobalFilterState {
+export function onTagSelect(state: GlobalFilterState, { payload }: { payload: FlagTagsFilter }): GlobalFilterState {
   return {
     ...state,
     selectedTags: payload,

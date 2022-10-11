@@ -13,7 +13,7 @@ import { Store } from 'redux';
  */
 const createChromeInstance = (
   jwt: LibJWT,
-  insights: Partial<ChromeAPI>,
+  insights: { chrome: Partial<ChromeAPI> },
   globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } },
   store: Store
 ) => {

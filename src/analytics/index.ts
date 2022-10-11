@@ -1,18 +1,10 @@
 'use strict';
 
-import logger from '../jwt/logger';
-import get from 'lodash/get';
 import { isBeta } from '../utils/common';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { DeepRequired } from 'utility-types';
 
-const log = logger('Analytics.js');
-
-const API_KEY = 'bde62396-720d-45b5-546a-e02df377a965';
-
-function initPendo(pendoConf) {
-  window.pendo.initialize(pendoConf);
-}
-
-function isInternalFlag(email, isInternal) {
+function isInternalFlag(email: string, isInternal = false) {
   if (email.includes('redhat') || isInternal) {
     return '_redhat';
   }
@@ -24,7 +16,7 @@ function isInternalFlag(email, isInternal) {
   return '';
 }
 
-function getUrl(type) {
+function getUrl(type?: string) {
   if (window.location.pathname === ('/beta' || '/')) {
     return 'landing';
   }
@@ -44,7 +36,7 @@ function getUrl(type) {
 }
 
 function getAdobeVisitorId() {
-  const visitor = get('window.s.visitor', false);
+  const visitor = window?.s?.visitor;
   if (visitor) {
     return visitor.getMarketingCloudVisitorID();
   }
@@ -52,10 +44,10 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-export function getPendoConf(data) {
+export function getPendoConf(data: DeepRequired<ChromeUser>) {
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
-  const entitlements = {};
+  const entitlements: Record<string, boolean> = {};
 
   data.entitlements &&
     Object.entries(data.entitlements).forEach(([key, value]) => {
@@ -109,14 +101,3 @@ export function getPendoConf(data) {
     },
   };
 }
-
-export default (data) => {
-  // eslint-disable-next-line
-  (function (p, e, n, d, o) { var v, w, x, y, z; o = p[d] = p[d] || {}; o._q = []; v = ['initialize', 'identify', 'updateOptions', 'pageLoad']; for (w = 0, x = v.length; w < x; ++w)(function (m) { o[m] = o[m] || function () { o._q[m === v[0] ? 'unshift' : 'push']([m].concat([].slice.call(arguments, 0))); }; })(v[w]); y = e.createElement(n); y.onerror = function (error) { console.error('Pendo blocked') };y.async=!0;y.src=`https://content.analytics.console.redhat.com/agent/static/${API_KEY}/pendo.js`;z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
-  try {
-    initPendo(getPendoConf(data));
-    log('Pendo initialized');
-  } catch {
-    log('Pendo init failed');
-  }
-};

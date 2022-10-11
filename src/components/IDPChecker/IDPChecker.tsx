@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 import { isFedRamp } from '../../utils/common';
 import IDPError from '../ErrorComponents/IDPError';
+import { ReduxState } from '../../redux/store';
 
 const IDPStatuses = {
   OK: 'OK',
@@ -13,16 +13,16 @@ const IDPStatuses = {
   ERROR: 'ERROR',
 };
 
-const IDPChecker = ({ children }) => {
+const IDPChecker: React.FunctionComponent = ({ children }) => {
   const isFedrampEnv = isFedRamp();
-  const missingIDP = useSelector(({ chrome }) => chrome?.missingIDP);
+  const missingIDP = useSelector(({ chrome }: ReduxState) => chrome?.missingIDP);
   const [status, setStatus] = useState(() => {
     if (isFedrampEnv) {
       return missingIDP === true ? IDPStatuses.ERROR : IDPStatuses.UNKNOWN;
     }
     return IDPStatuses.OK;
   });
-  const hasUser = useSelector(({ chrome: { user } }) => Object.keys(user || {}).length > 0);
+  const hasUser = useSelector(({ chrome: { user } }: ReduxState) => Object.keys(user || {}).length > 0);
   const allowStateChange = useRef(isFedrampEnv);
 
   useEffect(() => {
@@ -48,16 +48,12 @@ const IDPChecker = ({ children }) => {
   }, [missingIDP]);
 
   if (status === IDPStatuses.OK) {
-    return children;
+    return <Fragment>{children}</Fragment>;
   }
   if (status === IDPStatuses.ERROR) {
     return <IDPError />;
   }
   return null;
-};
-
-IDPChecker.propTypes = {
-  children: PropTypes.node,
 };
 
 export default IDPChecker;

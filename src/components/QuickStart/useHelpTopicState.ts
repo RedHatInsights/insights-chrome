@@ -11,6 +11,10 @@ type HelpTopicsState = {
   };
 };
 
+export type AddHelpTopic = (topics: HelpTopic[], enabled?: boolean) => void;
+export type DisableTopics = (...topicsNames: string[]) => void;
+export type EnableTopics = (...topicNames: string[]) => Promise<void[]>;
+
 const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: {} }) => {
   const [helpTopics, setHelpTopics] = useState<{
     [name: string]: HelpTopic;
@@ -35,7 +39,7 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
    * Add new or replace exiting topics
    * New topics
    */
-  function addHelpTopics(topics: HelpTopic[], enabled = true) {
+  const addHelpTopics: AddHelpTopic = (topics: HelpTopic[], enabled = true) => {
     setHelpTopics((prev) =>
       topics.reduce(
         (acc, curr) => ({
@@ -49,7 +53,7 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
       topics.map(({ name }) => name),
       enabled
     );
-  }
+  };
 
   function appendQueryArray(params: URLSearchParams, name: string, values: string[]) {
     values.forEach((value) => {
@@ -85,7 +89,7 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     }
   }
 
-  async function enableTopics(...topicsNames: string[]) {
+  const enableTopics: EnableTopics = async (...topicsNames: string[]) => {
     const newTopics: string[] = [];
     const existingTopics: string[] = [];
     topicsNames.forEach((name) => {
@@ -101,11 +105,11 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     }
     batchToggleTopic(existingTopics, true);
     return await Promise.all(tasks);
-  }
+  };
 
-  function disableTopics(...topicsNames: string[]) {
+  const disableTopics: DisableTopics = (...topicsNames: string[]) => {
     batchToggleTopic(topicsNames, false);
-  }
+  };
 
   return {
     helpTopics: Object.values(helpTopics).filter(({ name }) => activeTopics?.[name]),

@@ -1,6 +1,7 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../@types/types';
+import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type RouteDefinition = {
@@ -161,7 +162,7 @@ export type GlobalFilterState = {
   globalFilterRemoved?: boolean;
   workloads: GlobalFilterWorkloads;
   sid: GlobalFilterSIDs;
-  selectedTags?: unknown;
+  selectedTags?: FlagTagsFilter;
   globalFilterHidden: boolean;
   scope?: 'insights';
 };

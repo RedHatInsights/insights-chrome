@@ -31,7 +31,7 @@ const plugins = (dev = false, beta = false) => {
       name: 'chrome',
       filename: dev ? 'chrome.js' : 'chrome.[fullhash].js',
       exposes: {
-        './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.js'),
+        './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },

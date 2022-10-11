@@ -1,31 +1,36 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
-import { HelpTopicContainer, QuickStartContainer } from '@patternfly/quickstarts';
+import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
-import { isBeta } from '../../utils/common';
 import chromeHistory from '../../utils/chromeHistory';
-import { FeatureFlagsProvider } from '../../components/FeatureFlags';
+import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from '../IDPChecker/IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
 import { populateQuickstartsCatalog } from '../../redux/actions';
-import { LazyQuickStartCatalog } from '../../components/QuickStart/LazyQuickStartCatalog';
-import useQuickstartsStates from '../../components/QuickStart/useQuickstartsStates';
-import useHelpTopicState from '../../components/QuickStart/useHelpTopicState';
+import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
+import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
+import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
+import { ReduxState } from '../../redux/store';
+import { AppsConfig } from '@scalprum/core';
 
-const RootApp = (props) => {
+export type RootAppProps = {
+  config: AppsConfig;
+};
+
+const RootApp = (props: RootAppProps) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
-  const activeModule = useSelector(({ chrome: { activeModule } }) => activeModule);
+  const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
   const quickStarts = useSelector(
     ({
       chrome: {
         quickstarts: { quickstarts },
       },
-    }) => Object.values(quickstarts).flat()
+    }: ReduxState) => Object.values(quickstarts).flat()
   );
   /**
    * Updates the available quick starts
@@ -37,20 +42,20 @@ const RootApp = (props) => {
    * @param {string} key App identifier
    * @param {array} qs Array of quick starts
    */
-  const updateQuickStarts = (key, qs) => {
+  const updateQuickStarts = (key: string, qs: QuickStart[]) => {
     dispatch(populateQuickstartsCatalog(key, qs));
   };
 
-  const addQuickstart = (key, qs) => {
+  const addQuickstart = (key: string, qs: QuickStart): boolean => {
     return validateQuickstart(key, qs) ? !!dispatch(addQuickstart(key, qs)) : false;
   };
 
-  const quickStartProps = {
+  const quickStartProps: QuickStartContainerProps = {
     quickStarts,
     activeQuickStartID,
     allQuickStartStates,
-    setActiveQuickStartID,
-    setAllQuickStartStates,
+    setActiveQuickStartID: setActiveQuickStartID as QuickStartContainerProps['setActiveQuickStartID'],
+    setAllQuickStartStates: setAllQuickStartStates as unknown as QuickStartContainerProps['setAllQuickStartStates'],
     showCardFooters: false,
     language: 'en',
     alwaysShowTaskReview: true,
@@ -68,9 +73,10 @@ const RootApp = (props) => {
     add: addQuickstart,
     toggle: setActiveQuickStartID,
     Catalog: LazyQuickStartCatalog,
+    updateQuickStarts,
   };
   return (
-    <Router history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
+    <Router history={chromeHistory}>
       <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
           <IDPChecker>
@@ -78,7 +84,7 @@ const RootApp = (props) => {
 
             <QuickStartContainer {...quickStartProps}>
               <HelpTopicContainer helpTopics={helpTopics}>
-                <ScalprumRoot {...props} helpTopics={helpTopics} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+                <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
               </HelpTopicContainer>
             </QuickStartContainer>
           </IDPChecker>

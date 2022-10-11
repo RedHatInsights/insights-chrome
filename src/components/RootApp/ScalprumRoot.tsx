@@ -1,45 +1,55 @@
 import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
-import { ScalprumProvider } from '@scalprum/react-core';
-import PropTypes from 'prop-types';
+import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
 import DefaultLayout from '../../layouts/DefaultLayout';
 import NavLoader from '../Navigation/Loader';
-import { usePendoFeedback } from '../../components/Feedback';
+import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils/common';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
+import { ReduxState } from '../../redux/store';
+import { FlagTagsFilter } from '../GlobalFilter/globalFilterApi';
+import { AppsConfig } from '@scalprum/core';
+import { HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 
 const Navigation = lazy(() => import('../Navigation'));
 const LandingNav = lazy(() => import('../LandingNav'));
-const ProductSelection = lazy(() => import('../../components/Stratosphere/ProductSelection'));
+const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
-const loaderWrapper = (Component, props = {}) => (
+const loaderWrapper = (Component: React.ComponentType, props = {}) => (
   <Suspense fallback={<NavLoader />}>
     <Component {...props} />
   </Suspense>
 );
 
-const useGlobalFilter = (callback) => {
-  const selectedTags = useSelector(({ globalFilter: { selectedTags } }) => selectedTags, shallowEqual);
+const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
+  const selectedTags = useSelector(({ globalFilter: { selectedTags } }: ReduxState) => selectedTags, shallowEqual);
   return callback(selectedTags);
 };
 
-const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
+export type ScalprumRootProps = {
+  config: AppsConfig;
+  helpTopicsAPI: HelpTopicsAPI;
+  quickstartsAPI: QuickstartsApi;
+};
+
+const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
   const { analytics } = useContext(SegmentContext);
-  const [activeTopicName, setActiveTopicName] = useState();
-  const [prevActiveTopic, setPrevActiveTopic] = useState(activeHelpTopic?.name);
+  const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
+  const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
   const history = useHistory();
-  const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }) => globalFilterRemoved);
+  const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
   const dispatch = useDispatch();
 
-  async function setActiveTopic(name) {
+  async function setActiveTopic(name: string) {
     setActiveTopicName(name);
     if (name?.length > 0) {
       helpTopicsAPI.enableTopics(name);
@@ -63,16 +73,16 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
      */
     if (prevActiveTopic && activeHelpTopic === null) {
       setActiveTopic('');
-      setPrevActiveTopic();
+      setPrevActiveTopic(undefined);
     } else {
-      if (activeTopicName?.length > 0) {
-        if (helpTopics.find(({ name }) => name === activeTopicName)) {
-          setActiveHelpTopicByName(activeTopicName);
+      if (typeof activeTopicName === 'string' && activeTopicName?.length > 0) {
+        if (helpTopics?.find(({ name }) => name === activeTopicName)) {
+          setActiveHelpTopicByName && setActiveHelpTopicByName(activeTopicName);
           setPrevActiveTopic(activeTopicName);
         }
       } else {
-        setActiveHelpTopicByName('');
-        setPrevActiveTopic();
+        setActiveHelpTopicByName && setActiveHelpTopicByName('');
+        setPrevActiveTopic(undefined);
       }
     }
   }, [activeTopicName, helpTopics, activeHelpTopic]);
@@ -84,6 +94,36 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
     };
   }, []);
 
+  const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = {
+    config,
+    api: {
+      chrome: {
+        ...window.insights.chrome,
+        experimentalApi: true,
+        isFedramp: isFedRamp(),
+        usePendoFeedback,
+        segment: {
+          setPageMetadata,
+        },
+        toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+        quickStarts: quickstartsAPI,
+        helpTopics: {
+          ...helpTopicsAPI,
+          setActiveTopic,
+          closeHelpTopic: () => {
+            setActiveTopic('');
+          },
+        },
+        clearAnsibleTrialFlag,
+        isAnsibleTrialFlagActive,
+        setAnsibleTrialFlag,
+        chromeHistory: history,
+        analytics: analytics!,
+        useGlobalFilter,
+      },
+    },
+  };
+
   return (
     /**
      * Once all applications are migrated to chrome 2:
@@ -91,35 +131,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
      * - copy these functions to window
      * - add deprecation warning to the window functions
      */
-    <ScalprumProvider
-      config={config}
-      api={{
-        chrome: {
-          experimentalApi: true,
-          ...window.insights.chrome,
-          isFedramp: isFedRamp(),
-          usePendoFeedback,
-          segment: {
-            setPageMetadata,
-          },
-          toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
-          quickStarts: quickstartsAPI,
-          helpTopics: {
-            ...helpTopicsAPI,
-            setActiveTopic,
-            closeHelpTopic: () => {
-              setActiveTopic('');
-            },
-          },
-          clearAnsibleTrialFlag,
-          isAnsibleTrialFlagActive,
-          setAnsibleTrialFlag,
-          chromeHistory: history,
-          analytics,
-          useGlobalFilter,
-        },
-      }}
-    >
+    <ScalprumProvider {...scalprumProviderProps}>
       <Switch>
         <Route exact path="/">
           <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
@@ -141,21 +153,6 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
       </Switch>
     </ScalprumProvider>
   );
-};
-
-ScalprumRoot.propTypes = {
-  config: PropTypes.any,
-  helpTopicsAPI: PropTypes.shape({
-    addHelpTopics: PropTypes.func.isRequired,
-    disableTopics: PropTypes.func.isRequired,
-    enableTopics: PropTypes.func.isRequired,
-  }).isRequired,
-  quickstartsAPI: PropTypes.shape({
-    version: PropTypes.number.isRequired,
-    set: PropTypes.func.isRequired,
-    toggle: PropTypes.func.isRequired,
-    Catalog: PropTypes.elementType.isRequired,
-  }).isRequired,
 };
 
 export default ScalprumRoot;

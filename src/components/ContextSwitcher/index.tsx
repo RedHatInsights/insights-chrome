@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
+import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client';
 
 import { onToggleContextSwitcher } from '../../redux/actions';
 
@@ -21,20 +22,27 @@ import {
   REQUESTS_COUNT,
   REQUESTS_DATA,
 } from '../../utils/consts';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { ReduxState } from '../../redux/store';
 
-const ContextSwitcher = ({ user, className }) => {
+export type ContextSwitcherProps = {
+  user: ChromeUser;
+  className?: string;
+};
+
+const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   const dispatch = useDispatch();
   const intl = useIntl();
-  const isOpen = useSelector(({ chrome }) => chrome?.contextSwitcherOpen);
-  const [data, setData] = useState([]);
+  const isOpen = useSelector(({ chrome }: ReduxState) => chrome?.contextSwitcherOpen);
+  const [data, setData] = useState<CrossAccountRequest[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
     dispatch(onToggleContextSwitcher());
   };
 
-  const handleItemClick = (target_account, request_id, end_date, target_org) => {
-    if (target_account === selectedAccountNumber) {
+  const handleItemClick = (target_account?: string, request_id?: string, end_date?: Date, target_org?: string) => {
+    if (!target_org || !target_account || target_account === selectedAccountNumber) {
       return;
     }
     localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
@@ -84,7 +92,7 @@ const ContextSwitcher = ({ user, className }) => {
         }
       }
       axios
-        .get('/api/rbac/v1/cross-account-requests/', {
+        .get<{ data: CrossAccountRequest[] }>('/api/rbac/v1/cross-account-requests/', {
           params: {
             status: 'approved',
             order_by: '-created',
@@ -94,7 +102,13 @@ const ContextSwitcher = ({ user, className }) => {
         .then(({ data: { data } }) =>
           setData(
             data
-              .reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), [])
+              .reduce((acc, curr) => {
+                const request = acc.find(({ target_account }) => target_account === curr.target_account);
+                if (request) {
+                  return [...acc, request];
+                }
+                return acc;
+              }, [])
               .filter(({ target_account }) => target_account !== user.identity.account_number)
           )
         );

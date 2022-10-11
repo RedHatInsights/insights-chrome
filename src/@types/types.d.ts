@@ -1,5 +1,7 @@
-import { ChromeAPI, VisibilityFunctions } from '@redhat-cloud-services/types';
+import { QuickStart, QuickStartCatalogPage } from '@patternfly/quickstarts';
+import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
 /**
  * @deprecated
  * Only use as placeholder
@@ -41,13 +43,12 @@ export type BundleNavigation = {
 
 declare global {
   interface Window {
+    hj: any;
     pendo?: {
       updateOptions: (...args: any[]) => void;
+      initialize: (config: Record<string, any>) => void;
     };
     sendCustomEvent: (event: string) => void;
-    insights: {
-      chrome: ChromeAPI;
-    };
     segment?: AnalyticsBrowser;
     _segment?: {
       activeModule?: string;
@@ -59,6 +60,9 @@ declare global {
         getMarketingCloudVisitorID: () => string;
       };
     };
+    _satellite?: {
+      pageBottom?: () => void;
+    };
   }
 }
 
@@ -68,4 +72,17 @@ export type ChromeAuthOptions = {
   cookieName: string;
   refreshToken?: string;
   token?: string;
+};
+
+export type HelpTopicsAPI = {
+  addHelpTopics: AddHelpTopic;
+  disableTopics: DisableTopics;
+  enableTopics: EnableTopics;
+};
+
+export type QuickstartsApi = {
+  version: number;
+  updateQuickStarts: (key: string, quickstarts: QuickStart[]) => void;
+  toggle: (quickstart: string) => void;
+  Catalog: typeof QuickStartCatalogPage;
 };

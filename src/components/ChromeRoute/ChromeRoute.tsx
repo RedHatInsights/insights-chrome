@@ -10,6 +10,8 @@ import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { ReduxState } from '../../redux/store';
+import { DeepRequired } from 'utility-types';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -42,7 +44,7 @@ const ChromeRoute = memo(
        * update pendo metadata on application change
        */
       try {
-        window?.pendo?.updateOptions(getPendoConf(user));
+        window?.pendo?.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>));
       } catch (error) {
         console.error('Unable to update pendo options');
         console.error(error);

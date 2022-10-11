@@ -7,7 +7,7 @@ import RootApp from './components/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
-import auth, { crossAccountBouncer } from './auth';
+import auth, { LibJWT, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import createChromeInstance from './chrome/create-chrome';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
@@ -15,8 +15,10 @@ import { getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/commo
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
+import { ReduxState } from './redux/store';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 
-const language = navigator.language.slice(0, 2) || 'en';
+const language: keyof typeof messages = 'en';
 
 const initializeAccessRequestCookies = () => {
   const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
@@ -36,14 +38,16 @@ const initializeAccessRequestCookies = () => {
   }
 };
 
-const libjwtSetup = (chromeConfig, setReadyState) => {
+const libjwtSetup = (chromeConfig: { ssoUrl?: string }, setReadyState: (isReady: boolean) => void) => {
   const libjwt = auth(chromeConfig || {});
 
   libjwt.initPromise.then(() => {
     return libjwt.jwt
       .getUserInfo()
-      .then((...data) => {
-        sentry(...data);
+      .then((chromeUser) => {
+        if (chromeUser) {
+          sentry(chromeUser);
+        }
         setReadyState(true);
       })
       .catch(noop);
@@ -53,12 +57,12 @@ const libjwtSetup = (chromeConfig, setReadyState) => {
 };
 
 const App = () => {
-  const modules = useSelector(({ chrome }) => chrome?.modules);
-  const scalprumConfig = useSelector(({ chrome }) => chrome?.scalprumConfig);
-  const documentTitle = useSelector(({ chrome }) => chrome?.documentTitle);
+  const modules = useSelector(({ chrome }: ReduxState) => chrome?.modules);
+  const scalprumConfig = useSelector(({ chrome }: ReduxState) => chrome?.scalprumConfig);
+  const documentTitle = useSelector(({ chrome }: ReduxState) => chrome?.documentTitle);
   const dispatch = useDispatch();
   const [jwtState, setJwtState] = useState(false);
-  const [libjwt, setLibjwt] = useState();
+  const [libjwt, setLibjwt] = useState<LibJWT>();
   const store = useStore();
 
   useEffect(() => {
@@ -67,13 +71,13 @@ const App = () => {
       dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
       const libjwt = libjwtSetup(chromeConfig?.config || chromeConfig, setJwtState);
+      // TODO: Create subset for window. Window CHROME API does not have all the functions ass the Context value
+      window.insights = createChromeInstance(libjwt, window.insights, data, store) as unknown as { chrome: ChromeAPI };
       setLibjwt(libjwt);
-
-      window.insights = createChromeInstance(libjwt, window.insights, data, store);
     });
-    if (typeof _satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+    if (typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
-      registerAnalyticsObserver(window._satellite.pageBottom);
+      registerAnalyticsObserver();
     }
 
     trustarcScriptSetup();
@@ -84,7 +88,7 @@ const App = () => {
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
 
-  return modules && scalprumConfig && jwtState ? (
+  return modules && scalprumConfig && jwtState && libjwt ? (
     <LibtJWTContext.Provider value={libjwt}>
       <RootApp config={scalprumConfig} />{' '}
     </LibtJWTContext.Provider>

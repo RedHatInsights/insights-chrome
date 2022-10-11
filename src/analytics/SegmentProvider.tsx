@@ -123,14 +123,14 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
 };
 
 export type SegmentProviderProps = {
-  activeModule: string;
+  activeModule?: string;
 };
 
 const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
-  const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => modules?.[activeModule]?.analytics?.APIKey);
+  const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
   useEffect(() => {
     const disconnect = registerAnalyticsObserver();
