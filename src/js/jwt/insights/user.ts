@@ -23,7 +23,7 @@ const pathMapper = {
   internal: 'internal',
 };
 
-const REDIRECT_BASE = `${document.location.origin}${isBeta() ? 'beta/' : '/'}`;
+const REDIRECT_BASE = `${document.location.origin}${isBeta() ? '/beta/' : '/'}`;
 
 const unentitledPathMapper = (section: string, service: string, expired = false) =>
   ({
