@@ -73,29 +73,32 @@ const ContextSwitcher = ({ user, className }) => {
   };
 
   useEffect(() => {
-    const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
-    if (initialAccount) {
-      try {
-        setSelectedAccountNumber(JSON.parse(initialAccount).target_account);
-      } catch {
-        console.log('Unable to parse initial account. Using default account');
+    // only inernal users have the TAM features enabled
+    if (user?.identity?.user?.is_internal) {
+      const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
+      if (initialAccount) {
+        try {
+          setSelectedAccountNumber(JSON.parse(initialAccount).target_account);
+        } catch {
+          console.log('Unable to parse initial account. Using default account');
+        }
       }
+      axios
+        .get('/api/rbac/v1/cross-account-requests/', {
+          params: {
+            status: 'approved',
+            order_by: '-created',
+            query_by: 'user_id',
+          },
+        })
+        .then(({ data: { data } }) =>
+          setData(
+            data
+              .reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), [])
+              .filter(({ target_account }) => target_account !== user.identity.account_number)
+          )
+        );
     }
-    axios
-      .get('/api/rbac/v1/cross-account-requests/', {
-        params: {
-          status: 'approved',
-          order_by: '-created',
-          query_by: 'user_id',
-        },
-      })
-      .then(({ data: { data } }) =>
-        setData(
-          data
-            .reduce((acc, curr) => (acc.find(({ target_account }) => target_account === curr.target_account) ? acc : [...acc, curr]), [])
-            .filter(({ target_account }) => target_account !== user.identity.account_number)
-        )
-      );
   }, []);
 
   if (data.length === 0) {
