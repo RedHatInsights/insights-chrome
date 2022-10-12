@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import {
   Bullseye,
   Button,

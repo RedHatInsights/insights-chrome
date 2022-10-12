@@ -3,7 +3,7 @@ import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import { deleteLocalStorageItems, pageRequiresAuthentication } from '../utils';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import logger from './logger';
 
 // Insights Specific
