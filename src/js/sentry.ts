@@ -1,4 +1,5 @@
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isProd } from './utils';
 
@@ -71,6 +72,8 @@ function initSentry() {
     environment: `Prod${appDetails.beta}`,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
+    integrations: [new BrowserTracing()],
+    tracesSampleRate: 0.5, // send only every second transaction to Sentry
   });
 }
 
