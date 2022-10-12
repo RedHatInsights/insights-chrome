@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-jest.mock('@sentry/browser', () => ({
+jest.mock('@sentry/react', () => ({
   __esModule: true,
   captureException: () => 'mock-id',
 }));
