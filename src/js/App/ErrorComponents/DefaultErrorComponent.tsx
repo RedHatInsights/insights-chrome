@@ -20,7 +20,6 @@ import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 
 import './ErrorComponent.scss';
-import ChromeLink from '../Sidenav/Navigation/ChromeLink';
 
 export type DefaultErrorComponentProps = {
   error?: string | Error;
@@ -87,14 +86,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
           </Flex>
         </EmptyStateBody>
         <EmptyStatePrimary>
-          <Button
-            component={(props) => (
-              <ChromeLink {...props} appId="landing" href="/">
-                {intl.formatMessage(messages.returnToHomepage)}
-              </ChromeLink>
-            )}
-            variant="primary"
-          />
+          <Button component={() => <a href="/">{intl.formatMessage(messages.returnToHomepage)}</a>} variant="primary" />
         </EmptyStatePrimary>
       </EmptyState>
     </Bullseye>
