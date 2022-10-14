@@ -8,7 +8,7 @@ import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilitie
 import { Nav, NavList } from '@patternfly/react-core';
 import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
-import FeatureFlagsProvider from '../../src/js/App/FeatureFlags/FeatureFlagsProvider';
+import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
