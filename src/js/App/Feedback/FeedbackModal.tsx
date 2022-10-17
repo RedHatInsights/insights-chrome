@@ -103,7 +103,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
         <OutlinedCommentsIcon />
         {intl.formatMessage(messages.feedback)}
       </Button>
-      <Modal isOpen={isOpen} className="chr-c-feedback-modal" variant={ModalVariant.medium} onClose={handleCloseModal}>
+      <Modal aria-label="Feedback modal" isOpen={isOpen} className="chr-c-feedback-modal" variant={ModalVariant.medium} onClose={handleCloseModal}>
         <Grid>
           <GridItem span={8} rowSpan={12}>
             <ModalDescription modalPage={modalPage} />
