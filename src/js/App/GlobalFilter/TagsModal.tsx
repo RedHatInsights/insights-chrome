@@ -141,7 +141,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
         setTagsSelected([]);
         setFilterBy('');
         setFilterSIDsBy('');
-        toggleModal(open as boolean);
+        toggleModal(!!open);
       }}
       filters={[
         [
