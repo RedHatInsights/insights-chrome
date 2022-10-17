@@ -21,6 +21,9 @@
   }
   &.expanded, &.pf-m-expanded {
     width: 450px;
+    .pf-c-menu-toggle__text {
+      width: 390px;
+    }
   }
   .pf-c-select__toggle-text {
     flex-grow: 1;
