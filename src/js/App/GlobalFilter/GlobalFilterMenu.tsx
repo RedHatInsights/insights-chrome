@@ -1,5 +1,5 @@
-import React, { Fragment, useMemo } from 'react';
-import { GroupFilter, groupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import React, { FormEvent, Fragment, MouseEventHandler, useMemo } from 'react';
+import { Group, GroupFilter, groupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
 import messages from '../../Messages';
@@ -11,6 +11,7 @@ import { FlagTagsFilter, updateSelected } from './constants';
 import TagsModal from './TagsModal';
 import { fetchAllTags } from '../../redux/actions';
 import { CommonSelectedTag } from '../../redux/store';
+import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 
 export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
 export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
@@ -34,26 +35,8 @@ export type FilterMenuGroup = {
   items: FilterMenuItem[];
 };
 
-export type FilterMenuItemOnChange = (
-  event: Event,
-  selected: unknown,
-  selectedItem: {
-    value: string;
-    label: string;
-    id: string;
-    type: unknown;
-    items: FilterMenuItem[];
-  },
-  item: {
-    id?: string;
-    value?: string;
-  },
-  value: string,
-  itemValue: string
-) => void;
-
 /** Create unique hotjar event for selected tags */
-const generateGlobalFilterEvent = (isChecked: boolean, value: string) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
+const generateGlobalFilterEvent = (isChecked: boolean, value?: string) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
 
 export type SelectedTags = {
   [key: string]: {
@@ -73,7 +56,7 @@ export type GlobalFilterDropdownProps = {
   filter: {
     filterBy?: string | number;
     onFilter?: (value: string) => void;
-    groups?: FilterMenuGroup[];
+    groups?: Group[];
     onChange: FilterMenuItemOnChange;
   };
   chips: { category: string; chips: { key: string; tagKey: string; value: string }[] }[];
@@ -128,12 +111,20 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
               <GroupFilter
                 className="chr-c-menu-global-filter__select"
                 selected={selectedTags}
+                isDisabled={isDisabled}
                 groups={filter.groups?.map((group) => ({
                   ...group,
                   items: group.items.map((item) => ({
                     ...item,
-                    onClick: (e: Event, selected: any, group: unknown, currItem: unknown, groupName: string, itemName: string) => {
-                      generateGlobalFilterEvent(selected?.[groupName]?.[itemName]?.isSelected, item.value);
+                    onClick: (
+                      e: FormEvent | MouseEventHandler<HTMLInputElement> | undefined,
+                      selected: any,
+                      group: number | undefined,
+                      currItem: boolean | undefined,
+                      groupName: string | undefined,
+                      itemName: string | undefined
+                    ) => {
+                      generateGlobalFilterEvent((selected?.[groupName as string]?.[itemName as string] as Group)?.isSelected as boolean, item.value);
                       item.onClick?.(e, selected, group, currItem, groupName, itemName);
                     },
                   })),
@@ -202,11 +193,12 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
           }}
           onApplyTags={(selected: CommonSelectedTag[], sidSelected: CommonSelectedTag[]) => {
             setValue(() =>
-              [...(selected || []), ...(sidSelected || [])].reduce(
-                (acc: { [key: string]: { [key: string]: Record<string, unknown> } }, { key, value, namespace }: CommonSelectedTag) =>
-                  updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value, true, {
+              [...(selected || []), ...(sidSelected || [])].reduce<FlagTagsFilter>(
+                (acc: FlagTagsFilter, { key, value, namespace }: CommonSelectedTag) => {
+                  return updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value as string, true, {
                     item: { tagKey: key },
-                  }),
+                  });
+                },
                 selectedTags
               )
             );

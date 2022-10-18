@@ -3,6 +3,7 @@ import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../redux/globalFilterReducers';
 import { getUrl } from '../../utils';
+import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -23,19 +24,30 @@ export const workloads = [
   },
 ];
 
-export const updateSelected = (
-  original: { [key: string]: { [key: string]: Record<string, unknown> } },
+export interface GroupItem {
+  /** Optional isSelected flag */
+  isSelected?: boolean;
+  /** Reference back to the group */
+  group: Group;
+  /** Current group filter item */
+  item: GroupFilterItem;
+}
+
+export type UpdateSelected = (
+  original: FlagTagsFilter,
   namespace: string,
   key: string,
-  value: unknown,
+  value: string | undefined,
   isSelected: boolean,
-  extra: Record<string, unknown>
-) => ({
+  extra: Record<string, { tagKey?: string }>
+) => FlagTagsFilter;
+
+export const updateSelected: UpdateSelected = (original, namespace, key, value, isSelected, extra) => ({
   ...original,
   [namespace]: {
     ...original?.[namespace],
     [key]: {
-      ...original?.[namespace]?.[key],
+      ...(original?.[namespace]?.[key] as GroupItem),
       isSelected,
       value,
       ...extra,
@@ -114,31 +126,15 @@ export const generateFilter = () => {
 
 export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
 
-type Tag = {
-  isSelected?: boolean;
-  value: string;
-  item?: {
-    tagKey?: string;
-    tagValue?: string;
-  };
-  group?: {
-    items?: unknown;
-  };
-};
-
-export type FlagTagsFilter = {
-  [key: string]: {
-    [key: string]: Tag;
-  };
-};
+export type FlagTagsFilter = Record<string, Record<string, boolean | GroupItem>>;
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
-      Object.entries(item || {})
-        .filter(([, { isSelected }]) => isSelected)
-        .map(([tagKey, { item, value: tagValue }]) => {
+      Object.entries<any>(item || {})
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
           }${
@@ -151,8 +147,8 @@ export const flatTags = memoize(
     return format
       ? [
           Workloads,
-          Object.entries(SID || {})
-            .filter(([, { isSelected }]) => isSelected)
+          Object.entries<any>(SID || {})
+            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
             .reduce<any>((acc, [key]) => [...acc, key], []),
           mappedTags,
         ]
@@ -162,7 +158,7 @@ export const flatTags = memoize(
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
-          `${namespace}.${Object.entries(val || {})
+          `${namespace}.${Object.entries<any>(val || {})
             .filter(([, { isSelected }]) => isSelected)
             .map(([key]) => key)
             .join('')}`
