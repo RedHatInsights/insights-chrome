@@ -29,7 +29,7 @@ export function get3scaleError(response: string | { errors: ThreeScaleError[] })
   }
 
   // check if one of the error messages has gateway flag
-  const result = parsedResponse.find(({ status, meta }) => status >= 400 && meta?.response_by === 'gateway');
+  const result = parsedResponse.find(({ status, meta }) => (status === 401 || status === 403) && meta?.response_by === 'gateway');
   if (result) {
     // in case the gateway sends compliance error as a error detail
     result.complianceError = isComplianceError(result.detail);

@@ -188,4 +188,51 @@ describe('Gateway errors', () => {
     cy.contains(`Normal render`).should('not.exist');
     cy.contains(`Component error handler`).should('exist');
   });
+
+  it('does not handle 404 3scale gateway error', () => {
+    const code = 'gateway-404';
+    const Component = createEnv(code);
+
+    // mock the module
+    window[code] = {
+      init: () => undefined,
+      get: () => () => ({
+        // eslint-disable-next-line react/display-name
+        default: () => {
+          const [err, setErr] = useState(false);
+
+          return (
+            <div>
+              {err ? <h1>Component error handler</h1> : <h1>Normal render</h1>}
+              <button onClick={() => fetch('/foo/bar').then(() => setErr(true))}>Force API call</button>
+            </div>
+          );
+        },
+      }),
+    };
+    // throw 403 gateway error
+    cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
+      statusCode: 404,
+      body: {
+        errors: [
+          {
+            status: 404,
+            detail: 'Gateway has thrown an 403 error',
+            meta: {
+              response_by: 'gateway',
+            },
+          },
+        ],
+      },
+    }).as(code);
+    cy.mount(<Component />);
+    cy.contains(`Normal render`).should('exist');
+    cy.contains(`Component error handler`).should('not.exist');
+
+    cy.contains('Force API call').click();
+    cy.wait(`@${code}`);
+
+    cy.contains(`Normal render`).should('not.exist');
+    cy.contains(`Component error handler`).should('exist');
+  });
 });
