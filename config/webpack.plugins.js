@@ -6,6 +6,7 @@ const path = require('path');
 const { ProvidePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const deps = require('../package.json').dependencies;
 const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
@@ -68,6 +69,7 @@ const plugins = (dev = false, beta = false) => [
     Buffer: ['buffer', 'Buffer'],
   }),
   new ForkTsCheckerWebpackPlugin(),
+  ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
 ];
 
 module.exports = plugins;

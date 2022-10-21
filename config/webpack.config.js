@@ -74,6 +74,9 @@ const commonConfig = ({ dev }) => {
           test: /\.jsx?$/,
           loader: 'babel-loader',
           exclude: /node_modules/,
+          options: {
+            plugins: [dev && require.resolve('react-refresh/babel')].filter(Boolean),
+          },
         },
         {
           test: /\.tsx?$/,
@@ -120,7 +123,7 @@ const commonConfig = ({ dev }) => {
       },
       https: true,
       port: 1337,
-      hot: true,
+      hot: false,
       ...proxy({
         env: 'stage-beta',
         port: 1337,
