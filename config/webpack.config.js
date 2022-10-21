@@ -27,10 +27,21 @@ const commonConfig = ({ dev }) => {
     entry: path.resolve(__dirname, '../src/js/chrome.js'),
     output: {
       path: path.resolve(__dirname, '../build/js'),
-      filename: 'chrome-root.[fullhash].js',
+      filename: dev ? 'chrome-root.js' : 'chrome-root.[fullhash].js',
       publicPath,
-      chunkFilename: '[name].[fullhash].js',
+      chunkFilename: dev ? '[name].js' : '[name].[fullhash].js',
     },
+    ...(dev
+      ? {
+          cache: {
+            type: 'filesystem',
+            buildDependencies: {
+              config: [__filename],
+            },
+            cacheDirectory: path.resolve(__dirname, '../.cache'),
+          },
+        }
+      : {}),
     devtool: false,
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
@@ -66,8 +77,11 @@ const commonConfig = ({ dev }) => {
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          loader: 'ts-loader',
           exclude: /node_modules/,
+          options: {
+            transpileOnly: true,
+          },
         },
         {
           test: /\.s?[ac]ss$/,
@@ -106,6 +120,7 @@ const commonConfig = ({ dev }) => {
       },
       https: true,
       port: 1337,
+      hot: true,
       ...proxy({
         env: 'stage-beta',
         port: 1337,
