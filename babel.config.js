@@ -1,6 +1,6 @@
 module.exports = (api) => {
   api.cache.using(() => process.env.NODE_ENV);
-  const devServer = process.env.DEV_SERVER;
+  const devServer = process.env.DEV_SERVER === 'true';
   return {
     presets: [
       [
@@ -14,7 +14,7 @@ module.exports = (api) => {
         ...(devServer
           ? [
               {
-                development: !api.env('production'),
+                development: !api.env('production') && !api.env('test'),
                 runtime: 'automatic',
               },
             ]
@@ -27,10 +27,5 @@ module.exports = (api) => {
       'babel-plugin-lodash',
       ...(devServer ? ['react-refresh/babel'] : []),
     ],
-    env: {
-      test: {
-        plugins: ['babel-plugin-rewire'],
-      },
-    },
   };
 };
