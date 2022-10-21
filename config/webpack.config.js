@@ -24,10 +24,17 @@ const myGenerator = asGenerator((item, ...rest) => {
 const commonConfig = ({ dev }) => {
   const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
   return {
-    entry: path.resolve(__dirname, '../src/js/chrome.js'),
+    entry: dev
+      ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
+        {
+          main: path.resolve(__dirname, '../src/js/chrome.js'),
+          vendors: ['react', 'react-dom', 'react-refresh/runtime'],
+        }
+      : path.resolve(__dirname, '../src/js/chrome.js'),
     output: {
       path: path.resolve(__dirname, '../build/js'),
-      filename: dev ? 'chrome-root.js' : 'chrome-root.[fullhash].js',
+      // the HMR needs dynamic entry filename to remove name conflicts
+      filename: dev ? '[name].js' : 'chrome-root.[fullhash].js',
       publicPath,
       chunkFilename: dev ? '[name].js' : '[name].[fullhash].js',
     },
@@ -67,16 +74,19 @@ const commonConfig = ({ dev }) => {
     optimization: {
       minimizer: [new TerserPlugin()],
       concatenateModules: false,
+      ...(dev
+        ? {
+            // for HMR all runtime chunks must be in a single file
+            runtimeChunk: 'single',
+          }
+        : {}),
     },
     module: {
       rules: [
         {
           test: /\.jsx?$/,
-          loader: 'babel-loader',
+          use: 'babel-loader',
           exclude: /node_modules/,
-          options: {
-            plugins: [dev && require.resolve('react-refresh/babel')].filter(Boolean),
-          },
         },
         {
           test: /\.tsx?$/,
@@ -123,7 +133,8 @@ const commonConfig = ({ dev }) => {
       },
       https: true,
       port: 1337,
-      hot: false,
+      // HMR flag
+      hot: true,
       ...proxy({
         env: 'stage-beta',
         port: 1337,
@@ -138,7 +149,8 @@ const commonConfig = ({ dev }) => {
 };
 
 module.exports = function (env) {
-  const config = commonConfig({ dev: env.devServer === 'true', publicPath: env.publicPath });
+  const dev = process.env.DEV_SERVER;
+  const config = commonConfig({ dev, publicPath: env.publicPath });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
   }

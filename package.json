@@ -13,7 +13,7 @@
     "build:beta": "BETA=true npm run build",
     "build:dev": "NODE_ENV=development webpack --config config/webpack.config.js  --mode=development",
     "cypress": "cypress",
-    "dev": "webpack serve --config config/webpack.config.js --mode=development --env devServer=true",
+    "dev": "DEV_SERVER=true webpack serve --config config/webpack.config.js --mode=development",
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src",

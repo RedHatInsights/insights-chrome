@@ -23,11 +23,11 @@ const plugins = (dev = false, beta = false) => [
       ]
     : []),
   new MiniCssExtractPlugin({
-    filename: '[name].[fullhash].css',
+    filename: dev ? '[name].css' : '[name].[fullhash].css',
   }),
   new ModuleFederationPlugin({
     name: 'chrome',
-    filename: 'chrome.[fullhash].js',
+    filename: dev ? 'chrome.js' : 'chrome.[fullhash].js',
     exposes: {
       './InventoryTable': resolve(__dirname, '../src/js/inventory/modules/InventoryTable.js'),
       './AppInfo': resolve(__dirname, '../src/js/inventory/modules/AppInfo.js'),
