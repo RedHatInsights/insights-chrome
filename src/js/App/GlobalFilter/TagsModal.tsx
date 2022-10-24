@@ -149,7 +149,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             label: `${intl.formatMessage(messages.tagsFilter)}`,
             placeholder: `${intl.formatMessage(messages.filterTags)}`,
             value: 'tags-filter',
-            type: 'checkbox',
+            type: 'text',
             filterValues: {
               value: filterBy,
               onChange: (_e: any, value?: any) => {
@@ -164,7 +164,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
             label: `${intl.formatMessage(messages.SIDsFilter)}`,
             placeholder: `${intl.formatMessage(messages.filterSAPIDs)}`,
             value: 'sids-filter',
-            type: 'checkbox',
+            type: 'text',
             filterValues: {
               value: filterSIDsBy,
               onChange: (_e: any, value: any) => {
