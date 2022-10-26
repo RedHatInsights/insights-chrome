@@ -13,12 +13,13 @@ import {
   loadNavigationSegmentReducer,
   loginReducer,
   markAccessRequestRequestReducer,
+  markActiveProduct,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
   populateQuickstartsReducer,
+  setGatewayError,
   setPendoFeedbackFlag,
-  storeInitialHashReducer,
   toggleFeedbackModal,
 } from './reducers';
 import {
@@ -51,18 +52,19 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
+  MARK_ACTIVE_PRODUCT,
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
+  SET_GATEWAY_ERROR,
   SET_PENDO_FEEDBACK_FLAG,
-  STORE_INITIAL_HASH,
   TOGGLECONTEXTSWITCHER,
   TOGGLE_FEEDBACK_MODAL,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
 } from './action-types';
-import { ChromeState, GlobalFilterState } from './store';
+import { ChromeState, GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
 
 const reducers = {
@@ -80,11 +82,12 @@ const reducers = {
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
-  [STORE_INITIAL_HASH]: storeInitialHashReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [ADD_QUICKSTARTS_TO_APP]: addQuickstartstoApp,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
+  [MARK_ACTIVE_PRODUCT]: markActiveProduct,
+  [SET_GATEWAY_ERROR]: setGatewayError,
 };
 
 const globalFilter = {
@@ -98,6 +101,23 @@ const globalFilter = {
   [GLOBAL_FILTER_TOGGLE]: onGlobalFilterToggle,
   [GLOBAL_FILTER_REMOVE]: onGlobalFilterRemove,
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
+};
+
+export const chromeInitialState: ReduxState = {
+  chrome: {
+    contextSwitcherOpen: false,
+    navigation: {},
+    accessRequests: {
+      hasUnseen: false,
+      count: 0,
+      data: [],
+    },
+    quickstarts: {
+      quickstarts: {},
+    },
+    moduleRoutes: [],
+  },
+  globalFilter: globalFilterDefaultState,
 };
 
 export default function (): {
@@ -121,6 +141,7 @@ export default function (): {
         contextSwitcherOpen: false,
         modules: {},
         scalprumConfig: {},
+        moduleRoutes: [],
       },
       action
     ) => applyReducerHash(reducers)(state, action),

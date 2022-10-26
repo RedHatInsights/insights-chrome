@@ -1,5 +1,5 @@
 import consts from '../../consts';
-import { DEFAULT_ROUTES } from '../constants';
+import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from '../constants';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
 
@@ -18,12 +18,14 @@ const priv: Priv = {};
 // so that is somewhat difficult
 export function wipePostbackParamsThatAreNotForUs() {
   if (getWindow().location.href.indexOf(consts.offlineToken) !== -1) {
-    const { hash, search, origin, pathname } = getWindow().location;
-    const noAuthParam = new URLSearchParams(search).get(consts.noAuthParam);
+    const { hash, origin, pathname } = getWindow().location;
+    // attempt to use postback created from in previous doOffline call
+    const postbackUrl = new URL(localStorage.getItem(OFFLINE_REDIRECT_STORAGE_KEY) || `${origin}${pathname}`);
+    postbackUrl.hash = hash;
     // this is a UHC offline token postback
     // we need to not let the JWT lib see this
     // and try to use it
-    priv.postbackUrl = `${origin}${pathname}?${consts.noAuthParam}=${noAuthParam}${hash}`;
+    priv.postbackUrl = postbackUrl.toString();
 
     // we do this because keycloak.js looks at the hash for its parameters
     // and if found uses the params for its own use

@@ -14,7 +14,7 @@ jobs:
   include:
     - stage: Test
       if: branch != nightly
-      script: npm run circular && npm run lint && npm run test && npx codecov
+      script: npm run circular && npm run lint && npm run test && npx codecov && npm run test:ct
     - stage: Deploy prod-stable
       if: branch = prod-stable AND type != pull_request
       name: deploy:prod-stable

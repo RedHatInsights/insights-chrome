@@ -49,6 +49,7 @@ describe('ChromeNavItemFactory', () => {
   const store = mockStore({
     chrome: {
       activeModule: 'testModule',
+      moduleRoutes: [],
       modules: {
         testModule: {},
       },

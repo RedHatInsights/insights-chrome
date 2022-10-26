@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
+import messages from '../../../Messages';
 
 import { CaretDownIcon } from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
@@ -61,6 +63,7 @@ App.propTypes = {
 const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue, filteredApps }) => {
   const dropdownRef = useRef(null);
   const { pathname } = useLocation();
+  const intl = useIntl();
 
   useEffect(() => {
     if (isLoaded) {
@@ -96,7 +99,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                   <Flex className="chr-l-flex-app-filter-search">
                     <SearchInput
                       data-ouia-component-id="app-filter-search"
-                      placeholder="Find an app or service"
+                      placeholder={intl.formatMessage(messages.findAppOrService)}
                       value={filterValue}
                       onChange={(val) => setFilterValue(val)}
                       onClear={(e) => {
@@ -114,10 +117,8 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                   ) : (
                     <EmptyState className="pf-u-mt-xl" variant={EmptyStateVariant.full}>
                       <EmptyStateIcon className="pf-u-mb-xl" icon={FilterIcon} />
-                      <Title headingLevel="h4">No matching applications or services found.</Title>
-                      <EmptyStateBody className="pf-u-mb-xl">
-                        This filter criteria matches no applications or services. Try changing your input filter.
-                      </EmptyStateBody>
+                      <Title headingLevel="h4">{intl.formatMessage(messages.noMatchingAppsFound)}</Title>
+                      <EmptyStateBody className="pf-u-mb-xl">{intl.formatMessage(messages.tryChangingSearch)}</EmptyStateBody>
                       <Button
                         ouiaId="app-filter-clear-input"
                         className="pf-u-mt-lg"
@@ -127,7 +128,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                           e.stopPropagation();
                         }}
                       >
-                        Clear all filters
+                        {intl.formatMessage(messages.clearFilters)}
                       </Button>
                     </EmptyState>
                   )}

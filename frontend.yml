@@ -15,6 +15,10 @@ objects:
       API:
         versions:
           - v1
+      module:
+        manifestLocation: "/apps/chrome/js/fed-mods.json"
+        config:
+          ssoUrl: ${SSO_URL}
       frontend:
         paths:
           - /
@@ -23,6 +27,8 @@ parameters:
   - name: ENV_NAME
     required: true
   - name: IMAGE_TAG
+    required: true
+  - name: SSO_URL
     required: true
   - name: IMAGE
     value: quay.io/cloudservices/insights-chrome-frontend

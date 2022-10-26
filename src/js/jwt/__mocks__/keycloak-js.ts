@@ -42,6 +42,7 @@ class Keycloak {
   login = (data: any) => {
     this.redirectUri = data.redirectUri;
     cookie.set('cs_jwt', 'token1');
+    return Promise.resolve({});
   };
   updateToken = () => {
     return new Promise((res) => {

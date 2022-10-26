@@ -5,6 +5,7 @@ import { NavItem } from '../types';
 import { AccessRequest, ChromeModule, Navigation } from './store';
 import { QuickStart } from '@patternfly/quickstarts';
 import { NavDOMEvent } from '../App/Sidenav/Navigation/ChromeLink';
+import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -146,13 +147,8 @@ export const updateAccessRequestsNotifications = (payload: { count: number; data
   payload,
 });
 
-export const markAccessRequestNotification = (payload: string) => ({
+export const markAccessRequestNotification = (payload: string | number) => ({
   type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
-  payload,
-});
-
-export const storeInitialHash = (payload?: string) => ({
-  type: actionTypes.STORE_INITIAL_HASH,
   payload,
 });
 
@@ -179,4 +175,14 @@ export const disableQuickstarts = () => ({
 export const updateDocumentTitle = (title: string) => ({
   type: actionTypes.UPDATE_DOCUMENT_TITLE_REDUCER,
   payload: title,
+});
+
+export const markActiveProduct = (product: string) => ({
+  type: actionTypes.MARK_ACTIVE_PRODUCT,
+  payload: product,
+});
+
+export const setGatewayError = (error?: ThreeScaleError) => ({
+  type: actionTypes.SET_GATEWAY_ERROR,
+  payload: error,
 });

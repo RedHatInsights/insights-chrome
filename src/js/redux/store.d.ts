@@ -1,12 +1,40 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { NavItem } from '../types';
+import { ThreeScaleError } from '../utils/responseInterceptors';
+
+export type RouteDefinition = {
+  scope: string;
+  module: string;
+  isFedramp?: boolean;
+  path: string;
+  manifestLocation: string;
+  dynamic?: boolean;
+  exact?: boolean;
+};
+
+export type ModuleRoute =
+  | {
+      isFedramp?: boolean;
+      pathname: string;
+      exact?: boolean;
+      dynamic?: boolean;
+    }
+  | string;
+
+export type RemoteModule = {
+  module: string;
+  routes: ModuleRoute[];
+};
 
 export type ChromeModule = {
   manifestLocation: string;
   analytics?: {
     APIKey?: string;
   };
+  dynamic?: boolean;
+  isFedramp?: boolean;
+  modules?: RemoteModule[];
 };
 
 // TODO: Update once navigation is mgrated to TS
@@ -26,6 +54,7 @@ export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
   activeModule?: string;
+  activeProduct?: string;
   /**
    * @deprecated
    * App id is replaced by active module. It is still required until we completely remove usage of main.yml
@@ -44,6 +73,7 @@ export type ChromeState = {
       module?: string;
     };
   };
+  moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
   accessRequests: {
@@ -59,16 +89,40 @@ export type ChromeState = {
     };
   };
   documentTitle?: string;
+  gatewayError?: ThreeScaleError;
 };
 
 export type GlobalFilterWorkloads = {
+  selected?: boolean;
+  page?: number;
+  perPage?: number;
   isLoaded: boolean;
-  hasSap?: number;
-  hasAap?: number;
-  hasMssql?: number;
+  name: 'Workloads';
+  noFilter?: true;
+  tags?: { tag?: CommonTag; count: number }[];
   items?: any[];
   count?: number;
   total?: number;
+};
+
+export type CommonTag = {
+  key?: string;
+  namespace?: string;
+  value?: string | number | boolean;
+};
+
+export type CommonSelectedTag = CommonTag & {
+  id: string;
+  cells: [string, string, string];
+  selected?: boolean;
+};
+
+export type SID = {
+  id?: string;
+  name?: string;
+  tags?: {
+    tag: CommonTag;
+  }[];
 };
 
 export type GlobalFilterSIDs = {
@@ -77,12 +131,15 @@ export type GlobalFilterSIDs = {
   count?: number;
   page?: number;
   perPage?: number;
-  items?: any[];
+  items?: SID[];
 };
 
 export type GlobalFilterTag = {
-  name: string;
-  tags: unknown;
+  id?: string;
+  name?: string;
+  tags?: {
+    tag: CommonTag;
+  }[];
 };
 
 export type GlobalFilterTags = {
@@ -101,5 +158,10 @@ export type GlobalFilterState = {
   sid: GlobalFilterSIDs;
   selectedTags?: unknown;
   globalFilterHidden: boolean;
-  scope?: string;
+  scope?: 'insights';
+};
+
+export type ReduxState = {
+  chrome: ChromeState;
+  globalFilter: GlobalFilterState;
 };

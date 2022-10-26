@@ -117,16 +117,21 @@ export function bootstrap(
   libjwt: LibJWT,
   initFunc: () => ChromeAPI,
   getUser: () => Promise<ChromeUser | void>,
-  globalConfig: { chrome?: { ssoUrl?: string } }
+  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } }
 ) {
+  const { store } = spinUpStore();
   return {
     chrome: {
       auth: {
         getOfflineToken: () => libjwt.getOfflineToken(),
-        doOffline: () => libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl),
+        doOffline: () =>
+          libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
         getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
         getUser,
-        qe: qe,
+        qe: {
+          ...qe,
+          init: () => qe.init(store),
+        },
         logout: (bounce?: boolean) => libjwt.jwt.logoutAllTabs(bounce),
         login: () => libjwt.jwt.login(),
       },
@@ -139,7 +144,7 @@ export function bootstrap(
       getApp: () => getUrl('app'),
       getEnvironment: () => getEnv(),
       getEnvironmentDetails: () => getEnvDetails(),
-      createCase: (fields?: any) => window.insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, fields)),
+      createCase: (fields?: any) => window.insights.chrome.auth.getUser().then((user) => createSupportCase(user.identity, libjwt, fields)),
       visibilityFunctions,
       init: initFunc,
       isChrome2: true,

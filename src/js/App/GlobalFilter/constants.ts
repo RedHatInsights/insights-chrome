@@ -1,9 +1,9 @@
-import { GLOBAL_FILTER_KEY, decodeToken } from '../../jwt/jwt';
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../redux/globalFilterReducers';
 import { getUrl } from '../../utils';
+import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -21,23 +21,33 @@ export const workloads = [
         tag: { key: MSSQL_KEY },
       },
     ],
-    type: 'checkbox',
   },
 ];
 
-export const updateSelected = (
-  original: { [key: string]: { [key: string]: Record<string, unknown> } },
+export interface GroupItem {
+  /** Optional isSelected flag */
+  isSelected?: boolean;
+  /** Reference back to the group */
+  group: Group;
+  /** Current group filter item */
+  item: GroupFilterItem;
+}
+
+export type UpdateSelected = (
+  original: FlagTagsFilter,
   namespace: string,
   key: string,
-  value: unknown,
+  value: string | undefined,
   isSelected: boolean,
-  extra: Record<string, unknown>
-) => ({
+  extra: Record<string, { tagKey?: string }>
+) => FlagTagsFilter;
+
+export const updateSelected: UpdateSelected = (original, namespace, key, value, isSelected, extra) => ({
   ...original,
   [namespace]: {
     ...original?.[namespace],
     [key]: {
-      ...original?.[namespace]?.[key],
+      ...(original?.[namespace]?.[key] as GroupItem),
       isSelected,
       value,
       ...extra,
@@ -69,7 +79,7 @@ export const createTagsFilter = (tags: string[] = []) =>
     };
   }, {});
 
-export const generateFilter = async () => {
+export const generateFilter = () => {
   const searchParams = new URLSearchParams(location.hash?.substring(1));
 
   // Ansible bundle requires AAP to be active at all times
@@ -77,15 +87,9 @@ export const generateFilter = async () => {
     searchParams.set('workloads', AAP_KEY);
   }
 
-  const currToken = decodeToken(await window.insights.chrome.auth.getToken())?.session_state;
-  let data;
-  try {
-    data = JSON.parse(localStorage.getItem(`${GLOBAL_FILTER_KEY}/${currToken}`) || '{}');
-  } catch (e) {
-    data = {};
-  }
-
-  let { Workloads, [SID_KEY]: SIDs, ...tags } = data;
+  let Workloads = {};
+  let tags = {};
+  let SIDs = {};
 
   if (searchParams.get('workloads')) {
     const { tag } = workloads[0].tags.find(({ tag: { key } }) => key === searchParams.get('workloads')) || {};
@@ -97,7 +101,7 @@ export const generateFilter = async () => {
             item: { tagKey: tag?.key },
           },
         }
-      : data.Workloads;
+      : {};
   }
 
   if (typeof searchParams.get('tags') === 'string') {
@@ -113,40 +117,24 @@ export const generateFilter = async () => {
     )?.[SID_KEY];
   }
 
-  return [
-    {
-      Workloads,
-      ...(SIDs && { [SID_KEY]: SIDs }),
-      ...tags,
-    },
-    currToken,
-  ];
+  return {
+    Workloads,
+    ...(SIDs && { [SID_KEY]: SIDs }),
+    ...tags,
+  };
 };
 
 export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
 
-type Tag = {
-  isSelected?: boolean;
-  value: string;
-  item?: {
-    tagKey?: string;
-    tagValue?: string;
-  };
-};
-
-export type FlagTagsFilter = {
-  [key: string]: {
-    [key: string]: Tag;
-  };
-};
+export type FlagTagsFilter = Record<string, Record<string, boolean | GroupItem>>;
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
-      Object.entries(item || {})
-        .filter(([, { isSelected }]) => isSelected)
-        .map(([tagKey, { item, value: tagValue }]) => {
+      Object.entries<any>(item || {})
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
           }${
@@ -159,8 +147,8 @@ export const flatTags = memoize(
     return format
       ? [
           Workloads,
-          Object.entries(SID || {})
-            .filter(([, { isSelected }]) => isSelected)
+          Object.entries<any>(SID || {})
+            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
             .reduce<any>((acc, [key]) => [...acc, key], []),
           mappedTags,
         ]
@@ -170,7 +158,7 @@ export const flatTags = memoize(
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
-          `${namespace}.${Object.entries(val || {})
+          `${namespace}.${Object.entries<any>(val || {})
             .filter(([, { isSelected }]) => isSelected)
             .map(([key]) => key)
             .join('')}`

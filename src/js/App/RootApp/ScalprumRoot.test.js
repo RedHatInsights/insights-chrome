@@ -26,6 +26,16 @@ jest.mock('react-router-dom', () => {
   };
 });
 
+jest.mock('@unleash/proxy-client-react', () => {
+  const unleash = jest.requireActual('@unleash/proxy-client-react');
+  return {
+    __esModule: true,
+    ...unleash,
+    useFlag: () => false,
+    useFlagsStatus: () => ({ flagsReady: true }),
+  };
+});
+
 window.ResizeObserver =
   window.ResizeObserver ||
   jest.fn().mockImplementation(() => ({
@@ -66,12 +76,19 @@ describe('ScalprumRoot', () => {
     mockStore = configureStore();
     initialState = {
       chrome: {
+        user: {
+          identity: {
+            account_number: 'foo',
+            user: { username: 'foo', first_name: 'foo', last_name: 'foo', is_org_admin: false, is_internal: false },
+          },
+        },
         activeApp: 'some-app',
         activeLocation: 'some-location',
         appId: 'app-id',
         quickstarts: {
           quickstarts: {},
         },
+        moduleRoutes: [],
         navigation: {
           '/': {
             navItems: [],
@@ -167,6 +184,15 @@ describe('ScalprumRoot', () => {
     Object.defineProperty(window, 'location', {
       value: {
         pathname: '/insights',
+        href: '/insights',
+        host: 'foo.bar.baz',
+      },
+    });
+    Object.defineProperty(window, 'insights', {
+      value: {
+        chrome: {
+          getEnvironment: () => '',
+        },
       },
     });
     const store = mockStore({

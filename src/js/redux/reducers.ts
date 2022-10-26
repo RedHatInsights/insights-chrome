@@ -2,7 +2,8 @@ import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../consts';
 import { NavItem } from '../types';
-import { highlightItems, isBeta, isFedRamp, levelArray } from '../utils';
+import { generateRoutesList, highlightItems, isBeta, isFedRamp, levelArray } from '../utils';
+import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeModule, ChromeState, Navigation } from './store';
 
 export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
@@ -55,13 +56,14 @@ export function onRegisterModule(
   }
 ): ChromeState {
   const isModuleLoaded = state.modules?.[payload.module];
-  if (!isModuleLoaded) {
+  const manifestLocation = payload.manifestLocation || payload.manifest;
+  if (!isModuleLoaded && typeof manifestLocation === 'string') {
     return {
       ...state,
       modules: {
         ...state.modules,
         [payload.module]: {
-          manifestLocation: (payload.manifestLocation || payload.manifest)!,
+          manifestLocation,
         },
       },
     };
@@ -144,10 +146,12 @@ export function loadModulesSchemaReducer(
       },
     }
   );
+  const moduleRoutes = generateRoutesList(schema);
   return {
     ...state,
     modules: schema,
     scalprumConfig,
+    moduleRoutes,
   };
 }
 
@@ -222,14 +226,6 @@ export function markAccessRequestRequestReducer(state: ChromeState, { payload }:
   };
 }
 
-export function storeInitialHashReducer(state: ChromeState, { payload }: { payload?: string }): ChromeState {
-  const initialHash = typeof payload === 'string' ? payload.replace(/^#/, '') : undefined;
-  return {
-    ...state,
-    initialHash,
-  };
-}
-
 export function populateQuickstartsReducer(
   state: ChromeState,
   { payload: { app, quickstarts } }: { payload: { app: string; quickstarts: QuickStart[] } }
@@ -273,5 +269,19 @@ export function documentTitleReducer(state: ChromeState, { payload }: { payload:
   return {
     ...state,
     documentTitle: payload,
+  };
+}
+
+export function markActiveProduct(state: ChromeState, { payload }: { payload?: string }): ChromeState {
+  return {
+    ...state,
+    activeProduct: payload,
+  };
+}
+
+export function setGatewayError(state: ChromeState, { payload }: { payload?: ThreeScaleError }): ChromeState {
+  return {
+    ...state,
+    gatewayError: payload,
   };
 }

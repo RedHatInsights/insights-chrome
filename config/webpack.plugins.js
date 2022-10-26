@@ -53,7 +53,7 @@ const plugins = (dev = false, beta = false) => [
     inject: 'body',
     minify: false,
     filename: dev ? 'index.html' : '../index.html',
-    base: beta ? '/beta' : '/',
+    base: beta ? '/beta/' : '/',
   }),
   new HtmlWebpackPlugin({
     title: 'Authenticating - console.redhat.com',

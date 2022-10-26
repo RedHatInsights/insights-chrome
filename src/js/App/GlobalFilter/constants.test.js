@@ -90,43 +90,6 @@ describe('updateSelected', () => {
 });
 
 describe('storeFilter', () => {
-  it('should call correct localStorage', () => {
-    storeFilter({
-      someTag: {
-        someKey: {
-          isSelected: true,
-          item: {
-            value: 'some value',
-          },
-          group: {
-            items: ['something'],
-            groupValue: 'something else',
-          },
-        },
-        key: {
-          isSelected: true,
-          value: 'some value',
-          group: {
-            items: ['something'],
-            groupValue: 'something else',
-          },
-        },
-        key2: {
-          isSelected: true,
-          value: 'some value',
-          group: {
-            items: ['something'],
-            groupValue: 'something else',
-          },
-        },
-      },
-    });
-    expect(setItem).toHaveBeenLastCalledWith(
-      'chrome:global-filter/undefined',
-      '{"someTag":{"someKey":{"isSelected":true,"item":{"tagKey":"someKey"},"group":{"groupValue":"something else"}},"key":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key"},"group":{"groupValue":"something else"}},"key2":{"isSelected":true,"item":{"tagValue":"some value","tagKey":"key2"},"group":{"groupValue":"something else"}}}}'
-    );
-  });
-
   describe('global hash', () => {
     it('should add workloads and empty SID', () => {
       const push = jest.fn();
@@ -141,7 +104,6 @@ describe('storeFilter', () => {
             },
           },
         },
-        '',
         true,
         history
       );
@@ -161,7 +123,6 @@ describe('storeFilter', () => {
             },
           },
         },
-        '',
         true,
         history
       );
@@ -192,7 +153,6 @@ describe('storeFilter', () => {
             },
           },
         },
-        '',
         true,
         history
       );
@@ -233,7 +193,6 @@ describe('storeFilter', () => {
             },
           },
         },
-        '',
         true,
         history
       );

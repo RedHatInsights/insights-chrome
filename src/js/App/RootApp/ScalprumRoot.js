@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useCallback, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 
@@ -12,15 +12,23 @@ import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import { SegmentContext } from '../analytics/segment-analytics';
+import LoadingFallback from '../../utils/loading-fallback';
+import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
+const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
 const loaderWrapper = (Component, props = {}) => (
   <Suspense fallback={<NavLoader />}>
     <Component {...props} />
   </Suspense>
 );
+
+const useGlobalFilter = (callback) => {
+  const selectedTags = useSelector(({ globalFilter: { selectedTags } }) => selectedTags, shallowEqual);
+  return callback(selectedTags);
+};
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
   const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
@@ -103,14 +111,26 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }) => {
               setActiveTopic('');
             },
           },
+          clearAnsibleTrialFlag,
+          isAnsibleTrialFlagActive,
+          setAnsibleTrialFlag,
           chromeHistory: history,
           analytics,
+          useGlobalFilter,
         },
       }}
     >
       <Switch>
         <Route exact path="/">
           <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
+        </Route>
+        <Route exact path="/connect/products">
+          <Suspense fallback={LoadingFallback}>
+            <ProductSelection />
+          </Suspense>
+        </Route>
+        <Route path="/connect">
+          <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
         </Route>
         <Route path="/security">
           <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />

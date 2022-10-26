@@ -117,7 +117,7 @@ export const visibilityFunctions = {
       return false;
     }
   },
-  featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && unleashClient.isEnabled(flagName) === expectedValue,
+  featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && unleashClient?.isEnabled(flagName) === expectedValue,
 };
 
 export const isVisible = (limitedApps?: string[], app?: string, visibility?: Record<string, unknown>) => {
@@ -139,8 +139,12 @@ export const activationRequestURLs = [
   'azure-ocp-activation',
   'azure-oke-activation',
   'azure-opp-activation',
+  'azure-ansible-activation',
   'aws-openshift-activation',
   'aws-ocp-activation',
   'aws-oke-activation',
   'aws-opp-activation',
+  'gcp-opp-activation',
+  'gcp-oke-activation',
+  'gcp-ocp-activation',
 ];

@@ -1,5 +1,4 @@
-import Cookies from 'js-cookie';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 import logger from './jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
@@ -8,6 +7,7 @@ import { getEnvDetails, getUrl } from './utils';
 import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from './redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { LibJWT } from './auth';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -72,6 +72,7 @@ async function getProductData() {
 
 export async function createSupportCase(
   userInfo: ChromeUser['identity'],
+  libjwt: LibJWT,
   fields?: {
     caseFields: Record<string, unknown>;
   }
@@ -83,11 +84,12 @@ export async function createSupportCase(
 
   log('Creating a support case');
 
+  const token = await libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken()));
   fetch(caseUrl, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${Cookies.get('cs_jwt')}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

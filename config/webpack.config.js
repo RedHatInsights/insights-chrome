@@ -29,12 +29,7 @@ const commonConfig = ({ dev }) => {
       path: path.resolve(__dirname, '../build/js'),
       filename: 'chrome-root.[fullhash].js',
       publicPath,
-      chunkFilename: ({ chunk }) => {
-        /**
-         * The sso-url.js chunk is required by ephemeral env config map
-         */
-        return chunk.name === 'sso-url' ? '[name].js' : `[name].[fullhash].js`;
-      },
+      chunkFilename: '[name].[fullhash].js',
     },
     devtool: false,
     resolve: {
@@ -44,6 +39,8 @@ const commonConfig = ({ dev }) => {
         ...imageNullLoader(),
         // do not consume unfetch from nested dependencies
         unfetch: path.resolve(__dirname, '../src/js/unfetch'),
+        // charts override for the PDF renderer
+        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(__dirname, '../src/js/overrides/chart-utils-override.js'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
       },

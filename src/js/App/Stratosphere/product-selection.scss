@@ -1,0 +1,26 @@
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.chr-c-product-selection {
+  max-width: 1260px;
+  margin: auto;
+  padding-right: var(--pf-global--spacer--lg);
+  padding-left: var(--pf-global--spacer--lg);
+
+  &__description {
+    text-align: center;
+  }
+
+  &__layout {
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 300px);
+    column-gap: 1em;
+    grid-auto-rows: auto;
+    @media only screen and (max-width: $pf-global--breakpoint--xl) {      
+      grid-template-columns: repeat(2, 300px);
+    }
+    @media only screen and (max-width: $pf-global--breakpoint--md) {      
+      grid-template-columns: repeat(1, minmax(auto, 400px));
+    }
+  }
+}

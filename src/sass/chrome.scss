@@ -30,6 +30,10 @@ aside {
   display:none !important;
 } 
 
+#chrome-app-render-root {
+  height: 100vh;
+}
+
 .pf-c-page.chr-c-page__hasBanner {
   grid-template-areas: "banner banner"
                        "header header"
@@ -113,3 +117,7 @@ aside {
     }
   }
   
+// fix quickstarts drawer overflow for long quickstart/helptopic content
+#chrome-entry {
+  height: 100vh;
+}
