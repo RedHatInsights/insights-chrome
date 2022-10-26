@@ -117,8 +117,9 @@ const Tools = () => {
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
-      title: `${intl.formatMessage(messages.supportOptions)}`,
-      url: 'https://access.redhat.com/support',
+      title: `${intl.formatMessage(messages.apiDocumentation)}`,
+      url: `/docs/api`,
+      appId: 'apiDocs',
     },
     {
       title: `${intl.formatMessage(messages.openSupportCase)}`,
@@ -126,19 +127,19 @@ const Tools = () => {
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
     },
     {
-      title: `${intl.formatMessage(messages.apiDocumentation)}`,
-      url: `/docs/api`,
-      appId: 'apiDocs',
-    },
-    {
       title: `${intl.formatMessage(messages.statusPage)}`,
       url: 'https://status.redhat.com/',
+    },
+    {
+      title: `${intl.formatMessage(messages.supportOptions)}`,
+      url: 'https://access.redhat.com/support',
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
       url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
       isHidden: getSection() !== 'insights',
     },
+
     {
       title: `${intl.formatMessage(messages.demoMode)}`,
       onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
