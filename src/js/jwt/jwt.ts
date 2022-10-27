@@ -10,7 +10,7 @@ import logger from './logger';
 import insightsUrl from './insights/url';
 import insightsUser from './insights/user';
 import urijs from 'urijs';
-import { DEFAULT_ROUTES, options as defaultOptions } from './constants';
+import { DEFAULT_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY, options as defaultOptions } from './constants';
 import Priv from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
@@ -81,15 +81,23 @@ export function decodeToken(str: string): DecodedToken {
 }
 
 export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
+  // clear previous postback
+  localStorage.removeItem(OFFLINE_REDIRECT_STORAGE_KEY);
   const url = urijs(window.location.href);
   url.removeSearch(key);
   url.addSearch(key, val);
+  const redirectUri = url.toString();
+
+  if (redirectUri) {
+    // set new postback
+    localStorage.setItem(OFFLINE_REDIRECT_STORAGE_KEY, redirectUri);
+  }
 
   Promise.resolve(insightsUrl(DEFAULT_ROUTES, configSsoUrl)).then(async (ssoUrl) => {
     const options: KeycloakInitOptions & KeycloakConfig & { promiseType: string; redirectUri: string; url: string } = {
       ...defaultOptions,
       promiseType: 'native',
-      redirectUri: url.toString(),
+      redirectUri,
       url: ssoUrl,
     };
 
@@ -234,7 +242,8 @@ export function login() {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
-  return priv.login({ redirectUri: location.href, scope: getPartnerScope(window.location.pathname) });
+  const redirectUri = location.href;
+  return priv.login({ redirectUri, scope: getPartnerScope(window.location.pathname) });
 }
 
 export function logout(bounce?: boolean) {
