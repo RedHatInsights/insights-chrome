@@ -59,3 +59,5 @@ export const options: ChromeAuthOptions = {
 export const noAuthParam = 'noauth';
 
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
+
+export const OFFLINE_REDIRECT_STORAGE_KEY = 'chrome.offline.redirectUri';
