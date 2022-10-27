@@ -160,6 +160,14 @@ export const populateQuickstartsCatalog = (app: string, quickstarts: QuickStart[
   },
 });
 
+export const addQuickstart = (app: string, quickstart: QuickStart) => ({
+  type: actionTypes.ADD_QUICKSTARTS_TO_APP,
+  payload: {
+    app,
+    quickstart,
+  },
+});
+
 export const disableQuickstarts = () => ({
   type: actionTypes.DISABLE_QUICKSTARTS,
 });
