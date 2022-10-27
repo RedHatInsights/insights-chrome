@@ -106,7 +106,8 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
           setPageMetadata,
         },
         toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
-        quickStarts: quickstartsAPI,
+        // FIXME: Update types once merged
+        quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
         helpTopics: {
           ...helpTopicsAPI,
           setActiveTopic,
@@ -119,7 +120,8 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         setAnsibleTrialFlag,
         chromeHistory: history,
         analytics: analytics!,
-        useGlobalFilter,
+        // FIXME: Update types once merged
+        useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
       },
     },
   };

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from 'axios';
-import { OFFLINE_REDIRECT_STORAGE_KEY } from '../constants';
+import { OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
 
 jest.mock('axios', () => {
   return {
