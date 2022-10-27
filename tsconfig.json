@@ -6,7 +6,7 @@
     "module": "esnext",
     "target": "esnext",
     "jsx": "react",
-    "allowJs": false,
+    "allowJs": true,
     "moduleResolution": "node",
     "removeComments": false,
     "strict": true,
