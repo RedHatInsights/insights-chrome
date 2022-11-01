@@ -79,6 +79,10 @@
     "defaultMessage": "Feedback Sent",
     "description": "Feedback Sent"
   },
+  "filterByTags": {
+    "defaultMessage": "Filter by tags",
+    "description": "Placeholder to indicate "
+  },
   "filterResults": {
     "defaultMessage": "Filter results",
     "description": "Filter results"
@@ -102,6 +106,10 @@
   "globalFilterNotApplicable": {
     "defaultMessage": "Global filter is not applicable for this page",
     "description": "Global filter is not applicable for this page"
+  },
+  "globalRuntimeErrorId": {
+    "defaultMessage": "Sentry error ID: {errorId}",
+    "description": "Global runtime error Id"
   },
   "helpUsImproveHCC": {
     "defaultMessage": "Help us improve the Red Hat Hybrid Cloud Console.",
@@ -160,7 +168,7 @@
     "description": "My profile"
   },
   "myUserAccess": {
-    "defaultMessage": "MyUserAccess",
+    "defaultMessage": "My User Access",
     "description": "My User Access"
   },
   "name": {
@@ -198,6 +206,12 @@
   "orgAdministrator": {
     "defaultMessage": "Org. Administrator",
     "description": "Org. Administrator"
+  },
+  "permissionErrorDescription": {
+    "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions."
+  },
+  "permissionErrorDetail": {
+    "defaultMessage": "Detail: {message}."
   },
   "personalAccount": {
     "defaultMessage": "Personal account",
