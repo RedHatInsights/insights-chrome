@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 
 type SegmentEnvs = 'dev' | 'prod';
-type SegmentModules = 'openshift';
+type SegmentModules = 'acs' | 'openshift';
 
 const KEY_FALLBACK = {
   prod: 'nm7VsnYsBVJ9MqjaVInft69pAkhCXq9Q',
@@ -49,9 +49,11 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   moduleAPIKey ||
   {
     prod: {
+      acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
       openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
     },
     dev: {
+      acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
       openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
     },
   }[env]?.[module] ||
