@@ -73,7 +73,7 @@ function initSentry() {
     maxBreadcrumbs: 50,
     attachStacktrace: true,
     integrations: [new BrowserTracing()],
-    tracesSampleRate: 0.5, // send only every second transaction to Sentry
+    tracesSampleRate: 0.1,
   });
 }
 
