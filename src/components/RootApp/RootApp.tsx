@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Router } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
@@ -7,7 +7,7 @@ import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from '../IDPChecker/IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
-import { populateQuickstartsCatalog } from '../../redux/actions';
+import { clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
@@ -32,6 +32,10 @@ const RootApp = (props: RootAppProps) => {
       },
     }: ReduxState) => Object.values(quickstarts).flat()
   );
+
+  useEffect(() => {
+    dispatch(clearQuickstarts(activeQuickStartID));
+  }, [activeModule]);
   /**
    * Updates the available quick starts
    *
@@ -77,7 +81,7 @@ const RootApp = (props: RootAppProps) => {
   };
   return (
     <Router history={chromeHistory}>
-      <SegmentProvider activeModule={activeModule}>
+      <SegmentProvider activeModule={activeModule!}>
         <FeatureFlagsProvider>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}

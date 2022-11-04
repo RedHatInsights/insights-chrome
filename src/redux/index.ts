@@ -5,6 +5,7 @@ import {
   addQuickstartstoApp,
   appNavClick,
   changeActiveModuleReducer,
+  clearQuickstartsReducer,
   contextSwitcherBannerReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
@@ -44,6 +45,7 @@ import {
   CHROME_GET_ALL_WORKLOADS,
   CHROME_PAGE_ACTION,
   CHROME_PAGE_OBJECT,
+  CLEAR_QUICKSTARTS,
   DISABLE_QUICKSTARTS,
   GLOBAL_FILTER_REMOVE,
   GLOBAL_FILTER_SCOPE,
@@ -88,6 +90,7 @@ const reducers = {
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
   [SET_GATEWAY_ERROR]: setGatewayError,
+  [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
 };
 
 const globalFilter = {
