@@ -31,14 +31,7 @@ const plugins = (dev = false, beta = false) => {
       name: 'chrome',
       filename: dev ? 'chrome.js' : 'chrome.[fullhash].js',
       exposes: {
-        './InventoryTable': resolve(__dirname, '../src/js/inventory/modules/InventoryTable.js'),
-        './AppInfo': resolve(__dirname, '../src/js/inventory/modules/AppInfo.js'),
-        './InventoryDetailHead': resolve(__dirname, '../src/js/inventory/modules/InventoryDetailHead.js'),
-        './InventoryDetail': resolve(__dirname, '../src/js/inventory/modules/InventoryDetail.js'),
-        './TagWithDialog': resolve(__dirname, '../src/js/inventory/modules/TagWithDialog.js'),
-        './DetailWrapper': resolve(__dirname, '../src/js/inventory/modules/DetailWrapper.js'),
-        './DownloadButton': resolve(__dirname, '../src/js/pdf/DownloadButton.js'),
-        './useChromeAuth': resolve(__dirname, '../src/js/jwt/modules/useChromeAuth.ts'),
+        './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },

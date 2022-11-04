@@ -27,10 +27,10 @@ const commonConfig = ({ dev }) => {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
         {
-          main: path.resolve(__dirname, '../src/js/chrome.js'),
+          main: path.resolve(__dirname, '../src/index.ts'),
           vendors: ['react', 'react-dom', 'react-refresh/runtime'],
         }
-      : path.resolve(__dirname, '../src/js/chrome.js'),
+      : path.resolve(__dirname, '../src/index.ts'),
     output: {
       path: path.resolve(__dirname, '../build/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
@@ -55,10 +55,13 @@ const commonConfig = ({ dev }) => {
       alias: {
         ...searchIgnoredStyles(path.resolve(__dirname, '../')),
         ...imageNullLoader(),
-        // do not consume unfetch from nested dependencies
-        unfetch: path.resolve(__dirname, '../src/js/unfetch'),
         // charts override for the PDF renderer
-        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(__dirname, '../src/js/overrides/chart-utils-override.js'),
+        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(
+          __dirname,
+          '../src/moduleOverrides/chart-utils-override.js'
+        ),
+        // do not consume unfetch from nested dependencies
+        unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
       },
@@ -83,6 +86,7 @@ const commonConfig = ({ dev }) => {
     },
     module: {
       rules: [
+        // we need babel loadr because of the PDF/Charts override
         {
           test: /\.jsx?$/,
           use: 'babel-loader',
