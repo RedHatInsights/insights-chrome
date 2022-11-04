@@ -5,7 +5,7 @@ const externalToken = require('../../testdata/externalToken.json');
 const ibmToken = require('../../testdata/ibmToken.json');
 
 describe('User + Analytics', () => {
-  const getPendoConf = analytics.__get__('getPendoConf');
+  const getPendoConf = analytics.getPendoConf;
   describe('buildUser + getPendoConf internal', () => {
     test('should build a valid internal Pendo config', () => {
       const conf = getPendoConf(user.buildUser(token));
