@@ -352,7 +352,7 @@ export default defineMessages({
     defaultMessage: 'Internal user',
   },
   myProfile: { id: 'myProfile', description: 'My profile', defaultMessage: 'My profile' },
-  myUserAccess: { id: 'myUserAccess', description: 'My User Access', defaultMessage: 'MyUserAccess' },
+  myUserAccess: { id: 'myUserAccess', description: 'My User Access', defaultMessage: 'My User Access' },
   userPreferences: {
     id: 'userPreferences',
     description: 'User Preferences',

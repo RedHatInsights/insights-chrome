@@ -2,6 +2,7 @@ import { applyReducerHash } from '@redhat-cloud-services/frontend-components-uti
 
 import {
   accessRequestsNotificationsReducer,
+  addQuickstartstoApp,
   appNavClick,
   changeActiveModuleReducer,
   contextSwitcherBannerReducer,
@@ -35,6 +36,7 @@ import {
   onTagSelect,
 } from './globalFilterReducers';
 import {
+  ADD_QUICKSTARTS_TO_APP,
   APP_NAV_CLICK,
   CHANGE_ACTIVE_MODULE,
   CHROME_GET_ALL_SIDS,
@@ -81,6 +83,7 @@ const reducers = {
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
+  [ADD_QUICKSTARTS_TO_APP]: addQuickstartstoApp,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
