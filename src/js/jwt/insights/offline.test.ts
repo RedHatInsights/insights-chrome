@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from 'axios';
+import { OFFLINE_REDIRECT_STORAGE_KEY } from '../constants';
 
 jest.mock('axios', () => {
   return {
@@ -67,6 +68,7 @@ describe('Offline', () => {
         value: getMockWindow().history,
         writable: true,
       });
+      localStorage.setItem(OFFLINE_REDIRECT_STORAGE_KEY, getMockWindow().location.href);
     });
     test('fails when there is no offline postbackUrl', async () => {
       try {
@@ -101,6 +103,7 @@ describe('Offline', () => {
           value: getMockWindow().history,
           writable: true,
         });
+        localStorage.setItem(OFFLINE_REDIRECT_STORAGE_KEY, getMockWindow().location.href);
         offline.wipePostbackParamsThatAreNotForUs();
       });
 
