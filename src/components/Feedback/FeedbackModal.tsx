@@ -148,7 +148,15 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
             onClickBack={() => setModalPage('feedbackHome')}
             handleFeedbackError={() => setModalPage('feedbackError')}
             modalTitle={intl.formatMessage(messages.informRedhatDirection)}
-            modalDescription={<Text>{intl.formatMessage(messages.informDirectionDescription)}</Text>}
+            modalDescription={
+              <Text>
+                {intl.formatMessage(messages.informDirectionDescription)}
+                <Text component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
+                  {intl.formatMessage(messages.userResearchTeam)} <ExternalLinkAltIcon />
+                </Text>
+                {intl.formatMessage(messages.directInfluence)}
+              </Text>
+            }
             feedbackType="[Research Opportunities]"
             textAreaHidden={true}
             checkboxDescription={intl.formatMessage(messages.weNeverSharePersonalInformation)}

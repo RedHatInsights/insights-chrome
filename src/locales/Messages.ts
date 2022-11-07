@@ -498,10 +498,20 @@ export default defineMessages({
   },
   informDirectionDescription: {
     id: 'informDirectionDescription',
+    description: 'By participating in feedback sessions, usability tests, and interviews with our ',
+    defaultMessage: 'By participating in feedback sessions, usability tests, and interviews with our ',
+  },
+  userResearchTeam: {
+    id: 'userResearchTeam',
+    description: 'User Research Team',
+    defaultMessage: 'User Research Team',
+  },
+  directInfluence: {
+    id: 'directInfluence',
     description:
-      'By participating in feedback sessions, usability tests, and interviews with our User Research Team your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
     defaultMessage:
-      'By participating in feedback sessions, usability tests, and interviews with our User Research Team your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
   },
   bugReported: {
     id: 'bugReported',
