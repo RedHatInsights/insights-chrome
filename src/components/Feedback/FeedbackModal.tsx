@@ -20,18 +20,12 @@ import { useIntl } from 'react-intl';
 import { DeepRequired } from 'utility-types';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';
-import Feedback from './Feedback';
-import InformDirection from './InformDirection';
+import FeedbackForm from './FeedbackForm';
 import { toggleFeedbackModal } from '../../redux/actions';
 import { ReduxState } from '../../redux/store';
 import FeedbackSuccess from './FeedbackSuccess';
-<<<<<<< HEAD:src/components/Feedback/FeedbackModal.tsx
 import messages from '../../locales/Messages';
-=======
-import ReportBug from './ReportBug';
-import messages from '../../Messages';
 import FeedbackError from './FeedbackError';
->>>>>>> 2ce05700 (Add Report Bug and Inform Direction):src/js/App/Feedback/FeedbackModal.tsx
 
 import './Feedback.scss';
 
@@ -110,27 +104,55 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
         );
       case 'feedbackOne':
         return (
-          <Feedback
+          <FeedbackForm
             user={user}
             onCloseModal={handleCloseModal}
             onSubmit={() => setModalPage('feedbackSuccess')}
             onClickBack={() => setModalPage('feedbackHome')}
             handleFeedbackError={() => setModalPage('feedbackError')}
+            modalTitle={intl.formatMessage(messages.shareYourFeedback)}
+            textareaLabel={intl.formatMessage(messages.enterFeedback)}
+            feedbackType="Feedback"
+            checkboxDescription={intl.formatMessage(messages.learnAboutResearchOpportunities)}
           />
         );
       case 'reportBugOne':
         return (
-          <ReportBug
+          <FeedbackForm
             user={user}
             onCloseModal={handleCloseModal}
             onSubmit={() => setModalPage('feedbackSuccess')}
             onClickBack={() => setModalPage('feedbackHome')}
             handleFeedbackError={() => setModalPage('feedbackError')}
+            modalTitle={intl.formatMessage(messages.reportABug)}
+            modalDescription={
+              <Text>
+                {intl.formatMessage(messages.describeReportBug)}{' '}
+                <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
+                  {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
+                </Text>
+              </Text>
+            }
+            feedbackType="Bug"
+            checkboxDescription={`${intl.formatMessage(messages.learnAboutResearchOpportunities)} ${intl.formatMessage(
+              messages.weNeverSharePersonalInformation
+            )}`}
           />
         );
       case 'informDirection':
         return (
-          <InformDirection user={user} onCloseModal={handleCloseModal} onSubmit={handleCloseModal} onClickBack={() => setModalPage('feedbackHome')} />
+          <FeedbackForm
+            user={user}
+            onCloseModal={handleCloseModal}
+            onSubmit={handleCloseModal}
+            onClickBack={() => setModalPage('feedbackHome')}
+            handleFeedbackError={() => setModalPage('feedbackError')}
+            modalTitle={intl.formatMessage(messages.informRedhatDirection)}
+            modalDescription={<Text>{intl.formatMessage(messages.informDirectionDescription)}</Text>}
+            feedbackType="[Research Opportunities]"
+            textAreaHidden={true}
+            checkboxDescription={intl.formatMessage(messages.weNeverSharePersonalInformation)}
+          />
         );
       case 'feedbackSuccess':
         return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -12,27 +12,45 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import './Feedback.scss';
-import PropTypes from 'prop-types';
-import { getEnv, getUrl, isProd } from '../../utils';
 import { useIntl } from 'react-intl';
-import messages from '../../Messages';
 
-export type ReportBugProps = {
+import messages from '../../locales/Messages';
+import { getEnv, getUrl, isProd } from '../../utils/common';
+
+import './Feedback.scss';
+
+export type FeedbackFormProps = {
   user: DeepRequired<ChromeUser>;
   onCloseModal: () => void;
   onSubmit: () => void;
   onClickBack: () => void;
   handleFeedbackError: () => void;
+  modalTitle: string;
+  modalDescription?: string | ReactNode;
+  textareaLabel?: string;
+  feedbackType: 'Feedback' | 'Bug' | '[Research Opportunities]';
+  checkboxDescription: string;
+  textAreaHidden?: boolean;
 };
 
-const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackError }: ReportBugProps) => {
+const FeedbackForm = ({
+  user,
+  onCloseModal,
+  onSubmit,
+  onClickBack,
+  handleFeedbackError,
+  modalTitle,
+  modalDescription,
+  textareaLabel,
+  feedbackType,
+  checkboxDescription,
+  textAreaHidden = false,
+}: FeedbackFormProps) => {
+  const intl = useIntl();
   const [textAreaValue, setTextAreaValue] = useState('');
   const [checked, setChecked] = useState(false);
-  const intl = useIntl();
   const env = getEnv();
   const app = getUrl('app');
   const bundle = getUrl('bundle');
@@ -43,7 +61,7 @@ const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackEr
     const token = await window.insights.chrome.auth.getToken();
     if (isAvailable) {
       try {
-        const response = await fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
+        await fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -51,14 +69,13 @@ const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackEr
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            description: `Bug: ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, 
-          Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`,
+            description: `${feedbackType} ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${
+              user.identity.account_number
+            }, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`, //eslint-disable-line
             summary: `${addFeedbackTag()} App Feedback`,
             labels: [app, bundle],
           }),
-        });
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const result = response.json();
+        }).then((response) => response.json());
         onSubmit();
       } catch (err) {
         console.error(err);
@@ -72,34 +89,30 @@ const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackEr
   return (
     <div className="chr-c-feedback-content">
       <TextContent>
-        <Text component={TextVariants.h1}>{intl.formatMessage(messages.reportABug)}</Text>
-        <Text>
-          {intl.formatMessage(messages.describeReportBug)}{' '}
-          <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
-            {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
-          </Text>
-        </Text>
+        <Text component={TextVariants.h1}>{modalTitle}</Text>
+        {modalDescription}
       </TextContent>
       <Form>
-        <FormGroup fieldId="horizontal-form-exp">
-          <TextArea
-            value={textAreaValue}
-            onChange={(value) => setTextAreaValue(value)}
-            className="chr-c-feedback-text-area"
-            name="feedback-description-text"
-            id="bug-report-description-text"
-            placeholder={intl.formatMessage(messages.addDescription)}
-          />
-        </FormGroup>
+        {textAreaHidden ? (
+          ''
+        ) : (
+          <FormGroup label={textareaLabel} fieldId="horizontal-form-exp">
+            <TextArea
+              value={textAreaValue}
+              onChange={(value) => setTextAreaValue(value)}
+              className="chr-c-feedback-text-area"
+              name="feedback-description-text"
+              id="feedback-description-text"
+            />
+          </FormGroup>
+        )}
         <FormGroup className="pf-u-mt-20">
           <Checkbox
             id="feedback-checkbox"
             isChecked={checked}
             onChange={() => setChecked(!checked)}
             label={intl.formatMessage(messages.researchOpportunities)}
-            description={`${intl.formatMessage(messages.learnAboutResearchOpportunities)} ${intl.formatMessage(
-              messages.weNeverSharePersonalInformation
-            )}`}
+            description={checkboxDescription}
           />
         </FormGroup>
       </Form>
@@ -118,10 +131,10 @@ const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackEr
       <div className="chr-c-feedback-buttons">
         <Button
           ouiaId="submit-feedback"
-          isDisabled={textAreaValue.length > 1 ? false : true}
           className="chr-c-feedback-footer-button"
           key="confirm"
           variant="primary"
+          isDisabled={feedbackType !== '[Research Opportunities]' ? (textAreaValue.length > 1 ? false : true) : !checked}
           onClick={handleModalSubmission}
         >
           {intl.formatMessage(messages.submitFeedback)}
@@ -137,12 +150,4 @@ const ReportBug = ({ user, onCloseModal, onSubmit, onClickBack, handleFeedbackEr
   );
 };
 
-ReportBug.propTypes = {
-  user: PropTypes.object,
-  modalPage: PropTypes.string,
-  setModalPage: PropTypes.func,
-  onCloseModal: PropTypes.func,
-  onSubmit: PropTypes.func,
-};
-
-export default ReportBug;
+export default FeedbackForm;
