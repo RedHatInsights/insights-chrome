@@ -104,10 +104,13 @@ export default defineMessages({
   },
   learnAboutResearchOpportunities: {
     id: 'learnAboutResearchOpportunities',
-    description:
-      'Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time.',
-    defaultMessage:
-      'Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time.',
+    description: 'Learn about opportunities to share your feedback with our User Research Team.',
+    defaultMessage: 'Learn about opportunities to share your feedback with our User Research Team.',
+  },
+  weNeverSharePersonalInformation: {
+    id: 'weNeverSharePersonalInformation',
+    description: 'We never share your personal information, and you can opt out at any time.',
+    defaultMessage: 'We never share your personal information, and you can opt out at any time.',
   },
   email: {
     id: 'email',
@@ -144,10 +147,10 @@ export default defineMessages({
     description: 'Share feedback',
     defaultMessage: 'Share feedback',
   },
-  orShareIdeas: {
-    id: 'orShareIdeas',
-    description: 'or share your ideas.',
-    defaultMessage: 'or share your ideas.',
+  howIsConsoleExperience: {
+    id: 'howIsConsoleExperience',
+    description: 'What has your console experience been like so far?',
+    defaultMessage: 'What has your console experience been like so far?',
   },
   reportBug: {
     id: 'reportBug',
@@ -460,5 +463,64 @@ export default defineMessages({
     id: 'filterByTags',
     description: 'Placeholder to indicate ',
     defaultMessage: 'Filter by tags',
+  },
+  reportABug: {
+    id: 'reportABug',
+    description: 'Report a bug',
+    defaultMessage: 'Report a bug',
+  },
+  describeReportBug: {
+    id: 'describeReportBug',
+    description:
+      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+    defaultMessage:
+      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+  },
+  describeBugUrgentCases: {
+    id: 'describeBugUrgentCases',
+    description: 'Describe the bug you encountered. For urgent issues, open a support case instead.',
+    defaultMessage: 'Describe the bug you encountered. For urgent issues, open a support case instead.',
+  },
+  addDescription: {
+    id: 'addDescription',
+    description: 'Add description',
+    defaultMessage: 'Add description',
+  },
+  back: {
+    id: 'back',
+    description: 'Back',
+    defaultMessage: 'Back',
+  },
+  informRedhatDirection: {
+    id: 'informRedhatDirection',
+    description: 'Inform the direction of Red Hat',
+    defaultMessage: 'Inform the direction of Red Hat',
+  },
+  informDirectionDescription: {
+    id: 'informDirectionDescription',
+    description: 'By participating in feedback sessions, usability tests, and interviews with our ',
+    defaultMessage: 'By participating in feedback sessions, usability tests, and interviews with our ',
+  },
+  userResearchTeam: {
+    id: 'userResearchTeam',
+    description: 'User Research Team',
+    defaultMessage: 'User Research Team',
+  },
+  directInfluence: {
+    id: 'directInfluence',
+    description:
+      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+    defaultMessage:
+      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+  },
+  bugReported: {
+    id: 'bugReported',
+    description: 'Bug Reported',
+    defaultMessage: 'Bug Reported',
+  },
+  teamWillReviewBug: {
+    id: 'teamWillReviewBug',
+    description: 'We appreciate your feedback and our team will review your report shorlty',
+    defaultMessage: 'We appreciate your feedback and our team will review your report shorlty',
   },
 });
