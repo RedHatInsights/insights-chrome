@@ -152,7 +152,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
               <Text>
                 {intl.formatMessage(messages.informDirectionDescription)}
                 <Text component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
-                  {intl.formatMessage(messages.userResearchTeam)} <ExternalLinkAltIcon />
+                  {intl.formatMessage(messages.userResearchTeam)}
                 </Text>
                 {intl.formatMessage(messages.directInfluence)}
               </Text>

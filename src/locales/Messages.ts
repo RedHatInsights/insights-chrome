@@ -509,9 +509,9 @@ export default defineMessages({
   directInfluence: {
     id: 'directInfluence',
     description:
-      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+      ', your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
     defaultMessage:
-      ' your feedback will directly influence the future of Red Hat’s products. or opt in below to hear about future research opportunities via email.',
+      ', your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
   },
   bugReported: {
     id: 'bugReported',
