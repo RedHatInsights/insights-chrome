@@ -40,7 +40,8 @@ export type FeedbackPages =
   | 'reportBugOne'
   | 'informDirection'
   | 'feedbackError'
-  | 'bugReportSuccess';
+  | 'bugReportSuccess'
+  | 'informDirectionSuccess';
 
 const FeedbackModal = ({ user }: FeedbackModalProps) => {
   const intl = useIntl();
@@ -114,6 +115,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
             textareaLabel={intl.formatMessage(messages.enterFeedback)}
             feedbackType="Feedback"
             checkboxDescription={intl.formatMessage(messages.learnAboutResearchOpportunities)}
+            submitTitle={intl.formatMessage(messages.submitFeedback)}
           />
         );
       case 'reportBugOne':
@@ -121,7 +123,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
           <FeedbackForm
             user={user}
             onCloseModal={handleCloseModal}
-            onSubmit={() => setModalPage('feedbackSuccess')}
+            onSubmit={() => setModalPage('bugReportSuccess')}
             onClickBack={() => setModalPage('feedbackHome')}
             handleFeedbackError={() => setModalPage('feedbackError')}
             modalTitle={intl.formatMessage(messages.reportABug)}
@@ -137,6 +139,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
             checkboxDescription={`${intl.formatMessage(messages.learnAboutResearchOpportunities)} ${intl.formatMessage(
               messages.weNeverSharePersonalInformation
             )}`}
+            submitTitle={intl.formatMessage(messages.submitFeedback)}
           />
         );
       case 'informDirection':
@@ -144,7 +147,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
           <FeedbackForm
             user={user}
             onCloseModal={handleCloseModal}
-            onSubmit={handleCloseModal}
+            onSubmit={() => setModalPage('informDirectionSuccess')}
             onClickBack={() => setModalPage('feedbackHome')}
             handleFeedbackError={() => setModalPage('feedbackError')}
             modalTitle={intl.formatMessage(messages.informRedhatDirection)}
@@ -160,6 +163,7 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
             feedbackType="[Research Opportunities]"
             textAreaHidden={true}
             checkboxDescription={intl.formatMessage(messages.weNeverSharePersonalInformation)}
+            submitTitle={intl.formatMessage(messages.joinMailingList)}
           />
         );
       case 'feedbackSuccess':
@@ -175,6 +179,14 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
           <FeedbackSuccess
             successTitle={intl.formatMessage(messages.bugReported)}
             successDescription={intl.formatMessage(messages.teamWillReviewBug)}
+            onCloseModal={handleCloseModal}
+          />
+        );
+      case 'informDirectionSuccess':
+        return (
+          <FeedbackSuccess
+            successTitle={intl.formatMessage(messages.responseSent)}
+            successDescription={intl.formatMessage(messages.thankYouForInterest)}
             onCloseModal={handleCloseModal}
           />
         );

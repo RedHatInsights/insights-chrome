@@ -33,6 +33,7 @@ export type FeedbackFormProps = {
   feedbackType: 'Feedback' | 'Bug' | '[Research Opportunities]';
   checkboxDescription: string;
   textAreaHidden?: boolean;
+  submitTitle: string;
 };
 
 const FeedbackForm = ({
@@ -47,6 +48,7 @@ const FeedbackForm = ({
   feedbackType,
   checkboxDescription,
   textAreaHidden = false,
+  submitTitle,
 }: FeedbackFormProps) => {
   const intl = useIntl();
   const [textAreaValue, setTextAreaValue] = useState('');
@@ -137,7 +139,7 @@ const FeedbackForm = ({
           isDisabled={feedbackType !== '[Research Opportunities]' ? (textAreaValue.length > 1 ? false : true) : !checked}
           onClick={handleModalSubmission}
         >
-          {intl.formatMessage(messages.submitFeedback)}
+          {submitTitle}
         </Button>
         <Button ouiaId="back-feedback" className="chr-c-feedback-footer-button" key="back" variant="secondary" onClick={onClickBack}>
           {intl.formatMessage(messages.back)}
