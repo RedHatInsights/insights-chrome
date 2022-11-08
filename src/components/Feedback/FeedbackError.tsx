@@ -7,20 +7,23 @@ import messages from '../../locales/Messages';
 
 import './Feedback.scss';
 
-export type FeedbackSuccessProps = {
+export type FeedbackErrorProps = {
   onCloseModal: () => void;
-  successTitle: string;
-  successDescription: string;
 };
 
-const FeedbackSuccess = ({ onCloseModal, successTitle, successDescription }: FeedbackSuccessProps) => {
+const FeedbackError = ({ onCloseModal }: FeedbackErrorProps) => {
   const intl = useIntl();
   return (
     <div className="chr-c-feedback-success-content">
       <CheckIcon size="md" color="var(--pf-global--success-color--100)" className="pf-u-mx-auto" />
       <TextContent>
-        <Text component={TextVariants.h1}>{successTitle}</Text>
-        <Text>{successDescription}</Text>
+        <Text component={TextVariants.h1}>{intl.formatMessage(messages.somethingWentWrong)}</Text>
+        <Text>
+          {intl.formatMessage(messages.problemProcessingRequest)}{' '}
+          <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
+            {intl.formatMessage(messages.redHatSupport)}
+          </a>
+        </Text>
       </TextContent>
       <Button variant="primary" onClick={onCloseModal}>
         {intl.formatMessage(messages.close)}
@@ -29,4 +32,4 @@ const FeedbackSuccess = ({ onCloseModal, successTitle, successDescription }: Fee
   );
 };
 
-export default FeedbackSuccess;
+export default FeedbackError;
