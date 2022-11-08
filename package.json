@@ -23,7 +23,7 @@
     "test": "jest --forceExit --detectOpenHandles",
     "test:ct": "node ./cypress/run-test.js",
     "translations": "npm-run-all translations:*",
-    "translations:extract": "npx formatjs extract ./src/js/*.{js,jsx,ts,tsx} --ignore='**/*.d.ts' --out-file ./locales/translation-template.json",
+    "translations:extract": "npx formatjs extract ./src/locales/*.{js,jsx,ts,tsx} --ignore='**/*.d.ts' --out-file ./locales/translation-template.json",
     "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
     "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test",
