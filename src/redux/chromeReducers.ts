@@ -235,7 +235,6 @@ export function populateQuickstartsReducer(
     quickstarts: {
       ...state.quickstarts,
       quickstarts: {
-        ...state.quickstarts.quickstarts,
         [app]: quickstarts,
       },
     },
@@ -261,6 +260,26 @@ export function disableQuickstartsReducer(state: ChromeState): ChromeState {
     quickstarts: {
       ...state.quickstarts,
       disabled: true,
+    },
+  };
+}
+
+export function clearQuickstartsReducer(
+  state: ChromeState,
+  { payload: { activeQuickstart } }: { payload: { activeQuickstart?: string } }
+): ChromeState {
+  return {
+    ...state,
+    quickstarts: {
+      ...state.quickstarts,
+      // do not remove currently opened quickstart
+      quickstarts: Object.entries(state.quickstarts.quickstarts)?.reduce(
+        (acc, [namespace, quickstarts]) => ({
+          ...acc,
+          [namespace]: Array.isArray(quickstarts) ? quickstarts.filter((qs) => qs?.metadata?.name === activeQuickstart) : quickstarts,
+        }),
+        {}
+      ),
     },
   };
 }

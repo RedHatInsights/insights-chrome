@@ -166,6 +166,13 @@ export const addQuickstart = (app: string, quickstart: QuickStart) => ({
   },
 });
 
+export const clearQuickstarts = (activeQuickstart?: string) => ({
+  type: actionTypes.CLEAR_QUICKSTARTS,
+  payload: {
+    activeQuickstart,
+  },
+});
+
 export const disableQuickstarts = () => ({
   type: actionTypes.DISABLE_QUICKSTARTS,
 });
