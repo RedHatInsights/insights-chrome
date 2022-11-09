@@ -167,6 +167,10 @@
     "defaultMessage": "Internal user",
     "description": "Internal user"
   },
+  "joinMailingList": {
+    "defaultMessage": "Join mailing list",
+    "description": "Join mailing list"
+  },
   "knownOutages": {
     "defaultMessage": "for known outages.",
     "description": "for known outages."
@@ -273,6 +277,10 @@
     "defaultMessage": "Yes, I would like to hear about research opportunities",
     "description": "Yes, I would like to hear about research opportunities"
   },
+  "responseSent": {
+    "defaultMessage": "Response sent",
+    "description": "Response sent"
+  },
   "returnToHomepage": {
     "defaultMessage": "Return to home page",
     "description": "Return to home page"
@@ -344,6 +352,10 @@
   "thankYouForFeedback": {
     "defaultMessage": "Thank you, we appreciate your feedback.",
     "description": "Thank you, we appreciate your feedback."
+  },
+  "thankYouForInterest": {
+    "defaultMessage": "Thank you for your interest in user research. You have been added to our mailing list.",
+    "description": "Thank you for your interest in user research. You have been added to our mailing list."
   },
   "thereWillBeACatalgPage": {
     "defaultMessage": "There will be a catalog page for {bundle} bundle",

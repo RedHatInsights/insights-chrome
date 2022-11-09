@@ -523,4 +523,19 @@ export default defineMessages({
     description: 'We appreciate your feedback and our team will review your report shorlty',
     defaultMessage: 'We appreciate your feedback and our team will review your report shorlty',
   },
+  responseSent: {
+    id: 'responseSent',
+    description: 'Response sent',
+    defaultMessage: 'Response sent',
+  },
+  thankYouForInterest: {
+    id: 'thankYouForInterest',
+    description: 'Thank you for your interest in user research. You have been added to our mailing list.',
+    defaultMessage: 'Thank you for your interest in user research. You have been added to our mailing list.',
+  },
+  joinMailingList: {
+    id: 'joinMailingList',
+    description: 'Join mailing list',
+    defaultMessage: 'Join mailing list',
+  },
 });
