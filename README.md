@@ -66,6 +66,25 @@ To run a script you have to install dependencies `npm install`. Then you are fre
 
 As with any application, chrome can be a host application for others. You can configure the `routes` object in the `webpack.config.js` file as described in the proxy config [docs](https://github.com/RedHatInsights/frontend-components/tree/master/packages/config#routes).
 
+#### Example
+
+For illustration, to locally deploy Advisor for OpenShift together with Insights Chrome, you would require to 
+1. Run Advisor with `--port=8004` (or any other available port number),
+2. Update the webpack config in the following way:
+```
+...
+devServer: {
+    ...
+    routes: {
+        '/apps/ocp-advisor': {
+            host: 'https://localhost:8004',
+        },
+    },
+}
+...
+```
+3. Run insights-chrome with `npm run dev` or `npm run dev:beta`.
+
 ## LocalStorage Debugging
 
 There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
