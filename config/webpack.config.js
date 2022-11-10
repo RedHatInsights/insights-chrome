@@ -35,6 +35,7 @@ const commonConfig = ({ dev }) => {
       path: path.resolve(__dirname, '../build/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
       filename: dev ? '[name].js' : 'chrome-root.[fullhash].js',
+      hashFunction: 'xxhash64',
       publicPath,
       chunkFilename: dev ? '[name].js' : '[name].[fullhash].js',
     },
