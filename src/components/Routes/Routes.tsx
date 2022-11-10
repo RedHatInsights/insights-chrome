@@ -6,7 +6,7 @@ import NotFoundRoute from '../NotFoundRoute';
 import { isFedRamp } from '../../utils/common';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
-import AppsServices from '../../layouts/AppsServices';
+import AllServices from '../../layouts/AllServices';
 
 const QuickstartCatalogRoute = lazy(() => import('../QuickstartsCatalogRoute'));
 
@@ -51,8 +51,8 @@ const Routes = ({ routesProps }: RoutesProps) => {
       {list.map((app) => (
         <ChromeRoute key={app.path} {...routesProps} {...app} />
       ))}
-      <Route path="/allappsandservices">
-        <AppsServices />
+      <Route path="/allservices">
+        <AllServices />
       </Route>
       <Route>
         <NotFoundRoute />
