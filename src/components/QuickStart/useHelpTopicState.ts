@@ -13,7 +13,7 @@ type HelpTopicsState = {
 
 export type AddHelpTopic = (topics: HelpTopic[], enabled?: boolean) => void;
 export type DisableTopics = (...topicsNames: string[]) => void;
-export type EnableTopics = (...topicNames: string[]) => Promise<void[]>;
+export type EnableTopics = (...topicNames: string[]) => Promise<HelpTopic[]>;
 
 const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: {} }) => {
   const [helpTopics, setHelpTopics] = useState<{
@@ -80,12 +80,12 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
 
     try {
       const { data } = await instance.get<{ content: HelpTopic }[]>(`/api/quickstarts/v1/helptopics?${params.toString()}`);
-      addHelpTopics(
-        data.map(({ content }) => content),
-        enabled
-      );
+      const content = data.map(({ content }) => content);
+      addHelpTopics(content, enabled);
+      return content;
     } catch (error) {
       console.error('Unable to fetch help topics', error);
+      return [];
     }
   }
 
@@ -103,8 +103,12 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     if (newTopics.length > 0) {
       tasks.push(fetchHelpTopics({ enabled: true, names: newTopics }));
     }
+    const existingContent: HelpTopic[] = Object.entries(helpTopics).reduce<HelpTopic[]>(
+      (acc, [name, topic]) => [...acc, ...(topicsNames.includes(name) ? [topic] : [])],
+      []
+    );
     batchToggleTopic(existingTopics, true);
-    return await Promise.all(tasks);
+    return await Promise.all(tasks).then((res) => [...res.flat(), ...existingContent]);
   };
 
   const disableTopics: DisableTopics = (...topicsNames: string[]) => {
