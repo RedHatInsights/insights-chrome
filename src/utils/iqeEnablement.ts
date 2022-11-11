@@ -83,20 +83,17 @@ function init(store: Store) {
     }
     return prom
       .then(async (res) => {
+        const resCloned = res.clone();
         if (!res.ok) {
           try {
-            const isJson = res?.headers?.get('content-type')?.includes('application/json');
-            const data = isJson ? await res.json() : await res.text();
+            const isJson = resCloned?.headers?.get('content-type')?.includes('application/json');
+            const data = isJson ? await resCloned.json() : await resCloned.text();
             const gatewayError = get3scaleError(data);
             if (gatewayError) {
               store.dispatch(setGatewayError(gatewayError));
             }
 
-            return {
-              ...res,
-              headers: res.headers,
-              ...(isJson ? { json: () => Promise.resolve(data) } : { text: () => Promise.resolve(data) }),
-            };
+            return res;
           } catch (error) {
             console.error('unable to check unauthotized response', error);
             return res;
