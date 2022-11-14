@@ -1,0 +1,25 @@
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.chr-l-stack-allservices {
+  .pf-l-gallery {
+    display: block;
+    column-count: auto;
+    column-width: 330px;
+    max-width: var(--pf-c-page--section--m-limit-width--MaxWidth);
+  }
+  .pf-c-card {
+    display: block;
+    overflow: hidden; // prevents padding from spilling into next column
+    break-inside: avoid-column; // prevents padding from spilling into next column
+
+    &__header {
+      svg {
+        margin-right: var(--pf-global--spacer--sm);
+      }
+    }
+     &__body {
+      padding-bottom: var(--pf-global--spacer--sm);
+    }
+  }
+}
