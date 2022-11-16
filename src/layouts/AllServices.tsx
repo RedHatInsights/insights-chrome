@@ -26,417 +26,421 @@ import ScreenIcon from '@patternfly/react-icons/dist/js/icons/screen-icon';
 // import TemplateIcon from '@patternfly/react-icons/dist/js/icons/template-icon';
 import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
 
+import Footer from '../components/Footer/Footer.js';
 import './AllServices.scss';
 
 const AllServices = () => (
-  <PageSection variant={PageSectionVariants.light}>
-    <Stack className="chr-l-stack-allservices pf-u-background-color-100">
-      <StackItem className="pf-u-pl-lg">
-        <Title headingLevel="h2">All Services</Title>
-      </StackItem>
-      <StackItem>
-        <Gallery hasGutter>
-          <Card isPlain>
-            <CardHeader>
-              <QuestionCircleIcon /> Application Services
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    API Designer
+  <>
+    <PageSection variant={PageSectionVariants.light}>
+      <Stack className="chr-l-stack-allservices pf-u-background-color-100">
+        <StackItem className="pf-u-pl-lg">
+          <Title headingLevel="h2">All Services</Title>
+        </StackItem>
+        <StackItem>
+          <Gallery hasGutter>
+            <Card isPlain>
+              <CardHeader>
+                <QuestionCircleIcon /> Application Services
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      API Designer
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    API Management
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      API Management
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Connectors
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Connectors
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Service Accounts
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Service Accounts
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Service Registry
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Service Registry
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Streams of Apache Kafka
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Streams of Apache Kafka
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ArrowRightIcon /> Automation
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Automation Hub
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ArrowRightIcon /> Automation
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Automation Hub
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Automation Analytics
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Automation Analytics
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Insights
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Insights
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Remediations
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Remediations
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <DatabaseIcon /> Data Services
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Data Access
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <DatabaseIcon /> Data Services
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Data Access
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Data Science
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Data Science
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <FlagIcon /> Deploy
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Database Access
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <FlagIcon /> Deploy
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Database Access
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Data Science
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Data Science
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <UsersIcon /> Identity and Access Management
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Authentication policy
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <UsersIcon /> Identity and Access Management
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Authentication policy
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    My User Access
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      My User Access
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    User Access
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      User Access
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ArrowRightIcon /> Infrastructure
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ArrowRightIcon /> Infrastructure
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <DomainIcon /> Integration and Notifications
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Integration (Sources)
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <DomainIcon /> Integration and Notifications
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Integration (Sources)
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Notifications
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Notifications
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Splunk | ServiceNow
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Splunk | ServiceNow
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <InfrastructureIcon /> Inventories
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Clusters
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <InfrastructureIcon /> Inventories
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Clusters
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Edge
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Edge
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Subscriptions
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Subscriptions
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Systems
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Systems
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ScreenIcon /> Observe
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Adviser
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ScreenIcon /> Observe
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Adviser
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Drift
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Drift
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Recommendations
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Recommendations
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Vulnerability
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Vulnerability
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ArrowRightIcon /> Openshift
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ArrowRightIcon /> Openshift
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <CloudSecurityIcon /> Security
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Advance Cluster Security
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <CloudSecurityIcon /> Security
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Advance Cluster Security
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Advisor
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Advisor
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Compliance
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Compliance
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Malware Detection
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Malware Detection
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Patch
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Patch
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Policies
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Policies
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Remediations
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Remediations
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Vulnerability
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Vulnerability
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ArrowRightIcon /> Spend Management
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Cost Managementy
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ArrowRightIcon /> Spend Management
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Cost Managementy
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Hybrid Committed Spend
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Hybrid Committed Spend
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Subscription Inventory
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Subscription Inventory
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>
-              <ArrowRightIcon /> System Configuration
-            </CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Activation Keys
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>
+                <ArrowRightIcon /> System Configuration
+              </CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Activation Keys
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Manifests
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Manifests
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Remote Host Configuration
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Remote Host Configuration
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    Register RHEL Systems
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      Register RHEL Systems
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-          <Card isPlain>
-            <CardHeader>Try and Buy</CardHeader>
-            <CardBody>
-              <TextContent>
-                <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                </TextContent>
+              </CardBody>
+            </Card>
+            <Card isPlain>
+              <CardHeader>Try and Buy</CardHeader>
+              <CardBody>
+                <TextContent>
+                  <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-                <Text component={TextVariants.p}>
-                  <Text component={TextVariants.a} href="#">
-                    TBD
+                  <Text component={TextVariants.p}>
+                    <Text component={TextVariants.a} href="#">
+                      TBD
+                    </Text>
                   </Text>
-                </Text>
-              </TextContent>
-            </CardBody>
-          </Card>
-        </Gallery>
-      </StackItem>
-    </Stack>
-  </PageSection>
+                </TextContent>
+              </CardBody>
+            </Card>
+          </Gallery>
+        </StackItem>
+      </Stack>
+    </PageSection>
+    <Footer />
+  </>
 );
 export default AllServices;
