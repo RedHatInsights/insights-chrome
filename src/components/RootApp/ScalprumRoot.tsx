@@ -92,7 +92,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         setPrevActiveTopic(undefined);
       }
     }
-  }, [activeTopicName, helpTopics, activeHelpTopic]);
+  }, [activeTopicName, helpTopics]);
 
   const setPageMetadata = useCallback((pageOptions) => {
     window._segment = {
