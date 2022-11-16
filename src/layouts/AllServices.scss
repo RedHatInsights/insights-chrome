@@ -12,14 +12,12 @@
     display: block;
     overflow: hidden; // prevents padding from spilling into next column
     break-inside: avoid-column; // prevents padding from spilling into next column
-
-    &__header {
-      svg {
-        margin-right: var(--pf-global--spacer--sm);
-      }
-    }
      &__body {
       padding-bottom: var(--pf-global--spacer--sm);
+      .pf-c-content {
+        --pf-c-content--FontSize: var(--pf-global--FontSize--sm);
+        --pf-c-content--LineHeight: var(--pf-global--LineHeight--sm);
+      }
     }
   }
 }

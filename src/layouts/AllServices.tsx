@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Card,
   CardBody,
-  CardHeader,
+  CardTitle,
   Gallery,
   PageSection,
   PageSectionVariants,
@@ -31,7 +31,7 @@ import './AllServices.scss';
 
 const AllServices = () => (
   <>
-    <PageSection variant={PageSectionVariants.light}>
+    <PageSection variant={PageSectionVariants.light} className="pf-m-fill">
       <Stack className="chr-l-stack-allservices pf-u-background-color-100">
         <StackItem className="pf-u-pl-lg">
           <Title headingLevel="h2">All Services</Title>
@@ -39,9 +39,9 @@ const AllServices = () => (
         <StackItem>
           <Gallery hasGutter>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <QuestionCircleIcon /> Application Services
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -79,9 +79,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ArrowRightIcon /> Automation
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -109,9 +109,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <DatabaseIcon /> Data Services
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
@@ -129,9 +129,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <FlagIcon /> Deploy
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
@@ -149,9 +149,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <UsersIcon /> Identity and Access Management
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -174,9 +174,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ArrowRightIcon /> Infrastructure
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -199,9 +199,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <DomainIcon /> Integration and Notifications
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -224,9 +224,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <InfrastructureIcon /> Inventories
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -254,9 +254,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ScreenIcon /> Observe
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -284,9 +284,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ArrowRightIcon /> Openshift
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -309,9 +309,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <CloudSecurityIcon /> Security
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -359,9 +359,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ArrowRightIcon /> Spend Management
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -384,9 +384,9 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>
+              <CardTitle>
                 <ArrowRightIcon /> System Configuration
-              </CardHeader>
+              </CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>
@@ -414,7 +414,7 @@ const AllServices = () => (
               </CardBody>
             </Card>
             <Card isPlain>
-              <CardHeader>Try and Buy</CardHeader>
+              <CardTitle>Try and Buy</CardTitle>
               <CardBody>
                 <TextContent>
                   <Text component={TextVariants.p}>Lorem ipsum dolor sit amet. Est dolores repellat</Text>

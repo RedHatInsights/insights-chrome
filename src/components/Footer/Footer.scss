@@ -5,8 +5,8 @@
   li + li {
     @media screen and (min-width: $pf-global--breakpoint--lg) {
       &::before {
-          content: '|';
-          margin-right: var(--pf-global--spacer--md);
+        content: '|';
+        margin-right: var(--pf-global--spacer--md);
       }
     }
   }
