@@ -1,9 +1,7 @@
 import groupBy from 'lodash/groupBy';
-import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
+import { FlagTagsFilter } from '../@types/types';
+import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../components/GlobalFilter/globalFilterApi';
 import { CommonTag, GlobalFilterState } from './store';
-export const SID_KEY = 'SAP ID (SID)';
-export const AAP_KEY = 'Ansible Automation Platform';
-export const MSSQL_KEY = 'Microsoft SQL';
 
 export const globalFilterDefaultState: GlobalFilterState = {
   scope: 'insights',

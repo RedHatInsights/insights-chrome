@@ -46,6 +46,7 @@ window.ResizeObserver =
 
 import * as utils from '../../utils/common';
 import * as routerDom from 'react-router-dom';
+import LibtJWTContext from '../LibJWTContext';
 
 describe('ScalprumRoot', () => {
   let initialState;
@@ -204,11 +205,21 @@ describe('ScalprumRoot', () => {
     });
 
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/insights']}>
-          <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
-        </MemoryRouter>
-      </Provider>
+      <LibtJWTContext.Provider
+        value={{
+          initPromise: Promise.resolve(),
+          jwt: {
+            getUserInfo: () => Promise.resolve({}),
+            getEncodedToken: () => '',
+          },
+        }}
+      >
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/insights']}>
+            <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
+          </MemoryRouter>
+        </Provider>
+      </LibtJWTContext.Provider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeTruthy());
 

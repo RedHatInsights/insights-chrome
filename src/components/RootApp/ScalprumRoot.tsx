@@ -1,26 +1,23 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useState } from 'react';
+import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import isEqual from 'lodash/isEqual';
+import { AppsConfig } from '@scalprum/core';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import NavLoader from '../Navigation/Loader';
-import { usePendoFeedback } from '../Feedback';
-import { toggleFeedbackModal } from '../../redux/actions';
 import historyListener from '../../utils/historyListener';
-import { isFedRamp } from '../../utils/common';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
-import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../../utils/isAnsibleTrialFlagActive';
 import { ReduxState } from '../../redux/store';
-import { FlagTagsFilter } from '../GlobalFilter/globalFilterApi';
-import { AppsConfig } from '@scalprum/core';
-import { HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
-import { ChromeAPI } from '@redhat-cloud-services/types';
-import { History } from 'history';
+import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
+import { createGetUser } from '../../auth';
+import LibtJWTContext from '../LibJWTContext';
+import { createChromeContext } from '../../chrome/create-chrome';
 
 const Navigation = lazy(() => import('../Navigation'));
 const LandingNav = lazy(() => import('../LandingNav'));
@@ -49,7 +46,9 @@ const ScalprumRoot = memo(
     const { analytics } = useContext(SegmentContext);
     const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
     const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
-    const dispatch = useDispatch();
+    const libJwt = useContext(LibtJWTContext);
+    const store = useStore();
+    const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     async function setActiveTopic(name: string) {
       setActiveTopicName(name);
@@ -103,38 +102,44 @@ const ScalprumRoot = memo(
       };
     }, []);
 
-    const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = {
-      config,
-      api: {
-        chrome: {
-          ...window.insights.chrome,
-          experimentalApi: true,
-          isFedramp: isFedRamp(),
-          usePendoFeedback,
-          segment: {
-            setPageMetadata,
-          },
-          toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
-          // FIXME: Update types once merged
-          quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
-          helpTopics: {
-            ...helpTopicsAPI,
-            setActiveTopic,
-            enableTopics,
-            closeHelpTopic: () => {
-              setActiveTopic('');
-            },
-          },
-          clearAnsibleTrialFlag,
-          isAnsibleTrialFlagActive,
-          setAnsibleTrialFlag,
-          chromeHistory: history as unknown as History,
-          analytics: analytics!,
-          // FIXME: Update types once merged
-          useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
+    const getUser = useCallback(createGetUser(libJwt), [libJwt]);
+    const helpTopicsChromeApi = useMemo(
+      () => ({
+        ...helpTopicsAPI,
+        setActiveTopic,
+        enableTopics,
+        closeHelpTopic: () => {
+          setActiveTopic('');
         },
-      },
-    };
+      }),
+      []
+    );
+    const chromeApi = useMemo(
+      () =>
+        createChromeContext({
+          analytics: analytics!,
+          getUser,
+          helpTopics: helpTopicsChromeApi,
+          libJwt,
+          modulesConfig,
+          quickstartsAPI,
+          useGlobalFilter,
+          store,
+          setPageMetadata,
+        }),
+      []
+    );
+
+    const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
+      // set the deprecated chrome API to window
+      window.insights.chrome = chromeApi;
+      return {
+        config,
+        api: {
+          chrome: chromeApi,
+        },
+      };
+    }, []);
 
     return (
       /**

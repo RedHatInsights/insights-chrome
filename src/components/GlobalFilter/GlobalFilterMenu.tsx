@@ -10,8 +10,9 @@ import { Button, Chip, ChipGroup, Divider, Skeleton, Split, SplitItem, Tooltip }
 import TagsModal from './TagsModal';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 import { CommonSelectedTag, ReduxState } from '../../redux/store';
-import { FlagTagsFilter, updateSelected } from './globalFilterApi';
+import { updateSelected } from './globalFilterApi';
 import { fetchAllTags } from '../../redux/actions';
+import { FlagTagsFilter } from '../../@types/types';
 
 export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
 export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];

@@ -1,12 +1,11 @@
 import * as actionTypes from './action-types';
-import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
-import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem } from '../@types/types';
-import { AccessRequest, ChromeModule, Navigation } from './store';
-import { QuickStart } from '@patternfly/quickstarts';
-import { NavDOMEvent } from '../components/ChromeLink/ChromeLink';
-import { ThreeScaleError } from '../utils/responseInterceptors';
-import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
+import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
+import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
+import type { ChromeUser } from '@redhat-cloud-services/types';
+import type { ChromeModule, FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
+import type { AccessRequest } from './store';
+import type { QuickStart } from '@patternfly/quickstarts';
+import type { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -15,10 +14,12 @@ export function userLogIn(user: ChromeUser | boolean) {
   };
 }
 
+export type AppNavClickItem = { id?: string; custom?: boolean };
+
 /*
  *TODO: The event type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
  */
-export function appNavClick(item: { id?: string; custom?: boolean }, event?: NavDOMEvent) {
+export function appNavClick(item: AppNavClickItem, event?: NavDOMEvent) {
   return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item?.id, event } };
 }
 

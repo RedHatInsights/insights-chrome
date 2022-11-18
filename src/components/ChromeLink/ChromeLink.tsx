@@ -5,16 +5,8 @@ import { preloadModule } from '@scalprum/core';
 
 import { appNavClick } from '../../redux/actions';
 import NavContext, { OnLinkClick } from '../Navigation/navContext';
-import { AnyObject } from '../../@types/types';
-import { ReduxState, RouteDefinition } from '../../redux/store';
-
-export type NavDOMEvent = {
-  href: string;
-  id: string;
-  navId: string;
-  type: string;
-  target?: HTMLAnchorElement | null;
-};
+import { ReduxState } from '../../redux/store';
+import { NavDOMEvent, RouteDefinition } from '../../@types/types';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
@@ -145,7 +137,7 @@ const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
 
 const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {
   const { onLinkClick, isNavOpen, inPageLayout } = useContext(NavContext);
-  const currAppId = useSelector(({ chrome }: AnyObject) => chrome?.appId);
+  const currAppId = useSelector(({ chrome }: ReduxState) => chrome?.appId);
 
   const LinkComponent = !rest.isExternal ? LinkWrapper : RefreshLink;
   return (
