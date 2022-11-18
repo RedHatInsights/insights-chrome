@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown, GlobalFilterDropdownProps } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
 import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter, generateFilter } from './globalFilterApi';
+import { isGlobalFilterAllowed } from '../../utils/common';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -124,6 +125,18 @@ GlobalFilter.propTypes = {
 
 const GlobalFilterWrapper = () => {
   const [hasAccess, setHasAccess] = useState(false);
+  const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
+  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
+  const { pathname } = useLocation();
+
+  // FIXME: Clean up the global filter display flag
+  const isLanding = pathname === '/';
+  const isAllowed = isGlobalFilterAllowed();
+  const isGlobalFilterEnabled = useMemo(() => {
+    const globalFilterAllowed = isAllowed || globalFilterRemoved;
+    return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
+  }, [isLanding, isAllowed]);
+
   useEffect(() => {
     const fetchPermissions = async () => {
       const permissions = await window.insights?.chrome?.getUserPermissions?.('inventory');
@@ -135,8 +148,7 @@ const GlobalFilterWrapper = () => {
     };
     fetchPermissions();
   }, []);
-  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
-  return userLoaded ? <GlobalFilter hasAccess={hasAccess} /> : null;
+  return isGlobalFilterEnabled && userLoaded ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 
 export default GlobalFilterWrapper;

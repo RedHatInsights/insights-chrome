@@ -288,3 +288,11 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
       []
     )
     .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
+
+export const isGlobalFilterAllowed = () => {
+  if (getUrl('bundle') === 'insights') {
+    return true;
+  }
+
+  return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
+};

@@ -90,7 +90,7 @@ const App = () => {
 
   return modules && scalprumConfig && jwtState && libjwt ? (
     <LibtJWTContext.Provider value={libjwt}>
-      <RootApp config={scalprumConfig} />{' '}
+      <RootApp config={scalprumConfig} />
     </LibtJWTContext.Provider>
   ) : null;
 };
