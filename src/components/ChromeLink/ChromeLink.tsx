@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useMemo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { preloadModule } from '@scalprum/core';
@@ -34,29 +34,7 @@ export interface LinkWrapperProps extends RefreshLinkProps {
   tabIndex?: number;
 }
 
-const useDynamicModule = (appId = '') => {
-  const [isDynamic, setIsDynamic] = useState<boolean | undefined>();
-  const { modules, activeModule } = useSelector(({ chrome: { modules = {}, activeModule } }: AnyObject) => ({
-    modules,
-    activeModule,
-  }));
-  useEffect(() => {
-    const currentModule = modules[appId];
-    if (appId === 'dynamic') {
-      setIsDynamic(true);
-    } else if (!currentModule) {
-      setIsDynamic(false);
-    } else if (appId === activeModule) {
-      setIsDynamic(true);
-    } else if (currentModule && appId !== activeModule) {
-      setIsDynamic(currentModule.dynamic !== false && modules[activeModule]?.dynamic !== false);
-    }
-  }, [appId]);
-
-  return isDynamic;
-};
-
-const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
+const LinkWrapper: React.FC<LinkWrapperProps> = memo(({ href, isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
   const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
@@ -132,7 +110,9 @@ const LinkWrapper: React.FC<LinkWrapperProps> = ({ href, isBeta, onLinkClick, cl
       {children}
     </NavLink>
   );
-};
+});
+
+LinkWrapper.displayName = 'MemoizedLinkWrapper';
 
 const basepath = document.baseURI;
 
@@ -166,13 +146,8 @@ const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
 const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {
   const { onLinkClick, isNavOpen, inPageLayout } = useContext(NavContext);
   const currAppId = useSelector(({ chrome }: AnyObject) => chrome?.appId);
-  const isDynamic = useDynamicModule(appId);
 
-  if (!rest.isExternal && typeof isDynamic === 'undefined') {
-    return null;
-  }
-
-  const LinkComponent = !rest.isExternal && isDynamic ? LinkWrapper : RefreshLink;
+  const LinkComponent = !rest.isExternal ? LinkWrapper : RefreshLink;
   return (
     <LinkComponent {...(inPageLayout && !isNavOpen ? { tabIndex: -1 } : {})} onLinkClick={onLinkClick} appId={appId} currAppId={currAppId} {...rest}>
       {children}
