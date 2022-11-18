@@ -41,7 +41,7 @@ export type ScalprumRootProps = {
 };
 
 const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
-  const { setActiveHelpTopicByName, helpTopics, activeHelpTopic } = useContext(HelpTopicContext);
+  const { setActiveHelpTopicByName, helpTopics, activeHelpTopic, setFilteredHelpTopics } = useContext(HelpTopicContext);
   const { analytics } = useContext(SegmentContext);
   const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
   const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
@@ -54,6 +54,13 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
     if (name?.length > 0) {
       helpTopicsAPI.enableTopics(name);
     }
+  }
+
+  async function enableTopics(...names: string[]) {
+    return helpTopicsAPI.enableTopics(...names).then((res) => {
+      setFilteredHelpTopics?.(res);
+      return res;
+    });
   }
 
   useEffect(() => {
@@ -85,7 +92,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         setPrevActiveTopic(undefined);
       }
     }
-  }, [activeTopicName, helpTopics, activeHelpTopic]);
+  }, [activeTopicName, helpTopics]);
 
   const setPageMetadata = useCallback((pageOptions) => {
     window._segment = {
@@ -111,6 +118,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         helpTopics: {
           ...helpTopicsAPI,
           setActiveTopic,
+          enableTopics,
           closeHelpTopic: () => {
             setActiveTopic('');
           },

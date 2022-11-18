@@ -58,6 +58,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
+    hashFunction: 'xxhash64',
     path: path.resolve(__dirname, 'dist'),
   },
   stats: {
