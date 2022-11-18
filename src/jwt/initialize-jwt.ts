@@ -16,7 +16,8 @@ const initializeJWT = async (libjwt: LibJWT, chromeInstance: { cache?: CacheAdap
     if (encodedToken) {
       chromeInstance.cache = new CacheAdapter('chrome-store', `${decodeToken(encodedToken).session_state}-chrome-store`);
     }
-  } catch {
+  } catch (error) {
+    console.error(error);
     actions.userLogIn(false);
   }
 };

@@ -43,6 +43,6 @@ export const createFetchPermissionsWatcher = () => {
     if (typeof currentCall?.[app] === 'undefined' || bypassCache) {
       currentCall[app] = await fetchPermissions(userToken, app);
     }
-    return currentCall?.[app];
+    return currentCall?.[app] || [];
   };
 };
