@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<UserIcon /> should render correctly with initial state 1`] = `
+<img
+  alt="User Avatar"
+  class="pf-c-avatar"
+  src="/apps/chrome/assets/images/img_avatar.svg"
+/>
+`;

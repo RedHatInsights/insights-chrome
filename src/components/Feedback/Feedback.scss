@@ -1,0 +1,107 @@
+button.pf-c-button.chr-c-button-feedback {
+  svg {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+  position: fixed;
+  z-index: 100;
+  right: -45px;
+  bottom: 150px;
+  transform: rotate(270deg);
+  color: var(--pf-global--Color--dark-100);
+  background: var(--pf-global--palette--purple-100);
+  &:hover {
+    background: var(--pf-global--palette--purple-200);
+  }
+}
+
+.chr-c-feedback-modal {
+  margin: 0;
+  padding: 0;
+
+  .pf-c-content {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
+
+  .pf-c-modal-box__body {
+    padding: 0;
+    margin: 0;
+  }
+  .pf-c-modal-box > .pf-c-button + *{
+    margin-right: 0;
+  }
+  & .pf-c-modal-box__body {
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+}
+
+.chr-c-feedback-cards {
+  margin: var(--pf-global--spacer--sm);
+}
+
+.chr-c-feedback-card-title {
+  color: var(--pf-global--link--Color);
+}
+
+.chr-c-feedback {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.chr-c-feedback-content {
+  display: flex;
+  flex-direction: column;
+  padding-right: var(--pf-global--spacer--lg);
+  padding-top: var(--pf-global--spacer--lg);
+  margin: var(--pf-global--spacer--md);
+}
+
+.chr-c-feedback-button {
+  margin: var(--pf-global--spacer--sm);
+  text-align: left;
+  position: absolute;
+  bottom: var(--pf-global--spacer--md);
+}
+
+.chr-c-feedback-footer-button {
+  margin: var(--pf-global--spacer--md);
+}
+
+.chr-c-feedback-buttons {
+  margin: var(--pf-global--spacer--sm);
+  position: absolute;
+  bottom: var(--pf-global--spacer--md);
+}
+
+.chr-c-feedback-success-content {
+  margin-top: 150px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.chr-c-feedback-email {
+  margin-top: var(--pf-global--spacer--lg);
+  overflow: hidden;
+}
+
+.chr-c-feedback-image {
+  background-color: var(--pf-global--palette--black-150);
+}
+
+.chr-c-feedback-panel {
+  margin-bottom: var(--pf-global--spacer--lg);
+  &__body {
+    padding-bottom: 4px;
+    padding-top: 4px;
+    border-bottom: 1px solid var(--pf-global--palette--black-500);
+  }
+}
+
+.chr-c-feedback-text-area {
+  resize: none;
+}

@@ -19,6 +19,10 @@
     "defaultMessage": "Thank you for submitting your activation request",
     "description": "Thank you for submitting your activation request"
   },
+  "addDescription": {
+    "defaultMessage": "Add description",
+    "description": "Add description"
+  },
   "afterBetaUse": {
     "defaultMessage": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar.",
     "description": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar."
@@ -31,9 +35,17 @@
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
   },
+  "back": {
+    "defaultMessage": "Back",
+    "description": "Back"
+  },
   "betaRelease": {
     "defaultMessage": "the beta release",
     "description": "the beta release"
+  },
+  "bugReported": {
+    "defaultMessage": "Bug Reported",
+    "description": "Bug Reported"
   },
   "cancel": {
     "defaultMessage": "Cancel",
@@ -62,6 +74,18 @@
   "describeBug": {
     "defaultMessage": "Describe the bug you encountered. For urgent issues, open a support case instead.",
     "description": "Describe the bug you encountered. For urgent issues, open a support case instead."
+  },
+  "describeBugUrgentCases": {
+    "defaultMessage": "Describe the bug you encountered. For urgent issues, open a support case instead.",
+    "description": "Describe the bug you encountered. For urgent issues, open a support case instead."
+  },
+  "describeReportBug": {
+    "defaultMessage": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow,",
+    "description": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, "
+  },
+  "directInfluence": {
+    "defaultMessage": ", your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.",
+    "description": ", your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email."
   },
   "email": {
     "defaultMessage": "Email",
@@ -119,6 +143,18 @@
     "defaultMessage": "Home",
     "description": "Home"
   },
+  "howIsConsoleExperience": {
+    "defaultMessage": "What has your console experience been like so far?",
+    "description": "What has your console experience been like so far?"
+  },
+  "informDirectionDescription": {
+    "defaultMessage": "By participating in feedback sessions, usability tests, and interviews with our",
+    "description": "By participating in feedback sessions, usability tests, and interviews with our "
+  },
+  "informRedhatDirection": {
+    "defaultMessage": "Inform the direction of Red Hat",
+    "description": "Inform the direction of Red Hat"
+  },
   "insightsRhelDocumentation": {
     "defaultMessage": "Insights for RHEL Documentation",
     "description": "Insights for RHEL Documentation"
@@ -131,13 +167,17 @@
     "defaultMessage": "Internal user",
     "description": "Internal user"
   },
+  "joinMailingList": {
+    "defaultMessage": "Join mailing list",
+    "description": "Join mailing list"
+  },
   "knownOutages": {
     "defaultMessage": "for known outages.",
     "description": "for known outages."
   },
   "learnAboutResearchOpportunities": {
-    "defaultMessage": "Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time.",
-    "description": "Learn about opportunities to share your feedback with our User Research Team. We never shareyour personal information, and you can opt out at any time."
+    "defaultMessage": "Learn about opportunities to share your feedback with our User Research Team.",
+    "description": "Learn about opportunities to share your feedback with our User Research Team."
   },
   "learnHowTo": {
     "defaultMessage": "Learn how to create, import, and run applications with step-by-step instructions and tasks.",
@@ -199,10 +239,6 @@
     "defaultMessage": "Open a support case",
     "description": "Open a support case "
   },
-  "orShareIdeas": {
-    "defaultMessage": "or share your ideas.",
-    "description": "or share your ideas."
-  },
   "orgAdministrator": {
     "defaultMessage": "Org. Administrator",
     "description": "Org. Administrator"
@@ -229,6 +265,10 @@
     "defaultMessage": "Red Hat support",
     "description": "Red Hat support"
   },
+  "reportABug": {
+    "defaultMessage": "Report a bug",
+    "description": "Report a bug"
+  },
   "reportBug": {
     "defaultMessage": "Report a bug",
     "description": "Report a bug"
@@ -236,6 +276,10 @@
   "researchOpportunities": {
     "defaultMessage": "Yes, I would like to hear about research opportunities",
     "description": "Yes, I would like to hear about research opportunities"
+  },
+  "responseSent": {
+    "defaultMessage": "Response sent",
+    "description": "Response sent"
   },
   "returnToHomepage": {
     "defaultMessage": "Return to home page",
@@ -297,6 +341,10 @@
     "defaultMessage": "Tags filter",
     "description": "Tags filter"
   },
+  "teamWillReviewBug": {
+    "defaultMessage": "We appreciate your feedback and our team will review your report shorlty",
+    "description": "We appreciate your feedback and our team will review your report shorlty"
+  },
   "tellAboutExperience": {
     "defaultMessage": "Tell us about your experience",
     "description": "Tell us about your experience"
@@ -304,6 +352,10 @@
   "thankYouForFeedback": {
     "defaultMessage": "Thank you, we appreciate your feedback.",
     "description": "Thank you, we appreciate your feedback."
+  },
+  "thankYouForInterest": {
+    "defaultMessage": "Thank you for your interest in user research. You have been added to our mailing list.",
+    "description": "Thank you for your interest in user research. You have been added to our mailing list."
   },
   "thereWillBeACatalgPage": {
     "defaultMessage": "There will be a catalog page for {bundle} bundle",
@@ -341,6 +393,10 @@
     "defaultMessage": "User Preferences",
     "description": "User Preferences"
   },
+  "userResearchTeam": {
+    "defaultMessage": "User Research Team",
+    "description": "User Research Team"
+  },
   "username": {
     "defaultMessage": "Username:",
     "description": "Username:"
@@ -364,5 +420,9 @@
   "viewingAsAccount": {
     "defaultMessage": "Viewing as Account {selectedAccountNumber}",
     "description": "Viewing as Account {selectedAccountNumber}"
+  },
+  "weNeverSharePersonalInformation": {
+    "defaultMessage": "We never share your personal information, and you can opt out at any time.",
+    "description": "We never share your personal information, and you can opt out at any time."
   }
 }

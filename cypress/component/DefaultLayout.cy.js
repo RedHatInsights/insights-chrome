@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ScalprumProvider } from '@scalprum/react-core';
-import chromeReducer, { chromeInitialState } from '../../src/js/redux';
-import DefaultLayout from '../../src/js/App/RootApp/DefaultLayout';
+import chromeReducer, { chromeInitialState } from '../../src/redux';
+import DefaultLayout from '../../src/layouts/DefaultLayout';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { Nav, NavList } from '@patternfly/react-core';
-import ChromeNavItem from '../../src/js/App/Sidenav/Navigation/ChromeNavItem';
+import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
-import FeatureFlagsProvider from '../../src/js/App/FeatureFlags/FeatureFlagsProvider';
+import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">

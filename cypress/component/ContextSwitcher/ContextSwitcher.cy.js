@@ -1,9 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import chromeReducer, { chromeInitialState } from '../../../src/js/redux';
+import chromeReducer, { chromeInitialState } from '../../../src/redux';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { IntlProvider } from 'react-intl';
-import ContextSwitcher from '../../../src/js/App/Header/ContextSwitcher';
+import ContextSwitcher from '../../../src/components/ContextSwitcher';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">

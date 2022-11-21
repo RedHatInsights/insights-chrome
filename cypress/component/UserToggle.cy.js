@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ScalprumProvider } from '@scalprum/react-core';
-import chromeReducer, { chromeInitialState } from '../../src/js/redux';
+import chromeReducer, { chromeInitialState } from '../../src/redux';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { IntlProvider } from 'react-intl';
-import UserToggle from '../../src/js/App/Header/UserToggle';
+import UserToggle from '../../src/components/Header/UserToggle';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
