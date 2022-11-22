@@ -146,6 +146,9 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         <Route exact path="/">
           <DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />
         </Route>
+        <Route exact path="/allservices">
+          <DefaultLayout {...props} globalFilterRemoved={globalFilterRemoved} />
+        </Route>
         <Route exact path="/connect/products">
           <Suspense fallback={LoadingFallback}>
             <ProductSelection />

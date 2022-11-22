@@ -2,11 +2,33 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
 .chr-l-stack-allservices {
+  max-width: var(--pf-c-page--section--m-limit-width--MaxWidth);
+
+    @media screen and (max-width: $pf-global--breakpoint--md) {
+      .sticky {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0px;
+        padding-top: 12px;
+      }
+    }
+
+    @media screen and (max-width: $pf-global--breakpoint--md) {
+      .pf-c-search-input {
+        width: 100% !important;
+        margin: auto;
+      }
+    }
+
+  .pf-c-search-input {
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+  }
   .pf-l-gallery {
     display: block;
     column-count: auto;
     column-width: 330px;
-    max-width: var(--pf-c-page--section--m-limit-width--MaxWidth);
   }
   .pf-c-card {
     display: block;
