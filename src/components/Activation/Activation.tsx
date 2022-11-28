@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
+import { useNavigate } from 'react-router-dom';
+import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { getEnv } from '../../utils/common';
 import { useIntl } from 'react-intl';
@@ -11,7 +11,7 @@ import messages from '../../locales/Messages';
 const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
   const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const isAvailable = getEnv() === 'prod';
 
   async function handleActivationRequest() {
@@ -38,7 +38,7 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
 
   const onModalClose = () => {
     setIsModalOpen(false);
-    history.push('/');
+    navigate('/');
   };
 
   useEffect(() => {

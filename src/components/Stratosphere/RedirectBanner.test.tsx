@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { LocationDescriptor } from 'history';
+import { InitialEntry } from 'history';
 import { Store } from 'redux';
 
 import RedirectBanner, { STRATOSPHERE_BANNER_NAME } from './RedirectBanner';
@@ -21,7 +21,7 @@ const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ ch
   return null;
 };
 
-const Wrapper: React.FC<{ initialEntries?: LocationDescriptor[]; store: Store; changeSpy?: jest.Mock }> = ({
+const Wrapper: React.FC<{ initialEntries?: InitialEntry[]; store: Store; changeSpy?: jest.Mock }> = ({
   changeSpy = jest.fn(),
   store,
   initialEntries,
@@ -74,7 +74,7 @@ describe('<RedirectBanner>', () => {
       hash: '',
       pathname: '/foo/bar',
       search: '',
-      state: undefined,
+      state: null,
     });
   });
 });
