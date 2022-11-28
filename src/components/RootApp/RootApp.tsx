@@ -1,5 +1,5 @@
-import React from 'react';
-import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
 import chromeHistory from '../../utils/chromeHistory';
@@ -15,6 +15,7 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
+import { isBeta } from '../../utils/common';
 
 export type RootAppProps = {
   config: AppsConfig;
@@ -80,7 +81,7 @@ const RootApp = (props: RootAppProps) => {
     updateQuickStarts,
   };
   return (
-    <HistoryRouter history={chromeHistory} basename={isBeta() ? '/beta' : '/'}>
+    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={isBeta() ? '/beta' : '/'}>
       <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
           <IDPChecker>

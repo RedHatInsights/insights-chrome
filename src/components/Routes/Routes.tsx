@@ -37,7 +37,6 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
     <Routes>
       {showBundleCatalog && (
         <Route
-          exact
           path="/([^\/]+)/quickstarts"
           element={
             <Suspense fallback={LoadingFallback}>

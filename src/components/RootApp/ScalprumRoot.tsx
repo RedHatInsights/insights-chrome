@@ -19,6 +19,7 @@ import { FlagTagsFilter } from '../GlobalFilter/globalFilterApi';
 import { AppsConfig } from '@scalprum/core';
 import { HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
 import { ChromeAPI } from '@redhat-cloud-services/types';
+import { History } from 'history';
 
 const Navigation = lazy(() => import('../Navigation'));
 const LandingNav = lazy(() => import('../LandingNav'));
@@ -126,7 +127,7 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
         clearAnsibleTrialFlag,
         isAnsibleTrialFlagActive,
         setAnsibleTrialFlag,
-        chromeHistory: history,
+        chromeHistory: history as unknown as History,
         analytics: analytics!,
         // FIXME: Update types once merged
         useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
@@ -142,7 +143,6 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
      * - add deprecation warning to the window functions
      */
     <ScalprumProvider {...scalprumProviderProps}>
-
       <Routes>
         <Route index path="/" element={<DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} globalFilterRemoved={globalFilterRemoved} />} />
         <Route
