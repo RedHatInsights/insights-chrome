@@ -7,6 +7,8 @@ import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
 import { isFedRamp } from '../../utils/common';
 
+import AllServices from '../../layouts/AllServices';
+
 const QuickstartCatalogRoute = lazy(() => import('../QuickstartsCatalogRoute'));
 
 const redirects = [
@@ -51,6 +53,7 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
       {list.map((app) => (
         <Route key={app.path} path={`${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
       ))}
+      <Route path="/allservices" element={<AllServices />} />
       <Route path="*" element={<NotFoundRoute />} />
     </Routes>
   );

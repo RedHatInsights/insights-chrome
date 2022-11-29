@@ -6,6 +6,7 @@ import { HelpTopicContext } from '@patternfly/quickstarts';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
+import AllServices from '../../layouts/AllServices';
 import NavLoader from '../Navigation/Loader';
 import { usePendoFeedback } from '../Feedback';
 import { toggleFeedbackModal } from '../../redux/actions';
@@ -150,6 +151,14 @@ const ScalprumRoot = ({ config, helpTopicsAPI, quickstartsAPI, ...props }: Scalp
           element={
             <Suspense fallback={LoadingFallback}>
               <ProductSelection />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/allservices"
+          element={
+            <Suspense fallback={LoadingFallback}>
+              <AllServices />
             </Suspense>
           }
         />
