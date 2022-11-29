@@ -9,7 +9,7 @@ import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { onToggle } from '../redux/actions';
-import Routes from '../components/Routes/Routes';
+import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
@@ -100,11 +100,11 @@ const ShieldedRoot = memo(
         }
         sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
       >
-        <div className={classnames('chr-render')}>
+        <div className={classnames('chr-render', { 'pf-u-h-100vh': !isGlobalFilterEnabled })}>
           {isGlobalFilterEnabled && <GlobalFilter key={getUrl('bundle')} />}
           {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
           <RedirectBanner />
-          <Routes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
+          <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         </div>
       </Page>
     );

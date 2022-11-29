@@ -1,6 +1,5 @@
 import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
-import { Route } from 'react-router-dom';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { changeActiveModule, toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
@@ -23,7 +22,7 @@ export type ChromeRouteProps = {
 
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
-  ({ scope, module, scopeClass, ...props }: ChromeRouteProps) => {
+  ({ scope, module, scopeClass, path }: ChromeRouteProps) => {
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }: ReduxState) => user);
@@ -68,18 +67,18 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
     return (
-      <Route key={props.path} {...props}>
-        <div className={classNames(scopeClass, scope)}>
-          <ScalprumComponent
-            ErrorComponent={<ErrorComponent />}
-            appName={scope}
-            fallback={LoadingFallback}
-            LoadingComponent={() => LoadingFallback}
-            scope={scope}
-            module={module}
-          />
-        </div>
-      </Route>
+      <main role="main" className={classNames(scopeClass, scope)}>
+        <ScalprumComponent
+          // TODO: fix in scalprum. The async loader is no triggred when module/scope changes. We had tp abuse the key
+          key={path}
+          ErrorComponent={<ErrorComponent />}
+          appName={scope}
+          fallback={LoadingFallback}
+          // LoadingFallback={() => LoadingFallback}
+          scope={scope}
+          module={module}
+        />
+      </main>
     );
   },
   // prevent unecessary re-render that can trigger initialization phase of a module

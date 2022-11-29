@@ -30,9 +30,7 @@ export const computeFedrampResult = (
           return false;
         }
 
-        const match = matchPath(linkHref, {
-          path: route.pathname,
-        });
+        const match = matchPath(linkHref, route.pathname);
 
         return match !== null;
       })
