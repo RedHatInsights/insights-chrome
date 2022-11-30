@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { Suspense, lazy, memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
@@ -16,6 +16,8 @@ import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { isBeta } from '../../utils/common';
+
+const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 
 export type RootAppProps = {
   config: AppsConfig;
@@ -86,7 +88,9 @@ const RootApp = memo((props: RootAppProps) => {
         <FeatureFlagsProvider>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
-
+            <Suspense fallback={null}>
+              <NotEntitledModal />
+            </Suspense>
             <QuickStartContainer {...quickStartProps}>
               <HelpTopicContainer helpTopics={helpTopics}>
                 <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
