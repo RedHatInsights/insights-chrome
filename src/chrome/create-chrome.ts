@@ -69,7 +69,8 @@ export const createChromeContext = ({
     ...actions,
     auth: createAuthObject(libJwt, getUser, store, modulesConfig),
     initialized: true,
-    isProd: isProd(),
+    // FIXME: Remove typecasting after types package update
+    isProd: isProd as unknown as boolean,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
     getBundle: () => getUrl('bundle'),
     getApp: () => getUrl('app'),
