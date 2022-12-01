@@ -12,20 +12,7 @@ import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../utils/useRenderFedramp';
 import { markActiveProduct } from '../../redux/actions';
-
-export type ChromeNavItemProps = {
-  isHidden?: boolean;
-  ignoreCase?: boolean;
-  title?: string;
-  isExternal?: boolean;
-  isBeta?: boolean;
-  href: string;
-  className?: string;
-  active?: boolean;
-  appId: string;
-  notifier?: string;
-  product?: string;
-};
+import { ChromeNavItemProps } from '../../@types/types';
 
 const ChromeNavItem = ({
   appId,

@@ -108,7 +108,7 @@ function init(store: Store) {
   };
 }
 
-export default {
+const qe = {
   init: (store: Store) => {
     init(store);
   },
@@ -131,3 +131,5 @@ export default {
     return fetchResults;
   },
 };
+
+export default qe;

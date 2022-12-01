@@ -12,7 +12,7 @@ import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-compo
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 import messages from '../../locales/Messages';
 import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
-import { FlagTagsFilter } from './globalFilterApi';
+import { FlagTagsFilter } from '../../@types/types';
 
 export type TagsModalProps = {
   isOpen?: boolean;

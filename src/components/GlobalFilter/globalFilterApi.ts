@@ -1,9 +1,13 @@
 import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
-import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
-import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../redux/globalFilterReducers';
+
 import { getUrl } from '../../utils/common';
+import { FlagTagsFilter, GroupItem } from '../../@types/types';
+
+export const SID_KEY = 'SAP ID (SID)';
+export const AAP_KEY = 'Ansible Automation Platform';
+export const MSSQL_KEY = 'Microsoft SQL';
 
 export const INVENTORY_API_BASE = '/api/inventory/v1';
 export const workloads = [
@@ -23,15 +27,6 @@ export const workloads = [
     ],
   },
 ];
-
-export interface GroupItem {
-  /** Optional isSelected flag */
-  isSelected?: boolean;
-  /** Reference back to the group */
-  group: Group;
-  /** Current group filter item */
-  item: GroupFilterItem;
-}
 
 export type UpdateSelected = (
   original: FlagTagsFilter,
@@ -125,8 +120,6 @@ export const generateFilter = () => {
 };
 
 export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
-
-export type FlagTagsFilter = Record<string, Record<string, boolean | GroupItem>>;
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {

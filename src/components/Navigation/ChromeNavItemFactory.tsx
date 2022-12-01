@@ -1,9 +1,22 @@
 import React, { useContext } from 'react';
-import { ChromeNavExapandableProps } from './ChromeNavExapandable';
-import { ChromeNavGroupProps } from './ChromeNavGroup';
-import { ChromeNavItemProps } from './ChromeNavItem';
-import { DynamicNavProps } from './DynamicNav';
+import { ChromeNavExapandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
 import NavContext from './navContext';
+
+import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
+import SecurityIcon from '@patternfly/react-icons/dist/js/icons/security-icon';
+import TrendUpIcon from '@patternfly/react-icons/dist/js/icons/trend-up-icon';
+import CodeIcon from '@patternfly/react-icons/dist/js/icons/code-icon';
+import DatabaseIcon from '@patternfly/react-icons/dist/js/icons/database-icon';
+import CloudIcon from '@patternfly/react-icons/dist/js/icons/cloud-upload-alt-icon';
+
+export const sectionTitleMapper = {
+  wrench: <WrenchIcon />,
+  shield: <SecurityIcon />,
+  database: <DatabaseIcon />,
+  cloud: <CloudIcon />,
+  code: <CodeIcon />,
+  'trend-up': <TrendUpIcon />,
+};
 
 export type ChromeNavItemFactoryProps = {
   groupId?: string;

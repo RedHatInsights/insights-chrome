@@ -1,96 +1,150 @@
-import qe from '../utils/iqeEnablement';
-import { bootstrap, chromeInit } from './entry';
-import initializeJWT from '../jwt/initialize-jwt';
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { LibJWT } from '../auth';
-import { ChromeAPI, ChromeUser } from '@redhat-cloud-services/types';
+import { LibJWT, createAuthObject } from '../auth';
+import { AppNavigationCB, ChromeAPI, ChromeUser, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
+import { AnalyticsBrowser } from '@segment/analytics-next';
+import get from 'lodash/get';
+import Cookies from 'js-cookie';
 
-/**
- * Create a chrome API instance
- * @param {object} jwt JWT auth functions
- * @param {object} insights existing insights instance
- */
-const createChromeInstance = (
-  jwt: LibJWT,
-  insights: { chrome: Partial<ChromeAPI> },
-  globalConfig: { chrome?: { ssoUrl?: string; config?: { ssoUrl?: string } } },
-  store: Store
-) => {
-  const libjwt = jwt;
-  const chromeInstance = {
-    cache: undefined,
+import {
+  AppNavClickItem,
+  appAction,
+  appNavClick,
+  appObjectId,
+  globalFilterScope,
+  registerModule,
+  removeGlobalFilter,
+  toggleFeedbackModal,
+  toggleGlobalFilter,
+} from '../redux/actions';
+import { getEnv, getEnvDetails, getUrl, isBeta, isFedRamp, isProd, updateDocumentTitle } from '../utils/common';
+import { createSupportCase } from '../utils/createCase';
+import debugFunctions from '../utils/debugFunctions';
+import { flatTags } from '../components/GlobalFilter/globalFilterApi';
+import { PUBLIC_EVENTS, visibilityFunctions } from '../utils/consts';
+import { usePendoFeedback } from '../components/Feedback';
+import { middlewareListener } from '../redux/redux-config';
+import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
+import chromeHistory from '../utils/chromeHistory';
+import { ReduxState } from '../redux/store';
+import { STORE_INITIAL_HASH } from '../redux/action-types';
+import { ChromeModule, FlagTagsFilter } from '../@types/types';
+
+export type CreateChromeContextConfig = {
+  useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
+  libJwt: LibJWT;
+  getUser: () => Promise<void | ChromeUser>;
+  store: Store<ReduxState>;
+  modulesConfig?: {
+    [key: string]: ChromeModule;
   };
-  // initialize qe instance globally
-  qe.init(store);
-
-  const jwtResolver = initializeJWT(libjwt, chromeInstance);
-  const init = () => {
-    /**
-     * Mutate the root element to enable QA during app init.
-     * Previously was done from applications after react-dom render.
-     */
-    const rootEl = document.getElementById('root');
-    if (rootEl) {
-      rootEl.setAttribute('data-ouia-safe', 'true');
-    }
-
-    const initializedChrome: ChromeAPI = {
-      ...window.insights.chrome,
-      ...chromeInit(),
-    };
-    window.insights.chrome = initializedChrome;
-
-    return initializedChrome;
-  };
-
-  /**
-   * here we need to init the qe plugin
-   * the "contract" is we will do this before anyone
-   * calls/finishes getUser
-   * this only does something if the correct localstorage
-   * vars are set
-   */
-  const getUser = (): Promise<ChromeUser | undefined | void> => {
-    return libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
-      libjwt.jwt.logoutAllTabs();
-    });
-  };
-
-  /**
-   * Guard async cache dependent functions until cache is created
-   * @param {function} fn function that requires global chrome cache
-   * @returns {Promise}
-   */
-  const bufferAsyncFunction = (fn: (...args: any[]) => any) => {
-    if (chromeInstance.cache) {
-      return fn;
-    }
-
-    /**
-     * Wait for JWT initialization to happen and cache initialization in chrome instance
-     */
-    return (...args: any[]) => jwtResolver.then(() => fn(...(args || [])));
-  };
-
-  const fetchPermissions = bufferAsyncFunction(createFetchPermissionsWatcher());
-
-  const bootstrapFunctions = bootstrap(libjwt, init, getUser, globalConfig);
-  const chromeFunctions = {
-    ...bootstrapFunctions,
-    chrome: {
-      ...bootstrapFunctions.chrome,
-      getUserPermissions: async (app = '', bypassCache?: boolean) => {
-        await getUser();
-        return fetchPermissions(libjwt.jwt.getEncodedToken(), app, bypassCache);
-      },
-    },
-  };
-
-  return {
-    ...insights,
-    ...chromeFunctions,
-  };
+  setPageMetadata: (pageOptions: any) => any;
+  analytics: AnalyticsBrowser;
+  quickstartsAPI: ChromeAPI['quickStarts'];
+  helpTopics: ChromeAPI['helpTopics'];
 };
 
-export default createChromeInstance;
+export const createChromeContext = ({
+  useGlobalFilter,
+  analytics,
+  libJwt,
+  getUser,
+  store,
+  modulesConfig,
+  setPageMetadata,
+  quickstartsAPI,
+  helpTopics,
+}: CreateChromeContextConfig): ChromeAPI => {
+  const fetchPermissions = createFetchPermissionsWatcher();
+  const dispatch = store.dispatch;
+  const actions = {
+    appAction: (action: string) => dispatch(appAction(action)),
+    appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
+    appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
+    globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
+    registerModule: (module?: string, manifest?: string) => dispatch(registerModule(module, manifest)),
+    removeGlobalFilter: (isHidden: boolean) => store.dispatch(removeGlobalFilter(isHidden)),
+  };
+  const api: ChromeAPI = {
+    ...actions,
+    auth: createAuthObject(libJwt, getUser, store, modulesConfig),
+    initialized: true,
+    isProd: isProd(),
+    forceDemo: () => Cookies.set('cs_demo', 'true'),
+    getBundle: () => getUrl('bundle'),
+    getApp: () => getUrl('app'),
+    getEnvironment: () => getEnv(),
+    getEnvironmentDetails: () => getEnvDetails(),
+    createCase: (fields?: any) => getUser().then((user) => createSupportCase(user!.identity, libJwt, fields)),
+    getUserPermissions: async (app = '', bypassCache?: boolean) => {
+      await getUser();
+      return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
+    },
+    identifyApp: (_data: any, appTitle?: string, noSuffix?: boolean) => {
+      updateDocumentTitle(appTitle, noSuffix);
+      return Promise.resolve();
+    },
+    hideGlobalFilter: (isHidden: boolean) => {
+      const initialHash = store.getState()?.chrome?.initialHash;
+      /**
+       * Restore app URL hash fragment after the global filter is disabled
+       */
+      if (initialHash) {
+        chromeHistory.replace({
+          ...chromeHistory.location,
+          hash: initialHash,
+        });
+        store.dispatch({ type: STORE_INITIAL_HASH });
+      }
+      store.dispatch(toggleGlobalFilter(isHidden));
+    },
+    isBeta,
+    isChrome2: true,
+    enable: debugFunctions,
+    isDemo: () => (Cookies.get('cs_demo') ? true : false),
+    isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+    mapGlobalFilter: flatTags,
+    navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
+    updateDocumentTitle,
+    visibilityFunctions,
+    on: (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
+      if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
+        throw new Error(`Unknown event type: ${type}`);
+      }
+
+      const [listener, selector] = PUBLIC_EVENTS[type];
+      if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+        (callback as GenericCB)({
+          data: get(store.getState(), selector) || {},
+        });
+      }
+      if (typeof listener === 'function') {
+        return middlewareListener.addNew(listener(callback as GenericCB));
+      }
+    },
+    experimentalApi: true,
+    isFedramp: isFedRamp(),
+    usePendoFeedback,
+    segment: {
+      setPageMetadata,
+    },
+    toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+    // FIXME: Update types once merged
+    quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
+    helpTopics,
+    clearAnsibleTrialFlag,
+    isAnsibleTrialFlagActive,
+    setAnsibleTrialFlag,
+    chromeHistory,
+    analytics: analytics!,
+    // FIXME: Update types once merged
+    useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
+    init: () => {
+      console.error(`Caaling deprecated "chrome.init function"! Please remove the function call from your code.`);
+    },
+    $internal: {
+      store,
+    },
+  };
+  return api;
+};

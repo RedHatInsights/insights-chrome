@@ -5,7 +5,10 @@ import cookie from 'js-cookie';
 import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
 import { isBeta, isProd } from './common';
 import { AxiosRequestConfig } from 'axios';
-import { ChromeAuthOptions } from '../@types/types';
+import { AppNavigationCB, ChromeAuthOptions, GenericCB, NavDOMEvent } from '../@types/types';
+import { VisibilityFunctions } from '@redhat-cloud-services/types';
+import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
+import { APP_NAV_CLICK, GLOBAL_FILTER_UPDATE } from '../redux/action-types';
 
 export const noAuthParam = 'noauth';
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
@@ -48,11 +51,11 @@ const checkPermissions = async (permissions: string[] = [], require: 'every' | '
   return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
 };
 
-export const visibilityFunctions = {
+export const visibilityFunctions: VisibilityFunctions = {
   isOrgAdmin: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return !!data.identity.user?.is_org_admin;
+      return !!data?.identity.user?.is_org_admin;
     } catch {
       return false;
     }
@@ -60,7 +63,7 @@ export const visibilityFunctions = {
   isActive: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return !!data.identity.user?.is_active;
+      return !!data?.identity.user?.is_active;
     } catch {
       return false;
     }
@@ -68,27 +71,27 @@ export const visibilityFunctions = {
   isInternal: async () => {
     const data = await window.insights.chrome.auth.getUser();
     try {
-      return !!data.identity.user?.is_internal;
+      return !!data?.identity.user?.is_internal;
     } catch {
       return false;
     }
   },
-  isEntitled: async (appName: string) => {
+  isEntitled: async (appName?: string) => {
     const data = await window.insights.chrome.auth.getUser();
-    const { entitlements } = data || {};
-    return data.entitlements && appName
+    const { entitlements } = data || { entitlements: {} };
+    return data?.entitlements && appName
       ? Boolean(entitlements[appName] && entitlements[appName].is_entitled)
       : // eslint-disable-next-line camelcase
         Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
   },
   isProd: () => isProd(),
   isBeta: () => isBeta(),
-  isHidden: () => true,
+  isHidden: () => true, // FIXME: Why always true?
   withEmail: async (...toHave: string[]) => {
     const data = await window.insights.chrome.auth.getUser();
     const {
       identity: { user },
-    } = data || {};
+    } = data || { identity: {} };
     return toHave?.some((item) => user?.email?.includes(item));
   },
   loosePermissions: (permissions: string[]) => checkPermissions(permissions, 'some'),
@@ -101,11 +104,11 @@ export const visibilityFunctions = {
     accessor,
     matcher,
     ...options
-  }: Omit<AxiosRequestConfig, 'adapter'> & { accessor?: 'string'; matcher?: keyof typeof matcherMapper }) => {
+  }: Omit<AxiosRequestConfig, 'adapter'> & { accessor?: string; matcher?: keyof typeof matcherMapper }) => {
     const data = await window.insights.chrome.auth.getUser();
 
     // this will log a bunch of 403s if the account number isn't present
-    if (data.identity.account_number) {
+    if (data?.identity.account_number) {
       return instance({
         url,
         method,
@@ -159,49 +162,6 @@ export const activationRequestURLs = [
 
 // Global Defaults
 
-export const DEFAULT_SSO_ROUTES = {
-  prod: {
-    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
-    sso: 'https://sso.redhat.com/auth',
-    portal: 'https://access.redhat.com',
-  },
-  qa: {
-    url: ['qa.foo.redhat.com', 'qa.cloud.redhat.com', 'qa.console.redhat.com'],
-    sso: 'https://sso.qa.redhat.com/auth',
-    portal: 'https://access.qa.redhat.com',
-  },
-  ci: {
-    url: ['ci.foo.redhat.com', 'ci.cloud.redhat.com', 'ci.console.redhat.com'],
-    sso: 'https://sso.qa.redhat.com/auth',
-    portal: 'https://access.qa.redhat.com',
-  },
-  qaprodauth: {
-    url: ['qaprodauth.foo.redhat.com', 'qaprodauth.cloud.redhat.com', 'qaprodauth.console.redhat.com'],
-    sso: 'https://sso.redhat.com/auth',
-    portal: 'https://access.redhat.com',
-  },
-  stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
-    sso: 'https://sso.stage.redhat.com/auth',
-    portal: 'https://access.stage.redhat.com',
-  },
-  gov: {
-    url: ['gov.cloud.redhat.com', 'gov.console.redhat.com'],
-    sso: 'https://sso.redhat.com/auth',
-    portal: 'https://access.redhat.com',
-  },
-  govStage: {
-    url: ['gov.cloud.stage.redhat.com', 'gov.console.stage.redhat.com'],
-    sso: 'https://sso.stage.redhat.com/auth',
-    portal: 'https://access.redhat.com',
-  },
-  dev: {
-    url: ['console.dev.redhat.com'],
-    sso: 'https://sso.redhat.com/auth',
-    portal: 'https://access.redhat.com',
-  },
-};
-
 export const defaultAuthOptions: ChromeAuthOptions = {
   realm: 'redhat-external',
   clientId: 'cloud-services',
@@ -209,3 +169,39 @@ export const defaultAuthOptions: ChromeAuthOptions = {
 };
 
 export const OFFLINE_REDIRECT_STORAGE_KEY = 'chrome.offline.redirectUri';
+
+export const PUBLIC_EVENTS: {
+  APP_NAVIGATION: [(callback: AppNavigationCB) => Listener];
+  NAVIGATION_TOGGLE: [(callback: GenericCB) => Listener];
+  GLOBAL_FILTER_UPDATE: [(callback: GenericCB) => Listener, string];
+} = {
+  APP_NAVIGATION: [
+    (callback: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
+      const appNavListener: Listener<{ event: NavDOMEvent; id?: string }> = {
+        on: APP_NAV_CLICK,
+        callback: ({ data }) => {
+          if (data.id !== undefined || data.event) {
+            callback({ navId: data.id, domEvent: data.event });
+          }
+        },
+      };
+      return appNavListener;
+    },
+  ],
+  NAVIGATION_TOGGLE: [
+    (callback: (...args: unknown[]) => void) => {
+      console.error('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');
+      return {
+        on: 'NAVIGATION_TOGGLE',
+        callback,
+      };
+    },
+  ],
+  GLOBAL_FILTER_UPDATE: [
+    (callback: (...args: unknown[]) => void) => ({
+      on: GLOBAL_FILTER_UPDATE,
+      callback,
+    }),
+    'globalFilter.selectedTags',
+  ],
+};
