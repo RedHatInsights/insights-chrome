@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { BundleNavigation, NavItem } from '../../@types/types';
-import { ChromeModule, ReduxState } from '../../redux/store';
+import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
+import { ReduxState } from '../../redux/store';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { computeFedrampResult } from '../../utils/useRenderFedramp';

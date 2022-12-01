@@ -11,6 +11,7 @@ import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import { loadModulesSchema } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
+import LibtJWTContext from '../../src/components/LibJWTContext';
 
 function createEnv(code) {
   if (!code) {
@@ -35,23 +36,33 @@ function createEnv(code) {
   );
 
   const Component = () => (
-    <MemoryRouter initialEntries={[`/${code}`]}>
-      <Provider store={reduxStore}>
-        <IntlProvider locale="en">
-          <FeatureFlagsProvider>
-            <ScalprumRoot
-              config={{
-                [code]: {
-                  manifestLocation: `/apps/${code}/fed-mods.json`,
-                  name: code,
-                  module: `${code}#./RootApp`,
-                },
-              }}
-            />
-          </FeatureFlagsProvider>
-        </IntlProvider>
-      </Provider>
-    </MemoryRouter>
+    <LibtJWTContext.Provider
+      value={{
+        initPromise: Promise.resolve(),
+        jwt: {
+          getUserInfo: () => Promise.resolve({}),
+          getEncodedToken: () => '',
+        },
+      }}
+    >
+      <MemoryRouter initialEntries={[`/${code}`]}>
+        <Provider store={reduxStore}>
+          <IntlProvider locale="en">
+            <FeatureFlagsProvider>
+              <ScalprumRoot
+                config={{
+                  [code]: {
+                    manifestLocation: `/apps/${code}/fed-mods.json`,
+                    name: code,
+                    module: `${code}#./RootApp`,
+                  },
+                }}
+              />
+            </FeatureFlagsProvider>
+          </IntlProvider>
+        </Provider>
+      </MemoryRouter>
+    </LibtJWTContext.Provider>
   );
 
   return Component;

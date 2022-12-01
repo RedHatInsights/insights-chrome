@@ -1,6 +1,7 @@
-import consts, { DEFAULT_SSO_ROUTES, OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
+import consts, { OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
+import { DEFAULT_SSO_ROUTES } from '../utils/common';
 
 type Priv = {
   postbackUrl?: string;
