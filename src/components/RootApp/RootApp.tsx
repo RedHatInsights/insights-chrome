@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
@@ -21,7 +21,7 @@ export type RootAppProps = {
   config: AppsConfig;
 };
 
-const RootApp = (props: RootAppProps) => {
+const RootApp = memo((props: RootAppProps) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
@@ -97,6 +97,8 @@ const RootApp = (props: RootAppProps) => {
       </SegmentProvider>
     </HistoryRouter>
   );
-};
+});
+
+RootApp.displayName = 'MemoizedRootApp';
 
 export default RootApp;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import { getUrl, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
@@ -126,69 +126,76 @@ export type SegmentProviderProps = {
   activeModule?: string;
 };
 
-const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
-  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
-  const analytics = useRef<AnalyticsBrowser>();
-  const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
-  const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
-  const { pathname } = useLocation();
-  useEffect(() => {
-    const disconnect = registerAnalyticsObserver();
-    return () => disconnect();
-  }, []);
+const SegmentProvider: React.FC<SegmentProviderProps> = memo(
+  ({ activeModule, children }) => {
+    const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
+    const analytics = useRef<AnalyticsBrowser>();
+    const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
+    const moduleAPIKey = useSelector(
+      ({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey
+    );
+    const { pathname } = useLocation();
+    useEffect(() => {
+      const disconnect = registerAnalyticsObserver();
+      return () => disconnect();
+    }, []);
 
-  useEffect(() => {
-    if (!isDisabled && activeModule && user) {
-      /**
-       * Clean up custom page event data after module change
-       */
-      window._segment = {
-        groupId: user.identity.internal?.org_id,
-        activeModule,
-      };
-      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTrais(user, pathname, activeModule);
-      const identityOptions = {
-        context: {
+    useEffect(() => {
+      if (!isDisabled && activeModule && user) {
+        /**
+         * Clean up custom page event data after module change
+         */
+        window._segment = {
           groupId: user.identity.internal?.org_id,
-        },
-        cloud_user_id: user.identity.internal?.account_id,
-        adobe_cloud_visitor_id: getAdobeVisitorId(),
-      };
-      const groupTraits = {
-        account_number: user.identity.account_number,
-        account_id: user.identity.internal?.org_id,
-        cloud_org_id: user.identity.internal?.org_id,
-        cloud_ebs_id: user.identity.account_number,
-      };
-      if (!analytics.current) {
-        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
-        window.segment = analytics.current;
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
-        analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page(...getPageEventOptions());
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-      } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        window.segment = undefined;
-        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
-        window.segment = analytics.current;
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
-        analytics.current.group(user.identity.internal?.org_id, groupTraits);
+          activeModule,
+        };
+        const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
+        const identityTraits = getIdentityTrais(user, pathname, activeModule);
+        const identityOptions = {
+          context: {
+            groupId: user.identity.internal?.org_id,
+          },
+          cloud_user_id: user.identity.internal?.account_id,
+          adobe_cloud_visitor_id: getAdobeVisitorId(),
+        };
+        const groupTraits = {
+          account_number: user.identity.account_number,
+          account_id: user.identity.internal?.org_id,
+          cloud_org_id: user.identity.internal?.org_id,
+          cloud_ebs_id: user.identity.account_number,
+        };
+        if (!analytics.current) {
+          analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
+          window.segment = analytics.current;
+          analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+          analytics.current.group(user.identity.internal?.org_id, groupTraits);
+          analytics.current.page(...getPageEventOptions());
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
+        } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
+          window.segment = undefined;
+          analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
+          window.segment = analytics.current;
+          analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+          analytics.current.group(user.identity.internal?.org_id, groupTraits);
+        }
       }
-    }
-  }, [activeModule, user]);
+    }, [activeModule, user]);
 
-  return (
-    <SegmentContext.Provider
-      value={{
-        ready: true,
-        analytics: analytics.current,
-      }}
-    >
-      {children}
-    </SegmentContext.Provider>
-  );
-};
+    return (
+      <SegmentContext.Provider
+        value={{
+          ready: true,
+          analytics: analytics.current,
+        }}
+      >
+        {children}
+      </SegmentContext.Provider>
+    );
+  },
+  (prev, next) => prev.activeModule === next.activeModule
+);
+
+SegmentProvider.displayName = 'MemoizedSegmentProvider';
 
 export default SegmentProvider;
