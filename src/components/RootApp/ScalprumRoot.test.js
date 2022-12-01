@@ -134,11 +134,21 @@ describe('ScalprumRoot', () => {
     let container;
     await act(async () => {
       const { container: internalContainer } = await render(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <ScalprumRoot config={config} {...initialProps} />
-          </MemoryRouter>
-        </Provider>
+        <LibtJWTContext.Provider
+          value={{
+            initPromise: Promise.resolve(),
+            jwt: {
+              getUserInfo: () => Promise.resolve({}),
+              getEncodedToken: () => '',
+            },
+          }}
+        >
+          <Provider store={store}>
+            <MemoryRouter initialEntries={['/']}>
+              <ScalprumRoot config={config} {...initialProps} />
+            </MemoryRouter>
+          </Provider>
+        </LibtJWTContext.Provider>
       );
       container = internalContainer;
     });
@@ -168,11 +178,21 @@ describe('ScalprumRoot', () => {
     let getByLabelText;
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
-          </MemoryRouter>
-        </Provider>
+        <LibtJWTContext.Provider
+          value={{
+            initPromise: Promise.resolve(),
+            jwt: {
+              getUserInfo: () => Promise.resolve({}),
+              getEncodedToken: () => '',
+            },
+          }}
+        >
+          <Provider store={store}>
+            <MemoryRouter initialEntries={['/']}>
+              <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
+            </MemoryRouter>
+          </Provider>
+        </LibtJWTContext.Provider>
       );
       getByLabelText = internalGetByLabelText;
     });
