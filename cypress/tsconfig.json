@@ -14,5 +14,14 @@
     "resolveJsonModule": true,
     "baseUrl": "./",
     "types": ["cypress", "node"]
-  }
+  },
+  "include": ["../src/**/*.ts", "../src/**/*.tsx"],
+  "exclude": [
+    "../src/**/*.test.ts",
+    "../src/**/*.test.tsx",
+    "../src/**/*.spec.tsx",
+    "../src/**/*.spec.ts",
+    "../src/**/__mocks__/**/*.ts",
+    "../src/**/__mocks__/**/*.tx",
+  ]
 }
