@@ -65,6 +65,28 @@ export const createChromeContext = ({
     registerModule: (module?: string, manifest?: string) => dispatch(registerModule(module, manifest)),
     removeGlobalFilter: (isHidden: boolean) => store.dispatch(removeGlobalFilter(isHidden)),
   };
+
+  const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
+    if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
+      throw new Error(`Unknown event type: ${type}`);
+    }
+
+    const [listener, selector] = PUBLIC_EVENTS[type];
+    if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+      (callback as GenericCB)({
+        data: get(store.getState(), selector) || {},
+      });
+    }
+    if (typeof listener === 'function') {
+      return middlewareListener.addNew(listener(callback as GenericCB));
+    }
+  };
+
+  const identifyApp = (_data: any, appTitle?: string, noSuffix?: boolean) => {
+    updateDocumentTitle(appTitle, noSuffix);
+    return Promise.resolve();
+  };
+
   const api: ChromeAPI = {
     ...actions,
     auth: createAuthObject(libJwt, getUser, store, modulesConfig),
@@ -81,10 +103,7 @@ export const createChromeContext = ({
       await getUser();
       return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
     },
-    identifyApp: (_data: any, appTitle?: string, noSuffix?: boolean) => {
-      updateDocumentTitle(appTitle, noSuffix);
-      return Promise.resolve();
-    },
+    identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
       const initialHash = store.getState()?.chrome?.initialHash;
       /**
@@ -108,21 +127,7 @@ export const createChromeContext = ({
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     updateDocumentTitle,
     visibilityFunctions,
-    on: (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
-      if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
-        throw new Error(`Unknown event type: ${type}`);
-      }
-
-      const [listener, selector] = PUBLIC_EVENTS[type];
-      if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
-        (callback as GenericCB)({
-          data: get(store.getState(), selector) || {},
-        });
-      }
-      if (typeof listener === 'function') {
-        return middlewareListener.addNew(listener(callback as GenericCB));
-      }
-    },
+    on,
     experimentalApi: true,
     isFedramp: isFedRamp(),
     usePendoFeedback,
@@ -141,7 +146,14 @@ export const createChromeContext = ({
     // FIXME: Update types once merged
     useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
     init: () => {
-      console.error(`Caaling deprecated "chrome.init function"! Please remove the function call from your code.`);
+      console.error(
+        `Calling deprecated "chrome.init function"! Please remove the function call from your code. Functions "on" and "updateDocumentTitle" are directly accessible from "useChrome" hook.`
+      );
+      return {
+        on,
+        updateDocumentTitle,
+        identifyApp,
+      };
     },
     $internal: {
       store,
