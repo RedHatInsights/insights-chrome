@@ -1,6 +1,7 @@
 const path = require('path');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 
 // call default generator then pair different variations of uri with each base
 const myGenerator = asGenerator((item, ...rest) => {
@@ -55,6 +56,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+    },
   },
   output: {
     filename: 'bundle.js',
