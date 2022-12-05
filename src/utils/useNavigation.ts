@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { useContext, useEffect, useRef } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
-import { NavItem } from '../@types/types';
-import { Navigation, ReduxState } from '../redux/store';
+import { NavItem, Navigation } from '../@types/types';
+import { ReduxState } from '../redux/store';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -46,7 +46,8 @@ const useNavigation = () => {
   const { flagsReady } = useFlagsStatus();
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
-  const { replace, location } = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { pathname } = location;
   const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
@@ -81,11 +82,16 @@ const useNavigation = () => {
 
         setTimeout(() => {
           if (activeQSId.current && shouldPreseverQuickstartSearch(window.location.search, activeQSId.current)) {
-            replace({
-              ...activeLocation.current,
-              pathname: newPathname.replace(/^\/beta\//, '/'),
-              search: appendQSSearch(window.location.search, activeQSId.current),
-            });
+            navigate(
+              {
+                ...activeLocation.current,
+                pathname: newPathname.replace(/^\/beta\//, '/'),
+                search: appendQSSearch(window.location.search, activeQSId.current),
+              },
+              {
+                replace: true,
+              }
+            );
           }
         });
       });

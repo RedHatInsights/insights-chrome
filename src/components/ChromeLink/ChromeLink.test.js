@@ -48,28 +48,6 @@ describe('ChromeLink', () => {
     expect(getAllByTestId('router-link')).toHaveLength(1);
   });
 
-  test('should pick native link for non dynamic module', () => {
-    const store = mockStore({
-      chrome: {
-        activeModule: 'differentModule',
-        moduleRoutes: [],
-        modules: {
-          differentModule: {
-            dynamic: false,
-          },
-          testModule: {},
-        },
-      },
-    });
-    const { getAllByTestId } = render(
-      <LinkContext store={store}>
-        <ChromeLink {...testProps}>Test module link</ChromeLink>
-      </LinkContext>
-    );
-
-    expect(getAllByTestId('native-link')).toHaveLength(1);
-  });
-
   test('should dispatch appNavClick with correct actionId for top level route', () => {
     const store = mockStore({
       chrome: {

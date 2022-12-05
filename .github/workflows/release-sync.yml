@@ -1,0 +1,26 @@
+on:
+  push: 
+    branches:
+    - master
+
+jobs:
+  pull-request-stable:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: pull-request
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "master"
+        destination_branch: "master-stable"
+        pr_title: "[stable] Update build"
+  pull-request-prod-beta:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: pull-request
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "master"
+        destination_branch: "prod-beta"
+        pr_title: "[prod-beta] Update build"

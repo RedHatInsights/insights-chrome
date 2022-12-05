@@ -1,7 +1,7 @@
 import { setupCache } from 'axios-cache-adapter';
 import localforage from 'localforage';
 
-import { deleteLocalStorageItems, lastActive } from './common';
+import { deleteLocalStorageItems, isBeta, lastActive } from './common';
 
 export const createCacheStore = (endpoint: string, cacheKey: string) => {
   const name = lastActive(endpoint, cacheKey);
@@ -28,7 +28,7 @@ let store: LocalForage;
  * This issue may occur when the user switches between envs without logging out and in.
  */
 const envSwap = () => {
-  const currentEnv = window.insights.chrome.isBeta() ? 'beta' : 'non-beta';
+  const currentEnv = isBeta() ? 'beta' : 'non-beta';
   const prevEnv = localStorage.getItem('chrome:prevEnv');
   if (prevEnv && currentEnv !== prevEnv) {
     deleteLocalStorageItems(Object.keys(localStorage).filter((item) => item.endsWith('/chrome-store')));

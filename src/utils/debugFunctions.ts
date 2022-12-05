@@ -3,7 +3,7 @@ const functionBuilder = (key: string, value: boolean | number | string) => {
   return () => window.localStorage && window.localStorage.removeItem(key);
 };
 
-export default {
+const debugFunctions = {
   iqe: () => functionBuilder('iqe:chrome:init', true),
   remediationsDebug: () => functionBuilder('remediations:debug', true),
   invTags: () => functionBuilder('rhcs-tags', true),
@@ -22,3 +22,5 @@ export default {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
 };
+
+export default debugFunctions;

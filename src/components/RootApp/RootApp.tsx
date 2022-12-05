@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Router } from 'react-router-dom';
+import React, { Suspense, lazy, memo, useEffect } from 'react';
+import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 
 import chromeHistory from '../../utils/chromeHistory';
@@ -15,12 +15,15 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
+import { isBeta } from '../../utils/common';
+
+const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 
 export type RootAppProps = {
   config: AppsConfig;
 };
 
-const RootApp = (props: RootAppProps) => {
+const RootApp = memo((props: RootAppProps) => {
   const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
@@ -80,12 +83,14 @@ const RootApp = (props: RootAppProps) => {
     updateQuickStarts,
   };
   return (
-    <Router history={chromeHistory}>
-      <SegmentProvider activeModule={activeModule!}>
+    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={isBeta() ? '/beta' : '/'}>
+      <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
           <IDPChecker>
             {/* <CrossRequestNotifier /> */}
-
+            <Suspense fallback={null}>
+              <NotEntitledModal />
+            </Suspense>
             <QuickStartContainer {...quickStartProps}>
               <HelpTopicContainer helpTopics={helpTopics}>
                 <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
@@ -94,8 +99,10 @@ const RootApp = (props: RootAppProps) => {
           </IDPChecker>
         </FeatureFlagsProvider>
       </SegmentProvider>
-    </Router>
+    </HistoryRouter>
   );
-};
+});
+
+RootApp.displayName = 'MemoizedRootApp';
 
 export default RootApp;

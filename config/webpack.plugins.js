@@ -36,7 +36,7 @@ const plugins = (dev = false, beta = false) => {
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
         { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
-        { 'react-router-dom': { requiredVersion: deps['react-router-dom'] } },
+        { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
         { 'react-redux': { requiredVersion: deps['react-redux'] } },
         { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },

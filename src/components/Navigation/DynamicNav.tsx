@@ -2,27 +2,16 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useLoadModule } from '@scalprum/react-core';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { NavItem } from '@patternfly/react-core';
-import { useHistory } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
-import ChromeNavItem, { ChromeNavItemProps } from './ChromeNavItem';
+import ChromeNavItem from './ChromeNavItem';
 import { loadLeftNavSegment } from '../../redux/actions';
-import { Navigation, ReduxState } from '../../redux/store';
-import { NavItem as NavItemType } from '../../@types/types';
+import { ReduxState } from '../../redux/store';
+import { DynamicNavProps, NavItem as NavItemType, Navigation } from '../../@types/types';
 
 const toArray = (value: NavItemType | NavItemType[]) => (Array.isArray(value) ? value : [value]);
 const mergeArrays = (orig: any[], index: number, value: any[]) => [...orig.slice(0, index), ...toArray(value), ...orig.slice(index)];
-
-export type DynamicNavProps = ChromeNavItemProps & {
-  dynamicNav: string;
-  useNavigation: (config: {
-    schema?: Navigation | NavItemType[];
-    dynamicNav: string;
-    currentNamespace: string;
-    currNav?: NavItemType[];
-  }) => NavItemType | NavItemType[];
-  pathname: string;
-};
 
 const isRootNavigation = (schema?: Navigation | NavItemType[]): schema is Navigation => {
   return !!(!Array.isArray(schema) && schema?.navItems);
@@ -80,9 +69,7 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }: Dyn
 };
 
 const DynamicNav = ({ dynamicNav, ...props }: DynamicNavProps) => {
-  const {
-    location: { pathname },
-  } = useHistory();
+  const { pathname } = useLocation();
   const [appName] = dynamicNav.split('/');
   // TODO make useLoadModule generic type
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

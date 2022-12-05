@@ -9,24 +9,26 @@ import Feedback from '../Feedback';
 import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
-import ChromeLink from '../ChromeLink/ChromeLink';
-import { Route } from 'react-router-dom';
-import { activationRequestURLs } from '../../utils/consts';
+import ChromeLink from '../ChromeLink';
+import { Route, Routes } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
+import { activationRequestURLs } from '../../utils/consts';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
-  const path =
+  const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
-      ? '*'
-      : ['/insights', '/settings', '/openshift', '/application-services', '/ansible', '/edge'];
+      ? ['*']
+      : ['insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*'];
   return (
-    <Route path={path}>
-      <Feedback user={user} />
-    </Route>
+    <Routes>
+      {paths.map((path) => (
+        <Route key={path} path={path} element={<Feedback user={user} />} />
+      ))}
+    </Routes>
   );
 };
 

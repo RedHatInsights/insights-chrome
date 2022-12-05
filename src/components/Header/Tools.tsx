@@ -78,7 +78,7 @@ const Tools = () => {
   const intl = useIntl();
   const bundle = getUrl('bundle');
   const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
-  const identityAndAccessManagmentPath = '/iam/authentication-policy/authentication-factors';
+  const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
