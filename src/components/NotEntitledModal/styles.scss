@@ -1,0 +1,25 @@
+@import '~@redhat-cloud-services/frontend-components-utilities/styles/_mixins';
+
+// Unentitled Modal Styles
+.chr-c-error-modal {
+  &__header {
+      text-align: center;
+      max-width: 75%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-bottom: var(--pf-global--spacer--md);
+  }
+  &__content {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      &--body { width: 75%; }
+      &--footer-secondary { margin-top: var(--pf-global--spacer--sm);}
+  }
+}
+
+.chr-c-icon__active { fill: var(--pf-global--active-color--100); }
+
+img.chr-c-application-info__logo {
+  @include rem('height', 76px);
+}
