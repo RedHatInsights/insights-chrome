@@ -128,6 +128,7 @@ export type SegmentProviderProps = {
 
 const SegmentProvider: React.FC<SegmentProviderProps> = memo(
   ({ activeModule, children }) => {
+    const initialized = useRef(false);
     const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
     const analytics = useRef<AnalyticsBrowser>();
     const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
@@ -135,6 +136,18 @@ const SegmentProvider: React.FC<SegmentProviderProps> = memo(
       ({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey
     );
     const { pathname } = useLocation();
+
+    /**
+     * This needs to happen in a condition and during first render!
+     * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
+     */
+    if (!analytics.current) {
+      analytics.current = analytics.current = AnalyticsBrowser.load(
+        { writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey) },
+        { initialPageview: false }
+      );
+    }
+
     useEffect(() => {
       const disconnect = registerAnalyticsObserver();
       return () => disconnect();
@@ -164,15 +177,15 @@ const SegmentProvider: React.FC<SegmentProviderProps> = memo(
           cloud_org_id: user.identity.internal?.org_id,
           cloud_ebs_id: user.identity.account_number,
         };
-        if (!analytics.current) {
-          analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false });
+        if (!initialized.current && analytics.current) {
           window.segment = analytics.current;
           analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
           analytics.current.group(user.identity.internal?.org_id, groupTraits);
           analytics.current.page(...getPageEventOptions());
+          initialized.current = true;
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
-        } else if (!isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
+        } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
           window.segment = undefined;
           analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
           window.segment = analytics.current;
