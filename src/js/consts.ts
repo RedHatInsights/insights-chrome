@@ -147,4 +147,8 @@ export const activationRequestURLs = [
   'gcp-opp-activation',
   'gcp-oke-activation',
   'gcp-ocp-activation',
+  'gcp-rhaap2-activation',
+  'gcp-rhaap2-ext100-activation',
+  'gcp-rhaap2-ext200-activation',
+  'gcp-rhaap2-ext400-activation',
 ];
