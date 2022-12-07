@@ -1,11 +1,11 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { HelpTopicContext } from '@patternfly/quickstarts';
+import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import isEqual from 'lodash/isEqual';
 import { AppsConfig } from '@scalprum/core';
-import { ChromeAPI } from '@redhat-cloud-services/types';
+import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
@@ -43,6 +43,7 @@ export type ScalprumRootProps = {
 const ScalprumRoot = memo(
   ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
     const { setActiveHelpTopicByName, helpTopics, activeHelpTopic, setFilteredHelpTopics } = useContext(HelpTopicContext);
+    const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
     const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
     const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
@@ -57,9 +58,23 @@ const ScalprumRoot = memo(
       }
     }
 
-    async function enableTopics(...names: string[]) {
-      return helpTopicsAPI.enableTopics(...names).then((res) => {
-        setFilteredHelpTopics?.(res);
+    function isStringArray(arr: EnableTopicsArgs): arr is string[] {
+      return typeof arr[0] === 'string';
+    }
+    async function enableTopics(...names: EnableTopicsArgs) {
+      let internalNames: string[] = [];
+      let shouldAppend = false;
+      if (isStringArray(names)) {
+        internalNames = names;
+      } else {
+        internalNames = names[0].names;
+        shouldAppend = !!names[0].append;
+      }
+      return helpTopicsAPI.enableTopics(...internalNames).then((res) => {
+        internalFilteredTopics.current = shouldAppend
+          ? [...internalFilteredTopics.current, ...res.filter((topic) => !internalFilteredTopics.current.find(({ name }) => name === topic.name))]
+          : res;
+        setFilteredHelpTopics?.(internalFilteredTopics.current);
         return res;
       });
     }
