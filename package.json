@@ -90,7 +90,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.8",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.1",
     "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.24",
-    "@redhat-cloud-services/types": "^0.0.16",
+    "@redhat-cloud-services/types": "^0.0.17",
     "@simonsmith/cypress-image-snapshot": "^5.0.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.0.0",

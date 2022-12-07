@@ -3,7 +3,7 @@ import logger from '../jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getEnvDetails, getUrl, isBeta } from './common';
+import { getEnvDetails, getUrl, isBeta, isProd } from './common';
 import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -119,7 +119,7 @@ export async function createSupportCase(
 }
 
 function createSupportSentry(session: string, fields?: any) {
-  if (window.insights.chrome.isProd) {
+  if (isProd()) {
     log('Capturing support case information in Sentry');
     // this should capture the app information anyway, so no need to pass extra data
     Sentry.captureException(new Error('Support case created'), {
