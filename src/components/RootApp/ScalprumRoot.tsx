@@ -79,6 +79,12 @@ const ScalprumRoot = memo(
       });
     }
 
+    function disableTopics(...topicsNames: string[]) {
+      helpTopicsAPI.disableTopics(...topicsNames);
+      internalFilteredTopics.current = internalFilteredTopics.current.filter((topic) => !topicsNames.includes(topic.name));
+      setFilteredHelpTopics?.(internalFilteredTopics.current);
+    }
+
     useEffect(() => {
       const unregister = chromeHistory.listen(historyListener);
       return () => {
@@ -123,6 +129,7 @@ const ScalprumRoot = memo(
         ...helpTopicsAPI,
         setActiveTopic,
         enableTopics,
+        disableTopics,
         closeHelpTopic: () => {
           setActiveTopic('');
         },
