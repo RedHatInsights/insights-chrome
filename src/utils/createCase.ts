@@ -3,7 +3,7 @@ import logger from '../jwt/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getEnvDetails, getUrl } from './common';
+import { getEnvDetails, getUrl, isBeta, isProd } from './common';
 import { HYDRA_ENDPOINT } from './consts';
 import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -43,7 +43,7 @@ function registerProduct() {
 }
 
 async function getAppInfo(activeModule: string) {
-  let path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${activeModule}/app.info.json`;
+  let path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule}/app.info.json`;
   try {
     return activeModule && (await (await fetch(path)).json());
   } catch (error) {
@@ -52,9 +52,7 @@ async function getAppInfo(activeModule: string) {
      * Transformation co camel case is requried by webpack remote moduled name requirements.
      * If we don't find the app info with camel case app id we try using kebab-case
      */
-    path = `${window.location.origin}${window.insights.chrome.isBeta() ? '/beta/' : '/'}apps/${activeModule
-      .replace(/[A-Z]/g, '-$&')
-      .toLowerCase()}/app.info.json`;
+    path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule.replace(/[A-Z]/g, '-$&').toLowerCase()}/app.info.json`;
     try {
       return activeModule && (await (await fetch(path)).json());
     } catch (error) {
@@ -121,7 +119,7 @@ export async function createSupportCase(
 }
 
 function createSupportSentry(session: string, fields?: any) {
-  if (window.insights.chrome.isProd) {
+  if (isProd()) {
     log('Capturing support case information in Sentry');
     // this should capture the app information anyway, so no need to pass extra data
     Sentry.captureException(new Error('Support case created'), {

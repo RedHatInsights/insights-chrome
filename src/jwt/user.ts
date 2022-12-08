@@ -4,6 +4,7 @@ import logger from './logger';
 import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
+import chromeHistory from '../utils/chromeHistory';
 
 export type SSOServiceDetails = {
   is_entitled: boolean;
@@ -109,7 +110,17 @@ export function tryBounceIfUnentitled(
       log(`Entitled to: ${service}`);
     } else {
       log(`Not entitled to: ${service}`);
-      getWindow().location.replace(redirectAddress);
+      try {
+        const url = new URL(redirectAddress);
+        chromeHistory.replace({
+          pathname: url.pathname,
+          search: url.search,
+        });
+      } catch (error) {
+        console.error(error);
+        // if something goes wring with the redirect, use standard API
+        getWindow().location.replace(redirectAddress);
+      }
     }
   }
 }

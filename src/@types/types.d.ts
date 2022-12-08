@@ -1,7 +1,26 @@
 import { QuickStart, QuickStartCatalogPage } from '@patternfly/quickstarts';
 import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
+
+// TODO: Update once navigation is mgrated to TS
+export type Navigation = {
+  id?: string;
+  title?: string;
+  navItems: NavItem[];
+  sortedLinks: string[];
+};
+
+export type NavDOMEvent = {
+  href: string;
+  id: string;
+  navId: string;
+  type: string;
+  target?: HTMLAnchorElement | null;
+};
+
 /**
  * @deprecated
  * Only use as placeholder
@@ -83,6 +102,102 @@ export type HelpTopicsAPI = {
 export type QuickstartsApi = {
   version: number;
   updateQuickStarts: (key: string, quickstarts: QuickStart[]) => void;
+  set: (key: string, quickstarts: QuickStart[]) => void;
   toggle: (quickstart: string) => void;
   Catalog: typeof QuickStartCatalogPage;
+};
+
+export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;
+export type GenericCB = (...args: unknown[]) => void;
+
+export type RouteDefinition = {
+  appId?: string;
+  href?: string;
+  scope: string;
+  module: string;
+  isFedramp?: boolean;
+  path: string;
+  manifestLocation: string;
+  dynamic?: boolean;
+  exact?: boolean;
+};
+
+export type ModuleRoute =
+  | {
+      isFedramp?: boolean;
+      pathname: string;
+      exact?: boolean;
+      dynamic?: boolean;
+    }
+  | string;
+
+export type RemoteModule = {
+  module: string;
+  routes: ModuleRoute[];
+};
+
+export type ChromeModule = {
+  manifestLocation: string;
+  ssoUrl?: string;
+  config?: {
+    ssoUrl: string;
+  };
+  analytics?: {
+    APIKey?: string;
+  };
+  dynamic?: boolean;
+  isFedramp?: boolean;
+  modules?: RemoteModule[];
+  defaultDocumentTitle?: string;
+};
+
+export interface GroupItem {
+  /** Optional isSelected flag */
+  isSelected?: boolean;
+  /** Reference back to the group */
+  group: Group;
+  /** Current group filter item */
+  item: GroupFilterItem;
+}
+
+export type FlagTagsFilter = Record<string, Record<string, boolean | GroupItem>>;
+
+export type ChromeNavItemProps = {
+  isHidden?: boolean;
+  ignoreCase?: boolean;
+  title?: string;
+  isExternal?: boolean;
+  isBeta?: boolean;
+  href: string;
+  className?: string;
+  active?: boolean;
+  appId: string;
+  notifier?: string;
+  product?: string;
+};
+
+export type ChromeNavExapandableProps = {
+  title: string;
+  routes: RouteDefinition[];
+  active?: boolean;
+  isHidden?: boolean;
+  id?: string;
+};
+
+export type ChromeNavGroupProps = {
+  navItems: NavItem[];
+  isHidden?: boolean;
+  icon?: 'wrench' | 'shield' | 'database' | 'cloud' | 'code' | 'trend-up';
+  title: string;
+};
+
+export type DynamicNavProps = ChromeNavItemProps & {
+  dynamicNav: string;
+  useNavigation: (config: {
+    schema?: Navigation | NavItem[];
+    dynamicNav: string;
+    currentNamespace: string;
+    currNav?: NavItem[];
+  }) => NavItem | NavItem[];
+  pathname: string;
 };

@@ -1,9 +1,14 @@
 import { getOfflineToken, wipePostbackParamsThatAreNotForUs } from '../jwt/offline';
-import * as jwt from '../jwt/jwt';
-import cookie from 'js-cookie';
-import { defaultAuthOptions as defaultOptions } from '../utils/consts';
-import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import { AxiosResponse } from 'axios';
+import cookie from 'js-cookie';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { Store } from 'redux';
+
+import * as jwt from '../jwt/jwt';
+import consts, { defaultAuthOptions as defaultOptions } from '../utils/consts';
+import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
+import qe from '../utils/iqeEnablement';
+import { ChromeModule } from '../@types/types';
 
 export type LibJWT = {
   getOfflineToken: () => Promise<AxiosResponse<any>>;
@@ -32,6 +37,29 @@ export function crossAccountBouncer() {
   cookie.remove(CROSS_ACCESS_ORG_ID);
   window.location.reload();
 }
+
+export type ChromeGlobalConfig = { chrome?: ChromeModule };
+
+export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUser | void>, store: Store, globalConfig?: ChromeGlobalConfig) => ({
+  getOfflineToken: () => libjwt.getOfflineToken(),
+  doOffline: () =>
+    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
+  getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
+  getUser,
+  qe: {
+    ...qe,
+    init: () => qe.init(store),
+  },
+  logout: (bounce?: boolean) => libjwt.jwt.logoutAllTabs(bounce),
+  login: () => libjwt.jwt.login(),
+});
+
+export const createGetUser = (libjwt: LibJWT): (() => Promise<ChromeUser | undefined | void>) => {
+  return () =>
+    libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
+      libjwt.jwt.logoutAllTabs();
+    });
+};
 
 export default ({ ssoUrl }: { ssoUrl?: string }): LibJWT => {
   console.time(TIMER_STR); // eslint-disable-line no-console

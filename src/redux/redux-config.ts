@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'development' || (window && window.localStorage.get
   basicMiddlewares.push(logger);
 }
 
-const middlewareListener = new MiddlewareListener();
+export const middlewareListener = new MiddlewareListener();
 const reduxRegistry = new ReducerRegistry<ReduxState>(chromeInitialState, [promise, middlewareListener.getMiddleware(), ...basicMiddlewares]);
 
 reduxRegistry.register(chromeReducer());

@@ -1,53 +1,8 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem } from '../@types/types';
-import { FlagTagsFilter } from '../components/GlobalFilter/globalFilterApi';
+
+import { ChromeModule, FlagTagsFilter, NavItem, Navigation, RouteDefinition } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
-
-export type RouteDefinition = {
-  appId?: string;
-  href?: string;
-  scope: string;
-  module: string;
-  isFedramp?: boolean;
-  path: string;
-  manifestLocation: string;
-  dynamic?: boolean;
-  exact?: boolean;
-};
-
-export type ModuleRoute =
-  | {
-      isFedramp?: boolean;
-      pathname: string;
-      exact?: boolean;
-      dynamic?: boolean;
-    }
-  | string;
-
-export type RemoteModule = {
-  module: string;
-  routes: ModuleRoute[];
-};
-
-export type ChromeModule = {
-  manifestLocation: string;
-  analytics?: {
-    APIKey?: string;
-  };
-  dynamic?: boolean;
-  isFedramp?: boolean;
-  modules?: RemoteModule[];
-  defaultDocumentTitle?: string;
-};
-
-// TODO: Update once navigation is mgrated to TS
-export type Navigation = {
-  id?: string;
-  title?: string;
-  navItems: NavItem[];
-  sortedLinks: string[];
-};
 
 export type InternalNavigation = {
   [key: string]: Navigation | NavItem[] | undefined;

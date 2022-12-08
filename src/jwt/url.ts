@@ -1,4 +1,4 @@
-import { DEFAULT_SSO_ROUTES } from '../utils/consts';
+import { DEFAULT_SSO_ROUTES } from '../utils/common';
 import logger from './logger';
 const log = logger('insights/url.js');
 

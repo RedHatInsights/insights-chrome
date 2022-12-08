@@ -2,7 +2,7 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
+import { DEFAULT_SSO_ROUTES, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
 
@@ -10,7 +10,7 @@ import logger from './logger';
 import platformUrl from './url';
 import platformUser from './user';
 import urijs from 'urijs';
-import { DEFAULT_SSO_ROUTES, GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, defaultAuthOptions as defaultOptions } from '../utils/consts';
+import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY, defaultAuthOptions as defaultOptions } from '../utils/consts';
 import Priv from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 

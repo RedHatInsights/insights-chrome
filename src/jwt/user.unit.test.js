@@ -6,6 +6,16 @@ const userOutput = require('../../testdata/user.json');
 const user = require('./user');
 const { setAnsibleTrialFlag, ANSIBLE_TRIAL_FLAG } = require('../utils/isAnsibleTrialFlagActive');
 const replaceMock = jest.fn();
+const chromeHistory = require('../utils/chromeHistory');
+
+jest.mock('../utils/chromeHistory', () => {
+  return {
+    __esModule: true,
+    default: {
+      replace: jest.fn(),
+    },
+  };
+});
 
 describe('User', () => {
   const { location } = window;
@@ -49,31 +59,34 @@ describe('User', () => {
     });
 
     test('should bounce if unentitled', () => {
+      const historySpy = jest.spyOn(chromeHistory.default, 'replace');
       user.tryBounceIfUnentitled(ents, 'insights');
-      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=insights');
+      expect(historySpy).lastCalledWith({ pathname: '/', search: '?not_entitled=insights' });
 
       user.tryBounceIfUnentitled(ents, 'cost-management');
-      expect(replaceMock).lastCalledWith('https://test.com/?not_entitled=cost_management');
+      expect(historySpy).lastCalledWith({ pathname: '/', search: '?not_entitled=cost_management' });
 
       user.tryBounceIfUnentitled(ents, 'ansible');
-      expect(replaceMock).lastCalledWith('https://test.com/ansible/ansible-dashboard/trial');
+      expect(historySpy).lastCalledWith({ pathname: '/ansible/ansible-dashboard/trial', search: '' });
+      historySpy.mockRestore();
     });
 
     test('should properly bounce if unentitled user with ansible trial locastorage flags', () => {
+      const historySpy = jest.spyOn(chromeHistory.default, 'replace');
       jest.useFakeTimers();
       // enable ansible trial flag
       setAnsibleTrialFlag(Date.now());
       // advance time by one minute. user should not be bounced
       jest.advanceTimersByTime(1 * 60 * 1000);
       user.tryBounceIfUnentitled(ents, 'ansible');
-      expect(replaceMock).not.toBeCalled();
+      expect(historySpy).not.toBeCalled();
 
       // advace time by additional 10 minutes. user should be bounced to /trial/expired
       jest.advanceTimersByTime(10 * 60 * 1000);
       user.tryBounceIfUnentitled(ents, 'ansible');
-      expect(replaceMock).toBeCalledTimes(1);
-      expect(replaceMock).toHaveBeenLastCalledWith('https://test.com/ansible/ansible-dashboard/trial/expired');
-      replaceMock.mockClear();
+      expect(historySpy).toBeCalledTimes(1);
+      expect(historySpy).toHaveBeenLastCalledWith({ pathname: '/ansible/ansible-dashboard/trial/expired', search: '' });
+      historySpy.mockClear();
 
       // should not be bounced at all if entitled to ansible
       user.tryBounceIfUnentitled(
@@ -84,7 +97,7 @@ describe('User', () => {
         },
         'ansible'
       );
-      expect(replaceMock).not.toBeCalled();
+      expect(historySpy).not.toBeCalled();
 
       // clear the ansible trial flag
       localStorage.removeItem(ANSIBLE_TRIAL_FLAG);

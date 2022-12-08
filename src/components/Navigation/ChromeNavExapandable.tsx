@@ -4,15 +4,8 @@ import ChromeNavItemFactory from './ChromeNavItemFactory';
 import { useSelector } from 'react-redux';
 import { isFedRamp } from '../../utils/common';
 import { computeFedrampResult } from '../../utils/useRenderFedramp';
-import { ReduxState, RouteDefinition } from '../../redux/store';
-
-export type ChromeNavExapandableProps = {
-  title: string;
-  routes: RouteDefinition[];
-  active?: boolean;
-  isHidden?: boolean;
-  id?: string;
-};
+import { ReduxState } from '../../redux/store';
+import { ChromeNavExapandableProps } from '../../@types/types';
 
 const ChromeNavExapandable = ({ title, routes, active, isHidden, id }: ChromeNavExapandableProps) => {
   const modules = useSelector((state: ReduxState) => state.chrome.modules);

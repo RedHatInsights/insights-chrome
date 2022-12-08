@@ -1,5 +1,6 @@
 import { NavigateFunction } from 'react-router-dom';
-import { FlagTagsFilter, GroupItem, flatTags } from './globalFilterApi';
+import { FlagTagsFilter, GroupItem } from '../../@types/types';
+import { flatTags } from './globalFilterApi';
 
 export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: NavigateFunction) => {
   if (isEnabled) {
