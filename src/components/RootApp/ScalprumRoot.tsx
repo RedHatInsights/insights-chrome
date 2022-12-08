@@ -182,6 +182,14 @@ const ScalprumRoot = memo(
               </Suspense>
             }
           />
+          <Route
+            path="/allservices"
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <AllServices />
+              </Suspense>
+            }
+          />
           <Route path="/connect/*" element={<DefaultLayout {...props} />} />
           <Route path="/security" element={<DefaultLayout {...props} />} />
           <Route path="*" element={<DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} />} />

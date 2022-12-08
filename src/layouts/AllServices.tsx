@@ -29,7 +29,6 @@ import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
 import CloudSecurityIcon from '@patternfly/react-icons/dist/js/icons/cloud-security-icon';
 import DatabaseIcon from '@patternfly/react-icons/dist/js/icons/database-icon';
 import InfrastructureIcon from '@patternfly/react-icons/dist/js/icons/infrastructure-icon';
-import OpenShiftIcon from '@patternfly/react-icons/dist/js/icons/openshift-icon';
 import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
