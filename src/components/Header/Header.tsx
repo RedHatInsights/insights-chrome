@@ -17,6 +17,7 @@ import { DeepRequired } from 'utility-types';
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
+import { isFedRamp } from '../../utils/common';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -45,7 +46,7 @@ export const Header = () => {
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
-        {user?.identity?.account_number && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
+        {user?.identity?.account_number && !isFedRamp() && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
