@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -52,6 +52,7 @@ const useNavigation = () => {
   const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }: ReduxState) => navigation[currentNamespace] as Navigation);
+  const [noNav, setNoNav] = useState(false);
 
   /**
    * We need a side effect to get the value into the mutation observer closure
@@ -100,6 +101,8 @@ const useNavigation = () => {
 
   useEffect(() => {
     let observer: MutationObserver | undefined;
+    // reset no nav flag
+    setNoNav(false);
     if (currentNamespace && flagsReady) {
       axios
         .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
@@ -109,16 +112,24 @@ const useNavigation = () => {
           }
 
           const data = response.data;
-          const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
-          const schema = {
-            ...data,
-            navItems,
-          };
-          observer = registerLocationObserver(pathname, schema);
-          observer.observe(document.querySelector('body')!, {
-            childList: true,
-            subtree: true,
-          });
+          try {
+            const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
+            const schema = {
+              ...data,
+              navItems,
+            };
+            observer = registerLocationObserver(pathname, schema);
+            observer.observe(document.querySelector('body')!, {
+              childList: true,
+              subtree: true,
+            });
+          } catch (error) {
+            // Hide nav if an error was encountered. Can happen for non-existing navigation files.
+            setNoNav(true);
+          }
+        })
+        .catch(() => {
+          setNoNav(true);
         });
     }
     return () => {
@@ -131,6 +142,7 @@ const useNavigation = () => {
   return {
     loaded: !!schema,
     schema,
+    noNav,
   };
 };
 

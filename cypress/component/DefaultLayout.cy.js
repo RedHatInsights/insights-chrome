@@ -44,15 +44,21 @@ const testUser = {
   },
 };
 
-const SidebarMock = ({ items = 5 }) => (
-  <Nav>
-    <NavList>
-      {[...Array(items)].map((_, i) => (
-        <ChromeNavItem title={`Nav item no: ${i}`} href="#" key={i} />
-      ))}
-    </NavList>
-  </Nav>
-);
+const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
+  if (!loaded) {
+    return null;
+  }
+  return (
+    <Nav>
+      <NavList>
+        {items.map((_, i) => (
+          <ChromeNavItem title={`Nav item no: ${i}`} href="#" key={i} />
+        ))}
+      </NavList>
+    </Nav>
+  );
+};
+
 describe('<Default layout />', () => {
   let store;
   beforeEach(() => {
@@ -78,14 +84,18 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
+    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+      navItems: [...Array(5)],
+    }).as('navRequest');
     const elem = cy
       .mount(
         <Wrapper store={store}>
-          <DefaultLayout Sidebar={<SidebarMock />} />
+          <DefaultLayout Sidebar={SidebarMock} />
         </Wrapper>
       )
       .get('html');
-    elem.matchImageSnapshot();
+    cy.wait('@navRequest');
+    elem.get('body').matchImageSnapshot();
   });
 
   it('render correctly with many nav items', () => {
@@ -94,13 +104,18 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
+
+    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+      navItems: [...Array(30)],
+    }).as('navRequest');
     const elem = cy
       .mount(
         <Wrapper store={store}>
-          <DefaultLayout Sidebar={<SidebarMock items={30} />} />
+          <DefaultLayout Sidebar={SidebarMock} />
         </Wrapper>
       )
       .get('html');
-    elem.matchImageSnapshot();
+    cy.wait('@navRequest');
+    elem.get('body').matchImageSnapshot();
   });
 });

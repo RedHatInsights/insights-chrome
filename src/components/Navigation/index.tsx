@@ -7,12 +7,13 @@ import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../../components/BetaInfoModal';
 import { getUrl, isBeta } from '../../utils/common';
 
-import useNavigation from '../../utils/useNavigation';
 import NavLoader from './Loader';
 import ChromeNavItem from './ChromeNavItem';
+import type { Navigation as NavigationSchema } from '../../@types/types';
 
-const Navigation = () => {
-  const { loaded, schema } = useNavigation();
+export type NavigationProps = { loaded: boolean; schema: NavigationSchema };
+
+const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
   const [showBetaModal, setShowBetaModal] = useState(false);
   const deferedOnClickArgs = useRef<[React.MouseEvent<HTMLAnchorElement, MouseEvent> | undefined, string | undefined, string | undefined]>([
     undefined,

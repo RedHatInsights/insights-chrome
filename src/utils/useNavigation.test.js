@@ -97,6 +97,7 @@ describe('useNavigatiom', () => {
     });
     expect(result.current).toEqual({
       loaded: true,
+      noNav: false,
       schema: {
         id: 'insights',
         navItems: [],
@@ -106,6 +107,7 @@ describe('useNavigatiom', () => {
     rerender({ path: '/ansible' });
     expect(result.current).toEqual({
       loaded: true,
+      noNav: false,
       schema: {
         id: 'ansible',
         navItems: [],
