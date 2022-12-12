@@ -184,7 +184,6 @@ const ScalprumRoot = memo(
               </Suspense>
             }
           />
-          <Route path="/connect/*" element={<DefaultLayout {...props} />} />
           <Route path="/security" element={<DefaultLayout {...props} />} />
           <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
         </Routes>

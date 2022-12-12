@@ -20,17 +20,19 @@ import {
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartShopping, faChartLine, faCloudArrowUp, faCog, faCreditCard } from '@fortawesome/free-solid-svg-icons';
-import { faSpaceAwesome } from '@fortawesome/free-brands-svg-icons';
-
 import AutomationIcon from '@patternfly/react-icons/dist/js/icons/automation-icon';
 import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
+import ChartLineIcon from '@patternfly/react-icons/dist/js/icons/chart-line-icon';
 import CloudSecurityIcon from '@patternfly/react-icons/dist/js/icons/cloud-security-icon';
+import CloudUploadAltIcon from '@patternfly/react-icons/dist/js/icons/cloud-upload-alt-icon';
+import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
+import CreditCardIcon from '@patternfly/react-icons/dist/js/icons/credit-card-icon';
 import DatabaseIcon from '@patternfly/react-icons/dist/js/icons/database-icon';
-import InfrastructureIcon from '@patternfly/react-icons/dist/js/icons/infrastructure-icon';
-import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import InfrastructureIcon from '@patternfly/react-icons/dist/js/icons/infrastructure-icon';
+import RocketIcon from '@patternfly/react-icons/dist/js/icons/rocket-icon';
+import ShoppingCartIcon from '@patternfly/react-icons/dist/js/icons/shopping-cart-icon';
+import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
 
 import Footer from '../components/Footer/Footer.js';
 import './AllServices.scss';
@@ -76,7 +78,7 @@ const AllServices = () => (
               <Gallery hasGutter>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faCloudArrowUp} /> Application Services
+                    <CloudUploadAltIcon /> Application Services
                   </CardTitle>
                   <CardBody>
                     <TextContent>
@@ -168,7 +170,7 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faSpaceAwesome} /> Deploy
+                    <RocketIcon /> Deploy
                   </CardTitle>
                   <CardBody>
                     <TextContent>
@@ -230,7 +232,7 @@ const AllServices = () => (
                       </Text>
                       <Text component={TextVariants.p}>
                         <Text component={TextVariants.a} href="/openshift/overview">
-                          Openshift
+                          OpenShift
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
@@ -300,7 +302,7 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faChartLine} />
+                    <ChartLineIcon />
                     Observe
                   </CardTitle>
                   <CardBody>
@@ -325,7 +327,7 @@ const AllServices = () => (
                         </Text>
                       </Text>
                       <Text component={TextVariants.p} className="subtitle">
-                        Openshift
+                        OpenShift
                       </Text>
                       <Text component={TextVariants.p}>
                         <Text component={TextVariants.a} href="/openshift/insights/advisor/recommendations">
@@ -392,7 +394,7 @@ const AllServices = () => (
                       </Text>
 
                       <Text component={TextVariants.p} className="subtitle">
-                        Openshift
+                        OpenShift
                       </Text>
                       <Text component={TextVariants.p}>
                         <Text component={TextVariants.a} href="/openshift/insights/advisor/recommendations">
@@ -443,7 +445,7 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faCreditCard} />
+                    <CreditCardIcon />
                     Spend Management
                   </CardTitle>
                   <CardBody>
@@ -469,7 +471,7 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faCog} />
+                    <CogIcon />
                     System Configuration
                   </CardTitle>
                   <CardBody>
@@ -500,7 +502,7 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <FontAwesomeIcon icon={faCartShopping} />
+                    <ShoppingCartIcon />
                     Try and Buy
                   </CardTitle>
                   <CardBody>
@@ -516,13 +518,13 @@ const AllServices = () => (
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="https://marketplace.redhat.com/en-us" target="_blank">
+                        <Text component={TextVariants.a} href="https://marketplace.redhat.com/en-us" rel="noopener noreferrer" target="_blank">
                           Red Hat Marketplace
                           <ExternalLinkAltIcon />
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="https://www.redhat.com/en/products/trials" target="_blank">
+                        <Text component={TextVariants.a} href="https://www.redhat.com/en/products/trials" rel="noopener noreferrer" target="_blank">
                           Red Hat Product Trials
                           <ExternalLinkAltIcon />
                         </Text>
