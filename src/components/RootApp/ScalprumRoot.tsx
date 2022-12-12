@@ -10,7 +10,6 @@ import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import AllServices from '../../layouts/AllServices';
-import NavLoader from '../Navigation/Loader';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -19,16 +18,10 @@ import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/type
 import { createGetUser } from '../../auth';
 import LibtJWTContext from '../LibJWTContext';
 import { createChromeContext } from '../../chrome/create-chrome';
+import LandingNav from '../LandingNav';
+import Navigation from '../Navigation';
 
-const Navigation = lazy(() => import('../Navigation'));
-const LandingNav = lazy(() => import('../LandingNav'));
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
-
-const loaderWrapper = (Component: React.ComponentType, props = {}) => (
-  <Suspense fallback={<NavLoader />}>
-    <Component {...props} />
-  </Suspense>
-);
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useSelector(({ globalFilter: { selectedTags } }: ReduxState) => selectedTags, shallowEqual);
@@ -173,7 +166,7 @@ const ScalprumRoot = memo(
        */
       <ScalprumProvider {...scalprumProviderProps}>
         <Routes>
-          <Route index path="/" element={<DefaultLayout Sidebar={loaderWrapper(LandingNav)} {...props} />} />
+          <Route index path="/" element={<DefaultLayout Sidebar={LandingNav} {...props} />} />
           <Route
             path="/connect/products"
             element={
@@ -182,6 +175,7 @@ const ScalprumRoot = memo(
               </Suspense>
             }
           />
+
           <Route
             path="/allservices"
             element={
@@ -192,7 +186,7 @@ const ScalprumRoot = memo(
           />
           <Route path="/connect/*" element={<DefaultLayout {...props} />} />
           <Route path="/security" element={<DefaultLayout {...props} />} />
-          <Route path="*" element={<DefaultLayout Sidebar={loaderWrapper(Navigation)} {...props} />} />
+          <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
         </Routes>
       </ScalprumProvider>
     );

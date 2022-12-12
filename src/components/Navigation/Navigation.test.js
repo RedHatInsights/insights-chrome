@@ -6,31 +6,6 @@ import { act, render } from '@testing-library/react';
 import createMockStore from 'redux-mock-store';
 import Navigation from './';
 
-jest.mock('axios', () => {
-  const axios = jest.requireActual('axios');
-  return {
-    __esModule: true,
-    ...axios,
-    get: () =>
-      Promise.resolve({
-        data: {
-          navItems: [],
-        },
-      }),
-    default: {
-      ...axios.default,
-      get: () =>
-        Promise.resolve({
-          data: {
-            navItems: [],
-          },
-        }),
-    },
-  };
-});
-
-import * as axios from 'axios';
-
 jest.mock('@unleash/proxy-client-react', () => {
   const actual = jest.requireActual('@unleash/proxy-client-react');
   return {
@@ -48,8 +23,6 @@ const NavContextWrapper = ({ store, children, initialEntries = ['/insights/dashb
 );
 
 describe('ChromeNavItem', () => {
-  const axiosGetSpy = jest.spyOn(axios.default, 'get');
-  axiosGetSpy.mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
   const mockStore = createMockStore();
   const navTitle = 'Nav title';
   const store = mockStore({
@@ -92,7 +65,7 @@ describe('ChromeNavItem', () => {
     await act(async () => {
       const { container: iContainer } = render(
         <NavContextWrapper store={store}>
-          <Navigation />
+          <Navigation loaded schema={{ navItems: [], title: navTitle }} />
         </NavContextWrapper>
       );
       container = iContainer;
