@@ -20,11 +20,13 @@ import { getUrl } from '../utils/common';
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
+import useNavigation from '../utils/useNavigation';
+import { NavigationProps } from '../components/Navigation';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
   initialized?: boolean;
-  Sidebar?: React.ReactNode;
+  Sidebar?: React.FC<NavigationProps>;
 };
 
 type DefaultLayoutProps = {
@@ -33,12 +35,14 @@ type DefaultLayoutProps = {
   hideNav: boolean;
   isNavOpen: boolean;
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  Sidebar: React.ReactNode;
+  Sidebar?: React.FC<NavigationProps>;
 };
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { loaded, schema, noNav } = useNavigation();
+
   return (
     <Page
       className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
@@ -63,7 +67,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           <Header />
         </Masthead>
       }
-      sidebar={hideNav ? undefined : <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={Sidebar} />}
+      sidebar={
+        (noNav || hideNav) && Sidebar
+          ? undefined
+          : Sidebar && <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={<Sidebar schema={schema} loaded={loaded} />} />
+      }
     >
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
@@ -134,7 +142,7 @@ const ShieldedRoot = memo(
 ShieldedRoot.displayName = 'ShieldedRoot';
 
 export type RootAppProps = {
-  Sidebar?: React.ReactNode;
+  Sidebar?: React.FC<NavigationProps>;
 };
 
 const DefaultLayoutRoot = ({ Sidebar }: RootAppProps) => {

@@ -72,6 +72,9 @@ describe('Gateway errors', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/featureflags/*', { toggles: [] });
     cy.intercept('POST', '/api/featureflags/v0/client/*', {});
+    cy.intercept('GET', '/config/chrome/*-navigation.json?ts=*', {
+      navItems: [],
+    });
     window.__scalprum__ === undefined;
   });
 
