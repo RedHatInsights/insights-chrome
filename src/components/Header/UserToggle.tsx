@@ -73,7 +73,7 @@ const buildItems = (
       {accountNumber > -1 && (
         <DropdownItem
           component={
-            <ChromeLink href="/user-preferences/email" isBeta={isBeta()} appId="userPreferences">
+            <ChromeLink href="/user-preferences/notifications" isBeta={isBeta()} appId="userPreferences">
               {intl.formatMessage(messages.userPreferences)}
             </ChromeLink>
           }
