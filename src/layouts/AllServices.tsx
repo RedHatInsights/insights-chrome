@@ -19,6 +19,7 @@ import {
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
+import ChromeLink from '../components/ChromeLink';
 
 import AutomationIcon from '@patternfly/react-icons/dist/js/icons/automation-icon';
 import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
@@ -86,34 +87,22 @@ const AllServices = () => (
                         Streamline your hybrid cloud experience, reducing the operational cost and complexity of delivering cloud-native applications.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/beta/application-services/api-designer">
-                          API Designer
-                        </Text>
+                        <ChromeLink href="/beta/application-services/api-designer">API Designer</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/api-management">
-                          API Management
-                        </Text>
+                        <ChromeLink href="/application-services/api-management">API Management</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/beta/application-services/connectors ">
-                          Connectors
-                        </Text>
+                        <ChromeLink href="/beta/application-services/connectors">Connectors</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/service-accounts ">
-                          Service Accounts
-                        </Text>
+                        <ChromeLink href="/application-services/service-accounts">Service Accounts</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/service-registry ">
-                          Service Registry
-                        </Text>
+                        <ChromeLink href="/application-services/service-registry">Service Registry</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/streams/overview ">
-                          Streams of Apache Kafka
-                        </Text>
+                        <ChromeLink href="/application-services/streams/overview">Streams of Apache Kafka</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -126,24 +115,18 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Solve problems once, in one place, and scale up. </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/automation-analytics/reports">
-                          Automation Analytics
-                        </Text>
+                        <ChromeLink href="/ansible/automation-analytics/reports">Automation Analytics</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/automation-hub">
-                          Automation Hub
-                        </Text>
+                        <ChromeLink href="/ansible/automation-hub">Automation Hub</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Insights
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/remediations">
-                          Remediations
-                        </Text>
+                        <ChromeLink href="/ansible/remediations">Remediations</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -156,14 +139,10 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/databases">
-                          Database Access
-                        </Text>
+                        <ChromeLink href="/application-services/databases">Database Access</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/application-services/data-science">
-                          Data Science
-                        </Text>
+                        <ChromeLink href="/application-services/data-science">Data Science</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -176,19 +155,13 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Create RHEL images, systems at the Edge, and OpenShift clusters.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/edge/fleet-management">
-                          Edge Management
-                        </Text>
+                        <ChromeLink href="/edge/fleet-management">Edge Management</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/edge/manage-images">
-                          Image Builder
-                        </Text>
+                        <ChromeLink href="/edge/manage-images">Image Builder</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/create">
-                          Clusters
-                        </Text>
+                        <ChromeLink href="/openshift/create">Clusters</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -201,19 +174,15 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Ensure that the right users have the appropriate access to technology resources.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Authentication policy
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/settings/my-user-access">
-                          My User Access
-                        </Text>
+                        <ChromeLink href="/settings/my-user-access">My User Access</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/create">
-                          User Access
-                        </Text>
+                        <ChromeLink href="/edge/users">User Access</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -226,19 +195,13 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Manage your infrastructure across the hybrid cloud.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift">
-                          Clusters
-                        </Text>
+                        <ChromeLink href="/openshift">Clusters</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/overview">
-                          OpenShift
-                        </Text>
+                        <ChromeLink href="/openshift/overview">OpenShift</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/releases">
-                          Releases
-                        </Text>
+                        <ChromeLink href="/openshift/releases">Releases</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -251,17 +214,17 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Alerts users to events, using email and integrations such as Webhooks.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Integration (Sources)
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Notifications
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Splunk | ServiceNow
                         </Text>
                       </Text>
@@ -278,24 +241,18 @@ const AllServices = () => (
                         View OpenShift clusters, Edge systems, RHEL hosts, and your organization&apos;s subscriptions.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift">
-                          Clusters
-                        </Text>
+                        <ChromeLink href="/openshift">Clusters</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/edge/fleet-management">
-                          Edge
-                        </Text>
+                        <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Subscriptions
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/dashboard">
-                          Systems
-                        </Text>
+                        <ChromeLink href="/insights/dashboard">Systems</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -312,65 +269,43 @@ const AllServices = () => (
                         Ansible
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">
-                          Adviser
-                        </Text>
+                        <ChromeLink href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">Adviser</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/drift">
-                          Drift
-                        </Text>
+                        <ChromeLink href="/ansible/drift">Drift</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/ansible/policies">
-                          Policies
-                        </Text>
+                        <ChromeLink href="/ansible/policies">Policies</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p} className="subtitle">
                         OpenShift
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/insights/advisor/recommendations">
-                          Advisor
-                        </Text>
+                        <ChromeLink href="/openshift/insights/advisor/recommendations">Advisor</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/insights/vulnerability/">
-                          Vulnerability
-                        </Text>
+                        <ChromeLink href="/openshift/insights/vulnerability/">Vulnerability</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p} className="subtitle">
                         RHEL
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/advisor/recommendations">
-                          Advisor
-                        </Text>
+                        <ChromeLink href="/insights/advisor/recommendations">Advisor</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/drift">
-                          Drift
-                        </Text>
+                        <ChromeLink href="/insights/drift">Drift</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/patch/advisories">
-                          Patch as Content
-                        </Text>
+                        <ChromeLink href="/insights/patch/advisories">Patch as Content</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/policies/list">
-                          Policies
-                        </Text>
+                        <ChromeLink href="/insights/policies/list">Policies</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="insights/remediations">
-                          Remediations
-                        </Text>
+                        <ChromeLink href="insights/remediations">Remediations</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/ros">
-                          Resource Optimization
-                        </Text>
+                        <ChromeLink href="/insights/ros">Resource Optimization</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -388,57 +323,39 @@ const AllServices = () => (
                         Ansible
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="ansible/remediations">
-                          Remediations
-                        </Text>
+                        <ChromeLink href="/ansible/remediations">Remediations</ChromeLink>
                       </Text>
 
                       <Text component={TextVariants.p} className="subtitle">
                         OpenShift
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/insights/advisor/recommendations">
-                          Advanced Cluster Security
-                        </Text>
+                        <ChromeLink href="/openshift/insights/advisor/recommendations">Advanced Cluster Security</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/insights/vulnerability/">
-                          Vulnerability
-                        </Text>
+                        <ChromeLink href="/openshift/insights/vulnerability/">Vulnerability</ChromeLink>
                       </Text>
 
                       <Text component={TextVariants.p} className="subtitle">
                         RHEL
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/advisor/recommendations">
-                          Advisor
-                        </Text>
+                        <ChromeLink href="/insights/advisor/recommendations">Advisor</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/compliance/">
-                          Compliance
-                        </Text>
+                        <ChromeLink href="/insights/compliance/">Compliance</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/edge/fleet-managements">
-                          Edge
-                        </Text>
+                        <ChromeLink href="/edge/fleet-managements">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/malware/">
-                          Malware
-                        </Text>
+                        <ChromeLink href="/insights/malware/">Malware</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/patch/advisories">
-                          Patch
-                        </Text>
+                        <ChromeLink href="/insights/patch/advisories">Patch</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/edge/cves">
-                          Vulnerability
-                        </Text>
+                        <ChromeLink href="/edge/cves">Vulnerability</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -452,12 +369,10 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Control costs and monitor committed spend.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/cost-management">
-                          Cost Management
-                        </Text>
+                        <ChromeLink href="/openshift/cost-management">Cost Management</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Hybrid Committed Spend
                         </Text>
                       </Text>
@@ -478,24 +393,18 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Connect your RHEL systems to Hybrid Cloud Console services.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/settings/connector/activation-keys">
-                          Activation Keys
-                        </Text>
+                        <ChromeLink href="/settings/connector/activation-keys">Activation Keys</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="#">
+                        <Text component={TextVariants.p} href="">
                           Manifests
                         </Text>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/insights/registration">
-                          Register Systems
-                        </Text>
+                        <ChromeLink href="/insights/registration">Register Systems</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/settings/connector">
-                          Remote Host Configuration
-                        </Text>
+                        <ChromeLink href="/settings/connector">Remote Host Configuration</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -512,22 +421,22 @@ const AllServices = () => (
                         organization.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="/openshift/sandbox" target="_blank">
+                        <ChromeLink href="/openshift/sandbox" target="_blank">
                           Developer Sandbox
                           <ExternalLinkAltIcon />
-                        </Text>
+                        </ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="https://marketplace.redhat.com/en-us" rel="noopener noreferrer" target="_blank">
+                        <ChromeLink href="https://marketplace.redhat.com/en-us" rel="noopener noreferrer" target="_blank">
                           Red Hat Marketplace
                           <ExternalLinkAltIcon />
-                        </Text>
+                        </ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.a} href="https://www.redhat.com/en/products/trials" rel="noopener noreferrer" target="_blank">
+                        <ChromeLink href="https://www.redhat.com/en/products/trials" rel="noopener noreferrer" target="_blank">
                           Red Hat Product Trials
                           <ExternalLinkAltIcon />
-                        </Text>
+                        </ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
