@@ -21,6 +21,7 @@ const debugFunctions = {
   darkMode: () => functionBuilder('chrome:darkmode', true),
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
+  sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
 };
 
 export default debugFunctions;
