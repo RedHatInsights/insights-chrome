@@ -73,7 +73,8 @@ function initSentry() {
     maxBreadcrumbs: 50,
     attachStacktrace: true,
     integrations: [new BrowserTracing()],
-    tracesSampleRate: 0.007,
+    tracesSampleRate: 0.2,
+    debug: !!window.localStorage.getItem('chrome:sentry:debug'),
   });
 }
 
