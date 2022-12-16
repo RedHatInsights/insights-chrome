@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <React.Fragment>
       <PageSection className="pf-m-no-fill">
-        <footer role="contentinfo" className="chr-c-footer pf-l-flex pf-m-column pf-m-row-on-lg pf-m-align-items-center-on-lg">
+        <footer role="contentinfo" id="hcc-footer" className="chr-c-footer pf-l-flex pf-m-column pf-m-row-on-lg pf-m-align-items-center-on-lg">
           <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer">
             <img
               src="https://console.redhat.com/apps/frontend-assets/console-logos/Logo-Red_Hat-A-Standard-RGB.svg"

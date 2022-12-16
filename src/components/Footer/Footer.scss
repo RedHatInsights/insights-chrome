@@ -11,3 +11,14 @@
     }
   }
 }
+
+footer#hcc-footer { // temp override for conflict with OCM footer
+  background: transparent;
+  li {
+    border: none;
+    a {
+      color: var(--pf-global--active-color--100);
+      margin: 0;
+    }
+  }
+}

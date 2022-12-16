@@ -35,7 +35,7 @@ import RocketIcon from '@patternfly/react-icons/dist/js/icons/rocket-icon';
 import ShoppingCartIcon from '@patternfly/react-icons/dist/js/icons/shopping-cart-icon';
 import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
 
-import Footer from '../components/Footer/Footer.js';
+import Footer from '../components/Footer/Footer';
 import './AllServices.scss';
 
 const AllServices = () => (
