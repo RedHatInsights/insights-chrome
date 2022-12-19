@@ -161,7 +161,7 @@
     "@formatjs/cli": "4.2.33",
     "@patternfly/patternfly": "4.210.2",
     "@patternfly/quickstarts": "2.3.1",
-    "@patternfly/react-core": "4.250.1",
+    "@patternfly/react-core": "4.267.6",
     "@patternfly/react-icons": "4.86.7",
     "@patternfly/react-tokens": "4.87.7",
     "@redhat-cloud-services/entitlements-client": "1.0.101",
