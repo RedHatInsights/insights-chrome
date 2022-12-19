@@ -1,0 +1,58 @@
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.chr-l-stack-allservices {
+  .pf-c-search-input {
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+  }
+  input[type="text"]:disabled { //disabled state until search is implemented
+    background: #f1f1f1;
+    cursor: not-allowed;
+    opacity: .6;
+  }
+  .pf-l-gallery {
+    display: block;
+    column-count: auto;
+    column-width: 330px;
+  }
+  .pf-c-card {
+    display: block;
+    overflow: hidden;
+    break-inside: avoid-column;
+    &__title {
+      svg {
+        margin-right: var(--pf-global--spacer--xs);
+      }
+    }
+    &__body {
+      padding-bottom: var(--pf-global--spacer--sm);
+      .pf-c-content {
+        --pf-c-content--FontSize: var(--pf-global--FontSize--sm);
+        --pf-c-content--LineHeight: var(--pf-global--LineHeight--sm);
+        a {  // external link icon
+          svg {
+            font-size: var(--pf-global--icon--FontSize--sm);
+            margin-bottom: 2px;
+            margin-left: var(--pf-global--spacer--xs);
+          }
+        }
+        .subtitle {
+          font-weight: var(--pf-global--FontWeight--semi-bold);
+          padding-top: var(--pf-global--spacer--form-element);
+        }
+      }
+    }
+  }
+  @media screen and (max-width: $pf-global--breakpoint--md) {
+    .sticky {
+      position: sticky;
+      top: 0;
+    }
+    .pf-c-search-input {
+      margin: auto;
+      width: 100%;
+    }
+  }
+}
