@@ -49,10 +49,12 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   {
     prod: {
       acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
+      hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
       openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
     },
     dev: {
       acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
+      hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
       openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
     },
   }[env]?.[module] ||
