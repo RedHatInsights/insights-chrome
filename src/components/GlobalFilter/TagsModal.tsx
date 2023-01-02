@@ -70,7 +70,7 @@ const useRow = (
 };
 
 const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: FlagTagsFilter) => {
-  const registeredWith = useSelector<ReduxState, 'insights' | undefined>(({ globalFilter: { scope } }) => scope || undefined);
+  const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope || undefined);
   const dispatch = useDispatch();
   return useCallback(
     debounce((search?: string) => {
@@ -100,7 +100,7 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
   const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
   const tags = useSelector<ReduxState, GlobalFilterTag[]>(({ globalFilter: { tags } }) => tags?.items || []);
   const sids = useSelector<ReduxState, SID[]>(({ globalFilter: { sid } }) => sid?.items || []);
-  const filterScope = useSelector<ReduxState, 'insights' | undefined>(({ globalFilter: { scope } }) => scope || undefined);
+  const filterScope = useSelector(({ globalFilter: { scope } }: ReduxState) => scope || undefined);
   const debounceGetTags = useDebounce(fetchAllTags, tagsPerPage, selectedTags);
   const debounceGetSIDs = useDebounce(fetchAllSIDs, sidPerPage, selectedTags);
   useEffect(() => {
