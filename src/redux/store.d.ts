@@ -112,6 +112,10 @@ export type GlobalFilterTags = {
   perPage?: number;
 };
 
+export type TagRegisteredWith = Array<
+  'insights' | 'yupana' | 'puptoo' | 'rhsm-conduit' | 'cloud-connector' | '!yupana' | '!puptoo' | '!rhsm-conduit' | '!cloud-connector'
+>;
+
 export type GlobalFilterState = {
   tags: GlobalFilterTags;
   globalFilterRemoved?: boolean;
@@ -119,7 +123,7 @@ export type GlobalFilterState = {
   sid: GlobalFilterSIDs;
   selectedTags?: FlagTagsFilter;
   globalFilterHidden: boolean;
-  scope?: 'insights';
+  scope?: TagRegisteredWith[number];
 };
 
 export type ReduxState = {
