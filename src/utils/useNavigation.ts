@@ -43,7 +43,7 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 };
 
 const useNavigation = () => {
-  const { flagsReady } = useFlagsStatus();
+  const { flagsReady, flagsError } = useFlagsStatus();
   const isBetaEnv = isBeta();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -103,7 +103,7 @@ const useNavigation = () => {
     let observer: MutationObserver | undefined;
     // reset no nav flag
     setNoNav(false);
-    if (currentNamespace && flagsReady) {
+    if (currentNamespace && (flagsReady || flagsError)) {
       axios
         .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
         .then(async (response) => {
@@ -137,7 +137,7 @@ const useNavigation = () => {
         observer.disconnect();
       }
     };
-  }, [currentNamespace, flagsReady]);
+  }, [currentNamespace, flagsReady, flagsError]);
 
   return {
     loaded: !!schema,
