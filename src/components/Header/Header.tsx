@@ -2,8 +2,7 @@ import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import AppFilter from '../AppFilter';
-import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -53,7 +52,7 @@ export const Header = () => {
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <AppFilter />
+                  <Button className="chr-c-button-allservices" component={(props) => <ChromeLink {...props} href="/AllServices" />}>All Services</Button>
                 </ToolbarItem>
               )}
               {user && (
