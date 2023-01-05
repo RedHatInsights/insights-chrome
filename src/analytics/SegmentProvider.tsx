@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
-import { getUrl, isBeta, isProd } from '../utils/common';
+import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -49,10 +49,12 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   {
     prod: {
       acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
+      hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
       openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
     },
     dev: {
       acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
+      hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
       openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
     },
   }[env]?.[module] ||
@@ -128,7 +130,8 @@ export type SegmentProviderProps = {
 
 const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const initialized = useRef(false);
-  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true';
+  const fedRampEnv = isFedRamp();
+  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
@@ -141,7 +144,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   if (!analytics.current) {
     analytics.current = analytics.current = AnalyticsBrowser.load(
       { writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey) },
-      { initialPageview: false }
+      { initialPageview: false, integrations: { All: !fedRampEnv } }
     );
   }
 
@@ -184,7 +187,10 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
         window.segment = undefined;
-        analytics.current = AnalyticsBrowser.load({ writeKey: newKey }, { initialPageview: false, disableClientPersistence: true });
+        analytics.current = AnalyticsBrowser.load(
+          { writeKey: newKey },
+          { initialPageview: false, disableClientPersistence: true, integrations: { All: !fedRampEnv } }
+        );
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
         analytics.current.group(user.identity.internal?.org_id, groupTraits);

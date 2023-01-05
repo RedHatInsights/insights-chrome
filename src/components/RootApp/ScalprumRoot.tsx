@@ -9,6 +9,7 @@ import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
+import AllServices from '../../layouts/AllServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -171,6 +172,15 @@ const ScalprumRoot = memo(
             element={
               <Suspense fallback={LoadingFallback}>
                 <ProductSelection />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="/allservices"
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <AllServices />
               </Suspense>
             }
           />

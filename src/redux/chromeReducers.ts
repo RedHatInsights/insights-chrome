@@ -248,7 +248,7 @@ export function addQuickstartstoApp(state: ChromeState, { app, quickstart }: { a
       ...state.quickstarts,
       quickstarts: {
         ...state.quickstarts.quickstarts,
-        [app]: [...(state.quickstarts?.quickstarts?.[app] ? state.quickstarts?.quickstarts?.[app] : []), quickstart],
+        [app]: [...(state.quickstarts?.quickstarts?.[app] ? state.quickstarts?.quickstarts?.[app] || [] : []), quickstart],
       },
     },
   };
