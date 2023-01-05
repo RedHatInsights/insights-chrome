@@ -1,17 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import UnleasFlagProvider, { FlagProvider, UnleashClient } from '@unleash/proxy-client-react';
+import UnleasFlagProvider, { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { useSelector } from 'react-redux';
+import { captureException } from '@sentry/react';
 import { ReduxState } from '../../redux/store';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
-const config = {
+const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
   clientKey: 'proxy-123',
   appName: 'web',
   headerName: 'X-Unleash-Auth',
   refreshInterval: 60000,
-  metrcisInterval: 120000,
+  metricsInterval: 120000,
+  fetch: (url: URL, headers: RequestInit) => {
+    /**
+     * The default fetch handler in the client does not handle 500 errors and does not set the error flag or calls the on('error') listener.
+     * So we need a little bit of cheating to unblock the flagError and flagsReady variables
+     */
+    return window.fetch(url, headers).catch((err) => {
+      captureException(err);
+      // set the error flag
+      localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
+      return {
+        headers: {
+          get: () => '',
+        },
+        json: () => Promise.resolve({ toggles: [] }),
+        ok: true,
+      };
+    });
+  },
 };
 
 export const UNLEASH_ERROR_KEY = 'chrome:feature-flags:error';
