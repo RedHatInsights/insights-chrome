@@ -18,18 +18,27 @@ const config: IFlagProvider['config'] = {
      * The default fetch handler in the client does not handle 500 errors and does not set the error flag or calls the on('error') listener.
      * So we need a little bit of cheating to unblock the flagError and flagsReady variables
      */
-    return window.fetch(url, headers).catch((err) => {
-      captureException(err);
-      // set the error flag
-      localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
-      return {
-        headers: {
-          get: () => '',
-        },
-        json: () => Promise.resolve({ toggles: [] }),
-        ok: true,
-      };
-    });
+    return window
+      .fetch(url, headers)
+      .then((resp) => {
+        // prevent the request from falling back to default error behavior
+        if (resp.status >= 400) {
+          throw new Error(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`);
+        }
+        return resp;
+      })
+      .catch((err) => {
+        captureException(err);
+        // set the error flag
+        localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
+        return {
+          headers: {
+            get: () => '',
+          },
+          json: () => Promise.resolve({ toggles: [] }),
+          ok: true,
+        };
+      });
   },
 };
 
@@ -59,7 +68,8 @@ const FeatureFlagsProvider: React.FC = ({ children }) => {
         },
       });
       unleashClient = unleashClientInternal.current;
-      unleashClient.on('error', () => {
+      unleashClient.on('error', (error: any) => {
+        console.log('error', error);
         localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
       });
     }
