@@ -102,12 +102,12 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
         .then(({ data: { data } }) =>
           setData(
             data
-              .reduce((acc, curr) => {
+              .reduce<CrossAccountRequest[]>((acc, curr) => {
                 const request = acc.find(({ target_account }) => target_account === curr.target_account);
                 if (request) {
-                  return [...acc, request];
+                  return acc;
                 }
-                return acc;
+                return [...acc, curr];
               }, [])
               .filter(({ target_account }) => target_account !== user.identity.account_number)
           )
