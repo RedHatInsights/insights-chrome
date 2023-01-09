@@ -52,7 +52,9 @@ export const Header = () => {
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <Button className="chr-c-button-allservices" component={(props) => <ChromeLink {...props} href="/AllServices" />}>All Services</Button>
+                  <Button className="chr-c-button-allservices" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
+                    All Services
+                  </Button>
                 </ToolbarItem>
               )}
               {user && (
