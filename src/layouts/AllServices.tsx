@@ -69,7 +69,7 @@ const AllServices = () => (
                         Streamline your hybrid cloud experience, reducing the operational cost and complexity of delivering cloud-native applications.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/application-services/api-designer">API Designer</ChromeLink>
+                        <ChromeLink href="/beta/application-services/api-designer">API Designer</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/application-services/api-management">API Management</ChromeLink>
@@ -135,7 +135,7 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Create RHEL images, systems at the Edge, and OpenShift clusters.</Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/fleet-management">Edge Management</ChromeLink>
+                        <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/edge/manage-images">Image Builder</ChromeLink>
