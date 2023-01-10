@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
+import ChromeProvider from '@redhat-cloud-services/chrome/ChromeProvider';
 
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
@@ -91,11 +92,13 @@ const RootApp = memo((props: RootAppProps) => {
             <Suspense fallback={null}>
               <NotEntitledModal />
             </Suspense>
-            <QuickStartContainer {...quickStartProps}>
-              <HelpTopicContainer helpTopics={helpTopics}>
-                <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
-              </HelpTopicContainer>
-            </QuickStartContainer>
+            <ChromeProvider>
+              <QuickStartContainer {...quickStartProps}>
+                <HelpTopicContainer helpTopics={helpTopics}>
+                  <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+                </HelpTopicContainer>
+              </QuickStartContainer>
+            </ChromeProvider>
           </IDPChecker>
         </FeatureFlagsProvider>
       </SegmentProvider>
