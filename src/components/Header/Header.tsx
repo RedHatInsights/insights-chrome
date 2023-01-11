@@ -56,10 +56,12 @@ export const Header = () => {
               {user && (
                 <ToolbarItem>
                   <Button className="chr-c-button-masthead" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
-                    <CloudIcon />Services
+                    <CloudIcon />
+                    Services
                   </Button>
-                  <Button className="chr-c-button-masthead disabled" component={(props) => <ChromeLink {...props} href="/" />}>
-                    <StarIcon />Favorites
+                  <Button className="chr-c-button-masthead disabled" component={(props) => <ChromeLink {...props} href="#" />}>
+                    <StarIcon />
+                    Favorites
                   </Button>
                 </ToolbarItem>
               )}
