@@ -1,38 +1,65 @@
 import { HelpTopic } from '@patternfly/quickstarts';
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-import { useState } from 'react';
-
-type HelpTopicsState = {
-  topics?: {
-    [name: string]: HelpTopic;
-  };
-  activeTopics?: {
-    [name: string]: boolean;
-  };
-};
+import { Reducer, useReducer } from 'react';
 
 export type AddHelpTopic = (topics: HelpTopic[], enabled?: boolean) => void;
 export type DisableTopics = (...topicsNames: string[]) => void;
 export type EnableTopics = (...topicNames: string[]) => Promise<HelpTopic[]>;
 
-const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: {} }) => {
-  const [helpTopics, setHelpTopics] = useState<{
+type HelpTopicsState = {
+  helpTopics: {
     [name: string]: HelpTopic;
-  }>(state.topics || {});
-  const [activeTopics, setActiveTopics] = useState<{
+  };
+  activeTopics: {
     [name: string]: boolean;
-  }>(state.activeTopics || {});
+  };
+};
+
+type HelpTopicsAction = {
+  type: 'setActiveTopics' | 'setHelpTopics';
+  activeTopics?: string[];
+  helpTopics?: HelpTopic[];
+  active?: boolean;
+};
+
+const helpTopicsReducer: Reducer<HelpTopicsState, HelpTopicsAction> = (state, action) => {
+  switch (action.type) {
+    case 'setActiveTopics':
+      return {
+        ...state,
+        activeTopics: (action.activeTopics || []).reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr]: !!action.active,
+          }),
+          { ...state.activeTopics }
+        ),
+      };
+    case 'setHelpTopics':
+      return {
+        ...state,
+        helpTopics: (action.helpTopics || []).reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.name]: curr,
+          }),
+          { ...state.helpTopics }
+        ),
+      };
+
+    default:
+      return state;
+  }
+};
+
+const useHelpTopicState = () => {
+  const [state, dispatch] = useReducer(helpTopicsReducer, {
+    activeTopics: {},
+    helpTopics: {},
+  });
 
   function batchToggleTopic(names: string[], active: boolean) {
-    setActiveTopics((prev) =>
-      names.reduce(
-        (acc, curr) => ({
-          ...acc,
-          [curr]: active,
-        }),
-        { ...prev }
-      )
-    );
+    dispatch({ type: 'setActiveTopics', activeTopics: names, active });
   }
 
   /**
@@ -40,15 +67,7 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
    * New topics
    */
   const addHelpTopics: AddHelpTopic = (topics: HelpTopic[], enabled = true) => {
-    setHelpTopics((prev) =>
-      topics.reduce(
-        (acc, curr) => ({
-          ...acc,
-          [curr.name]: curr,
-        }),
-        { ...prev }
-      )
-    );
+    dispatch({ type: 'setHelpTopics', helpTopics: topics });
     batchToggleTopic(
       topics.map(({ name }) => name),
       enabled
@@ -89,11 +108,11 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     }
   }
 
-  const enableTopics: EnableTopics = async (...topicsNames: string[]) => {
+  function enableTopics(...topicsNames: string[]) {
     const newTopics: string[] = [];
     const existingTopics: string[] = [];
     topicsNames.forEach((name) => {
-      if (typeof helpTopics[name] === 'undefined') {
+      if (typeof state.helpTopics[name] === 'undefined') {
         newTopics.push(name);
       } else {
         existingTopics.push(name);
@@ -103,20 +122,20 @@ const useHelpTopicState = (state: HelpTopicsState = { topics: {}, activeTopics: 
     if (newTopics.length > 0) {
       tasks.push(fetchHelpTopics({ enabled: true, names: newTopics }));
     }
-    const existingContent: HelpTopic[] = Object.entries(helpTopics).reduce<HelpTopic[]>(
+    const existingContent: HelpTopic[] = Object.entries(state.helpTopics).reduce<HelpTopic[]>(
       (acc, [name, topic]) => [...acc, ...(topicsNames.includes(name) ? [topic] : [])],
       []
     );
     batchToggleTopic(existingTopics, true);
-    return await Promise.all(tasks).then((res) => [...res.flat(), ...existingContent]);
-  };
+    return Promise.all(tasks).then((res) => [...res.flat(), ...existingContent]);
+  }
 
   const disableTopics: DisableTopics = (...topicsNames: string[]) => {
     batchToggleTopic(topicsNames, false);
   };
 
   return {
-    helpTopics: Object.values(helpTopics).filter(({ name }) => activeTopics?.[name]),
+    helpTopics: Object.values(state.helpTopics).filter(({ name }) => state.activeTopics?.[name]),
     addHelpTopics,
     disableTopics,
     enableTopics,
