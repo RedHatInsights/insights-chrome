@@ -73,7 +73,8 @@ describe('HelpTopicManager', () => {
         ...chromeInitialState.chrome,
         moduleRoutes: [
           {
-            path: '/__cypress/iframes//home/martin/insights/insights-chrome/cypress/component/helptopics/HelpTopicManager.cy.tsx',
+            absolute: true,
+            path: '*',
             module: './TestApp',
             scope: 'TestApp',
             appId: 'TestApp',
