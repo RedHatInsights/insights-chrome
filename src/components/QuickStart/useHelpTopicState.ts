@@ -52,10 +52,10 @@ const helpTopicsReducer: Reducer<HelpTopicsState, HelpTopicsAction> = (state, ac
   }
 };
 
-const useHelpTopicState = () => {
+const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopics: {}, helpTopics: {} }) => {
   const [state, dispatch] = useReducer(helpTopicsReducer, {
-    activeTopics: {},
-    helpTopics: {},
+    activeTopics: initialState.activeTopics || {},
+    helpTopics: initialState.helpTopics || {},
   });
 
   function batchToggleTopic(names: string[], active: boolean) {
