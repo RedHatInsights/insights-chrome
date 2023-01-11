@@ -84,7 +84,7 @@ const AllServices = () => (
                         <ChromeLink href="/application-services/service-registry">Service Registry</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/application-services/streams/overview">Streams of Apache Kafka</ChromeLink>
+                        <ChromeLink href="/application-services/streams/overview">Streams for Apache Kafka</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -117,7 +117,7 @@ const AllServices = () => (
                   </CardTitle>
                   <CardBody>
                     <TextContent>
-                      <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
+                      <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases.</Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/application-services/databases">Database Access</ChromeLink>
                       </Text>
@@ -187,7 +187,7 @@ const AllServices = () => (
                   </CardTitle>
                   <CardBody>
                     <TextContent>
-                      <Text component={TextVariants.p}>Alerts users to events, using email and integrations such as Webhooks.</Text>
+                      <Text component={TextVariants.p}>Alerts users to events, using email and integrations such as webhooks.</Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/settings/sources">Sources</ChromeLink>
                       </Text>
@@ -236,7 +236,7 @@ const AllServices = () => (
                         Ansible
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">Adviser</ChromeLink>
+                        <ChromeLink href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">Advisor</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/ansible/drift">Drift</ChromeLink>
@@ -263,7 +263,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/drift">Drift</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/insights/patch/advisories">Patch as Content</ChromeLink>
+                        <ChromeLink href="/insights/patch/advisories">Patch</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/policies/list">Policies</ChromeLink>
