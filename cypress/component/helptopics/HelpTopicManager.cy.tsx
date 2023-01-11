@@ -112,11 +112,6 @@ describe('HelpTopicManager', () => {
   it('should switch help topics drawer content', () => {
     // change screen size
     cy.viewport(1280, 720);
-    // mount element
-    cy.mount(<Wrapper store={store}></Wrapper>);
-    cy.wait('@manifest');
-
-    // mock the dynamic module
     cy.window().then((win) => {
       win.TestApp = {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -125,6 +120,12 @@ describe('HelpTopicManager', () => {
           default: TestComponent,
         }),
       };
+    });
+    // mount element
+    cy.mount(<Wrapper store={store}></Wrapper>);
+
+    // mock the dynamic module
+    cy.window().then((win) => {
       win.__scalprum__ = {
         ...window.__scalprum__,
         scalprumOptions: {
