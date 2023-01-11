@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "module": "esnext",
     "target": "esnext",
-    "jsx": "react",
+    "jsx": "preserve",
     "moduleResolution": "node",
     "removeComments": false,
     "strict": true,
@@ -15,7 +15,7 @@
     "baseUrl": "./",
     "types": ["cypress", "node"]
   },
-  "include": ["../src/**/*.ts", "../src/**/*.tsx"],
+  "include": ["../src/**/*.ts", "../src/**/*.tsx", "./components/**/*.cy.tsx"],
   "exclude": [
     "../src/**/*.test.ts",
     "../src/**/*.test.tsx",

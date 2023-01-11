@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
@@ -14,16 +16,20 @@ import LibtJWTContext from '../../../src/components/LibJWTContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../../../src/auth';
 
+const jwt = {
+  getUserInfo: () => Promise.resolve(testUser as unknown as ChromeUser),
+  getEncodedToken: () => '',
+};
+
 const Wrapper = ({ store }: { store: Store }) => (
   <IntlProvider locale="en">
     <LibtJWTContext.Provider
-      value={{
-        initPromise: Promise.resolve(),
-        jwt: {
-          getUserInfo: () => Promise.resolve(testUser as unknown as ChromeUser),
-          getEncodedToken: () => '',
-        } as unknown as LibJWT,
-      }}
+      value={
+        {
+          initPromise: Promise.resolve(),
+          jwt,
+        } as unknown as LibJWT
+      }
     >
       <Provider store={store}>
         <RootApp
@@ -113,6 +119,7 @@ describe('HelpTopicManager', () => {
     // mock the dynamic module
     cy.window().then((win) => {
       win.TestApp = {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         init: () => {},
         get: () => () => ({
           default: TestComponent,
