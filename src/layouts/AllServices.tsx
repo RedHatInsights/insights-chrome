@@ -313,7 +313,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/compliance/">Compliance</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/fleet-managements">Edge</ChromeLink>
+                        <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/malware/">Malware</ChromeLink>
