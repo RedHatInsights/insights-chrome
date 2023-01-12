@@ -21,7 +21,7 @@ const Footer = () => (
       </LevelItem>
       <LevelItem className="pf-u-mr-2xl">
         <TextContent>
-          <Text component="small">Copyright c 2022 Red Hat, Inc.</Text>
+          <Text component="small">Copyright c 2023 Red Hat, Inc.</Text>
         </TextContent>
       </LevelItem>
       <LevelItem className="pf-u-mr-auto">
