@@ -41,6 +41,17 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
       trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
     });
     setSentryId(sentryId);
+
+    // explicitely track chunk loading errors
+    if (typeof (props.error as Error)?.message === 'string' && (props.error as Error).message.includes('Loading chunk') && window.segment) {
+      window.segment.track('chunk-loading-error', {
+        bundle: getUrl('bundle'),
+        app: getUrl(),
+        pathname: window.location.pathname,
+        message: (props.error as Error).message,
+        sentryId,
+      });
+    }
   }, []);
   const stack = props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error;
   return (
