@@ -69,13 +69,13 @@ const AllServices = () => (
                         Streamline your hybrid cloud experience, reducing the operational cost and complexity of delivering cloud-native applications.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/beta/application-services/api-designer">API Designer</ChromeLink>
+                        <ChromeLink href="/application-services/api-designer">API Designer</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/application-services/api-management">API Management</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/beta/application-services/connectors">Connectors</ChromeLink>
+                        <ChromeLink href="/application-services/connectors">Connectors</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/application-services/service-accounts">Service Accounts</ChromeLink>
@@ -103,7 +103,7 @@ const AllServices = () => (
                         <ChromeLink href="/ansible/automation-hub">Automation Hub</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/ansible/inventory">Insights</ChromeLink>
+                        <ChromeLink href="/insights/inventory">Insights</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/ansible/remediations">Remediations</ChromeLink>
@@ -138,7 +138,7 @@ const AllServices = () => (
                         <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/manage-images">Image Builder</ChromeLink>
+                        <ChromeLink href="/insights/image-builder">Image Builder</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/openshift/create">Clusters</ChromeLink>
