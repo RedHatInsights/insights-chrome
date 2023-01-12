@@ -18,6 +18,9 @@ import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { isFedRamp } from '../../utils/common';
 
+import CloudIcon from '@patternfly/react-icons/dist/js/icons/cloud-icon';
+import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
@@ -52,8 +55,13 @@ export const Header = () => {
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <Button className="chr-c-button-allservices" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
-                    All Services
+                  <Button className="chr-c-button-masthead" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
+                    <CloudIcon />
+                    Services
+                  </Button>
+                  <Button className="chr-c-button-masthead disabled" component={(props) => <ChromeLink {...props} href="#" />}>
+                    <StarIcon />
+                    Favorites
                   </Button>
                 </ToolbarItem>
               )}
