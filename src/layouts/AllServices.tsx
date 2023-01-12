@@ -56,24 +56,6 @@ const AllServices = () => (
               <StackItem className="pf-u-pl-lg pf-u-pb-md">
                 <Title headingLevel="h2">All Services</Title>
               </StackItem>
-              <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
-                <div className="pf-c-search-input">
-                  <div className="pf-c-search-input__bar">
-                    <span className="pf-c-search-input__text">
-                      <span className="pf-c-search-input__icon">
-                        <i className="fas fa-search fa-fw" aria-hidden="true"></i>
-                      </span>
-                      <input
-                        className="pf-c-search-input__text-input"
-                        type="text"
-                        placeholder="Find a service"
-                        aria-label="Find a service"
-                        disabled
-                      />
-                    </span>
-                  </div>
-                </div>
-              </StackItem>
             </StackItem>
             <StackItem>
               <Gallery hasGutter>
@@ -102,7 +84,7 @@ const AllServices = () => (
                         <ChromeLink href="/application-services/service-registry">Service Registry</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/application-services/streams/overview">Streams of Apache Kafka</ChromeLink>
+                        <ChromeLink href="/application-services/streams/overview">Streams for Apache Kafka</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -121,9 +103,7 @@ const AllServices = () => (
                         <ChromeLink href="/ansible/automation-hub">Automation Hub</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Insights
-                        </Text>
+                        <ChromeLink href="/ansible/inventory">Insights</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/ansible/remediations">Remediations</ChromeLink>
@@ -137,7 +117,7 @@ const AllServices = () => (
                   </CardTitle>
                   <CardBody>
                     <TextContent>
-                      <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases</Text>
+                      <Text component={TextVariants.p}>Create, manage, and migrate relational and non-relational databases.</Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/application-services/databases">Database Access</ChromeLink>
                       </Text>
@@ -155,7 +135,7 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Create RHEL images, systems at the Edge, and OpenShift clusters.</Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/fleet-management">Edge Management</ChromeLink>
+                        <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/edge/manage-images">Image Builder</ChromeLink>
@@ -173,11 +153,6 @@ const AllServices = () => (
                   <CardBody>
                     <TextContent>
                       <Text component={TextVariants.p}>Ensure that the right users have the appropriate access to technology resources.</Text>
-                      <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Authentication policy
-                        </Text>
-                      </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/settings/my-user-access">My User Access</ChromeLink>
                       </Text>
@@ -208,25 +183,19 @@ const AllServices = () => (
                 </Card>
                 <Card isPlain>
                   <CardTitle>
-                    <BellIcon /> Integration and Notifications
+                    <BellIcon /> Integrations and Notifications
                   </CardTitle>
                   <CardBody>
                     <TextContent>
-                      <Text component={TextVariants.p}>Alerts users to events, using email and integrations such as Webhooks.</Text>
+                      <Text component={TextVariants.p}>Alerts users to events, using email and integrations such as webhooks.</Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Integration (Sources)
-                        </Text>
+                        <ChromeLink href="/settings/sources">Sources</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Notifications
-                        </Text>
+                        <ChromeLink href="/settings/integrations">Integrations</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Splunk | ServiceNow
-                        </Text>
+                        <ChromeLink href="/settings/notifications/console">Notifications</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -247,9 +216,7 @@ const AllServices = () => (
                         <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Subscriptions
-                        </Text>
+                        <ChromeLink href="/insights/subscriptions/inventory">Subscriptions</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/dashboard">Systems</ChromeLink>
@@ -269,7 +236,7 @@ const AllServices = () => (
                         Ansible
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">Adviser</ChromeLink>
+                        <ChromeLink href="/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=">Advisor</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/ansible/drift">Drift</ChromeLink>
@@ -296,7 +263,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/drift">Drift</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/insights/patch/advisories">Patch as Content</ChromeLink>
+                        <ChromeLink href="/insights/patch/advisories">Patch</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/policies/list">Policies</ChromeLink>
@@ -372,14 +339,7 @@ const AllServices = () => (
                         <ChromeLink href="/openshift/cost-management">Cost Management</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Hybrid Committed Spend
-                        </Text>
-                      </Text>
-                      <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Subscription Inventory
-                        </Text>
+                        <ChromeLink href="/insights/subscriptions/inventory">Subscription Inventory</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -396,9 +356,7 @@ const AllServices = () => (
                         <ChromeLink href="/settings/connector/activation-keys">Activation Keys</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <Text component={TextVariants.p} href="">
-                          Manifests
-                        </Text>
+                        <ChromeLink href="/insights/subscriptions/manifests#SIDs=&tags=">Manifests</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/registration">Register Systems</ChromeLink>

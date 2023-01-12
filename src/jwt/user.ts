@@ -11,6 +11,11 @@ export type SSOServiceDetails = {
   is_trial: boolean;
 };
 
+const bounceInvocationLock: { [service: string]: boolean } = {
+  // not_entitled modal should appear only once for insights bundle
+  insights: false,
+};
+
 const log = logger('insights/user.js');
 const pathMapper = {
   'cost-management': 'cost_management',
@@ -26,10 +31,18 @@ const pathMapper = {
 
 const REDIRECT_BASE = `${document.location.origin}${isBeta() ? '/beta/' : '/'}`;
 
-const unentitledPathMapper = (section: string, service: string, expired = false) =>
-  ({
-    ansible: `${REDIRECT_BASE}ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
-  }[section] || `${REDIRECT_BASE}?not_entitled=${service}`);
+const unentitledPathMapper = (section: string, service: string, expired = false) => {
+  const search = new URLSearchParams(document.location.search);
+  if (!search.has('not_entitled')) {
+    search.append('not_entitled', service);
+  }
+  return (
+    {
+      ansible: `${REDIRECT_BASE}ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
+      insights: `${document.location.origin}${document.location.pathname}?${search.toString()}`,
+    }[section] || `${REDIRECT_BASE}?not_entitled=${service}`
+  );
+};
 
 function getWindow() {
   return window;
@@ -96,6 +109,11 @@ export function tryBounceIfUnentitled(
     return;
   }
 
+  // do not show not entitled modal repeadly for the same section
+  if (bounceInvocationLock[section]) {
+    return;
+  }
+
   const service = pathMapper[section];
   // ansibleActive can be true/false/undefined
   const redirectAddress = unentitledPathMapper(section, service, ansibleActive === false);
@@ -116,6 +134,9 @@ export function tryBounceIfUnentitled(
           pathname: url.pathname,
           search: url.search,
         });
+        if (section === 'insights') {
+          bounceInvocationLock[section] = true;
+        }
       } catch (error) {
         console.error(error);
         // if something goes wring with the redirect, use standard API
