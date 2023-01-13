@@ -45,7 +45,7 @@ describe('useHelpTopicState', () => {
   );
 
   const initialState = {
-    topics: initialTopics,
+    helpTopics: initialTopics,
     activeTopics: initialActiveTopics,
   };
 
@@ -116,7 +116,7 @@ describe('useHelpTopicState', () => {
   });
 
   test('should enable one help topic', () => {
-    const { result } = renderHook(() => useHelpTopicState({ topics: initialTopics }));
+    const { result } = renderHook(() => useHelpTopicState({ helpTopics: initialTopics }));
 
     expect(result.current.helpTopics).toEqual([]);
 
@@ -128,7 +128,7 @@ describe('useHelpTopicState', () => {
   });
 
   test('should enable multiple help topics', () => {
-    const { result } = renderHook(() => useHelpTopicState({ topics: initialTopics }));
+    const { result } = renderHook(() => useHelpTopicState({ helpTopics: initialTopics }));
 
     expect(result.current.helpTopics).toEqual([]);
 

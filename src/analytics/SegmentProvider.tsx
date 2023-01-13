@@ -143,7 +143,14 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
    */
   if (!analytics.current) {
     analytics.current = analytics.current = AnalyticsBrowser.load(
-      { writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey) },
+      {
+        writeKey: getAPIKey(
+          DEV_ENV ? 'dev' : 'prod',
+          // FIXME: Find a better way of getting the initial activeModule ID
+          (activeModule || getUrl('bundle') === 'openshift' ? 'openshift' : getUrl('app')) as SegmentModules,
+          moduleAPIKey
+        ),
+      },
       { initialPageview: false, integrations: { All: !fedRampEnv } }
     );
   }

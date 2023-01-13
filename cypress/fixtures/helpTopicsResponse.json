@@ -1,0 +1,151 @@
+{
+  "data": [
+    {
+      "id": 102,
+      "createdAt": "2023-01-06T08:18:37.582379Z",
+      "updatedAt": "2023-01-06T08:18:37.582379Z",
+      "deletedAt": null,
+      "groupName": "appstudio-add-component",
+      "name": "add-component",
+      "content": {
+        "name": "add-component",
+        "tags": null,
+        "links": [],
+        "title": "Add components",
+        "content": "An application is a collection of components. To add a component, tell App Studio where to find your code. Here are some possible sources for your code:\n\n1. **GitHub repository**\n\n   After you provide a Git repo URL, App Studio scans and analyzes the Git directory to determine how many components to add to your application. The number and type of components are determined by the file type in your Git repo, and also by your Git directory file hierarchy.\n\n   For example, your repo might contain in a [devfile](https://devfile.io/docs/2.0.0/defining-environment-variables) or [Dockerfile](https://docs.docker.com/glossary/#dockerfile) for defining a multicomponent application. Or maybe it contains various code sources for App Studio to use for creating a multicomponent application.\n\n   After App Studio analyzes your repo, it builds container images for your components, stores them on Quay, and deploys components to the App Studio Development environment.\n\n   >**NOTE**: App Studio can build apps that are written in the following language stacks and frameworks: Python, Java, Go, .NET, Node.js, Quarkus, and Spring.\n\n2. **Quay container image**\n\n   Add a link to a container image with your prebuilt app so that App Studio can deploy it to the Development environments. With an image, you can use any programming language you prefer, but you must store it in the [Quay container registry](https://quay.io/).\n\n3) **Sample code**\n\n   Use one of our samples to explore App Studio. They're a great way to test out different languages and frameworks in App Studio."
+      }
+    },
+    {
+      "id": 104,
+      "createdAt": "2023-01-06T08:18:37.616467Z",
+      "updatedAt": "2023-01-06T08:18:37.616467Z",
+      "deletedAt": null,
+      "groupName": "appstudio-create-app-config",
+      "name": "create-app-config",
+      "content": {
+        "name": "create-app-config",
+        "tags": null,
+        "links": [],
+        "title": "Configure components",
+        "content": "App Studio analyzes your code and defines deployment settings for each of your app components. Before we create and deploy your app, check the values in this view. You can also rename each component if you like.\n\n- Verify the **target port** is correct.\n\n- Choose how many **CPUs**, **memory**, and **instances** you want for your app. Their number depends on the amount of resources available to you.\n\n- Enter the **route** for your app. A route is the public URL for your published application.\n\n- Define **environment variables** to customize how your components are deployed. **Environment variables** are typically defined in a [devfile](https://devfile.io/docs/2.0.0/defining-environment-variables) or [Dockerfile](https://docs.docker.com/glossary/#dockerfile). If your app doesn't contain such files, App Studio tries to extract the needed information from your code with the [Alizer](https://github.com/redhat-developer/alizer) tool.\n\n>**NOTE**: After you app is created, you can always adjust configuration settings and values for your components in the Application view."
+      }
+    },
+    {
+      "id": 106,
+      "createdAt": "2023-01-06T08:18:37.649323Z",
+      "updatedAt": "2023-01-06T08:18:37.649323Z",
+      "deletedAt": null,
+      "groupName": "appstudio-in-context-help",
+      "name": "create-app",
+      "content": {
+        "name": "create-app",
+        "tags": null,
+        "links": [],
+        "title": "Create your application",
+        "content": "**Add components**\n\nAn application is a collection of components. To add a component, tell App Studio where to find your code. Here are some possible sources for your code:\n\n1. **GitHub repository**\n\n   After you provide a Git repo URL, App Studio scans and analyzes the Git directory to determine how many components to add to your application. The number and type of components are determined by the file type in your Git repo, and also by your Git directory file hierarchy.\n\n   For example, your repo might contain in a [devfile](https://devfile.io/docs/2.0.0/defining-environment-variables) or [Dockerfile](https://docs.docker.com/glossary/#dockerfile) for defining a multicomponent application. Or maybe it contains various code sources for App Studio to use for creating a multicomponent application.\n\n   After App Studio analyzes your repo, it builds a Quay container image for your components, then deploys that container to the App Studio Development environment.\n\n   >**NOTE**: App Studio can build apps that are written in the following language stacks and frameworks: Python, Java, Go, .NET, Node.js, Quarkus, and Spring.\n\n2. **Quay container image**\n\n   Add a link to a container image with your prebuilt app so that App Studio can deploy it to the Development environments. With an image, you can use any programming language you prefer. Your image must be stored in the [Quay container registry](https://quay.io/).\n\n3) **Sample code**\n\n   Use one of our samples to explore App Studio. They're a great way to test out different languages and frameworks in App Studio.\n\n**Configure your application**\n\nApp Studio analyzes your code and defines deployment settings for each of your app components. Before we create and deploy your app, check the values in this view. You can also rename each component if you like.\n\n- Verify the **target port** is correct.\n\n- Choose how many **CPUs**, **memory**, and **instances** you want for your app. Their number depends on the amount of resources available to you.\n\n- Enter the **route** for your app. A route is the public URL for your published application.\n\n- Define **environment variables** to customize how your components are deployed. **Environment variables** are typically defined in a [devfile](https://devfile.io/docs/2.0.0/defining-environment-variables) or [Dockerfile](https://docs.docker.com/glossary/#dockerfile). If your app doesn't contain such files, App Studio tries to extract the needed information from your code with the [Alizer](https://github.com/redhat-developer/alizer) tool.\n\n>**NOTE**: After you app is created, you can always adjust configuration settings and values for your components in the Application view."
+      }
+    },
+    {
+      "id": 105,
+      "createdAt": "2023-01-06T08:18:37.634021Z",
+      "updatedAt": "2023-01-06T08:18:37.688204Z",
+      "deletedAt": null,
+      "groupName": "appstudio-in-context-help",
+      "name": "create-environment",
+      "content": {
+        "name": "create-environment",
+        "tags": null,
+        "links": [],
+        "title": "Create a new environment",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      }
+    },
+    {
+      "id": 103,
+      "createdAt": "2023-01-06T08:18:37.60099Z",
+      "updatedAt": "2023-01-06T08:18:37.668093Z",
+      "deletedAt": null,
+      "groupName": "appstudio-in-context-help",
+      "name": "app-view",
+      "content": {
+        "name": "app-view",
+        "tags": null,
+        "links": [],
+        "title": "Manage your apps",
+        "content": "Add components, configure component settings, view logs, and monitor build status - all from a single view.\n\nSwitch between the **Components** and **Environment** views to explore different options.\n\n**The Components view**\n\n- Click the **Components** card to review the components and their details.\n\n- Review your application components build statuses, build logs and history.\n\n- Change the component settings or delete the component in the **Actions** menu.\n\n- Add new components to your application. New components are automatically deployed to the Development environment.\n\n>**NOTE**: We rebuild components when you change the source code in Git repos to keep things in sync.\n\n\n**The Environment view**\n\n- Click the **Development** environment card to review deployed components, their deployment statuses and history.\n\n- Change the component settings in the **Actions** menu.\n\n- Review the deployment strategy used for the selected environment. Click **Settings** in the main menu on the left to choose a deployment strategy.\n\n  - The **automatic** deployment strategy means all component updates are automatically deployed to the environment.\n  - The **manual** deployment strategy means that you need to manually redeploy a component every time you make some changes to it."
+      }
+    },
+    {
+      "id": 107,
+      "createdAt": "2023-01-06T08:18:37.704561Z",
+      "updatedAt": "2023-01-06T08:18:37.723915Z",
+      "deletedAt": null,
+      "groupName": "appstudio-promote-component",
+      "name": "promote-component",
+      "content": {
+        "name": "promote-component",
+        "tags": null,
+        "links": [],
+        "title": "Promote your components",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      }
+    },
+    {
+      "id": 108,
+      "createdAt": "2023-01-06T08:18:37.737693Z",
+      "updatedAt": "2023-01-06T08:18:37.737693Z",
+      "deletedAt": null,
+      "groupName": "appstudio-settings",
+      "name": "settings",
+      "content": {
+        "name": "settings",
+        "tags": null,
+        "links": [],
+        "title": "Environments",
+        "content": "This view shows all available environments. Environments are abstract spaces where you can safely develop and test your code without breaking published apps that are running live in production.\n\nWhat you might want to remember on your journey:\n\n- The **Development environment** is included with App Studio by default. You can create as many other environments as you need.\n\n- Each environment is available for all your applications.\n\n- The promotion of components for your application occurs in the order the environments are listed in this view. You cannot skip any of the environments.\n\n- **Environment links** are generated automatically and allow access to your apps deployed to that environment.\n\n- Automatic and manual **deployment strategies** set how App Studio treats updates you make to your code. With the **automatic strategy**, all component updates are automatically deployed to the environment, then updated components are automatically promoted to the subsequent environments where they were deployed before. With the **manual strategy**, manual steps are required to redeploy and promote updated components.\n\n>**NOTE**: When you promote a component to the next environment, the current deployment strategy is used in the destination environment. However, you can change a strategy while promoting components.\n\n- **Environment status** shows how apps deployed to the environment are feeling, for example, a green status means that all apps are healthy and running."
+      }
+    },
+    {
+      "id": 109,
+      "createdAt": "2023-01-06T08:18:37.752123Z",
+      "updatedAt": "2023-01-06T08:18:37.752123Z",
+      "deletedAt": null,
+      "groupName": "poc-topic",
+      "name": "poc-topic-part-1",
+      "content": {
+        "name": "poc-topic-part-1",
+        "tags": [
+          "page-1"
+        ],
+        "links": [
+          "[Creating quick starts](https://docs.openshift.com/container-platform/4.9/web_console/creating-quick-start-tutorials.html)",
+          "[Redhat Console](https://console.redhat.com/)"
+        ],
+        "title": "Automatic Deployment",
+        "content": "**An Automatic Deployment** is...\n\nEtiam viverra et tortor et maximus. Aliquam quis scelerisque metus. Proin luctus pretium sodales. Mauris nibh nibh, auctor eu scelerisque et, hendrerit a metus. Vivamus pharetra bibendum finibus. Sed a pulvinar ipsum. Fusce pharetra venenatis porttitor. Praesent justo metus, consectetur quis erat id, congue varius metus. Suspendisse dui est, tempor nec diam quis, facilisis sodales erat. Curabitur viverra convallis ex. Ut egestas condimentum augue, id euismod leo volutpat vitae. Quisque aliquet ac dolor quis pretium. Nunc at nibh quis arcu maximus elementum vel a mi."
+      }
+    },
+    {
+      "id": 110,
+      "createdAt": "2023-01-06T08:18:37.765757Z",
+      "updatedAt": "2023-01-06T08:18:37.765757Z",
+      "deletedAt": null,
+      "groupName": "poc-topic",
+      "name": "workspace",
+      "content": {
+        "name": "workspace",
+        "tags": [
+          "page-1",
+          "page-2",
+          "page-3"
+        ],
+        "links": [
+          "[Creating quick starts](https://docs.openshift.com/container-platform/4.9/web_console/creating-quick-start-tutorials.html)",
+          "[Redhat Console](https://console.redhat.com/)"
+        ],
+        "title": "poc-topic-part-2",
+        "content": "**A Workspace** is...\n\nFusce nunc risus, vehicula feugiat pellentesque sit amet, pretium non urna. Phasellus nibh mi, ornare quis euismod a, iaculis et eros. Vivamus auctor nunc odio, quis porttitor diam pellentesque nec. In et varius tellus, eget porta urna. Etiam bibendum, est eget mollis lobortis, velit risus efficitur lacus, sed pulvinar sem est vel libero. In sodales placerat tincidunt. Proin vitae risus elit. Ut lobortis ligula est, cursus rhoncus enim scelerisque ac. Donec lacus nisl, tempor porta hendrerit nec, volutpat vitae arcu. Curabitur ornare ullamcorper mi in tincidunt. Aenean efficitur posuere auctor. Pellentesque accumsan mauris vel arcu congue, nec sagittis nisl condimentum. Suspendisse mauris nulla, dignissim at viverra sed, fringilla eu purus."
+      }
+    }
+  ]
+}

@@ -15,7 +15,7 @@
     "baseUrl": "./",
     "types": ["cypress", "node"]
   },
-  "include": ["../src/**/*.ts", "../src/**/*.tsx"],
+  "include": ["../src/**/*.ts", "../src/**/*.tsx", "./components/**/*.cy.tsx"],
   "exclude": [
     "../src/**/*.test.ts",
     "../src/**/*.test.tsx",
