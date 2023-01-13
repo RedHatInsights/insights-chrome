@@ -219,7 +219,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/subscriptions/inventory">Subscriptions</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/insights/dashboard">Systems</ChromeLink>
+                        <ChromeLink href="/insights/inventory">Systems</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
