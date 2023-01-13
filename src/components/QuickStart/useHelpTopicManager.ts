@@ -64,7 +64,6 @@ const useHelpTopicManager = (helpTopicsAPI: HelpTopicsAPI) => {
   }
 
   useEffect(() => {
-    // console.log({ activeTopicName, atp: activeHelpTopic?.name, prevActiveTopic, internalTopicsSwitch });
     /**
      * We can't call the setActiveHelpTopicByName directly after we populate the context with new value
      * The quickstarts module returns a undefined value
@@ -74,7 +73,7 @@ const useHelpTopicManager = (helpTopicsAPI: HelpTopicsAPI) => {
       setActiveTopic('', undefined);
     } else {
       if (activeHelpTopic?.name && prevActiveTopic === activeTopicName && activeHelpTopic?.name !== activeTopicName) {
-        // siwtching topics via the drawer dropdown
+        // switching topics via the drawer dropdown
         setActiveHelpTopicByName && setActiveHelpTopicByName(activeHelpTopic.name);
         dispatch({ type: 'setActiveTopicInternal', prevActiveTopic });
       } else if (typeof activeTopicName === 'string' && activeTopicName?.length > 0) {
