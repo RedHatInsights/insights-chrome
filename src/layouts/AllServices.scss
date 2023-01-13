@@ -1,6 +1,23 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
+.chr-c-allservices {
+  &__link-wrapper {
+    position: relative;
+    .chr-c-allservices__favourite {
+      position: absolute;
+      &.chr-c-allservices__favourite_not {
+        display: none;
+      }
+    }
+    &:hover {
+      .chr-c-allservices__favourite{
+        display: inline-block;
+      }
+    }
+  }
+}
+
 .chr-l-stack-allservices {
   .pf-l-gallery {
     display: block;

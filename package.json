@@ -165,7 +165,7 @@
     "@patternfly/react-core": "4.267.7",
     "@patternfly/react-icons": "4.93.3",
     "@patternfly/react-tokens": "4.94.3",
-    "@redhat-cloud-services/chrome": "file:../frontend-components/packages/chrome",
+    "@redhat-cloud-services/chrome": "^0.0.4",
     "@redhat-cloud-services/entitlements-client": "1.2.0",
     "@redhat-cloud-services/frontend-components": "^3.9.27",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.12",
