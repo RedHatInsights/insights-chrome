@@ -79,6 +79,18 @@ export function buildUser(token: SSOParsedToken) {
 }
 /* eslint-enable camelcase */
 
+function partialBounce(redirectAddress: string, section: string) {
+  const url = new URL(redirectAddress);
+  chromeHistory.replace({
+    pathname: url.pathname,
+    search: url.search,
+  });
+
+  if (section === 'insights') {
+    bounceInvocationLock[section] = true;
+  }
+}
+
 export function tryBounceIfUnentitled(
   data:
     | boolean
@@ -120,7 +132,11 @@ export function tryBounceIfUnentitled(
 
   if (data === true) {
     // this is a force bounce scenario!
-    getWindow().location.replace(redirectAddress);
+    if (section === 'insights') {
+      partialBounce(redirectAddress, section);
+    } else {
+      getWindow().location.replace(redirectAddress);
+    }
   }
 
   if (section && typeof data === 'object') {
@@ -129,13 +145,15 @@ export function tryBounceIfUnentitled(
     } else {
       log(`Not entitled to: ${service}`);
       try {
-        const url = new URL(redirectAddress);
-        chromeHistory.replace({
-          pathname: url.pathname,
-          search: url.search,
-        });
-        if (section === 'insights') {
-          bounceInvocationLock[section] = true;
+        const search = new URLSearchParams(window.location.search);
+        // do not trigger redirect if the not_entitled param already exists
+        if (!search.has('not_entitled')) {
+          partialBounce(redirectAddress, section);
+        } else {
+          // lock the section if user landed directly on the not_entitled page
+          if (section === 'insights') {
+            bounceInvocationLock[section] = true;
+          }
         }
       } catch (error) {
         console.error(error);
@@ -200,7 +218,12 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
     // was never called
     if (!isValidAccountNumber(user.identity.account_number)) {
       tryBounceIfUnentitled(true, pathName[0]);
-      return;
+      // always return user regardless of the entitlements result
+      // required for insights accounts with invalid account number
+      return {
+        ...user,
+        entitlements: data,
+      };
     }
 
     tryBounceIfUnentitled(data as unknown as { [key: string]: SSOServiceDetails }, pathName[0]);

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-namespace */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable prettier/prettier */
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.
@@ -36,6 +39,9 @@ addMatchImageSnapshotCommand({
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
 declare global {
+  interface Window {
+    TestApp: any;
+  }
   namespace Cypress {
     interface Chainable {
       mount: typeof mount

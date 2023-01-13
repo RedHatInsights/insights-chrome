@@ -1,0 +1,22 @@
+{
+  "identity": {
+    "account_number": "123456",
+    "org_id": "7890",
+    "internal": {
+      "org_id": "7890",
+      "account_id": "13579"
+    },
+    "type": "external",
+    "user": {
+      "username": "Extra fella",
+      "email": "mail@mail.com",
+      "first_name": "john",
+      "last_name": "doe",
+      "is_active": true,
+      "is_internal": false,
+      "is_org_admin": false,
+      "locale": "en-us"
+    }
+  },
+  "entitlements": []
+}

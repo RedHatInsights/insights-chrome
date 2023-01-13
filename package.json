@@ -16,7 +16,7 @@
     "dev": "DEV_SERVER=true webpack serve --config config/webpack.config.js --mode=development",
     "dev:beta": "BETA=true npm run dev",
     "lint": "npm-run-all lint:*",
-    "lint:js": "eslint src",
+    "lint:js": "eslint src cypress",
     "circular": "madge --circular ./src --extensions js,ts,tsx",
     "start": "NODE_ENV=development webpack --config config/webpack.config.js --watch  --mode=development",
     "start:beta": "BETA=true npm run start",

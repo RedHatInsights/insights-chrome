@@ -25,7 +25,7 @@ const Footer = () => {
             pf-m-flex-1-on-lg
             pf-m-justify-content-flex-end-on-lg"
           >
-            <p className="pf-u-color-200 pf-u-font-size-sm pf-m-spacer-xl-on-lg">©2022 Red Hat, Inc.</p>
+            <p className="pf-u-color-200 pf-u-font-size-sm pf-m-spacer-xl-on-lg">©2023 Red Hat, Inc.</p>
             <ul className="pf-u-font-size-sm pf-l-flex pf-m-column pf-m-row-on-md">
               <li>
                 <Button variant="link" className="pf-u-p-0" onClick={() => setIsModalOpen(true)} isInline>
