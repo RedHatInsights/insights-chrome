@@ -49,7 +49,7 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
         <Route key={path} path={path} element={<Navigate replace to={to} />} />
       ))}
       {list.map((app) => (
-        <Route key={app.path} path={`${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
+        <Route key={app.path} path={app.absolute ? app.path : `${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
       ))}
       <Route path="*" element={<NotFoundRoute />} />
     </Routes>

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
@@ -20,6 +20,7 @@ import LibtJWTContext from '../LibJWTContext';
 import { createChromeContext } from '../../chrome/create-chrome';
 import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
+import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -36,21 +37,15 @@ export type ScalprumRootProps = {
 
 const ScalprumRoot = memo(
   ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
-    const { setActiveHelpTopicByName, helpTopics, activeHelpTopic, setFilteredHelpTopics } = useContext(HelpTopicContext);
+    const { setFilteredHelpTopics } = useContext(HelpTopicContext);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
-    const [activeTopicName, setActiveTopicName] = useState<string | undefined>();
-    const [prevActiveTopic, setPrevActiveTopic] = useState<string | undefined>(activeHelpTopic?.name);
+
     const libJwt = useContext(LibtJWTContext);
     const store = useStore();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
-    async function setActiveTopic(name: string) {
-      setActiveTopicName(name);
-      if (name?.length > 0) {
-        helpTopicsAPI.enableTopics(name);
-      }
-    }
+    const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
 
     function isStringArray(arr: EnableTopicsArgs): arr is string[] {
       return typeof arr[0] === 'string';
@@ -87,28 +82,6 @@ const ScalprumRoot = memo(
         }
       };
     }, []);
-
-    useEffect(() => {
-      /**
-       * We can't call the setActiveHelpTopicByName directly after we populate the context with new value
-       * The quickstarts module returns a undefined value
-       * TODO: Fix it in the quickstarts repository
-       */
-      if (prevActiveTopic && activeHelpTopic === null) {
-        setActiveTopic('');
-        setPrevActiveTopic(undefined);
-      } else {
-        if (typeof activeTopicName === 'string' && activeTopicName?.length > 0) {
-          if (helpTopics?.find(({ name }) => name === activeTopicName)) {
-            setActiveHelpTopicByName && setActiveHelpTopicByName(activeTopicName);
-            setPrevActiveTopic(activeTopicName);
-          }
-        } else {
-          setActiveHelpTopicByName && setActiveHelpTopicByName('');
-          setPrevActiveTopic(undefined);
-        }
-      }
-    }, [activeTopicName, helpTopics]);
 
     const setPageMetadata = useCallback((pageOptions) => {
       window._segment = {

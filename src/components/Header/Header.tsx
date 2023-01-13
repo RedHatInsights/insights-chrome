@@ -2,8 +2,10 @@ import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import AppFilter from '../AppFilter';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import AppFilter from '../AppFilter';
+import ServicesLink from './ServicesLink';
+import FavoritesLink from './FavoritesLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -17,7 +19,7 @@ import { DeepRequired } from 'utility-types';
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
-import { isFedRamp } from '../../utils/common';
+import { isBeta, isFedRamp, isProd } from '../../utils/common';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -53,7 +55,13 @@ export const Header = () => {
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <AppFilter />
+                  {isProd() && !isBeta() ? (
+                    <AppFilter />
+                  ) : (
+                    <>
+                      <ServicesLink /> <FavoritesLink />
+                    </>
+                  )}
                 </ToolbarItem>
               )}
               {user && (

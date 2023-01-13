@@ -1,0 +1,23 @@
+{
+  "extends": "../.eslintrc.js",
+
+  "overrides": [
+    {
+      "files": ["./**/*.ts", "./**/*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/triple-slash-reference": "off",
+        "react/prop-types": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true, "args": "after-used" }]
+      }
+    }
+  ],
+  "globals": {
+    "cy": "readonly"
+  },
+  "rules": {
+    "react/prop-types": "off"
+  }
+}
