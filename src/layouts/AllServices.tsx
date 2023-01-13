@@ -297,7 +297,7 @@ const AllServices = () => (
                         OpenShift
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/openshift/insights/advisor/recommendations">Advanced Cluster Security</ChromeLink>
+                        <ChromeLink href="/application-services/acs/overview">Advanced Cluster Security</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/openshift/insights/vulnerability/">Vulnerability</ChromeLink>
