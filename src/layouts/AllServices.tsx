@@ -157,7 +157,7 @@ const AllServices = () => (
                         <ChromeLink href="/settings/my-user-access">My User Access</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/users">User Access</ChromeLink>
+                        <ChromeLink href="/iam/user-access/users">User Access</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
