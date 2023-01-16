@@ -84,7 +84,7 @@ const AllServices = () => (
                         <ChromeLink href="/application-services/service-registry">Service Registry</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/application-services/streams/overview">Streams for Apache Kafka</ChromeLink>
+                        <ChromeLink href="/application-services/streams/kafkas">Streams for Apache Kafka</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
