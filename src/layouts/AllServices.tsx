@@ -84,7 +84,7 @@ const AllServices = () => (
                         <ChromeLink href="/application-services/service-registry">Service Registry</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/application-services/streams/overview">Streams for Apache Kafka</ChromeLink>
+                        <ChromeLink href="/application-services/streams/kafkas">Streams for Apache Kafka</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -103,7 +103,7 @@ const AllServices = () => (
                         <ChromeLink href="/ansible/automation-hub">Automation Hub</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/insights/inventory">Insights</ChromeLink>
+                        <ChromeLink href="/ansible/inventory">Insights</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/ansible/remediations">Remediations</ChromeLink>
@@ -219,7 +219,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/subscriptions/inventory">Subscriptions</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/insights/dashboard">Systems</ChromeLink>
+                        <ChromeLink href="/insights/inventory">Systems</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -269,7 +269,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/policies/list">Policies</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="insights/remediations">Remediations</ChromeLink>
+                        <ChromeLink href="/insights/remediations">Remediations</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/ros">Resource Optimization</ChromeLink>
@@ -322,7 +322,7 @@ const AllServices = () => (
                         <ChromeLink href="/insights/patch/advisories">Patch</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/edge/cves">Vulnerability</ChromeLink>
+                        <ChromeLink href="/insights/vulnerability/cves">Vulnerability</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
@@ -379,19 +379,16 @@ const AllServices = () => (
                         organization.
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/openshift/sandbox" target="_blank">
-                          Developer Sandbox
-                          <ExternalLinkAltIcon />
-                        </ChromeLink>
+                        <ChromeLink href="/openshift/sandbox">Developer Sandbox</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="https://marketplace.redhat.com/en-us" rel="noopener noreferrer" target="_blank">
+                        <ChromeLink href="https://marketplace.redhat.com/en-us" rel="noopener noreferrer" target="_new" isExternal>
                           Red Hat Marketplace
                           <ExternalLinkAltIcon />
                         </ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="https://www.redhat.com/en/products/trials" rel="noopener noreferrer" target="_blank">
+                        <ChromeLink href="https://www.redhat.com/en/products/trials" rel="noopener noreferrer" target="_new" isExternal>
                           Red Hat Product Trials
                           <ExternalLinkAltIcon />
                         </ChromeLink>
