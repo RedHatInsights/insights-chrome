@@ -1,32 +1,34 @@
 import React from 'react';
 
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Gallery,
-  Icon,
-  Masthead,
-  Page,
-  PageSection,
-  PageSectionVariants,
-  Split,
-  SplitItem,
-  Stack,
-  StackItem,
-  Text,
-  TextContent,
-  TextVariants,
-  Title,
-} from '@patternfly/react-core';
+// import {
+//   Button,
+//   Card,
+//   CardBody,
+//   CardTitle,
+//   Gallery,
+//   Icon,
+//   Masthead,
+//   Page,
+//   PageSection,
+//   PageSectionVariants,
+//   Split,
+//   SplitItem,
+//   Stack,
+//   StackItem,
+//   Text,
+//   TextContent,
+//   TextVariants,
+//   Title,
+// } from '@patternfly/react-core';
+
+import { Button, Masthead, Page, PageSection, PageSectionVariants, Stack, StackItem, Text, TextContent, Title } from '@patternfly/react-core';
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import ChromeLink from '../components/ChromeLink';
 import Footer from '../components/Footer/Footer';
 
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+// import ChromeLink from '../components/ChromeLink';
+// import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 
 import './FavoritedServices.scss';
 
@@ -48,21 +50,25 @@ const FavoritedServices = () => (
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
 
-            <StackItem className="pf-l-stack__item-centered">
+            <StackItem className="chr-l-stack__item-centered">
               <img src="https://console.redhat.com/apps/frontend-assets/favoritedservices/favoriting-emptystate.svg" alt="favoriting image" />
             </StackItem>
-            <StackItem className="pf-l-stack__item-centered pf-u-mt-md">
+            <StackItem className="chr-l-stack__item-centered pf-u-mt-md">
               <TextContent>
-                <Text component="h3" className="pf-m-center">No favorited services</Text>
-                <Text component="small" className="pf-u-mt-sm">Add a service to your favorites to get started here.
+                <Text component="h3" className="pf-m-center">
+                  No favorited services
+                </Text>
+                <Text component="small" className="pf-u-mt-sm">
+                  Add a service to your favorites to get started here.
                 </Text>
               </TextContent>
             </StackItem>
-            <StackItem className="pf-l-stack__item-centered pf-u-mt-md">
-              <Button variant="primary" isDisabled alt="View all services">View all services</Button>
+            <StackItem className="chr-l-stack__item-centered pf-u-mt-md">
+              <Button variant="primary" isDisabled alt="View all services">
+                View all services
+              </Button>
             </StackItem>
-
-{/*         <StackItem>
+            {/* <StackItem>
               Get quick access to your favorite services. To add more services to your Favorites, <ChromeLink href="/">browse all Hybrid Cloud Console services.</ChromeLink>
             </StackItem>
             <StackItem className="pf-u-pt-2xl-on-md">

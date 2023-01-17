@@ -12,7 +12,9 @@
     overflow: hidden;
     break-inside: avoid-column;
     &__title {
-
+      svg {
+        margin-right: var(--pf-global--spacer--xs);
+      }
     }
     &__body {
       padding-bottom: var(--pf-global--spacer--sm);
