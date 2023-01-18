@@ -6,15 +6,26 @@ import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import Footer from '../components/Footer/Footer';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
-import allServicesLinks from '../components/AllServices/allServicesLinks';
 
 import './AllServices.scss';
 import { updateDocumentTitle } from '../utils/common';
+import useAllServices from '../hooks/useAllServices';
 
 const AllServices = () => {
+  const { linkSections, error, ready } = useAllServices();
   useEffect(() => {
     updateDocumentTitle('All services');
   }, []);
+
+  if (!ready) {
+    // TODO: Add loading state
+    return <div>Loading</div>;
+  }
+
+  if (error) {
+    // TODO: Add error state
+    return <div>Error</div>;
+  }
   return (
     <div id="chrome-app-render-root">
       <Page
@@ -36,7 +47,7 @@ const AllServices = () => {
               </StackItem>
               <StackItem>
                 <Gallery hasGutter>
-                  {allServicesLinks.map((section, index) => (
+                  {linkSections.map((section, index) => (
                     <AllServicesSection key={index} {...section} />
                   ))}
                 </Gallery>

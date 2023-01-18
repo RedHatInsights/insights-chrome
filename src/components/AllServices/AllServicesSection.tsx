@@ -7,7 +7,7 @@ import type { AllServicesGroup as AllServicesGroupType, AllServicesLink as AllSe
 
 export type AllServicesSectionProps = AllServicesSection;
 
-const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkType): item is AllServicesGroup => {
+export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkType): item is AllServicesGroup => {
   return (item as AllServicesGroupType).isGroup === true;
 };
 

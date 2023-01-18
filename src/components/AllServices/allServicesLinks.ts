@@ -44,7 +44,7 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'Service Registry',
       },
       {
-        href: '/application-services/streams/kafkas',
+        href: '/application-services/streams',
         title: 'Streams for Apache Kafka',
       },
     ],
@@ -59,7 +59,7 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'Automation Analytics',
       },
       {
-        href: '/ansible/automation-hub',
+        href: '/ansible/automation-hub/',
         title: 'Automation Hub',
       },
       {
@@ -337,7 +337,7 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'Activation Keys',
       },
       {
-        href: '/insights/subscriptions/manifests#SIDs=&tags=',
+        href: '/insights/subscriptions/manifests',
         title: 'Manifests',
       },
       {
