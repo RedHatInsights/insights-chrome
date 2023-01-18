@@ -1,6 +1,7 @@
 const path = require('path');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { ModuleFederationPlugin } = require('webpack').container;
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 
 // call default generator then pair different variations of uri with each base
@@ -71,6 +72,20 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].[fullhash].css',
+    }),
+    new ModuleFederationPlugin({
+      name: 'chrome',
+      filename: 'chrome.js',
+      shared: [
+        { react: { singleton: true, eager: true } },
+        { 'react-dom': { singleton: true, eager: true } },
+        { 'react-router-dom': { singleton: true } },
+        { 'react-redux': {} },
+        { '@patternfly/react-core': {} },
+        { '@patternfly/quickstarts': { singleton: true } },
+        { '@scalprum/react-core': { singleton: true } },
+        { '@unleash/proxy-client-react': { singleton: true } },
+      ],
     }),
   ],
 };
