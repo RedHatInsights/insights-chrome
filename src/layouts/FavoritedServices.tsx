@@ -27,7 +27,7 @@ import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import Footer from '../components/Footer/Footer';
 
-// import ChromeLink from '../components/ChromeLink';
+import ChromeLink from '../components/ChromeLink';
 // import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 
 import './FavoritedServices.scss';
@@ -64,7 +64,7 @@ const FavoritedServices = () => (
               </TextContent>
             </StackItem>
             <StackItem className="chr-l-stack__item-centered pf-u-mt-md">
-              <Button variant="primary" isDisabled alt="View all services">
+              <Button variant="primary" alt="View all services" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
                 View all services
               </Button>
             </StackItem>

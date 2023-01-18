@@ -26,8 +26,14 @@
     padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
     text-decoration: none;
     &:hover {
-      border-bottom: 3px solid var(--pf-global--info-color--100);
-    }
+       border-bottom: 3px solid var(--pf-global--info-color--100);
+       &.disabled {
+         border-bottom: none;
+       }
+     }
+      &.disabled {
+       color: var(--pf-global--palette--black-500);
+      }
     svg {
       margin-right: var(--pf-global--spacer--sm)
     }
