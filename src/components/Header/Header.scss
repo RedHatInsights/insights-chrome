@@ -31,6 +31,9 @@
          border-bottom: none;
        }
      }
+      &.active {
+        border-bottom: 3px solid var(--pf-global--info-color--100);
+      }
       &.disabled {
        color: var(--pf-global--palette--black-500);
       }
