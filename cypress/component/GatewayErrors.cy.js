@@ -83,6 +83,14 @@ describe('Gateway errors', () => {
   it('handles 403 3scale gateway error', () => {
     const code = 'gateway-403';
     const Component = createEnv(code);
+    cy.window().then((win) => {
+      win[code] = {
+        init: () => undefined,
+        get: () => () => ({
+          default: () => <div>{code}</div>,
+        }),
+      };
+    });
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 403,
@@ -108,6 +116,14 @@ describe('Gateway errors', () => {
 
   COMPLIACE_ERROR_CODES.forEach((code) => {
     it(`handles compliance ${code} gateway error`, () => {
+      cy.window().then((win) => {
+        win[code] = {
+          init: () => undefined,
+          get: () => () => ({
+            default: () => <div>{code}</div>,
+          }),
+        };
+      });
       const Component = createEnv(code);
       // throw 403 gateway error with compliance error response
       cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
@@ -237,7 +253,7 @@ describe('Gateway errors', () => {
     };
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
-      statusCode: 404,
+      statusCode: 200,
       body: {
         [code]: {
           entry: [],
