@@ -72,7 +72,6 @@ const ChromeRoute = memo(
           // TODO: fix in scalprum. The async loader is no triggred when module/scope changes. We had tp abuse the key
           key={path}
           ErrorComponent={<ErrorComponent />}
-          appName={scope}
           fallback={LoadingFallback}
           // LoadingFallback={() => LoadingFallback}
           scope={scope}
