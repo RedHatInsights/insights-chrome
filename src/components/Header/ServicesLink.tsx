@@ -1,13 +1,15 @@
 import React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Icon } from '@patternfly/react-core';
 import CloudIcon from '@patternfly/react-icons/dist/js/icons/cloud-icon';
 
 import ChromeLink from '../ChromeLink';
 
 const ServicesLink = () => {
   return (
-    <Button className="chr-c-button-masthead" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
-      <CloudIcon />
+    <Button className="chr-c-button-masthead pf-u-px-lg-on-md" component={(props) => <ChromeLink {...props} href="/AllServices" />}>
+      <Icon isInline className="ins-m-hide-on-sm">
+        <CloudIcon />
+      </Icon>
       Services
     </Button>
   );
