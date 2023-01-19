@@ -120,7 +120,7 @@
     "description": "Filter tags"
   },
   "findAppOrService": {
-    "defaultMessage": "Find an app or service",
+    "defaultMessage": "Find a service",
     "description": "Find an app or service"
   },
   "getSupport": {

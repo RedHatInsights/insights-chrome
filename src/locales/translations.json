@@ -29,7 +29,7 @@
   "filterResults": "Filter results",
   "filterSAPIDs": "Filter SAP IDs",
   "filterTags": "Filter tags",
-  "findAppOrService": "Find an app or service",
+  "findAppOrService": "Find a service",
   "getSupport": "Get help from Red Hat support.",
   "globalFilterNotApplicable": "Global filter is not applicable for this page",
   "globalRuntimeErrorId": "Sentry error ID: {errorId}",
