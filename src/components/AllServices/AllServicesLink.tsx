@@ -30,18 +30,20 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
         {title}
         {isExternal && <ExternalLinkAltIcon />}
       </ChromeLink>
-      <span>
-        <Button
-          onClick={() => handleFavouriteToggle(href, isFavorite)}
-          variant="plain"
-          aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-          className={classNames('pf-u-ml-sm', 'pf-u-p-0', 'chr-c-allservices__favourite', {
-            'chr-c-allservices__favourite_not': !isFavorite,
-          })}
-        >
-          {isFavorite ? <StarIcon color="var(--pf-global--palette--gold-200)" /> : <StarHalfAltIcon color="var(--pf-global--palette--gold-200)" />}
-        </Button>
-      </span>
+      {!isExternal && (
+        <span>
+          <Button
+            onClick={() => handleFavouriteToggle(href, isFavorite)}
+            variant="plain"
+            aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
+            className={classNames('pf-u-ml-sm', 'pf-u-p-0', 'chr-c-allservices__favourite', {
+              'chr-c-allservices__favourite_not': !isFavorite,
+            })}
+          >
+            {isFavorite ? <StarIcon color="var(--pf-global--palette--gold-200)" /> : <StarHalfAltIcon color="var(--pf-global--palette--gold-200)" />}
+          </Button>
+        </span>
+      )}
     </Text>
   );
 };
