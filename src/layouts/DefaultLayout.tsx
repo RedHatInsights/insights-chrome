@@ -27,6 +27,7 @@ type ShieldedRootProps = {
   hideNav?: boolean;
   initialized?: boolean;
   Sidebar?: React.FC<NavigationProps>;
+  Footer?: React.FC;
 };
 
 type DefaultLayoutProps = {
@@ -36,12 +37,15 @@ type DefaultLayoutProps = {
   isNavOpen: boolean;
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
   Sidebar?: React.FC<NavigationProps>;
+  Footer?: React.FC;
 };
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar }) => {
+const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { loaded, schema, noNav } = useNavigation();
+
+  console.log(Footer, 'this is footer!!');
 
   return (
     <Page
@@ -78,13 +82,14 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
         {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
         <RedirectBanner />
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
+        {Footer && <Footer />}
       </div>
     </Page>
   );
 };
 
 const ShieldedRoot = memo(
-  ({ hideNav = false, initialized = false, Sidebar }: ShieldedRootProps) => {
+  ({ hideNav = false, initialized = false, Sidebar, Footer }: ShieldedRootProps) => {
     const [isMobileView, setIsMobileView] = useState(window.document.body.clientWidth < 1200);
     const [isNavOpen, setIsNavOpen] = useState(!isMobileView);
     /**
@@ -133,6 +138,7 @@ const ShieldedRoot = memo(
         hasBanner={hasBanner}
         selectedAccountNumber={selectedAccountNumber}
         Sidebar={Sidebar}
+        Footer={Footer}
       />
     );
   },
@@ -143,16 +149,17 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 
 export type RootAppProps = {
   Sidebar?: React.FC<NavigationProps>;
+  Footer?: React.FC;
 };
 
-const DefaultLayoutRoot = ({ Sidebar }: RootAppProps) => {
+const DefaultLayoutRoot = ({ Sidebar, Footer }: RootAppProps) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
   const hideNav = useSelector(({ chrome: { user } }: ReduxState) => !user || !Sidebar);
 
   return (
     <div id="chrome-app-render-root" {...ouiaTags}>
-      <ShieldedRoot hideNav={hideNav} initialized={initialized} Sidebar={Sidebar} />
+      <ShieldedRoot hideNav={hideNav} initialized={initialized} Sidebar={Sidebar} Footer={Footer} />
     </div>
   );
 };

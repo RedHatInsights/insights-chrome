@@ -8,7 +8,7 @@ const FavoritesLink = () => {
   return (
     <Button
       className="chr-c-button-masthead pf-u-px-lg-on-md disabled"
-      component={(props) => <ChromeLink {...props} href="/FavoritedServices" />}
+      component={(props) => <ChromeLink {...props} href="/favoritedservices" />}
       isDisabled
     >
       <Icon isInline className="ins-m-hide-on-sm">
