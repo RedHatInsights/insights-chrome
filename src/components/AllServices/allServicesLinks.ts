@@ -150,16 +150,16 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Alerts users to events, using email and integrations such as webhooks.',
     links: [
       {
-        href: '/settings/sources',
-        title: 'Sources',
-      },
-      {
         href: '/settings/integrations',
         title: 'Integrations',
       },
       {
         href: '/settings/notifications/console',
         title: 'Notifications',
+      },
+      {
+        href: '/settings/sources',
+        title: 'Sources',
       },
     ],
   },
