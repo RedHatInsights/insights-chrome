@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath } from 'react-router-dom';
 import { BundleNavigation, NavItem } from '../@types/types';
-import allServicesLinks, { AllServicesSection } from '../components/AllServices/allServicesLinks';
+import allServicesLinks, { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
 import { isAllServicesGroup } from '../components/AllServices/AllServicesSection';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
 import { isBeta } from '../utils/common';
@@ -51,12 +51,62 @@ const parseBundlesToObject = (items: NavItem[]) =>
     {}
   );
 
+const matchStrings = (value: string, searchTerm: string): boolean => {
+  // convert strings to lowercase and remove any white spaces
+  return value.toLocaleLowerCase().replace(/\s/gm, '').includes(searchTerm.toLocaleLowerCase().replace(/\s/gm, ''));
+};
+
+// remove links that do not include the search term
+const filterAllServicesLinks = (links: (AllServicesLink | AllServicesGroup)[], filterValue: string): (AllServicesLink | AllServicesGroup)[] => {
+  return links.reduce<(AllServicesLink | AllServicesGroup)[]>((acc, link) => {
+    // groups have links nested, we have to filter them as well
+    if (isAllServicesGroup(link)) {
+      const groupLinks = filterAllServicesLinks(link.links, filterValue);
+      // replace group links with filtered results
+      const newGroup: AllServicesGroup = {
+        ...link,
+        links: groupLinks as AllServicesLink[],
+      };
+      // do not include empty group to result
+      return [...acc, ...(groupLinks.length > 0 ? [newGroup] : [])];
+    }
+
+    // include leaf link only if it matches
+    if (matchStrings(link.title, filterValue)) {
+      return [...acc, link];
+    }
+    return acc;
+  }, []);
+};
+
+// remove sections that do not include any relevant items or their title does not match the search term
+const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filterValue: string) => {
+  return allServicesLinks.reduce<AllServicesSection[]>((acc, section) => {
+    // if a section title matches, include in results
+    if (matchStrings(section.title, filterValue)) {
+      return [...acc, section];
+    }
+    // filter section links
+    const sectionLinks = filterAllServicesLinks(section.links, filterValue);
+    // include section only if internal links match the term
+    if (sectionLinks.length > 0) {
+      return [...acc, { ...section, links: sectionLinks }];
+    }
+    return acc;
+  }, []);
+};
+
 const useAllServices = () => {
-  const [{ availableLinks, ready, error }, setState] = useState<{ error: boolean; ready: boolean; availableLinks: NavItem[] }>({
+  const [{ availableLinks, ready, error }, setState] = useState<{
+    error: boolean;
+    ready: boolean;
+    availableLinks: NavItem[];
+  }>({
     ready: false,
     availableLinks: [],
     error: false,
   });
+  const [filterValue, setFilterValue] = useState('');
   // TODO: move constant once the AppFilter is fully replaced
   const bundles = requiredBundles;
   useEffect(() => {
@@ -72,12 +122,13 @@ const useAllServices = () => {
       )
     ).then((bundleItems) => {
       const availableLinks = parseBundlesToObject(bundleItems.flat());
-      setState({
+      setState((prev) => ({
+        ...prev,
         availableLinks: bundleItems.flat(),
         ready: true,
         // no links means all bundle requests have failed
         error: Object.keys(availableLinks).length === 0,
-      });
+      }));
     });
   }, []);
 
@@ -106,8 +157,9 @@ const useAllServices = () => {
       return acc;
     }, []);
 
+    // pre-filter sections data by filter value
     // re-create all services section data with links avaiable in current environments
-    return allServicesLinks.reduce<AllServicesSection[]>((acc, curr) => {
+    return filterAllServicesSections(allServicesLinks, filterValue).reduce<AllServicesSection[]>((acc, curr) => {
       const sectionLinks = curr.links.filter((item) =>
         isAllServicesGroup(item)
           ? item.links.filter(({ href, isExternal }) => isExternal || matchedLinks.find((link) => link.href === href || link.routeMatch === href))
@@ -119,12 +171,15 @@ const useAllServices = () => {
       }
       return acc;
     }, []);
-  }, [ready]);
+    // run hook after data are loaded or filter value changed
+  }, [ready, filterValue]);
 
   return {
     linkSections,
     error,
     ready,
+    filterValue,
+    setFilterValue,
   };
 };
 

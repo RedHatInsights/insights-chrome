@@ -259,8 +259,8 @@ export default defineMessages({
   },
   findAppOrService: {
     id: 'findAppOrService',
-    description: 'Find an app or service',
-    defaultMessage: 'Find an app or service',
+    description: 'Find a service',
+    defaultMessage: 'Find a service',
   },
   noMatchingAppsFound: {
     id: 'noMatchingAppsFound',
