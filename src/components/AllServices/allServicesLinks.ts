@@ -93,6 +93,10 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Create RHEL images, systems at the Edge, and OpenShift clusters.',
     links: [
       {
+        href: '/openshift/create',
+        title: 'Clusters',
+      },
+      {
         href: '/edge/fleet-management',
         title: 'Edge',
       },
@@ -101,8 +105,8 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'Image Builder',
       },
       {
-        href: '/openshift/create',
-        title: 'Clusters',
+        href: '/settings/content',
+        title: 'Repositories',
       },
     ],
   },
