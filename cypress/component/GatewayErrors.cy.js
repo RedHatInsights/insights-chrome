@@ -242,17 +242,9 @@ describe('Gateway errors', () => {
     };
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
-      statusCode: 404,
+      statusCode: 200,
       body: {
-        errors: [
-          {
-            status: 404,
-            detail: 'Gateway has thrown an 403 error',
-            meta: {
-              response_by: 'gateway',
-            },
-          },
-        ],
+        entries: [],
       },
     }).as(code);
     cy.mount(<Component />);
