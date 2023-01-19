@@ -22,6 +22,7 @@ import { createChromeContext } from '../../chrome/create-chrome';
 import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
+import Footer from '../Footer/Footer';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -140,7 +141,7 @@ const ScalprumRoot = memo(
        */
       <ScalprumProvider {...scalprumProviderProps}>
         <Routes>
-          <Route index path="/" element={<DefaultLayout Sidebar={LandingNav} {...props} />} />
+          <Route index path="/" element={<DefaultLayout Sidebar={LandingNav} Footer={Footer} {...props} />} />
           <Route
             path="/connect/products"
             element={
@@ -153,7 +154,7 @@ const ScalprumRoot = memo(
             path="/allservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                <AllServices />
+                <AllServices Footer={Footer} />
               </Suspense>
             }
           />
@@ -161,7 +162,7 @@ const ScalprumRoot = memo(
             path="/favoritedservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                <FavoritedServices />
+                <FavoritedServices Footer={Footer} />
               </Suspense>
             }
           />

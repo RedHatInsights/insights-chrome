@@ -121,7 +121,7 @@
   },
   "findAppOrService": {
     "defaultMessage": "Find a service",
-    "description": "Find an app or service"
+    "description": "Find a service"
   },
   "getSupport": {
     "defaultMessage": "Get help from Red Hat support.",

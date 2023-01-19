@@ -61,6 +61,7 @@
     .sticky {
       position: sticky;
       top: 0;
+      z-index: 2;
     }
     .chr-c-all-services-filter {
       max-width: 100%;

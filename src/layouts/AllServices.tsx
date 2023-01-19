@@ -5,7 +5,6 @@ import { Gallery, Masthead, Page, PageSection, PageSectionVariants, SearchInput,
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import Footer from '../components/Footer/Footer';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
 
 import './AllServices.scss';
@@ -13,7 +12,11 @@ import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 
-const AllServices = () => {
+export type AllServicesProps = {
+  Footer?: React.FC;
+};
+
+const AllServices = ({ Footer }: AllServicesProps) => {
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
@@ -43,24 +46,24 @@ const AllServices = () => {
         <div className="chr-render">
           <RedirectBanner />
           <PageSection variant={PageSectionVariants.light} className="pf-m-fill">
-            <Stack className="chr-l-stack-allservices pf-u-background-color-100">
+            <Stack className="chr-l-stack-allservices">
               <StackItem className="sticky pf-u-background-color-100">
                 <StackItem className="pf-u-pl-lg pf-u-pb-md">
                   <Title headingLevel="h2">All Services</Title>
                 </StackItem>
-              </StackItem>
-              <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
-                <SearchInput
-                  className="chr-c-all-services-filter"
-                  data-ouia-component-id="app-filter-search"
-                  placeholder={intl.formatMessage(Messages.findAppOrService)}
-                  value={filterValue}
-                  onChange={(val) => setFilterValue(val)}
-                  onClear={(e) => {
-                    setFilterValue('');
-                    e.stopPropagation();
-                  }}
-                />
+                <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
+                  <SearchInput
+                    className="chr-c-all-services-filter"
+                    data-ouia-component-id="app-filter-search"
+                    placeholder={intl.formatMessage(Messages.findAppOrService)}
+                    value={filterValue}
+                    onChange={(val) => setFilterValue(val)}
+                    onClear={(e) => {
+                      setFilterValue('');
+                      e.stopPropagation();
+                    }}
+                  />
+                </StackItem>
               </StackItem>
               <StackItem>
                 <Gallery hasGutter>
@@ -73,7 +76,7 @@ const AllServices = () => {
               </StackItem>
             </Stack>
           </PageSection>
-          <Footer />
+          {Footer && <Footer />}
         </div>
       </Page>
     </div>
