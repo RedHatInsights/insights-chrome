@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
+import useLastVisited from '@redhat-cloud-services/chrome/useLastVisited';
 import {
   Button,
   Card,
@@ -43,7 +44,7 @@ export type FeedbackPages =
   | 'bugReportSuccess'
   | 'informDirectionSuccess';
 
-const FeedbackModal = ({ user }: FeedbackModalProps) => {
+const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
   const intl = useIntl();
   const usePendoFeedback = useSelector<ReduxState, boolean | undefined>(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
@@ -55,6 +56,9 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false), setModalPage('feedbackHome');
   };
+  const lastVisited = useLastVisited();
+  console.log({ lastVisited });
+  console.log('Render of a feedback modal');
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
     switch (modalPage) {
@@ -222,6 +226,8 @@ const FeedbackModal = ({ user }: FeedbackModalProps) => {
       </Modal>
     </React.Fragment>
   );
-};
+});
+
+FeedbackModal.displayName = 'FeedbackModal';
 
 export default FeedbackModal;
