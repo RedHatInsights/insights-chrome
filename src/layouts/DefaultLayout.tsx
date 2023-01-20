@@ -45,8 +45,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   const dispatch = useDispatch();
   const { loaded, schema, noNav } = useNavigation();
 
-  console.log(Footer, 'this is footer!!');
-
   return (
     <Page
       className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
