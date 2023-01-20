@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Text, TextVariants } from '@patternfly/react-core';
 import classNames from 'classnames';
 import useFavoritePages from '@redhat-cloud-services/chrome/useFavoritePages';
+import { matchPath } from 'react-router-dom';
 
 import StarHalfAltIcon from '@patternfly/react-icons/dist/js/icons/star-half-alt-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
@@ -9,10 +10,17 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-
 
 import ChromeLink from '../ChromeLink';
 import type { AllServicesLink as AllServicesLinkType } from './allServicesLinks';
+import { shallowEqual, useSelector } from 'react-redux';
+import { ReduxState } from '../../redux/store';
 
 export type AllServicesLinkProps = AllServicesLinkType;
 
 const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
+  // Find service appId
+  const appId = useSelector(
+    ({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes.find(({ path }) => matchPath(path, href) || matchPath(`${path}/*`, href))?.scope,
+    shallowEqual
+  );
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
 
   const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
@@ -26,7 +34,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
     <Text className="chr-c-allservices__link-wrapper" component={TextVariants.p}>
-      <ChromeLink isExternal={isExternal} href={href}>
+      <ChromeLink appId={appId} isExternal={isExternal} href={href}>
         {title}
         {isExternal && <ExternalLinkAltIcon />}
       </ChromeLink>

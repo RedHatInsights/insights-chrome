@@ -27,17 +27,19 @@ const ChromeRoute = memo(
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }: ReduxState) => user);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
-    /**
-     * If default title was not set, use module scope (appId)
-     */
+    const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
     const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => modules?.[scope]?.defaultDocumentTitle || scope);
     useEffect(() => {
       batch(() => {
+        // Only trigger update on a first application render before any active module has been selected
+        // should be triggered only once per session
+        if (!activeModule) {
+          /**
+           * Default document title update. If application won't update its title chrome sets a title using module config
+           */
+          dispatch(updateDocumentTitle(defaultTitle));
+        }
         dispatch(changeActiveModule(scope));
-        /**
-         * Default document title update. If application won't update its title chrome sets a title using module config
-         */
-        dispatch(updateDocumentTitle(defaultTitle));
       });
       /**
        * update pendo metadata on application change
