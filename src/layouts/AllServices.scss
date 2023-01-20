@@ -1,27 +1,10 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
-.chr-c-allservices {
-  &__link-wrapper {
-    position: relative;
-    .chr-c-allservices__favourite {
-      position: absolute;
-      &.chr-c-allservices__favourite_not {
-        display: none;
-      }
-    }
-    &:hover {
-      .chr-c-allservices__favourite{
-        display: inline-block;
-      }
-    }
-  }
-}
 
 .chr-l-stack-allservices {
   .chr-c-all-services-filter {
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto auto;
     max-width: 300px;
   }
   .pf-l-gallery {
@@ -43,16 +26,12 @@
       .pf-c-content {
         --pf-c-content--FontSize: var(--pf-global--FontSize--sm);
         --pf-c-content--LineHeight: var(--pf-global--LineHeight--sm);
-        a {  // external link icon
-          svg {
-            font-size: var(--pf-global--icon--FontSize--sm);
-            margin-bottom: 2px;
-            margin-left: var(--pf-global--spacer--xs);
-          }
-        }
         .subtitle {
           font-weight: var(--pf-global--FontWeight--semi-bold);
           padding-top: var(--pf-global--spacer--form-element);
+        }
+        .chr-c-icon-not-favorited:not(:hover) {
+          opacity: 0;
         }
       }
     }

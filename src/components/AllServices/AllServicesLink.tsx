@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, TextVariants } from '@patternfly/react-core';
+import { Icon, Text, TextVariants } from '@patternfly/react-core';
 import classNames from 'classnames';
 import useFavoritePages from '@redhat-cloud-services/chrome/useFavoritePages';
 import { matchPath } from 'react-router-dom';
@@ -33,24 +33,27 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
-    <Text className="chr-c-allservices__link-wrapper" component={TextVariants.p}>
+    <Text component={TextVariants.p}>
       <ChromeLink appId={appId} isExternal={isExternal} href={href}>
         {title}
-        {isExternal && <ExternalLinkAltIcon />}
+        {isExternal && (
+          <Icon className="pf-u-ml-sm" isInline>
+            <ExternalLinkAltIcon />
+          </Icon>
+        )}
       </ChromeLink>
       {!isExternal && (
-        <span>
-          <Button
-            onClick={() => handleFavouriteToggle(href, isFavorite)}
-            variant="plain"
-            aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-            className={classNames('pf-u-ml-sm', 'pf-u-p-0', 'chr-c-allservices__favourite', {
-              'chr-c-allservices__favourite_not': !isFavorite,
-            })}
-          >
-            {isFavorite ? <StarIcon color="var(--pf-global--palette--gold-200)" /> : <StarHalfAltIcon color="var(--pf-global--palette--gold-200)" />}
-          </Button>
-        </span>
+        <Icon
+          onClick={() => handleFavouriteToggle(href, isFavorite)}
+          aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
+          className={classNames('pf-u-ml-md', {
+            'chr-c-icon-not-favorited': !isFavorite,
+          })}
+          status="warning"
+          isInline
+        >
+          {isFavorite ? <StarIcon /> : <StarHalfAltIcon />}
+        </Icon>
       )}
     </Text>
   );
