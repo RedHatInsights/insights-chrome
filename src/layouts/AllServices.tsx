@@ -46,24 +46,24 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         <div className="chr-render">
           <RedirectBanner />
           <PageSection variant={PageSectionVariants.light} className="pf-m-fill">
-            <Stack className="chr-l-stack-allservices pf-u-background-color-100">
+            <Stack className="chr-l-stack-allservices">
               <StackItem className="sticky pf-u-background-color-100">
                 <StackItem className="pf-u-pl-lg pf-u-pb-md">
                   <Title headingLevel="h2">All Services</Title>
                 </StackItem>
-              </StackItem>
-              <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
-                <SearchInput
-                  className="chr-c-all-services-filter"
-                  data-ouia-component-id="app-filter-search"
-                  placeholder={intl.formatMessage(Messages.findAppOrService)}
-                  value={filterValue}
-                  onChange={(val) => setFilterValue(val)}
-                  onClear={(e) => {
-                    setFilterValue('');
-                    e.stopPropagation();
-                  }}
-                />
+                <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
+                  <SearchInput
+                    className="chr-c-all-services-filter"
+                    data-ouia-component-id="app-filter-search"
+                    placeholder={intl.formatMessage(Messages.findAppOrService)}
+                    value={filterValue}
+                    onChange={(val) => setFilterValue(val)}
+                    onClear={(e) => {
+                      setFilterValue('');
+                      e.stopPropagation();
+                    }}
+                  />
+                </StackItem>
               </StackItem>
               <StackItem>
                 <Gallery hasGutter>
