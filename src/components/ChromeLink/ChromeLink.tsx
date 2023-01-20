@@ -7,6 +7,7 @@ import { appNavClick } from '../../redux/actions';
 import NavContext, { OnLinkClick } from '../Navigation/navContext';
 import { ReduxState } from '../../redux/store';
 import { NavDOMEvent, RouteDefinition } from '../../@types/types';
+import { updateDocumentTitle } from '../../utils/common';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
@@ -30,6 +31,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(({ href, isBeta, onLinkClic
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
   const moduleEntry = useMemo(() => moduleRoutes.find((route) => href.includes(route.path)), [href, appId]);
+  const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => appId && modules?.[appId]?.defaultDocumentTitle);
   const preloadTimeout = useRef<NodeJS.Timeout>();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {
@@ -56,6 +58,10 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(({ href, isBeta, onLinkClic
   };
   const dispatch = useDispatch();
   const onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (defaultTitle || appId) {
+      updateDocumentTitle(defaultTitle || appId);
+    }
+
     if (event.ctrlKey || event.shiftKey) {
       return false;
     }
