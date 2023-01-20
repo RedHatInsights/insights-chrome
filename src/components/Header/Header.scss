@@ -15,27 +15,36 @@
   }
 
   a.chr-c-button-masthead  {
-    display: block;
-    height: 75px;
+    display: flex;
+    align-items: center; 
+    align-self: stretch;
     background: transparent;
     border: 1px solid var(--pf-global--Color--300);
     border-bottom: 0;
     border-radius: 0;
     border-top: 0;
     color: var(--pf-global--Color--light-100);
-    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
     text-decoration: none;
     &:hover {
        border-bottom: 3px solid var(--pf-global--info-color--100);
+       padding-bottom: 3px;
        &.disabled {
          border-bottom: none;
        }
      }
+      &.active {
+        border-bottom: 3px solid var(--pf-global--info-color--100);
+        padding-bottom: 3px;
+      }
       &.disabled {
        color: var(--pf-global--palette--black-500);
+       .pf-c-icon {
+         --pf-c-icon__content--Color: var(--pf-global--palette--black-500);
+        }
       }
-    svg {
-      margin-right: var(--pf-global--spacer--sm)
+    .pf-c-icon {
+      --pf-c-icon__content--Color: var(--pf-global--Color--light-100);
+      margin-right: var(--pf-global--spacer--sm);
     }
   }
 
