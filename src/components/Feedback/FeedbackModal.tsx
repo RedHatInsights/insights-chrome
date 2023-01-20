@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react';
-import useLastVisited from '@redhat-cloud-services/chrome/useLastVisited';
 import {
   Button,
   Card,
@@ -56,9 +55,6 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false), setModalPage('feedbackHome');
   };
-  const lastVisited = useLastVisited();
-  console.log({ lastVisited });
-  console.log('Render of a feedback modal');
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
     switch (modalPage) {
