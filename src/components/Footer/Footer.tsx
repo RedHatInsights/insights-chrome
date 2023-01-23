@@ -60,7 +60,7 @@ const Footer = () => {
           <Text component="p">
             To successfully interact with our websites and services, your browser must meet the following feature requirements:
           </Text>
-          <TextList className>
+          <TextList>
             <TextListItem>The browser must be configured to accept cookies</TextListItem>
             <TextListItem>The browser must be configured to execute JavaScript</TextListItem>
           </TextList>
