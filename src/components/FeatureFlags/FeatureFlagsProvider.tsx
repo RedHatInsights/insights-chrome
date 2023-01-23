@@ -25,6 +25,13 @@ const config: IFlagProvider['config'] = {
         if (resp.status >= 400) {
           throw new Error(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`);
         }
+
+        const contentType = resp.headers.get('content-type');
+        // make sure the response has correct content type
+        // in case the API falls back to the chrome HTML template
+        if (!contentType?.includes('application/json')) {
+          throw new Error(`Feature loading error server error! Invalid response content type. Expected 'application/json, got: ${contentType}'`);
+        }
         return resp;
       })
       .catch((err) => {
