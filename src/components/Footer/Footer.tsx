@@ -1,9 +1,25 @@
 import { Button, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import './Footer.scss';
 
-const Footer = () => {
+export type FooterProps = {
+  setCookieElement: Dispatch<SetStateAction<HTMLAnchorElement | null>>;
+  cookieElement: Element | null;
+};
+
+const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
+  const cookieRef = useRef<HTMLAnchorElement>(null);
+  useEffect(() => {
+    if (cookieRef.current) {
+      if (cookieElement) {
+        cookieRef.current.replaceWith(cookieElement);
+      } else {
+        setCookieElement(cookieRef.current);
+      }
+    }
+  }, [cookieRef.current]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -42,7 +58,7 @@ const Footer = () => {
                 <a href="https://www.redhat.com/en/about/all-policies-guidelines">All Policies and Guidelines</a>
               </li>
               <li>
-                <a id="teconsent"></a>
+                <a id="teconsent" ref={cookieRef}></a>
               </li>
             </ul>
           </div>
@@ -78,6 +94,11 @@ const Footer = () => {
       </Modal>
     </React.Fragment>
   );
+};
+
+Footer.propTypes = {
+  setCookieElement: PropTypes.func,
+  cookieElement: PropTypes.element,
 };
 
 export default Footer;

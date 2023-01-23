@@ -27,7 +27,7 @@ type ShieldedRootProps = {
   hideNav?: boolean;
   initialized?: boolean;
   Sidebar?: React.FC<NavigationProps>;
-  Footer?: React.FC;
+  Footer?: React.ReactNode;
 };
 
 type DefaultLayoutProps = {
@@ -37,7 +37,7 @@ type DefaultLayoutProps = {
   isNavOpen: boolean;
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
   Sidebar?: React.FC<NavigationProps>;
-  Footer?: React.FC;
+  Footer?: React.ReactNode;
 };
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
@@ -80,7 +80,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
         {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
         <RedirectBanner />
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
-        {Footer && <Footer />}
+        {Footer}
       </div>
     </Page>
   );
@@ -147,7 +147,7 @@ ShieldedRoot.displayName = 'ShieldedRoot';
 
 export type RootAppProps = {
   Sidebar?: React.FC<NavigationProps>;
-  Footer?: React.FC;
+  Footer?: React.ReactNode;
 };
 
 const DefaultLayoutRoot = ({ Sidebar, Footer }: RootAppProps) => {

@@ -32,7 +32,7 @@ import ChromeLink from '../components/ChromeLink';
 import './FavoritedServices.scss';
 
 export type FavoritedServicesProps = {
-  Footer?: React.FC;
+  Footer?: React.ReactNode;
 };
 
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => (
@@ -114,7 +114,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => (
             </StackItem>*/}
           </Stack>
         </PageSection>
-        {Footer && <Footer />}
+        {Footer}
       </div>
     </Page>
   </div>
