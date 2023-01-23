@@ -9,6 +9,7 @@ import { Nav, NavList } from '@patternfly/react-core';
 import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
+import Footer from '../../src/components/Footer/Footer';
 
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
@@ -116,6 +117,28 @@ describe('<Default layout />', () => {
       )
       .get('html');
     cy.wait('@navRequest');
+    elem.get('body').matchImageSnapshot();
+  });
+
+  it('render with footer at the screen bottom', () => {
+    // footer should stick to the bottom of the page
+    cy.viewport(1280, 720);
+    cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
+      data: [],
+    });
+
+    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+      navItems: [...Array(5)],
+    }).as('navRequest');
+    const elem = cy
+      .mount(
+        <Wrapper store={store}>
+          <DefaultLayout Sidebar={SidebarMock} Footer={Footer} />
+        </Wrapper>
+      )
+      .get('html');
+    cy.wait('@navRequest');
+
     elem.get('body').matchImageSnapshot();
   });
 });
