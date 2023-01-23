@@ -13,7 +13,7 @@ import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 
 export type AllServicesProps = {
-  Footer?: React.FC;
+  Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
@@ -76,7 +76,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
               </StackItem>
             </Stack>
           </PageSection>
-          {Footer && <Footer />}
+          {Footer}
         </div>
       </Page>
     </div>

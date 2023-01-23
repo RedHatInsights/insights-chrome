@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
@@ -40,6 +40,7 @@ export type ScalprumRootProps = {
 const ScalprumRoot = memo(
   ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
+    const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
 
@@ -141,7 +142,13 @@ const ScalprumRoot = memo(
        */
       <ScalprumProvider {...scalprumProviderProps}>
         <Routes>
-          <Route index path="/" element={<DefaultLayout Sidebar={LandingNav} Footer={Footer} {...props} />} />
+          <Route
+            index
+            path="/"
+            element={
+              <DefaultLayout Sidebar={LandingNav} Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />
+            }
+          />
           <Route
             path="/connect/products"
             element={
@@ -154,7 +161,7 @@ const ScalprumRoot = memo(
             path="/allservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={Footer} />
+                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
               </Suspense>
             }
           />
@@ -162,7 +169,7 @@ const ScalprumRoot = memo(
             path="/favoritedservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                <FavoritedServices Footer={Footer} />
+                <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
               </Suspense>
             }
           />
