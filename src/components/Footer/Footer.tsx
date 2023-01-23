@@ -8,7 +8,7 @@ const Footer = () => {
 
   return (
     <React.Fragment>
-      <PageSection className="pf-m-no-fill">
+      <PageSection className="pf-m-no-fill pf-u-mt-auto">
         <footer role="contentinfo" id="hcc-footer" className="chr-c-footer pf-l-flex pf-m-column pf-m-row-on-lg pf-m-align-items-center-on-lg">
           <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer">
             <img
@@ -60,7 +60,7 @@ const Footer = () => {
           <Text component="p">
             To successfully interact with our websites and services, your browser must meet the following feature requirements:
           </Text>
-          <TextList className>
+          <TextList>
             <TextListItem>The browser must be configured to accept cookies</TextListItem>
             <TextListItem>The browser must be configured to execute JavaScript</TextListItem>
           </TextList>
