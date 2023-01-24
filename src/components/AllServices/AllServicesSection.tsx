@@ -14,14 +14,14 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon];
   return (
-    <Card className="pf-u-display-block" isPlain>
+    <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100" isPlain>
       <CardTitle>
         <Icon className="pf-u-mr-xs" isInline>
           <TitleIcon />
         </Icon>
         {title}
       </CardTitle>
-      <CardBody className="pf-u-pb-sm">
+      <CardBody>
         <TextContent className="pf-u-font-size-sm">
           <Text component={TextVariants.p} className="pf-u-mb-sm">
             {description}

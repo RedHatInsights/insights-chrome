@@ -69,7 +69,7 @@ const useInitialize = () => {
       store.dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
       // create JWT instance
-      const libJwt = libjwtSetup(chromeConfig);
+      const libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
       setState((prev) => ({
         ...prev,
         libJwt,
