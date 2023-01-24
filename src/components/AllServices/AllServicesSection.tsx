@@ -1,4 +1,4 @@
-import { Card, CardBody, CardTitle, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import React from 'react';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
@@ -14,14 +14,18 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon];
   return (
-    <Card isPlain>
+    <Card className="pf-u-display-block" isPlain>
       <CardTitle>
-        <TitleIcon />
+        <Icon className="pf-u-mr-xs" isInline>
+          <TitleIcon />
+        </Icon>
         {title}
       </CardTitle>
-      <CardBody>
-        <TextContent>
-          <Text component={TextVariants.p}>{description}</Text>
+      <CardBody className="pf-u-pb-sm">
+        <TextContent className="pf-u-font-size-sm">
+          <Text component={TextVariants.p} className="pf-u-mb-sm">
+            {description}
+          </Text>
           {links.map((link, index) =>
             isAllServicesGroup(link) ? <AllServicesGroup key={index} {...link} /> : <AllServicesLink key={index} {...link} />
           )}

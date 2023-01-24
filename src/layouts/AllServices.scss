@@ -1,39 +1,19 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
-
-.chr-l-stack-allservices {
+.chr-c-all-services {
   .chr-c-all-services-filter {
-    margin: auto auto;
     max-width: 300px;
   }
   .pf-l-gallery {
-    display: block;
     column-count: auto;
     column-width: 330px;
   }
   .pf-c-card {
-    display: block;
     overflow: hidden;
     break-inside: avoid-column;
-    &__title {
-      svg {
-        margin-right: var(--pf-global--spacer--xs);
-      }
-    }
-    &__body {
-      padding-bottom: var(--pf-global--spacer--sm);
-      .pf-c-content {
-        --pf-c-content--FontSize: var(--pf-global--FontSize--sm);
-        --pf-c-content--LineHeight: var(--pf-global--LineHeight--sm);
-        .subtitle {
-          font-weight: var(--pf-global--FontWeight--semi-bold);
-          padding-top: var(--pf-global--spacer--form-element);
-        }
-        .chr-c-icon-not-favorited:not(:hover) {
-          opacity: 0;
-        }
-      }
+    .chr-c-icon-not-favorited:not(:hover) {
+      opacity: 0;
     }
   }
   @media screen and (max-width: $pf-global--breakpoint--md) {
