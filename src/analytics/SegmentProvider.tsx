@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,7 @@ import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 
 type SegmentEnvs = 'dev' | 'prod';
-type SegmentModules = 'acs' | 'openshift';
+type SegmentModules = 'acs' | 'openshift' | 'hacCore';
 
 const KEY_FALLBACK = {
   prod: 'nm7VsnYsBVJ9MqjaVInft69pAkhCXq9Q',
@@ -137,24 +137,6 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
 
-  /**
-   * This needs to happen in a condition and during first render!
-   * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
-   */
-  if (!analytics.current) {
-    analytics.current = analytics.current = AnalyticsBrowser.load(
-      {
-        writeKey: getAPIKey(
-          DEV_ENV ? 'dev' : 'prod',
-          // FIXME: Find a better way of getting the initial activeModule ID
-          (activeModule || getUrl('bundle') === 'openshift' ? 'openshift' : getUrl('app')) as SegmentModules,
-          moduleAPIKey
-        ),
-      },
-      { initialPageview: false, integrations: { All: !fedRampEnv } }
-    );
-  }
-
   useEffect(() => {
     const disconnect = registerAnalyticsObserver();
     return () => disconnect();
@@ -204,6 +186,29 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
       }
     }
   }, [activeModule, user]);
+
+  // Do not use the segment provider and a client before chrome has loaded first UI module
+  if (!activeModule) {
+    return <Fragment>{children}</Fragment>;
+  }
+
+  /**
+   * This needs to happen in a condition and during first valid render!
+   * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
+   */
+  if (!analytics.current) {
+    analytics.current = analytics.current = AnalyticsBrowser.load(
+      {
+        writeKey: getAPIKey(
+          DEV_ENV ? 'dev' : 'prod',
+          // FIXME: Find a better way of getting the initial activeModule ID
+          activeModule as SegmentModules,
+          moduleAPIKey
+        ),
+      },
+      { initialPageview: false, integrations: { All: !fedRampEnv } }
+    );
+  }
 
   return (
     <SegmentContext.Provider
