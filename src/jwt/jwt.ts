@@ -367,6 +367,8 @@ export function setCookie(token?: string) {
   if (token && token.length > 10) {
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
+      setCookieWrapper(`${cookieName}=${token};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+      setCookieWrapper(`${cookieName}=${token};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
       setCookieWrapper(`${cookieName}=${token};` + `path=/api;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
   }
