@@ -6,7 +6,7 @@ import configureStore from 'redux-mock-store';
 import { InitialEntry } from 'history';
 import { Store } from 'redux';
 
-import RedirectBanner, { STRATOSPHERE_BANNER_NAME } from './RedirectBanner';
+import RedirectBanner, { AWS_BANNER_NAME } from './RedirectBanner';
 
 const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
   const { search, pathname, hash, state } = useLocation();
@@ -49,9 +49,9 @@ describe('<RedirectBanner>', () => {
     expect(screen.queryByText('Congratulations, your Red Hat and AWS accounts are linked')).not.toBeInTheDocument();
   });
 
-  test('should return inline alert if required query param does not exist', () => {
+  test('should return inline alert if required query param exists', () => {
     render(
-      <Wrapper store={store} initialEntries={[`/foo/bar?${STRATOSPHERE_BANNER_NAME}`]}>
+      <Wrapper store={store} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]}>
         <RedirectBanner />
       </Wrapper>
     );
@@ -61,7 +61,7 @@ describe('<RedirectBanner>', () => {
   test('should close inline alert if after clicking on close button', async () => {
     const locationSpy = jest.fn();
     render(
-      <Wrapper changeSpy={locationSpy} store={store} initialEntries={[`/foo/bar?${STRATOSPHERE_BANNER_NAME}`]}>
+      <Wrapper changeSpy={locationSpy} store={store} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]}>
         <RedirectBanner />
       </Wrapper>
     );
