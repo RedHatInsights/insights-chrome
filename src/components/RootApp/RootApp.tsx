@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
-import ChromeProvider from '@redhat-cloud-services/chrome/ChromeProvider';
+import { ChromeProvider } from '@redhat-cloud-services/chrome';
 
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
