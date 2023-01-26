@@ -60,6 +60,7 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
       class="pf-c-nav__link chr-c-navigation__additional-links"
       data-quickstart-id="/foo"
       data-testid="native-link"
+      documenttitleupdate="Foo"
       href="/foo"
       itemid="/foo"
       rel="noreferrer noopener"
