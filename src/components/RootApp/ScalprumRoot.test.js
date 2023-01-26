@@ -67,6 +67,11 @@ describe('ScalprumRoot', () => {
     },
   };
 
+  beforeAll(() => {
+    global.__webpack_init_sharing__ = () => undefined;
+    global.__webpack_share_scopes__ = { default: {} };
+  });
+
   beforeEach(() => {
     config = {
       foo: {
