@@ -1,24 +1,13 @@
-@import '~@redhat-cloud-services/frontend-components-utilities/styles/_mixins';
-@import '~@patternfly/patternfly/sass-utilities/_all';
-
 .chr-c-footer {
-  li + li {
-    @media screen and (min-width: $pf-global--breakpoint--lg) {
-      &::before {
-        content: '|';
-        margin-right: var(--pf-global--spacer--md);
-      }
+  .pf-c-icon {
+    --pf-c-icon__content--Color: var(--pf-global--palette--black-500);
+    --pf-c-icon__content--FontSize: 2.5em;
+    &:hover {
+      --pf-c-icon__content--Color: var(--pf-global--palette--black-400);
     }
   }
-}
-
-footer#hcc-footer { // temp override for conflict with OCM footer
-  background: transparent;
-  li {
-    border: none;
-    a {
-      color: var(--pf-global--active-color--100);
-      margin: 0;
-    }
+  .pf-c-content {
+    --pf-c-content--a--Color: var(--pf-global--Color--light-100);
+    --pf-c-content--a--hover--Color: var(--pf-global--Color--light-100);
   }
 }
