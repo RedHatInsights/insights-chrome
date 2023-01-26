@@ -17,6 +17,7 @@ import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { isBeta } from '../../utils/common';
+import useBundle from '../../hooks/useBundle';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 
@@ -36,6 +37,7 @@ const RootApp = memo((props: RootAppProps) => {
       },
     }: ReduxState) => Object.values(quickstarts).flat()
   );
+  const { bundleTitle } = useBundle();
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));
@@ -92,7 +94,7 @@ const RootApp = memo((props: RootAppProps) => {
             <Suspense fallback={null}>
               <NotEntitledModal />
             </Suspense>
-            <ChromeProvider>
+            <ChromeProvider bundle={bundleTitle}>
               <QuickStartContainer {...quickStartProps}>
                 <HelpTopicContainer helpTopics={helpTopics}>
                   <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
