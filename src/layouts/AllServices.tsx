@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
-import { Gallery, Masthead, Page, PageSection, PageSectionVariants, SearchInput, Stack, StackItem, Title } from '@patternfly/react-core';
+import { Gallery, Masthead, Page, PageGroup, PageSection, PageSectionVariants, SearchInput, Title } from '@patternfly/react-core';
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
@@ -36,6 +36,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   return (
     <div id="chrome-app-render-root">
       <Page
+        className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
           <Masthead className="chr-c-masthead">
@@ -43,41 +44,33 @@ const AllServices = ({ Footer }: AllServicesProps) => {
           </Masthead>
         }
       >
-        <div className="chr-render">
-          <RedirectBanner />
-          <PageSection variant={PageSectionVariants.light} className="pf-m-fill">
-            <Stack className="chr-l-stack-allservices">
-              <StackItem className="sticky pf-u-background-color-100">
-                <StackItem className="pf-u-pl-lg pf-u-pb-md">
-                  <Title headingLevel="h2">All Services</Title>
-                </StackItem>
-                <StackItem className="pf-u-pl-lg pf-u-pb-md-on-md">
-                  <SearchInput
-                    className="chr-c-all-services-filter"
-                    data-ouia-component-id="app-filter-search"
-                    placeholder={intl.formatMessage(Messages.findAppOrService)}
-                    value={filterValue}
-                    onChange={(val) => setFilterValue(val)}
-                    onClear={(e) => {
-                      setFilterValue('');
-                      e.stopPropagation();
-                    }}
-                  />
-                </StackItem>
-              </StackItem>
-              <StackItem>
-                <Gallery hasGutter>
-                  {linkSections.map((section, index) => (
-                    <AllServicesSection key={index} {...section} />
-                  ))}
-                  {/* TODO: Add empty state */}
-                  {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
-                </Gallery>
-              </StackItem>
-            </Stack>
+        <RedirectBanner />
+        <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
+          <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md">
+            <Title headingLevel="h2">All Services</Title>
+            <SearchInput
+              className="chr-c-all-services-filter pf-u-m-auto pf-u-mt-md"
+              data-ouia-component-id="app-filter-search"
+              placeholder={intl.formatMessage(Messages.findAppOrService)}
+              value={filterValue}
+              onChange={(val) => setFilterValue(val)}
+              onClear={(e) => {
+                setFilterValue('');
+                e.stopPropagation();
+              }}
+            />
           </PageSection>
-          {Footer}
-        </div>
+        </PageGroup>
+        <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
+          <Gallery className="pf-u-display-block" hasGutter>
+            {linkSections.map((section, index) => (
+              <AllServicesSection key={index} {...section} />
+            ))}
+            {/* TODO: Add empty state */}
+            {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
+          </Gallery>
+        </PageSection>
+        {Footer}
       </Page>
     </div>
   );
