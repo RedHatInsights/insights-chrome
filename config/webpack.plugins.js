@@ -40,6 +40,7 @@ const plugins = (dev = false, beta = false) => {
         { 'react-redux': { requiredVersion: deps['react-redux'] } },
         { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
+        { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
       ],

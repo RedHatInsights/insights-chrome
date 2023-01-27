@@ -8,7 +8,7 @@ export type AllServicesGroupProps = AllServicesGroup;
 const AllServicesGroup = ({ title, links }: AllServicesGroupProps) => {
   return (
     <Fragment>
-      <Text component={TextVariants.p} className="subtitle">
+      <Text component={TextVariants.p} className="pf-u-pt-xs pf-u-font-weight-bold">
         {title}
       </Text>
       {links.map((link, index) => (

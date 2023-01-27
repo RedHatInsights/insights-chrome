@@ -1,6 +1,8 @@
-import { Button, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
+import { Flex, Icon, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
+import RedHatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 
 import './Footer.scss';
 
@@ -24,45 +26,36 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
 
   return (
     <React.Fragment>
-      <PageSection className="pf-m-no-fill pf-u-mt-auto">
-        <footer role="contentinfo" id="hcc-footer" className="chr-c-footer pf-l-flex pf-m-column pf-m-row-on-lg pf-m-align-items-center-on-lg">
-          <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer">
-            <img
-              src="https://console.redhat.com/apps/frontend-assets/console-logos/Logo-Red_Hat-A-Standard-RGB.svg"
-              alt="Red Hat logo"
-              width="145px"
-              height="613px"
-            />
+      <PageSection className="chr-c-footer pf-u-mt-auto pf-u-p-lg pf-m-no-fill pf-u-mt-auto pf-u-background-color-dark-100">
+        <Flex role="contentinfo" className="pf-m-column pf-m-row-on-lg">
+          <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer" className="pf-l-flex">
+            <Icon className="pf-u-mx-md pf-u-mt-xs pf-u-mb-md">
+              <RedHatIcon />
+            </Icon>
           </a>
-          <div
-            className="
-            pf-l-flex pf-m-column
-            pf-m-row-on-lg
-            pf-m-flex-1-on-lg
-            pf-m-justify-content-flex-end-on-lg"
-          >
-            <p className="pf-u-color-200 pf-u-font-size-sm pf-m-spacer-xl-on-lg">©2023 Red Hat, Inc.</p>
-            <ul className="pf-u-font-size-sm pf-l-flex pf-m-column pf-m-row-on-md">
-              <li>
-                <Button variant="link" className="pf-u-p-0" onClick={() => setIsModalOpen(true)} isInline>
-                  Browser Support
-                </Button>
-              </li>
-              <li>
-                <a href="https://www.redhat.com/en/about/privacy-policy">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="https://access.redhat.com/help/terms/">Terms of Use</a>
-              </li>
-              <li>
-                <a href="https://www.redhat.com/en/about/all-policies-guidelines">All Policies and Guidelines</a>
-              </li>
-              <li>
-                <a id="teconsent" ref={cookieRef}></a>
-              </li>
-            </ul>
-          </div>
-        </footer>
+          <Flex className="pf-m-column pf-u-align-self-flex-start">
+            <TextContent className="pf-l-flex pf-u-mb-sm">
+              <Text component="p" className="pf-u-color-400 pf-u-font-size-xs">
+                ©2023 Red Hat, Inc.
+              </Text>
+            </TextContent>
+            <TextContent className="pf-l-flex pf-m-column pf-m-row-on-md pf-u-font-size-xs">
+              <Text component="a" onClick={() => setIsModalOpen(true)}>
+                Browser Support
+              </Text>
+              <Text component="a" href="https://www.redhat.com/en/about/privacy-policy">
+                Privacy Policy
+              </Text>
+              <Text component="a" href="https://access.redhat.com/help/terms/">
+                Terms of Use
+              </Text>
+              <Text component="a" href="https://www.redhat.com/en/about/all-policies-guidelines">
+                All Policies and Guidelines
+              </Text>
+              <Text component="a" id="teconsent" ref={cookieRef}></Text>
+            </TextContent>
+          </Flex>
+        </Flex>
       </PageSection>
       <Modal title="Browser support" isOpen={isModalOpen} variant={ModalVariant.small} onClose={() => setIsModalOpen(false)}>
         <TextContent>
