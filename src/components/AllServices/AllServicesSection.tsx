@@ -14,7 +14,7 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon];
   return (
-    <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100" isPlain>
+    <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100">
       <CardTitle>
         <Icon className="pf-u-mr-xs" isInline>
           <TitleIcon />
