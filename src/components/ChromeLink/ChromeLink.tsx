@@ -20,12 +20,12 @@ interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   currAppId?: string;
   target?: string;
   rel?: string;
+  documentTitleUpdate?: string;
 }
 
 export interface LinkWrapperProps extends RefreshLinkProps {
   className?: string;
   tabIndex?: number;
-  documentTitleUpdate?: string;
 }
 
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(
@@ -118,7 +118,7 @@ LinkWrapper.displayName = 'MemoizedLinkWrapper';
 const basepath = document.baseURI;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
+const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, documentTitleUpdate, ...rest }: RefreshLinkProps) => rest;
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
   const { href, isExternal, onLinkClick, isBeta, ...rest } = cleanRefreshLinkProps(props);

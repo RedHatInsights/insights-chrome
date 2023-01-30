@@ -1,6 +1,5 @@
 import { Flex, Icon, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import RedHatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 
