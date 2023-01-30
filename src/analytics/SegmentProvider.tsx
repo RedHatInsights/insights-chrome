@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
@@ -133,9 +133,14 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const fedRampEnv = isFedRamp();
   const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
   const analytics = useRef<AnalyticsBrowser>();
+  const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
+
+  if (!analytics.current) {
+    analytics.current = new AnalyticsBrowser();
+  }
 
   useEffect(() => {
     const disconnect = registerAnalyticsObserver();
@@ -187,17 +192,13 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
     }
   }, [activeModule, user]);
 
-  // Do not use the segment provider and a client before chrome has loaded first UI module
-  if (!activeModule) {
-    return <Fragment>{children}</Fragment>;
-  }
-
   /**
    * This needs to happen in a condition and during first valid render!
    * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
    */
-  if (!analytics.current) {
-    analytics.current = analytics.current = AnalyticsBrowser.load(
+  if (analytics.current && activeModule && !analyticsLoaded.current) {
+    analyticsLoaded.current = true;
+    analytics.current.load(
       {
         writeKey: getAPIKey(
           DEV_ENV ? 'dev' : 'prod',
