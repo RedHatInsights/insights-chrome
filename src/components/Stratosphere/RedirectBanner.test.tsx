@@ -6,7 +6,7 @@ import configureStore from 'redux-mock-store';
 import { InitialEntry } from 'history';
 import { Store } from 'redux';
 
-import RedirectBanner, { AWS_BANNER_NAME } from './RedirectBanner';
+import RedirectBanner, { AWS_BANNER_NAME, AZURE_BANNER_NAME } from './RedirectBanner';
 
 const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
   const { search, pathname, hash, state } = useLocation();
@@ -49,13 +49,22 @@ describe('<RedirectBanner>', () => {
     expect(screen.queryByText('Congratulations, your Red Hat and AWS accounts are linked')).not.toBeInTheDocument();
   });
 
-  test('should return inline alert if required query param exists', () => {
+  test('should return inline alert if AWS query param exists', () => {
     render(
       <Wrapper store={store} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]}>
         <RedirectBanner />
       </Wrapper>
     );
     expect(screen.queryByText('Congratulations, your Red Hat and AWS accounts are linked')).toBeInTheDocument();
+  });
+
+  test('should return inline alert if Azure query param exists', () => {
+    render(
+      <Wrapper store={store} initialEntries={[`/foo/bar?${AZURE_BANNER_NAME}`]}>
+        <RedirectBanner />
+      </Wrapper>
+    );
+    expect(screen.queryByText('Congratulations, your Red Hat and Microsoft Azure accounts are linked')).toBeInTheDocument();
   });
 
   test('should close inline alert if after clicking on close button', async () => {

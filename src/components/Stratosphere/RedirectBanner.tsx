@@ -12,13 +12,7 @@ const RedirectBanner = () => {
   const { pathname, search, hash, state } = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(search);
-  const partner = () => {
-    if (params.has(AWS_BANNER_NAME)) {
-      return 'AWS';
-    } else if (params.has(AZURE_BANNER_NAME)) {
-      return 'Microsoft Azure';
-    }
-  };
+  const partner = params.has(AWS_BANNER_NAME) ? 'AWS' : params.has(AZURE_BANNER_NAME) ? 'Microsoft Azure' : null;
   const product = useSelector<ReduxState, string | undefined>((state) => state.chrome.activeProduct);
 
   const handleClose = () => {
@@ -44,7 +38,7 @@ const RedirectBanner = () => {
       actionClose={<AlertActionCloseButton data-testid="stratosphere-banner-close" onClose={handleClose} />}
       isInline
       variant="success"
-      title={`Congratulations, your Red Hat and ${partner()} accounts are linked`}
+      title={`Congratulations, your Red Hat and ${partner} accounts are linked`}
     >
       <TextContent>
         <Text>
