@@ -81,6 +81,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   };
 
   useEffect(() => {
+    let mounted = true;
     // only inernal users have the TAM features enabled
     if (user?.identity?.user?.is_internal) {
       const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
@@ -99,20 +100,25 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
             query_by: 'user_id',
           },
         })
-        .then(({ data: { data } }) =>
-          setData(
-            data
-              .reduce<CrossAccountRequest[]>((acc, curr) => {
-                const request = acc.find(({ target_account }) => target_account === curr.target_account);
-                if (request) {
-                  return acc;
-                }
-                return [...acc, curr];
-              }, [])
-              .filter(({ target_account }) => target_account !== user.identity.account_number)
-          )
-        );
+        .then(({ data: { data } }) => {
+          if (mounted) {
+            setData(
+              data
+                .reduce<CrossAccountRequest[]>((acc, curr) => {
+                  const request = acc.find(({ target_account }) => target_account === curr.target_account);
+                  if (request) {
+                    return acc;
+                  }
+                  return [...acc, curr];
+                }, [])
+                .filter(({ target_account }) => target_account !== user.identity.account_number)
+            );
+          }
+        });
     }
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (data.length === 0) {

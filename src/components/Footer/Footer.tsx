@@ -1,6 +1,5 @@
 import { Flex, Icon, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import RedHatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 
@@ -52,7 +51,7 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
               <Text component="a" href="https://www.redhat.com/en/about/all-policies-guidelines">
                 All Policies and Guidelines
               </Text>
-              <Text component="a" id="teconsent" ref={cookieRef}></Text>
+              <a id="teconsent" ref={cookieRef}></a>
             </TextContent>
           </Flex>
         </Flex>
@@ -87,11 +86,6 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
       </Modal>
     </React.Fragment>
   );
-};
-
-Footer.propTypes = {
-  setCookieElement: PropTypes.func,
-  cookieElement: PropTypes.element,
 };
 
 export default Footer;
