@@ -139,15 +139,21 @@ const GlobalFilterWrapper = () => {
   }, [isLanding, isAllowed]);
 
   useEffect(() => {
+    let mounted = true;
     const fetchPermissions = async () => {
       const permissions = await window.insights?.chrome?.getUserPermissions?.('inventory');
-      setHasAccess(
-        permissions?.some((item) =>
-          ['inventory:*:*', 'inventory:*:read', 'inventory:hosts:read'].includes((typeof item === 'string' && item) || item?.permission)
-        )
-      );
+      if (mounted) {
+        setHasAccess(
+          permissions?.some((item) =>
+            ['inventory:*:*', 'inventory:*:read', 'inventory:hosts:read'].includes((typeof item === 'string' && item) || item?.permission)
+          )
+        );
+      }
     };
     fetchPermissions();
+    return () => {
+      mounted = false;
+    };
   }, []);
   return isGlobalFilterEnabled && userLoaded ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
