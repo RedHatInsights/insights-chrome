@@ -135,13 +135,16 @@ const AllServices = () => (
                     <TextContent>
                       <Text component={TextVariants.p}>Create RHEL images, systems at the Edge, and OpenShift clusters.</Text>
                       <Text component={TextVariants.p}>
+                        <ChromeLink href="/openshift/create">Clusters</ChromeLink>
+                      </Text>
+                      <Text component={TextVariants.p}>
                         <ChromeLink href="/edge/fleet-management">Edge</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/insights/image-builder">Image Builder</ChromeLink>
                       </Text>
                       <Text component={TextVariants.p}>
-                        <ChromeLink href="/openshift/create">Clusters</ChromeLink>
+                        <ChromeLink href="/settings/content">Repositories</ChromeLink>
                       </Text>
                     </TextContent>
                   </CardBody>
