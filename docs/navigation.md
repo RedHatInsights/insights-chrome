@@ -29,6 +29,7 @@ List of available permissions methods:
   * `matcher`: `['isEmpty' | 'isNotEmpty']`.
     * `isEmpty` uses [lodash isEmpty](https://lodash.com/docs/4.17.15#isEmpty) to evaluate api response.
     * `isNotEmpty` is a negation of `isEmpty`
+* `featureFlag` - test if feature flag name is enabled. First argument is name of the featureFlag and second is the expected value (`true` or `false`)
 
 #### apiRequest example
 
