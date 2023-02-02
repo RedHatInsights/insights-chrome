@@ -174,8 +174,19 @@ const useAllServices = () => {
     // run hook after data are loaded or filter value changed
   }, [ready, filterValue]);
 
+  // Provide a flat list of all avaiable links
+  const servicesLinks = useMemo(
+    () =>
+      linkSections
+        .flatMap(({ links }) => links)
+        .flatMap((item) => (isAllServicesGroup(item) ? item.links : item))
+        .flat(),
+    [linkSections]
+  );
+
   return {
     linkSections,
+    servicesLinks,
     error,
     ready,
     filterValue,

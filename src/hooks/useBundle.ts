@@ -1,6 +1,6 @@
 import { getUrl } from '../utils/common';
 
-const bundleMapping: {
+export const bundleMapping: {
   [bundleId: string]: string;
 } = {
   'application-services': 'Application and Data Services',
