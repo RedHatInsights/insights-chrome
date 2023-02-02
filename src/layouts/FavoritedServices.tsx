@@ -70,8 +70,8 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
         }
       >
         <RedirectBanner />
-        <PageSection variant={PageSectionVariants.light} className="pf-m-fill">
-          <Stack className="pf-u-background-color-100 pf-u-pl-lg">
+        <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md pf-m-fill">
+          <Stack className="pf-u-background-color-100">
             <StackItem className="pf-u-pb-md">
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
@@ -79,7 +79,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
             {favoritePages.length === 0 ? (
               <EmptyState />
             ) : (
-              <StackItem className="pf-u-pt-sm">
+              <StackItem className="pf-u-pt-xl">
                 <Gallery hasGutter>
                   {favoritedServices.map((props, index) => (
                     <ServiceTile {...props} key={index} />
