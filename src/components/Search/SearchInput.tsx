@@ -85,6 +85,11 @@ const SearchInput = () => {
     if (!isOpen) {
       setIsOpen(!isOpen);
     }
+
+    if (isOpen && ev.key === 'ArrowDown' && menuRef.current) {
+      const firstElement = menuRef.current.querySelector('li > button:not(:disabled), li > a:not(:disabled)');
+      firstElement && (firstElement as HTMLElement).focus();
+    }
   };
 
   React.useEffect(() => {
