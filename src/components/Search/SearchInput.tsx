@@ -82,12 +82,6 @@ const SearchInput = () => {
 
   const onToggleKeyDown: SearchInputProps['onKeyDown'] = (ev) => {
     ev.stopPropagation(); // Stop handleClickOutside from handling
-    setTimeout(() => {
-      if (menuRef.current) {
-        const firstElement = menuRef.current.querySelector('li > button:not(:disabled), li > a:not(:disabled)');
-        firstElement && (firstElement as HTMLElement).focus();
-      }
-    }, 0);
     if (!isOpen) {
       setIsOpen(!isOpen);
     }
@@ -145,13 +139,11 @@ const SearchInput = () => {
               <Spinner size="xl" />
             </Bullseye>
           ) : (
-            <>
-              {searchResults.docs.map(({ id, allTitle, abstract, relative_uri }) => (
-                <MenuItem component={(props) => <ChromeLink {...props} href={relative_uri} />} description={abstract} key={id}>
-                  {allTitle}
-                </MenuItem>
-              ))}
-            </>
+            searchResults.docs.map(({ id, allTitle, abstract, relative_uri }) => (
+              <MenuItem component={(props) => <ChromeLink {...props} href={relative_uri} />} description={abstract} key={id}>
+                {allTitle}
+              </MenuItem>
+            ))
           )}
         </MenuList>
       </MenuContent>
