@@ -1,0 +1,13 @@
+.chr-c-search {
+  &__item {
+    &__description {
+      .bundle {
+        // prevent underline while pointer is over parent link
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

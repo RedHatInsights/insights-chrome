@@ -1,8 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Bullseye,
   Menu,
-  MenuBreadcrumb,
   MenuContent,
   MenuItem,
   MenuList,
@@ -15,6 +14,7 @@ import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
 import ChromeLink from '../ChromeLink';
+import SearchDescription from './SearchDescription';
 
 const REPLACE_TAG = '@query';
 /**
@@ -26,13 +26,13 @@ const REPLACE_TAG = '@query';
  *
  * Query parsin docs: https://solr.apache.org/guide/7_7/the-standard-query-parser.html#the-standard-query-parser
  */
-const BASE_URL = `https://access.stage.redhat.com/hydra/rest/search/platform/console/?q=${REPLACE_TAG}~&fq=documentKind:ModuleDefinition&rows=10`;
+const BASE_URL = `https://access.stage.redhat.com/hydra/rest/search/platform/console/?q=${REPLACE_TAG}~10&fq=documentKind:ModuleDefinition&rows=10&mm=4`;
 
 export type SearchResultItem = {
-  abstract?: string;
+  abstract: string;
   allTitle: string;
   bundle: string[];
-  bundile_title: string[];
+  bundle_title: string[];
   documentKind: string;
   id: string;
   relative_uri: string;
@@ -58,6 +58,7 @@ const SearchInput = () => {
     start: 0,
   });
 
+  const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,19 +81,33 @@ const SearchInput = () => {
     }
   };
 
+  const onInputClick: SearchInputProps['onClick'] = (ev) => {
+    ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
+    searchResults.numFound > 0 && setIsOpen(true);
+  };
+
   const onToggleKeyDown: SearchInputProps['onKeyDown'] = (ev) => {
-    ev.stopPropagation(); // Stop handleClickOutside from handling
+    ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
     if (!isOpen) {
-      setIsOpen(!isOpen);
+      setIsOpen(true);
     }
 
     if (isOpen && ev.key === 'ArrowDown' && menuRef.current) {
       const firstElement = menuRef.current.querySelector('li > button:not(:disabled), li > a:not(:disabled)');
       firstElement && (firstElement as HTMLElement).focus();
+    } else if (isOpen && ev.key === 'Escape') {
+      setIsOpen(false);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('keydown', handleMenuKeys);
     window.addEventListener('click', handleClickOutside);
     return () => {
@@ -109,10 +124,10 @@ const SearchInput = () => {
     return fetch(BASE_URL.replace(REPLACE_TAG, value))
       .then((r) => r.json())
       .then(({ response }: { response: SearchResponseType }) => {
-        setSearchResults(response);
+        isMounted.current && setSearchResults(response);
       })
       .finally(() => {
-        setIsFetching(false);
+        isMounted.current && setIsFetching(false);
       });
   };
 
@@ -126,6 +141,7 @@ const SearchInput = () => {
 
   const toggle = (
     <PFSearchInput
+      onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
       placeholder="Search for services"
@@ -136,7 +152,7 @@ const SearchInput = () => {
   );
 
   const menu = (
-    <Menu ref={menuRef} onSelect={(_ev, itemId) => console.log('selected', itemId)}>
+    <Menu ref={menuRef} className="pf-u-mt-xs">
       <MenuContent>
         <MenuList>
           {isFetching ? (
@@ -144,12 +160,18 @@ const SearchInput = () => {
               <Spinner size="xl" />
             </Bullseye>
           ) : (
-            searchResults.docs.map(({ id, allTitle, abstract, relative_uri }) => (
-              <MenuItem component={(props) => <ChromeLink {...props} href={relative_uri} />} description={abstract} key={id}>
+            searchResults.docs.map(({ id, allTitle, bundle, bundle_title, abstract, relative_uri }) => (
+              <MenuItem
+                component={(props) => <ChromeLink {...props} href={relative_uri} />}
+                description={<SearchDescription bundle={bundle[0]} description={abstract} bundleTitle={bundle_title[0]} />}
+                key={id}
+              >
                 {allTitle}
               </MenuItem>
             ))
           )}
+          {/* TODO: Add empty state */}
+          {searchResults.numFound === 0 && !isFetching && <MenuItem>No matching results</MenuItem>}
         </MenuList>
       </MenuContent>
     </Menu>
