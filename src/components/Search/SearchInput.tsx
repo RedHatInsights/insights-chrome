@@ -46,6 +46,17 @@ export type SearchResponseType = {
   maxScore: number;
 };
 
+const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
+  if (!menuElement) {
+    return 0;
+  }
+  const { height: bodyHeight } = document.body.getBoundingClientRect();
+  const { top: menuTopOffset } = menuElement.getBoundingClientRect();
+  // do not allow the menu to overflow the screen
+  // leave 4 px free on the bottom of the viewport
+  return bodyHeight - menuTopOffset - 4;
+};
+
 const SearchInput = () => {
   const isEnabled = localStorage.getItem('chrome:experimental:search') === 'true';
   const [isOpen, setIsOpen] = React.useState(false);
@@ -100,9 +111,21 @@ const SearchInput = () => {
     }
   };
 
+  const handleWindowResize = () => {
+    const maxHeight = getMaxMenuHeight(menuRef.current);
+    if (menuRef.current) {
+      menuRef.current.style.maxHeight = `${maxHeight}px`;
+    }
+  };
+
   useEffect(() => {
     isMounted.current = true;
+    // make sure the menu does not overflow the screen and creates extra space bellow the main content
+    window.addEventListener('resize', handleWindowResize);
+    // calculate initial max height
+    handleWindowResize();
     return () => {
+      window.removeEventListener('resize', handleWindowResize);
       isMounted.current = false;
     };
   }, []);
@@ -152,7 +175,7 @@ const SearchInput = () => {
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-mt-xs">
+    <Menu ref={menuRef} className="pf-u-mt-xs chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (

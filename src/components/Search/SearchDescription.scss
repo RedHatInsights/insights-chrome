@@ -2,11 +2,7 @@
   &__item {
     &__description {
       .bundle {
-        // prevent underline while pointer is over parent link
-        text-decoration: none;
-        &:hover {
-          text-decoration: underline;
-        }
+        color: var(--pf-global--palette--black-700);
       }
     }
   }

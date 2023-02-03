@@ -3,6 +3,10 @@
     margin: auto;
   }
 
+  &__menu {
+    overflow-y: auto;
+  }
+
   &__input {
     border-radius: 8px;
     width: 100%;
