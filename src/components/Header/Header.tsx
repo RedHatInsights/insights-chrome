@@ -65,7 +65,7 @@ export const Header = () => {
               )}
               {user && (
                 <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
-                  <ContextSwitcher user={user} className="data-hj-suppress" />
+                  <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
                 </ToolbarItem>
               )}
             </ToolbarGroup>
