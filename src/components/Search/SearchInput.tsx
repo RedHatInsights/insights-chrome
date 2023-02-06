@@ -37,6 +37,7 @@ BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
 BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
 BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
+BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
 
 const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
 BASE_URL.search = BASE_SEARCH.toString();

@@ -19,15 +19,21 @@ const parseHighlights = (base: string, highlights: string[] = []) => {
     }
   });
 
+  const highlightStartIndexes = highlights.map((item) => base.match(item.replace('<mark>', '').replace('</mark>', ''))?.index);
+
   markIndexes = markIndexes
-    // sort marks
-    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
     // update mark positions based mark count
     .map((marks, index) => [marks[0] + index * MARK_OFFSET, marks[1] + index * MARK_OFFSET]);
 
   // highlight marks in string
-  markIndexes.forEach(([start, end]) => {
-    result = `${result.slice(0, start)}${MARK_START}${result.slice(start, end - MARK_SIZE)}${MARK_END}${result.slice(end - MARK_SIZE)}`;
+  markIndexes.forEach(([start, end], index) => {
+    // adjust for highlight starting index
+    const startIndex = start + highlightStartIndexes[index]!;
+    const endIndex = end + highlightStartIndexes[index]!;
+
+    result = `${result.slice(0, startIndex)}${MARK_START}${result.slice(startIndex, endIndex - MARK_SIZE)}${MARK_END}${result.slice(
+      endIndex - MARK_SIZE
+    )}`;
   });
   // replace mark with span tags
   return result.replaceAll('<mark>', '<span>').replaceAll('</mark>', '</span>');
