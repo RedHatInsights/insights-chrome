@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
 import type { Store } from 'redux';
-import { crossAccountBouncer } from '../auth';
+import { LibJWT, crossAccountBouncer } from '../auth';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
 // TODO: Refactor this file to use modern JS
@@ -11,7 +11,7 @@ let fetchResults: Record<string, unknown> = {};
 
 const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 
-function init(store: Store) {
+function init(store: Store, libJwt: () => LibJWT | undefined) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const oldFetch = window.fetch;
@@ -35,6 +35,10 @@ function init(store: Store) {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
+    if (libJwt?.()?.jwt.isAuthenticated()) {
+      // There is potentially a problem if app sets its own Auth header
+      this.setRequestHeader('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+    }
     // eslint-disable-line func-names
     if (iqeEnabled) {
       xhrResults.push(this);
@@ -65,6 +69,8 @@ function init(store: Store) {
       {
         ...(options || {}),
         headers: {
+          // If app wants to set its own Auth header it can do so
+          ...(libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
           ...((options && options.headers) || {}),
         },
       },
@@ -109,9 +115,7 @@ function init(store: Store) {
 }
 
 const qe = {
-  init: (store: Store) => {
-    init(store);
-  },
+  init,
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
     xhrResults = xhrResults.filter((result) => result.readyState !== 4 && result.readyState !== 0);

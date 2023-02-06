@@ -61,26 +61,23 @@ const useInitialize = () => {
   const fedRampEnv = isFedRamp();
   const chromeInstance = useRef({ cache: undefined });
   useEffect(() => {
-    // init qe functions
-    qe.init(store);
+    // We have to use `let` because we want to access it once jwt is initialized
+    let libJwt: LibJWT | undefined = undefined;
+    // init qe functions, callback for libjwt because we want it to initialize before jwt is ready
+    qe.init(store, () => libJwt);
     // initi fed modules registry
     loadFedModules().then(({ data }) => {
       const { chrome: chromeConfig } = data;
       store.dispatch(loadModulesSchema(data));
       initializeAccessRequestCookies();
       // create JWT instance
-      const libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
-      setState((prev) => ({
-        ...prev,
-        libJwt,
-      }));
-
+      libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
       // initialize JWT instance
       initializeJWT(libJwt, chromeInstance.current).then(() => {
-        setState((prev) => ({
-          ...prev,
+        setState({
+          libJwt,
           isReady: true,
-        }));
+        });
       });
     });
     // setup trust arc
