@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bullseye,
   Menu,
@@ -13,9 +13,8 @@ import {
 import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
-import ChromeLink from '../ChromeLink';
-import SearchDescription from './SearchDescription';
-import SearchTitle from './SearchTitle';
+import SearchGroup from './SearchGroup';
+import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
 
 const REPLACE_TAG = 'REPLACE_TAG';
 /**
@@ -43,30 +42,6 @@ const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/plat
 BASE_URL.search = BASE_SEARCH.toString();
 const SEARCH_QUERY = BASE_URL.toString();
 
-export type SearchResultItem = {
-  abstract: string;
-  allTitle: string;
-  bundle: string[];
-  bundle_title: string[];
-  documentKind: string;
-  id: string;
-  relative_uri: string;
-  view_uri: string;
-};
-
-export type SearchResponseType = {
-  docs: SearchResultItem[];
-  start: number;
-  numFound: number;
-  maxScore: number;
-};
-
-export type SearchHighlight = { allTitle?: string[]; abstract?: string[] };
-
-export type HighlightingResponseType = {
-  [recordId: string]: SearchHighlight;
-};
-
 const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
   if (!menuElement) {
     return 0;
@@ -76,6 +51,12 @@ const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
   // do not allow the menu to overflow the screen
   // leave 4 px free on the bottom of the viewport
   return bodyHeight - menuTopOffset - 4;
+};
+
+type SearchCategories = {
+  highLevel: SearchResultItem[];
+  midLevel: SearchResultItem[];
+  lowLevel: SearchResultItem[];
 };
 
 const SearchInput = () => {
@@ -95,6 +76,39 @@ const SearchInput = () => {
   const toggleRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // sort result items based on matched field and its priority
+  const resultCategories = useMemo(
+    () =>
+      searchResults.docs.reduce<SearchCategories>(
+        (acc, curr) => {
+          if (highlighting[curr.id]?.allTitle) {
+            return {
+              ...acc,
+              highLevel: [...acc.highLevel, curr],
+            };
+          }
+
+          if (highlighting[curr.id]?.abstract) {
+            return {
+              ...acc,
+              midLevel: [...acc.midLevel, curr],
+            };
+          }
+
+          return {
+            ...acc,
+            lowLevel: [...acc.lowLevel, curr],
+          };
+        },
+        {
+          highLevel: [],
+          midLevel: [],
+          lowLevel: [],
+        }
+      ),
+    [searchResults.docs, highlighting]
+  );
 
   const handleMenuKeys = (event: KeyboardEvent) => {
     if (!isOpen) {
@@ -153,6 +167,7 @@ const SearchInput = () => {
   }, []);
 
   useEffect(() => {
+    handleWindowResize();
     window.addEventListener('keydown', handleMenuKeys);
     window.addEventListener('click', handleClickOutside);
     return () => {
@@ -208,17 +223,11 @@ const SearchInput = () => {
               <Spinner size="xl" />
             </Bullseye>
           ) : (
-            searchResults.docs.map(({ id, allTitle, bundle, bundle_title, abstract, relative_uri }) => (
-              <MenuItem
-                component={(props) => <ChromeLink {...props} href={relative_uri} />}
-                description={
-                  <SearchDescription highlight={highlighting[id]?.abstract} bundle={bundle[0]} description={abstract} bundleTitle={bundle_title[0]} />
-                }
-                key={id}
-              >
-                <SearchTitle title={allTitle} highlight={highlighting[id]?.allTitle} />
-              </MenuItem>
-            ))
+            <>
+              <SearchGroup highlighting={highlighting} groupLabel="High priority" items={resultCategories.highLevel} />
+              <SearchGroup highlighting={highlighting} groupLabel="Medium priority" items={resultCategories.midLevel} />
+              <SearchGroup highlighting={highlighting} groupLabel="Low priority" items={resultCategories.lowLevel} />
+            </>
           )}
           {/* TODO: Add empty state */}
           {searchResults.numFound === 0 && !isFetching && <MenuItem>No matching results</MenuItem>}
