@@ -15,8 +15,9 @@ import debounce from 'lodash/debounce';
 import './SearchInput.scss';
 import ChromeLink from '../ChromeLink';
 import SearchDescription from './SearchDescription';
+import SearchTitle from './SearchTitle';
 
-const REPLACE_TAG = '@query';
+const REPLACE_TAG = 'REPLACE_TAG';
 /**
  * The ?q is the search term.
  * ------
@@ -25,8 +26,22 @@ const REPLACE_TAG = '@query';
  * We can use distance ~(0-2) for example: "~2" to narrow restrict/expand the fuzzy search range
  *
  * Query parsin docs: https://solr.apache.org/guide/7_7/the-standard-query-parser.html#the-standard-query-parser
+ *
+ * hl=true enables string "highlight"
+ * hl.fl=field_name specifies field to be highlighted
  */
-const BASE_URL = `https://access.stage.redhat.com/hydra/rest/search/platform/console/?q=${REPLACE_TAG}~10&fq=documentKind:ModuleDefinition&rows=10&mm=4`;
+
+const BASE_SEARCH = new URLSearchParams();
+BASE_SEARCH.append('q', `${REPLACE_TAG}~10`); // add query replacement tag and enable fuzzy search with ~10
+BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
+BASE_SEARCH.append('rows', '10'); // request 10 results
+BASE_SEARCH.append('hl', 'true'); // enable highlight
+BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
+BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
+
+const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
+BASE_URL.search = BASE_SEARCH.toString();
+const SEARCH_QUERY = BASE_URL.toString();
 
 export type SearchResultItem = {
   abstract: string;
@@ -44,6 +59,12 @@ export type SearchResponseType = {
   start: number;
   numFound: number;
   maxScore: number;
+};
+
+export type SearchHighlight = { allTitle?: string[]; abstract?: string[] };
+
+export type HighlightingResponseType = {
+  [recordId: string]: SearchHighlight;
 };
 
 const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
@@ -68,6 +89,7 @@ const SearchInput = () => {
     numFound: 0,
     start: 0,
   });
+  const [highlighting, sethigHlighting] = useState<HighlightingResponseType>({});
 
   const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
@@ -144,10 +166,13 @@ const SearchInput = () => {
   }
 
   const handleFetch = (value: string) => {
-    return fetch(BASE_URL.replace(REPLACE_TAG, value))
+    return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value))
       .then((r) => r.json())
-      .then(({ response }: { response: SearchResponseType }) => {
-        isMounted.current && setSearchResults(response);
+      .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
+        if (isMounted.current) {
+          setSearchResults(response);
+          sethigHlighting(highlighting);
+        }
       })
       .finally(() => {
         isMounted.current && setIsFetching(false);
@@ -186,10 +211,12 @@ const SearchInput = () => {
             searchResults.docs.map(({ id, allTitle, bundle, bundle_title, abstract, relative_uri }) => (
               <MenuItem
                 component={(props) => <ChromeLink {...props} href={relative_uri} />}
-                description={<SearchDescription bundle={bundle[0]} description={abstract} bundleTitle={bundle_title[0]} />}
+                description={
+                  <SearchDescription highlight={highlighting[id]?.abstract} bundle={bundle[0]} description={abstract} bundleTitle={bundle_title[0]} />
+                }
                 key={id}
               >
-                {allTitle}
+                <SearchTitle title={allTitle} highlight={highlighting[id]?.allTitle} />
               </MenuItem>
             ))
           )}

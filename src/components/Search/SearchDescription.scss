@@ -1,6 +1,11 @@
 .chr-c-search {
   &__item {
     &__description {
+      >p {
+        >span {
+          color: red;
+        }
+      }
       .bundle {
         color: var(--pf-global--palette--black-700);
       }
