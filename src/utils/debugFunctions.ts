@@ -22,6 +22,7 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
+  platformSearch: () => functionBuilder('chrome:experimental:search', true),
 };
 
 export default debugFunctions;
