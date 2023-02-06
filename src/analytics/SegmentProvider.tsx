@@ -133,26 +133,13 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const fedRampEnv = isFedRamp();
   const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
   const analytics = useRef<AnalyticsBrowser>();
+  const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
 
-  /**
-   * This needs to happen in a condition and during first render!
-   * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
-   */
   if (!analytics.current) {
-    analytics.current = analytics.current = AnalyticsBrowser.load(
-      {
-        writeKey: getAPIKey(
-          DEV_ENV ? 'dev' : 'prod',
-          // FIXME: Find a better way of getting the initial activeModule ID
-          (activeModule || getUrl('bundle') === 'openshift' ? 'openshift' : getUrl('app')) as SegmentModules,
-          moduleAPIKey
-        ),
-      },
-      { initialPageview: false, integrations: { All: !fedRampEnv } }
-    );
+    analytics.current = new AnalyticsBrowser();
   }
 
   useEffect(() => {
@@ -204,6 +191,25 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
       }
     }
   }, [activeModule, user]);
+
+  /**
+   * This needs to happen in a condition and during first valid render!
+   * To avoid recreating the buffered instance on each render, but provide the full API before the first sucesfull mount.
+   */
+  if (analytics.current && activeModule && !analyticsLoaded.current) {
+    analyticsLoaded.current = true;
+    analytics.current.load(
+      {
+        writeKey: getAPIKey(
+          DEV_ENV ? 'dev' : 'prod',
+          // FIXME: Find a better way of getting the initial activeModule ID
+          activeModule as SegmentModules,
+          moduleAPIKey
+        ),
+      },
+      { initialPageview: false, integrations: { All: !fedRampEnv } }
+    );
+  }
 
   return (
     <SegmentContext.Provider
