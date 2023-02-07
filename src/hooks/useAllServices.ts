@@ -95,7 +95,7 @@ const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filte
     return acc;
   }, []);
 };
-
+// need to expand this to include descriptions which have been created, so just use random words
 const useAllServices = () => {
   const [{ availableLinks, ready, error }, setState] = useState<{
     error: boolean;
