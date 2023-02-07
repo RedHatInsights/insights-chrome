@@ -7,6 +7,10 @@
     top: 70px;
   }
 
+  .chr-c-newnav-active:not {
+    display: none;
+  }
+
   .chr-c-navtest {
 
     /* smaller top padding for main card wrapper w/ title */
