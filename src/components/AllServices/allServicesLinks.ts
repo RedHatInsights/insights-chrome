@@ -309,6 +309,10 @@ const allServicesLinks: AllServicesSection[] = [
             title: 'Patch',
           },
           {
+            href: '/insights/tasks',
+            title: 'Tasks',
+          },
+          {
             href: '/insights/vulnerability/cves',
             title: 'Vulnerability',
           },

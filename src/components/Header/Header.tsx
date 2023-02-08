@@ -20,6 +20,7 @@ import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
+import SearchInput from '../Search/SearchInput';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -68,6 +69,15 @@ export const Header = () => {
                   <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
                 </ToolbarItem>
               )}
+            </ToolbarGroup>
+            <ToolbarGroup
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+              }}
+              variant="filter-group"
+            >
+              <SearchInput />
             </ToolbarGroup>
             <HeaderTools />
           </ToolbarContent>

@@ -160,7 +160,7 @@
     "@data-driven-forms/react-form-renderer": "^3.19.0",
     "@formatjs/cli": "4.8.4",
     "@patternfly/patternfly": "4.222.4",
-    "@patternfly/quickstarts": "2.3.2",
+    "@patternfly/quickstarts": "2.3.3",
     "@patternfly/react-charts": "^6.94.15",
     "@patternfly/react-core": "4.267.7",
     "@patternfly/react-icons": "4.93.3",
