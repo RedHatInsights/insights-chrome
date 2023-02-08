@@ -121,7 +121,7 @@ const Tools = () => {
   useEffect(() => {
     if (user) {
       setState({
-        isSettingsDisabled: !user?.identity?.account_number,
+        isSettingsDisabled: false,
         isInternal: !!user?.identity?.user?.is_internal,
         isRhosakEntitled: !!user?.entitlements?.rhosak?.is_entitled,
         isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
