@@ -1,0 +1,29 @@
+{
+    {$CADDY_TLS_MODE}
+    auto_https disable_redirects
+}
+:9000 {
+    metrics /metrics
+}
+  
+:8000 {
+    {$CADDY_TLS_CERT}
+    log
+    @app_match {
+        path /apps/chrome*
+    }
+    handle @app_match {
+        uri strip_prefix /apps/chrome
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
+    }
+    handle / {
+        root * /opt/app-root/src/build
+        file_server
+        try_files {path} /index.html
+    }
+
+}
