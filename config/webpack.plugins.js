@@ -38,6 +38,7 @@ const plugins = (dev = false, beta = false) => {
         { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
         { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
         { 'react-redux': { requiredVersion: deps['react-redux'] } },
+        { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },

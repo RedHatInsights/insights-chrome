@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
+import { removeScalprum } from '@scalprum/core';
 
 import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
 import chromeReducer from '../../src/redux';
@@ -75,12 +76,21 @@ describe('Gateway errors', () => {
     cy.intercept('GET', '/config/chrome/*-navigation.json?ts=*', {
       navItems: [],
     });
-    window.__scalprum__ === undefined;
+    // clear the instance
+    removeScalprum();
   });
 
   it('handles 403 3scale gateway error', () => {
     const code = 'gateway-403';
     const Component = createEnv(code);
+    cy.window().then((win) => {
+      win[code] = {
+        init: () => undefined,
+        get: () => () => ({
+          default: () => <div>{code}</div>,
+        }),
+      };
+    });
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 403,
@@ -106,6 +116,14 @@ describe('Gateway errors', () => {
 
   COMPLIACE_ERROR_CODES.forEach((code) => {
     it(`handles compliance ${code} gateway error`, () => {
+      cy.window().then((win) => {
+        win[code] = {
+          init: () => undefined,
+          get: () => () => ({
+            default: () => <div>{code}</div>,
+          }),
+        };
+      });
       const Component = createEnv(code);
       // throw 403 gateway error with compliance error response
       cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
@@ -137,6 +155,11 @@ describe('Gateway errors', () => {
 
   COMPLIACE_ERROR_CODES.forEach((code) => {
     it(`handles compliance ${code} string error`, () => {
+      cy.on('uncaught:exception', () => {
+        // runtime exception is expected
+        return false;
+      });
+      removeScalprum();
       const Component = createEnv(code);
       // throw 403 string error with compliance error code
       cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
@@ -179,7 +202,11 @@ describe('Gateway errors', () => {
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 200,
-      body: {},
+      body: {
+        [code]: {
+          entry: [],
+        },
+      },
     }).as(code);
     cy.intercept('GET', `/foo/bar`, {
       statusCode: 403,
@@ -226,17 +253,11 @@ describe('Gateway errors', () => {
     };
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
-      statusCode: 404,
+      statusCode: 200,
       body: {
-        errors: [
-          {
-            status: 404,
-            detail: 'Gateway has thrown an 403 error',
-            meta: {
-              response_by: 'gateway',
-            },
-          },
-        ],
+        [code]: {
+          entry: [],
+        },
       },
     }).as(code);
     cy.mount(<Component />);
