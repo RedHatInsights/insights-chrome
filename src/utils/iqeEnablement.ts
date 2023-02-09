@@ -11,6 +11,18 @@ let fetchResults: Record<string, unknown> = {};
 
 const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 
+const checkOrigin = (path: URL | Request | string = '') => {
+  if (path.constructor.name === 'URL') {
+    return (path as URL).origin === location.origin;
+  } else if (path.constructor.name === 'Request') {
+    return (path as Request).url.includes(location.origin);
+  } else if (path.constructor.name === 'String') {
+    return (path as string).includes(location.origin) || !(path as string).startsWith('http');
+  }
+
+  return true;
+};
+
 function init(store: Store, libJwt: () => LibJWT | undefined) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
@@ -35,7 +47,7 @@ function init(store: Store, libJwt: () => LibJWT | undefined) {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (libJwt?.()?.jwt.isAuthenticated()) {
+    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url) && libJwt?.()?.jwt.isAuthenticated()) {
       // There is potentially a problem if app sets its own Auth header
       this.setRequestHeader('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
     }
@@ -70,7 +82,7 @@ function init(store: Store, libJwt: () => LibJWT | undefined) {
         ...(options || {}),
         headers: {
           // If app wants to set its own Auth header it can do so
-          ...(libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
+          ...(checkOrigin(path) && libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
           ...((options && options.headers) || {}),
         },
       },

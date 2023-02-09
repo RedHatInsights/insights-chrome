@@ -73,6 +73,7 @@ const commonConfig = ({ dev }) => {
         assert: require.resolve('assert/'),
         buffer: require.resolve('buffer/'),
         url: require.resolve('url/'),
+        process: require.resolve('process'),
       },
     },
     optimization: {
