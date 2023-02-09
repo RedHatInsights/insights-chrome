@@ -1,10 +1,9 @@
-FROM quay.io/cloudservices/caddy-ubi:357c825
+FROM registry.access.redhat.com/ubi8/nginx-118
 
-ENV CADDY_TLS_MODE http_port 8000
-
-COPY ./Caddyfile /opt/app-root/src/Caddyfile
+COPY ./nginx.conf /opt/app-root/etc/nginx/conf.d/default.conf
 COPY ./build /opt/app-root/src/build
 COPY ./chrome_config/*.json /opt/app-root/src/build/chrome/
-COPY ./package.json /opt/app-root/src
-WORKDIR /opt/app-root/src
-CMD ["caddy", "run", "--config", "/opt/app-root/src/Caddyfile"]
+
+ADD ./nginx.conf "${NGINX_CONFIGURATION_PATH}"
+
+CMD ["nginx", "-g", "daemon off;"]
