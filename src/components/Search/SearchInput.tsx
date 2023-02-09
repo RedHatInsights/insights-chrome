@@ -31,7 +31,7 @@ const REPLACE_TAG = 'REPLACE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}~10`); // add query replacement tag and enable fuzzy search with ~10
+BASE_SEARCH.append('q', `${REPLACE_TAG}~2`); // add query replacement tag and enable fuzzy search with ~10
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
