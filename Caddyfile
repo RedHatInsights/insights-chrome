@@ -35,9 +35,9 @@
         }
     }
 
-    handle / {
+    handle * {
         root * /opt/app-root/src/build
         file_server
-        try_files {path} /index.html
+        try_files {path} {path}/ /index.html
     }
 }
