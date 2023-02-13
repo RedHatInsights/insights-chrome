@@ -136,6 +136,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
       className="chr-c-dropdown-user-toggle"
       isOpen={isOpen}
       dropdownItems={buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}
+      isFullHeight
     />
   );
 };

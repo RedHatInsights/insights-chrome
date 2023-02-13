@@ -77,7 +77,6 @@ describe('HelpTopicManager', () => {
             path: '*',
             module: './TestApp',
             scope: 'TestApp',
-            appId: 'TestApp',
             manifestLocation: '/foo/bar.json',
           },
         ],
@@ -90,7 +89,9 @@ describe('HelpTopicManager', () => {
       toggles: [],
     });
     cy.intercept('GET', '/foo/bar.json', {
-      entries: [],
+      TestApp: {
+        entry: [],
+      },
     }).as('manifest');
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
     cy.intercept('POST', 'https://api.segment.io/v1/*', {});
@@ -124,28 +125,6 @@ describe('HelpTopicManager', () => {
     });
     // mount element
     cy.mount(<Wrapper store={store}></Wrapper>);
-
-    // mock the dynamic module
-    cy.window().then((win) => {
-      win.__scalprum__ = {
-        ...window.__scalprum__,
-        scalprumOptions: {
-          cacheTimeout: 999999,
-        },
-        factories: {
-          TestApp: {
-            expiration: new Date('01-01-3000'),
-            modules: {
-              './TestApp': {
-                __esModule: true,
-                default: TestComponent,
-              },
-            },
-          },
-        },
-      };
-    });
-
     // open drawer
     cy.get('#open-one').click();
     cy.get(`h1.pf-c-title`).should('be.visible').contains('Configure components');
