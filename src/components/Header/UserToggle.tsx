@@ -26,7 +26,7 @@ const buildItems = (
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
         <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.username)}</dt>
-        <dd className="chr-c-dropdown-item__stack--value data-hj-suppress">{username}</dd>
+        <dd className="chr-c-dropdown-item__stack--value data-hj-suppress sentry-mask">{username}</dd>
         {isOrgAdmin && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.orgAdministrator)}</dd>}
       </dl>
     </DropdownItem>,
@@ -120,9 +120,9 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
     setIsOpen(isOpen);
   };
   const toggle = isSmall ? (
-    <KebabToggle onToggle={onToggle} className="data-hj-suppress" />
+    <KebabToggle onToggle={onToggle} className="data-hj-suppress sentry-mask" />
   ) : (
-    <DropdownToggle id="UserMenu" icon={<UserIcon />} className="data-hj-suppress" widget-type="UserMenu" onToggle={onToggle}>
+    <DropdownToggle id="UserMenu" icon={<UserIcon />} className="data-hj-suppress sentry-mask" widget-type="UserMenu" onToggle={onToggle}>
       {account.name}
     </DropdownToggle>
   );

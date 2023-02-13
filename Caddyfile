@@ -10,20 +10,34 @@
     {$CADDY_TLS_CERT}
     log
     @app_match {
-        path /apps/chrome*
+        path_regexp /apps/chrome(.*)
     }
     handle @app_match {
         uri strip_prefix /apps/chrome
+        uri strip_prefix /beta/apps/chrome
         file_server * {
             root /opt/app-root/src/build 
             index opt/app-root/src/build/index.html
             browse
         }
     }
-    handle / {
-        root * /opt/app-root/src/build
-        file_server
-        try_files {path} /index.html
+
+    @config_match {
+        path_regexp /config/(.*)
+    }
+    handle @config_match {
+        uri strip_prefix /config
+        uri strip_prefix /beta/config
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
     }
 
+    handle * {
+        root * /opt/app-root/src/build
+        file_server
+        try_files {path} {path}/ /index.html
+    }
 }
