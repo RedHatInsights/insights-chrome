@@ -11,6 +11,7 @@ import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { login } from '../../jwt/jwt';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -56,6 +57,12 @@ const ChromeRoute = memo(
        * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
        */
       setActiveHelpTopicByName && setActiveHelpTopicByName('');
+
+      // handle fullProfileLevel
+      console.log({ scope });
+      if (scope === 'sources') {
+        // login(true);
+      }
 
       return () => {
         /**

@@ -236,12 +236,19 @@ export function initError() {
 }
 
 /*** Login/Logout ***/
-export function login() {
+export function login(fullProfile = false) {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
   const redirectUri = location.href;
-  return priv.login({ redirectUri, scope: getPartnerScope(window.location.pathname) });
+  const scope = ['openid', fullProfile ? 'rhfull' : 'nameandterms'];
+  const partner = getPartnerScope(window.location.pathname);
+  if (partner) {
+    scope.push(partner);
+  }
+  console.log('callng login with these scopes', scope, fullProfile)
+  // KC scopes are delimited by a space character, hence the join(' ')
+  return priv.login({ redirectUri, scope: scope.join(' ') });
 }
 
 export function logout(bounce?: boolean) {
