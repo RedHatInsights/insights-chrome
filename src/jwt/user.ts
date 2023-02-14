@@ -108,7 +108,6 @@ export function tryBounceIfUnentitled(
     section !== 'migrations' &&
     section !== 'ansible' &&
     section !== 'subscriptions' &&
-    section !== 'settings' &&
     section !== 'user-preferences' &&
     section !== 'internal'
   ) {
