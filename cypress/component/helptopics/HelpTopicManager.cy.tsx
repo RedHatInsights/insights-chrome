@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { Store } from 'redux';
+import { AnyAction, Store } from 'redux';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { IntlProvider } from 'react-intl';
@@ -64,7 +64,7 @@ const TestComponent = () => {
 };
 
 describe('HelpTopicManager', () => {
-  let store;
+  let store: Store<any, AnyAction>;
   beforeEach(() => {
     const reduxRegistry = new ReducerRegistry({
       ...chromeInitialState,
