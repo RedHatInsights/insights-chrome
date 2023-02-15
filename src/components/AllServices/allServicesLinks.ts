@@ -261,6 +261,10 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Meet your policy and compliance objectives.',
     links: [
       {
+        href: '/application-services/acs/overview',
+        title: 'Advanced Cluster Security',
+      },
+      {
         isGroup: true,
         title: 'Ansible',
         links: [
@@ -274,10 +278,6 @@ const allServicesLinks: AllServicesSection[] = [
         isGroup: true,
         title: 'OpenShift',
         links: [
-          {
-            href: '/application-services/acs/overview',
-            title: 'Advanced Cluster Security',
-          },
           {
             href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
