@@ -59,7 +59,7 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'Automation Analytics',
       },
       {
-        href: '/ansible/automation-hub/',
+        href: '/ansible/automation-hub',
         title: 'Automation Hub',
       },
       {
@@ -218,7 +218,7 @@ const allServicesLinks: AllServicesSection[] = [
             title: 'Advisor',
           },
           {
-            href: '/openshift/insights/vulnerability/',
+            href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
           },
         ],
@@ -279,7 +279,7 @@ const allServicesLinks: AllServicesSection[] = [
             title: 'Advanced Cluster Security',
           },
           {
-            href: '/openshift/insights/vulnerability/',
+            href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
           },
         ],
@@ -293,7 +293,7 @@ const allServicesLinks: AllServicesSection[] = [
             title: 'Advisor',
           },
           {
-            href: '/insights/compliance/',
+            href: '/insights/compliance',
             title: 'Compliance',
           },
           {
@@ -301,7 +301,7 @@ const allServicesLinks: AllServicesSection[] = [
             title: 'Edge',
           },
           {
-            href: '/insights/malware/',
+            href: '/insights/malware',
             title: 'Malware',
           },
           {
