@@ -67,19 +67,27 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
     >
       Foo
        
-      <svg
-        aria-hidden="true"
-        fill="currentColor"
-        height="1em"
-        role="img"
-        style="vertical-align: -0.125em;"
-        viewBox="0 0 512 512"
-        width="1em"
+      <span
+        class="pf-c-icon pf-m-inline"
       >
-        <path
-          d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z"
-        />
-      </svg>
+        <span
+          class="pf-c-icon__content"
+        >
+          <svg
+            aria-hidden="true"
+            fill="currentColor"
+            height="1em"
+            role="img"
+            style="vertical-align: -0.125em;"
+            viewBox="0 0 512 512"
+            width="1em"
+          >
+            <path
+              d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z"
+            />
+          </svg>
+        </span>
+      </span>
     </a>
   </li>
 </div>
@@ -102,9 +110,25 @@ exports[`ChromeNavItem should render nav item with beta badge 1`] = `
       Foo
        
       <span
-        class="pf-c-badge pf-m-unread chr-c-toolbar__beta-badge chr-c-navigation__beta-badge"
+        class="pf-c-icon pf-m-inline chr-c-navigation__beta-icon"
       >
-        beta
+        <span
+          class="pf-c-icon__content"
+        >
+          <svg
+            aria-hidden="true"
+            fill="currentColor"
+            height="1em"
+            role="img"
+            style="vertical-align: -0.125em;"
+            viewBox="0 0 448 512"
+            width="1em"
+          >
+            <path
+              d="M437.2 403.5L320 215V64h8c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24H120c-13.3 0-24 10.7-24 24v16c0 13.3 10.7 24 24 24h8v151L10.8 403.5C-18.5 450.6 15.3 512 70.9 512h306.2c55.7 0 89.4-61.5 60.1-108.5zM137.9 320l48.2-77.6c3.7-5.2 5.8-11.6 5.8-18.4V64h64v160c0 6.9 2.2 13.2 5.8 18.4l48.2 77.6h-172z"
+            />
+          </svg>
+        </span>
       </span>
     </a>
   </li>

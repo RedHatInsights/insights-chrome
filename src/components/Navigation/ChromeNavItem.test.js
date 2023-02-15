@@ -90,6 +90,6 @@ describe('ChromeNavItem', () => {
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
-    expect(queryAllByText('beta')).toHaveLength(1);
+    expect(queryAllByText('beta')).toHaveLength(0);
   });
 });
