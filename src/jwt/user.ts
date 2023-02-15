@@ -39,8 +39,7 @@ const unentitledPathMapper = (section: string, service: string, expired = false)
   return (
     {
       ansible: `${REDIRECT_BASE}ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
-      insights: `${document.location.origin}${document.location.pathname}?${search.toString()}`,
-    }[section] || `${REDIRECT_BASE}?not_entitled=${service}`
+    }[section] || `${document.location.origin}${document.location.pathname}?${search.toString()}`
   );
 };
 
@@ -86,7 +85,7 @@ function partialBounce(redirectAddress: string, section: string) {
     search: url.search,
   });
 
-  if (section === 'insights') {
+  if (section !== 'ansible') {
     bounceInvocationLock[section] = true;
   }
 }
@@ -108,7 +107,6 @@ export function tryBounceIfUnentitled(
     section !== 'migrations' &&
     section !== 'ansible' &&
     section !== 'subscriptions' &&
-    section !== 'settings' &&
     section !== 'user-preferences' &&
     section !== 'internal'
   ) {
@@ -132,7 +130,7 @@ export function tryBounceIfUnentitled(
 
   if (data === true) {
     // this is a force bounce scenario!
-    if (section === 'insights') {
+    if (section !== 'ansible') {
       partialBounce(redirectAddress, section);
     } else {
       getWindow().location.replace(redirectAddress);
@@ -151,7 +149,7 @@ export function tryBounceIfUnentitled(
           partialBounce(redirectAddress, section);
         } else {
           // lock the section if user landed directly on the not_entitled page
-          if (section === 'insights') {
+          if (section !== 'ansible') {
             bounceInvocationLock[section] = true;
           }
         }

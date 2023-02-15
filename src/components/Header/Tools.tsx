@@ -76,8 +76,7 @@ const useAuthFactor = () => {
 };
 
 const Tools = () => {
-  const [{ isDemoAcc, isInternal, isRhosakEntitled, isSettingsDisabled }, setState] = useState({
-    isSettingsDisabled: true,
+  const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
     isRhosakEntitled: false,
     isDemoAcc: false,
@@ -121,7 +120,6 @@ const Tools = () => {
   useEffect(() => {
     if (user) {
       setState({
-        isSettingsDisabled: !user?.identity?.account_number,
         isInternal: !!user?.identity?.user?.is_internal,
         isRhosakEntitled: !!user?.entitlements?.rhosak?.is_entitled,
         isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
@@ -226,7 +224,7 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
-      {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
+      <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>
       <AboutButton />
 
       <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
