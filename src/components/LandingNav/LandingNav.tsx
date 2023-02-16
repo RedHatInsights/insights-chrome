@@ -111,7 +111,7 @@ const LandingNav = () => {
           </SidebarPanel>
           <SidebarContent>
             {linkSections.map((section, index) => (
-              <Card className={activeTabKey ? "" : "chr-c-newnav-active"}>
+              <Card isPlain>
               <CardHeader>
                 <Title headingLevel="h2">{convertTitleIcon(section.icon)} &nbsp;{section.title}</Title>
                 <CardActions>

@@ -28,6 +28,7 @@ import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
+import type {AllServicesSection as AllServicesSectionType} from '../components/AllServices/allServicesLinks';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
@@ -39,6 +40,8 @@ const AllServices = ({ Footer }: AllServicesProps) => {
 
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(1);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[1])
+  const [selectedTabIndex, setSelectedTabIndex] = React.useState<number>(0);
   // Toggle currently active tab
   const handleTabClick = (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
@@ -46,6 +49,11 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   ) => {
     setActiveTabKey(tabIndex);
   };
+
+  const onTabClick = (section: AllServicesSectionType, index: number) => {
+    setActiveTabKey(index);
+    setSelectedService(section);
+  }
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -57,8 +65,6 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   }
 
   const contentRef1 = React.createRef<HTMLElement>();
-  const contentRef2 = React.createRef<HTMLElement>();
-  const contentRef3 = React.createRef<HTMLElement>();
 
   return (
     <div id="chrome-app-render-root">
@@ -72,30 +78,8 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         }
       >
         <RedirectBanner />
-        <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-          <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md">
-            <Title headingLevel="h2">All Services</Title>
-            <SearchInput
-              className="chr-c-all-services-filter pf-u-m-auto pf-u-mt-md"
-              data-ouia-component-id="app-filter-search"
-              placeholder={intl.formatMessage(Messages.findAppOrService)}
-              value={filterValue}
-              onChange={(val) => setFilterValue(val)}
-              onClear={(e) => {
-                setFilterValue('');
-                e.stopPropagation();
-              }}
-            />
-          </PageSection>
-        </PageGroup>
+
         <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-          <Gallery className="pf-u-display-block" hasGutter>
-            {linkSections.map((section, index) => (
-              <AllServicesSection key={index} {...section} />
-            ))}
-            {/* TODO: Add empty state */}
-            {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
-          </Gallery>
     <Panel variant="raised" className="chr-c-navtest">
       <PanelMain>
         <Sidebar>
@@ -124,15 +108,15 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                 title={<TabTitleText>{section.title}</TabTitleText>}
                 tabContentId="refTab1Section"
                 tabContentRef={contentRef1}
+                onClick={() => onTabClick(section, index)}
               />
             ))}
             </Tabs>
           </SidebarPanel>
           <SidebarContent>
-            {linkSections.map((section, index) => (
               <Card isPlain>
               <CardHeader>
-                <Title headingLevel="h2">{convertTitleIcon(section.icon)} &nbsp;{section.title}</Title>
+                <Title headingLevel="h2">{convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}</Title>
                 <CardActions>
                   <Button variant="plain" aria-label="Close menu">
                     <TimesIcon />
@@ -141,30 +125,32 @@ const AllServices = ({ Footer }: AllServicesProps) => {
               </CardHeader>
               <CardBody>
                 <TabContent
-                  eventKey={index}
+                  eventKey={activeTabKey}
                   id="refTab1Section"
                   ref={contentRef1}
-                  aria-label={section.description}
+                  aria-label={selectedService.description}
                 >
                   <Gallery hasGutter>
-                    {section.links.map((link, index) => (
+                    {selectedService.links.map((link, index) => (
                       <Card isFlat>
-                      <CardBody>
-                        <Split>
-                          <SplitItem className="pf-m-fill">
-                          </SplitItem>
-                          <SplitItem>
-                          </SplitItem>
-                        </Split>
-                        {link.title}
-                      </CardBody>
-                    </Card>
+                        <CardHeader>
+                          {link.title}
+                        </CardHeader>
+                        <CardBody>
+                          <Split>
+                            <SplitItem className="pf-m-fill">
+                            </SplitItem>
+                            <SplitItem>
+                            </SplitItem>
+                          </Split>
+                          description here please
+                        </CardBody>
+                      </Card>
                     ))}
                   </Gallery>
                 </TabContent>
               </CardBody>
             </Card>
-            ))}
           </SidebarContent>
         </Sidebar>
       </PanelMain>
