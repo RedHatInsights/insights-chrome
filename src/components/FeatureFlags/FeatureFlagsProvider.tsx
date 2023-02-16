@@ -25,7 +25,8 @@ const config: IFlagProvider['config'] = {
         // prevent the request from falling back to default error behavior
         //add warning level
         if (resp.status >= 400) {
-          return Sentry.captureMessage(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`, 'warning');
+          Sentry.captureMessage(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`, 'warning');
+          throw new Error(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`);
         }
 
         const contentType = resp.headers.get('content-type');

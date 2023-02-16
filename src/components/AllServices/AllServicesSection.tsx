@@ -23,7 +23,7 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
       </CardTitle>
       <CardBody>
         <TextContent className="pf-u-font-size-sm">
-          <Text component={TextVariants.p} className="pf-u-mb-sm">
+          <Text component={TextVariants.p} className="pf-u-mb-md">
             {description}
           </Text>
           {links.map((link, index) =>
