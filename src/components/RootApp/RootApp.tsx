@@ -18,6 +18,7 @@ import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { isBeta } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
+import useUserProfile from '../../hooks/useUserProfile';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 
@@ -38,6 +39,9 @@ const RootApp = memo((props: RootAppProps) => {
     }: ReduxState) => Object.values(quickstarts).flat()
   );
   const { bundleTitle } = useBundle();
+
+  // verify if full profile reauth is required
+  useUserProfile();
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));

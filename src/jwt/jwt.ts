@@ -2,7 +2,7 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { DEFAULT_SSO_ROUTES, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
+import { DEFAULT_SSO_ROUTES, LOGIN_TYPE_STORAGE_KEY, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
 
@@ -103,8 +103,19 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
 
     await kc.init(options);
     const partnerScope = getPartnerScope(window.location.pathname);
+    const profileScope = localStorage.getItem(LOGIN_TYPE_STORAGE_KEY);
+    const scopes = ['offline_access'];
+    if (partnerScope) {
+      scopes.push(partnerScope);
+    }
+
+    if (profileScope) {
+      // make sure add openid scope when profile scope is used
+      scopes.push('openid', profileScope);
+    }
+
     kc.login({
-      scope: `offline_access${partnerScope ? ` ${partnerScope}` : ''}`,
+      scope: scopes.join(' '),
     });
   });
 };
@@ -236,12 +247,20 @@ export function initError() {
 }
 
 /*** Login/Logout ***/
-export function login() {
+export function login(fullProfile = false) {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
   const redirectUri = location.href;
-  return priv.login({ redirectUri, scope: getPartnerScope(window.location.pathname) });
+  const loginProfile = fullProfile ? 'rhfull' : 'nameandterms';
+  localStorage.setItem(LOGIN_TYPE_STORAGE_KEY, loginProfile);
+  const scope = ['openid', loginProfile];
+  const partner = getPartnerScope(window.location.pathname);
+  if (partner) {
+    scope.push(partner);
+  }
+  // KC scopes are delimited by a space character, hence the join(' ')
+  return priv.login({ redirectUri, scope: scope.join(' ') });
 }
 
 export function logout(bounce?: boolean) {
@@ -261,7 +280,7 @@ export function logout(bounce?: boolean) {
       key.startsWith('kc-callback') ||
       key.startsWith(GLOBAL_FILTER_KEY)
   );
-  deleteLocalStorageItems(keys);
+  deleteLocalStorageItems([...keys, LOGIN_TYPE_STORAGE_KEY]);
   // Redirect to logout
   if (bounce) {
     const eightSeconds = new Date(new Date().getTime() + 8 * 1000);

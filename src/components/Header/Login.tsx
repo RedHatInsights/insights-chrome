@@ -14,7 +14,7 @@ const Login = () => {
         variant="tertiary"
         aria-label="Toggle primary navigation"
         widget-type="InsightsNavToggle"
-        onClick={login}
+        onClick={() => login()}
       >
         {intl.formatMessage(messages.login)}
       </Button>
