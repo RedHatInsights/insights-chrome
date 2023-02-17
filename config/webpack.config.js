@@ -149,6 +149,16 @@ const commonConfig = ({ dev }) => {
         publicPath,
         proxyVerbose: true,
         isChrome: true,
+        routes: {
+          ...(process.env.CONFIG_PORT && {
+            '/beta/config': {
+              host: `http://localhost:${process.env.CONFIG_PORT}`,
+            },
+            '/config': {
+              host: `http://localhost:${process.env.CONFIG_PORT}`,
+            },
+          }),
+        },
       }),
     },
   };
