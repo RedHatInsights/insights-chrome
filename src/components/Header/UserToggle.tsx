@@ -42,7 +42,7 @@ const buildItems = (
                 </Tooltip>
               </span>
             </dt>
-            <dd className="chr-c-dropdown-item__stack--value">{accountNumber}</dd>
+            <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
           </dl>
         </DropdownItem>
