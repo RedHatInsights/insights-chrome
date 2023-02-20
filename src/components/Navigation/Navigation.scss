@@ -20,10 +20,6 @@
       font-size: var(--pf-global--FontSize--xs);
       font-weight: var(--pf-global--FontWeight--medium);
       padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
-      svg {
-        margin-left: var(--pf-global--spacer--none);
-        margin-right: var(--pf-global--spacer--sm);
-      }
     }
     ul
       > li.pf-c-nav__item {
@@ -65,11 +61,6 @@
     margin-left: var(--pf-global--spacer--sm);
     width: 12px;  
   }
-}
-
-.chr-c-navigation__additional-links {
-  align-items: center;
-  svg { margin-left: var(--pf-global--spacer--sm); }
 }
 
 .pf-c-nav__item {

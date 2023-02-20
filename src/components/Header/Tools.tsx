@@ -10,7 +10,6 @@ import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 import { getSection, getUrl, isBeta, isProd } from '../../utils/common';
-import classnames from 'classnames';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -29,8 +28,6 @@ export const switchRelease = (isBeta: boolean, pathname: string) => {
     return document.baseURI.concat(path.join('/'));
   }
 };
-
-export const betaBadge = (className: string) => <Badge className={classnames('chr-c-toolbar__beta-badge', className)}>beta</Badge>;
 
 const InternalButton = () => (
   <Button

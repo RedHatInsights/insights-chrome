@@ -84,12 +84,11 @@ describe('ChromeNavItem', () => {
   });
 
   test('should render nav item with beta badge', () => {
-    const { queryAllByText, container } = render(
+    const { container } = render(
       <NavContextWrapper store={store}>
         <ChromeNavItem {...testProps} isBeta />
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
-    expect(queryAllByText('beta')).toHaveLength(0);
   });
 });
