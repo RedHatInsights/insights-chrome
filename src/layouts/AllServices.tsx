@@ -40,20 +40,20 @@ const AllServices = ({ Footer }: AllServicesProps) => {
 
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(1);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[1])
-  const [selectedTabIndex, setSelectedTabIndex] = React.useState<number>(0);
+  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[1]);
   // Toggle currently active tab
   const handleTabClick = (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
+    console.log(selectedService)
   };
 
   const onTabClick = (section: AllServicesSectionType, index: number) => {
-    setActiveTabKey(index);
     setSelectedService(section);
-  }
+    setActiveTabKey(index);
+  };
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
