@@ -29,6 +29,7 @@ const ChromeRoute = memo(
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
     const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
     const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => modules?.[scope]?.defaultDocumentTitle || scope);
+
     useEffect(() => {
       batch(() => {
         // Only trigger update on a first application render before any active module has been selected
