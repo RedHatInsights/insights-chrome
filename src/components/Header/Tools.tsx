@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Badge, Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
@@ -9,7 +9,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { getSection, getUrl, isBeta, isProd } from '../../utils/common';
+import { getSection, getUrl, isBeta } from '../../utils/common';
 import classnames from 'classnames';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -66,15 +66,6 @@ SettingsButton.propTypes = {
   settingsMenuDropdownItems: PropTypes.array.isRequired,
 };
 
-// We are unable to set feature flag only for /beta env.
-// We need additional checks for the auth factor item to be visible.
-const useAuthFactor = () => {
-  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const isBetaEnv = useMemo(() => isBeta(), []);
-  const isProdEnv = useMemo(() => isProd(), []);
-  return isProdEnv && !isBetaEnv ? false : enableAuthDropdownOption;
-};
-
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled, isSettingsDisabled }, setState] = useState({
     isSettingsDisabled: true,
@@ -92,7 +83,7 @@ const Tools = () => {
     messages.betaRelease
   )}`;
 
-  const enableAuthDropdownOption = useAuthFactor();
+  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
