@@ -112,7 +112,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       undefined,
-      1,  // number of items per page
+      1, // number of items per page
       undefined,
       undefined,
       undefined,
@@ -141,7 +141,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       undefined,
-      1,  // number of items per page
+      1, // number of items per page
       undefined,
       undefined,
       undefined,
