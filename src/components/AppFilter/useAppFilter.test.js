@@ -73,7 +73,7 @@ describe('useAppFilter', () => {
     expect(result.current).toEqual(expectedState);
   });
 
-  test('should create 6 API calls on the first dropdown open', async () => {
+  test('should create 7 API calls on the first dropdown open', async () => {
     const dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
       return 666;
     });
@@ -97,8 +97,8 @@ describe('useAppFilter', () => {
     await act(async () => {
       result.current.setIsOpen(true);
     });
-    expect(axiosGetSpy).toHaveBeenCalledTimes(6);
-    for (let index = 0; index < 6; index++) {
+    expect(axiosGetSpy).toHaveBeenCalledTimes(7);
+    for (let index = 0; index < 7; index++) {
       expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json?ts=666`]);
     }
     axiosGetSpy.mockReset();
