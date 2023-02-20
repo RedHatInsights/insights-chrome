@@ -254,7 +254,8 @@ export function login(fullProfile = false) {
   const redirectUri = location.href;
   const loginProfile = fullProfile ? 'rhfull' : 'nameandterms';
   localStorage.setItem(LOGIN_TYPE_STORAGE_KEY, loginProfile);
-  const scope = ['openid', loginProfile];
+  // TODO: Remove once ephemeral environment supports full and thin profile
+  const scope = ['openid', ...(location.origin.includes('redhat.com') ? [loginProfile] : [])];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
