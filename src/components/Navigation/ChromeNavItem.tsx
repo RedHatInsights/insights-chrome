@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { NavItem } from '@patternfly/react-core';
+import { Icon, NavItem, Tooltip } from '@patternfly/react-core';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import FlaskIcon from '@patternfly/react-icons/dist/js/icons/flask-icon';
 import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
 import { titleCase } from 'title-case';
 import classNames from 'classnames';
 import get from 'lodash/get';
 
 import { isBeta } from '../../utils/common';
-import { betaBadge } from '../Header/Tools';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../utils/useRenderFedramp';
@@ -45,7 +45,7 @@ const ChromeNavItem = ({
 
   return (
     <NavItem
-      className={classNames(className, { 'chr-c-navigation__additional-links': isExternal, 'chr-c-navigation__with-notifier': hasNotifier })}
+      className={classNames(className, { 'chr-c-navigation__with-notifier': hasNotifier })}
       itemID={href}
       data-quickstart-id={href}
       preventDefault
@@ -56,8 +56,19 @@ const ChromeNavItem = ({
         <ChromeLink {...props} documentTitleUpdate={title} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />
       )}
     >
-      {typeof title === 'string' && !ignoreCase ? titleCase(title) : title} {isExternal && <ExternalLinkAltIcon />}
-      {isBetaEnv && !isBeta() && !isExternal && betaBadge('chr-c-navigation__beta-badge')}
+      {typeof title === 'string' && !ignoreCase ? titleCase(title) : title}{' '}
+      {isExternal && (
+        <Icon isInline>
+          <ExternalLinkAltIcon />
+        </Icon>
+      )}
+      {isBetaEnv && !isBeta() && !isExternal && (
+        <Tooltip position={'right'} content={<div>This service is a Preview.</div>}>
+          <Icon className="chr-c-navigation__beta-icon" isInline>
+            <FlaskIcon />
+          </Icon>
+        </Tooltip>
+      )}
       {hasNotifier && <BellIcon size="md" className="notifier-icon" color="var(--pf-global--default-color--200)" />}
     </NavItem>
   );
