@@ -40,6 +40,8 @@ const plugins = (dev = false, beta = false) => {
         { 'react-redux': { requiredVersion: deps['react-redux'] } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/react-core': { requiredVersion: deps['@patternfly/react-core'] } },
+        { '@patternfly/react-icons': { requiredVersion: deps['@patternfly/react-icons'] } },
+        { '@patternfly/react-table': { requiredVersion: deps['@patternfly/react-table'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
