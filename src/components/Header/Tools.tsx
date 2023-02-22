@@ -141,7 +141,7 @@ const Tools = () => {
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
-      url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
+      url: `https://access.redhat.com/documentation/en-us/red_hat_insights`,
       isHidden: getSection() !== 'insights' || fedRampEnv,
     },
 
