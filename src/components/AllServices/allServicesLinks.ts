@@ -116,6 +116,10 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Ensure that the right users have the appropriate access to technology resources.',
     links: [
       {
+        href: '/iam/authentication-policy/authentication-factors',
+        title: 'Authentication Policy',
+      },
+      {
         href: '/settings/my-user-access',
         title: 'My User Access',
       },
