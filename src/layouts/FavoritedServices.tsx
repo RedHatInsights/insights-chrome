@@ -33,7 +33,7 @@ export type FavoritedServicesProps = {
 const QuickAccess = () => (
   <StackItem>
     Get quick access to your favorite services. To add more services to your Favorites,{' '}
-    <ChromeLink href="/">browse all Hybrid Cloud Console services.</ChromeLink>
+    <ChromeLink href="/allservices">browse all Hybrid Cloud Console services.</ChromeLink>
   </StackItem>
 );
 
@@ -89,7 +89,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
                       <TextContent>
                         <Text component="p">Go to the All Services page to tag your favorites.</Text>
                         <Text component="p">
-                          <ChromeLink href="/">View all services</ChromeLink>
+                          <ChromeLink href="/allservices">View all services</ChromeLink>
                         </Text>
                       </TextContent>
                     </CardBody>
