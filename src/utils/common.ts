@@ -41,7 +41,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://ephem.outsrights.cc/beta/apps/chrome/index.html',
   },
   dev: {
-    url: ['console.dev.redhat.com'],
+    url: ['dev.foo.redhat.com', 'console.dev.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
