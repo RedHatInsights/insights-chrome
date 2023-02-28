@@ -13,6 +13,19 @@ COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-fronten
 # ---------------------------
 
 set -ex
+
+docker run -t \
+  -v $PWD:/e2e:ro,Z \
+  -w /e2e \
+  -e CHROME_ACCOUNT=$CHROME_ACCOUNT \
+  -e CHROME_PASSWORD=$CHROME_PASSWORD \
+  --add-host stage.foo.redhat.com:127.0.0.1 \
+  --add-host prod.foo.redhat.com:127.0.0.1 \
+  --entrypoint bash \
+  quay.io/cloudservices/cypress-e2e-image:9f5d140 /e2e/run-e2e.sh
+
+echo "After docker run"
+
 # source is preferred to | bash -s in this case to avoid a subshell
 source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 BUILD_RESULTS=$?

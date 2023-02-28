@@ -30,3 +30,4 @@ cypress/**/*.diff.png
 
 #swc
 .swc
+.cypress_cache
