@@ -77,7 +77,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     >
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
-        {selectedAccountNumber && <div className="chr-viewing-as">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>}
+        {selectedAccountNumber && (
+          <div className="chr-viewing-as sentry-mask data-hj-suppress">
+            {intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}
+          </div>
+        )}
         <RedirectBanner />
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         {Footer}

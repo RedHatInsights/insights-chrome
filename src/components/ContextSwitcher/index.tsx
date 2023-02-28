@@ -144,7 +144,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       {user && user?.identity?.account_number.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
           <TextContent className="chr-c-content-personal-account">
-            <Text className="account-label pf-u-mb-0">
+            <Text className="account-label pf-u-mb-0 sentry-mask data-hj-suppress">
               <span>{user?.identity?.account_number}</span>
               {user?.identity?.account_number === `${selectedAccountNumber}` && (
                 <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
