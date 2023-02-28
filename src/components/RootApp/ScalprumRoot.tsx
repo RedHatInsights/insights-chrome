@@ -24,6 +24,7 @@ import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
+import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -77,6 +78,9 @@ const ScalprumRoot = memo(
       internalFilteredTopics.current = internalFilteredTopics.current.filter((topic) => !topicsNames.includes(topic.name));
       setFilteredHelpTopics?.(internalFilteredTopics.current);
     }
+
+    // track bundle visits
+    useBundleVisitDetection();
 
     useEffect(() => {
       // prepare webpack module sharing scope overrides
