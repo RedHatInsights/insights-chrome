@@ -29,63 +29,6 @@
     "verify": "npm-run-all lint build test",
     "postinstall": "rm -rf .cache"
   },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "src/**/*.ts",
-      "!src/**/*Styles.js"
-    ],
-    "testEnvironment": "jsdom",
-    "testEnvironmentOptions": {
-      "url": "https://test.com"
-    },
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!@redhat-cloud-services|@openshift|lodash-es).+(js|jsx)$"
-    ],
-    "transform": {
-      "^.+\\.(ts|js)x?$": [
-        "@swc/jest",
-        {
-          "$schema": "http://json.schemastore.org/swcrc",
-          "jsc": {
-            "experimental": {
-              "plugins": [["jest_workaround", {}]]
-            },
-            "parser": {
-              "jsx": true,
-              "syntax": "typescript",
-              "tsx": true
-            },
-            "transform": {
-              "react": {
-                "runtime": "automatic"
-              }
-            }
-          }
-        }
-      ]
-    },
-    "roots": [
-      "<rootDir>/src/"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/setupTests.js"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/config/jest.scripts.js"
-    ],
-    "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy",
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RedHatInsights/insights-chrome.git"
@@ -111,7 +54,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^29.4.0",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.191",
     "@types/redux-logger": "^3.0.9",
@@ -131,11 +74,12 @@
     "glob": "^7.2.3",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.5.1",
+    "jest": "^29.4.3",
     "jest_workaround": "^0.1.14",
+    "jest-environment-jsdom": "^29.4.3",
     "jest-fetch-mock": "^3.0.3",
     "jest-mock-axios": "^4.6.2",
-    "jsdom": "^17.0.0",
+    "jsdom": "^21.1.0",
     "jws": "^4.0.0",
     "madge": "^5.0.1",
     "mkdir": "^0.0.2",

@@ -13,7 +13,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.js'],
+      files: ['**/*.ts', '**/*.tsx', '**/*.js'],
       parser: '@typescript-eslint/parser',
       plugins: ['@typescript-eslint'],
       extends: ['plugin:@typescript-eslint/recommended'],
