@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
@@ -83,10 +82,6 @@ const FeatureFlagsProvider: React.FC = ({ children }) => {
     []
   );
   return <FlagProvider unleashClient={unleashClient}>{children}</FlagProvider>;
-};
-
-FeatureFlagsProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default FeatureFlagsProvider;

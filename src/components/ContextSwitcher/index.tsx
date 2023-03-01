@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, Text, TextContent } from '@patternfly/react-core';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -175,11 +174,6 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       )}
     </ContextSelector>
   );
-};
-
-ContextSwitcher.propTypes = {
-  user: PropTypes.object,
-  className: PropTypes.string,
 };
 
 export default ContextSwitcher;
