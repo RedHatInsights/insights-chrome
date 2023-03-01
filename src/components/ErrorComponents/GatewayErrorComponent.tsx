@@ -14,7 +14,7 @@ export type GatewayErrorComponentProps = {
   error: ThreeScaleError;
 };
 
-const MuaLink: React.FC = (chunks) => (
+const MuaLink = (chunks: React.ReactNode) => (
   <ChromeLink appId="rbac" href="/settings/my-user-access">
     {chunks}
   </ChromeLink>

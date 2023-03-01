@@ -75,7 +75,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                   data-ouia-component-id="app-filter-search"
                   placeholder={intl.formatMessage(Messages.findAppOrService)}
                   value={filterValue}
-                  onChange={(val) => setFilterValue(val)}
+                  onChange={(_e, val) => setFilterValue(val)}
                   onClear={(e) => {
                     setFilterValue('');
                     e.stopPropagation();

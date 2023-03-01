@@ -140,7 +140,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       searchInputPlaceholder={intl.formatMessage(messages.searchAccount)}
       isFullHeight
     >
-      {user && user?.identity?.account_number.includes(searchValue) ? (
+      {user && user?.identity?.account_number!.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
           <TextContent className="chr-c-content-personal-account">
             <Text className="account-label pf-u-mb-0 sentry-mask data-hj-suppress">

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
@@ -94,9 +95,11 @@ const commonConfig = ({ dev }) => {
           use: {
             loader: 'swc-loader',
             options: {
+              $schema: 'https://json.schemastore.org/swcrc',
               jsc: {
                 parser: {
                   syntax: 'typescript',
+                  tsx: true,
                 },
               },
             },
