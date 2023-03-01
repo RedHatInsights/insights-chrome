@@ -95,7 +95,6 @@ const commonConfig = ({ dev }) => {
           use: {
             loader: 'swc-loader',
             options: {
-              $schema: 'https://json.schemastore.org/swcrc',
               jsc: {
                 parser: {
                   syntax: 'typescript',

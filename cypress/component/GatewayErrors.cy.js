@@ -116,6 +116,10 @@ describe('Gateway errors', () => {
 
   COMPLIACE_ERROR_CODES.forEach((code) => {
     it(`handles compliance ${code} gateway error`, () => {
+      cy.on('uncaught:exception', () => {
+        // runtime exception is expected
+        return false;
+      });
       cy.window().then((win) => {
         win[code] = {
           init: () => undefined,

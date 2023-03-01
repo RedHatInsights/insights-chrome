@@ -21,6 +21,8 @@ import messages from '../../locales/Messages';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 import './ErrorComponent.scss';
+import { get3scaleError } from '../../utils/responseInterceptors';
+import GatewayErrorComponent from './GatewayErrorComponent';
 
 export type DefaultErrorComponentProps = {
   error?: any | Error;
@@ -64,6 +66,12 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
       }
     }
   }, [props.error, activeModule]);
+
+  // second level of error capture if xhr/fetch interceptor fails
+  const gatewayError = get3scaleError(props.error as any);
+  if (gatewayError) {
+    return <GatewayErrorComponent error={gatewayError} />;
+  }
 
   const stack = props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error;
   return (

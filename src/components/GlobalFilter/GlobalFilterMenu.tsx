@@ -15,7 +15,7 @@ import { fetchAllTags } from '../../redux/actions';
 import { FlagTagsFilter } from '../../@types/types';
 
 export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
-export type GlobalFilterMenuGroupValues = (typeof groupType)[GlobalFilterMenuGroupKeys];
+export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
 
 export type FilterMenuItem = {
   value: string;
