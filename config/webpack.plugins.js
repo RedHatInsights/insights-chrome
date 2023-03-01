@@ -5,7 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { ProvidePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const deps = require('../package.json').dependencies;
@@ -65,7 +64,6 @@ const plugins = (dev = false, beta = false) => {
       process: 'process/browser.js',
       Buffer: ['buffer', 'Buffer'],
     }),
-    new ForkTsCheckerWebpackPlugin(),
     ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
   ];
 };

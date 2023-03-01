@@ -45,8 +45,27 @@
       "<rootDir>/node_modules/(?!@redhat-cloud-services|@openshift|lodash-es).+(js|jsx)$"
     ],
     "transform": {
-      "^.+\\.jsx?$": "babel-jest",
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.(ts|js)x?$": [
+        "@swc/jest",
+        {
+          "$schema": "http://json.schemastore.org/swcrc",
+          "jsc": {
+            "experimental": {
+              "plugins": [["jest_workaround", {}]]
+            },
+            "parser": {
+              "jsx": true,
+              "syntax": "typescript",
+              "tsx": true
+            },
+            "transform": {
+              "react": {
+                "runtime": "automatic"
+              }
+            }
+          }
+        }
+      ]
     },
     "roots": [
       "<rootDir>/src/"
@@ -92,6 +111,8 @@
     "@redhat-cloud-services/frontend-components-config-utilities": "^1.5.25",
     "@redhat-cloud-services/types": "^0.0.18",
     "@simonsmith/cypress-image-snapshot": "^5.0.5",
+    "@swc/core": "^1.3.37",
+    "@swc/jest": "^0.2.24",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^7.0.2",
@@ -106,7 +127,6 @@
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "assert": "^2.0.0",
-    "babel-jest": "^27.5.1",
     "babel-loader": "^8.3.0",
     "babel-plugin-lodash": "^3.3.4",
     "browserify-zlib": "^0.2.0",
@@ -121,6 +141,7 @@
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
+    "jest_workaround": "^0.1.14",
     "jest-fetch-mock": "^3.0.3",
     "jest-mock-axios": "^4.6.2",
     "jsdom": "^17.0.0",
@@ -143,9 +164,8 @@
     "source-map-loader": "^3.0.2",
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.1",
+    "swc-loader": "^0.2.3",
     "terser-webpack-plugin": "^5.3.6",
-    "ts-jest": "^27.1.5",
-    "ts-loader": "^9.4.2",
     "typescript": "^4.9.4",
     "url": "^0.11.0",
     "utility-types": "^3.10.0",
