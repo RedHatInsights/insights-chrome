@@ -17,7 +17,8 @@ import LibtJWTContext from './components/LibJWTContext';
 import { ReduxState } from './redux/store';
 import qe from './utils/iqeEnablement';
 import initializeJWT from './jwt/initialize-jwt';
-
+import { getSharedScope } from '@scalprum/core';
+import { warnDuplicatePkg } from './utils/duplicateNPMPackageWarning';
 const language: keyof typeof messages = 'en';
 
 const initializeAccessRequestCookies = () => {
@@ -104,6 +105,10 @@ const App = () => {
   useEffect(() => {
     const title = typeof documentTitle === 'string' ? `${documentTitle} | ` : '';
     document.title = `${title}console.redhat.com`;
+
+    const packages = getSharedScope();
+    const escapedPackages = JSON.parse(JSON.stringify(packages).replaceAll('.', '_'));
+    warnDuplicatePkg(escapedPackages);
   }, [documentTitle]);
 
   return isReady && modules && scalprumConfig && libJwt ? (
