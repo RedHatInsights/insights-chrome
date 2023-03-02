@@ -38,16 +38,16 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
-  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(1);
+  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[1]);
+  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
+
   // Toggle currently active tab
   const handleTabClick = (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
-    console.log(selectedService)
   };
 
   const onTabClick = (section: AllServicesSectionType, index: number) => {
@@ -114,43 +114,43 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             </Tabs>
           </SidebarPanel>
           <SidebarContent>
-              <Card isPlain>
-              <CardHeader>
-                <Title headingLevel="h2">{convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}</Title>
-                <CardActions>
-                  <Button variant="plain" aria-label="Close menu">
-                    <TimesIcon />
-                  </Button>
-                </CardActions>
-              </CardHeader>
-              <CardBody>
-                <TabContent
-                  eventKey={activeTabKey}
-                  id="refTab1Section"
-                  ref={contentRef1}
-                  aria-label={selectedService.description}
-                >
-                  <Gallery hasGutter>
-                    {selectedService.links.map((link, index) => (
-                      <Card isFlat>
-                        <CardHeader>
-                          {link.title}
-                        </CardHeader>
-                        <CardBody>
-                          <Split>
-                            <SplitItem className="pf-m-fill">
-                            </SplitItem>
-                            <SplitItem>
-                            </SplitItem>
-                          </Split>
-                          description here please
-                        </CardBody>
-                      </Card>
-                    ))}
-                  </Gallery>
-                </TabContent>
-              </CardBody>
-            </Card>
+                <Card isPlain>
+                <CardHeader>
+                  <Title headingLevel="h2">{convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}</Title>
+                  <CardActions>
+                    <Button variant="plain" aria-label="Close menu">
+                      <TimesIcon />
+                    </Button>
+                  </CardActions>
+                </CardHeader>
+                <CardBody>
+                  <TabContent
+                    eventKey={activeTabKey}
+                    id="refTab1Section"
+                    ref={contentRef1}
+                    aria-label={selectedService.description}
+                  >
+                    <Gallery hasGutter>
+                      {selectedService.links.map((link, index) => (
+                        <Card isFlat>
+                          <CardHeader>
+                            {link.title}
+                          </CardHeader>
+                          <CardBody>
+                            <Split>
+                              <SplitItem className="pf-m-fill">
+                              </SplitItem>
+                              <SplitItem>
+                              </SplitItem>
+                            </Split>
+                            description here please
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </Gallery>
+                  </TabContent>
+                </CardBody>
+              </Card>              
           </SidebarContent>
         </Sidebar>
       </PanelMain>

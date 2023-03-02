@@ -1,0 +1,510 @@
+t a/src/components/LandingNav/LandingNav.scss b/src/components/LandingNav/LandingNav.scss
+index 613ba0da..571b6b4e 100644
+--- a/src/components/LandingNav/LandingNav.scss
++++ b/src/components/LandingNav/LandingNav.scss
+@@ -1,15 +1,87 @@
+-.chr-c-landing-nav {
+-  height: 100%;
+ 
+-  .chr-c-app-title {
+-    border: 0;
++@media (min-width: 768px) {
++
++  .pf-c-page__sidebar {
++    width: 100%;
++    position: absolute;
++    top: 70px;
+   }
+-}
+ 
+-/**
+-* There is a transition of background color on first landing page nav render
+-* We have to turn it off for now because we are adding the PF nav class names later on
+-*/
+-#chr-c-landing-nav {
+-  transition: none;
++  .chr-c-navtest {
++
++    /* smaller top padding for main card wrapper w/ title */
++    .pf-c-card.pf-m-plain {
++      --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
++    }
++
++    .pf-c-sidebar {
++      /* nav background color */
++      --pf-c-sidebar__panel--BackgroundColor: var(
++        --pf-global--BackgroundColor--200
++      );
++      /* custom nav width - set to whatever */
++      --pf-c-sidebar__panel--md--FlexBasis: 20rem;
++      // width: var(--pf-c-page__sidebar--Width);
++
++      &__main {
++        /* makes nav and content heights match. necessary for nav background to span full height */
++        align-items: stretch;
++       }
++
++      &__panel {
++        /* inner padding in the nav area */
++        padding-top: var(--pf-global--spacer--sm);
++        padding-bottom: var(--pf-global--spacer--sm);
++        padding-left: var(--pf-global--spacer--md);
++        /* shadow between nav and content */
++        box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
++
++        .pf-c-tabs {
++          /* tab item custom padding */
++          --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
++          --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
++          --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);
++          --pf-c-tabs__link--PaddingLeft: var(--pf-global--spacer--md);
++
++          /* adjust tabs toggle margins */
++          --pf-c-tabs__toggle-button--MarginTop: 0;
++          --pf-c-tabs__toggle-button--MarginBottom: 0;
++          --pf-c-tabs__toggle-button--MarginLeft: 0;
++          --pf-c-tabs__toggle--MarginBottom: 0;
++
++          /* current tab item text color */
++          --pf-c-tabs__item--m-current__link--Color: var(--pf-global--link--Color);
++
++          /* allow tabs width to fill parent */
++          --pf-c-tabs--m-vertical--MaxWidth: 100%;
++
++          /* remove tab list left border */
++          --pf-c-tabs--m-vertical__list--before--BorderColor: transparent;
++        }
++
++        .pf-c-tabs__link::after {
++          /* remove tab item accent border */
++          border-color: transparent;
++        }
++
++        .pf-c-tabs__item.pf-m-current {
++          /* custom background for current tab */
++          --pf-c-tabs__link--BackgroundColor: var(--pf-global--BackgroundColor--100);
++        }
++      }
++
++      &__content {
++
++      }
++    }
++
++  }
++
++  .pf-c-tabs {
++    /* adjust tabs toggle margins */
++    --pf-c-tabs__toggle-button--MarginTop: 0;
++    --pf-c-tabs__toggle-button--MarginBottom: 0;
++    --pf-c-tabs__toggle-button--MarginLeft: 0;
++    --pf-c-tabs__toggle--MarginBottom: 0;
++  }
+ }
+diff --git a/src/components/LandingNav/LandingNav.tsx b/src/components/LandingNav/LandingNav.tsx
+index ba6d9351..c2dc8e39 100644
+--- a/src/components/LandingNav/LandingNav.tsx
++++ b/src/components/LandingNav/LandingNav.tsx
+@@ -1,5 +1,5 @@
+ import React, { useEffect, useState } from 'react';
+-import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
++import { Nav, NavList, PageContextConsumer, Split, SplitItem } from '@patternfly/react-core';
+ import { isBeta, isFedRamp } from '../../utils/common';
+ import './LandingNav.scss';
+ import { useDispatch, useSelector } from 'react-redux';
+@@ -13,6 +13,29 @@ import { useIntl } from 'react-intl';
+ import messages from '../../locales/Messages';
+ import { ReduxState } from '../../redux/store';
+ 
++import {
++  Button,
++  Card,
++  CardBody,
++  CardHeader,
++  CardActions,
++  CardTitle,
++  Gallery,
++  Tabs,
++  Tab,
++  TabContent,
++  TabTitleText,
++  Title,
++  Panel,
++  PanelMain,
++  Sidebar,
++  SidebarContent,
++  SidebarPanel
++} from "@patternfly/react-core";
++import TimesIcon from "@patternfly/react-icons/dist/esm/icons/times-icon";
++import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
++import ShoppingCartIcon from '@patternfly/react-icons/dist/js/icons/shopping-cart-icon';
++
+ const LandingNav = () => {
+   const dispatch = useDispatch();
+   const intl = useIntl();
+@@ -25,51 +48,204 @@ const LandingNav = () => {
+       },
+     }: ReduxState) => landingPage
+   );
+-  const modules = useSelector((state: ReduxState) => state.chrome.modules);
+-  useEffect(() => {
+-    if (showNav) {
+-      setElementReady(true);
+-    }
+-  }, [showNav]);
+ 
+-  useEffect(() => {
+-    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/landing-navigation.json`).then((response) => {
+-      dispatch(loadNavigationLandingPage(response.data));
+-    });
+-  }, []);
++  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(1);
++  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
++  // Toggle currently active tab
++  const handleTabClick = (
++    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
++    tabIndex: string | number
++  ) => {
++    setActiveTabKey(tabIndex);
++  };
++
++  const onToggle = (isExpanded: boolean) => {
++    setIsExpanded(isExpanded);
++  };
+ 
+-  /**
+-   * render navigation only if the user is logged in
+-   */
+-  if (!showNav || !elementReady || !schema) {
+-    return <NavLoader />;
+-  }
++  const contentRef1 = React.createRef<HTMLElement>();
++  const contentRef2 = React.createRef<HTMLElement>();
++  const contentRef3 = React.createRef<HTMLElement>();
+ 
+   return (
+-    <Nav className="chr-c-landing-nav" ouiaId="SideNavigation">
+-      <NavList>
+-        <div className="chr-c-app-title">
+-          <b>{intl.formatMessage(messages.home)}</b>
+-        </div>
+-        <PageContextConsumer>
+-          {({ isNavOpen }) => (
+-            <NavContext.Provider
+-              value={{
+-                componentMapper,
+-                inPageLayout: true,
+-                isNavOpen,
++    <Panel variant="raised" className="chr-c-navtest">
++      <PanelMain>
++        <Sidebar>
++          <SidebarPanel>
++            {" "}
++            <Tabs
++              inset={{
++                default: "insetNone"
++              }}
++              activeKey={activeTabKey}
++              onSelect={handleTabClick}
++              isVertical
++              expandable={{
++                default: "expandable",
++                md: "nonExpandable"
+               }}
++              isExpanded={isExpanded}
++              onToggle={onToggle}
++              toggleText="Containers"
++              aria-label="Tabs in the vertical expandable example"
++              role="region"
+             >
+-              {schema
+-                .filter(({ appId }) => (appId && isFedRamp() ? modules?.[appId]?.isFedramp === true : true))
+-                .map((item, index) => (
+-                  <ChromeNavItemFactory key={index} {...item} />
+-                ))}
+-            </NavContext.Provider>
+-          )}
+-        </PageContextConsumer>
+-      </NavList>
+-    </Nav>
++              <Tab
++                eventKey={0}
++                title={<TabTitleText>Try and Buy</TabTitleText>}
++                tabContentId="refTab1Section"
++                tabContentRef={contentRef1}
++              />
++              <Tab
++                eventKey={1}
++                title={<TabTitleText>Application Services</TabTitleText>}
++                tabContentId="refTab2Section"
++                tabContentRef={contentRef2}
++              />
++              <Tab
++                eventKey={2}
++                title={<TabTitleText>Automation</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={3}
++                title={<TabTitleText>Data Services</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={4}
++                title={<TabTitleText>Deploy</TabTitleText>}
++                tabContentId="refTab2Section"
++                tabContentRef={contentRef2}
++              />
++              <Tab
++                eventKey={5}
++                title={<TabTitleText>Identity and Access Management</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={6}
++                title={<TabTitleText>Infrastructure</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={7}
++                title={<TabTitleText>Integrations and Notifications</TabTitleText>}
++                tabContentId="refTab2Section"
++                tabContentRef={contentRef2}
++              />
++              <Tab
++                eventKey={8}
++                title={<TabTitleText>Inventories</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={9}
++                title={<TabTitleText>Observability</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++              <Tab
++                eventKey={10}
++                title={<TabTitleText>Security</TabTitleText>}
++                tabContentRef={contentRef2}
++              />
++              <Tab
++                eventKey={11}
++                title={<TabTitleText>Spend Management</TabTitleText>}
++                tabContentId="refTab3Section"
++                tabContentRef={contentRef3}
++              />
++            </Tabs>
++          </SidebarPanel>
++          <SidebarContent>
++            <Card isPlain>
++              <CardHeader>
++                <Title headingLevel="h2"><ShoppingCartIcon />&nbsp;Try and Buy</Title>
++                <CardActions>
++                  <Button variant="plain" aria-label="Close menu">
++                    <TimesIcon />
++                  </Button>
++                </CardActions>
++              </CardHeader>
++              <CardBody>
++                <TabContent
++                  eventKey={0}
++                  id="refTab1Section"
++                  ref={contentRef1}
++                  aria-label="This is content for the first separate content tab"
++                >
++                  <Gallery hasGutter>
++                    <Card isFlat>
++                      <CardBody>
++                        <Split>
++                          <SplitItem className="pf-m-fill">
++                          </SplitItem>
++                          <SplitItem>
++                          </SplitItem>
++                        </Split>
++                        Developer Sandbox
++                        Learn and try developing in a private, pre-configured OpenShift environment.
++                      </CardBody>
++                    </Card>
++                    <Card isFlat>
++                      <CardBody>
++                        <Split>
++                          <SplitItem className="pf-m-fill">
++                            Red Hat Marketplace
++                          </SplitItem>
++                          <SplitItem>
++                            <ExternalLinkAltIcon />
++                          </SplitItem>
++                        </Split>
++                        <br/>
++                        Find, try, purchase, and deploy your software across clouds.
++                      </CardBody>
++                    </Card>
++                    <Card isFlat>
++                      <CardBody>
++                        <Split>
++                          <SplitItem className="pf-m-fill">
++                            Red Hat Product Trials
++                          </SplitItem>
++                          <SplitItem>
++                            <ExternalLinkAltIcon />
++                          </SplitItem>
++                        </Split>
++                        Gain hands-on experience and assess if a product is right for you in a no-cost trial.
++                      </CardBody>
++                    </Card>
++                  </Gallery>
++                </TabContent>
++                <TabContent
++                  eventKey={1}
++                  id="refTab2Section"
++                  ref={contentRef2}
++                  aria-label="This is content for the second separate content tab"
++                  hidden
++                >
++                  <Gallery hasGutter>Tab 2 section</Gallery>
++                </TabContent>
++                <TabContent
++                  eventKey={2}
++                  id="refTab3Section"
++                  ref={contentRef3}
++                  aria-label="This is content for the third separate content tab"
++                  hidden
++                >
++                  <Gallery hasGutter>Tab 3 section</Gallery>
++                </TabContent>
++              </CardBody>
++            </Card>
++          </SidebarContent>
++        </Sidebar>
++      </PanelMain>
++    </Panel>
+   );
+ };
+ 
+diff --git a/src/components/Navigation/Navigation.scss b/src/components/Navigation/Navigation.scss
+index be1d78d8..e69de29b 100644
+--- a/src/components/Navigation/Navigation.scss
++++ b/src/components/Navigation/Navigation.scss
+@@ -1,116 +0,0 @@
+-.chr-c-app-title {
+-  color: white;
+-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+-  width: 100%;
+-  border-bottom: var(--pf-global--spacer--xs) solid var(--pf-global--Color--300);
+-  font-weight: var(--pf-global--FontWeight--semi-bold);
+-  white-space: normal;
+-  text-align: left;
+-  font-size: 17px;
+-}
+-
+-.pf-c-nav__list {
+-  section.chr-c-section-nav {
+-    margin-bottom: var(--pf-global--spacer--md);
+-    margin-top: 0 !important;
+-    h2.pf-c-nav__section-title {
+-      border: 0;
+-      border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
+-      color: var(--pf-global--palette--black-500);
+-      font-size: var(--pf-global--FontSize--xs);
+-      font-weight: var(--pf-global--FontWeight--medium);
+-      padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
+-      svg {
+-        margin-left: var(--pf-global--spacer--none);
+-        margin-right: var(--pf-global--spacer--sm);
+-      }
+-    }
+-    ul
+-      > li.pf-c-nav__item {
+-        border-top: 0;
+-        --pf-c-nav__item--MarginTop: 0;
+-        --pf-c-nav__item--before--BorderWidth: 0;
+-        &:last-child {
+-          margin-bottom: var(--pf-global--spacer--sm);
+-        }
+-        .pf-c-nav__subnav {
+-          padding: 0 0 0 var(--pf-global--spacer--lg);
+-          .pf-c-nav__list {
+-            .pf-c-nav__item {
+-              .pf-c-nav__link{
+-                padding-left: var(--pf-global--spacer--lg);
+-              }
+-              &:last-child {
+-                margin-bottom: var(--pf-global--spacer--sm);
+-              }
+-            }
+-          }
+-        }
+-        section.pf-c-nav__subnav {
+-          li.pf-c-nav__item {
+-            border: none !important;
+-          }
+-        }
+-      }
+-    }
+-    .pf-c-nav__item.chr-c-navigation__additional-links {
+-      .pf-c-nav__link {
+-        padding-left: var(--pf-global--spacer--lg);
+-      }
+-    }
+-  > .pf-c-nav__item:not(:first-child) {
+-    border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
+-  }   
+-  svg {
+-    margin-left: var(--pf-global--spacer--sm);
+-    width: 12px;  
+-  }
+-}
+-
+-.chr-c-navigation__additional-links {
+-  align-items: center;
+-  svg { margin-left: var(--pf-global--spacer--sm); }
+-}
+-
+-.pf-c-nav__item {
+-  a.chr-c-navigation__with-notifier {
+-    align-items: center;
+-    .notifier-icon {
+-      margin-left: auto;
+-      margin-right: 8px;
+-    }
+-  }
+-}
+-
+-.pf-c-nav__item .pf-c-nav__link .chr-c-navigation__beta-badge {
+-  float: right;
+-  margin-right: 0px;
+-  margin-left: auto;
+-}
+-
+-.pf-c-nav {
+-  .chr-c-navigation__beta-badge {
+-      background-color: var(--pf-global--palette--green-300);
+-      color: var(--pf-global--Color--dark-100);
+-  }
+-}
+-
+-.chr-c-navigation__beta-info-modal {
+-  text-align: center;
+-  width: 90%;
+-  div {
+-      margin: var(--pf-global--spacer--md);
+-  }
+-  .info-icon {
+-      color: var(--pf-global--info-color--100);
+-      margin: var(--pf-global--spacer--md);
+-  }
+-}
+-
+-.chr-c-navigation__isHidden {
+-  display: none;
+-}
+-
+-.chr-c-app-switcher--loading {
+-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg)
+-}
+

@@ -23,6 +23,7 @@ import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
+import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -161,7 +162,8 @@ const ScalprumRoot = memo(
             path="/allservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                {/* <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} /> */}
+                <ServicesNewNav Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
               </Suspense>
             }
           />

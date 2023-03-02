@@ -58,7 +58,8 @@ export const Header = () => {
                     <AppFilter />
                   ) : (
                     <>
-                      <ServicesLink /> <FavoritesLink />
+                      <ServicesLink /> 
+                      <FavoritesLink />
                     </>
                   )}
                 </ToolbarItem>
