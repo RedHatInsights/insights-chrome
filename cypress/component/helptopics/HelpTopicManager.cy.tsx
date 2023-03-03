@@ -109,6 +109,19 @@ describe('HelpTopicManager', () => {
 
       req.reply({ status: 200, body: { data: [] } });
     });
+    cy.intercept('POST', '/api/chrome-service/v1/user/visited-bundles', {
+      data: [],
+    });
+    cy.intercept('POST', '/api/chrome-service/v1/last-visited', {
+      data: [],
+    });
+    cy.intercept('GET', '/api/chrome-service/v1/user', {
+      data: {
+        lastVisited: [],
+        favoritePages: [],
+        visitedBundles: {},
+      },
+    });
   });
 
   it('should switch help topics drawer content', () => {
