@@ -12,8 +12,13 @@
   .pf-c-card {
     overflow: hidden;
     break-inside: avoid-column;
-    .chr-c-icon-not-favorited:not(:hover) {
-      opacity: 0;
+    .chr-c-icon-not-favorited {
+      cursor: pointer;
+    }
+    .chr-c-favorite-trigger:not(:hover) {
+      .chr-c-icon-not-favorited {
+        opacity: 0;
+      }
     }
   }
   @media screen and (max-width: $pf-global--breakpoint--md) {
