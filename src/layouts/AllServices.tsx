@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
-import { Gallery, Masthead, Page, PageGroup, PageSection, PageSectionVariants, SearchInput, Title } from '@patternfly/react-core';
+import { Bullseye, Gallery, Masthead, Page, PageGroup, PageSection, PageSectionVariants, SearchInput, Spinner, Title } from '@patternfly/react-core';
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
@@ -24,11 +24,6 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     updateDocumentTitle('All services');
   }, []);
 
-  if (!ready) {
-    // TODO: Add loading state
-    return <div>Loading</div>;
-  }
-
   if (error) {
     // TODO: Add error state
     return <div>Error</div>;
@@ -45,31 +40,39 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         }
       >
         <RedirectBanner />
-        <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-          <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md">
-            <Title headingLevel="h2">All Services</Title>
-            <SearchInput
-              className="chr-c-all-services-filter pf-u-m-auto pf-u-mt-md"
-              data-ouia-component-id="app-filter-search"
-              placeholder={intl.formatMessage(Messages.findAppOrService)}
-              value={filterValue}
-              onChange={(val) => setFilterValue(val)}
-              onClear={(e) => {
-                setFilterValue('');
-                e.stopPropagation();
-              }}
-            />
-          </PageSection>
-        </PageGroup>
-        <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-          <Gallery className="pf-u-display-block" hasGutter>
-            {linkSections.map((section, index) => (
-              <AllServicesSection key={index} {...section} />
-            ))}
-            {/* TODO: Add empty state */}
-            {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
-          </Gallery>
-        </PageSection>
+        {!ready ? (
+          <Bullseye>
+            <Spinner size="xl" />
+          </Bullseye>
+        ) : (
+          <Fragment>
+            <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
+              <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md">
+                <Title headingLevel="h2">All Services</Title>
+                <SearchInput
+                  className="chr-c-all-services-filter pf-u-m-auto pf-u-mt-md"
+                  data-ouia-component-id="app-filter-search"
+                  placeholder={intl.formatMessage(Messages.findAppOrService)}
+                  value={filterValue}
+                  onChange={(val) => setFilterValue(val)}
+                  onClear={(e) => {
+                    setFilterValue('');
+                    e.stopPropagation();
+                  }}
+                />
+              </PageSection>
+            </PageGroup>
+            <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
+              <Gallery className="pf-u-display-block" hasGutter>
+                {linkSections.map((section, index) => (
+                  <AllServicesSection key={index} {...section} />
+                ))}
+                {/* TODO: Add empty state */}
+                {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
+              </Gallery>
+            </PageSection>
+          </Fragment>
+        )}
         {Footer}
       </Page>
     </div>
