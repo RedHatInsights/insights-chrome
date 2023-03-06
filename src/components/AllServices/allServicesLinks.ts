@@ -10,6 +10,7 @@ export type AllServicesGroup = {
   isGroup: true;
   title: string;
   links: AllServicesLink[];
+  description?: string;
 };
 export type AllServicesSection = {
   icon: keyof typeof AllServicesIcons;

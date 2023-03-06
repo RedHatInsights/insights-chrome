@@ -28,7 +28,7 @@ import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
-import type {AllServicesSection as AllServicesSectionType} from '../components/AllServices/allServicesLinks';
+import type {AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType} from '../components/AllServices/allServicesLinks';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -62,6 +62,14 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
   const convertTitleIcon = (icon: keyof typeof AllServicesIcons) => {
     const TitleIcon = AllServicesIcons[icon]
     return <TitleIcon />
+  }
+
+  const linkDescription = (link: AllServicesLink | AllServicesGroup) => {
+    if(link.description) {
+      return link.description;
+    } else {
+      return "";
+    }
   }
 
   const contentRef1 = React.createRef<HTMLElement>();
@@ -143,7 +151,7 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                                 <SplitItem>
                                 </SplitItem>
                               </Split>
-                              description here please
+                              {linkDescription(link)}
                             </CardBody>
                           </Card>
                         ))}
