@@ -25,6 +25,7 @@ import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
+import chromeApiWrapper from './chromeApiWrapper';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -131,7 +132,7 @@ const ScalprumRoot = memo(
 
     const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
       // set the deprecated chrome API to window
-      window.insights.chrome = chromeApi;
+      window.insights.chrome = chromeApiWrapper(chromeApi);
       return {
         config,
         api: {
