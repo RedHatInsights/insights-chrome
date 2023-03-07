@@ -48,7 +48,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/application-services/service-registry',
         title: 'Service Registry',
-        description: 'Discover, publish, and reuse event schemas and API definitions in a shared repository.'
+        description: 'Discover, publish, and reuse event schemas and API definitions in a shared repository.',
       },
       {
         href: '/application-services/streams',
@@ -144,7 +144,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/iam/user-access/users',
         title: 'User Access',
-        description: 'Manage your organization\'s role-based access control (RBAC) to services.',
+        description: "Manage your organization's role-based access control (RBAC) to services.",
       },
     ],
   },
@@ -231,7 +231,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/ansible/drift',
             title: 'Drift',
-            description: 'Create baselines and compare system profiles in your Ansible inventory over time.'
+            description: 'Create baselines and compare system profiles in your Ansible inventory over time.',
           },
           {
             href: '/ansible/policies',
@@ -366,7 +366,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/vulnerability/cves',
             title: 'Vulnerability',
-            description: 'Assess security vulnerabilities (CVEs) that could affect your systems.'
+            description: 'Assess security vulnerabilities (CVEs) that could affect your systems.',
           },
         ],
       },
@@ -437,7 +437,7 @@ const allServicesLinks: AllServicesSection[] = [
         isExternal: true,
         href: 'https://www.redhat.com/en/products/trials',
         title: 'Red Hat Product Trials',
-        description: 'Gain hands-on experience and assess if a product is right for you in a no-cost trial.'
+        description: 'Gain hands-on experience and assess if a product is right for you in a no-cost trial.',
       },
     ],
   },
