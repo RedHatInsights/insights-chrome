@@ -1,6 +1,6 @@
 # Javascript API
 
-Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
+Chrome comes with a JavaScript API that allows applications to control navigation, global filters, etc.
 
 ```js
     // initialize chrome
