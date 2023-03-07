@@ -67,14 +67,23 @@ function initSentry() {
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
   // attachStacktrace: attach the actual console logs
   // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
+  // replaysOnErrorSampleRate: the sample rate for replays that are recorded when an error happens. Up to 1 minute before error, and until session stops.
+  // ^ 1.0 captures all sessions with an error, and 0 captures none.
+  // maskAllInputs: mask values of inpute elements before sending to server
+  // maskeAllText: mask all text on the screen.
+  // ignoreErrors: Sentry ignores errors containing strings or regex. Regex needs to be exact message, string is partial
+  // replaysSessionSampleRate: replays that begin recording immediately and last the entirety of the user's session.
+
   Sentry.init({
     dsn: API_KEY,
     environment: `Prod${appDetails.beta}`,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
-    integrations: [new BrowserTracing()],
+    integrations: [new BrowserTracing(), new Sentry.Replay({ maskAllText: false, maskAllInputs: true })],
     tracesSampleRate: 0.2,
     debug: !!window.localStorage.getItem('chrome:sentry:debug'),
+    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 0.3,
   });
 }
 

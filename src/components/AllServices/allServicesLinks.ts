@@ -68,7 +68,7 @@ const allServicesLinks: AllServicesSection[] = [
         description: 'Plan, measure, and scale your automation using actionable data.',
       },
       {
-        href: '/ansible/automation-hub/',
+        href: '/ansible/automation-hub',
         title: 'Automation Hub',
         description: 'Find and download Ansible Content Collections from Red Hat and partners.',
       },
@@ -132,6 +132,10 @@ const allServicesLinks: AllServicesSection[] = [
     title: 'Identity and Access Management',
     description: 'Ensure that the right users have the appropriate access to technology resources.',
     links: [
+      {
+        href: '/iam/authentication-policy/authentication-factors',
+        title: 'Authentication Policy',
+      },
       {
         href: '/settings/my-user-access',
         title: 'My User Access',
@@ -246,7 +250,7 @@ const allServicesLinks: AllServicesSection[] = [
             description: 'Get recommendations to prevent and resolve potential issues on your OpenShift clusters.',
           },
           {
-            href: '/openshift/insights/vulnerability/',
+            href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
             description: 'Assess security vulnerabilities (CVEs) that could affect your clusters.',
           },
@@ -296,6 +300,10 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Meet your policy and compliance objectives.',
     links: [
       {
+        href: '/application-services/acs/overview',
+        title: 'Advanced Cluster Security',
+      },
+      {
         isGroup: true,
         title: 'Ansible',
         links: [
@@ -332,7 +340,7 @@ const allServicesLinks: AllServicesSection[] = [
             description: 'Analyze the availability, performance, stability, and security risk for your systems.',
           },
           {
-            href: '/insights/compliance/',
+            href: '/insights/compliance',
             title: 'Compliance',
             description: 'Deploy and monitor security compliance policies for your organization.',
           },
@@ -342,7 +350,7 @@ const allServicesLinks: AllServicesSection[] = [
             description: 'Manage the lifecycle and enhance security of your RHEL systems at the edge.'
           },
           {
-            href: '/insights/malware/',
+            href: '/insights/malware',
             title: 'Malware',
             description: 'Identify potential malware on your RHEL hosts.',
           },

@@ -33,7 +33,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
-    <Text component={TextVariants.p}>
+    <Text component={TextVariants.p} className="chr-c-favorite-trigger">
       <ChromeLink appId={appId} isExternal={isExternal} href={href}>
         {title}
         {isExternal && (

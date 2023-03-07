@@ -48,7 +48,7 @@ export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUs
   getUser,
   qe: {
     ...qe,
-    init: () => qe.init(store),
+    init: () => qe.init(store, () => libjwt),
   },
   logout: (bounce?: boolean) => libjwt.jwt.logoutAllTabs(bounce),
   login: () => libjwt.jwt.login(),

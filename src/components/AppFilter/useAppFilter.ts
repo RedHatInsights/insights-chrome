@@ -20,7 +20,8 @@ export const requiredBundles = [
   'edge',
   'ansible',
   'settings',
-  ...(isBeta() && !isProd() ? ['iam', 'business-services'] : []),
+  'iam',
+  ...(isBeta() && !isProd() ? ['business-services'] : []),
 ];
 
 const bundlesOrder = [

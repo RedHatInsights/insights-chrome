@@ -36,16 +36,18 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   govStage: {
-    url: ['gov.cloud.stage.redhat.com', 'gov.console.stage.redhat.com'],
-    sso: 'https://sso.stage.redhat.com/auth',
-    portal: 'https://access.redhat.com',
+    url: ['ephem.outsrights.cc', 'ephem.outsrights.cc'],
+    sso: 'https://stage-gov-console.auth.us-east-1.amazoncognito.com/login?client_id=6c7ba7mlnnv9db9ijqj73a1vpg&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fephem.outsrights.cc%2Fbeta%2Fapps%2Fchrome%2Findex.html',
+    portal: 'https://ephem.outsrights.cc/beta/apps/chrome/index.html',
   },
   dev: {
-    url: ['console.dev.redhat.com'],
+    url: ['dev.foo.redhat.com', 'console.dev.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
 };
+
+export const LOGIN_TYPE_STORAGE_KEY = '@chrome/profile-type';
 
 export function getWindow() {
   return window;
@@ -192,7 +194,7 @@ export function isBeta() {
 }
 
 export function isFedRamp() {
-  return getEnv() === 'gov';
+  return getEnv() === 'outsrights';
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {

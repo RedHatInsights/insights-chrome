@@ -53,12 +53,7 @@
     color: var(--pf-global--Color--dark-100);
   }
   .chr-c-dropdown-user-toggle {
-    button::before {
-      border-color: var(--pf-global--palette--black-900)
-    }
-    &.pf-m-expanded button::before, button:hover::before {
-      border-bottom-color: var(--pf-global--primary-color--200)
-    }    
+    --pf-c-dropdown__menu--Top: 100%;
   }
 }
 

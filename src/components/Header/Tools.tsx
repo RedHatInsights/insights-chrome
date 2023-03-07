@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Badge, Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
@@ -9,14 +9,15 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { getSection, getUrl, isBeta, isProd } from '../../utils/common';
-import classnames from 'classnames';
+import { getSection, getUrl, isBeta, isFedRamp } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
+
+const fedRampEnv = isFedRamp();
 
 export const switchRelease = (isBeta: boolean, pathname: string) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -29,8 +30,6 @@ export const switchRelease = (isBeta: boolean, pathname: string) => {
     return document.baseURI.concat(path.join('/'));
   }
 };
-
-export const betaBadge = (className: string) => <Badge className={classnames('chr-c-toolbar__beta-badge', className)}>beta</Badge>;
 
 const InternalButton = () => (
   <Button
@@ -66,18 +65,8 @@ SettingsButton.propTypes = {
   settingsMenuDropdownItems: PropTypes.array.isRequired,
 };
 
-// We are unable to set feature flag only for /beta env.
-// We need additional checks for the auth factor item to be visible.
-const useAuthFactor = () => {
-  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const isBetaEnv = useMemo(() => isBeta(), []);
-  const isProdEnv = useMemo(() => isProd(), []);
-  return isProdEnv && !isBetaEnv ? false : enableAuthDropdownOption;
-};
-
 const Tools = () => {
-  const [{ isDemoAcc, isInternal, isRhosakEntitled, isSettingsDisabled }, setState] = useState({
-    isSettingsDisabled: true,
+  const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
     isRhosakEntitled: false,
     isDemoAcc: false,
@@ -92,7 +81,7 @@ const Tools = () => {
     messages.betaRelease
   )}`;
 
-  const enableAuthDropdownOption = useAuthFactor();
+  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
@@ -121,7 +110,6 @@ const Tools = () => {
   useEffect(() => {
     if (user) {
       setState({
-        isSettingsDisabled: !user?.identity?.account_number,
         isInternal: !!user?.identity?.user?.is_internal,
         isRhosakEntitled: !!user?.entitlements?.rhosak?.is_entitled,
         isDemoAcc: user?.identity?.user?.username === 'insights-demo-2021',
@@ -144,15 +132,17 @@ const Tools = () => {
     {
       title: `${intl.formatMessage(messages.statusPage)}`,
       url: 'https://status.redhat.com/',
+      isHidden: fedRampEnv,
     },
     {
       title: `${intl.formatMessage(messages.supportOptions)}`,
       url: 'https://access.redhat.com/support',
+      isHidden: fedRampEnv,
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
       url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
-      isHidden: getSection() !== 'insights',
+      isHidden: getSection() !== 'insights' || fedRampEnv,
     },
 
     {
@@ -226,7 +216,7 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
-      {!isSettingsDisabled && <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>}
+      <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>
       <AboutButton />
 
       <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">

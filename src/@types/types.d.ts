@@ -150,6 +150,7 @@ export type ChromeModule = {
   isFedramp?: boolean;
   modules?: RemoteModule[];
   defaultDocumentTitle?: string;
+  fullProfile?: boolean;
 };
 
 export interface GroupItem {

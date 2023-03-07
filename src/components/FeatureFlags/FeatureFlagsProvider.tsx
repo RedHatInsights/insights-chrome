@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
 import { ReduxState } from '../../redux/store';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import * as Sentry from '@sentry/react';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -22,7 +23,9 @@ const config: IFlagProvider['config'] = {
       .fetch(url, headers)
       .then((resp) => {
         // prevent the request from falling back to default error behavior
+        //add warning level
         if (resp.status >= 400) {
+          Sentry.captureMessage(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`, 'warning');
           throw new Error(`Feature loading error server error! ${resp.status}: ${resp.statusText}.`);
         }
 

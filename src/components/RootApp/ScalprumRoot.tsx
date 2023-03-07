@@ -24,6 +24,8 @@ import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
 import ServicesNewNav from '../../layouts/ServicesNewNav';
+import updateSharedScope from '../../chrome/update-shared-scope';
+import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -78,7 +80,12 @@ const ScalprumRoot = memo(
       setFilteredHelpTopics?.(internalFilteredTopics.current);
     }
 
+    // track bundle visits
+    useBundleVisitDetection();
+
     useEffect(() => {
+      // prepare webpack module sharing scope overrides
+      updateSharedScope();
       const unregister = chromeHistory.listen(historyListener);
       return () => {
         if (typeof unregister === 'function') {
@@ -130,6 +137,26 @@ const ScalprumRoot = memo(
         config,
         api: {
           chrome: chromeApi,
+        },
+        pluginSDKOptions: {
+          pluginLoaderOptions: {
+            // sharedScope: scope,
+            postProcessManifest: (manifest) => {
+              if (manifest.name === 'chrome') {
+                return {
+                  ...manifest,
+                  // Do not include chrome chunks in manifest for chrome. It will result in an infinite loading loop
+                  // window.chrome always exists because chrome container is always initialized
+                  loadScripts: [],
+                };
+              }
+              return {
+                ...manifest,
+                loadScripts: manifest.loadScripts ?? ['plugin-entry.js'],
+                registrationMethod: manifest.registrationMethod ?? 'callback',
+              };
+            },
+          },
         },
       };
     }, []);

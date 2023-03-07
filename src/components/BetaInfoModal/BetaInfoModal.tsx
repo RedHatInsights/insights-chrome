@@ -1,6 +1,6 @@
 import React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
-import { Bullseye, Button, ButtonProps, Modal, ModalProps, ModalVariant, Title } from '@patternfly/react-core';
+import { Bullseye, Button, ButtonProps, Icon, Modal, ModalProps, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 
@@ -15,21 +15,23 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }: BetaInfoM
   return (
     <Modal aria-label="Beta info modal" isOpen={isOpen} onClose={onCancel} variant={ModalVariant.medium}>
       <Bullseye>
-        <div className="chr-c-navigation__beta-info-modal">
-          <InfoCircleIcon size="xl" className="info-icon" />
-          <Title headingLevel="h4" size="xl">
-            {`${menuItemClicked} is only available in our Beta Environment`}
-          </Title>
-          <div>{intl.formatMessage(messages.tryThisFeatureInBeta)}</div>
-          <div>{intl.formatMessage(messages.afterBetaUse)}</div>
-          <div className="pf-u-pt-md">
-            <Button key="confirm" variant="primary" onClick={onClick}>
-              {intl.formatMessage(messages.useFeatureInBeta)}
-            </Button>
-          </div>
-          <div>
-            <a href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">{intl.formatMessage(messages.learnMoreABoutBeta)}</a>
-          </div>
+        <div className="pf-u-m-md pf-u-text-align-center">
+          <Icon size="xl" iconSize="xl" status="info" className="pf-u-m-md">
+            <InfoCircleIcon />
+          </Icon>
+          <TextContent>
+            <Text component="h2">{`${menuItemClicked} is only available in our Beta Environment`}</Text>
+            <Text component="p">{intl.formatMessage(messages.tryThisFeatureInBeta)}</Text>
+            <Text component="p">{intl.formatMessage(messages.afterBetaUse)}</Text>
+          </TextContent>
+          <Button key="confirm" variant="primary" onClick={onClick} className="pf-u-mt-md">
+            {intl.formatMessage(messages.useFeatureInBeta)}
+          </Button>
+          <TextContent className="pf-u-mt-md">
+            <Text component="a" href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">
+              {intl.formatMessage(messages.learnMoreABoutBeta)}
+            </Text>
+          </TextContent>
         </div>
       </Bullseye>
     </Modal>

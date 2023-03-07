@@ -140,15 +140,16 @@ const useAllServices = () => {
         return item.links;
       })
       .flatMap((item) => {
+        // use router "path/*" to increase number of route matches
         if (isAllServicesGroup(item)) {
-          return item.links.map(({ href }) => href);
+          return item.links.map(({ href }) => `${href}/*`);
         }
-        return [item.href];
+        return [`${item.href}/*`];
       });
 
     // use router match to remove links that are not included in current environment (chrome navigation files)
-    const matchedLinks = availableLinks.reduce<(NavItem & { routeMatch?: string })[]>((acc, item) => {
-      const match = linksToMatch.find((link) => matchPath(item.href!, link) || matchPath(`${item.href}/*`, link));
+    const matchedLinks = availableLinks.reduce<(NavItem & { routeMatch: string })[]>((acc, item) => {
+      const match = linksToMatch.find((link) => matchPath(link, item.href!));
       if (match) {
         return [...acc, { ...item, routeMatch: match }];
       }
@@ -159,12 +160,11 @@ const useAllServices = () => {
     // pre-filter sections data by filter value
     // re-create all services section data with links avaiable in current environments
     return filterAllServicesSections(allServicesLinks, filterValue).reduce<AllServicesSection[]>((acc, curr) => {
-      const sectionLinks = curr.links.filter((item) =>
-        isAllServicesGroup(item)
-          ? item.links.filter(({ href, isExternal }) => isExternal || matchedLinks.find((link) => link.href === href || link.routeMatch === href))
-              .length > 0
-          : item.isExternal || matchedLinks.find((link) => link.href === item.href || link.routeMatch === item.href)
-      );
+      const sectionLinks = curr.links.filter((item) => {
+        return isAllServicesGroup(item)
+          ? item.links.filter(({ href, isExternal }) => isExternal || matchedLinks.find((link) => matchPath(link.routeMatch, href))).length > 0
+          : item.isExternal || matchedLinks.find((link) => matchPath(link.routeMatch, item.href));
+      });
       if (sectionLinks.length > 0) {
         return [...acc, { ...curr, links: sectionLinks }];
       }
@@ -173,8 +173,19 @@ const useAllServices = () => {
     // run hook after data are loaded or filter value changed
   }, [ready, filterValue]);
 
+  // Provide a flat list of all avaiable links
+  const servicesLinks = useMemo(
+    () =>
+      linkSections
+        .flatMap(({ links }) => links)
+        .flatMap((item) => (isAllServicesGroup(item) ? item.links : item))
+        .flat(),
+    [linkSections]
+  );
+
   return {
     linkSections,
+    servicesLinks,
     error,
     ready,
     filterValue,

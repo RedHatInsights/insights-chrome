@@ -73,6 +73,7 @@ const commonConfig = ({ dev }) => {
         assert: require.resolve('assert/'),
         buffer: require.resolve('buffer/'),
         url: require.resolve('url/'),
+        process: require.resolve('process'),
       },
     },
     optimization: {
@@ -148,6 +149,16 @@ const commonConfig = ({ dev }) => {
         publicPath,
         proxyVerbose: true,
         isChrome: true,
+        routes: {
+          ...(process.env.CONFIG_PORT && {
+            '/beta/config': {
+              host: `http://localhost:${process.env.CONFIG_PORT}`,
+            },
+            '/config': {
+              host: `http://localhost:${process.env.CONFIG_PORT}`,
+            },
+          }),
+        },
       }),
     },
   };
