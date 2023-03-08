@@ -9,7 +9,7 @@ import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
-// import AllServices from '../../layouts/AllServices';
+import AllServices from '../../layouts/AllServices';
 import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
@@ -23,7 +23,7 @@ import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
-import ServicesNewNav from '../../layouts/ServicesNewNav';
+// import ServicesNewNav from '../../layouts/ServicesNewNav';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 
@@ -189,8 +189,8 @@ const ScalprumRoot = memo(
             path="/allservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                {/* <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} /> */}
-                <ServicesNewNav Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                {/* <ServicesNewNav Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} /> */}
               </Suspense>
             }
           />
