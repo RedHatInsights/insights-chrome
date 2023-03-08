@@ -98,7 +98,6 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                   >
                     {linkSections.map((section, index) => (
                       <Tab
-                        key={index}
                         eventKey={index}
                         title={<TabTitleText>{section.title}</TabTitleText>}
                         tabContentId="refTab1Section"
@@ -124,7 +123,7 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                       <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
                         <Gallery hasGutter>
                           {selectedService.links.map((link) => (
-                            <Card isFlat key={activeTabKey}>
+                            <Card isFlat>
                               <CardHeader>{link.title}</CardHeader>
                               <CardBody>
                                 <Split>
