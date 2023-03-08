@@ -347,7 +347,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/edge/fleet-management',
             title: 'Edge',
-            description: 'Manage the lifecycle and enhance security of your RHEL systems at the edge.'
+            description: 'Manage the lifecycle and enhance security of your RHEL systems at the edge.',
           },
           {
             href: '/insights/malware',

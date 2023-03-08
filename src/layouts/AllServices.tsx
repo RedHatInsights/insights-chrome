@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { useIntl } from 'react-intl';
 import { Bullseye, Gallery, Masthead, Page, PageGroup, PageSection, PageSectionVariants, SearchInput, Spinner, Title } from '@patternfly/react-core';
 import { Header } from '../components/Header/Header';
@@ -6,11 +6,8 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
 
 import './AllServices.scss';
-import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
-import AllServicesIcons from '../components/AllServices/AllServicesIcons';
-import type {AllServicesSection as AllServicesSectionType} from '../components/AllServices/allServicesLinks';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
@@ -20,16 +17,10 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
-  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
-
   if (error) {
     // TODO: Add error state
     return <div>Error</div>;
   }
-
-  const contentRef1 = React.createRef<HTMLElement>();
 
   return (
     <div id="chrome-app-render-root">

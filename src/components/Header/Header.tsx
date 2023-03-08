@@ -59,7 +59,7 @@ export const Header = () => {
                     <AppFilter />
                   ) : (
                     <>
-                      <ServicesLink /> 
+                      <ServicesLink />
                       <FavoritesLink />
                     </>
                   )}
