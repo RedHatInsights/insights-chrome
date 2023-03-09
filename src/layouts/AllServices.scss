@@ -2,6 +2,15 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
 .chr-c-all-services {
+  .pf-c-text-input-group__icon {
+    display: none;
+  }
+  .chr-c-icon-filter {
+    position: absolute;
+    padding-left: 10px;
+    padding-top: 34px;
+    z-index: 2;
+  }
   .chr-c-all-services-filter {
     max-width: 300px;
   }
