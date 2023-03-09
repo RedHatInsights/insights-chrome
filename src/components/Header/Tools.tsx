@@ -1,6 +1,6 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Badge, Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -101,10 +101,6 @@ const Tools = () => {
           },
         ]
       : []),
-    {
-      title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), window.location.pathname)),
-    },
   ];
 
   useEffect(() => {
@@ -181,6 +177,21 @@ const Tools = () => {
     />
   );
 
+  const BetaSwitcher = () => {
+    return (
+      <Switch
+        id="reversed-switch"
+        label="Beta on"
+        labelOff="Beta off"
+        aria-label="Beta switcher"
+        isChecked={isBeta()}
+        onChange={() => (window.location.href = switchRelease(isBeta(), window.location.pathname))}
+        isReversed
+        className="chr-c-beta-switcher"
+      />
+    );
+  };
+
   const ThemeToggle = () => {
     const [darkmode, setDarkmode] = useState(false);
     return (
@@ -205,11 +216,9 @@ const Tools = () => {
       spaceItems={{ default: 'spaceItemsNone' }}
       widget-type="InsightsToolbar"
     >
-      {isBeta() && (
-        <ToolbarItem>
-          <Badge className="chr-c-badge-beta">beta</Badge>
-        </ToolbarItem>
-      )}
+      <ToolbarItem className="pf-m-hidden pf-m-visible-on-lg">
+        <BetaSwitcher />
+      </ToolbarItem>
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>
           <ThemeToggle />
