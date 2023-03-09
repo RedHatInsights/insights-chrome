@@ -19,16 +19,19 @@ const sendVisitedBundle = async (orgId: string) => {
 const useBundleVisitDetection = () => {
   const { pathname } = useLocation();
   const orgId = useSelector(({ chrome: { user } }: ReduxState) => user?.identity?.org_id);
-  const { markVisited, visitedBundles } = useVisitedBundles();
+  const { markVisited, visitedBundles, initialized } = useVisitedBundles();
   const bundle = useMemo(() => getUrl('bundle'), [pathname]);
   useEffect(() => {
-    if (shouldSendVisit(bundle, visitedBundles) && orgId) {
-      sendVisitedBundle(orgId);
+    // wait for user profile to be ready before any actions
+    if (initialized) {
+      if (shouldSendVisit(bundle, visitedBundles) && orgId) {
+        sendVisitedBundle(orgId);
+      }
+      if (bundle?.length > 0 && orgId) {
+        markVisited(bundle);
+      }
     }
-    if (bundle?.length > 0 && orgId) {
-      markVisited(bundle);
-    }
-  }, [bundle, orgId]);
+  }, [bundle, orgId, initialized]);
 };
 
 export default useBundleVisitDetection;
