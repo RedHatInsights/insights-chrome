@@ -1,11 +1,12 @@
 import React from 'react';
-import { Gallery, Masthead, Page, PageSection, Panel, PanelMain, Sidebar, Split, SplitItem, Title } from '@patternfly/react-core';
+import { Icon, Gallery, Masthead, Page, PageSection, Panel, PanelMain, Sidebar, Split, SplitItem, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import {
   Button,
   Card,
   CardActions,
   CardBody,
   CardHeader,
+  Divider,
   SidebarContent,
   SidebarPanel,
   Tab,
@@ -13,13 +14,16 @@ import {
   TabTitleText,
   Tabs,
 } from '@patternfly/react-core';
+import ChromeLink from '../components/ChromeLink';
+import BookOpenIcon from '@patternfly/react-icons/dist/esm/icons/book-open-icon';
+import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
 import type { AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType } from '../components/AllServices/allServicesLinks';
+import './ServicesNewNav.scss';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -72,11 +76,10 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
         }
       >
         <RedirectBanner />
-
-        <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-          <Panel variant="raised" className="chr-c-navtest">
+        <PageSection padding={{ default: 'noPadding'}}>
+          <Panel variant="raised" className="chr-c-panel-services-nav">
             <PanelMain>
-              <Sidebar>
+              <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
                 <SidebarPanel>
                   {' '}
                   <Tabs
@@ -95,6 +98,7 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                     toggleText="Containers"
                     aria-label="Tabs in the vertical expandable example"
                     role="region"
+                    className="pf-u-pl-md"
                   >
                     {linkSections.map((section, index) => (
                       <Tab
@@ -106,6 +110,17 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                       />
                     ))}
                   </Tabs>
+                  <Divider inset={{ default: 'insetNone' }} className="pf-u-py-md" />
+                  <TextContent className="pf-u-pb-md pf-u-pl-lg">
+                    <Text component={TextVariants.p}>
+                      <ChromeLink href="/allservices">
+                        <Icon className="pf-u-mr-sm" isInline>
+                          <BookOpenIcon />
+                        </Icon>
+                        Browse all cloud services
+                      </ChromeLink>
+                    </Text>
+                  </TextContent>
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>
@@ -123,14 +138,20 @@ const ServicesNewNav = ({ Footer }: ServicesNewNavProps) => {
                       <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
                         <Gallery hasGutter>
                           {selectedService.links.map((link) => (
-                            <Card isFlat>
-                              <CardHeader>{link.title}</CardHeader>
-                              <CardBody>
+                            <Card isFlat isSelectableRaised>
+                              <CardBody className="pf-u-p-md">
                                 <Split>
-                                  <SplitItem className="pf-m-fill"> </SplitItem>
-                                  <SplitItem> </SplitItem>
+                                  <SplitItem className="pf-m-fill">{link.title}</SplitItem>
+                                  <SplitItem>
+                                    <Icon className="chr-c-icon-service-card">
+                                      <StarIcon />
+                                    </Icon>
+                                  </SplitItem>
                                 </Split>
-                                {linkDescription(link)}
+                                <TextContent>
+                                  <Text component="small">bundle name</Text>
+                                  <Text component="small" className="pf-u-color-100">{linkDescription(link)}</Text>
+                                </TextContent>
                               </CardBody>
                             </Card>
                           ))}
