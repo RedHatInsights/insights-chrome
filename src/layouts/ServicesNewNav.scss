@@ -1,3 +1,26 @@
+@import '~@patternfly/patternfly/sass-utilities/_all';
+
+.chr-c-page__services-nav-dropdown-menu {
+  position: absolute;
+  .pf-c-dropdown__menu::before {
+    z-index: -1000;
+  }
+  .pf-c-dropdown__menu {
+    top: 70px;
+
+    position: fixed; // allows menu to go full width
+    @media (max-width: 768px) {
+      top: 120px;
+    }
+  }
+}
+
+.chr-c-panel-services-nav {
+  .pf-c-tabs {
+    height: calc(100% - 90px);
+  }
+}
+
 @media (min-width: 768px) {
   .chr-c-panel-services-nav {
     .pf-c-card.pf-m-plain {
@@ -18,7 +41,7 @@
       }
     }
     .pf-c-tabs {
-      height: calc(100% - 70px);
+      height: calc(100% - 90px);
       padding-top: var(--pf-global--spacer--md);
       --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
       --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
