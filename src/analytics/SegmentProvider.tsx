@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import Cookie from 'js-cookie';
 import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -28,12 +29,17 @@ function getAdobeVisitorId() {
 
 const getPageEventOptions = () => {
   const path = window.location.pathname.replace(/^\/beta\//, '/');
+  const search = new URLSearchParams(window.location.search)
   return [
     {
       path,
       url: `${window.location.origin}${path}${window.location.search}`,
       isBeta: isBeta(),
       module: window._segment?.activeModule,
+      // Marketing campaing tracking
+      tactic_id_external: search.get('sc_cid') || Cookie.get('rh_omni_tc'),
+      tactic_id_internal: search.get('intcmp') || Cookie.get('rh_omni_itc'),
+      tactic_id_personalization: search.get('percmp') || Cookie.get('rh_omni_pc'),
       ...window?._segment?.pageOptions,
     },
     {
