@@ -48,10 +48,12 @@
     }
   }
 
-  .chr-c-badge-beta {
-    background-color: var(--pf-global--palette--green-300);
-    color: var(--pf-global--Color--dark-100);
+  .chr-c-beta-switcher {
+    .pf-c-switch__label {
+      color: var(--pf-global--palette--black-400) !important;
+    }
   }
+
   .chr-c-dropdown-user-toggle {
     --pf-c-dropdown__menu--Top: 100%;
   }

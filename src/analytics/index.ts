@@ -1,6 +1,6 @@
 'use strict';
 
-import { isBeta } from '../utils/common';
+import { isBeta, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -65,6 +65,13 @@ export function getPendoConf(data: DeepRequired<ChromeUser>) {
       // even if its duplicative... just to be extra sure
       // in case another we property overrides account_num account_id
       cloud_user_id: userID,
+      // keep in pree prod until PIA approved
+      ...(!isProd()
+        ? {
+            name: `${data.identity.user.first_name} ${data.identity.user.last_name}`,
+            email: `${data.identity.user.email}`,
+          }
+        : {}),
 
       adobe_cloud_visitor_id: getAdobeVisitorId(),
 
