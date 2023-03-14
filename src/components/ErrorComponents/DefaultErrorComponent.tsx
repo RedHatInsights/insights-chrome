@@ -15,14 +15,15 @@ import {
   Title,
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { getUrl } from '../../utils/common';
+import { chunkLoadErrorRefreshKey, getUrl } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-
+import { useSelector } from 'react-redux';
+import { ReduxState } from '../../redux/store';
 import './ErrorComponent.scss';
 
 export type DefaultErrorComponentProps = {
-  error?: string | Error;
+  error?: any | Error;
   errorInfo?: {
     componentStack?: string;
   };
@@ -30,7 +31,9 @@ export type DefaultErrorComponentProps = {
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
+
   const [sentryId, setSentryId] = useState<string | undefined>();
+  const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
   useEffect(() => {
     const sentryId = Sentry.captureException(new Error('Unhandled UI runtime error'), {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,18 +44,27 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
       trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
     });
     setSentryId(sentryId);
-
-    // explicitely track chunk loading errors
-    if (typeof (props.error as Error)?.message === 'string' && (props.error as Error).message.includes('Loading chunk') && window.segment) {
-      window.segment.track('chunk-loading-error', {
+    // When a chunk error occurs, save it with sentry and reload the page.
+    // After ten seconds, the key will be removed from localStorage
+    // so the page can refresh again if the chunk has not been fixed in akamai
+    if (activeModule && props.error?.cause?.name == 'ChunkLoadError') {
+      const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
+      // explicitly track chunk loading errors
+      window?.segment?.track('chunk-loading-error', {
         bundle: getUrl('bundle'),
         app: getUrl(),
         pathname: window.location.pathname,
         message: (props.error as Error).message,
         sentryId,
       });
+      const moduleHasReloaded = localStorage.getItem(moduleStorageKey);
+      if (moduleHasReloaded !== 'true') {
+        localStorage.setItem(moduleStorageKey, 'true');
+        location.reload();
+      }
     }
-  }, []);
+  }, [props.error, activeModule]);
+
   const stack = props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error;
   return (
     <Bullseye className="chr-c-error-component">
