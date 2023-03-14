@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
+import Cookie from 'js-cookie';
 import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -28,12 +29,17 @@ function getAdobeVisitorId() {
 
 const getPageEventOptions = () => {
   const path = window.location.pathname.replace(/^\/beta\//, '/');
+  const search = new URLSearchParams(window.location.search);
   return [
     {
       path,
       url: `${window.location.origin}${path}${window.location.search}`,
       isBeta: isBeta(),
       module: window._segment?.activeModule,
+      // Marketing campaing tracking
+      tactic_id_external: search.get('sc_cid') || Cookie.get('rh_omni_tc'),
+      tactic_id_internal: search.get('intcmp') || Cookie.get('rh_omni_itc'),
+      tactic_id_personalization: search.get('percmp') || Cookie.get('rh_omni_pc'),
       ...window?._segment?.pageOptions,
     },
     {
@@ -113,6 +119,12 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
     isBeta: isBeta(),
+    ...(!isProd() && user.identity.user
+      ? {
+          name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
+          email: `${user.identity.user.email}`,
+        }
+      : {}),
     ...[...Array(5)].reduce(
       (acc, _, i) => ({
         ...acc,
@@ -131,7 +143,8 @@ export type SegmentProviderProps = {
 const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const initialized = useRef(false);
   const fedRampEnv = isFedRamp();
-  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
+  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || fedRampEnv;
+  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
@@ -207,7 +220,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
           moduleAPIKey
         ),
       },
-      { initialPageview: false, integrations: { All: !fedRampEnv } }
+      { initialPageview: false, integrations: { All: !disableIntegrations } }
     );
   }
 

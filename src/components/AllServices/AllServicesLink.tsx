@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import useFavoritePages from '@redhat-cloud-services/chrome/useFavoritePages';
 import { matchPath } from 'react-router-dom';
 
-import StarHalfAltIcon from '@patternfly/react-icons/dist/js/icons/star-half-alt-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
@@ -33,11 +32,16 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
-    <Text component={TextVariants.p} className="chr-c-favorite-trigger">
+    <Text
+      component={TextVariants.p}
+      className={classNames('chr-c-favorite-trigger', {
+        'chr-c-icon-favorited': !isFavorite,
+      })}
+    >
       <ChromeLink appId={appId} isExternal={isExternal} href={href}>
         {title}
         {isExternal && (
-          <Icon className="pf-u-ml-sm" isInline>
+          <Icon className="pf-u-ml-sm chr-c-icon-external-link" isInline>
             <ExternalLinkAltIcon />
           </Icon>
         )}
@@ -46,13 +50,10 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
         <Icon
           onClick={() => handleFavouriteToggle(href, isFavorite)}
           aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-          className={classNames('pf-u-ml-md', {
-            'chr-c-icon-not-favorited': !isFavorite,
-          })}
-          status="warning"
+          className="pf-u-ml-sm chr-c-icon-star"
           isInline
         >
-          {isFavorite ? <StarIcon /> : <StarHalfAltIcon />}
+          <StarIcon />
         </Icon>
       )}
     </Text>
