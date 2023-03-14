@@ -143,7 +143,8 @@ export type SegmentProviderProps = {
 const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const initialized = useRef(false);
   const fedRampEnv = isFedRamp();
-  const isDisabled = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
+  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || fedRampEnv;
+  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
@@ -219,7 +220,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
           moduleAPIKey
         ),
       },
-      { initialPageview: false, integrations: { All: !fedRampEnv } }
+      { initialPageview: false, integrations: { All: !disableIntegrations } }
     );
   }
 
