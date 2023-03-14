@@ -23,7 +23,7 @@ const ServiceTile = ({ name, pathname, description = 'Lorem ipsum dolor sit amet
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
-      <Card isSelectableRaised>
+      <Card isFlat isSelectableRaised>
         <CardBody>
           <Split>
             <SplitItem className="pf-m-fill">{name}</SplitItem>
