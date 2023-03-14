@@ -29,7 +29,7 @@ function getAdobeVisitorId() {
 
 const getPageEventOptions = () => {
   const path = window.location.pathname.replace(/^\/beta\//, '/');
-  const search = new URLSearchParams(window.location.search)
+  const search = new URLSearchParams(window.location.search);
   return [
     {
       path,
@@ -119,6 +119,12 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
     isBeta: isBeta(),
+    ...(!isProd() && user.identity.user
+      ? {
+          name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
+          email: `${user.identity.user.email}`,
+        }
+      : {}),
     ...[...Array(5)].reduce(
       (acc, _, i) => ({
         ...acc,
