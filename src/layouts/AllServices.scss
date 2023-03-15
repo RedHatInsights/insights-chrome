@@ -26,6 +26,7 @@
     }
 
     .chr-c-favorite-trigger {
+      cursor: pointer;
       .pf-c-icon {
         --pf-c-icon__content--Color: var(--pf-global--Color--light-100);
       }
