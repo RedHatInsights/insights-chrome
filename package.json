@@ -179,7 +179,7 @@
     "@segment/analytics-next": "^1.48.0",
     "@sentry/react": "^7.28.1",
     "@sentry/tracing": "^7.28.1",
-    "@unleash/proxy-client-react": "^3.5.0",
+    "@unleash/proxy-client-react": "^3.5.2",
     "abortcontroller-polyfill": "^1.7.5",
     "axios": "^0.27.2",
     "axios-cache-adapter": "^2.7.3",
