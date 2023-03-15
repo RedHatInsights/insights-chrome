@@ -189,14 +189,14 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                       />
                     ))}
                   </Tabs>
-                  <Divider inset={{ default: 'insetNone' }} className="pf-u-py-md" />
-                  <TextContent className="pf-u-pb-md pf-u-pl-lg">
+                  <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
+                  <TextContent className="pf-u-pb-md pf-u-text-align-center">
                     <Text component={TextVariants.p}>
                       <ChromeLink href="/allservices">
                         <Icon className="pf-u-mr-sm" isInline>
                           <BookOpenIcon />
                         </Icon>
-                        Browse all cloud services
+                        Browse all services
                       </ChromeLink>
                     </Text>
                   </TextContent>

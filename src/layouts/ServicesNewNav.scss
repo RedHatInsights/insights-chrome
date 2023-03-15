@@ -10,14 +10,14 @@
 
     position: fixed; // allows menu to go full width
     @media (max-width: 768px) {
-      top: 120px;
+      top: 118px;
     }
   }
 }
 
 .chr-c-panel-services-nav {
   .pf-c-tabs {
-    height: calc(100% - 90px);
+    height: calc(100% - 80px);
   }
 }
 
@@ -41,7 +41,7 @@
       }
     }
     .pf-c-tabs {
-      height: calc(100% - 90px);
+      height: calc(100% - 80px);
       padding-top: var(--pf-global--spacer--md);
       --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
       --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
