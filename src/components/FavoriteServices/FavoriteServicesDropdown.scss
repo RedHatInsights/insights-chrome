@@ -1,0 +1,11 @@
+.chr-c-favorite-services-dropdown {
+  position: absolute !important;
+  top: 70px;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: var(--pf-global--BackgroundColor--light-100);
+  overflow-y: auto;
+  overflow-x: none;
+  height: calc(100vh - 70px);
+}

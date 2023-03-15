@@ -10,7 +10,6 @@ import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import AllServices from '../../layouts/AllServices';
-import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -189,14 +188,6 @@ const ScalprumRoot = memo(
             element={
               <Suspense fallback={LoadingFallback}>
                 <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/favoritedservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
               </Suspense>
             }
           />

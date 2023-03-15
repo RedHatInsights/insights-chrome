@@ -5,7 +5,6 @@ import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import AppFilter from '../AppFilter';
 import ServicesLink from './ServicesLink';
-import FavoritesLink from './FavoritesLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -21,6 +20,7 @@ import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
+import FavoriteServicesDropdown from '../FavoriteServices';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -59,7 +59,7 @@ export const Header = () => {
                     <AppFilter />
                   ) : (
                     <>
-                      <ServicesLink /> <FavoritesLink />
+                      <ServicesLink /> <FavoriteServicesDropdown />
                     </>
                   )}
                 </ToolbarItem>
