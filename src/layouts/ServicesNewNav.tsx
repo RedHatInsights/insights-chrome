@@ -41,7 +41,7 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import useAllServices from '../hooks/useAllServices';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
 import type { AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType } from '../components/AllServices/allServicesLinks';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import useAppFilter, { AppFilterBucket } from '../components/AppFilter/useAppFilter';
@@ -91,6 +91,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoaded) {
@@ -124,6 +125,13 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
       return '';
     }
   };
+
+  const navigateToLink = (link: AllServicesLink | AllServicesGroup) => {
+    let serviceLink = link as AllServicesLink;
+    if (serviceLink.href) {
+      navigate(serviceLink.href);
+    }
+  }
 
   const contentRef1 = React.createRef<HTMLElement>();
 
@@ -209,7 +217,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                       <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
                         <Gallery hasGutter>
                           {selectedService.links.map((link) => (
-                            <Card isFlat isSelectableRaised>
+                            <Card isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
                               <CardBody className="pf-u-p-md">
                                 <Split>
                                   <SplitItem className="pf-m-fill">{link.title}</SplitItem>
