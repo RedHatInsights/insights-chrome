@@ -23,7 +23,6 @@ import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
-// import ServicesNewNav from '../../layouts/ServicesNewNav';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 
@@ -190,7 +189,6 @@ const ScalprumRoot = memo(
             element={
               <Suspense fallback={LoadingFallback}>
                 <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-                {/* <ServicesNewNav Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} /> */}
               </Suspense>
             }
           />
