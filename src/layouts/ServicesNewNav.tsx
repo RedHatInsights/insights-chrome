@@ -208,7 +208,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                         {convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}
                       </Title>
                       <CardActions>
-                        <Button variant="plain" aria-label="Close menu">
+                        <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
                           <TimesIcon />
                         </Button>
                       </CardActions>
