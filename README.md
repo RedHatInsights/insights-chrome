@@ -6,7 +6,7 @@ Insights Chrome provides:
 
 - Standard header and navigation
 - Base CSS/style
-- A JavaScript library for interacting with Insights Chrome
+- A Javascript library for interacting with Insights Chrome
 
 For more detailed information about chrome and what it provides, [look through the detailed documentation](https://github.com/redhatinsights/insights-chrome/tree/master/docs).
 
