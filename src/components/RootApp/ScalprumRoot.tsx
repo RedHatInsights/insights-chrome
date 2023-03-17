@@ -151,7 +151,11 @@ const ScalprumRoot = memo(
               }
               return {
                 ...manifest,
-                loadScripts: manifest.loadScripts ?? ['plugin-entry.js'],
+                // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
+                baseURL: '/',
+                loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
+                  `${manifest.baseURL ?? ''}plugin-entry.js`,
+                ],
                 registrationMethod: manifest.registrationMethod ?? 'callback',
               };
             },
