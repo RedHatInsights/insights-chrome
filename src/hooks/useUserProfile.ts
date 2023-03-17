@@ -14,7 +14,7 @@ const useUserProfile = () => {
     // check current login method
     const currentProfile = localStorage.getItem(LOGIN_TYPE_STORAGE_KEY);
     // if current login scope is not full profile and scope requires it, trigger full profile login`
-    if (activeModule?.fullProfile && currentProfile !== 'rhfull') {
+    if ((activeModule?.config?.fullProfile || activeModule?.fullProfile) && currentProfile !== 'rhfull') {
       login(true);
     }
   }, [activeModule]);

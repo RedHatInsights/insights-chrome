@@ -140,9 +140,7 @@ export type RemoteModule = {
 export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
-  config?: {
-    ssoUrl: string;
-  };
+  config?: Record<string, unknown>;
   analytics?: {
     APIKey?: string;
   };

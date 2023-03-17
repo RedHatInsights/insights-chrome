@@ -43,7 +43,7 @@ export type ChromeGlobalConfig = { chrome?: ChromeModule };
 export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUser | void>, store: Store, globalConfig?: ChromeGlobalConfig) => ({
   getOfflineToken: () => libjwt.getOfflineToken(),
   doOffline: () =>
-    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
+    libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || (globalConfig?.chrome?.config?.ssoUrl as string)),
   getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
   getUser,
   qe: {
