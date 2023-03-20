@@ -10,7 +10,7 @@ Insights Chrome provides:
 
 For more detailed information about chrome and what it provides, [look through the detailed documentation](https://github.com/redhatinsights/insights-chrome/tree/master/docs).
 
-## Javascript API
+## JavaScript API
 
 Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
 
