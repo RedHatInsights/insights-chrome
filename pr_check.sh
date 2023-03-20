@@ -17,6 +17,7 @@ set -ex
 source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 BUILD_RESULTS=$?
 
+set -ex
 # Stubbed out for now
 mkdir -p $WORKSPACE/artifacts
 cat << EOF > $WORKSPACE/artifacts/junit-dummy.xml
