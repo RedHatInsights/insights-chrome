@@ -181,6 +181,8 @@ describe('Gateway errors', () => {
 
   it('should render component if a 403 error does not originate from gateway', () => {
     const code = 'not-gateway-403';
+    // make sure to mock the JS modle asset
+    cy.intercept('/apps/foo/bar.js*', {});
     const Component = createEnv(code);
     // mock the module
     window[code] = {
@@ -199,15 +201,15 @@ describe('Gateway errors', () => {
         },
       }),
     };
-    // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 200,
       body: {
         [code]: {
-          entry: [],
+          entry: ['/apps/foo/bar.js'],
         },
       },
     }).as(code);
+    // throw 403 gateway error
     cy.intercept('GET', `/foo/bar`, {
       statusCode: 403,
       body: {
@@ -232,6 +234,7 @@ describe('Gateway errors', () => {
 
   it('does not handle 404 3scale gateway error', () => {
     const code = 'gateway-404';
+    cy.intercept('/apps/foo/bar.js*', {});
     const Component = createEnv(code);
 
     // mock the module
@@ -256,7 +259,7 @@ describe('Gateway errors', () => {
       statusCode: 200,
       body: {
         [code]: {
-          entry: [],
+          entry: ['/apps/foo/bar.js'],
         },
       },
     }).as(code);
