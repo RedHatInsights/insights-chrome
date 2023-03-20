@@ -17,6 +17,7 @@ import LibtJWTContext from './components/LibJWTContext';
 import { ReduxState } from './redux/store';
 import qe from './utils/iqeEnablement';
 import initializeJWT from './jwt/initialize-jwt';
+import AppPlaceholder from './components/AppPlaceholder';
 
 const language: keyof typeof messages = 'en';
 
@@ -110,7 +111,9 @@ const App = () => {
     <LibtJWTContext.Provider value={libJwt}>
       <RootApp config={scalprumConfig} />
     </LibtJWTContext.Provider>
-  ) : null;
+  ) : (
+    <AppPlaceholder />
+  );
 };
 
 ReactDOM.render(
