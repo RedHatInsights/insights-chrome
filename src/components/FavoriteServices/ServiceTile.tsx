@@ -23,7 +23,7 @@ const ServiceTile = ({ name, pathname, description = 'Lorem ipsum dolor sit amet
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
-      <Card isSelectableRaised>
+      <Card isFlat isFullHeight isSelectableRaised>
         <CardBody>
           <Split>
             <SplitItem className="pf-m-fill">{name}</SplitItem>
@@ -38,7 +38,7 @@ const ServiceTile = ({ name, pathname, description = 'Lorem ipsum dolor sit amet
                 className="pf-u-p-0"
                 variant="plain"
               >
-                <Icon onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} status="warning">
+                <Icon onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} status="warning" className="pf-u-ml-sm">
                   {/* indicate the unfavorite action on clicking by showing half start icon */}
                   {mouseOver ? <StarIconHalf /> : <StarIcon />}
                 </Icon>

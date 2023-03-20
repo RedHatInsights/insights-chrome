@@ -35,7 +35,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
     <Text
       component={TextVariants.p}
       className={classNames('chr-c-favorite-trigger', {
-        'chr-c-icon-favorited': !isFavorite,
+        'chr-c-icon-favorited': isFavorite,
       })}
     >
       <ChromeLink appId={appId} isExternal={isExternal} href={href}>
