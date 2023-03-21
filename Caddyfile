@@ -37,7 +37,7 @@
         path_regexp /preview/chrome(.*)
     }
     handle @preview_match {
-        uri strip_prefix /beta/chrome
+        uri strip_prefix /preview/chrome
         file_server * {
             root /opt/app-root/src/build 
             index opt/app-root/src/build/index.html
