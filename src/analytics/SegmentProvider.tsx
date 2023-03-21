@@ -30,6 +30,14 @@ function getAdobeVisitorId() {
 const getPageEventOptions = () => {
   const path = window.location.pathname.replace(/^\/beta\//, '/');
   const search = new URLSearchParams(window.location.search);
+
+  // Do not send keys with undefined values to segment.
+  const trackingContext = [
+    { name: 'tactic_id_external', value: search.get('sc_cid') || Cookie.get('rh_omni_tc') },
+    { name: 'tactic_id_internal', value: search.get('intcmp') || Cookie.get('rh_omni_itc') },
+    { name: 'tactic_id_personalization', value: search.get('percmp') || Cookie.get('rh_omni_pc') },
+  ].reduce((acc, curr) => (typeof curr.value === 'string' ? { ...acc, [curr.name]: curr.value } : acc), {});
+
   return [
     {
       path,
@@ -37,9 +45,7 @@ const getPageEventOptions = () => {
       isBeta: isBeta(),
       module: window._segment?.activeModule,
       // Marketing campaing tracking
-      tactic_id_external: search.get('sc_cid') || Cookie.get('rh_omni_tc'),
-      tactic_id_internal: search.get('intcmp') || Cookie.get('rh_omni_itc'),
-      tactic_id_personalization: search.get('percmp') || Cookie.get('rh_omni_pc'),
+      ...trackingContext,
       ...window?._segment?.pageOptions,
     },
     {
