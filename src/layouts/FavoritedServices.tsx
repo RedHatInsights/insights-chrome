@@ -76,7 +76,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
             <QuickAccess />
-            {favoritePages.length === 0 ? (
+            {favoritePages.length === 1 ? (
               <EmptyState />
             ) : (
               <StackItem className="pf-u-pt-xl">
