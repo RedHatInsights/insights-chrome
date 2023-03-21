@@ -3,12 +3,14 @@ import AllServicesIcons from './AllServicesIcons';
 export type AllServicesLink = {
   href: string;
   title: string;
+  description?: string;
   isExternal?: boolean;
 };
 export type AllServicesGroup = {
   isGroup: true;
   title: string;
   links: AllServicesLink[];
+  description?: string;
 };
 export type AllServicesSection = {
   icon: keyof typeof AllServicesIcons;
@@ -26,26 +28,32 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/application-services/api-designer',
         title: 'API Designer',
+        description: 'Create, import, edit, and manage API definitions and event schemas in a visual editor.',
       },
       {
         href: '/application-services/api-management',
         title: 'API Management',
+        description: 'Manage API access, policy, and traffic controls for micorservice-based applications.',
       },
       {
         href: '/application-services/connectors',
         title: 'Connectors',
+        description: 'Send data between event streams and third-party systems with pre-built integrations.',
       },
       {
         href: '/application-services/service-accounts',
         title: 'Service Accounts',
+        description: 'Authenticate and connect securely to APIs from multiple services.',
       },
       {
         href: '/application-services/service-registry',
         title: 'Service Registry',
+        description: 'Discover, publish, and reuse event schemas and API definitions in a shared repository.',
       },
       {
         href: '/application-services/streams',
         title: 'Streams for Apache Kafka',
+        description: 'Create, discover, and connect to real-time events and data streams.',
       },
     ],
   },
@@ -57,18 +65,22 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/ansible/automation-analytics/reports',
         title: 'Automation Analytics',
+        description: 'Plan, measure, and scale your automation using actionable data.',
       },
       {
         href: '/ansible/automation-hub',
         title: 'Automation Hub',
+        description: 'Find and download Ansible Content Collections from Red Hat and partners.',
       },
       {
         href: '/ansible/inventory',
         title: 'Insights',
+        description: 'Get recommendations to prevent and resolve potential issues on your Ansible-managed ecosystem.',
       },
       {
         href: '/ansible/remediations',
         title: 'Remediations',
+        description: 'Resolve issues with security, configuration, compliance, and policy recommendations.',
       },
     ],
   },
@@ -80,10 +92,12 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/application-services/databases',
         title: 'Database Access',
+        description: 'Provision, monitor, and connect to cloud-hosted partner database services.',
       },
       {
         href: '/application-services/data-science',
         title: 'Data Science',
+        description: 'Develop, train, and test artificial intelligence and machine learning (AI/ML) models.',
       },
     ],
   },
@@ -95,14 +109,17 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/openshift/create',
         title: 'Clusters',
+        description: 'Create an OpenShift cluster.',
       },
       {
         href: '/edge/fleet-management',
         title: 'Edge',
+        description: 'Manage the lifecycle and enhance security of your RHEL systems at the edge.',
       },
       {
         href: '/insights/image-builder',
         title: 'Image Builder',
+        description: 'Start building your images.',
       },
       {
         href: '/settings/content',
@@ -122,10 +139,12 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/settings/my-user-access',
         title: 'My User Access',
+        description: 'View your account permissions for Red Hat Hybrid Cloud Console services.',
       },
       {
         href: '/iam/user-access/users',
         title: 'User Access',
+        description: "Manage your organization's role-based access control (RBAC) to services.",
       },
     ],
   },
@@ -137,14 +156,17 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/openshift',
         title: 'Clusters',
+        description: 'View, Register, or Create a Openshift Cluster',
       },
       {
         href: '/openshift/overview',
         title: 'OpenShift',
+        description: 'Overview of your Openshift Environment',
       },
       {
         href: '/openshift/releases',
         title: 'Releases',
+        description: 'View general information on the most recent OpenShift Container Platform release versions that you can install',
       },
     ],
   },
@@ -183,10 +205,12 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/insights/subscriptions/inventory',
         title: 'Subscriptions',
+        description: 'List your purchased subscriptions and view more information about each.',
       },
       {
         href: '/insights/inventory',
         title: 'Systems',
+        description: 'View system facts about your RHEL hosts.',
       },
     ],
   },
@@ -202,14 +226,17 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=',
             title: 'Advisor',
+            description: 'Get recommendations to optimize availability, performance, and security on your Ansible hosts.',
           },
           {
             href: '/ansible/drift',
             title: 'Drift',
+            description: 'Create baselines and compare system profiles in your Ansible inventory over time.',
           },
           {
             href: '/ansible/policies',
             title: 'Policies',
+            description: 'Define and monitor against your own policies to identify misalignment.',
           },
         ],
       },
@@ -220,10 +247,12 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/openshift/insights/advisor/recommendations',
             title: 'Advisor',
+            description: 'Get recommendations to prevent and resolve potential issues on your OpenShift clusters.',
           },
           {
             href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
+            description: 'Assess security vulnerabilities (CVEs) that could affect your clusters.',
           },
         ],
       },
@@ -234,26 +263,32 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/advisor/recommendations',
             title: 'Advisor',
+            description: 'Get recommendations to optimize availability, performance, and security on your RHEL systems.',
           },
           {
             href: '/insights/drift',
             title: 'Drift',
+            description: 'Create baselines and compare system profiles in your RHEL inventory over time.',
           },
           {
             href: '/insights/patch/advisories',
             title: 'Patch',
+            description: 'Review applicable advisories and keep your RHEL systems up to date.',
           },
           {
             href: '/insights/policies/list',
             title: 'Policies',
+            description: 'Define and monitor against your own policies to identify misalignment',
           },
           {
             href: '/insights/remediations',
             title: 'Remediations',
+            description: 'Resolve issues with security, configuration, compliance, and policy recommendations.',
           },
           {
             href: '/insights/ros',
             title: 'Resource Optimization',
+            description: 'Right-size your public cloud systems based on CPU, memory, and I/O performance metrics.',
           },
         ],
       },
@@ -275,6 +310,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/ansible/remediations',
             title: 'Remediations',
+            description: 'Resolve issues with security, configuration, compliance, and policy recommendations.',
           },
         ],
       },
@@ -283,8 +319,14 @@ const allServicesLinks: AllServicesSection[] = [
         title: 'OpenShift',
         links: [
           {
-            href: '/openshift/insights/vulnerability',
+            href: '/application-services/acs/overview',
+            title: 'Advanced Cluster Security',
+            description: 'Securely build, deploy, and run your cloud applications using Kubernetes-native architecture.',
+          },
+          {
+            href: '/openshift/insights/vulnerability/',
             title: 'Vulnerability',
+            description: 'Assess security vulnerabilities (CVEs) that could affect your clusters.',
           },
         ],
       },
@@ -295,22 +337,27 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/advisor/recommendations',
             title: 'Advisor',
+            description: 'Analyze the availability, performance, stability, and security risk for your systems.',
           },
           {
             href: '/insights/compliance',
             title: 'Compliance',
+            description: 'Deploy and monitor security compliance policies for your organization.',
           },
           {
             href: '/edge/fleet-management',
             title: 'Edge',
+            description: 'Manage the lifecycle and enhance security of your RHEL systems at the edge.',
           },
           {
             href: '/insights/malware',
             title: 'Malware',
+            description: 'Identify potential malware on your RHEL hosts.',
           },
           {
             href: '/insights/patch/advisories',
             title: 'Patch',
+            description: 'Review applicable advisories and keep your RHEL systems up to date.',
           },
           {
             href: '/insights/tasks',
@@ -319,6 +366,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/vulnerability/cves',
             title: 'Vulnerability',
+            description: 'Assess security vulnerabilities (CVEs) that could affect your systems.',
           },
         ],
       },
@@ -332,10 +380,12 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/openshift/cost-management',
         title: 'Cost Management',
+        description: 'Understand and track costs for your OpenShift clusters and workloads.',
       },
       {
         href: '/insights/subscriptions/inventory',
         title: 'Subscription Inventory',
+        description: 'List your purchased subscriptions and view more information about each.',
       },
     ],
   },
@@ -347,18 +397,22 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/settings/connector/activation-keys',
         title: 'Activation Keys',
+        description: 'Create keys to register systems and configure repositories without a username and password.',
       },
       {
         href: '/insights/subscriptions/manifests',
         title: 'Manifests',
+        description: 'Download subscription manifests for Red Hat Satellite.',
       },
       {
         href: '/insights/registration',
         title: 'Register Systems',
+        description: 'Guides you through the setup process for the Red Hat Insights Client.',
       },
       {
         href: '/settings/connector',
         title: 'Remote Host Configuration',
+        description: 'Connect to Red Hat and automatically push ansible playbooks.',
       },
     ],
   },
@@ -371,16 +425,19 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/openshift/sandbox',
         title: 'Developer Sandbox',
+        description: 'Learn and try developing in a private, pre-configured OpenShift environment.',
       },
       {
         isExternal: true,
         href: 'https://marketplace.redhat.com/en-us',
         title: 'Red Hat Marketplace',
+        description: 'Find, try, purchase, and deploy your software across clouds.',
       },
       {
         isExternal: true,
         href: 'https://www.redhat.com/en/products/trials',
         title: 'Red Hat Product Trials',
+        description: 'Gain hands-on experience and assess if a product is right for you in a no-cost trial.',
       },
     ],
   },

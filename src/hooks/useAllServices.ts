@@ -95,7 +95,6 @@ const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filte
     return acc;
   }, []);
 };
-
 const useAllServices = () => {
   const [{ availableLinks, ready, error }, setState] = useState<{
     error: boolean;
