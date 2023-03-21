@@ -5,9 +5,6 @@ import {
   DropdownToggle,
   Gallery,
   Icon,
-  Masthead,
-  Page,
-  PageSection,
   Panel,
   PanelMain,
   Sidebar,
@@ -36,45 +33,14 @@ import ChromeLink from '../components/ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/esm/icons/book-open-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
-import { Header } from '../components/Header/Header';
-import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import useAllServices from '../hooks/useAllServices';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
 import type { AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType } from '../components/AllServices/allServicesLinks';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useIntl } from 'react-intl';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import useAppFilter, { AppFilterBucket } from '../components/AppFilter/useAppFilter';
+import useAppFilter from '../components/AppFilter/useAppFilter';
 import './ServicesNewNav.scss';
 import { bundleMapping } from '../hooks/useBundle';
-
-export type AppLinksProps = {
-  id: string;
-  title: React.ReactNode;
-  links?: AppFilterBucket['links'];
-  setIsOpen: (isOpen: boolean) => void;
-};
-const AppLinks = ({ id, title, links = [], setIsOpen }: AppLinksProps) =>
-  links.length > 0 ? (
-    <div className="galleryItem">
-      <Split>
-        <SplitItem>
-          <TextContent>
-            <Text component="h4">{title}</Text>
-            {links.map(({ filterable, href, title, isHidden, ...rest }) =>
-              isHidden || !href ? null : (
-                <Text component="p" key={`${id}-${href}`} onClick={() => setIsOpen?.(false)}>
-                  <ChromeLink {...rest} title={title} href={href}>
-                    {title}
-                  </ChromeLink>
-                </Text>
-              )
-            )}
-          </TextContent>
-        </SplitItem>
-      </Split>
-    </div>
-  ) : null;
 
 export type ServicesNewNavDropdownProps = {
   isLoaded: boolean;
@@ -84,10 +50,9 @@ export type ServicesNewNavDropdownProps = {
   setFilterValue: (filterValue?: string) => void;
 };
 
-const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilterValue }: ServicesNewNavDropdownProps) => {
+const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const intl = useIntl();
   const { linkSections } = useAllServices();
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
@@ -128,17 +93,17 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
   };
 
   const navigateToLink = (link: AllServicesLink | AllServicesGroup) => {
-    let serviceLink = link as AllServicesLink;
+    const serviceLink = link as AllServicesLink;
     if (serviceLink.href) {
       navigate(serviceLink.href);
     }
-  }
+  };
 
   const getBundle = (link: AllServicesLink) => {
     if (link.href) {
       return bundleMapping[link.href.split('/')[1]];
     }
-  }
+  };
 
   const contentRef1 = React.createRef<HTMLElement>();
 
@@ -188,6 +153,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                   >
                     {linkSections.map((section, index) => (
                       <Tab
+                        key={index}
                         eventKey={index}
                         title={<TabTitleText>{section.title}</TabTitleText>}
                         tabContentId="refTab1Section"
@@ -224,7 +190,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                       <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
                         <Gallery hasGutter>
                           {selectedService.links.map((link) => (
-                            <Card isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
+                            <Card key={link.title} isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
                               <CardBody className="pf-u-p-md">
                                 <Split>
                                   <SplitItem className="pf-m-fill">{link.title}</SplitItem>
@@ -235,7 +201,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                                   </SplitItem>
                                 </Split>
                                 <TextContent>
-                                  <Text component="small">{getBundle((link as AllServicesLink ))}</Text>
+                                  <Text component="small">{getBundle(link as AllServicesLink)}</Text>
                                   <Text component="small" className="pf-u-color-100">
                                     {linkDescription(link)}
                                   </Text>
@@ -263,7 +229,7 @@ export type ServicesNewNavProps = {
 };
 
 const ServicesNewNav = () => {
-  const { filteredApps, isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useAppFilter();
+  const { isLoaded, isOpen, setIsOpen, filterValue, setFilterValue } = useAppFilter();
   return (
     <React.Fragment>
       <ServicesNewNavDropdown isLoaded={isLoaded} setIsOpen={setIsOpen} isOpen={isOpen} filterValue={filterValue} setFilterValue={setFilterValue} />
