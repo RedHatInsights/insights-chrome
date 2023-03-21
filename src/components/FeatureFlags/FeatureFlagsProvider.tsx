@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
+import { DeepRequired } from 'utility-types';
 import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
 import { ReduxState } from '../../redux/store';
@@ -62,18 +63,18 @@ export let unleashClient: UnleashClient;
 export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
 
 const FeatureFlagsProvider: React.FC = ({ children }) => {
-  const user = useSelector<ReduxState, ChromeUser | undefined>((state) => state.chrome.user);
+  const user = useSelector<DeepRequired<ReduxState>, DeepRequired<ChromeUser>>((state) => state.chrome.user);
   unleashClient = useMemo(
     () =>
       new UnleashClient({
         ...config,
         context: {
-          userId: user?.identity.internal?.account_id,
+          userId: user.identity.internal?.account_id,
           ...(user
             ? {
                 properties: {
                   account_number: user.identity.account_number,
-                  email: user.identity.user?.email as string,
+                  email: user.identity.user.email,
                 },
               }
             : {}),
