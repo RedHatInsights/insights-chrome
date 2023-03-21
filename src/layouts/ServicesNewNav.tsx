@@ -46,6 +46,7 @@ import { useIntl } from 'react-intl';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import useAppFilter, { AppFilterBucket } from '../components/AppFilter/useAppFilter';
 import './ServicesNewNav.scss';
+import { bundleMapping } from '../hooks/useBundle';
 
 export type AppLinksProps = {
   id: string;
@@ -130,6 +131,12 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
     let serviceLink = link as AllServicesLink;
     if (serviceLink.href) {
       navigate(serviceLink.href);
+    }
+  }
+
+  const getBundle = (link: AllServicesLink) => {
+    if (link.href) {
+      return bundleMapping[link.href.split('/')[1]];
     }
   }
 
@@ -228,7 +235,7 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setF
                                   </SplitItem>
                                 </Split>
                                 <TextContent>
-                                  <Text component="small">bundle name</Text>
+                                  <Text component="small">{getBundle((link as AllServicesLink ))}</Text>
                                   <Text component="small" className="pf-u-color-100">
                                     {linkDescription(link)}
                                   </Text>
