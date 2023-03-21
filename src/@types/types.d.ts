@@ -141,7 +141,8 @@ export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
   config?: {
-    ssoUrl: string;
+    ssoUrl?: string;
+    fullProfile?: boolean;
   };
   analytics?: {
     APIKey?: string;

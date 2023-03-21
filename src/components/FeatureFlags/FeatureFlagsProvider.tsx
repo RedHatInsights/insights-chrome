@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import UnleasFlagProvider, { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
+import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
 import { ReduxState } from '../../redux/store';
@@ -64,34 +64,25 @@ export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY
 
 const FeatureFlagsProvider: React.FC = ({ children }) => {
   const user = useSelector<ReduxState, ChromeUser | undefined>((state) => state.chrome.user);
-  const unleashClientInternal = useRef<UnleashClient>();
-
-  // create the unleash client only after the user object is avaiable
-  useEffect(() => {
-    if (user && !unleashClientInternal.current) {
-      unleashClientInternal.current = new UnleashClient({
+  unleashClient = useMemo(
+    () =>
+      new UnleashClient({
         ...config,
         context: {
-          properties: {
-            account_number: user.identity.account_number,
-          },
+          userId: user?.identity.internal?.account_id,
+          ...(user
+            ? {
+                properties: {
+                  account_number: user.identity.account_number,
+                  email: user.identity.user?.email as string,
+                },
+              }
+            : {}),
         },
-      });
-      unleashClient = unleashClientInternal.current;
-      unleashClient.on('error', (error: any) => {
-        console.log('error', error);
-        localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
-      });
-    }
-  }, [user]);
-
-  // fallback to render the chrome withouth the feature flags if the provider is not initialized properly
-  if (getFeatureFlagsError() || !unleashClientInternal.current) {
-    // Fallback to handle errored client. The default flags provides has silent error handling if the client fails to initialize
-    return <FlagProvider config={config}>{children}</FlagProvider>;
-  }
-
-  return <UnleasFlagProvider unleashClient={unleashClientInternal.current}>{children}</UnleasFlagProvider>;
+      }),
+    []
+  );
+  return <FlagProvider unleashClient={unleashClient}>{children}</FlagProvider>;
 };
 
 FeatureFlagsProvider.propTypes = {
