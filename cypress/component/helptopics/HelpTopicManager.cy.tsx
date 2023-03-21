@@ -88,9 +88,10 @@ describe('HelpTopicManager', () => {
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [],
     });
+    cy.intercept('GET', 'foo/bar.js*', {});
     cy.intercept('GET', '/foo/bar.json', {
       TestApp: {
-        entry: [],
+        entry: ['/foo/bar.js'],
       },
     }).as('manifest');
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
