@@ -1,15 +1,22 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
 
 const chromeApiWrapper = (chromeApi: ChromeAPI): ChromeAPI => {
-  //chromeApi.forceDemo;
-  Object.keys(chromeApi).map((item) => {
-    if (typeof chromeApi[item as keyof ChromeAPI] == 'function') {
-      const originalCall = chromeApi[item as keyof ChromeAPI];
-      console.error('Do not use chrome api call from window. It has been deprecated.');
-      return { ...chromeApi, [item]: originalCall };
+  const internalApi = Object.keys(chromeApi).reduce((acc, curr) => {
+    const key = curr as keyof ChromeAPI;
+    const originalCall: ChromeAPI[typeof key] = chromeApi[key];
+    if (typeof originalCall == 'function') {
+      return {
+        ...acc,
+        [key]: (...args: Parameters<typeof originalCall>) => {
+          console.error('Do not use chrome api call from window. It has been deprecated.');
+          return originalCall(...args);
+        },
+      };
     }
-  });
-  return chromeApi;
+    return acc;
+  }, chromeApi);
+
+  return internalApi;
 };
 
 export default chromeApiWrapper;
