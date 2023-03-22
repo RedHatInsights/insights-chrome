@@ -2,13 +2,24 @@
 
 .chr-c-page__services-nav-dropdown-menu {
   position: absolute;
+  top: 70px;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  overflow-x: none;
   .pf-c-dropdown__menu::before {
     z-index: -1000;
   }
-  .pf-c-dropdown__menu {
-    top: 70px;
 
-    position: fixed; // allows menu to go full width
+  // To not cover the entire screen including masthead
+  .pf-c-backdrop {
+    position: relative;
+  }
+  .pf-c-dropdown__menu {
+    position: relative; // make sure to enable scroll within backdrop
+    top: 0;
     @media (max-width: 768px) {
       top: 118px;
     }

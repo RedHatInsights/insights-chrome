@@ -21,6 +21,7 @@ import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
+import ServicesNewNav from '../../layouts/ServicesNewNav';
 // import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
@@ -60,8 +61,8 @@ export const Header = () => {
                     <AppFilter /> // <ServicesNewNav />
                   ) : (
                     <>
-                      <ServicesLink />
-                      {/* <ServicesNewNav /> */}
+                      {/* <ServicesLink /> */}
+                      <ServicesNewNav />
                       <FavoritesLink />
                     </>
                   )}

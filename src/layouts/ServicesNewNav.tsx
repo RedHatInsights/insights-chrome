@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import {
+  Backdrop,
   Dropdown,
   DropdownToggle,
   Gallery,
@@ -128,95 +129,96 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
     >
       {ReactDOM.createPortal(
         <div ref={dropdownRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
-          <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
-            <PanelMain>
-              <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
-                <SidebarPanel>
-                  {' '}
-                  <Tabs
-                    inset={{
-                      default: 'insetNone',
-                    }}
-                    activeKey={activeTabKey}
-                    onSelect={handleTabClick}
-                    isVertical
-                    expandable={{
-                      default: 'expandable',
-                      md: 'nonExpandable',
-                    }}
-                    isExpanded={isExpanded}
-                    onToggle={onToggle}
-                    toggleText="Containers"
-                    aria-label="Tabs in the vertical expandable example"
-                    role="region"
-                    className="pf-u-pl-md"
-                  >
-                    {linkSections.map((section, index) => (
-                      <Tab
-                        key={index}
-                        eventKey={index}
-                        title={<TabTitleText>{section.title}</TabTitleText>}
-                        tabContentId="refTab1Section"
-                        tabContentRef={contentRef1}
-                        onClick={() => onTabClick(section, index)}
-                      />
-                    ))}
-                  </Tabs>
-                  <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
-                  <TextContent className="pf-u-pb-md pf-u-text-align-center">
-                    <Text component={TextVariants.p}>
-                      <ChromeLink href="/allservices">
-                        <Icon className="pf-u-mr-sm" isInline>
-                          <BookOpenIcon />
-                        </Icon>
-                        Browse all services
-                      </ChromeLink>
-                    </Text>
-                  </TextContent>
-                </SidebarPanel>
-                <SidebarContent>
-                  <Card isPlain>
-                    <CardHeader>
-                      <Title headingLevel="h2">
-                        {convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}
-                      </Title>
-                      <CardActions>
-                        <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                          <TimesIcon />
-                        </Button>
-                      </CardActions>
-                    </CardHeader>
-                    <CardBody>
-                      <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
-                        <Gallery hasGutter>
-                          {selectedService.links.map((link) => (
-                            <Card key={link.title} isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
-                              <CardBody className="pf-u-p-md">
-                                <Split>
-                                  <SplitItem className="pf-m-fill">{link.title}</SplitItem>
-                                  <SplitItem>
-                                    <Icon className="chr-c-icon-service-card">
-                                      <StarIcon />
-                                    </Icon>
-                                  </SplitItem>
-                                </Split>
-                                <TextContent>
-                                  <Text component="small">{getBundle(link as AllServicesLink)}</Text>
-                                  <Text component="small" className="pf-u-color-100">
-                                    {linkDescription(link)}
-                                  </Text>
-                                </TextContent>
-                              </CardBody>
-                            </Card>
-                          ))}
-                        </Gallery>
-                      </TabContent>
-                    </CardBody>
-                  </Card>
-                </SidebarContent>
-              </Sidebar>
-            </PanelMain>
-          </Panel>
+          <Backdrop>
+            <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
+              <PanelMain>
+                <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
+                  <SidebarPanel>
+                    <Tabs
+                      inset={{
+                        default: 'insetNone',
+                      }}
+                      activeKey={activeTabKey}
+                      onSelect={handleTabClick}
+                      isVertical
+                      expandable={{
+                        default: 'expandable',
+                        md: 'nonExpandable',
+                      }}
+                      isExpanded={isExpanded}
+                      onToggle={onToggle}
+                      toggleText="Containers"
+                      aria-label="Tabs in the vertical expandable example"
+                      role="region"
+                      className="pf-u-pl-md"
+                    >
+                      {linkSections.map((section, index) => (
+                        <Tab
+                          key={index}
+                          eventKey={index}
+                          title={<TabTitleText>{section.title}</TabTitleText>}
+                          tabContentId="refTab1Section"
+                          tabContentRef={contentRef1}
+                          onClick={() => onTabClick(section, index)}
+                        />
+                      ))}
+                    </Tabs>
+                    <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
+                    <TextContent className="pf-u-pb-md pf-u-text-align-center">
+                      <Text component={TextVariants.p}>
+                        <ChromeLink href="/allservices">
+                          <Icon className="pf-u-mr-sm" isInline>
+                            <BookOpenIcon />
+                          </Icon>
+                          Browse all services
+                        </ChromeLink>
+                      </Text>
+                    </TextContent>
+                  </SidebarPanel>
+                  <SidebarContent>
+                    <Card isPlain>
+                      <CardHeader>
+                        <Title headingLevel="h2">
+                          {convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}
+                        </Title>
+                        <CardActions>
+                          <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
+                            <TimesIcon />
+                          </Button>
+                        </CardActions>
+                      </CardHeader>
+                      <CardBody>
+                        <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
+                          <Gallery hasGutter>
+                            {selectedService.links.map((link) => (
+                              <Card key={link.title} isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
+                                <CardBody className="pf-u-p-md">
+                                  <Split>
+                                    <SplitItem className="pf-m-fill">{link.title}</SplitItem>
+                                    <SplitItem>
+                                      <Icon className="chr-c-icon-service-card">
+                                        <StarIcon />
+                                      </Icon>
+                                    </SplitItem>
+                                  </Split>
+                                  <TextContent>
+                                    <Text component="small">{getBundle(link as AllServicesLink)}</Text>
+                                    <Text component="small" className="pf-u-color-100">
+                                      {linkDescription(link)}
+                                    </Text>
+                                  </TextContent>
+                                </CardBody>
+                              </Card>
+                            ))}
+                          </Gallery>
+                        </TabContent>
+                      </CardBody>
+                    </Card>
+                  </SidebarContent>
+                </Sidebar>
+              </PanelMain>
+            </Panel>
+          </Backdrop>
         </div>,
         document.body
       )}
