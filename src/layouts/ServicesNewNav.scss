@@ -64,6 +64,11 @@
       &__link::after {
         border-color: transparent;
       }
+      .pf-c-tabs__item:hover, .pf-c-tabs__item:focus {
+        button {
+          color: var(--pf-global--primary-color--200)
+        }
+      } 
       .pf-c-tabs__item.pf-m-current {
         --pf-c-tabs__link--BackgroundColor: var(--pf-global--BackgroundColor--100);
       }

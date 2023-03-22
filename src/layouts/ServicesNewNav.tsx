@@ -37,7 +37,7 @@ import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import useAllServices from '../hooks/useAllServices';
 import AllServicesIcons from '../components/AllServices/AllServicesIcons';
 import type { AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType } from '../components/AllServices/allServicesLinks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import useAppFilter from '../components/AppFilter/useAppFilter';
 import './ServicesNewNav.scss';
@@ -58,7 +58,6 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoaded) {
@@ -90,13 +89,6 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
       return link.description;
     } else {
       return '';
-    }
-  };
-
-  const navigateToLink = (link: AllServicesLink | AllServicesGroup) => {
-    const serviceLink = link as AllServicesLink;
-    if (serviceLink.href) {
-      navigate(serviceLink.href);
     }
   };
 
@@ -190,25 +182,27 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
                       <CardBody>
                         <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
                           <Gallery hasGutter>
-                            {selectedService.links.map((link) => (
-                              <Card key={link.title} isFlat isSelectableRaised onClick={() => navigateToLink(link)}>
-                                <CardBody className="pf-u-p-md">
-                                  <Split>
-                                    <SplitItem className="pf-m-fill">{link.title}</SplitItem>
-                                    <SplitItem>
-                                      <Icon className="chr-c-icon-service-card">
-                                        <StarIcon />
-                                      </Icon>
-                                    </SplitItem>
-                                  </Split>
-                                  <TextContent>
-                                    <Text component="small">{getBundle(link as AllServicesLink)}</Text>
-                                    <Text component="small" className="pf-u-color-100">
-                                      {linkDescription(link)}
-                                    </Text>
-                                  </TextContent>
-                                </CardBody>
-                              </Card>
+                            {selectedService.links.map((link, index) => (
+                              <ChromeLink key={index} href={(link as AllServicesLink).href} className="chr-c-favorite-service__tile">
+                                <Card isFlat isSelectableRaised>
+                                  <CardBody className="pf-u-p-md">
+                                    <Split>
+                                      <SplitItem className="pf-m-fill">{link.title}</SplitItem>
+                                      <SplitItem>
+                                        <Icon className="chr-c-icon-service-card">
+                                          <StarIcon />
+                                        </Icon>
+                                      </SplitItem>
+                                    </Split>
+                                    <TextContent>
+                                      <Text component="small">{getBundle(link as AllServicesLink)}</Text>
+                                      <Text component="small" className="pf-u-color-100">
+                                        {linkDescription(link)}
+                                      </Text>
+                                    </TextContent>
+                                  </CardBody>
+                                </Card>
+                              </ChromeLink>
                             ))}
                           </Gallery>
                         </TabContent>
