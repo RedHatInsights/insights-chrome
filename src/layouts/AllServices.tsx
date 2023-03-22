@@ -1,6 +1,5 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { useIntl } from 'react-intl';
-
 import {
   Bullseye,
   Gallery,
@@ -16,16 +15,13 @@ import {
   TextContent,
   Title,
 } from '@patternfly/react-core';
-
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
 
 import './AllServices.scss';
-import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 
@@ -37,14 +33,11 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
-  useEffect(() => {
-    updateDocumentTitle('All services');
-  }, []);
-
   if (error) {
     // TODO: Add error state
     return <div>Error</div>;
   }
+
   return (
     <div id="chrome-app-render-root">
       <Page
