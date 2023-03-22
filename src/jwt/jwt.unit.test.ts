@@ -52,7 +52,9 @@ describe('JWT', () => {
   describe('setCookie', () => {
     test('sets a cookie that expires on the same second the JWT expires', () => {
       jwt.setCookie(encodedToken);
-      expect(window.document.cookie).toEqual(`cs_jwt=${encodedToken};` + `path=/foo;` + `secure=true;` + `expires=Wed, 24 Apr 2019 17:13:47 GMT`);
+      expect(window.document.cookie).toEqual(
+        `cs_jwt=${encodedToken};` + `path=/api/edge/v1;` + `secure=true;` + `expires=Wed, 24 Apr 2019 17:13:47 GMT`
+      );
     });
   });
 
