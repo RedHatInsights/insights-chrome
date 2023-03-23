@@ -389,7 +389,7 @@ export function setCookie(token?: string) {
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${token};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
       setCookieWrapper(`${cookieName}=${token};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
-      setCookieWrapper(`${cookieName}=${token};` + `path=/foo;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+      setCookieWrapper(`${cookieName}=${token};` + `path=/api/edge/v1;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
     }
   }
 }
