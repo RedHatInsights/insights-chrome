@@ -16,7 +16,7 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
-import { isBeta } from '../../utils/common';
+import { chunkLoadErrorRefreshKey, isBeta } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
 
@@ -45,6 +45,23 @@ const RootApp = memo((props: RootAppProps) => {
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));
+    if (activeModule) {
+      let timeout: NodeJS.Timeout;
+      const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
+      if (localStorage.getItem(moduleStorageKey) === 'true') {
+        // The localStorage should either be true or null. A false value
+        // can cause infinite loops. The timeout will remove the value after
+        // ten seconds
+        timeout = setTimeout(() => {
+          localStorage.removeItem(moduleStorageKey);
+        }, 10_000);
+      }
+      return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      };
+    }
   }, [activeModule]);
   /**
    * Updates the available quick starts
