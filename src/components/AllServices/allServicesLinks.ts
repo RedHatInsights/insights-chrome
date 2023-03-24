@@ -5,6 +5,7 @@ export type AllServicesLink = {
   title: string;
   description?: string;
   isExternal?: boolean;
+  prod?: boolean;
 };
 export type AllServicesGroup = {
   isGroup: true;
