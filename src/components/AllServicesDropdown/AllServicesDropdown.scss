@@ -54,6 +54,12 @@
     }
     .chr-c-icon-service-card {
       --pf-c-icon__content--Color: var(--pf-global--palette--black-200);
+      &.favorite {
+        --pf-c-icon__content--Color: var(--pf-global--palette--gold-300);
+      }
+      &:hover {
+        --pf-c-icon__content--Color: var(--pf-global--palette--black-800);        
+      }
     }
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;

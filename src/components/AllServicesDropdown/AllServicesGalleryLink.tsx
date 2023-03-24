@@ -1,16 +1,29 @@
 import React from 'react';
-import { Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
+import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import { useFavoritePages } from '@redhat-cloud-services/chrome';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
+import classNames from 'classnames';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
 const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
   const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
+  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
+
+  const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
+    if (favorite) {
+      unfavoritePage(pathname);
+    } else {
+      favoritePage(pathname);
+    }
+  };
+
+  const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
     <ChromeLink isExternal={isExternal} href={href} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-service-card" isFlat isSelectableRaised>
@@ -23,9 +36,24 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
                   <ExternalLinkAltIcon />
                 </Icon>
               ) : (
-                <Icon className="chr-c-icon-service-card">
-                  <StarIcon />
-                </Icon>
+                <Button
+                  variant="plain"
+                  className="pf-u-p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleFavouriteToggle(href, isFavorite);
+                  }}
+                  icon={
+                    <Icon
+                      className={classNames('chr-c-icon-service-card', {
+                        favorite: isFavorite,
+                      })}
+                    >
+                      <StarIcon />
+                    </Icon>
+                  }
+                />
               )}
             </SplitItem>
           </Split>
