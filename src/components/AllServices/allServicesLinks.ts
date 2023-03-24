@@ -34,7 +34,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/application-services/api-management',
         title: 'API Management',
-        description: 'Manage API access, policy, and traffic controls for micorservice-based applications.',
+        description: 'Manage API access, policy, and traffic controls for microservice-based applications.',
       },
       {
         href: '/application-services/connectors',
@@ -119,10 +119,12 @@ const allServicesLinks: AllServicesSection[] = [
       },
       {
         href: '/insights/image-builder',
-        title: 'Image Builder',
-        description: 'Start building your images.',
+        title: 'Images',
+        description: 'Build and manage Red Hat Enterprise Linux images and environments.',
       },
       {
+        // not in production
+        prod: false,
         href: '/settings/content',
         title: 'Repositories',
       },
@@ -136,6 +138,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/iam/authentication-policy/authentication-factors',
         title: 'Authentication Policy',
+        description: 'Manage how your organization authenticates to Red Hat services.',
       },
       {
         href: '/settings/my-user-access',
@@ -155,19 +158,24 @@ const allServicesLinks: AllServicesSection[] = [
     description: 'Manage your infrastructure across the hybrid cloud.',
     links: [
       {
+        href: '/openshift/create',
+        title: 'Create cluster',
+        description: 'Select an OpenShift cluster type to create.',
+      },
+      {
         href: '/openshift',
         title: 'Clusters',
-        description: 'View, Register, or Create a Openshift Cluster',
+        description: 'View, Register, or Create a Openshift Cluster.',
       },
       {
         href: '/openshift/overview',
-        title: 'OpenShift',
-        description: 'Overview of your Openshift Environment',
+        title: 'Openshift Dashboard (overview)',
+        description: 'Overview of your Openshift Environment.',
       },
       {
         href: '/openshift/releases',
         title: 'Releases',
-        description: 'View general information on the most recent OpenShift Container Platform release versions that you can install',
+        description: 'View general information on the most recent OpenShift Container Platform release versions that you can install.',
       },
     ],
   },
@@ -197,21 +205,26 @@ const allServicesLinks: AllServicesSection[] = [
     links: [
       {
         href: '/openshift',
-        title: 'Clusters',
+        title: 'Clusters Inventory',
       },
       {
         href: '/edge/fleet-management',
-        title: 'Edge',
+        title: 'Edge Inventory',
+      },
+      {
+        href: '/insights/image-builder',
+        title: 'Images',
+        description: 'Build and manage Red Hat Enterprise Linux images and environments.',
       },
       {
         href: '/insights/subscriptions/inventory',
-        title: 'Subscriptions',
-        description: 'List your purchased subscriptions and view more information about each.',
+        title: 'Subscriptions Inventory',
+        description: 'List your purchased subscriptions and view more information about each one.',
       },
       {
         href: '/insights/inventory',
         title: 'Systems',
-        description: 'View system facts about your RHEL hosts.',
+        description: 'View details about your Red Hat Enterprise Linux systems. ',
       },
     ],
   },
@@ -227,17 +240,17 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/ansible/advisor/recommendations#workloads=Ansible+Automation+Platform&SIDs=&tags=',
             title: 'Advisor',
-            description: 'Get recommendations to optimize availability, performance, and security on your Ansible hosts.',
+            description: 'See targeted recommendations to optimize your Ansible hosts’ availability, performance, and security.',
           },
           {
             href: '/ansible/drift',
             title: 'Drift',
-            description: 'Create baselines and compare system profiles in your Ansible inventory over time.',
+            description: 'Compare systems in your Ansible inventory to one another or against a set baseline.',
           },
           {
             href: '/ansible/policies',
             title: 'Policies',
-            description: 'Define and monitor against your own policies to identify misalignment.',
+            description: 'Monitor your Ansible hosts against set parameters to detect deviation or misalignment. ',
           },
         ],
       },
@@ -248,12 +261,12 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/openshift/insights/advisor/recommendations',
             title: 'Advisor',
-            description: 'Get recommendations to prevent and resolve potential issues on your OpenShift clusters.',
+            description: 'See targeted recommendations to optimize your OpenShift clusters’ availability, performance, and security.',
           },
           {
             href: '/openshift/insights/vulnerability',
             title: 'Vulnerability',
-            description: 'Assess security vulnerabilities (CVEs) that could affect your clusters.',
+            description: 'Identify and prioritize security vulnerabilities within your OpenShift clusters based on severity and frequency.',
           },
         ],
       },
@@ -264,32 +277,33 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/advisor/recommendations',
             title: 'Advisor',
-            description: 'Get recommendations to optimize availability, performance, and security on your RHEL systems.',
+            description: 'See targeted recommendations to optimize your Red Hat Enterprise Linux systems’ availability, performance, and security.',
+          },
+          {
+            href: '/insights/patch/advisories',
+            title: 'Content Advisories',
+            description: 'View applicable advisories and updates for your Red Hat Enterprise Linux systems.',
           },
           {
             href: '/insights/drift',
             title: 'Drift',
-            description: 'Create baselines and compare system profiles in your RHEL inventory over time.',
-          },
-          {
-            href: '/insights/patch/advisories',
-            title: 'Patch',
-            description: 'Review applicable advisories and keep your RHEL systems up to date.',
+            description: 'Compare your Red Hat Enterprise Linux systems to one another or against a set baseline.',
           },
           {
             href: '/insights/policies/list',
             title: 'Policies',
-            description: 'Define and monitor against your own policies to identify misalignment',
+            description: 'Monitor your Red Hat Enterprise Linux inventory systems against set parameters to detect deviation or misalignment.',
           },
           {
             href: '/insights/remediations',
             title: 'Remediations',
-            description: 'Resolve issues with security, configuration, compliance, and policy recommendations.',
+            description:
+              'Use Ansible Playbooks to resolve configuration, security, and compliance issues identified on your Red Hat Enterprise Linux systems. ',
           },
           {
             href: '/insights/ros',
             title: 'Resource Optimization',
-            description: 'Right-size your public cloud systems based on CPU, memory, and I/O performance metrics.',
+            description: 'Optimize your public cloud-based Red Hat Enterprise Linux systems based on CPU, memory, and disk input/output performance.',
           },
         ],
       },
@@ -300,10 +314,6 @@ const allServicesLinks: AllServicesSection[] = [
     title: 'Security',
     description: 'Meet your policy and compliance objectives.',
     links: [
-      {
-        href: '/application-services/acs/overview',
-        title: 'Advanced Cluster Security',
-      },
       {
         isGroup: true,
         title: 'Ansible',
@@ -327,7 +337,7 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/openshift/insights/vulnerability/',
             title: 'Vulnerability',
-            description: 'Assess security vulnerabilities (CVEs) that could affect your clusters.',
+            description: 'Identify and prioritize security vulnerabilities within your OpenShift clusters based on severity and frequency.',
           },
         ],
       },
@@ -338,12 +348,17 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/advisor/recommendations',
             title: 'Advisor',
-            description: 'Analyze the availability, performance, stability, and security risk for your systems.',
+            description: 'See targeted recommendations to optimize your Red Hat Enterprise Linux systems’ availability, performance, and security.',
+          },
+          {
+            href: '/insights/patch/advisories',
+            title: 'Content Advisories',
+            description: 'View applicable advisories and updates for your Red Hat Enterprise Linux systems.',
           },
           {
             href: '/insights/compliance',
             title: 'Compliance',
-            description: 'Deploy and monitor security compliance policies for your organization.',
+            description: 'Evaluate your Red Hat Enterprise systems’ compliance with security or regulatory standards.',
           },
           {
             href: '/edge/fleet-management',
@@ -353,21 +368,19 @@ const allServicesLinks: AllServicesSection[] = [
           {
             href: '/insights/malware',
             title: 'Malware',
-            description: 'Identify potential malware on your RHEL hosts.',
+            description: 'Identify potential malware on your Red Hat Enterprise Linux systems. ',
           },
           {
-            href: '/insights/patch/advisories',
-            title: 'Patch',
-            description: 'Review applicable advisories and keep your RHEL systems up to date.',
-          },
-          {
-            href: '/insights/tasks',
-            title: 'Tasks',
+            href: '/insights/remediations',
+            title: 'Remediations',
+            description:
+              'Use Ansible Playbooks to resolve configuration, security, and compliance issues identified on your Red Hat Enterprise Linux systems.',
           },
           {
             href: '/insights/vulnerability/cves',
             title: 'Vulnerability',
-            description: 'Assess security vulnerabilities (CVEs) that could affect your systems.',
+            description:
+              'Identify and prioritize security vulnerabilities within your Red Hat Enterprise Linux systems based on severity and frequency.',
           },
         ],
       },
@@ -386,7 +399,12 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/insights/subscriptions/inventory',
         title: 'Subscription Inventory',
-        description: 'List your purchased subscriptions and view more information about each.',
+        description: 'List your purchased subscriptions and view more information about each one.',
+      },
+      {
+        href: '/insights/ros',
+        title: 'Resource Optimization',
+        description: 'Optimize your public cloud-based Red Hat Enterprise Linux systems based on CPU, memory, and disk input/output performance.',
       },
     ],
   },
@@ -398,22 +416,22 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/settings/connector/activation-keys',
         title: 'Activation Keys',
-        description: 'Create keys to register systems and configure repositories without a username and password.',
+        description: 'Create activation keys to register your systems and configure repositories without using a username and password.',
       },
       {
         href: '/insights/subscriptions/manifests',
         title: 'Manifests',
-        description: 'Download subscription manifests for Red Hat Satellite.',
+        description: 'Export subscription manifests for Red Hat Satellite.',
       },
       {
         href: '/insights/registration',
         title: 'Register Systems',
-        description: 'Guides you through the setup process for the Red Hat Insights Client.',
+        description: 'Register your systems with the Red Hat Insights Client to view them on the Red Hat Hybrid Cloud Console.',
       },
       {
         href: '/settings/connector',
         title: 'Remote Host Configuration',
-        description: 'Connect to Red Hat and automatically push ansible playbooks.',
+        description: 'Configure your systems to execute Ansible Playbooks.',
       },
     ],
   },
