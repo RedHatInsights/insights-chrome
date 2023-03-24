@@ -48,7 +48,7 @@ const AllServicesDropdown = () => {
   };
 
   const toggle = (
-    <MenuToggle className="pf-m-full-height chr-c-link-service-toggle" ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle className="pf-m-full-height chr-c-link-service-toggle" ref={toggleRef} onClick={onToggleClick} isExpanded={true}>
       Services
     </MenuToggle>
   );
@@ -57,8 +57,8 @@ const AllServicesDropdown = () => {
     <Popper
       trigger={toggle}
       appendTo={document.body}
-      isVisible={isOpen}
-      popper={<AllServicesPortal menuRef={menuRef} setIsOpen={setIsOpen} isOpen={isOpen} isLoaded={isLoaded} />}
+      isVisible={true}
+      popper={<AllServicesPortal menuRef={menuRef} setIsOpen={setIsOpen} isOpen={true} isLoaded={isLoaded} />}
     />
   );
 };

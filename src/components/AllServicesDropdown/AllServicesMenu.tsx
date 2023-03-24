@@ -1,30 +1,17 @@
 import React, { useEffect } from 'react';
-import { Backdrop, Gallery, Icon, Panel, PanelMain, Sidebar, Split, SplitItem, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardBody,
-  CardHeader,
-  Divider,
-  SidebarContent,
-  SidebarPanel,
-  Tab,
-  TabContent,
-  TabTitleText,
-  Tabs,
-} from '@patternfly/react-core';
+import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/esm/icons/book-open-icon';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import useAllServices from '../../hooks/useAllServices';
 import AllServicesIcons from '../AllServices/AllServicesIcons';
-import type { AllServicesGroup, AllServicesLink, AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
+import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import { useLocation } from 'react-router-dom';
-import { bundleMapping } from '../../hooks/useBundle';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
+import AllServicesTabs from './AllServicesTabs';
+import AllServicesGallery from './AllServicesGallery';
 
 export type AllServicesMenuProps = {
   isLoaded: boolean;
@@ -41,7 +28,7 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
   const { linkSections } = useAllServices();
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
+  const [selectedService, setSelectedService] = React.useState<AllServicesSection>(linkSections[0]);
   const favoritedServices = useFavoritedServices();
 
   useEffect(() => {
@@ -55,7 +42,7 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
     setActiveTabKey(tabIndex);
   };
 
-  const onTabClick = (section: AllServicesSectionType, index: number) => {
+  const onTabClick = (section: AllServicesSection, index: number) => {
     setSelectedService(section);
     setActiveTabKey(index);
   };
@@ -69,21 +56,7 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
     return <TitleIcon />;
   };
 
-  const linkDescription = (link: AllServicesLink | AllServicesGroup) => {
-    if (link.description) {
-      return link.description;
-    } else {
-      return '';
-    }
-  };
-
-  const getBundle = (link: AllServicesLink) => {
-    if (link.href) {
-      return bundleMapping[link.href.split('/')[1]];
-    }
-  };
-
-  const contentRef1 = React.createRef<HTMLElement>();
+  const tabContentRef = React.createRef<HTMLElement>();
 
   return (
     <div ref={menuRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
@@ -92,46 +65,15 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
           <PanelMain>
             <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
               <SidebarPanel>
-                <Tabs
-                  inset={{
-                    default: 'insetNone',
-                  }}
-                  activeKey={activeTabKey}
-                  onSelect={handleTabClick}
-                  isVertical
-                  expandable={{
-                    default: 'expandable',
-                    md: 'nonExpandable',
-                  }}
+                <AllServicesTabs
+                  activeTabKey={activeTabKey}
+                  handleTabClick={handleTabClick}
                   isExpanded={isExpanded}
                   onToggle={onToggle}
-                  toggleText="Containers"
-                  aria-label="Tabs in the vertical expandable example"
-                  role="region"
-                  className="pf-u-pl-md"
-                >
-                  <Tab
-                    eventKey={FAVORITE_TAB_ID}
-                    title={
-                      <TabTitleText>
-                        My favorite services
-                        <Icon className="pf-u-ml-md" status="warning">
-                          <StarIcon size="sm" className="chr-c-icon-service-tab" />
-                        </Icon>
-                      </TabTitleText>
-                    }
-                  />
-                  {linkSections.map((section, index) => (
-                    <Tab
-                      key={index}
-                      eventKey={index}
-                      title={<TabTitleText>{section.title}</TabTitleText>}
-                      tabContentId={TAB_CONTENT_ID}
-                      tabContentRef={contentRef1}
-                      onClick={() => onTabClick(section, index)}
-                    />
-                  ))}
-                </Tabs>
+                  linkSections={linkSections}
+                  tabContentRef={tabContentRef}
+                  onTabClick={onTabClick}
+                />
                 <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
                 <TextContent className="pf-u-pb-md pf-u-text-align-center">
                   <Text component={TextVariants.p}>
@@ -157,34 +99,11 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
                     </CardActions>
                   </CardHeader>
                   <CardBody>
-                    <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={contentRef1} aria-label={selectedService.description}>
+                    <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>
                       {activeTabKey === FAVORITE_TAB_ID ? (
                         <FavoriteServicesGallery favoritedServices={favoritedServices} />
                       ) : (
-                        <Gallery hasGutter>
-                          {selectedService.links.map((link, index) => (
-                            <ChromeLink key={index} href={(link as AllServicesLink).href} className="chr-c-favorite-service__tile">
-                              <Card className="chr-c-link-service-card" isFlat isSelectableRaised>
-                                <CardBody className="pf-u-p-md">
-                                  <Split>
-                                    <SplitItem className="pf-m-fill">{link.title}</SplitItem>
-                                    <SplitItem>
-                                      <Icon className="chr-c-icon-service-card">
-                                        <StarIcon />
-                                      </Icon>
-                                    </SplitItem>
-                                  </Split>
-                                  <TextContent>
-                                    <Text component="small">{getBundle(link as AllServicesLink)}</Text>
-                                    <Text component="small" className="pf-u-color-100">
-                                      {linkDescription(link)}
-                                    </Text>
-                                  </TextContent>
-                                </CardBody>
-                              </Card>
-                            </ChromeLink>
-                          ))}
-                        </Gallery>
+                        <AllServicesGallery selectedService={selectedService} />
                       )}
                     </TabContent>
                   </CardBody>
