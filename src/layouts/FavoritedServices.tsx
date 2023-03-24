@@ -1,19 +1,6 @@
 import React from 'react';
 
-import {
-  Card,
-  CardBody,
-  Gallery,
-  Masthead,
-  Page,
-  PageSection,
-  PageSectionVariants,
-  Stack,
-  StackItem,
-  Text,
-  TextContent,
-  Title,
-} from '@patternfly/react-core';
+import { Masthead, Page, PageSection, PageSectionVariants, Stack, StackItem, Title } from '@patternfly/react-core';
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
@@ -23,8 +10,8 @@ import ChromeLink from '../components/ChromeLink';
 import './FavoritedServices.scss';
 import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import EmptyState from '../components/FavoriteServices/EmptyState';
-import ServiceTile, { ServiceTileProps } from '../components/FavoriteServices/ServiceTile';
-import useAllServices from '../hooks/useAllServices';
+import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
+import useFavoritedServices from '../hooks/useFavoritedServices';
 
 export type FavoritedServicesProps = {
   Footer?: React.ReactNode;
@@ -39,24 +26,7 @@ const QuickAccess = () => (
 
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
   const { favoritePages } = useFavoritePages();
-  const { servicesLinks } = useAllServices();
-
-  // extract human friendly data from the all services data set
-  const favoritedServices = favoritePages.reduce<ServiceTileProps[]>((acc, curr) => {
-    const service = servicesLinks.find(({ isExternal, href }) => !isExternal && href.includes(curr.pathname));
-    // only pick favorite link if it is favorited and application exists in our all services registry
-    if (curr.favorite && service) {
-      return [
-        ...acc,
-        {
-          name: service.title,
-          pathname: curr.pathname,
-        },
-      ];
-    }
-
-    return acc;
-  }, []);
+  const favoritedServices = useFavoritedServices();
 
   return (
     <div id="chrome-app-render-root">
@@ -80,21 +50,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
               <EmptyState />
             ) : (
               <StackItem className="pf-u-pt-xl">
-                <Gallery hasGutter>
-                  {favoritedServices.map((props, index) => (
-                    <ServiceTile {...props} key={index} />
-                  ))}
-                  <Card isPlain className="chr-c-card-centered pf-u-background-color-200">
-                    <CardBody className="pf-u-pt-lg">
-                      <TextContent>
-                        <Text component="p">Go to the All Services page to tag your favorites.</Text>
-                        <Text component="p">
-                          <ChromeLink href="/allservices">View all services</ChromeLink>
-                        </Text>
-                      </TextContent>
-                    </CardBody>
-                  </Card>
-                </Gallery>
+                <FavoriteServicesGallery favoritedServices={favoritedServices} />
               </StackItem>
             )}
           </Stack>

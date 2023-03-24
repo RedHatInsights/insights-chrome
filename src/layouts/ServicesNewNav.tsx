@@ -42,6 +42,8 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import useAppFilter from '../components/AppFilter/useAppFilter';
 import './ServicesNewNav.scss';
 import { bundleMapping } from '../hooks/useBundle';
+import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
+import useFavoritedServices from '../hooks/useFavoritedServices';
 
 export type ServicesNewNavDropdownProps = {
   isLoaded: boolean;
@@ -51,13 +53,17 @@ export type ServicesNewNavDropdownProps = {
   setFilterValue: (filterValue?: string) => void;
 };
 
+const TAB_CONTENT_ID = 'refTab1Section';
+const FAVORITE_TAB_ID = 'favorites';
+
 const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const { linkSections } = useAllServices();
-  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(12);
+  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSectionType>(linkSections[0]);
+  const favoritedServices = useFavoritedServices();
 
   useEffect(() => {
     if (isLoaded) {
@@ -144,12 +150,23 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
                       role="region"
                       className="pf-u-pl-md"
                     >
+                      <Tab
+                        eventKey={FAVORITE_TAB_ID}
+                        title={
+                          <TabTitleText>
+                            My favorite services
+                            <Icon className="pf-u-ml-md" status="warning">
+                              <StarIcon size="sm" className="chr-c-icon-service-tab" />
+                            </Icon>
+                          </TabTitleText>
+                        }
+                      />
                       {linkSections.map((section, index) => (
                         <Tab
                           key={index}
                           eventKey={index}
                           title={<TabTitleText>{section.title}</TabTitleText>}
-                          tabContentId="refTab1Section"
+                          tabContentId={TAB_CONTENT_ID}
                           tabContentRef={contentRef1}
                           onClick={() => onTabClick(section, index)}
                         />
@@ -180,31 +197,35 @@ const ServicesNewNavDropdown = ({ isLoaded, setIsOpen, isOpen }: ServicesNewNavD
                         </CardActions>
                       </CardHeader>
                       <CardBody>
-                        <TabContent eventKey={activeTabKey} id="refTab1Section" ref={contentRef1} aria-label={selectedService.description}>
-                          <Gallery hasGutter>
-                            {selectedService.links.map((link, index) => (
-                              <ChromeLink key={index} href={(link as AllServicesLink).href} className="chr-c-favorite-service__tile">
-                                <Card isFlat isSelectableRaised>
-                                  <CardBody className="pf-u-p-md">
-                                    <Split>
-                                      <SplitItem className="pf-m-fill">{link.title}</SplitItem>
-                                      <SplitItem>
-                                        <Icon className="chr-c-icon-service-card">
-                                          <StarIcon />
-                                        </Icon>
-                                      </SplitItem>
-                                    </Split>
-                                    <TextContent>
-                                      <Text component="small">{getBundle(link as AllServicesLink)}</Text>
-                                      <Text component="small" className="pf-u-color-100">
-                                        {linkDescription(link)}
-                                      </Text>
-                                    </TextContent>
-                                  </CardBody>
-                                </Card>
-                              </ChromeLink>
-                            ))}
-                          </Gallery>
+                        <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={contentRef1} aria-label={selectedService.description}>
+                          {activeTabKey === FAVORITE_TAB_ID ? (
+                            <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                          ) : (
+                            <Gallery hasGutter>
+                              {selectedService.links.map((link, index) => (
+                                <ChromeLink key={index} href={(link as AllServicesLink).href} className="chr-c-favorite-service__tile">
+                                  <Card className="chr-c-link-service-card" isFlat isSelectableRaised>
+                                    <CardBody className="pf-u-p-md">
+                                      <Split>
+                                        <SplitItem className="pf-m-fill">{link.title}</SplitItem>
+                                        <SplitItem>
+                                          <Icon className="chr-c-icon-service-card">
+                                            <StarIcon />
+                                          </Icon>
+                                        </SplitItem>
+                                      </Split>
+                                      <TextContent>
+                                        <Text component="small">{getBundle(link as AllServicesLink)}</Text>
+                                        <Text component="small" className="pf-u-color-100">
+                                          {linkDescription(link)}
+                                        </Text>
+                                      </TextContent>
+                                    </CardBody>
+                                  </Card>
+                                </ChromeLink>
+                              ))}
+                            </Gallery>
+                          )}
                         </TabContent>
                       </CardBody>
                     </Card>

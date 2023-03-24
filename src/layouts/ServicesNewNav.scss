@@ -34,8 +34,15 @@
 
 @media (min-width: 768px) {
   .chr-c-panel-services-nav {
+    // make sure the card height fills the parent link
+    .chr-c-link-service-card {
+      height: 100%;
+    }
     .pf-c-card.pf-m-plain {
       --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
+    }
+    .chr-c-icon-service-tab {
+      font-size: 1rem;
     }
     .chr-c-icon-service-card {
       --pf-c-icon__content--Color: var(--pf-global--palette--black-200);
