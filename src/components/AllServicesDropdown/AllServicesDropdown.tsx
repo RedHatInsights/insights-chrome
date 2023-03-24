@@ -1,19 +1,23 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MenuToggle, Popper } from '@patternfly/react-core';
-import useAppFilter from '../AppFilter/useAppFilter';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
+import { useLocation } from 'react-router-dom';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServicesDropdown = () => {
-  const { isLoaded } = useAppFilter();
   const [isOpen, setIsOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const handleMenuKeys = (event: KeyboardEvent) => {
     if (!isOpen) {
@@ -48,7 +52,7 @@ const AllServicesDropdown = () => {
   };
 
   const toggle = (
-    <MenuToggle className="pf-m-full-height chr-c-link-service-toggle" ref={toggleRef} onClick={onToggleClick} isExpanded={true}>
+    <MenuToggle className="pf-m-full-height chr-c-link-service-toggle" ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
       Services
     </MenuToggle>
   );
@@ -57,8 +61,8 @@ const AllServicesDropdown = () => {
     <Popper
       trigger={toggle}
       appendTo={document.body}
-      isVisible={true}
-      popper={<AllServicesPortal menuRef={menuRef} setIsOpen={setIsOpen} isOpen={true} isLoaded={isLoaded} />}
+      isVisible={isOpen}
+      popper={<AllServicesPortal menuRef={menuRef} setIsOpen={setIsOpen} isOpen={isOpen} />}
     />
   );
 };

@@ -22,6 +22,7 @@ import { activationRequestURLs } from '../../utils/consts';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
+import { useFlag } from '@unleash/proxy-client-react';
 // import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
@@ -40,6 +41,7 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 
 export const Header = () => {
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   return (
@@ -58,11 +60,10 @@ export const Header = () => {
               {user && (
                 <ToolbarItem>
                   {isProd() && !isBeta() ? (
-                    <AppFilter /> // <ServicesNewNav />
+                    <AppFilter />
                   ) : (
                     <>
-                      {/* <ServicesLink /> */}
-                      <AllServicesDropdown />
+                      {navDropdownEnabled ? <AllServicesDropdown /> : <ServicesLink />}
                       <FavoritesLink />
                     </>
                   )}

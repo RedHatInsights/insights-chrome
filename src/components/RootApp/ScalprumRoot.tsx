@@ -25,6 +25,7 @@ import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -51,6 +52,7 @@ const ScalprumRoot = memo(
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
+    const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
 
     function isStringArray(arr: EnableTopicsArgs): arr is string[] {
       return typeof arr[0] === 'string';
@@ -177,7 +179,11 @@ const ScalprumRoot = memo(
             index
             path="/"
             element={
-              <DefaultLayout Sidebar={LandingNav} Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />
+              <DefaultLayout
+                Sidebar={navDropdownEnabled ? undefined : LandingNav}
+                Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />}
+                {...props}
+              />
             }
           />
           <Route

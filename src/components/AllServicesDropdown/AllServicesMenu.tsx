@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
 import ChromeLink from '../ChromeLink';
-import BookOpenIcon from '@patternfly/react-icons/dist/esm/icons/book-open-icon';
-import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
+import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
+import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
 import useAllServices from '../../hooks/useAllServices';
 import AllServicesIcons from '../AllServices/AllServicesIcons';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
-import { useLocation } from 'react-router-dom';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 
 export type AllServicesMenuProps = {
-  isLoaded: boolean;
   setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
   menuRef: React.RefObject<HTMLDivElement>;
@@ -23,19 +21,12 @@ export type AllServicesMenuProps = {
 const TAB_CONTENT_ID = 'refTab1Section';
 const FAVORITE_TAB_ID = 'favorites';
 
-const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMenuProps) => {
-  const { pathname } = useLocation();
+const AllServicesMenu = ({ setIsOpen, isOpen, menuRef }: AllServicesMenuProps) => {
   const { linkSections } = useAllServices();
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSection>(linkSections[0]);
   const favoritedServices = useFavoritedServices();
-
-  useEffect(() => {
-    if (isLoaded) {
-      setIsOpen(false);
-    }
-  }, [pathname]);
 
   // Toggle currently active tab
   const handleTabClick = (event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent, tabIndex: string | number) => {
@@ -90,7 +81,7 @@ const AllServicesMenu = ({ isLoaded, setIsOpen, isOpen, menuRef }: AllServicesMe
                 <Card isPlain>
                   <CardHeader>
                     <Title headingLevel="h2">
-                      {convertTitleIcon(selectedService.icon)} &nbsp;{selectedService.title}
+                      {convertTitleIcon(selectedService.icon)} &nbsp;{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
                     </Title>
                     <CardActions>
                       <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
