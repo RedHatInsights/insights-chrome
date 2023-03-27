@@ -5,17 +5,9 @@ import SearchDescription from './SearchDescription';
 import SearchTitle from './SearchTitle';
 import { HighlightingResponseType, SearchResultItem } from './SearchTypes';
 
-const SearchGroup = ({
-  groupLabel,
-  items,
-  highlighting,
-}: {
-  groupLabel: string;
-  items: SearchResultItem[];
-  highlighting: HighlightingResponseType;
-}) => {
+const SearchGroup = ({ items, highlighting }: { items: SearchResultItem[]; highlighting: HighlightingResponseType }) => {
   return items.length > 0 ? (
-    <MenuGroup label={groupLabel}>
+    <MenuGroup>
       {items.map(({ id, allTitle, bundle, bundle_title, abstract, relative_uri }) => (
         <MenuItem
           component={(props) => <ChromeLink {...props} href={relative_uri} />}

@@ -1,5 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bullseye, Menu, MenuContent, MenuList, SearchInput as PFSearchInput, Popper, SearchInputProps, Spinner } from '@patternfly/react-core';
+import {
+  Bullseye,
+  Menu,
+  MenuContent,
+  MenuGroup,
+  MenuList,
+  SearchInput as PFSearchInput,
+  Popper,
+  SearchInputProps,
+  Spinner,
+} from '@patternfly/react-core';
 import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
@@ -220,9 +230,11 @@ const SearchInput = () => {
             </Bullseye>
           ) : (
             <>
-              <SearchGroup highlighting={highlighting} groupLabel="High priority" items={resultCategories.highLevel} />
-              <SearchGroup highlighting={highlighting} groupLabel="Medium priority" items={resultCategories.midLevel} />
-              <SearchGroup highlighting={highlighting} groupLabel="Low priority" items={resultCategories.lowLevel} />
+              <MenuGroup label={searchResults.numFound > 0 ? `Top ${searchResults.docs.length} results` : undefined}>
+                <SearchGroup highlighting={highlighting} items={resultCategories.highLevel} />
+                <SearchGroup highlighting={highlighting} items={resultCategories.midLevel} />
+                <SearchGroup highlighting={highlighting} items={resultCategories.lowLevel} />
+              </MenuGroup>
             </>
           )}
           {searchResults.numFound === 0 && !isFetching && <EmptySearchState />}

@@ -3,7 +3,7 @@
     &__description {
       >p {
         >span {
-          color: red;
+          color: var(--pf-global--primary-color--100);
         }
       }
       .bundle {
