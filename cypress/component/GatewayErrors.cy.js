@@ -9,16 +9,19 @@ import { removeScalprum } from '@scalprum/core';
 import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
 import chromeReducer from '../../src/redux';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
-import { loadModulesSchema } from '../../src/redux/actions';
+import { loadModulesSchema, userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import LibtJWTContext from '../../src/components/LibJWTContext';
+import testUser from '../fixtures/testUser.json';
 
 function createEnv(code) {
   if (!code) {
     throw 'Enviroment must have identifier';
   }
   const reduxStore = createStore(combineReducers(chromeReducer()), applyMiddleware(logger));
+  // initialize user object for feature flags
+  reduxStore.dispatch(userLogIn(testUser));
   // initializes request interceptors
   qe.init(reduxStore);
   reduxStore.dispatch(
@@ -65,7 +68,6 @@ function createEnv(code) {
       </MemoryRouter>
     </LibtJWTContext.Provider>
   );
-
   return Component;
 }
 
@@ -178,6 +180,7 @@ describe('Gateway errors', () => {
 
       cy.wait(`@${code}-string`);
 
+      console.log({ code });
       cy.contains(code).should('exist');
       cy.contains(`Gateway has thrown ${code} compliance error`).should('exist');
     });
