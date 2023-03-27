@@ -40,6 +40,7 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 };
 
 export const Header = () => {
+  const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
@@ -75,15 +76,17 @@ export const Header = () => {
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            <ToolbarGroup
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-              }}
-              variant="filter-group"
-            >
-              <SearchInput />
-            </ToolbarGroup>
+            {searchEnabled ? (
+              <ToolbarGroup
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                }}
+                variant="filter-group"
+              >
+                <SearchInput />
+              </ToolbarGroup>
+            ) : null}
             <HeaderTools />
           </ToolbarContent>
         </Toolbar>
