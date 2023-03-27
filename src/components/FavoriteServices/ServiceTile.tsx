@@ -16,8 +16,7 @@ export type ServiceTileProps = {
   isExternal?: boolean;
 };
 
-// FIXME: Get the real description
-const ServiceTile = ({ name, pathname, description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,', isExternal }: ServiceTileProps) => {
+const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTileProps) => {
   const bundle = bundleMapping[pathname.split('/')[1]];
   const { unfavoritePage } = useFavoritePages();
   const [mouseOver, setMouseOver] = useState(false);
@@ -47,7 +46,7 @@ const ServiceTile = ({ name, pathname, description = 'Lorem ipsum dolor sit amet
           </Split>
           <TextContent>
             <Text component="small">{bundle}</Text>
-            <Text component="p">{description}</Text>
+            {description ? <Text component="p">{description}</Text> : null}
           </TextContent>
         </CardBody>
       </Card>
