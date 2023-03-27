@@ -1,6 +1,6 @@
 .chr-c-search {
   &__title {
-    >span {
+    span.hl {
       color: var(--pf-global--primary-color--100);
     }
   }

@@ -12,7 +12,13 @@ const SearchGroup = ({ items, highlighting }: { items: SearchResultItem[]; highl
         <MenuItem
           component={(props) => <ChromeLink {...props} href={relative_uri} />}
           description={
-            <SearchDescription highlight={highlighting[id]?.abstract} bundle={bundle[0]} description={abstract} bundleTitle={bundle_title[0]} />
+            <SearchDescription
+              highlight={highlighting[id]?.abstract}
+              bundleHighlight={highlighting[id]?.bundle_title || highlighting[id]?.bundle}
+              bundle={bundle[0]}
+              description={abstract}
+              bundleTitle={bundle_title[0]}
+            />
           }
           key={id}
         >
