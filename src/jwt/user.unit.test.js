@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 jest.mock('./entitlements');
 
 const mockedEntitlements = require('./entitlements');

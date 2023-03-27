@@ -197,7 +197,7 @@ const SearchInput = () => {
 
   const debouncedFetch = useCallback(debounce(handleFetch, 500), []);
 
-  const handleChange: SearchInputProps['onChange'] = (value) => {
+  const handleChange: SearchInputProps['onChange'] = (_e, value) => {
     setSearchValue(value);
     setIsFetching(true);
     debouncedFetch(value);

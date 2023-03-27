@@ -48,7 +48,7 @@ const ScalprumRoot = memo(
     const { analytics } = useContext(SegmentContext);
 
     const libJwt = useContext(LibtJWTContext);
-    const store = useStore();
+    const store = useStore<ReduxState>();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);

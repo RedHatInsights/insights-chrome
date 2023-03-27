@@ -8,7 +8,7 @@ import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from '../IDPChecker/IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
+import { addQuickstart as addQuickstartAction, clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
@@ -78,7 +78,7 @@ const RootApp = memo((props: RootAppProps) => {
   };
 
   const addQuickstart = (key: string, qs: QuickStart): boolean => {
-    return validateQuickstart(key, qs) ? !!dispatch(addQuickstart(key, qs)) : false;
+    return validateQuickstart(key, qs) ? !!dispatch(addQuickstartAction(key, qs)) : false;
   };
 
   const quickStartProps: QuickStartContainerProps = {

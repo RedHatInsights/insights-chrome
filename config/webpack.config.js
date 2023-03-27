@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
@@ -88,18 +89,19 @@ const commonConfig = ({ dev }) => {
     },
     module: {
       rules: [
-        // we need babel loadr because of the PDF/Charts override
         {
-          test: /\.jsx?$/,
-          use: 'babel-loader',
+          test: /\.(js|ts)x?$/,
           exclude: /node_modules/,
-        },
-        {
-          test: /\.tsx?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/,
-          options: {
-            transpileOnly: true,
+          use: {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                  tsx: true,
+                },
+              },
+            },
           },
         },
         {

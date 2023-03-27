@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const analytics = require('./');
 const user = require('../jwt/user');
 const token = require('../../testdata/token.json');

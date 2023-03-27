@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
 import { fetchAllSIDs, fetchAllTags } from '../../redux/actions';
@@ -89,7 +88,13 @@ const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: F
   );
 };
 
-const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTags }: TagsModalProps) => {
+const TagsModal = ({
+  isOpen = false,
+  filterTagsBy,
+  onApplyTags = () => undefined,
+  toggleModal = () => undefined,
+  selectedTags = {},
+}: TagsModalProps) => {
   const intl = useIntl();
   const [tagsSelected, setTagsSelected] = useState<CommonSelectedTag[]>([]);
   const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
@@ -223,19 +228,6 @@ const TagsModal = ({ isOpen, filterTagsBy, onApplyTags, toggleModal, selectedTag
       ouiaId="global-filter-tags-modal"
     />
   );
-};
-TagsModal.propTypes = {
-  isOpen: PropTypes.bool,
-  selectedTags: PropTypes.object,
-  filterTagsBy: PropTypes.string,
-  onApplyTags: PropTypes.func,
-  toggleModal: PropTypes.func,
-};
-TagsModal.defaultProps = {
-  isOpen: false,
-  selectedTags: {},
-  onApplyTags: () => undefined,
-  toggleModal: () => undefined,
 };
 
 export default TagsModal;
