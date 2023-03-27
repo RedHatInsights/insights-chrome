@@ -136,6 +136,7 @@
     "@segment/analytics-next": "^1.51.1",
     "@sentry/react": "^7.39.0",
     "@sentry/tracing": "^7.39.0",
+    "@types/intercom-web": "^2.8.20",
     "@unleash/proxy-client-react": "^3.5.2",
     "abortcontroller-polyfill": "^1.7.5",
     "axios": "^0.27.2",
