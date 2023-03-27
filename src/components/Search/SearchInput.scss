@@ -37,4 +37,10 @@
     }
   }
 
+  &__empty-state {
+    .pf-c-empty-state__icon {
+      font-size: 2rem;
+    }
+  }
+
 }

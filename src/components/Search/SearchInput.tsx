@@ -1,20 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Bullseye,
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuList,
-  SearchInput as PFSearchInput,
-  Popper,
-  SearchInputProps,
-  Spinner,
-} from '@patternfly/react-core';
+import { Bullseye, Menu, MenuContent, MenuList, SearchInput as PFSearchInput, Popper, SearchInputProps, Spinner } from '@patternfly/react-core';
 import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
+import EmptySearchState from './EmptySearchState';
 
 const REPLACE_TAG = 'REPLACE_TAG';
 /**
@@ -234,8 +225,7 @@ const SearchInput = () => {
               <SearchGroup highlighting={highlighting} groupLabel="Low priority" items={resultCategories.lowLevel} />
             </>
           )}
-          {/* TODO: Add empty state */}
-          {searchResults.numFound === 0 && !isFetching && <MenuItem>No matching results</MenuItem>}
+          {searchResults.numFound === 0 && !isFetching && <EmptySearchState />}
         </MenuList>
       </MenuContent>
     </Menu>
