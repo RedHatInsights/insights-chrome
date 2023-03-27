@@ -7,6 +7,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
+import resetIntegrations from './resetIntegrations';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -199,7 +200,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        window.segment = undefined;
+        resetIntegrations();
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !fedRampEnv } }
