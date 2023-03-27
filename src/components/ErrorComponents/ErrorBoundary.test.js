@@ -32,7 +32,7 @@ describe('ErrorBoundary', () => {
      * we don't want the error stack here because we expect it
      */
     const spy = jest.spyOn(console, 'error');
-    spy.mockImplementation(() => {});
+    spy.mockImplementation(() => undefined);
     render(<DummyComponent shouldThrow />);
     expect(screen.getByText('Something went wrong', { exact: false })).toBeInTheDocument();
     spy.mockRestore();
