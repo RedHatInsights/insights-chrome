@@ -61,7 +61,6 @@ type SearchCategories = {
 };
 
 const SearchInput = () => {
-  const isEnabled = localStorage.getItem('chrome:experimental:search') === 'true';
   const [isOpen, setIsOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
@@ -176,10 +175,6 @@ const SearchInput = () => {
       window.removeEventListener('click', handleClickOutside);
     };
   }, [isOpen, menuRef]);
-
-  if (!isEnabled) {
-    return null;
-  }
 
   const handleFetch = (value: string) => {
     return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value))
