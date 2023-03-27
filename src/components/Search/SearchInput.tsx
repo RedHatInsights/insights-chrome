@@ -60,16 +60,18 @@ type SearchCategories = {
   lowLevel: SearchResultItem[];
 };
 
+const initialSearchState: SearchResponseType = {
+  docs: [],
+  maxScore: 0,
+  numFound: 0,
+  start: 0,
+};
+
 const SearchInput = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResponseType>({
-    docs: [],
-    maxScore: 0,
-    numFound: 0,
-    start: 0,
-  });
+  const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
   const [highlighting, sethigHlighting] = useState<HighlightingResponseType>({});
 
   const isMounted = useRef(false);
@@ -192,7 +194,7 @@ const SearchInput = () => {
 
   const debouncedFetch = useCallback(debounce(handleFetch, 500), []);
 
-  const handleChange: SearchInputProps['onChange'] = (_e, value) => {
+  const handleChange = (_e: any, value: string) => {
     setSearchValue(value);
     setIsFetching(true);
     debouncedFetch(value);
@@ -207,6 +209,13 @@ const SearchInput = () => {
       value={searchValue}
       onChange={handleChange}
       className="chr-c-search__input"
+      onClear={(ev) => {
+        setSearchValue('');
+        setSearchResults(initialSearchState);
+        // make sure the input is not clicked/focused
+        ev.stopPropagation();
+        setIsOpen(false);
+      }}
     />
   );
 
