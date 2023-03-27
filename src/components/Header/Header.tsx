@@ -64,8 +64,14 @@ export const Header = () => {
                     <AppFilter />
                   ) : (
                     <>
-                      {navDropdownEnabled ? <AllServicesDropdown /> : <ServicesLink />}
-                      <FavoritesLink />
+                      {navDropdownEnabled ? (
+                        <AllServicesDropdown />
+                      ) : (
+                        <>
+                          <ServicesLink />
+                          <FavoritesLink />
+                        </>
+                      )}
                     </>
                   )}
                 </ToolbarItem>
