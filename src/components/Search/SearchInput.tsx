@@ -193,6 +193,8 @@ const SearchInput = () => {
         if (isMounted.current) {
           setSearchResults(response);
           sethigHlighting(highlighting);
+          // make sure to calculate resize when switching from loading to sucess state
+          handleWindowResize();
         }
       })
       .finally(() => {
