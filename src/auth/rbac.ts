@@ -9,5 +9,5 @@ export default (cachePrefix: string) => {
   const instance = axios.create({ adapter: cache.adapter });
   instance.interceptors.response.use((response) => response.data || response);
 
-  return new AccessApi(undefined, BASE_PATH, instance);
+  return new AccessApi(undefined, BASE_PATH, instance as any);
 };

@@ -7,6 +7,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
+import resetIntegrations from './resetIntegrations';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -30,6 +31,14 @@ function getAdobeVisitorId() {
 const getPageEventOptions = () => {
   const path = window.location.pathname.replace(/^\/beta\//, '/');
   const search = new URLSearchParams(window.location.search);
+
+  // Do not send keys with undefined values to segment.
+  const trackingContext = [
+    { name: 'tactic_id_external', value: search.get('sc_cid') || Cookie.get('rh_omni_tc') },
+    { name: 'tactic_id_internal', value: search.get('intcmp') || Cookie.get('rh_omni_itc') },
+    { name: 'tactic_id_personalization', value: search.get('percmp') || Cookie.get('rh_omni_pc') },
+  ].reduce((acc, curr) => (typeof curr.value === 'string' ? { ...acc, [curr.name]: curr.value } : acc), {});
+
   return [
     {
       path,
@@ -37,9 +46,7 @@ const getPageEventOptions = () => {
       isBeta: isBeta(),
       module: window._segment?.activeModule,
       // Marketing campaing tracking
-      tactic_id_external: search.get('sc_cid') || Cookie.get('rh_omni_tc'),
-      tactic_id_internal: search.get('intcmp') || Cookie.get('rh_omni_itc'),
-      tactic_id_personalization: search.get('percmp') || Cookie.get('rh_omni_pc'),
+      ...trackingContext,
       ...window?._segment?.pageOptions,
     },
     {
@@ -193,7 +200,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        window.segment = undefined;
+        resetIntegrations();
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !fedRampEnv } }

@@ -21,6 +21,9 @@ import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { isBeta, isFedRamp, isProd } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
+import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
+import { useFlag } from '@unleash/proxy-client-react';
+// import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -37,7 +40,9 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 };
 
 export const Header = () => {
+  const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   return (
@@ -59,7 +64,14 @@ export const Header = () => {
                     <AppFilter />
                   ) : (
                     <>
-                      <ServicesLink /> <FavoritesLink />
+                      {navDropdownEnabled ? (
+                        <AllServicesDropdown />
+                      ) : (
+                        <>
+                          <ServicesLink />
+                          <FavoritesLink />
+                        </>
+                      )}
                     </>
                   )}
                 </ToolbarItem>
@@ -70,15 +82,17 @@ export const Header = () => {
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            <ToolbarGroup
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-              }}
-              variant="filter-group"
-            >
-              <SearchInput />
-            </ToolbarGroup>
+            {searchEnabled ? (
+              <ToolbarGroup
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                }}
+                variant="filter-group"
+              >
+                <SearchInput />
+              </ToolbarGroup>
+            ) : null}
             <HeaderTools />
           </ToolbarContent>
         </Toolbar>
