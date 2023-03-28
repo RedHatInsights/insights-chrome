@@ -191,6 +191,34 @@ export function toggleFeedbackModal(
   };
 }
 
+export function toggleDebuggerModal(
+  state: ChromeState,
+  {
+    payload,
+  }: {
+    payload: boolean;
+  }
+): ChromeState {
+  return {
+    ...state,
+    isDebuggerModalOpen: payload,
+  };
+}
+
+export function toggleDebuggerButton(
+  state: ChromeState,
+  {
+    payload,
+  }: {
+    payload: boolean;
+  }
+): ChromeState {
+  return {
+    ...state,
+    isDebuggerEnabled: payload,
+  };
+}
+
 export function accessRequestsNotificationsReducer(
   state: ChromeState,
   { payload: { count, data } }: { payload: { count: number; data: AccessRequest[] } }

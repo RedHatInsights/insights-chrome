@@ -37,6 +37,8 @@ export type ChromeState = {
   moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
+  isDebuggerModalOpen?: boolean;
+  isDebuggerEnabled?: boolean;
   accessRequests: {
     count: number;
     data: AccessRequest[];

@@ -45,6 +45,7 @@ export const Header = () => {
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
+
   return (
     <Fragment>
       <MastheadMain>
