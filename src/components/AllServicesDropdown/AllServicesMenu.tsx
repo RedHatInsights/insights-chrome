@@ -41,7 +41,6 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     setIsExpanded(isExpanded);
   };
 
-
   const tabContentRef = React.createRef<HTMLElement>();
 
   return (
@@ -75,9 +74,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
               <SidebarContent>
                 <Card isPlain>
                   <CardHeader>
-                    <Title headingLevel="h2">
-                      {activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                    </Title>
+                    <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
                     <CardActions>
                       <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
                         <TimesIcon />
