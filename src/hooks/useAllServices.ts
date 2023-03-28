@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { matchPath } from 'react-router-dom';
 import { BundleNavigation, NavItem } from '../@types/types';
 import allServicesLinks, { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
@@ -106,10 +106,12 @@ const useAllServices = () => {
     availableLinks: [],
     error: false,
   });
+  const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
   // TODO: move constant once the AppFilter is fully replaced
   const bundles = requiredBundles;
   useEffect(() => {
+    isMounted.current = true;
     Promise.all(
       bundles.map((fragment) =>
         axios
@@ -121,15 +123,20 @@ const useAllServices = () => {
           })
       )
     ).then((bundleItems) => {
-      const availableLinks = parseBundlesToObject(bundleItems.flat());
-      setState((prev) => ({
-        ...prev,
-        availableLinks: bundleItems.flat(),
-        ready: true,
-        // no links means all bundle requests have failed
-        error: Object.keys(availableLinks).length === 0,
-      }));
+      if (isMounted.current) {
+        const availableLinks = parseBundlesToObject(bundleItems.flat());
+        setState((prev) => ({
+          ...prev,
+          availableLinks: bundleItems.flat(),
+          ready: true,
+          // no links means all bundle requests have failed
+          error: Object.keys(availableLinks).length === 0,
+        }));
+      }
     });
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
   // AllServices pages section
