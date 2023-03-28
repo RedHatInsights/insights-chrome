@@ -77,16 +77,23 @@ export function pageAllowsUnentitled() {
     pathname === '/' ||
     pathname === '/beta' ||
     pathname === '/beta/' ||
+    pathname === '/preview' ||
+    pathname === '/preview/' ||
     pathname.indexOf('/openshift') === 0 ||
     pathname.indexOf('/beta/openshift') === 0 ||
+    pathname.indexOf('/preview/openshift') === 0 ||
     pathname.indexOf('/security') === 0 ||
     pathname.indexOf('/beta/security') === 0 ||
+    pathname.indexOf('/preview/security') === 0 ||
     pathname.indexOf('/application-services') === 0 ||
     pathname.indexOf('/beta/application-services') === 0 ||
+    pathname.indexOf('/preview/application-services') === 0 ||
     pathname.indexOf('/hac') === 0 ||
     pathname.indexOf('/beta/hac') === 0 ||
+    pathname.indexOf('/preview/hac') === 0 ||
     pathname.indexOf('/ansible/ansible-dashboard/trial') === 0 ||
     pathname.indexOf('/beta/ansible/ansible-dashboard/trial') === 0 ||
+    pathname.indexOf('/preview/ansible/ansible-dashboard/trial') === 0 ||
     // allow tenants with no account numbers: RHCLOUD-21396
     pathname.match(/\/connect\//)
   ) {
@@ -167,12 +174,12 @@ export function lastActive(searchString: string, fallback: string) {
 export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
 
 export function getUrl(type?: string) {
-  if (window.location.pathname === '/beta/' || window.location.pathname === '/') {
+  if (['/', '/beta', '/beta/', '/preview', '/preview/'].includes(window.location.pathname)) {
     return 'landing';
   }
 
   const sections = window.location.pathname.split('/');
-  if (sections[1] === 'beta') {
+  if (['beta', 'preview'].includes(sections[1])) {
     return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
   }
 
@@ -191,8 +198,14 @@ export function isProd() {
   return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
 }
 
-export function isBeta() {
-  return window.location.pathname.split('/')[1] === 'beta' ? true : false;
+export function isBeta(pathname?: string) {
+  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
+  return ['beta', 'preview'].includes(previewFragment);
+}
+
+export function getRouterBasename(pathname?: string) {
+  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
+  return isBeta(pathname) ? `/${previewFragment}` : '/';
 }
 
 export function ITLess() {

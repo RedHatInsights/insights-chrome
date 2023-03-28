@@ -14,7 +14,7 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
-import { ITLess, chunkLoadErrorRefreshKey, isBeta } from '../../utils/common';
+import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
 import { DeepRequired } from 'utility-types';
@@ -110,7 +110,7 @@ const RootApp = memo((props: RootAppProps) => {
     updateQuickStarts,
   };
   return (
-    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={isBeta() ? '/beta' : '/'}>
+    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={getRouterBasename()}>
       <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
           {/* <CrossRequestNotifier /> */}
