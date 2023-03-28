@@ -16,6 +16,7 @@ const useFavoritedServices = () => {
         {
           name: service.title,
           pathname: curr.pathname,
+          description: service.description,
         },
       ];
     }
