@@ -6,7 +6,7 @@ import ChromeLink from '../ChromeLink';
 const SatelliteLink = () => {
   return (
     <Button className="chr-c-button-masthead pf-u-px-lg-on-md" component={(props) => <ChromeLink {...props} href="/insights/satellite" />}>
-      Register Satellite
+      Manage Satellites
     </Button>
   );
 };

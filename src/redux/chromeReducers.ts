@@ -2,7 +2,7 @@ import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { ChromeModule, NavItem, Navigation } from '../@types/types';
-import { generateRoutesList, highlightItems, isBeta, isFedRamp, levelArray } from '../utils/common';
+import { ITLess, generateRoutesList, highlightItems, isBeta, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState } from './store';
 
@@ -21,7 +21,7 @@ export function appNavClick(state: ChromeState, { payload }: { payload: { id: st
 }
 
 export function loginReducer(state: ChromeState, { payload }: { payload: ChromeUser }): ChromeState {
-  const missingIDP = isFedRamp() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
+  const missingIDP = ITLess() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
   return {
     ...state,
     missingIDP,

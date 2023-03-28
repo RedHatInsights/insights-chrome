@@ -14,8 +14,6 @@ import {
   OrderType,
   Page,
   PageSection,
-  Text,
-  TextVariants,
 } from '@patternfly/react-core';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
 
@@ -52,37 +50,47 @@ const SatelliteToken: React.FC = () => {
         }
       >
         <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-          <Text component={TextVariants.h2}>Your Registration Token</Text>
-          <Text component={TextVariants.p}>Use this API token to authenticate against your Satellite system</Text>
-          <div>
-            <Button onClick={generateToken}>Generate Token</Button>
-          </div>
-          <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
-            {token}
-          </ClipboardCopy>
           <Card>
-            <CardTitle>mTLS Registration</CardTitle>
+            <CardTitle>Your Registration Token</CardTitle>
             <CardBody>
-              Satellite authenticates with Insights using mTLS. This section describes how to enable and verify authentication with a specific set of
-              certificates
+              Use this token to register your Satellite server organization. Note: The token expires in 5 minutes.
+              <div>
+                <Button onClick={generateToken}>Generate Token</Button>
+              </div>
+              <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+                {token}
+              </ClipboardCopy>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardTitle>Satellite organization registration.</CardTitle>
+            <CardBody>
+              Every Satellite server organization must be registered following the steps below.
               <List component={ListComponent.ol} type={OrderType.number}>
-                <ListItem>Sign in to the AppGate VPN.</ListItem>
-                <ListItem>Copy the Registration Token above</ListItem>
-                <ListItem>Sign in to the AppGate VPN.</ListItem>
-                <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isBlock>
-                  hammer org list # get org id
-                  {''}
-                  org_id=3 \ SATELLITE_RH_CLOUD_URL=https://mtls.console.stage.openshiftusgov.com \ /usr/sbin/foreman-rake
-                  rh_cloud:hybridcloud_register
+                <ListItem>Copy the registration token above</ListItem>
+                <ListItem>Run the following command from your Satellite server to get the organization id you want to register</ListItem>
+                <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+                  hammer organization list
+                </ClipboardCopy>
+                <ListItem>
+                  {`Run the Hybrid Cloud registration task to register your Red Hat Satellite organization, replacing "<organization_id>" with the organization ID from
+                  Step 2. You will prompted to enter the token from Step 1.`}
+                </ListItem>
+                <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+                  {`SATELLITE_RH_CLOUD_URL=https://mtls.console.stage.openshiftusgov.com ORG_ID=<organization_id> foreman-rake rh_cloud:hybridcloud_register`}
                 </ClipboardCopy>
               </List>
             </CardBody>
           </Card>
         </PageSection>
         <PageSection>
-          <div className="pf-u-mt-md">
-            <SatelliteTable />
-          </div>
+          <Card>
+            <CardTitle>Registrations</CardTitle>
+            <CardBody>
+              <SatelliteTable />
+            </CardBody>
+          </Card>
         </PageSection>
       </Page>
     </div>

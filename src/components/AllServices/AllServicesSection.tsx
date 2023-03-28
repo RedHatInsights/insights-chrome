@@ -1,6 +1,6 @@
 import { Card, CardBody, CardTitle, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import React from 'react';
-import { isFedRamp } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
 import AllServicesLink from './AllServicesLink';
@@ -14,7 +14,7 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon];
-  const filteredLinks = isFedRamp() ? links.filter((link) => link.isFedramp) : links;
+  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
   return (
     <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100">
       <CardTitle>

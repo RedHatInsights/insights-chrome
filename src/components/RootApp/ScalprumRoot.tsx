@@ -28,7 +28,7 @@ import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { useFlag } from '@unleash/proxy-client-react';
-import { isFedRamp } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -205,7 +205,7 @@ const ScalprumRoot = memo(
               </Suspense>
             }
           />
-          {!isFedRamp() && (
+          {!ITLess() && (
             <Route
               path="/favoritedservices"
               element={
@@ -215,7 +215,7 @@ const ScalprumRoot = memo(
               }
             />
           )}
-          {isFedRamp() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
+          {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
           <Route path="/security" element={<DefaultLayout {...props} />} />
           <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
         </Routes>

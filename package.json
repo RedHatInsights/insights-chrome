@@ -140,6 +140,7 @@
     "@types/intercom-web": "^2.8.20",
     "@unleash/proxy-client-react": "^3.5.2",
     "abortcontroller-polyfill": "^1.7.5",
+    "amazon-cognito-identity-js": "^6.1.2",
     "axios": "^0.27.2",
     "axios-cache-adapter": "^2.7.3",
     "axios-mock-adapter": "^1.21.2",
