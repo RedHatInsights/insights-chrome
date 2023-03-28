@@ -43,6 +43,7 @@
 
 @media (min-width: 768px) {
   .chr-c-panel-services-nav {
+    min-height: 650px;
     // make sure the card height fills the parent link
     .chr-c-link-service-card {
       height: 100%;
@@ -52,15 +53,6 @@
     }
     .chr-c-icon-service-tab {
       font-size: 1rem;
-    }
-    .chr-c-icon-service-card {
-      --pf-c-icon__content--Color: var(--pf-global--palette--black-200);
-      &.favorite {
-        --pf-c-icon__content--Color: var(--pf-global--palette--gold-300);
-      }
-      &:hover {
-        --pf-c-icon__content--Color: var(--pf-global--palette--black-800);        
-      }
     }
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;

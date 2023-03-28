@@ -121,3 +121,33 @@ aside {
 #chrome-entry {
   height: 100vh;
 }
+
+.chr-c-favorite-trigger {
+  cursor: pointer;
+  .chr-c-icon-star {
+    --pf-c-icon__content--Color: var(--pf-global--Color--light-100);
+  }
+  &:hover {
+    .pf-c-icon {
+      --pf-c-icon__content--Color: var(--pf-global--icon--Color--light);
+      &:hover {
+        --pf-c-icon__content--Color: var(--pf-global--icon--Color--dark);
+      }
+    }
+    .pf-c-icon-external-link, .pf-c-icon-external-link:hover {
+      --pf-c-icon__content--Color: var(--pf-global--active-color--100);
+    }
+  }
+}
+.chr-c-favorite-trigger.chr-c-icon-favorited {
+  .pf-c-icon {
+    --pf-c-icon__content--Color: var(--pf-global--palette--gold-400);
+    &:hover {
+      --pf-c-icon__content--Color: var(--pf-global--palette--gold-500);
+      .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
+        --pf-c-icon__content--Color: var(--pf-global--active-color--100);
+      }
+    }
+  }
+}
+
