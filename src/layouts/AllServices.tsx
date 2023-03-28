@@ -24,6 +24,7 @@ import AllServicesSection from '../components/AllServices/AllServicesSection';
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
+import { isFedRamp } from '../utils/common';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
@@ -37,6 +38,8 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     // TODO: Add error state
     return <div>Error</div>;
   }
+
+  const sections = isFedRamp() ? linkSections.filter((section) => section.isFedramp) : linkSections;
 
   return (
     <div id="chrome-app-render-root">
@@ -85,11 +88,11 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             </PageGroup>
             <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
               <Gallery className="pf-u-display-block" hasGutter>
-                {linkSections.map((section, index) => (
+                {sections.map((section, index) => (
                   <AllServicesSection key={index} {...section} />
                 ))}
                 {/* TODO: Add empty state */}
-                {linkSections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
+                {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
               </Gallery>
             </PageSection>
           </Fragment>
