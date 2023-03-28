@@ -5,6 +5,7 @@ import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import ServicesLink from './ServicesLink';
 import FavoritesLink from './FavoritesLink';
+import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -66,13 +67,13 @@ export const Header = () => {
                     ) : (
                       <>
                         <ServicesLink />
-                        <FavoritesLink />
+                        {isFedRamp() ? user?.identity?.user?.is_org_admin && <SatelliteLink /> : <FavoritesLink />}
                       </>
                     )}
                   </>
                 </ToolbarItem>
               )}
-              {user && (
+              {user && !isFedRamp() && (
                 <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
                   <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
                 </ToolbarItem>

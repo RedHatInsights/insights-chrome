@@ -11,6 +11,7 @@ import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import AllServices from '../../layouts/AllServices';
 import FavoritedServices from '../../layouts/FavoritedServices';
+import SatelliteToken from '../../layouts/SatelliteToken';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
@@ -27,6 +28,7 @@ import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { useFlag } from '@unleash/proxy-client-react';
+import { isFedRamp } from '../../utils/common';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -203,14 +205,17 @@ const ScalprumRoot = memo(
               </Suspense>
             }
           />
-          <Route
-            path="/favoritedservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-              </Suspense>
-            }
-          />
+          {!isFedRamp() && (
+            <Route
+              path="/favoritedservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                </Suspense>
+              }
+            />
+          )}
+          {isFedRamp() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
           <Route path="/security" element={<DefaultLayout {...props} />} />
           <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
         </Routes>
