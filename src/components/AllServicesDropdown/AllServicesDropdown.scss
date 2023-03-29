@@ -8,7 +8,8 @@
 }
 
 .chr-c-page__services-nav-dropdown-menu {
-  position: absolute;
+  // pos has to be important to override PF styles that get lazy loaded!
+  position: absolute !important;
   top: 70px;
   z-index: 1000;
   left: 0;
