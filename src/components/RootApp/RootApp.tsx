@@ -16,11 +16,14 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
-import { chunkLoadErrorRefreshKey, isBeta } from '../../utils/common';
+import { chunkLoadErrorRefreshKey, isBeta, isFedRamp } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
+import { DeepRequired } from 'utility-types';
+import ReactDOM from 'react-dom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
+const Debugger = lazy(() => import('../Debugger'));
 
 export type RootAppProps = {
   config: AppsConfig;
@@ -39,6 +42,8 @@ const RootApp = memo((props: RootAppProps) => {
     }: ReduxState) => Object.values(quickstarts).flat()
   );
   const { bundleTitle } = useBundle();
+  const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
   // verify if full profile reauth is required
   useUserProfile();
@@ -114,6 +119,9 @@ const RootApp = memo((props: RootAppProps) => {
             {/* <CrossRequestNotifier /> */}
             <Suspense fallback={null}>
               <NotEntitledModal />
+            </Suspense>
+            <Suspense fallback={null}>
+              {user?.identity?.account_number && !isFedRamp() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
             </Suspense>
             <ChromeProvider bundle={bundleTitle}>
               <QuickStartContainer {...quickStartProps}>
