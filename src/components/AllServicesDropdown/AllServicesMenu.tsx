@@ -4,29 +4,28 @@ import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarConten
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
 import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
-import useAllServices from '../../hooks/useAllServices';
 import AllServicesIcons from '../AllServices/AllServicesIcons';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
-import useFavoritedServices from '../../hooks/useFavoritedServices';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
+import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
   menuRef: React.RefObject<HTMLDivElement>;
+  linkSections: AllServicesSection[];
+  favoritedServices: ServiceTileProps[];
 };
 
 const TAB_CONTENT_ID = 'refTab1Section';
 const FAVORITE_TAB_ID = 'favorites';
 
-const AllServicesMenu = ({ setIsOpen, isOpen, menuRef }: AllServicesMenuProps) => {
-  const { linkSections } = useAllServices();
+const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedServices }: AllServicesMenuProps) => {
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSection>(linkSections[0]);
-  const favoritedServices = useFavoritedServices();
 
   // Toggle currently active tab
   const handleTabClick = (event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent, tabIndex: string | number) => {

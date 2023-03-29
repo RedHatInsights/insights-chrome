@@ -4,6 +4,8 @@ import { MenuToggle, Popper } from '@patternfly/react-core';
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
 import { useLocation } from 'react-router-dom';
+import useAllServices from '../../hooks/useAllServices';
+import useFavoritedServices from '../../hooks/useFavoritedServices';
 
 export type ServicesNewNavProps = {
   Footer?: React.ReactNode;
@@ -14,6 +16,8 @@ const AllServicesDropdown = () => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+  const { linkSections } = useAllServices();
+  const favoritedServices = useFavoritedServices();
 
   useEffect(() => {
     setIsOpen(false);
@@ -62,7 +66,15 @@ const AllServicesDropdown = () => {
       trigger={toggle}
       appendTo={document.body}
       isVisible={isOpen}
-      popper={<AllServicesPortal menuRef={menuRef} setIsOpen={setIsOpen} isOpen={isOpen} />}
+      popper={
+        <AllServicesPortal
+          favoritedServices={favoritedServices}
+          linkSections={linkSections}
+          menuRef={menuRef}
+          setIsOpen={setIsOpen}
+          isOpen={isOpen}
+        />
+      }
     />
   );
 };
