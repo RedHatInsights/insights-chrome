@@ -70,7 +70,7 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
     return (
-      <div role="main" className={classNames(scopeClass, scope)}>
+      <div className={classNames(scopeClass, scope)}>
         <ScalprumComponent
           // TODO: fix in scalprum. The async loader is no triggred when module/scope changes. We had tp abuse the key
           key={path}
