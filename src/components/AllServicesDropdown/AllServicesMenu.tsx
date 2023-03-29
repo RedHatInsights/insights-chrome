@@ -1,5 +1,5 @@
 import React from 'react';
-import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Backdrop, Bullseye, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
@@ -10,6 +10,7 @@ import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
+import EmptyState from '../FavoriteServices/EmptyState';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -21,6 +22,17 @@ export type AllServicesMenuProps = {
 
 const TAB_CONTENT_ID = 'refTab1Section';
 const FAVORITE_TAB_ID = 'favorites';
+
+const FavoritesTabs = ({ favoritedServices }: { favoritedServices: ServiceTileProps[] }) =>
+  favoritedServices.length === 0 ? (
+    <Bullseye>
+      <div>
+        <EmptyState />
+      </div>
+    </Bullseye>
+  ) : (
+    <FavoriteServicesGallery favoritedServices={favoritedServices} />
+  );
 
 const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedServices }: AllServicesMenuProps) => {
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
@@ -91,7 +103,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                   <CardBody>
                     <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>
                       {activeTabKey === FAVORITE_TAB_ID ? (
-                        <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                        <FavoritesTabs favoritedServices={favoritedServices} />
                       ) : (
                         <AllServicesGallery selectedService={selectedService} />
                       )}
