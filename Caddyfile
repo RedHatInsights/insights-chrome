@@ -1,0 +1,67 @@
+{
+    {$CADDY_TLS_MODE}
+    auto_https disable_redirects
+}
+:9000 {
+    metrics /metrics
+}
+  
+:8000 {
+    {$CADDY_TLS_CERT}
+    log
+    @app_match {
+        path_regexp /apps/chrome(.*)
+    }
+    handle @app_match {
+        uri strip_prefix /apps/chrome
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
+    }
+    
+    @beta_match {
+        path_regexp /beta/apps/chrome(.*)
+    }
+    handle @beta_match {
+        uri strip_prefix /beta/apps/chrome
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
+    }
+
+    @preview_match {
+        path_regexp /preview/apps/chrome(.*)
+    }
+    handle @preview_match {
+        uri strip_prefix /preview/apps/chrome
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
+    }
+
+    @config_match {
+        path_regexp /config/(.*)
+    }
+    handle @config_match {
+        uri strip_prefix /config
+        uri strip_prefix /beta/config
+        uri strip_prefix /preview/config
+        file_server * {
+            root /opt/app-root/src/build 
+            index opt/app-root/src/build/index.html
+            browse
+        }
+    }
+
+    handle * {
+        root * /opt/app-root/src/build
+        file_server
+        try_files {path} {path}/ /index.html
+    }
+}
