@@ -4,7 +4,6 @@ import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarConten
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
 import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
-import AllServicesIcons from '../AllServices/AllServicesIcons';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
@@ -41,11 +40,6 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     setIsExpanded(isExpanded);
   };
 
-  const convertTitleIcon = (icon: keyof typeof AllServicesIcons) => {
-    const TitleIcon = AllServicesIcons[icon];
-    return <TitleIcon />;
-  };
-
   const tabContentRef = React.createRef<HTMLElement>();
 
   return (
@@ -79,9 +73,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
               <SidebarContent>
                 <Card isPlain>
                   <CardHeader>
-                    <Title headingLevel="h2">
-                      {convertTitleIcon(selectedService.icon)} &nbsp;{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                    </Title>
+                    <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
                     <CardActions>
                       <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
                         <TimesIcon />
