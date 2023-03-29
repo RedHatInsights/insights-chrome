@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isBeta } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
@@ -77,7 +77,9 @@ const useNavigation = () => {
             /**
              * Clean gateway error on URL change
              */
-            dispatch(setGatewayError());
+            if (localStorage.getItem(BLOCK_CLEAR_GATEWAY_ERROR) !== 'true') {
+              dispatch(setGatewayError());
+            }
           });
         }
 
