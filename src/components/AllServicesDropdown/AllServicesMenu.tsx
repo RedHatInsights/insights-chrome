@@ -4,7 +4,6 @@ import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarConten
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
 import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
-import useAllServices from '../../hooks/useAllServices';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
