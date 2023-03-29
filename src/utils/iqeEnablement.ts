@@ -23,7 +23,7 @@ const checkOrigin = (path: URL | Request | string = '') => {
   return true;
 };
 
-function init(store: Store, libJwt: () => LibJWT | undefined) {
+function init(store: Store, libJwt?: () => LibJWT | undefined) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const oldFetch = window.fetch;

@@ -49,6 +49,7 @@ export const DEFAULT_SSO_ROUTES = {
 
 export const LOGIN_TYPE_STORAGE_KEY = '@chrome/profile-type';
 export const chunkLoadErrorRefreshKey = 'ChunkLoadErrorRefreshed';
+export const BLOCK_CLEAR_GATEWAY_ERROR = 'BLOCK_CLEAR_GATEWAY_ERROR';
 
 export function getWindow() {
   return window;
