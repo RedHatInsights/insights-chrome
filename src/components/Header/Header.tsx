@@ -23,6 +23,7 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
+import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 // import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
@@ -39,7 +40,7 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   );
 };
 
-export const Header = () => {
+export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
@@ -49,7 +50,7 @@ export const Header = () => {
 
   return (
     <Fragment>
-      <MastheadMain>
+      <MastheadMain className="pf-u-pl-lg">
         <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
@@ -63,7 +64,7 @@ export const Header = () => {
               {user && (
                 <ToolbarItem>
                   <>
-                    {navDropdownEnabled ? (
+                    {true ? (
                       <AllServicesDropdown />
                     ) : (
                       <>
@@ -95,6 +96,9 @@ export const Header = () => {
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
+      <ToolbarGroup className="chr-c-breadcrumbs__group">
+        <Breadcrumbs {...breadcrumbsProps} />
+      </ToolbarGroup>
     </Fragment>
   );
 };
