@@ -2,6 +2,8 @@ import { Button, StackItem, Text, TextContent } from '@patternfly/react-core';
 import React from 'react';
 import ChromeLink from '../ChromeLink';
 
+import './EmptyState.scss';
+
 const EmptyState = () => (
   <>
     <StackItem className="chr-l-stack__item-centered pf-u-mt-xl">

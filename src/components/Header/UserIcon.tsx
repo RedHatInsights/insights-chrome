@@ -3,9 +3,11 @@ import { Avatar } from '@patternfly/react-core';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 
+import ImgAvatar from '../../../static/images/img_avatar.svg';
+
 const UserIcon = () => {
   const username = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.username);
-  const [avatar, setAvatar] = useState('/apps/chrome/assets/images/img_avatar.svg');
+  const [avatar, setAvatar] = useState(ImgAvatar);
 
   const getImage = (img: HTMLImageElement) => {
     if (img.width === 140) {

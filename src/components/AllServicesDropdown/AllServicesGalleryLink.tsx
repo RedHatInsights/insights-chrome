@@ -28,11 +28,15 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
     <ChromeLink isExternal={isExternal} href={href} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-service-card" isFlat isSelectableRaised>
         <CardBody className="pf-u-p-md">
-          <Split>
+          <Split
+            className={classNames('chr-c-favorite-trigger', {
+              'chr-c-icon-favorited': isFavorite,
+            })}
+          >
             <SplitItem className="pf-m-fill">{title}</SplitItem>
             <SplitItem>
               {isExternal ? (
-                <Icon>
+                <Icon className="pf-u-ml-sm chr-c-icon-external-link" isInline>
                   <ExternalLinkAltIcon />
                 </Icon>
               ) : (
@@ -46,7 +50,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
                   }}
                   icon={
                     <Icon
-                      className={classNames('chr-c-icon-service-card', {
+                      className={classNames('pf-u-ml-sm chr-c-icon-star', {
                         favorite: isFavorite,
                       })}
                     >
