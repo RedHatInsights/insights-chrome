@@ -14,6 +14,8 @@ import {
   globalFilterScope,
   registerModule,
   removeGlobalFilter,
+  toggleDebuggerButton,
+  toggleDebuggerModal,
   toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
@@ -134,6 +136,8 @@ export const createChromeContext = ({
       setPageMetadata,
     },
     toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+    enableDebugging: () => dispatch(toggleDebuggerButton(true)),
+    toggleDebuggerModal: (...args) => dispatch(toggleDebuggerModal(...args)),
     // FIXME: Update types once merged
     quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
     helpTopics,

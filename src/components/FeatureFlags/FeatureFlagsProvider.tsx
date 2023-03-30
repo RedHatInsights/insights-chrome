@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import UnleasFlagProvider, { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
+import React, { useMemo } from 'react';
+import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
+import { DeepRequired } from 'utility-types';
 import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
 import { ReduxState } from '../../redux/store';
@@ -63,39 +63,26 @@ export let unleashClient: UnleashClient;
 export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
 
 const FeatureFlagsProvider: React.FC = ({ children }) => {
-  const user = useSelector<ReduxState, ChromeUser | undefined>((state) => state.chrome.user);
-  const unleashClientInternal = useRef<UnleashClient>();
-
-  // create the unleash client only after the user object is avaiable
-  useEffect(() => {
-    if (user && !unleashClientInternal.current) {
-      unleashClientInternal.current = new UnleashClient({
+  const user = useSelector<DeepRequired<ReduxState>, DeepRequired<ChromeUser>>((state) => state.chrome.user);
+  unleashClient = useMemo(
+    () =>
+      new UnleashClient({
         ...config,
         context: {
-          properties: {
-            account_number: user.identity.account_number,
-          },
+          userId: user.identity.internal?.account_id,
+          ...(user
+            ? {
+                properties: {
+                  account_number: user.identity.account_number,
+                  email: user.identity.user.email,
+                },
+              }
+            : {}),
         },
-      });
-      unleashClient = unleashClientInternal.current;
-      unleashClient.on('error', (error: any) => {
-        console.log('error', error);
-        localStorage.setItem(UNLEASH_ERROR_KEY, 'true');
-      });
-    }
-  }, [user]);
-
-  // fallback to render the chrome withouth the feature flags if the provider is not initialized properly
-  if (getFeatureFlagsError() || !unleashClientInternal.current) {
-    // Fallback to handle errored client. The default flags provides has silent error handling if the client fails to initialize
-    return <FlagProvider config={config}>{children}</FlagProvider>;
-  }
-
-  return <UnleasFlagProvider unleashClient={unleashClientInternal.current}>{children}</UnleasFlagProvider>;
-};
-
-FeatureFlagsProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+      }),
+    []
+  );
+  return <FlagProvider unleashClient={unleashClient}>{children}</FlagProvider>;
 };
 
 export default FeatureFlagsProvider;

@@ -1,14 +1,27 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { useIntl } from 'react-intl';
-
-import { Bullseye, Gallery, Masthead, Page, PageGroup, PageSection, PageSectionVariants, SearchInput, Spinner, Title } from '@patternfly/react-core';
-
+import {
+  Bullseye,
+  Gallery,
+  Icon,
+  Masthead,
+  Page,
+  PageGroup,
+  PageSection,
+  PageSectionVariants,
+  SearchInput,
+  Spinner,
+  Text,
+  TextContent,
+  Title,
+} from '@patternfly/react-core';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
 
 import './AllServices.scss';
-import { updateDocumentTitle } from '../utils/common';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 
@@ -20,14 +33,11 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
-  useEffect(() => {
-    updateDocumentTitle('All services');
-  }, []);
-
   if (error) {
     // TODO: Add error state
     return <div>Error</div>;
   }
+
   return (
     <div id="chrome-app-render-root">
       <Page
@@ -47,14 +57,25 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         ) : (
           <Fragment>
             <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-              <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md">
+              <PageSection variant={PageSectionVariants.light} className="pf-u-px-xl-on-md">
                 <Title headingLevel="h2">All Services</Title>
+                <TextContent className="pf-u-mt-sm">
+                  <Text component="p">
+                    Every service available on Hybrid Cloud Console appears below. Hover on a service to select it as a favorite.
+                    <Icon status="warning" size="md" className="pf-u-pl-sm" isInline>
+                      <StarIcon />
+                    </Icon>
+                  </Text>
+                </TextContent>
+                <Icon className="chr-c-icon-filter">
+                  <FilterIcon />
+                </Icon>
                 <SearchInput
-                  className="chr-c-all-services-filter pf-u-m-auto pf-u-mt-md"
+                  className="chr-c-all-services-filter pf-u-mt-md pf-u-mb-sm"
                   data-ouia-component-id="app-filter-search"
                   placeholder={intl.formatMessage(Messages.findAppOrService)}
                   value={filterValue}
-                  onChange={(val) => setFilterValue(val)}
+                  onChange={(_e, val) => setFilterValue(val)}
                   onClear={(e) => {
                     setFilterValue('');
                     e.stopPropagation();

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require('webpack');
 const resolve = require('path').resolve;
 const { ModuleFederationPlugin } = require('webpack').container;

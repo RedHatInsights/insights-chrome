@@ -16,7 +16,7 @@ export type SearchResponseType = {
   maxScore: number;
 };
 
-export type SearchHighlight = { allTitle?: string[]; abstract?: string[] };
+export type SearchHighlight = { allTitle?: string[]; abstract?: string[]; bundle_title?: string[]; bundle?: string[] };
 
 export type HighlightingResponseType = {
   [recordId: string]: SearchHighlight;

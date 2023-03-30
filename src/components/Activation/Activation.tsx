@@ -3,7 +3,6 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 import { useNavigate } from 'react-router-dom';
 import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
-import PropTypes from 'prop-types';
 import { getEnv } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -52,11 +51,6 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
       </TextContent>
     </Modal>
   );
-};
-
-Activation.propTypes = {
-  user: PropTypes.object,
-  request: PropTypes.string,
 };
 
 export default Activation;

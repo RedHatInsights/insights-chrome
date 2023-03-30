@@ -21,6 +21,8 @@ import {
   populateQuickstartsReducer,
   setGatewayError,
   setPendoFeedbackFlag,
+  toggleDebuggerButton,
+  toggleDebuggerModal,
   toggleFeedbackModal,
 } from './chromeReducers';
 import {
@@ -61,6 +63,8 @@ import {
   SET_GATEWAY_ERROR,
   SET_PENDO_FEEDBACK_FLAG,
   TOGGLECONTEXTSWITCHER,
+  TOGGLE_DEBUGGER_BUTTON,
+  TOGGLE_DEBUGGER_MODAL,
   TOGGLE_FEEDBACK_MODAL,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
@@ -82,6 +86,8 @@ const reducers = {
   [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
   [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
+  [TOGGLE_DEBUGGER_MODAL]: toggleDebuggerModal,
+  [TOGGLE_DEBUGGER_BUTTON]: toggleDebuggerButton,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
