@@ -108,7 +108,7 @@ const AppFilterDropdown = ({ isLoaded, setIsOpen, isOpen, filterValue, setFilter
                       data-ouia-component-id="app-filter-search"
                       placeholder={intl.formatMessage(messages.findAppOrService)}
                       value={filterValue}
-                      onChange={(val) => setFilterValue(val)}
+                      onChange={(_e, val) => setFilterValue(val)}
                       onClear={(e) => {
                         setFilterValue('');
                         e.stopPropagation();

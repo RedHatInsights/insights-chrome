@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
@@ -118,10 +117,6 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
       setIsOpen={(isOpen) => setIsOpen(!!isOpen)}
     />
   );
-};
-
-GlobalFilter.propTypes = {
-  hasAccess: PropTypes.bool,
 };
 
 const GlobalFilterWrapper = () => {

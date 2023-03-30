@@ -2,6 +2,7 @@ import { QuickStart, QuickStartCatalogPage } from '@patternfly/quickstarts';
 import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import type Intercom from '@types/intercom-web';
 
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
 
@@ -66,7 +67,12 @@ declare global {
     pendo?: {
       updateOptions: (...args: any[]) => void;
       initialize: (config: Record<string, any>) => void;
+      flushNow: () => void;
+      setGuidesDisabled: (disabled: boolean) => void;
+      stopGuides: () => void;
+      stopSendingEvents: () => void;
     };
+    Intercom: Intercom;
     sendCustomEvent: (event: string) => void;
     segment?: AnalyticsBrowser;
     _segment?: {
@@ -141,7 +147,8 @@ export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
   config?: {
-    ssoUrl: string;
+    ssoUrl?: string;
+    fullProfile?: boolean;
   };
   analytics?: {
     APIKey?: string;

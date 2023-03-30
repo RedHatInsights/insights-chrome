@@ -8,7 +8,7 @@ import { FeatureFlagsProvider } from '../FeatureFlags';
 import IDPChecker from '../IDPChecker/IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
+import { addQuickstart as addQuickstartAction, clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
@@ -16,11 +16,14 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
-import { isBeta } from '../../utils/common';
+import { chunkLoadErrorRefreshKey, isBeta, isFedRamp } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
+import { DeepRequired } from 'utility-types';
+import ReactDOM from 'react-dom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
+const Debugger = lazy(() => import('../Debugger'));
 
 export type RootAppProps = {
   config: AppsConfig;
@@ -39,12 +42,31 @@ const RootApp = memo((props: RootAppProps) => {
     }: ReduxState) => Object.values(quickstarts).flat()
   );
   const { bundleTitle } = useBundle();
+  const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
   // verify if full profile reauth is required
   useUserProfile();
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));
+    if (activeModule) {
+      let timeout: NodeJS.Timeout;
+      const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
+      if (localStorage.getItem(moduleStorageKey) === 'true') {
+        // The localStorage should either be true or null. A false value
+        // can cause infinite loops. The timeout will remove the value after
+        // ten seconds
+        timeout = setTimeout(() => {
+          localStorage.removeItem(moduleStorageKey);
+        }, 10_000);
+      }
+      return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      };
+    }
   }, [activeModule]);
   /**
    * Updates the available quick starts
@@ -61,7 +83,7 @@ const RootApp = memo((props: RootAppProps) => {
   };
 
   const addQuickstart = (key: string, qs: QuickStart): boolean => {
-    return validateQuickstart(key, qs) ? !!dispatch(addQuickstart(key, qs)) : false;
+    return validateQuickstart(key, qs) ? !!dispatch(addQuickstartAction(key, qs)) : false;
   };
 
   const quickStartProps: QuickStartContainerProps = {
@@ -97,6 +119,9 @@ const RootApp = memo((props: RootAppProps) => {
             {/* <CrossRequestNotifier /> */}
             <Suspense fallback={null}>
               <NotEntitledModal />
+            </Suspense>
+            <Suspense fallback={null}>
+              {user?.identity?.account_number && !isFedRamp() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
             </Suspense>
             <ChromeProvider bundle={bundleTitle}>
               <QuickStartContainer {...quickStartProps}>

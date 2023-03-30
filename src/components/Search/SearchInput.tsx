@@ -3,7 +3,7 @@ import {
   Bullseye,
   Menu,
   MenuContent,
-  MenuItem,
+  MenuGroup,
   MenuList,
   SearchInput as PFSearchInput,
   Popper,
@@ -15,6 +15,7 @@ import debounce from 'lodash/debounce';
 import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
+import EmptySearchState from './EmptySearchState';
 
 const REPLACE_TAG = 'REPLACE_TAG';
 /**
@@ -31,13 +32,20 @@ const REPLACE_TAG = 'REPLACE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}~2`); // add query replacement tag and enable fuzzy search with ~10
+BASE_SEARCH.append('q', `${REPLACE_TAG}~2`); // add query replacement tag and enable fuzzy search with ~1
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
+BASE_SEARCH.append('fl', 'allTitle, bundle_title, bundle, abstract, href, relative_uri, id'); // list of valid rows
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
+BASE_SEARCH.append('hl.method', 'original'); // choose highlight method
 BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
 BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
+BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
+BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
+BASE_SEARCH.append('hl.simple.pre', '<span class="hl">'); // specify HL opening/closing tags
+BASE_SEARCH.append('hl.simple.post', '</span>');
+BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight atrribute to simply tag replacement.
 
 const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
 BASE_URL.search = BASE_SEARCH.toString();
@@ -60,17 +68,18 @@ type SearchCategories = {
   lowLevel: SearchResultItem[];
 };
 
+const initialSearchState: SearchResponseType = {
+  docs: [],
+  maxScore: 0,
+  numFound: 0,
+  start: 0,
+};
+
 const SearchInput = () => {
-  const isEnabled = localStorage.getItem('chrome:experimental:search') === 'true';
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResponseType>({
-    docs: [],
-    maxScore: 0,
-    numFound: 0,
-    start: 0,
-  });
+  const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
   const [highlighting, sethigHlighting] = useState<HighlightingResponseType>({});
 
   const isMounted = useRef(false);
@@ -177,10 +186,6 @@ const SearchInput = () => {
     };
   }, [isOpen, menuRef]);
 
-  if (!isEnabled) {
-    return null;
-  }
-
   const handleFetch = (value: string) => {
     return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value))
       .then((r) => r.json())
@@ -188,6 +193,8 @@ const SearchInput = () => {
         if (isMounted.current) {
           setSearchResults(response);
           sethigHlighting(highlighting);
+          // make sure to calculate resize when switching from loading to sucess state
+          handleWindowResize();
         }
       })
       .finally(() => {
@@ -197,7 +204,7 @@ const SearchInput = () => {
 
   const debouncedFetch = useCallback(debounce(handleFetch, 500), []);
 
-  const handleChange: SearchInputProps['onChange'] = (value) => {
+  const handleChange = (_e: any, value: string) => {
     setSearchValue(value);
     setIsFetching(true);
     debouncedFetch(value);
@@ -212,6 +219,13 @@ const SearchInput = () => {
       value={searchValue}
       onChange={handleChange}
       className="chr-c-search__input"
+      onClear={(ev) => {
+        setSearchValue('');
+        setSearchResults(initialSearchState);
+        // make sure the input is not clicked/focused
+        ev.stopPropagation();
+        setIsOpen(false);
+      }}
     />
   );
 
@@ -225,13 +239,14 @@ const SearchInput = () => {
             </Bullseye>
           ) : (
             <>
-              <SearchGroup highlighting={highlighting} groupLabel="High priority" items={resultCategories.highLevel} />
-              <SearchGroup highlighting={highlighting} groupLabel="Medium priority" items={resultCategories.midLevel} />
-              <SearchGroup highlighting={highlighting} groupLabel="Low priority" items={resultCategories.lowLevel} />
+              <MenuGroup label={searchResults.numFound > 0 ? `Top ${searchResults.docs.length} results` : undefined}>
+                <SearchGroup highlighting={highlighting} items={resultCategories.highLevel} />
+                <SearchGroup highlighting={highlighting} items={resultCategories.midLevel} />
+                <SearchGroup highlighting={highlighting} items={resultCategories.lowLevel} />
+              </MenuGroup>
             </>
           )}
-          {/* TODO: Add empty state */}
-          {searchResults.numFound === 0 && !isFetching && <MenuItem>No matching results</MenuItem>}
+          {searchResults.numFound === 0 && !isFetching && <EmptySearchState />}
         </MenuList>
       </MenuContent>
     </Menu>

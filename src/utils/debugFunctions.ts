@@ -11,7 +11,8 @@ const debugFunctions = {
   jwtDebug: () => functionBuilder('chrome:jwt:debug', true),
   reduxDebug: () => functionBuilder('chrome:redux:debug', true),
   forcePendo: () => functionBuilder('forcePendo', true),
-  disableSegment: () => functionBuilder('chrome:analytics:disable', true),
+  disableSegment: () => functionBuilder('chrome:segment:disable', true),
+  disableAnalytics: () => functionBuilder('chrome:analytics:disable', true),
   allDetails: () => functionBuilder('chrome:inventory:experimental_detail', true),
   inventoryDrawer: () => functionBuilder('chrome:inventory:experimental_drawer', true),
   globalFilter: () => functionBuilder('chrome:experimental:global-filter', true),
@@ -22,7 +23,6 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
-  platformSearch: () => functionBuilder('chrome:experimental:search', true),
 };
 
 export default debugFunctions;

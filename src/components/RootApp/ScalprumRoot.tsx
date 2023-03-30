@@ -25,6 +25,8 @@ import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
+import chromeApiWrapper from './chromeApiWrapper';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -47,10 +49,11 @@ const ScalprumRoot = memo(
     const { analytics } = useContext(SegmentContext);
 
     const libJwt = useContext(LibtJWTContext);
-    const store = useStore();
+    const store = useStore<ReduxState>();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
+    const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
 
     function isStringArray(arr: EnableTopicsArgs): arr is string[] {
       return typeof arr[0] === 'string';
@@ -131,7 +134,7 @@ const ScalprumRoot = memo(
 
     const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
       // set the deprecated chrome API to window
-      window.insights.chrome = chromeApi;
+      window.insights.chrome = chromeApiWrapper(chromeApi);
       return {
         config,
         api: {
@@ -151,7 +154,11 @@ const ScalprumRoot = memo(
               }
               return {
                 ...manifest,
-                loadScripts: manifest.loadScripts ?? ['plugin-entry.js'],
+                // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
+                baseURL: '/',
+                loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
+                  `${manifest.baseURL ?? ''}plugin-entry.js`,
+                ],
                 registrationMethod: manifest.registrationMethod ?? 'callback',
               };
             },
@@ -173,7 +180,11 @@ const ScalprumRoot = memo(
             index
             path="/"
             element={
-              <DefaultLayout Sidebar={LandingNav} Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />
+              <DefaultLayout
+                Sidebar={navDropdownEnabled ? undefined : LandingNav}
+                Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />}
+                {...props}
+              />
             }
           />
           <Route

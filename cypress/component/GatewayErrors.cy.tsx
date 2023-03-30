@@ -4,21 +4,30 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
-import { removeScalprum } from '@scalprum/core';
+import { AppMetadata, removeScalprum } from '@scalprum/core';
 
 import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
 import chromeReducer from '../../src/redux';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
-import { loadModulesSchema } from '../../src/redux/actions';
+import { loadModulesSchema, userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import LibtJWTContext from '../../src/components/LibJWTContext';
+import testUserJson from '../fixtures/testUser.json';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import type { LibJWT } from '../../src/auth';
+import { RemoteModule } from '../../src/@types/types';
+import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
 
-function createEnv(code) {
+const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
+
+function createEnv(code?: string) {
   if (!code) {
     throw 'Enviroment must have identifier';
   }
   const reduxStore = createStore(combineReducers(chromeReducer()), applyMiddleware(logger));
+  // initialize user object for feature flags
+  reduxStore.dispatch(userLogIn(testUser));
   // initializes request interceptors
   qe.init(reduxStore);
   reduxStore.dispatch(
@@ -30,7 +39,7 @@ function createEnv(code) {
             id: code,
             module: './RootApp',
             routes: [`/${code}`],
-          },
+          } as RemoteModule,
         ],
       },
     })
@@ -38,25 +47,39 @@ function createEnv(code) {
 
   const Component = () => (
     <LibtJWTContext.Provider
-      value={{
-        initPromise: Promise.resolve(),
-        jwt: {
-          getUserInfo: () => Promise.resolve({}),
-          getEncodedToken: () => '',
-        },
-      }}
+      value={
+        {
+          initPromise: Promise.resolve(),
+          jwt: {
+            getUserInfo: () => Promise.resolve(),
+            getEncodedToken: () => '',
+          },
+        } as LibJWT
+      }
     >
       <MemoryRouter initialEntries={[`/${code}`]}>
         <Provider store={reduxStore}>
           <IntlProvider locale="en">
             <FeatureFlagsProvider>
               <ScalprumRoot
+                helpTopicsAPI={{
+                  addHelpTopics: () => undefined,
+                  disableTopics: () => undefined,
+                  enableTopics: () => Promise.resolve([]),
+                }}
+                quickstartsAPI={{
+                  Catalog: () => null,
+                  set: () => undefined,
+                  toggle: () => undefined,
+                  updateQuickStarts: () => undefined,
+                  version: 1,
+                }}
                 config={{
                   [code]: {
                     manifestLocation: `/apps/${code}/fed-mods.json`,
                     name: code,
                     module: `${code}#./RootApp`,
-                  },
+                  } as AppMetadata,
                 }}
               />
             </FeatureFlagsProvider>
@@ -65,12 +88,15 @@ function createEnv(code) {
       </MemoryRouter>
     </LibtJWTContext.Provider>
   );
-
   return Component;
 }
 
 describe('Gateway errors', () => {
+  after(() => {
+    window.localStorage.removeItem(BLOCK_CLEAR_GATEWAY_ERROR);
+  });
   beforeEach(() => {
+    window.localStorage.setItem(BLOCK_CLEAR_GATEWAY_ERROR, 'true');
     cy.intercept('GET', '/api/featureflags/*', { toggles: [] });
     cy.intercept('POST', '/api/featureflags/v0/client/*', {});
     cy.intercept('GET', '/config/chrome/*-navigation.json?ts=*', {
@@ -114,19 +140,35 @@ describe('Gateway errors', () => {
     cy.contains('Detail: Gateway has thrown an 403 error.').should('exist');
   });
 
-  COMPLIACE_ERROR_CODES.forEach((code) => {
+  COMPLIACE_ERROR_CODES.forEach((code, index) => {
     it(`handles compliance ${code} gateway error`, () => {
-      cy.window().then((win) => {
-        win[code] = {
-          init: () => undefined,
-          get: () => () => ({
-            default: () => <div>{code}</div>,
-          }),
-        };
-      });
-      const Component = createEnv(code);
-      // throw 403 gateway error with compliance error response
-      cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
+      const moduleName = `module${index}`;
+      removeScalprum();
+      window[moduleName] = {
+        init: () => undefined,
+        get: () => () => ({
+          // eslint-disable-next-line react/display-name
+          default: () => {
+            return (
+              <div>
+                <button onClick={() => fetch(`/${code}/bar`)}>Force API call</button>
+              </div>
+            );
+          },
+        }),
+      };
+      const Component = createEnv(moduleName);
+      cy.intercept(`/apps/${code}/bar.js*`, {});
+      cy.intercept('GET', `/apps/${moduleName}/fed-mods.json`, {
+        statusCode: 200,
+        body: {
+          [moduleName]: {
+            entry: [`/apps/${code}/bar.js`],
+          },
+        },
+      }).as(`${code}-string`);
+
+      cy.intercept('GET', `/${code}/bar`, {
         statusCode: 403,
         Headers: {
           'content-type': 'application/json',
@@ -142,38 +184,63 @@ describe('Gateway errors', () => {
             },
           ],
         },
-      }).as(code);
+      }).as(`${code}-call`);
 
       cy.mount(<Component />);
 
-      cy.wait(`@${code}`);
-
+      cy.wait(`@${code}-string`);
+      cy.contains('Force API call').click();
+      cy.wait(`@${code}-call`);
       cy.contains(code).should('exist');
       cy.contains(`Gateway has thrown ${code} compliance error`).should('exist');
     });
   });
 
-  COMPLIACE_ERROR_CODES.forEach((code) => {
+  COMPLIACE_ERROR_CODES.forEach((code, index) => {
     it(`handles compliance ${code} string error`, () => {
+      const moduleName = `module${index}`;
+      removeScalprum();
+      window[moduleName] = {
+        init: () => undefined,
+        get: () => () => ({
+          // eslint-disable-next-line react/display-name
+          default: () => {
+            return (
+              <div>
+                <button onClick={() => fetch(`/${code}/bar`)}>Force API call</button>
+              </div>
+            );
+          },
+        }),
+      };
       cy.on('uncaught:exception', () => {
         // runtime exception is expected
         return false;
       });
-      removeScalprum();
-      const Component = createEnv(code);
-      // throw 403 string error with compliance error code
-      cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
+      const Component = createEnv(moduleName);
+      cy.intercept(`/apps/${code}/bar.js*`, {});
+      cy.intercept('GET', `/apps/${moduleName}/fed-mods.json`, {
+        statusCode: 200,
+        body: {
+          [moduleName]: {
+            entry: [`/apps/${code}/bar.js`],
+          },
+        },
+      }).as(`${code}-string`);
+
+      cy.intercept('GET', `/${code}/bar`, {
         statusCode: 403,
         Headers: {
           'content-type': 'text/plain',
         },
         body: `Gateway has thrown ${code} compliance error`,
-      }).as(`${code}-string`);
+      }).as(`${code}-call`);
 
       cy.mount(<Component />);
 
       cy.wait(`@${code}-string`);
-
+      cy.contains('Force API call').click();
+      cy.wait(`@${code}-call`);
       cy.contains(code).should('exist');
       cy.contains(`Gateway has thrown ${code} compliance error`).should('exist');
     });
@@ -181,6 +248,8 @@ describe('Gateway errors', () => {
 
   it('should render component if a 403 error does not originate from gateway', () => {
     const code = 'not-gateway-403';
+    // make sure to mock the JS modle asset
+    cy.intercept('/apps/foo/bar.js*', {});
     const Component = createEnv(code);
     // mock the module
     window[code] = {
@@ -199,15 +268,15 @@ describe('Gateway errors', () => {
         },
       }),
     };
-    // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 200,
       body: {
         [code]: {
-          entry: [],
+          entry: ['/apps/foo/bar.js'],
         },
       },
     }).as(code);
+    // throw 403 gateway error
     cy.intercept('GET', `/foo/bar`, {
       statusCode: 403,
       body: {
@@ -232,6 +301,7 @@ describe('Gateway errors', () => {
 
   it('does not handle 404 3scale gateway error', () => {
     const code = 'gateway-404';
+    cy.intercept('/apps/foo/bar.js*', {});
     const Component = createEnv(code);
 
     // mock the module
@@ -256,7 +326,7 @@ describe('Gateway errors', () => {
       statusCode: 200,
       body: {
         [code]: {
-          entry: [],
+          entry: ['/apps/foo/bar.js'],
         },
       },
     }).as(code);
