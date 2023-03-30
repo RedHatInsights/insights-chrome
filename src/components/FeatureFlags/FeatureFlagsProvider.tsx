@@ -69,7 +69,7 @@ const FeatureFlagsProvider: React.FC = ({ children }) => {
       new UnleashClient({
         ...config,
         context: {
-          userId: user.identity.internal?.account_id,
+          userId: user?.identity.internal?.account_id,
           ...(user
             ? {
                 properties: {
