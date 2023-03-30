@@ -5,18 +5,10 @@ import ChromeLink from '../ChromeLink';
 import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import EmptyState from './EmptyState';
 
-const QuickAccess = () => (
-  <StackItem className="pf-u-pb-xl">
-    Get quick access to your favorite services. To add more services to your Favorites,{' '}
-    <ChromeLink href="/allservices">browse all Hybrid Cloud Console services.</ChromeLink>
-  </StackItem>
-);
-
 const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: ServiceTileProps[] }) => {
   const { favoritePages } = useFavoritePages();
   return (
     <Stack>
-      <QuickAccess />
       {favoritePages.length === 0 ? (
         <EmptyState />
       ) : (
