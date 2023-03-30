@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import AppFilter from '../AppFilter';
 import ServicesLink from './ServicesLink';
 import FavoritesLink from './FavoritesLink';
 import ContextSwitcher from '../ContextSwitcher';
@@ -19,7 +18,7 @@ import { DeepRequired } from 'utility-types';
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
-import { isBeta, isFedRamp, isProd } from '../../utils/common';
+import { isFedRamp } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -61,20 +60,16 @@ export const Header = () => {
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  {isProd() && !isBeta() ? (
-                    <AppFilter />
-                  ) : (
-                    <>
-                      {navDropdownEnabled ? (
-                        <AllServicesDropdown />
-                      ) : (
-                        <>
-                          <ServicesLink />
-                          <FavoritesLink />
-                        </>
-                      )}
-                    </>
-                  )}
+                  <>
+                    {navDropdownEnabled ? (
+                      <AllServicesDropdown />
+                    ) : (
+                      <>
+                        <ServicesLink />
+                        <FavoritesLink />
+                      </>
+                    )}
+                  </>
                 </ToolbarItem>
               )}
               {user && (
