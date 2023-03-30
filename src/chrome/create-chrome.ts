@@ -48,12 +48,12 @@ export type CreateChromeContextConfig = {
 
 export const createChromeContext = ({
   useGlobalFilter,
-  analytics,
   libJwt,
   getUser,
   store,
   modulesConfig,
   setPageMetadata,
+  analytics,
   quickstartsAPI,
   helpTopics,
 }: CreateChromeContextConfig): ChromeAPI => {
@@ -65,7 +65,10 @@ export const createChromeContext = ({
     appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module?: string, manifest?: string) => dispatch(registerModule(module, manifest)),
-    removeGlobalFilter: (isHidden: boolean) => store.dispatch(removeGlobalFilter(isHidden)),
+    removeGlobalFilter: (isHidden: boolean) => {
+      console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
+      return dispatch(removeGlobalFilter(isHidden));
+    },
   };
 
   const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
@@ -115,15 +118,15 @@ export const createChromeContext = ({
           ...chromeHistory.location,
           hash: initialHash,
         });
-        store.dispatch({ type: STORE_INITIAL_HASH });
+        dispatch({ type: STORE_INITIAL_HASH });
       }
-      store.dispatch(toggleGlobalFilter(isHidden));
+      dispatch(toggleGlobalFilter(isHidden));
     },
     isBeta,
     isChrome2: true,
     enable: debugFunctions,
-    isDemo: () => (Cookies.get('cs_demo') ? true : false),
-    isPenTest: () => (Cookies.get('x-rh-insights-pentest') ? true : false),
+    isDemo: () => Boolean(Cookies.get('cs_demo')),
+    isPenTest: () => Boolean(Cookies.get('x-rh-insights-pentest')),
     mapGlobalFilter: flatTags,
     navigation: () => console.error("Don't use insights.chrome.navigation, it has been deprecated!"),
     updateDocumentTitle,
