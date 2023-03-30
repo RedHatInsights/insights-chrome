@@ -1,0 +1,8 @@
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.chr-l-stack__item-centered, .chr-c-card-centered {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}

@@ -19,5 +19,5 @@ export default (cachePrefix: string) => {
 
     return response.data || response;
   });
-  return new ServicesApi(undefined, BASE_PATH, instance);
+  return new ServicesApi(undefined, BASE_PATH, instance as any);
 };

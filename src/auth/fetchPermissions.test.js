@@ -1,6 +1,7 @@
 import mockedRbac from '../../testdata/rbacAccess.json';
 
 jest.mock('./rbac', () => () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mockedRbac = require('../../testdata/rbacAccess.json');
   return {
     getPrincipalAccess: () => {

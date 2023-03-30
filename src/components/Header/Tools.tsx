@@ -1,5 +1,4 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
@@ -60,10 +59,6 @@ const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
     dropdownItems={settingsMenuDropdownItems}
   />
 );
-
-SettingsButton.propTypes = {
-  settingsMenuDropdownItems: PropTypes.array.isRequired,
-};
 
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
@@ -137,7 +132,7 @@ const Tools = () => {
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
-      url: `https://access.redhat.com/documentation/en-us/red_hat_insights/`,
+      url: `https://access.redhat.com/documentation/en-us/red_hat_insights`,
       isHidden: getSection() !== 'insights' || fedRampEnv,
     },
 

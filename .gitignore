@@ -27,3 +27,6 @@ cypress/**/*.diff.png
 
 # cache
 .cache
+
+#swc
+.swc

@@ -1,0 +1,97 @@
+@import '~@patternfly/patternfly/sass-utilities/_all';
+
+.chr-c-link-service-toggle {
+  // override menu toggle extra bottom border
+  &.pf-c-menu-toggle::after {
+    border-bottom: none;
+  }
+}
+
+.chr-c-page__services-nav-dropdown-menu {
+  // pos has to be important to override PF styles that get lazy loaded!
+  position: absolute !important;
+  top: 70px;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  height: calc(100vh - 70px);
+  width: 100% !important; // override popper calculated width
+  overflow-y: auto;
+  overflow-x: none;
+  .pf-c-dropdown__menu::before {
+    z-index: -1000;
+  }
+
+  // To not cover the entire screen including masthead
+  .pf-c-backdrop {
+    position: relative;
+  }
+  .pf-c-dropdown__menu {
+    position: relative; // make sure to enable scroll within backdrop
+    top: 0;
+    @media (max-width: 768px) {
+      top: 118px;
+    }
+  }
+}
+
+.chr-c-panel-services-nav {
+  .pf-c-tabs {
+    height: calc(100% - 80px);
+  }
+}
+
+@media (min-width: 768px) {
+  .chr-c-panel-services-nav {
+    min-height: 650px;
+    // make sure the card height fills the parent link
+    .chr-c-link-service-card {
+      height: 100%;
+    }
+    .pf-c-card.pf-m-plain {
+      --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
+    }
+    .chr-c-icon-service-tab {
+      font-size: 1rem;
+    }
+    .pf-c-sidebar {
+      --pf-c-sidebar__panel--md--FlexBasis: 20rem;
+      &__main {
+        align-items: stretch;
+        background: var(--pf-global--BackgroundColor--200);
+      }
+      &__panel {
+        background: var(--pf-global--BackgroundColor--200);
+        box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
+      }
+    }
+    .pf-c-tabs {
+      height: calc(100% - 80px);
+      padding-top: var(--pf-global--spacer--md);
+      --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
+      --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
+      --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);
+      --pf-c-tabs__link--PaddingLeft: var(--pf-global--spacer--md);
+      --pf-c-tabs__item--m-current__link--Color: var(--pf-global--link--Color);
+      --pf-c-tabs--m-vertical--MaxWidth: 100%;
+      --pf-c-tabs--m-vertical__list--before--BorderColor: transparent;
+      &__link::after {
+        border-color: transparent;
+      }
+      .pf-c-tabs__item:hover, .pf-c-tabs__item:focus {
+        button {
+          color: var(--pf-global--primary-color--200)
+        }
+      } 
+      .pf-c-tabs__item.pf-m-current {
+        --pf-c-tabs__link--BackgroundColor: var(--pf-global--BackgroundColor--100);
+      }
+    }
+  }
+  .pf-c-tabs {
+    --pf-c-tabs__toggle-button--MarginTop: 0;
+    --pf-c-tabs__toggle-button--MarginBottom: 0;
+    --pf-c-tabs__toggle-button--MarginLeft: 0;
+    --pf-c-tabs__toggle--MarginBottom: 0;
+  }
+}

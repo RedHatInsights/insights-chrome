@@ -21,7 +21,6 @@ describe('NonEntitledModal', () => {
 
       // wait for the image to be loaded before start matching snapshots
       if (image) {
-        // cy.waitForResource(image)
         cy.get(`[src="${image}"]`).should('be.visible');
       }
       elem.matchImageSnapshot();
