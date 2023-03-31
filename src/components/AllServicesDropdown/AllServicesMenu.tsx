@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
 import ChromeLink from '../ChromeLink';
@@ -9,6 +9,7 @@ import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
+import QuickAccess from '../FavoriteServices/QuickAccess';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -83,7 +84,10 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                   <CardBody>
                     <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>
                       {activeTabKey === FAVORITE_TAB_ID ? (
-                        <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                        <Fragment>
+                          <QuickAccess />
+                          <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                        </Fragment>
                       ) : (
                         <AllServicesGallery selectedService={selectedService} />
                       )}
