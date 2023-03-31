@@ -4,24 +4,16 @@ import { Masthead, Page, PageSection, PageSectionVariants, Stack, StackItem, Tit
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-
-import ChromeLink from '../components/ChromeLink';
-
-import './FavoritedServices.scss';
 import EmptyState from '../components/FavoriteServices/EmptyState';
 import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../hooks/useFavoritedServices';
+import QuickAccess from '../components/FavoriteServices/QuickAccess';
+
+import './FavoritedServices.scss';
 
 export type FavoritedServicesProps = {
   Footer?: React.ReactNode;
 };
-
-const QuickAccess = () => (
-  <StackItem>
-    Get quick access to your favorite services. To add more services to your Favorites,{' '}
-    <ChromeLink href="/allservices">browse all Hybrid Cloud Console services.</ChromeLink>
-  </StackItem>
-);
 
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
   const favoritedServices = useFavoritedServices();
