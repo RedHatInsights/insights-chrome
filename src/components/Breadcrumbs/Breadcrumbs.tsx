@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { onToggle } from '../../redux/actions';
 
+import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
+import ChromeLink from '../ChromeLink/ChromeLink';
 import './Breadcrumbs.scss';
 
 export type Breadcrumbsprops = {
@@ -14,6 +16,7 @@ export type Breadcrumbsprops = {
 
 const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
   const dispatch = useDispatch();
+  const segments = useBreadcrumbsLinks();
   return (
     <PageBreadcrumb className="chr-c-breadcrumbs pf-u-pt-0">
       <div className="chr-c-breadcrumbs__alignment">
@@ -36,12 +39,16 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
         </FlexItem>
         <FlexItem>
           <Breadcrumb>
-            <BreadcrumbItem to="#">Section home</BreadcrumbItem>
-            <BreadcrumbItem to="#">Section title</BreadcrumbItem>
-            <BreadcrumbItem to="#">Section title</BreadcrumbItem>
-            <BreadcrumbItem to="#" isActive>
-              Section landing
-            </BreadcrumbItem>
+            {segments.map(({ title, href }, index) => (
+              <BreadcrumbItem
+                to={href}
+                component={(props) => <ChromeLink {...props} title={title} href={href} />}
+                key={index}
+                isActive={segments.length - 1 === index}
+              >
+                {title}
+              </BreadcrumbItem>
+            ))}
           </Breadcrumb>
         </FlexItem>
       </div>

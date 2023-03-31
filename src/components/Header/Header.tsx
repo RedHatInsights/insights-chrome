@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -12,7 +12,7 @@ import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -47,6 +47,8 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
+  const { pathname } = useLocation();
+  const displayBreadcrumbs = useMemo(() => !['/', '/allservices', '/favoritedservices'].includes(pathname), [pathname]);
 
   return (
     <Fragment>
@@ -64,7 +66,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               {user && (
                 <ToolbarItem>
                   <>
-                    {true ? (
+                    {navDropdownEnabled ? (
                       <AllServicesDropdown />
                     ) : (
                       <>
@@ -96,9 +98,11 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
-      <ToolbarGroup className="chr-c-breadcrumbs__group">
-        <Breadcrumbs {...breadcrumbsProps} />
-      </ToolbarGroup>
+      {displayBreadcrumbs && (
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs {...breadcrumbsProps} />
+        </ToolbarGroup>
+      )}
     </Fragment>
   );
 };
