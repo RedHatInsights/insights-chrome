@@ -12,15 +12,16 @@ export type AllServicesGroup = {
   isGroup: true;
   title: string;
   ITLess?: boolean;
-  links: AllServicesLink[];
+  links: (string | AllServicesLink)[];
   description?: string;
 };
 export type AllServicesSection = {
-  icon: keyof typeof AllServicesIcons;
+  id?: string;
+  icon?: keyof typeof AllServicesIcons;
   ITLess?: boolean;
   title: string;
-  description: string;
-  links: (AllServicesLink | AllServicesGroup)[];
+  description?: string;
+  links: (string | AllServicesLink | AllServicesGroup)[];
 };
 
 const allServicesLinks: AllServicesSection[] = [

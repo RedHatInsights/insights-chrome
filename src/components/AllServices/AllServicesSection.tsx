@@ -12,24 +12,32 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
   return (item as AllServicesGroupType).isGroup === true;
 };
 
+export function isAllServicesLink(item: AllServicesLinkType): item is AllServicesLinkType {
+  return !!(item as AllServicesLinkType).href;
+}
+
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
-  const TitleIcon = AllServicesIcons[icon];
-  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
+  const TitleIcon = AllServicesIcons[icon as keyof typeof AllServicesIcons];
+  const filteredLinks = ITLess() ? links.filter((link) => (link as AllServicesLinkType).ITLess) : links;
   return (
     <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100">
       <CardTitle>
         <Icon className="pf-u-mr-xs" isInline>
-          <TitleIcon />
+          {TitleIcon && <TitleIcon />}
         </Icon>
         {title}
       </CardTitle>
       <CardBody>
         <TextContent className="pf-u-font-size-sm">
           <Text component={TextVariants.p} className="pf-u-mb-md">
-            {description}
+            {description || null}
           </Text>
           {filteredLinks.map((link, index) =>
-            isAllServicesGroup(link) ? <AllServicesGroup key={index} {...link} /> : <AllServicesLink key={index} {...link} />
+            isAllServicesGroup(link as AllServicesGroupType) ? (
+              <AllServicesGroup key={index} {...(link as AllServicesGroupType)} />
+            ) : (
+              <AllServicesLink key={index} {...(link as AllServicesLinkType)} />
+            )
           )}
         </TextContent>
       </CardBody>

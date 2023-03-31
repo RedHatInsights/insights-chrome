@@ -24,7 +24,6 @@ import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-// import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -44,7 +43,9 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const searchEnabled = useFlag('platform.chrome.search.enabled');
   const breadcrumbEnabled = useFlag('platform.chrome.bredcrumbs.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
-  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
+  // TODO: remove me!
+  const navDropdownEnabled = true;
+  // TODO: remove me!
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
