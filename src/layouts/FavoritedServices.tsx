@@ -8,7 +8,6 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import ChromeLink from '../components/ChromeLink';
 
 import './FavoritedServices.scss';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import EmptyState from '../components/FavoriteServices/EmptyState';
 import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../hooks/useFavoritedServices';
@@ -25,9 +24,7 @@ const QuickAccess = () => (
 );
 
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
-  const { favoritePages } = useFavoritePages();
   const favoritedServices = useFavoritedServices();
-
   return (
     <div id="chrome-app-render-root">
       <Page
@@ -46,7 +43,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
             <QuickAccess />
-            {favoritePages.length === 1 ? (
+            {favoritedServices.length === 0 ? (
               <EmptyState />
             ) : (
               <StackItem className="pf-u-pt-xl">
