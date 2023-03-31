@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import StarIconHalf from '@patternfly/react-icons/dist/js/icons/star-half-alt-icon';
 
 import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
@@ -19,7 +18,6 @@ export type ServiceTileProps = {
 const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTileProps) => {
   const bundle = bundleMapping[pathname.split('/')[1]];
   const { unfavoritePage } = useFavoritePages();
-  const [mouseOver, setMouseOver] = useState(false);
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>
