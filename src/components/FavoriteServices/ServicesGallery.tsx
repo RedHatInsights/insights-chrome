@@ -2,14 +2,12 @@ import React from 'react';
 import { Card, CardBody, Gallery, Stack, StackItem, Text, TextContent } from '@patternfly/react-core';
 import ServiceTile, { ServiceTileProps } from './ServiceTile';
 import ChromeLink from '../ChromeLink';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import EmptyState from './EmptyState';
 
 const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: ServiceTileProps[] }) => {
-  const { favoritePages } = useFavoritePages();
   return (
     <Stack>
-      {favoritePages.length === 0 ? (
+      {favoritedServices.length === 0 ? (
         <EmptyState />
       ) : (
         <StackItem>

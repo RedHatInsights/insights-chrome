@@ -4,30 +4,19 @@ import { Masthead, Page, PageSection, PageSectionVariants, Stack, StackItem, Tit
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-
-import ChromeLink from '../components/ChromeLink';
-
-import './FavoritedServices.scss';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import EmptyState from '../components/FavoriteServices/EmptyState';
 import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../hooks/useFavoritedServices';
+import QuickAccess from '../components/FavoriteServices/QuickAccess';
+
+import './FavoritedServices.scss';
 
 export type FavoritedServicesProps = {
   Footer?: React.ReactNode;
 };
 
-const QuickAccess = () => (
-  <StackItem>
-    Get quick access to your favorite services. To add more services to your Favorites,{' '}
-    <ChromeLink href="/allservices">browse all Hybrid Cloud Console services.</ChromeLink>
-  </StackItem>
-);
-
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
-  const { favoritePages } = useFavoritePages();
   const favoritedServices = useFavoritedServices();
-
   return (
     <div id="chrome-app-render-root">
       <Page
@@ -46,7 +35,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
             <QuickAccess />
-            {favoritePages.length === 1 ? (
+            {favoritedServices.length === 0 ? (
               <EmptyState />
             ) : (
               <StackItem className="pf-u-pt-xl">
