@@ -4,18 +4,18 @@ import { matchPath } from 'react-router-dom';
 import { ChromeModule } from '../@types/types';
 
 import { ReduxState } from '../redux/store';
-import { isFedRamp } from './common';
-const isFedrampEnv = isFedRamp();
+import { ITLess } from './common';
+const isITLessEnv = ITLess();
 
 export const computeFedrampResult = (
-  isFedrampEnv: boolean | string,
+  isITLessEnv: boolean | string,
   linkHref = '',
   { modules, isFedramp }: Omit<ChromeModule, 'manifestLocation'> = { modules: [] }
 ) => {
   /**
    * Render everything on non-fedramp env
    */
-  if (!isFedrampEnv) {
+  if (!isITLessEnv) {
     return undefined;
   }
 
@@ -49,13 +49,13 @@ export const computeFedrampResult = (
 
 const useRenderFedramp = (appId: string, linkHref: string) => {
   const module = useSelector(({ chrome: { modules } }: ReduxState) => modules && modules[appId]);
-  const [shouldRender, setShouldRender] = useState(() => computeFedrampResult(isFedrampEnv, linkHref, module));
+  const [shouldRender, setShouldRender] = useState(() => computeFedrampResult(isITLessEnv, linkHref, module));
 
   useEffect(() => {
-    setShouldRender(computeFedrampResult(isFedrampEnv, linkHref, module));
+    setShouldRender(computeFedrampResult(isITLessEnv, linkHref, module));
   }, [appId, linkHref]);
 
-  return isFedrampEnv ? shouldRender : true;
+  return isITLessEnv ? shouldRender : true;
 };
 
 export default useRenderFedramp;

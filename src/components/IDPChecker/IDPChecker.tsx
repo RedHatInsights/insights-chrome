@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-import { isFedRamp } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import IDPError from '../ErrorComponents/IDPError';
 import { ReduxState } from '../../redux/store';
 
@@ -14,19 +14,19 @@ const IDPStatuses = {
 };
 
 const IDPChecker: React.FunctionComponent = ({ children }) => {
-  const isFedrampEnv = isFedRamp();
+  const ITLessEnv = ITLess();
   const missingIDP = useSelector(({ chrome }: ReduxState) => chrome?.missingIDP);
   const [status, setStatus] = useState(() => {
-    if (isFedrampEnv) {
+    if (ITLessEnv) {
       return missingIDP === true ? IDPStatuses.ERROR : IDPStatuses.UNKNOWN;
     }
     return IDPStatuses.OK;
   });
   const hasUser = useSelector(({ chrome: { user } }: ReduxState) => Object.keys(user || {}).length > 0);
-  const allowStateChange = useRef(isFedrampEnv);
+  const allowStateChange = useRef(ITLessEnv);
 
   useEffect(() => {
-    if (isFedrampEnv && status !== IDPStatuses.PENDING && hasUser) {
+    if (ITLessEnv && status !== IDPStatuses.PENDING && hasUser) {
       allowStateChange.current && setStatus(IDPStatuses.PENDING);
       axios
         .get('/api/entitlements/v1/services')

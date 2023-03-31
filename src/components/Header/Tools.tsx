@@ -8,7 +8,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { getSection, getUrl, isBeta, isFedRamp } from '../../utils/common';
+import { ITLess, getSection, getUrl, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -16,7 +16,7 @@ import { createSupportCase } from '../../utils/createCase';
 import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
 
-const fedRampEnv = isFedRamp();
+const isITLessEnv = ITLess();
 
 export const switchRelease = (isBeta: boolean, pathname: string) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -119,21 +119,22 @@ const Tools = () => {
       title: `${intl.formatMessage(messages.openSupportCase)}`,
       onClick: () => createSupportCase(user.identity, libjwt),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
+      isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.statusPage)}`,
       url: 'https://status.redhat.com/',
-      isHidden: fedRampEnv,
+      isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.supportOptions)}`,
       url: 'https://access.redhat.com/support',
-      isHidden: fedRampEnv,
+      isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
       url: `https://access.redhat.com/documentation/en-us/red_hat_insights`,
-      isHidden: getSection() !== 'insights' || fedRampEnv,
+      isHidden: getSection() !== 'insights' || isITLessEnv,
     },
 
     {

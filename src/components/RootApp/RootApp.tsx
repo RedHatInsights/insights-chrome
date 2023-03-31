@@ -2,10 +2,8 @@ import React, { Suspense, lazy, memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
-
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
-import IDPChecker from '../IDPChecker/IDPChecker';
 import ScalprumRoot from './ScalprumRoot';
 import { useDispatch, useSelector } from 'react-redux';
 import { addQuickstart as addQuickstartAction, clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
@@ -16,7 +14,7 @@ import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
-import { chunkLoadErrorRefreshKey, isBeta, isFedRamp } from '../../utils/common';
+import { ITLess, chunkLoadErrorRefreshKey, isBeta } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
 import { DeepRequired } from 'utility-types';
@@ -115,22 +113,20 @@ const RootApp = memo((props: RootAppProps) => {
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={isBeta() ? '/beta' : '/'}>
       <SegmentProvider activeModule={activeModule}>
         <FeatureFlagsProvider>
-          <IDPChecker>
-            {/* <CrossRequestNotifier /> */}
-            <Suspense fallback={null}>
-              <NotEntitledModal />
-            </Suspense>
-            <Suspense fallback={null}>
-              {user?.identity?.account_number && !isFedRamp() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
-            </Suspense>
-            <ChromeProvider bundle={bundleTitle}>
-              <QuickStartContainer {...quickStartProps}>
-                <HelpTopicContainer helpTopics={helpTopics}>
-                  <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
-                </HelpTopicContainer>
-              </QuickStartContainer>
-            </ChromeProvider>
-          </IDPChecker>
+          {/* <CrossRequestNotifier /> */}
+          <Suspense fallback={null}>
+            <NotEntitledModal />
+          </Suspense>
+          <Suspense fallback={null}>
+            {user?.identity?.account_number && !ITLess() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
+          </Suspense>
+          <ChromeProvider bundle={bundleTitle}>
+            <QuickStartContainer {...quickStartProps}>
+              <HelpTopicContainer helpTopics={helpTopics}>
+                <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+              </HelpTopicContainer>
+            </QuickStartContainer>
+          </ChromeProvider>
         </FeatureFlagsProvider>
       </SegmentProvider>
     </HistoryRouter>

@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import cookie from 'js-cookie';
 import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
-import { isBeta, isProd } from './common';
+import { ITLess, isBeta, isProd } from './common';
 import { AxiosRequestConfig } from 'axios';
 import { AppNavigationCB, ChromeAuthOptions, GenericCB, NavDOMEvent } from '../@types/types';
 import { VisibilityFunctions } from '@redhat-cloud-services/types';
@@ -14,6 +14,7 @@ export const noAuthParam = 'noauth';
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
+export const isITLessEnv = ITLess();
 /**
  * Keys for storing acess reqeusts data
  */
@@ -24,6 +25,8 @@ export const ACCOUNT_REQUEST_TIMEOUT = 'chrome:cross-account-requests:request-ti
 export const CROSS_ACCESS_ACCOUNT_NUMBER = 'cross_access_account_number';
 export const ACTIVE_REMOTE_REQUEST = 'chrome/active-remote-request';
 export const CROSS_ACCESS_ORG_ID = 'cross_access_org_id';
+export const REFRESH_KEY = 'refresh_key';
+export const ACCESS_KEY = 'access_key';
 
 const obj = {
   noAuthParam,

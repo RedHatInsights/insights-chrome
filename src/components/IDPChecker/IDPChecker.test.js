@@ -12,7 +12,7 @@ jest.mock('../../utils/common', () => {
   return {
     __esModule: true,
     ...utils,
-    isFedRamp: jest.fn(),
+    ITLess: jest.fn(),
   };
 });
 
@@ -26,7 +26,7 @@ jest.mock('axios', () => {
 });
 
 describe('<IDPChecker />', () => {
-  const isFedRampSpy = jest.spyOn(utils, 'isFedRamp');
+  const ITLessSpy = jest.spyOn(utils, 'ITLess');
   const getSpy = jest.spyOn(axios, 'get');
   let mockStore;
   const initialState = {
@@ -40,12 +40,12 @@ describe('<IDPChecker />', () => {
 
   beforeEach(() => {
     mockStore = configureStore();
-    isFedRampSpy.mockReturnValue(true);
+    ITLessSpy.mockReturnValue(true);
     getSpy.mockImplementation(() => Promise.resolve({}));
   });
 
   test('should render children in non fedRamp env', () => {
-    isFedRampSpy.mockReturnValueOnce(false);
+    ITLessSpy.mockReturnValueOnce(false);
     const store = mockStore(initialState);
     const { container, queryAllByTestId } = render(
       <Provider store={store}>

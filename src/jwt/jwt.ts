@@ -2,9 +2,10 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { DEFAULT_SSO_ROUTES, LOGIN_TYPE_STORAGE_KEY, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
+import { DEFAULT_SSO_ROUTES, ITLess, LOGIN_TYPE_STORAGE_KEY, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
+import { CogUser, getTokenWithAuthorizationCode, getUser } from '../cognito/auth';
 
 // Insights Specific
 import platformUrl from './url';
@@ -18,6 +19,7 @@ const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
 const priv = new Priv();
+const itLessEnv = ITLess();
 
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
@@ -139,53 +141,79 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
 
   priv.setCookie({ cookieName });
+  if (itLessEnv) {
+    let token;
+    let cogUser: CogUser;
 
-  return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_SSO_ROUTES, configSsoUrl)).then((ssoUrl) => {
-    //constructor for new Keycloak Object?
-    options.url = ssoUrl;
-    options.clientId = 'cloud-services';
-    options.realm = 'redhat-external';
-
-    //options for keycloak.init method
-    options.promiseType = 'native';
-    options.onLoad = 'check-sso';
-    options.checkLoginIframe = false;
-
-    const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
-
-    options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
-
-    if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
-      options.realm = 'short-session';
+    if (token) {
+      getUser().then((res) => {
+        cogUser = res;
+        if (cogUser) {
+          const now = Date.now().toString().substr(0, 10);
+          const exp = cogUser?.exp - parseInt(now);
+          if (exp < 30) {
+            return getTokenWithAuthorizationCode().then((res) => {
+              priv.setToken(res);
+              token = res;
+              return token;
+            });
+          }
+        }
+      });
     }
+    return getTokenWithAuthorizationCode().then((res) => {
+      priv.setToken(res);
+      token = res;
+      return token;
+    });
+  } else {
+    return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_SSO_ROUTES, configSsoUrl)).then((ssoUrl) => {
+      //constructor for new Keycloak Object?
+      options.url = ssoUrl;
+      options.clientId = 'cloud-services';
+      options.realm = 'redhat-external';
 
-    //priv.keycloak = Keycloak(options);
-    priv.setKeycloak(options, updateToken, loginAllTabs, refreshTokens);
+      //options for keycloak.init method
+      options.promiseType = 'native';
+      options.onLoad = 'check-sso';
+      options.checkLoginIframe = false;
 
-    if (options.token) {
-      if (isExistingValid(options.token)) {
-        // we still need to init async
-        // so that the renewal times and such fire
-        priv.initializeKeycloak(options);
-        // Here we have an existing key
-        // We need to set up some of the keycloak state
-        // so that the reset of the methods that Chrome uses
-        // to check if things are good get faked out
-        // TODO reafctor the direct access to priv.keycloak
-        // away from the users
-        priv.setToken(options.token);
-        return Promise.resolve();
-        // return new Promise((resolve) => {
+      const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
 
-        //   resolve();
-        // });
-      } else {
-        delete options.token;
+      options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
+
+      if (window.localStorage && window.localStorage.getItem('chrome:jwt:shortSession') === 'true') {
+        options.realm = 'short-session';
       }
-    }
 
-    return (priv.initialize(options) as unknown as Promise<unknown>).then(initSuccess).catch(initError);
-  });
+      //priv.keycloak = Keycloak(options);
+      priv.setKeycloak(options, updateToken, loginAllTabs, refreshTokens);
+
+      if (options.token) {
+        if (isExistingValid(options.token)) {
+          // we still need to init async
+          // so that the renewal times and such fire
+          priv.initializeKeycloak(options);
+          // Here we have an existing key
+          // We need to set up some of the keycloak state
+          // so that the reset of the methods that Chrome uses
+          // to check if things are good get faked out
+          // TODO reafctor the direct access to priv.keycloak
+          // away from the users
+          priv.setToken(options.token);
+          return Promise.resolve();
+          // return new Promise((resolve) => {
+
+          //   resolve();
+          // });
+        } else {
+          delete options.token;
+        }
+      }
+
+      return (priv.initialize(options) as unknown as Promise<unknown>).then(initSuccess).catch(initError);
+    });
+  }
 };
 
 export function isExistingValid(token?: string) {
@@ -235,9 +263,14 @@ export function isExistingValid(token?: string) {
 }
 
 // keycloak init successful
-export function initSuccess() {
+export async function initSuccess() {
   log('JWT Initialized');
-  setCookie(priv.getToken());
+  let cogToken;
+  if (itLessEnv) {
+    cogToken = await getTokenWithAuthorizationCode();
+  }
+  const token = itLessEnv ? cogToken : priv.getToken();
+  setCookie(token);
 }
 
 // keycloak init failed
@@ -382,21 +415,25 @@ export function getCookieExpires(exp: number) {
 }
 
 // Set the cookie for 3scale
-export function setCookie(token?: string) {
+export async function setCookie(token?: string) {
   log('Setting the cs_jwt cookie');
-  if (token && token.length > 10) {
+  let cogToken;
+  let cogUser;
+  if (itLessEnv) {
+    cogToken = await getTokenWithAuthorizationCode();
+    cogUser = await getUser();
+  }
+  const tok = itLessEnv ? cogToken : token;
+  const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
+  if (tok && tok.length > 10) {
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
-      setCookieWrapper(`${cookieName}=${token};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
-      setCookieWrapper(`${cookieName}=${token};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
-      setCookieWrapper(`${cookieName}=${token};` + `path=/api/tasks/v1;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
-      setCookieWrapper(
-        `${cookieName}=${token};` + `path=/api/automation-hub;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`
-      );
-      setCookieWrapper(
-        `${cookieName}=${token};` + `path=/api/remediations/v1;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`
-      );
-      setCookieWrapper(`${cookieName}=${token};` + `path=/api/edge/v1;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(token).exp)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/api/tasks/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/api/automation-hub;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(tok).exp)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/api/remediations/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=/api/edge/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
     }
   }
 }

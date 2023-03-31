@@ -30,15 +30,15 @@ export const DEFAULT_SSO_ROUTES = {
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
-  gov: {
-    url: ['gov.cloud.redhat.com', 'gov.console.redhat.com'],
-    sso: 'https://sso.redhat.com/auth',
-    portal: 'https://access.redhat.com',
+  frh: {
+    url: ['console.stage.openshiftusgov.com'],
+    sso: 'https://ocm-ra-stage-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
+    portal: 'https://console.stage.openshiftusgov.com',
   },
-  govStage: {
-    url: ['ephem.outsrights.cc', 'ephem.outsrights.cc'],
-    sso: 'https://stage-gov-console.auth.us-east-1.amazoncognito.com/login?client_id=6c7ba7mlnnv9db9ijqj73a1vpg&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fephem.outsrights.cc%2Fbeta%2Fapps%2Fchrome%2Findex.html',
-    portal: 'https://ephem.outsrights.cc/beta/apps/chrome/index.html',
+  frhStage: {
+    url: ['ephem.outsrights.cc'],
+    sso: 'https://stage-gov-console.auth.us-east-1.amazoncognito.com/login',
+    portal: 'https://ephem.outsrights.cc/',
   },
   dev: {
     url: ['dev.foo.redhat.com', 'console.dev.redhat.com'],
@@ -195,8 +195,8 @@ export function isBeta() {
   return window.location.pathname.split('/')[1] === 'beta' ? true : false;
 }
 
-export function isFedRamp() {
-  return getEnv() === 'outsrights';
+export function ITLess() {
+  return getEnv() === 'frh' || getEnv() === 'frhStage';
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {

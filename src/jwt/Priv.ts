@@ -1,4 +1,7 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakLoginOptions, KeycloakLogoutOptions } from 'keycloak-js';
+import { ITLess } from '../utils/common';
+
+const isITLessEnv = ITLess();
 
 export type PrivCookie = {
   cookieName: string;
@@ -109,7 +112,9 @@ class Priv {
 
   updateToken() {
     // 5 is default KC value, min validaty is required by KC byt then has a default value for some reason
-    return this._keycloak.updateToken(5);
+    if (!isITLessEnv) {
+      return this._keycloak.updateToken(5);
+    }
   }
 }
 

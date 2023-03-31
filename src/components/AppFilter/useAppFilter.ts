@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
 import { ReduxState } from '../../redux/store';
-import { isBeta, isFedRamp, isProd } from '../../utils/common';
+import { ITLess, isBeta, isProd } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { computeFedrampResult } from '../../utils/useRenderFedramp';
 
@@ -37,7 +37,7 @@ const bundlesOrder = [
   'business-services',
 ];
 
-const isFedrampEnv = isFedRamp();
+const isITLessEnv = ITLess();
 
 function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules'> = { modules: [] }) {
   const routes = (modules || [])
@@ -51,7 +51,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }:
   const subscriptionsLinks: NavItem[] = [];
   let url = href;
   let appId = rest.appId!;
-  let isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
+  let isFedramp = computeFedrampResult(isITLessEnv, url, modules[appId]);
   if (expandable) {
     routes?.forEach(({ href, title, ...rest }) => {
       if (href?.includes('/openshift/cost-management') && rest.filterable !== false) {
@@ -72,7 +72,7 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }:
         const truncatedRoute = href.split('/').slice(0, 3).join('/');
         url = isExternal ? href : moduleRoute.length > truncatedRoute.length ? moduleRoute : truncatedRoute;
         appId = rest.appId ? rest.appId : appId;
-        isFedramp = computeFedrampResult(isFedrampEnv, url, modules[appId]);
+        isFedramp = computeFedrampResult(isITLessEnv, url, modules[appId]);
       }
     });
   }
@@ -138,7 +138,7 @@ const useAppFilter = () => {
         }, [])
         .flat()
         .map((link) => getBundleLink(link, modules || {}))
-        .filter(({ isFedramp }) => (isFedrampEnv ? !!isFedramp : true))
+        .filter(({ isFedramp }) => (isITLessEnv ? !!isFedramp : true))
         .filter(({ filterable }) => filterable !== false) || [];
     const bundleLinks: NavItem[] = [];
     const extraLinks: { cost: NavItem[]; subs: NavItem[] } = {

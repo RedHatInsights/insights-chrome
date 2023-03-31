@@ -3,12 +3,13 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownTo
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
-import { getEnv, isBeta, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, getEnv, isBeta, isProd as isProdEnv } from '../../utils/common';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { ReduxState } from '../../redux/store';
 import { logout } from '../../jwt/jwt';
+import { cogLogout } from '../../cognito/auth';
 
 const buildItems = (
   username = '',
@@ -19,6 +20,7 @@ const buildItems = (
 ) => {
   const env = getEnv();
   const isProd = isProdEnv();
+  const isITLessEnv = ITLess();
   const intl = useIntl();
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
@@ -34,29 +36,37 @@ const buildItems = (
       {accountNumber > -1 && (
         <DropdownItem key="Account" isPlainText className="disabled-pointer">
           <dl className="chr-c-dropdown-item__stack">
-            <dt className="chr-c-dropdown-item__stack--header">
-              {intl.formatMessage(messages.accountNumber)}
-              <span className="visible-pointer pf-u-ml-sm">
-                <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
-                  <QuestionCircleIcon />
-                </Tooltip>
-              </span>
-            </dt>
-            <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
+            {!isITLessEnv && (
+              <>
+                <dt className="chr-c-dropdown-item__stack--header">
+                  {intl.formatMessage(messages.accountNumber)}
+                  <span className="visible-pointer pf-u-ml-sm">
+                    <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
+                      <QuestionCircleIcon />
+                    </Tooltip>
+                  </span>
+                </dt>
+                <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
+              </>
+            )}
             {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
           </dl>
         </DropdownItem>
       )}
     </React.Fragment>,
     <DropdownSeparator key="separator" />,
-    <DropdownItem
-      key="My Profile"
-      href={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {intl.formatMessage(messages.myProfile)}
-    </DropdownItem>,
+    <React.Fragment key="My Profile wrapper">
+      {!isITLessEnv && (
+        <DropdownItem
+          key="My Profile"
+          href={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {intl.formatMessage(messages.myProfile)}
+        </DropdownItem>
+      )}
+    </React.Fragment>,
     <React.Fragment key="My user access wrapper">
       {accountNumber > -1 && isBeta() && (
         <DropdownItem
@@ -88,7 +98,7 @@ const buildItems = (
         </DropdownItem>
       )}
     </React.Fragment>,
-    <DropdownItem key="logout" component="button" onClick={() => logout(true)}>
+    <DropdownItem key="logout" component="button" onClick={() => (isITLessEnv ? cogLogout() : logout(true))}>
       {intl.formatMessage(messages.logout)}
     </DropdownItem>,
     extraItems,
