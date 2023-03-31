@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { getUrl, isBeta, isFedRamp, isProd } from '../utils/common';
+import { ITLess, getUrl, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -149,9 +149,9 @@ export type SegmentProviderProps = {
 
 const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
   const initialized = useRef(false);
-  const fedRampEnv = isFedRamp();
-  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || fedRampEnv;
-  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || fedRampEnv;
+  const isITLessEnv = ITLess();
+  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;
+  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
@@ -203,7 +203,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         resetIntegrations();
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
-          { initialPageview: false, disableClientPersistence: true, integrations: { All: !fedRampEnv } }
+          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv } }
         );
         window.segment = analytics.current;
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);

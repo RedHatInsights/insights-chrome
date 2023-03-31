@@ -19,7 +19,7 @@ import {
   toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
-import { getEnv, getEnvDetails, getUrl, isBeta, isFedRamp, isProd, updateDocumentTitle } from '../utils/common';
+import { ITLess, getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
@@ -31,6 +31,8 @@ import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
 import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { ChromeModule, FlagTagsFilter } from '../@types/types';
+import { createFedrampAuthObject } from '../cognito';
+import { getTokenWithAuthorizationCode } from '../cognito/auth';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -92,9 +94,11 @@ export const createChromeContext = ({
     return Promise.resolve();
   };
 
+  const isITLessEnv = ITLess();
+
   const api: ChromeAPI = {
     ...actions,
-    auth: createAuthObject(libJwt, getUser, store, modulesConfig),
+    auth: isITLessEnv ? createFedrampAuthObject() : createAuthObject(libJwt, getUser, store, modulesConfig),
     initialized: true,
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
@@ -104,8 +108,13 @@ export const createChromeContext = ({
     getEnvironmentDetails: () => getEnvDetails(),
     createCase: (fields?: any) => getUser().then((user) => createSupportCase(user!.identity, libJwt, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
-      await getUser();
-      return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
+      if (isITLessEnv) {
+        const cogToken = await getTokenWithAuthorizationCode();
+        return fetchPermissions(cogToken || '', app, bypassCache);
+      } else {
+        await getUser();
+        return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
+      }
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
@@ -133,7 +142,7 @@ export const createChromeContext = ({
     visibilityFunctions,
     on,
     experimentalApi: true,
-    isFedramp: isFedRamp(),
+    isFedramp: isITLessEnv,
     usePendoFeedback,
     segment: {
       setPageMetadata,

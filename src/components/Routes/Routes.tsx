@@ -5,7 +5,7 @@ import ChromeRoute from '../ChromeRoute';
 import NotFoundRoute from '../NotFoundRoute';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
-import { isFedRamp } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 
 const QuickstartCatalogRoute = lazy(() => import('../QuickstartsCatalogRoute'));
 
@@ -29,7 +29,7 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
   let list = moduleRoutes;
-  if (isFedRamp()) {
+  if (ITLess()) {
     list = list.filter((list) => list.isFedramp);
   }
 

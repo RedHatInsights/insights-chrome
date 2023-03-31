@@ -1,5 +1,6 @@
 import { Card, CardBody, CardTitle, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import React from 'react';
+import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
 import AllServicesLink from './AllServicesLink';
@@ -13,6 +14,7 @@ export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkT
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon];
+  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
   return (
     <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100">
       <CardTitle>
@@ -26,7 +28,7 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
           <Text component={TextVariants.p} className="pf-u-mb-md">
             {description}
           </Text>
-          {links.map((link, index) =>
+          {filteredLinks.map((link, index) =>
             isAllServicesGroup(link) ? <AllServicesGroup key={index} {...link} /> : <AllServicesLink key={index} {...link} />
           )}
         </TextContent>

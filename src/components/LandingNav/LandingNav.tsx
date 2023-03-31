@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
-import { isBeta, isFedRamp } from '../../utils/common';
+import { ITLess, isBeta } from '../../utils/common';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -61,7 +61,7 @@ const LandingNav = () => {
               }}
             >
               {schema
-                .filter(({ appId }) => (appId && isFedRamp() ? modules?.[appId]?.isFedramp === true : true))
+                .filter(({ appId }) => (appId && ITLess() ? modules?.[appId]?.isFedramp === true : true))
                 .map((item, index) => (
                   <ChromeNavItemFactory key={index} {...item} />
                 ))}

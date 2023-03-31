@@ -10,7 +10,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { LibJWT, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { getEnv, isFedRamp, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -56,10 +56,11 @@ const libjwtSetup = (chromeConfig: { ssoUrl?: string }) => {
   return libjwt;
 };
 
+const isITLessEnv = ITLess();
+
 const useInitialize = () => {
   const [{ isReady, libJwt }, setState] = useState<{ isReady: boolean; libJwt?: LibJWT }>({ isReady: false, libJwt: undefined });
   const store = useStore();
-  const fedRampEnv = isFedRamp();
   const chromeInstance = useRef({ cache: undefined });
   useEffect(() => {
     // We have to use `let` because we want to access it once jwt is initialized
@@ -84,7 +85,7 @@ const useInitialize = () => {
     // setup trust arc
     trustarcScriptSetup();
     // setup adobe analytics
-    if (!fedRampEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+    if (!isITLessEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
       registerAnalyticsObserver();
     }
@@ -106,6 +107,10 @@ const App = () => {
     const title = typeof documentTitle === 'string' ? `${documentTitle} | ` : '';
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
+
+  if (isITLessEnv) {
+    return isReady && modules && scalprumConfig ? <RootApp config={scalprumConfig} /> : <AppPlaceholder />;
+  }
 
   return isReady && modules && scalprumConfig && libJwt ? (
     <LibtJWTContext.Provider value={libJwt}>

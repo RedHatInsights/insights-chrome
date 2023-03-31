@@ -6,15 +6,18 @@ export type AllServicesLink = {
   description?: string;
   isExternal?: boolean;
   prod?: boolean;
+  ITLess?: boolean;
 };
 export type AllServicesGroup = {
   isGroup: true;
   title: string;
+  ITLess?: boolean;
   links: AllServicesLink[];
   description?: string;
 };
 export type AllServicesSection = {
   icon: keyof typeof AllServicesIcons;
+  ITLess?: boolean;
   title: string;
   description: string;
   links: (AllServicesLink | AllServicesGroup)[];
@@ -133,6 +136,7 @@ const allServicesLinks: AllServicesSection[] = [
   {
     icon: 'UsersIcon',
     title: 'Identity and Access Management',
+    ITLess: true,
     description: 'Ensure that the right users have the appropriate access to technology resources.',
     links: [
       {
@@ -143,11 +147,13 @@ const allServicesLinks: AllServicesSection[] = [
       {
         href: '/settings/my-user-access',
         title: 'My User Access',
+        ITLess: true,
         description: 'View your account permissions for Red Hat Hybrid Cloud Console services.',
       },
       {
         href: '/iam/user-access/users',
         title: 'User Access',
+        ITLess: true,
         description: "Manage your organization's role-based access control (RBAC) to services.",
       },
     ],
@@ -231,6 +237,7 @@ const allServicesLinks: AllServicesSection[] = [
   {
     icon: 'ChartLineIcon',
     title: 'Observe',
+    ITLess: true,
     description: 'Monitor, troubleshoot, and improve application performance.',
     links: [
       {
@@ -273,6 +280,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         isGroup: true,
         title: 'RHEL',
+        ITLess: true,
         links: [
           {
             href: '/insights/advisor/recommendations',
@@ -283,27 +291,38 @@ const allServicesLinks: AllServicesSection[] = [
             href: '/insights/patch/advisories',
             title: 'Content Advisories',
             description: 'View applicable advisories and updates for your Red Hat Enterprise Linux systems.',
+            ITLess: true,
           },
           {
             href: '/insights/drift',
             title: 'Drift',
             description: 'Compare your Red Hat Enterprise Linux systems to one another or against a set baseline.',
+            ITLess: true,
+          },
+          {
+            href: '/insights/patch/advisories',
+            title: 'Patch',
+            ITLess: true,
+            description: 'Review applicable advisories and keep your RHEL systems up to date.',
           },
           {
             href: '/insights/policies/list',
             title: 'Policies',
             description: 'Monitor your Red Hat Enterprise Linux inventory systems against set parameters to detect deviation or misalignment.',
+            ITLess: true,
           },
           {
             href: '/insights/remediations',
             title: 'Remediations',
             description:
               'Use Ansible Playbooks to resolve configuration, security, and compliance issues identified on your Red Hat Enterprise Linux systems. ',
+            ITLess: true,
           },
           {
             href: '/insights/ros',
             title: 'Resource Optimization',
             description: 'Optimize your public cloud-based Red Hat Enterprise Linux systems based on CPU, memory, and disk input/output performance.',
+            ITLess: true,
           },
         ],
       },
@@ -312,6 +331,7 @@ const allServicesLinks: AllServicesSection[] = [
   {
     icon: 'CloudSecurityIcon',
     title: 'Security',
+    ITLess: true,
     description: 'Meet your policy and compliance objectives.',
     links: [
       {
@@ -344,6 +364,7 @@ const allServicesLinks: AllServicesSection[] = [
       {
         isGroup: true,
         title: 'RHEL',
+        ITLess: true,
         links: [
           {
             href: '/insights/advisor/recommendations',
@@ -354,11 +375,13 @@ const allServicesLinks: AllServicesSection[] = [
             href: '/insights/patch/advisories',
             title: 'Content Advisories',
             description: 'View applicable advisories and updates for your Red Hat Enterprise Linux systems.',
+            ITLess: true,
           },
           {
             href: '/insights/compliance',
             title: 'Compliance',
             description: 'Evaluate your Red Hat Enterprise systems’ compliance with security or regulatory standards.',
+            ITLess: true,
           },
           {
             href: '/edge/fleet-management',
@@ -369,18 +392,21 @@ const allServicesLinks: AllServicesSection[] = [
             href: '/insights/malware',
             title: 'Malware',
             description: 'Identify potential malware on your Red Hat Enterprise Linux systems. ',
+            ITLess: true,
           },
           {
             href: '/insights/remediations',
             title: 'Remediations',
             description:
               'Use Ansible Playbooks to resolve configuration, security, and compliance issues identified on your Red Hat Enterprise Linux systems.',
+            ITLess: true,
           },
           {
             href: '/insights/vulnerability/cves',
             title: 'Vulnerability',
             description:
               'Identify and prioritize security vulnerabilities within your Red Hat Enterprise Linux systems based on severity and frequency.',
+            ITLess: true,
           },
         ],
       },
