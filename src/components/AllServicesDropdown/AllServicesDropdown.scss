@@ -36,7 +36,9 @@
 }
 
 .chr-c-panel-services-nav {
-  .pf-c-tabs {
+  .pf-c-tabs.pf-m-vertical {
+    display: flex; // Kafka conflict
+    padding-top: var(--pf-global--spacer--md); // Kafka conflict
     height: calc(100% - 80px);
   }
 }
