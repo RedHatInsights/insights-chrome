@@ -44,11 +44,9 @@ const useBreadcrumbsLinks = () => {
       const activeFragment = activeNavigation.find((item) => item?.active);
       if (activeFragment && isExpandableNav(activeFragment)) {
         const leafFragment = activeFragment.routes.find((item) => item.active);
-        const groupLink = (() => {
-          const appFragments = leafFragment?.href?.split('/');
-          appFragments?.pop();
-          return appFragments ? `${appFragments.join('/')}` : `/${bundleId}`;
-        })();
+        const appFragments = leafFragment?.href?.split('/');
+        appFragments?.pop();
+        const groupLink = appFragments ? `${appFragments.join('/')}` : `/${bundleId}`;
         const groupFragment = { href: groupLink, ...activeFragment };
         segments.push(groupFragment, ...(leafFragment?.href ? [leafFragment as Required<NavItem, 'href'>] : []));
       } else if (activeFragment) {

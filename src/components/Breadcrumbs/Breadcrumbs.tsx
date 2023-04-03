@@ -7,6 +7,7 @@ import { onToggle } from '../../redux/actions';
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import './Breadcrumbs.scss';
+import classNames from 'classnames';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -42,7 +43,9 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
             {segments.map(({ title, href }, index) => (
               <BreadcrumbItem
                 to={href}
-                component={(props) => <ChromeLink {...props} title={title} href={href} />}
+                component={(props) => (
+                  <ChromeLink {...props} className={classNames(props.className, 'chr-c-breadcrumbs__link')} title={title} href={href} />
+                )}
                 key={index}
                 isActive={segments.length - 1 === index}
               >
