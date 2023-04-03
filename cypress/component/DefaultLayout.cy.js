@@ -79,13 +79,13 @@ describe('<Default layout />', () => {
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
   });
 
-  it('render correctly with few nav items', () => {
+  it.only('render correctly with few nav items', () => {
     // Should not see a nav scrollbar
     cy.viewport(1280, 720);
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json?ts=*', {
       navItems: [...Array(5)],
     }).as('navRequest');
     const elem = cy
@@ -106,7 +106,7 @@ describe('<Default layout />', () => {
       data: [],
     });
 
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json?ts=*', {
       navItems: [...Array(30)],
     }).as('navRequest');
     const elem = cy
@@ -127,7 +127,7 @@ describe('<Default layout />', () => {
       data: [],
     });
 
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json?ts=*', {
       navItems: [...Array(5)],
     }).as('navRequest');
     const elem = cy

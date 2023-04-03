@@ -5,13 +5,12 @@ import { BundleNavigation, NavItem } from '../@types/types';
 import allServicesLinks, { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
 import { isAllServicesGroup } from '../components/AllServices/AllServicesSection';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
-import { isBeta, isProd } from '../utils/common';
+import { getChromeStaticPathname, isProd } from '../utils/common';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
 };
 
-const isBetaEnv = isBeta();
 const isProdEnv = isProd();
 
 const handleBundleResponse = (bundle: { data: Omit<BundleNavigation, 'id' | 'title'> }): NavItem[] => {
@@ -115,7 +114,7 @@ const useAllServices = () => {
     Promise.all(
       bundles.map((fragment) =>
         axios
-          .get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`)
+          .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
           .then(handleBundleResponse)
           .catch((err) => {
             console.error('Unable to load appfilter bundle', err, fragment);

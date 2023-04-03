@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, isBeta } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
@@ -44,7 +44,6 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 
 const useNavigation = () => {
   const { flagsReady, flagsError } = useFlagsStatus();
-  const isBetaEnv = isBeta();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -107,7 +106,7 @@ const useNavigation = () => {
     setNoNav(false);
     if (currentNamespace && (flagsReady || flagsError)) {
       axios
-        .get(`${window.location.origin}${isBetaEnv ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`)
+        .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json?ts=${Date.now()}`)
         .then(async (response) => {
           if (observer && typeof observer.disconnect === 'function') {
             observer.disconnect();

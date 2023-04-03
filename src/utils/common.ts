@@ -314,14 +314,48 @@ export const trustarcScriptSetup = () => {
   document.body.appendChild(trustarcScript);
 };
 
-export const loadFedModules = () =>
-  axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
-    headers: {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
-      Expires: '0',
+const CHROME_SERVICE_BASE = '/api/chrome-service/v1';
+export const chromeServiceStaticPathname = {
+  beta: {
+    stage: '/static/beta/stage',
+    prod: '/static/beta/prod',
+  },
+  stable: {
+    stage: '/static/stable/stage',
+    prod: '/static/stable/prod',
+  },
+};
+
+export function getChromeStaticPathname(type: 'modules' | 'navigation') {
+  const stableEnv = isBeta() ? 'beta' : 'stable';
+  const prodEnv = isProd() ? 'prod' : 'stage';
+  return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
+}
+
+export const loadFedModules = async () => {
+  const commnHeaders = {
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+    Expires: '0',
+  };
+  // we need to fetch both old and new to get the chrome config from FEO
+  const [FEOModules, staticModules] = await Promise.all([
+    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+      headers: commnHeaders,
+    }),
+    axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json?ts=${Date.now()}`, {
+      headers: commnHeaders,
+    }),
+  ]);
+
+  return {
+    data: {
+      // get only chrome module from FEO. It is crucial not to add he key if it is empty
+      ...(FEOModules.data.chrome ? { chrome: FEOModules.data.chrome } : {}),
+      ...staticModules.data,
     },
-  });
+  };
+};
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
   Object.entries(modules)
