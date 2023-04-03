@@ -38,7 +38,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
             {favoritedServices.length === 0 ? (
               <EmptyState />
             ) : (
-              <StackItem className="pf-u-pt-xl">
+              <StackItem>
                 <FavoriteServicesGallery favoritedServices={favoritedServices} />
               </StackItem>
             )}
