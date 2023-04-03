@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import StarIconHalf from '@patternfly/react-icons/dist/js/icons/star-half-alt-icon';
 
 import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
@@ -19,10 +18,9 @@ export type ServiceTileProps = {
 const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTileProps) => {
   const bundle = bundleMapping[pathname.split('/')[1]];
   const { unfavoritePage } = useFavoritePages();
-  const [mouseOver, setMouseOver] = useState(false);
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
-      <Card isFlat isFullHeight isSelectableRaised>
+      <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>
         <CardBody>
           <Split>
             <SplitItem className="pf-m-fill">{name}</SplitItem>
@@ -37,9 +35,8 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
                 className="pf-u-p-0"
                 variant="plain"
               >
-                <Icon onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} status="warning" className="pf-u-ml-sm">
-                  {/* indicate the unfavorite action on clicking by showing half start icon */}
-                  {mouseOver ? <StarIconHalf /> : <StarIcon />}
+                <Icon className="pf-u-ml-sm chr-c-icon-star">
+                  <StarIcon />
                 </Icon>
               </Button>
             </SplitItem>
