@@ -127,6 +127,7 @@ export type RouteDefinition = {
   manifestLocation: string;
   dynamic?: boolean;
   exact?: boolean;
+  props?: any;
 };
 
 export type ModuleRoute =
@@ -135,6 +136,7 @@ export type ModuleRoute =
       pathname: string;
       exact?: boolean;
       dynamic?: boolean;
+      props?: any;
     }
   | string;
 
@@ -158,6 +160,7 @@ export type ChromeModule = {
   modules?: RemoteModule[];
   defaultDocumentTitle?: string;
   fullProfile?: boolean;
+  props?: any;
 };
 
 export interface GroupItem {

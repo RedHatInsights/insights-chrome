@@ -24,6 +24,8 @@ coverage/
 
 # cypress diff snapshots
 cypress/**/*.diff.png
+cypress/videos
+cypress/screenshots
 
 # cache
 .cache
