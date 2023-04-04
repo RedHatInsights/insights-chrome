@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownToggle, KebabToggle, Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
@@ -122,8 +122,10 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
     };
   });
 
-  const onSelect = () => {
-    setIsOpen(!isOpen);
+  const onSelect = (event: any) => {
+    if(event.target.tagName === 'A') {
+      setIsOpen(!isOpen);
+    }
   };
 
   const onToggle = (isOpen: boolean) => {
