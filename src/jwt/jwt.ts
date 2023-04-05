@@ -424,8 +424,9 @@ export async function setCookie(token?: string) {
     cogUser = await getUser();
   }
   const tok = itLessEnv ? cogToken : token;
-  const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
   if (tok && tok.length > 10) {
+    // FIXME: Fix cognito typing not to use any
+    const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
