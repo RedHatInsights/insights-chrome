@@ -8,7 +8,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getSection, getUrl, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, getUrl, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -20,11 +20,14 @@ const isITLessEnv = ITLess();
 
 export const switchRelease = (isBeta: boolean, pathname: string) => {
   cookie.set('cs_toggledRelease', 'true');
+  const previewFragment = getRouterBasename(pathname);
 
   if (isBeta) {
-    return `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
+    const [baseUri, pathnameFragment] = previewFragment.includes('beta') ? [/\/beta/, /\/beta\//] : [/\/preview/, /\/preview\//];
+    return `${document.baseURI.replace(baseUri, '')}${pathname.replace(pathnameFragment, '')}`;
   } else {
     const path = pathname.split('/');
+    // awlays go to preview as a default
     path[0] = 'beta';
     return document.baseURI.concat(path.join('/'));
   }
@@ -261,7 +264,7 @@ const Tools = () => {
 
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          title={`You're ${isBeta() ? 'now' : 'no longer'} using the preview release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}

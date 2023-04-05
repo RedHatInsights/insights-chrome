@@ -53,6 +53,7 @@ const plugins = (dev = false, beta = false) => {
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
+      // FIXME: Change to /preview on May
       base: beta ? '/beta/' : '/',
     }),
     new HtmlWebpackPlugin({

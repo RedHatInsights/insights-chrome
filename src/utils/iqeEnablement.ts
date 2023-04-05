@@ -26,7 +26,9 @@ const checkOrigin = (path: URL | Request | string = '') => {
 function init(store: Store, libJwt?: () => LibJWT | undefined) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
+  const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
   const oldFetch = window.fetch;
+  const authRequests = new Set();
   fetchResults = {};
 
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
@@ -45,11 +47,23 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
     return req;
   };
 
+  window.XMLHttpRequest.prototype.setRequestHeader = function serRequestHeaderReplacement() {
+    if (arguments[0] === 'Authorization') {
+      authRequests.add((this as XMLHttpRequest & { _url: string })._url);
+    }
+
+    // if the header is Auth change it to Authorization, since that's our internal name
+    // @ts-ignore
+    return setRequestHeader.apply(this, [arguments[0] === 'Auth' ? 'Authorization' : arguments[0], arguments[1]]);
+  };
+
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
     if (checkOrigin((this as XMLHttpRequest & { _url: string })._url) && libJwt?.()?.jwt.isAuthenticated()) {
-      // There is potentially a problem if app sets its own Auth header
-      this.setRequestHeader('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+      if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
+        // Send Auth header, it will be changed to Authorization later down the line
+        this.setRequestHeader('Auth', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+      }
     }
     // eslint-disable-line func-names
     if (iqeEnabled) {
