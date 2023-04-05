@@ -123,7 +123,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   });
 
   const onSelect = (event: any) => {
-    if (event.target.tagName === 'A') {
+    if (['A', 'BUTTON'].includes(event.target.tagName)) {
       setIsOpen(!isOpen);
     }
   };
