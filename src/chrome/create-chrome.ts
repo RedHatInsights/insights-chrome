@@ -33,6 +33,7 @@ import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { ChromeModule, FlagTagsFilter } from '../@types/types';
 import { createFedrampAuthObject } from '../cognito';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
+import useBundle from '../hooks/useBundle';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -103,6 +104,7 @@ export const createChromeContext = ({
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
     getBundle: () => getUrl('bundle'),
+    getBundleData: useBundle,
     getApp: () => getUrl('app'),
     getEnvironment: () => getEnv(),
     getEnvironmentDetails: () => getEnvDetails(),
