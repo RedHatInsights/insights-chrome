@@ -34,6 +34,7 @@ describe('Tools', () => {
 
   it('should switch release correctly', () => {
     expect(switchRelease(true, '/beta/settings/rbac')).toEqual(`${document.baseURI}settings/rbac`);
+    expect(switchRelease(true, '/preview/settings/rbac')).toEqual(`${document.baseURI}settings/rbac`);
     expect(switchRelease(false, '/settings/rbac')).toEqual(`${document.baseURI}beta/settings/rbac`);
   });
 });

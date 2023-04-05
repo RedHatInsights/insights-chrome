@@ -146,7 +146,7 @@ const commonConfig = ({ dev }) => {
       ...proxy({
         env: 'stage-beta',
         port: 1337,
-        appUrl: [/^\/*$/, /^\/beta\/*$/],
+        appUrl: [/^\/*$/, /^\/beta\/*$/, /^\/preview\/*$/],
         useProxy: true,
         publicPath,
         proxyVerbose: true,

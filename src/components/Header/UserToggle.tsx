@@ -3,7 +3,7 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, DropdownTo
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
-import { ITLess, getEnv, isBeta, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -11,13 +11,7 @@ import { ReduxState } from '../../redux/store';
 import { logout } from '../../jwt/jwt';
 import { cogLogout } from '../../cognito/auth';
 
-const buildItems = (
-  username = '',
-  isOrgAdmin?: boolean,
-  accountNumber: string | number = -1,
-  isInternal?: boolean,
-  extraItems: React.ReactNode[] = []
-) => {
+const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string, isInternal?: boolean, extraItems: React.ReactNode[] = []) => {
   const env = getEnv();
   const isProd = isProdEnv();
   const isITLessEnv = ITLess();
@@ -33,7 +27,7 @@ const buildItems = (
       </dl>
     </DropdownItem>,
     <React.Fragment key="account wrapper">
-      {accountNumber > -1 && (
+      {accountNumber && (
         <DropdownItem key="Account" isPlainText className="disabled-pointer">
           <dl className="chr-c-dropdown-item__stack">
             {!isITLessEnv && (
@@ -68,28 +62,24 @@ const buildItems = (
       )}
     </React.Fragment>,
     <React.Fragment key="My user access wrapper">
-      {accountNumber > -1 && isBeta() && (
-        <DropdownItem
-          component={
-            <ChromeLink href="/settings/my-user-access" isBeta={isBeta()} appId="rbac">
-              {intl.formatMessage(messages.myUserAccess)}
-            </ChromeLink>
-          }
-          key="My user access"
-        />
-      )}
+      <DropdownItem
+        component={
+          <ChromeLink href="/settings/my-user-access" appId="rbac">
+            {intl.formatMessage(messages.myUserAccess)}
+          </ChromeLink>
+        }
+        key="My user access"
+      />
     </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
-      {accountNumber > -1 && (
-        <DropdownItem
-          component={
-            <ChromeLink href="/user-preferences/notifications" isBeta={isBeta()} appId="userPreferences">
-              {intl.formatMessage(messages.userPreferences)}
-            </ChromeLink>
-          }
-          key="User preferences"
-        />
-      )}
+      <DropdownItem
+        component={
+          <ChromeLink href="/user-preferences/notifications" appId="userPreferences">
+            {intl.formatMessage(messages.userPreferences)}
+          </ChromeLink>
+        }
+        key="User preferences"
+      />
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
       {isInternal && isProd && (
@@ -114,7 +104,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const account = useSelector(({ chrome }: ReduxState) => {
     return {
-      number: chrome.user?.identity.account_number || 1,
+      number: chrome.user?.identity.account_number,
       username: chrome.user?.identity.user?.username,
       isOrgAdmin: chrome.user?.identity.user?.is_org_admin,
       isInternal: chrome.user?.identity.user?.is_internal,
