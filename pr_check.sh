@@ -22,7 +22,7 @@ docker run -t \
   --add-host stage.foo.redhat.com:127.0.0.1 \
   --add-host prod.foo.redhat.com:127.0.0.1 \
   --entrypoint bash \
-  quay.io/cloudservices/cypress-e2e-image:9f5d140 /e2e/run-e2e.sh
+  quay.io/cloudservices/cypress-e2e-image:06b70f3 /e2e/run-e2e.sh
 
 echo "After docker run"
 
