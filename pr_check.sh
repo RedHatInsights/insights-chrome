@@ -5,6 +5,7 @@ export IMAGE="quay.io/cloudservices/$COMPONENT"
 export WORKSPACE=${WORKSPACE:-$APP_ROOT}  # if running in jenkins, use the build's workspace
 export APP_ROOT=$(pwd)
 export INCLUDE_CHROME_CONFIG="true"
+export LANG=C.UTF-8
 cat /etc/redhat-release
 COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master
 
