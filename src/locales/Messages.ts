@@ -429,9 +429,9 @@ export default defineMessages({
   tryThisFeatureInBeta: {
     id: 'tryThisFeatureInBeta',
     description:
-      'Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
     defaultMessage:
-      'Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
   },
   afterBetaUse: {
     id: 'afterBetaUse',

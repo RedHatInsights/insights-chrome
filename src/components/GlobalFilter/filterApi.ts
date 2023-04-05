@@ -18,7 +18,7 @@ export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: 
       // needs to be in timeout to not override existing URLs caused by nested routers
       // FIXME: After router v6 migration can be removed and we can use router location instead of document location
       navigate({
-        pathname: location.pathname.replace(/^\/beta\//, ''),
+        pathname: location.pathname.replace(/^(\/beta\/|\/preview\/)/, ''),
         search: location.search,
         hash: searchParams.toString(),
       });
