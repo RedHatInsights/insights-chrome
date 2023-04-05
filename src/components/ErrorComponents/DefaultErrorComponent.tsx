@@ -33,18 +33,21 @@ export type DefaultErrorComponentProps = {
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
-
   const [sentryId, setSentryId] = useState<string | undefined>();
+
   const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
+  const exceptionMessage = (props.error as Error)?.message ? (props.error as Error).message : 'Unhandled UI runtime error';
   useEffect(() => {
-    const sentryId = Sentry.captureException(new Error('Unhandled UI runtime error'), {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bundle: getUrl('bundle'),
-      app: getUrl('app'),
-      error: (props.error instanceof Error && props.error?.message) || props.error,
-      trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
-    });
+    const sentryId =
+      props.error &&
+      Sentry.captureException(new Error(exceptionMessage), {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        bundle: getUrl('bundle'),
+        app: getUrl('app'),
+        error: (props.error instanceof Error && props.error?.message) || props.error,
+        trace: props.errorInfo?.componentStack || (props.error instanceof Error && props.error?.stack) || props.error,
+      });
     setSentryId(sentryId);
     // When a chunk error occurs, save it with sentry and reload the page.
     // After ten seconds, the key will be removed from localStorage
