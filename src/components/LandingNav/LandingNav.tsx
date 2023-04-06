@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
-import { ITLess, isBeta } from '../../utils/common';
+import { ITLess, getChromeStaticPathname } from '../../utils/common';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -33,7 +33,7 @@ const LandingNav = () => {
   }, [showNav]);
 
   useEffect(() => {
-    axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/landing-navigation.json`).then((response) => {
+    axios.get(`${getChromeStaticPathname('navigation')}/landing-navigation.json`).then((response) => {
       dispatch(loadNavigationLandingPage(response.data));
     });
   }, []);
