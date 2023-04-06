@@ -25,7 +25,7 @@ const useUserProfile = () => {
     if (shouldLoginFullProfile) {
       login(true);
     }
-  }, [activeModule]);
+  }, [activeModule, activeModule?.fullProfile]);
 };
 
 export default useUserProfile;

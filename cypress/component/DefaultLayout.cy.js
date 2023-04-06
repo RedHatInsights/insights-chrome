@@ -79,7 +79,7 @@ describe('<Default layout />', () => {
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
   });
 
-  it.only('render correctly with few nav items', () => {
+  it('render correctly with few nav items', () => {
     // Should not see a nav scrollbar
     cy.viewport(1280, 720);
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
