@@ -59,19 +59,19 @@ export const warnDuplicatePkg = () => {
 
   if (pkgNames.length) {
     console.group(
-      `%c [SCALPRUM]: You have following packages that is being loaded into browser multiple times. You might want to align your version with the chrome one`,
-      'font-size:20px; color:#581845; padding:1px; border-radius:1px;'
+      `%c[SCALPRUM]: You have following packages that is being loaded into browser multiple times. You might want to align your version with the chrome one`,
+      'font-size:15px; color:#581845; padding:1px; border-radius:1px;'
     );
 
     const apps = Object.entries(updateCommands);
 
     apps.forEach(([appName, packages]) => {
       console.group(
-        `[SCALPRUM]: To align ${appName} application's package dependency versions to the chroming app instance version, please run following command`
+        `[SCALPRUM]: To align ${appName} application's dependency versions to the chroming app instance version, run following command using the 'insights-interact-tool' application`
       );
       console.warn(
-        `%c insights-interact run alignPackages --app=${appName} --packages=${packages} `,
-        'font-size:15px; background:#F9F9F9; color:#581845; padding:1px; border-radius:1px;'
+        `%cinsights-interact run alignPackages --app=${appName} --packages=${packages} `,
+        'background:#F9F9F9; color:#581845; padding:1px; border-radius:1px;'
       );
       console.groupEnd();
     });
