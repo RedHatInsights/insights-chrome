@@ -39,7 +39,7 @@ const CrossRequestNotifier = () => {
 
   const DescriptionComponent = ({ id, markRead }: { id: string; markRead: (id: string) => void }) => (
     <span onClick={() => markRead(id)}>
-      <ChromeLink href={id === 'mark-all' ? '/settings/rbac/access-requests' : `/settings/rbac/access-requests/${id}`} appId="rbac">
+      <ChromeLink href={id === 'mark-all' ? '/iam/user-access/access-requests' : `/iam/user-access/access-requests/${id}`} appId="rbac">
         {intl.formatMessage(messages.viewRequest)}
       </ChromeLink>
     </span>
