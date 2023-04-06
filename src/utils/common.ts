@@ -314,13 +314,38 @@ export const trustarcScriptSetup = () => {
   document.body.appendChild(trustarcScript);
 };
 
-export const loadFedModules = () =>
+const CHROME_SERVICE_BASE = '/api/chrome-service/v1';
+export const chromeServiceStaticPathname = {
+  beta: {
+    stage: '/static/beta/stage',
+    prod: '/static/beta/prod',
+  },
+  stable: {
+    stage: '/static/stable/stage',
+    prod: '/static/stable/prod',
+  },
+};
+
+export function getChromeStaticPathname(type: 'modules' | 'navigation') {
+  const stableEnv = isBeta() ? 'beta' : 'stable';
+  const prodEnv = isProd() ? 'prod' : 'stage';
+  return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
+}
+
+const fedModulesheaders = {
+  'Cache-Control': 'no-cache',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
+export const loadFEOFedModules = () =>
   axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
-    headers: {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
-      Expires: '0',
-    },
+    headers: fedModulesheaders,
+  });
+
+export const loadFedModules = async () =>
+  axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+    headers: fedModulesheaders,
   });
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
