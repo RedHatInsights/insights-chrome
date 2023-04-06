@@ -4,8 +4,9 @@
       .bundle {
         color: var(--pf-global--palette--black-700);
       }
-      span.hl {
+      mark {
         color: var(--pf-global--primary-color--100);
+        background-color: transparent;
       }
     }
   }
