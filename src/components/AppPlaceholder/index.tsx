@@ -11,9 +11,10 @@ const AppPlaceholder = () => {
   return (
     <MemoryRouter>
       <Page
+        className="chr-c-page"
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadMain>
+            <MastheadMain className="pf-u-pl-lg">
               <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
                 <Logo />
               </MastheadBrand>
