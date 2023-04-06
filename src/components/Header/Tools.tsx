@@ -1,4 +1,5 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
@@ -23,13 +24,12 @@ export const switchRelease = (isBeta: boolean, pathname: string) => {
   const previewFragment = getRouterBasename(pathname);
 
   if (isBeta) {
-    const [baseUri, pathnameFragment] = previewFragment.includes('beta') ? [/\/beta/, /\/beta\//] : [/\/preview/, /\/preview\//];
-    return `${document.baseURI.replace(baseUri, '')}${pathname.replace(pathnameFragment, '')}`;
+    return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
   } else {
     const path = pathname.split('/');
-    // awlays go to preview as a default
+    // awlays go to beta as a default
     path[0] = 'beta';
-    return document.baseURI.concat(path.join('/'));
+    return `/beta${pathname}`;
   }
 };
 
@@ -73,6 +73,7 @@ const Tools = () => {
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const bundle = getUrl('bundle');
+  const location = useLocation();
   const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
@@ -142,7 +143,7 @@ const Tools = () => {
 
     {
       title: `${intl.formatMessage(messages.demoMode)}`,
-      onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
+      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
       isHidden: !isDemoAcc,
     },
   ];
@@ -157,7 +158,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), window.location.pathname)),
+      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -184,7 +185,7 @@ const Tools = () => {
         labelOff="Beta off"
         aria-label="Beta switcher"
         isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), window.location.pathname))}
+        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname))}
         isReversed
         className="chr-c-beta-switcher"
       />
