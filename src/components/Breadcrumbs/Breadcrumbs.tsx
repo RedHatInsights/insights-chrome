@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, FlexItem, MastheadToggle, PageBreadcrumb, PageToggleButton } from '@patternfly/react-core';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { onToggle } from '../../redux/actions';
@@ -8,6 +8,8 @@ import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import './Breadcrumbs.scss';
 import classNames from 'classnames';
+import BreadcrumbsFavorites from './BreadcrumbsFavorites';
+import { useFavoritePages } from '@redhat-cloud-services/chrome';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -18,6 +20,13 @@ export type Breadcrumbsprops = {
 const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
   const dispatch = useDispatch();
   const segments = useBreadcrumbsLinks();
+  const { favoritePages, favoritePage, unfavoritePage } = useFavoritePages();
+
+  const activeSegment = useMemo(() => segments.find(({ active }) => active), [segments]);
+  const isFavorited = useMemo(
+    () => favoritePages.find(({ pathname, favorite }) => favorite && pathname === activeSegment?.href),
+    [favoritePages, activeSegment]
+  );
   return (
     <PageBreadcrumb className="chr-c-breadcrumbs pf-u-pt-0">
       <div className="chr-c-breadcrumbs__alignment">
@@ -54,6 +63,15 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
             ))}
           </Breadcrumb>
         </FlexItem>
+        {activeSegment && (
+          <FlexItem className="pf-u-ml-auto">
+            <BreadcrumbsFavorites
+              favoritePage={() => favoritePage(activeSegment.href)}
+              unfavoritePage={() => unfavoritePage(activeSegment.href)}
+              isFavorited={!!isFavorited}
+            />
+          </FlexItem>
+        )}
       </div>
     </PageBreadcrumb>
   );
