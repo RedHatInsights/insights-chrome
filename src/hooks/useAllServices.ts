@@ -5,7 +5,7 @@ import { BundleNavigation, NavItem } from '../@types/types';
 import allServicesLinks, { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
 import { isAllServicesGroup } from '../components/AllServices/AllServicesSection';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
-import { getChromeStaticPathname, isProd } from '../utils/common';
+import { getChromeStaticPathname, isBeta, isProd } from '../utils/common';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
@@ -115,6 +115,8 @@ const useAllServices = () => {
       bundles.map((fragment) =>
         axios
           .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
+          // fallback static CSC for EE env
+          .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
           .then(handleBundleResponse)
           .catch((err) => {
             console.error('Unable to load appfilter bundle', err, fragment);

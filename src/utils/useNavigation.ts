@@ -3,11 +3,11 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname, isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
-import { NavItem, Navigation } from '../@types/types';
+import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { ReduxState } from '../redux/store';
 
 function cleanNavItemsHref(navItem: NavItem) {
@@ -106,7 +106,9 @@ const useNavigation = () => {
     setNoNav(false);
     if (currentNamespace && (flagsReady || flagsError)) {
       axios
-        .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json?ts=${Date.now()}`)
+        .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json`)
+        // fallback static CSC for EE env
+        .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`))
         .then(async (response) => {
           if (observer && typeof observer.disconnect === 'function') {
             observer.disconnect();
