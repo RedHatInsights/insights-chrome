@@ -10,7 +10,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { LibJWT, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, getEnv, loadFEOFedModules, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -62,26 +62,43 @@ const useInitialize = () => {
   const [{ isReady, libJwt }, setState] = useState<{ isReady: boolean; libJwt?: LibJWT }>({ isReady: false, libJwt: undefined });
   const store = useStore();
   const chromeInstance = useRef({ cache: undefined });
-  useEffect(() => {
+
+  const init = async () => {
     // We have to use `let` because we want to access it once jwt is initialized
     let libJwt: LibJWT | undefined = undefined;
     // init qe functions, callback for libjwt because we want it to initialize before jwt is ready
     qe.init(store, () => libJwt);
-    // initi fed modules registry
-    loadFedModules().then(({ data }) => {
-      const { chrome: chromeConfig } = data;
-      store.dispatch(loadModulesSchema(data));
-      initializeAccessRequestCookies();
-      // create JWT instance
-      libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
-      // initialize JWT instance
-      initializeJWT(libJwt, chromeInstance.current).then(() => {
-        setState({
-          libJwt,
-          isReady: true,
-        });
-      });
+
+    const { data: feoData } = await loadFEOFedModules();
+    const { chrome: chromeConfig } = feoData;
+    let modulesData = feoData;
+    initializeAccessRequestCookies();
+    // create JWT instance
+    libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
+
+    await initializeJWT(libJwt, chromeInstance.current);
+
+    setState({
+      libJwt,
+      isReady: true,
     });
+
+    try {
+      const { data } = await loadFedModules();
+      // merge configs with chrome service priority
+      modulesData = {
+        ...feoData,
+        ...data,
+      };
+    } catch (error) {
+      console.error('Unable to fetch fed-modules from chrome service! Falling back to CDN.');
+    }
+
+    store.dispatch(loadModulesSchema(modulesData));
+  };
+
+  useEffect(() => {
+    init();
     // setup trust arc
     trustarcScriptSetup();
     // setup adobe analytics

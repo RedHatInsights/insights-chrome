@@ -3,6 +3,7 @@ import Tools, { switchRelease } from '../Tools';
 import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
 jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');
@@ -24,16 +25,19 @@ describe('Tools', () => {
     let container;
     await act(async () => {
       container = render(
-        <Provider store={createStore((state = { chrome: { user: {} } }) => state)}>
-          <Tools onClick={mockClick} />
-        </Provider>
+        <MemoryRouter>
+          <Provider store={createStore((state = { chrome: { user: {} } }) => state)}>
+            <Tools onClick={mockClick} />
+          </Provider>
+        </MemoryRouter>
       ).container;
     });
     expect(container.querySelector('div')).toMatchSnapshot();
   });
 
   it('should switch release correctly', () => {
-    expect(switchRelease(true, '/beta/settings/rbac')).toEqual(`${document.baseURI}settings/rbac`);
-    expect(switchRelease(false, '/settings/rbac')).toEqual(`${document.baseURI}beta/settings/rbac`);
+    expect(switchRelease(true, '/beta/settings/rbac')).toEqual(`/settings/rbac`);
+    expect(switchRelease(true, '/preview/settings/rbac')).toEqual(`/settings/rbac`);
+    expect(switchRelease(false, '/settings/rbac')).toEqual(`/beta/settings/rbac`);
   });
 });

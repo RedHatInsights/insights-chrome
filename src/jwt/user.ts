@@ -1,4 +1,4 @@
-import { ITLess, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
+import { ITLess, getRouterBasename, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
 import servicesApi from './entitlements';
 import logger from './logger';
 import { SSOParsedToken } from './Priv';
@@ -31,7 +31,7 @@ const pathMapper = {
   internal: 'internal',
 };
 
-const REDIRECT_BASE = `${document.location.origin}${isBeta() ? '/beta/' : '/'}`;
+const REDIRECT_BASE = `${document.location.origin}${isBeta() ? getRouterBasename() : ''}`;
 
 const unentitledPathMapper = (section: string, service: string, expired = false) => {
   const search = new URLSearchParams(document.location.search);
@@ -40,7 +40,7 @@ const unentitledPathMapper = (section: string, service: string, expired = false)
   }
   return (
     {
-      ansible: `${REDIRECT_BASE}ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
+      ansible: `${REDIRECT_BASE}/ansible/ansible-dashboard/${expired ? 'trial/expired' : 'trial'}`,
     }[section] || `${document.location.origin}${document.location.pathname}?${search.toString()}`
   );
 };

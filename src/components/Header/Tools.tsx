@@ -1,4 +1,5 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
@@ -8,7 +9,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getSection, getUrl, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -20,13 +21,15 @@ const isITLessEnv = ITLess();
 
 export const switchRelease = (isBeta: boolean, pathname: string) => {
   cookie.set('cs_toggledRelease', 'true');
+  const previewFragment = getRouterBasename(pathname);
 
   if (isBeta) {
-    return `${document.baseURI.replace(/\/*beta/, '')}${pathname.replace(/\/*beta\/*/, '')}`;
+    return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
   } else {
     const path = pathname.split('/');
+    // awlays go to beta as a default
     path[0] = 'beta';
-    return document.baseURI.concat(path.join('/'));
+    return `/beta${pathname}`;
   }
 };
 
@@ -69,8 +72,8 @@ const Tools = () => {
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
-  const bundle = getUrl('bundle');
-  const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
+  const location = useLocation();
+  const settingsPath = `/settings/sources`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
@@ -84,7 +87,8 @@ const Tools = () => {
       url: settingsPath,
       title: 'Settings',
       target: '_self',
-      appId: 'rbac',
+      appId: 'sources',
+      documentTitleUpdate: 'Sources',
     },
     ...(enableAuthDropdownOption
       ? [
@@ -139,7 +143,7 @@ const Tools = () => {
 
     {
       title: `${intl.formatMessage(messages.demoMode)}`,
-      onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
+      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
       isHidden: !isDemoAcc,
     },
   ];
@@ -154,7 +158,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), window.location.pathname)),
+      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -181,7 +185,7 @@ const Tools = () => {
         labelOff="Beta off"
         aria-label="Beta switcher"
         isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), window.location.pathname))}
+        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname))}
         isReversed
         className="chr-c-beta-switcher"
       />
@@ -261,7 +265,7 @@ const Tools = () => {
 
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You're ${isBeta() ? 'now' : 'no longer'} using the beta release.`}
+          title={`You're ${isBeta() ? 'now' : 'no longer'} using the preview release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}

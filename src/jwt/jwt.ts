@@ -2,7 +2,15 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js';
 import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
-import { DEFAULT_SSO_ROUTES, ITLess, LOGIN_TYPE_STORAGE_KEY, deleteLocalStorageItems, pageRequiresAuthentication } from '../utils/common';
+import {
+  DEFAULT_SSO_ROUTES,
+  ITLess,
+  LOGIN_TYPE_STORAGE_KEY,
+  deleteLocalStorageItems,
+  getRouterBasename,
+  isBeta as isBetaFunction,
+  pageRequiresAuthentication,
+} from '../utils/common';
 import * as Sentry from '@sentry/react';
 import logger from './logger';
 import { CogUser, getTokenWithAuthorizationCode, getUser } from '../cognito/auth';
@@ -45,7 +53,7 @@ export type DecodedToken = {
 
 function getPartnerScope(pathname: string) {
   // replace beta and leading "/"
-  const sanitizedPathname = pathname.replace(/^\/beta\//, '/').replace(/^\//, '');
+  const sanitizedPathname = pathname.replace(/^(\/beta\/|\/preview\/)/, '/').replace(/^\//, '');
   // check if the pathname is connect/:partner
   if (sanitizedPathname.match(/^connect\/.+/)) {
     // return :partner param
@@ -178,7 +186,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
       options.onLoad = 'check-sso';
       options.checkLoginIframe = false;
 
-      const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
+      const isBeta = isBetaFunction() ? '/beta' : '';
 
       options.silentCheckSsoRedirectUri = `https://${window.location.host}${isBeta}/apps/chrome/silent-check-sso.html`;
 
@@ -305,7 +313,7 @@ export function logout(bounce?: boolean) {
   }
   cookie.remove('cs_demo');
 
-  const isBeta = window.location.pathname.split('/')[1] === 'beta' ? '/beta' : '';
+  const isBeta = isBetaFunction() ? getRouterBasename() : '';
   const keys = Object.keys(localStorage).filter(
     (key) =>
       key.endsWith('/api/entitlements/v1/services') ||
@@ -424,8 +432,9 @@ export async function setCookie(token?: string) {
     cogUser = await getUser();
   }
   const tok = itLessEnv ? cogToken : token;
-  const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
   if (tok && tok.length > 10) {
+    // FIXME: Fix cognito typing not to use any
+    const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);

@@ -49,13 +49,13 @@ exports[`ChromeNavExapandable should render nav item expandable 1`] = `
         class="pf-c-nav__list"
       >
         <li
-          class="pf-c-nav__item"
+          class="pf-c-nav__item chr-c-navigation__item"
           data-ouia-component-id="title"
           data-ouia-component-type="PF4/NavItem"
           data-ouia-safe="true"
         >
           <a
-            class="pf-c-nav__link"
+            class="pf-c-nav__link chr-c-navigation__item"
             data-quickstart-id="foo_bar"
             data-testid="router-link"
             href="/foo/bar"
@@ -117,13 +117,13 @@ exports[`ChromeNavExapandable should render nav item expandable with items 1`] =
         class="pf-c-nav__list"
       >
         <li
-          class="pf-c-nav__item"
+          class="pf-c-nav__item chr-c-navigation__item"
           data-ouia-component-id="Sub Item"
           data-ouia-component-type="PF4/NavItem"
           data-ouia-safe="true"
         >
           <a
-            class="pf-c-nav__link"
+            class="pf-c-nav__link chr-c-navigation__item"
             data-quickstart-id="foo"
             data-testid="router-link"
             href="/foo"

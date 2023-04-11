@@ -61,7 +61,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           disabled={isDisabled}
           component={
             appId && url ? (
-              <ChromeLink href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
+              <ChromeLink {...rest} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
                 {title}
               </ChromeLink>
             ) : url ? (

@@ -14,6 +14,17 @@ COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-fronten
 # ---------------------------
 
 set -ex
+
+
+# get correct config build per build
+ENV_BRANCH=$(sed "s/origin\///" <<< "$GIT_BRANCH")
+if [[ $ENV_BRANCH == "master" ]]
+then
+  export CHROME_CONFIG_BRANCH="prod-beta"
+else
+  export CHROME_CONFIG_BRANCH=$(sed "s/master/prod/" <<< "$ENV_BRANCH")
+fi
+
 # source is preferred to | bash -s in this case to avoid a subshell
 source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 BUILD_RESULTS=$?
