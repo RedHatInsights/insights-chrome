@@ -136,7 +136,7 @@ export type ModuleRoute =
       pathname: string;
       exact?: boolean;
       dynamic?: boolean;
-      props?: any;
+      props?: Record<string, unknown>;
     }
   | string;
 
@@ -151,6 +151,7 @@ export type ChromeModule = {
   config?: {
     ssoUrl?: string;
     fullProfile?: boolean;
+    props?: Record<string, unknown>;
   };
   analytics?: {
     APIKey?: string;
@@ -160,7 +161,7 @@ export type ChromeModule = {
   modules?: RemoteModule[];
   defaultDocumentTitle?: string;
   fullProfile?: boolean;
-  props?: any;
+  props?: Record<string, unknown>;
 };
 
 export interface GroupItem {
