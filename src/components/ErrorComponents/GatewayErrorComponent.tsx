@@ -15,7 +15,7 @@ export type GatewayErrorComponentProps = {
 };
 
 const MuaLink = (chunks: React.ReactNode) => (
-  <ChromeLink appId="rbac" href="/settings/my-user-access">
+  <ChromeLink appId="rbac" href="/iam/my-user-access">
     {chunks}
   </ChromeLink>
 );

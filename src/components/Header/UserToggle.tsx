@@ -64,7 +64,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     <React.Fragment key="My user access wrapper">
       <DropdownItem
         component={
-          <ChromeLink href="/settings/my-user-access" appId="rbac">
+          <ChromeLink href="/iam/my-user-access" appId="rbac">
             {intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         }
