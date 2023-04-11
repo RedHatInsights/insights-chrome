@@ -42,13 +42,17 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const searchEnabled = useFlag('platform.chrome.search.enabled');
+  const breadcrumbEnabled = useFlag('platform.chrome.bredcrumbs.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
   const { pathname } = useLocation();
-  const displayBreadcrumbs = useMemo(() => !['/', '/allservices', '/favoritedservices'].includes(pathname), [pathname]);
+  const displayBreadcrumbs = useMemo(
+    () => breadcrumbEnabled && !['/', '/allservices', '/favoritedservices'].includes(pathname),
+    [pathname, breadcrumbEnabled]
+  );
 
   return (
     <Fragment>

@@ -74,7 +74,14 @@ describe('<Default layout />', () => {
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
     cy.intercept('GET', '/api/featureflags/*', {
-      toggles: [],
+      toggles: [
+        {
+          // until the bredcrumbs are enabled by default
+          name: 'platform.chrome.bredcrumbs.enabled',
+          enabled: true,
+          variant: { name: 'disabled', enabled: true },
+        },
+      ],
     });
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
   });
