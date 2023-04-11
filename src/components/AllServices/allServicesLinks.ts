@@ -145,7 +145,7 @@ const allServicesLinks: AllServicesSection[] = [
         description: 'Manage how your organization authenticates to Red Hat services.',
       },
       {
-        href: '/settings/my-user-access',
+        href: '/iam/my-user-access',
         title: 'My User Access',
         ITLess: true,
         description: 'View your account permissions for Red Hat Hybrid Cloud Console services.',

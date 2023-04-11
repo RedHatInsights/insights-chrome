@@ -9,7 +9,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, getUrl, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -72,9 +72,8 @@ const Tools = () => {
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
-  const bundle = getUrl('bundle');
   const location = useLocation();
-  const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
+  const settingsPath = `/settings/sources`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
@@ -88,7 +87,8 @@ const Tools = () => {
       url: settingsPath,
       title: 'Settings',
       target: '_self',
-      appId: 'rbac',
+      appId: 'sources',
+      documentTitleUpdate: 'Sources',
     },
     ...(enableAuthDropdownOption
       ? [
