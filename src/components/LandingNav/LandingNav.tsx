@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
-import { ITLess, getChromeStaticPathname } from '../../utils/common';
+import { ITLess, getChromeStaticPathname, isBeta } from '../../utils/common';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import componentMapper from '../Navigation/componentMapper';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { ReduxState } from '../../redux/store';
+import { BundleNavigation } from '../../@types/types';
 
 const LandingNav = () => {
   const dispatch = useDispatch();
@@ -33,9 +34,13 @@ const LandingNav = () => {
   }, [showNav]);
 
   useEffect(() => {
-    axios.get(`${getChromeStaticPathname('navigation')}/landing-navigation.json`).then((response) => {
-      dispatch(loadNavigationLandingPage(response.data));
-    });
+    axios
+      .get(`${getChromeStaticPathname('navigation')}/landing-navigation.json`)
+      // fallback static CSC for EE env
+      .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/landing-navigation.json?ts=${Date.now()}`))
+      .then((response) => {
+        dispatch(loadNavigationLandingPage(response.data));
+      });
   }, []);
 
   /**

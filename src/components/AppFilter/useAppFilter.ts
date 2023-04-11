@@ -102,6 +102,7 @@ type AppFilterState = {
 };
 
 const useAppFilter = () => {
+  const isBetaEnv = isBeta();
   const [state, setState] = useState<AppFilterState>({
     isLoaded: false,
     isLoading: false,
@@ -202,6 +203,8 @@ const useAppFilter = () => {
       bundles.map((fragment) =>
         axios
           .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
+          // fallback static CSC for EE env
+          .catch(() => axios.get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))
           .catch((err) => {
