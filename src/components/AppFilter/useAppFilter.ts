@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
 import { ReduxState } from '../../redux/store';
-import { ITLess, isBeta, isProd } from '../../utils/common';
+import { ITLess, getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { computeFedrampResult } from '../../utils/useRenderFedramp';
 
@@ -202,7 +202,9 @@ const useAppFilter = () => {
       const bundles = requiredBundles.filter((app) => !Object.keys(existingSchemas).includes(app));
       bundles.map((fragment) =>
         axios
-          .get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`)
+          .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
+          // fallback static CSC for EE env
+          .catch(() => axios.get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))
           .catch((err) => {

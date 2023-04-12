@@ -31,7 +31,7 @@ import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
 import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { ChromeModule, FlagTagsFilter } from '../@types/types';
-import { createFedrampAuthObject } from '../cognito';
+import { createCognitoAuthObject } from '../cognito';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
 import useBundle from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -100,7 +100,7 @@ export const createChromeContext = ({
 
   const api: ChromeAPI = {
     ...actions,
-    auth: isITLessEnv ? createFedrampAuthObject() : createAuthObject(libJwt, getUser, store, modulesConfig),
+    auth: isITLessEnv ? createCognitoAuthObject(store) : createAuthObject(libJwt, getUser, store, modulesConfig),
     initialized: true,
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),

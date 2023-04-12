@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -12,7 +12,7 @@ import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -23,6 +23,7 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
+import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 // import ServicesNewNav from '../../layouts/ServicesNewNav';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
@@ -39,17 +40,23 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   );
 };
 
-export const Header = () => {
+export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const searchEnabled = useFlag('platform.chrome.search.enabled');
+  const breadcrumbEnabled = useFlag('platform.chrome.bredcrumbs.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
+  const { pathname } = useLocation();
+  const displayBreadcrumbs = useMemo(
+    () => breadcrumbEnabled && !['/', '/allservices', '/favoritedservices'].includes(pathname),
+    [pathname, breadcrumbEnabled]
+  );
 
   return (
     <Fragment>
-      <MastheadMain>
+      <MastheadMain className="pf-u-pl-lg">
         <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
@@ -95,6 +102,11 @@ export const Header = () => {
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
+      {displayBreadcrumbs && (
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs {...breadcrumbsProps} />
+        </ToolbarGroup>
+      )}
     </Fragment>
   );
 };

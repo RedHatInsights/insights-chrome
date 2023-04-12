@@ -99,7 +99,9 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(7);
     for (let index = 0; index < 7; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([`/config/chrome/${requiredBundles[index]}-navigation.json?ts=666`]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([
+        `/api/chrome-service/v1/static/stable/stage/navigation/${requiredBundles[index]}-navigation.json?ts=666`,
+      ]);
     }
     axiosGetSpy.mockReset();
     dateSpy.mockRestore();
