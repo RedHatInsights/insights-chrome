@@ -227,7 +227,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
           moduleAPIKey
         ),
       },
-      { initialPageview: false, integrations: { All: !disableIntegrations } }
+      { initialPageview: false, disableClientPersistence: true, integrations: { All: !disableIntegrations } }
     );
   }
 
