@@ -364,6 +364,7 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
               manifestLocation,
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
               exact: typeof route === 'string' ? false : route.exact,
+              props: typeof route === 'object' ? route.props : undefined,
             }))
           )
           .flat(),
