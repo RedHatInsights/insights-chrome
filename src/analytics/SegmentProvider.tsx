@@ -7,7 +7,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
-import resetIntegrations from './resetIntegrations';
+import { resetIntegrations } from './resetIntegrations';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -200,12 +200,15 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        resetIntegrations();
+        if (window.segment) {
+          window.segment = undefined;
+        }
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv } }
         );
         window.segment = analytics.current;
+        resetIntegrations(analytics.current);
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
       }
@@ -220,15 +223,11 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
     analyticsLoaded.current = true;
     analytics.current.load(
       {
-        writeKey: getAPIKey(
-          DEV_ENV ? 'dev' : 'prod',
-          // FIXME: Find a better way of getting the initial activeModule ID
-          activeModule as SegmentModules,
-          moduleAPIKey
-        ),
+        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey),
       },
       { initialPageview: false, disableClientPersistence: true, integrations: { All: !disableIntegrations } }
     );
+    resetIntegrations(analytics.current);
   }
 
   return (
