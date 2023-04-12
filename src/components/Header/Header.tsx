@@ -55,12 +55,24 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
 
   return (
     <Fragment>
-      <MastheadMain className="pf-u-pl-lg">
-        <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+      <MastheadMain className="pf-u-pl-lg pf-u-pt-0 pf-u-pb-xs">
+        <MastheadBrand className="pf-u-flex-shrink-0 pf-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
+        <Toolbar isFullHeight>
+          <ToolbarContent>
+            <ToolbarGroup
+              alignment={{ default: 'alignRight' }}
+              className="pf-m-icon-button-group"
+              widget-type="InsightsToolbar"
+              visibility={{ '2xl': 'hidden' }}
+            >
+              <HeaderTools />
+            </ToolbarGroup>
+          </ToolbarContent>
+        </Toolbar>
       </MastheadMain>
-      <MastheadContent>
+      <MastheadContent className="pf-u-mx-md pf-u-mx-0-on-2xl">
         {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
@@ -87,17 +99,13 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               )}
             </ToolbarGroup>
             {searchEnabled ? (
-              <ToolbarGroup
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                }}
-                variant="filter-group"
-              >
+              <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
                 <SearchInput />
               </ToolbarGroup>
             ) : null}
-            <HeaderTools />
+            <ToolbarGroup className="pf-m-icon-button-group" visibility={{ default: 'hidden', '2xl': 'visible' }} widget-type="InsightsToolbar">
+              <HeaderTools />
+            </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>

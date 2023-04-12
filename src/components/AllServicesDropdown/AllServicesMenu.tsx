@@ -44,9 +44,9 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const tabContentRef = React.createRef<HTMLElement>();
 
   return (
-    <div ref={menuRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+    <div ref={menuRef} className="pf-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
       <Backdrop>
-        <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
+        <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
           <PanelMain>
             <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
               <SidebarPanel>

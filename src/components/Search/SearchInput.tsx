@@ -251,7 +251,7 @@ const SearchInput = () => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input">
+    <div ref={containerRef} className="chr-c-search__input pf-u-stretch">
       <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
     </div>
   );
