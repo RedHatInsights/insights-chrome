@@ -1,8 +1,4 @@
 .chr-c-search {
-  &__container {
-    margin: auto;
-  }
-
   &__menu {
     overflow-y: auto;
   }
@@ -10,7 +6,6 @@
   &__input {
     border-radius: 0;
     width: 100%;
-    max-width: 600px;
     background-color: var(--pf-global--BackgroundColor--dark-200);
     .pf-c-text-input-group__text {
       &::before, &::after {

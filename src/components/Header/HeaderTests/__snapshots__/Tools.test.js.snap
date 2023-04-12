@@ -2,57 +2,36 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-c-toolbar__group pf-m-align-right pf-m-space-items-none pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
-  widget-type="InsightsToolbar"
+  class="pf-c-toolbar__item"
 >
-  <div
-    class="pf-c-toolbar__item pf-m-hidden pf-m-visible-on-lg"
+  <label
+    class="pf-c-switch pf-m-reverse chr-c-beta-switcher"
+    data-ouia-component-id="OUIA-Generated-Switch-2"
+    data-ouia-component-type="PF4/Switch"
+    data-ouia-safe="true"
+    for="reversed-switch"
   >
-    <label
-      class="pf-c-switch pf-m-reverse chr-c-beta-switcher"
-      data-ouia-component-id="OUIA-Generated-Switch-2"
-      data-ouia-component-type="PF4/Switch"
-      data-ouia-safe="true"
-      for="reversed-switch"
+    <input
+      aria-label="Beta switcher"
+      class="pf-c-switch__input"
+      id="reversed-switch"
+      type="checkbox"
+    />
+    <span
+      class="pf-c-switch__toggle"
+    />
+    <span
+      aria-hidden="true"
+      class="pf-c-switch__label pf-m-on"
     >
-      <input
-        aria-label="Beta switcher"
-        class="pf-c-switch__input"
-        id="reversed-switch"
-        type="checkbox"
-      />
-      <span
-        class="pf-c-switch__toggle"
-      />
-      <span
-        aria-hidden="true"
-        class="pf-c-switch__label pf-m-on"
-      >
-        Beta on
-      </span>
-      <span
-        aria-hidden="true"
-        class="pf-c-switch__label pf-m-off"
-      >
-        Beta off
-      </span>
-    </label>
-  </div>
-  <div
-    class="pf-c-toolbar__item"
-  >
-    &lt;ToolbarToggle /&gt;
-  </div>
-  &lt;ToolbarToggle /&gt;
-  <div
-    class="pf-c-toolbar__item pf-m-hidden pf-m-visible-on-lg pf-u-mr-0"
-  >
-    &lt;UserToggle /&gt;
-  </div>
-  <div
-    class="pf-c-toolbar__item pf-m-hidden-on-lg"
-  >
-    &lt;UserToggle /&gt;
-  </div>
+      Beta on
+    </span>
+    <span
+      aria-hidden="true"
+      class="pf-c-switch__label pf-m-off"
+    >
+      Beta off
+    </span>
+  </label>
 </div>
 `;
