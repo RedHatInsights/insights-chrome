@@ -33,6 +33,7 @@ global.window.insights = {
               // eslint-disable-next-line camelcase
               account_number: '0',
               type: 'User',
+              org_id: '123',
             },
             entitlements: {
               insights: {
