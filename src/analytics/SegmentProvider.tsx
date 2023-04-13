@@ -5,9 +5,11 @@ import { ITLess, getUrl, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
+import useBundle from '../hooks/useBundle';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -157,17 +159,28 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
+  const { bundleId } = useBundle();
+
+  const fetchIntercomHash = async () => {
+    try {
+      const { data } = await axios.get<{ data: string }>('/api/chrome-service/v1/user/intercom', {
+        params: {
+          // the identifier will change based on the DDIS mapping
+          bundle: bundleId,
+        },
+      });
+      return data.data;
+    } catch (error) {
+      console.error('unable to get intercom user hash');
+      return undefined;
+    }
+  };
 
   if (!analytics.current) {
     analytics.current = new AnalyticsBrowser();
   }
 
-  useEffect(() => {
-    const disconnect = registerAnalyticsObserver();
-    return () => disconnect();
-  }, []);
-
-  useEffect(() => {
+  const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
       /**
        * Clean up custom page event data after module change
@@ -182,8 +195,6 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         context: {
           groupId: user.identity.internal?.org_id,
         },
-        cloud_user_id: user.identity.internal?.account_id,
-        adobe_cloud_visitor_id: getAdobeVisitorId(),
       };
       const groupTraits = {
         account_number: user.identity.account_number,
@@ -193,7 +204,19 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
       };
       if (!initialized.current && analytics.current) {
         window.segment = analytics.current;
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+        const hash = await fetchIntercomHash();
+        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+          ...identityOptions,
+          context: {
+            ...identityOptions.context,
+            ...(hash
+              ? {
+                  Intercom: { user_hash: hash },
+                }
+              : {}),
+          },
+        });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
         analytics.current.page(...getPageEventOptions());
         initialized.current = true;
@@ -209,10 +232,31 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         );
         window.segment = analytics.current;
         resetIntegrations(analytics.current);
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+        const hash = await fetchIntercomHash();
+        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+          ...identityOptions,
+          context: {
+            ...identityOptions.context,
+            ...(hash
+              ? {
+                  Intercom: { user_hash: hash },
+                }
+              : {}),
+          },
+        });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
       }
     }
+  };
+
+  useEffect(() => {
+    const disconnect = registerAnalyticsObserver();
+    return () => disconnect();
+  }, []);
+
+  useEffect(() => {
+    handleModuleUpdate();
   }, [activeModule, user]);
 
   /**
