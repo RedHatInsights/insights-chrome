@@ -50,7 +50,7 @@ const handleBundleResponse = (bundle: {
 };
 
 const parseBundlesToObject = (items: NavItem[]) =>
-  items.reduce<AvailableLinks>(
+  items?.reduce<AvailableLinks>(
     (acc, curr) =>
       curr.href // Omit items with no href
         ? {
@@ -175,7 +175,7 @@ const useAllServices = () => {
         const availableLinks = (bundleItems as BundleNav[]).map((bundle) => {
           return {
             ...bundle,
-            items: parseBundlesToObject(bundle.links.flat()),
+            items: parseBundlesToObject(bundle.links?.flat()),
           };
         });
         const availableSections = sections
@@ -201,7 +201,7 @@ const useAllServices = () => {
           availableSections,
           ready: true,
           // no links means all bundle requests have failed
-          error: availableLinks.flatMap(({ items }) => Object.keys(items)).length === 0,
+          error: availableLinks.flatMap(({ items }) => Object.keys(items || {})).length === 0,
         }));
       }
     };

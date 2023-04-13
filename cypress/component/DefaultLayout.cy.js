@@ -92,9 +92,13 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
+      navItems: [...Array(5)],
+    }).as('allNavs');
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json', {
       navItems: [...Array(5)],
     }).as('navRequest');
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []).as('services');
     const elem = cy
       .mount(
         <Wrapper store={store}>
@@ -102,7 +106,9 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
+    cy.wait('@allNavs');
     cy.wait('@navRequest');
+    cy.wait('@services');
     elem.get('body').matchImageSnapshot();
   });
 
@@ -112,10 +118,13 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
+      navItems: [...Array(30)],
+    }).as('allNavs');
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json', {
       navItems: [...Array(30)],
     }).as('navRequest');
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []).as('services');
     const elem = cy
       .mount(
         <Wrapper store={store}>
@@ -123,6 +132,8 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
+    cy.wait('@allNavs');
+    cy.wait('@services');
     cy.wait('@navRequest');
     elem.get('body').matchImageSnapshot();
   });
@@ -133,10 +144,13 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
+      navItems: [...Array(5)],
+    }).as('allNavs');
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json', {
       navItems: [...Array(5)],
     }).as('navRequest');
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []).as('services');
     const elem = cy
       .mount(
         <Wrapper store={store}>
@@ -144,6 +158,8 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
+    cy.wait('@allNavs');
+    cy.wait('@services');
     cy.wait('@navRequest');
 
     elem.get('body').matchImageSnapshot();
