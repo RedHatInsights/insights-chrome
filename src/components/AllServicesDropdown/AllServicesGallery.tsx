@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { Gallery } from '@patternfly/react-core';
-import { AllServicesGroup, AllServicesLink, AllServicesSection } from '../AllServices/allServicesLinks';
-import { isAllServicesGroup } from '../AllServices/AllServicesSection';
+import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 import AllServicesGallerySection from './AllServicesGallerySection';
 
@@ -13,7 +12,7 @@ const AllServicesGallery = ({ selectedService }: AllServicesGalleryProps) => {
   const sections: AllServicesGroup[] = [];
   const links: AllServicesLink[] = [];
   selectedService.links.forEach((link) => {
-    if (isAllServicesGroup(link as AllServicesGroup)) {
+    if (isAllServicesGroup(link)) {
       sections.push(link as AllServicesGroup);
     } else {
       links.push(link as AllServicesLink);

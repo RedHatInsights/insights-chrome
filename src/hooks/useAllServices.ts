@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BundleNavigation, NavItem } from '../@types/types';
-import { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
-import { isAllServicesGroup, isAllServicesLink } from '../components/AllServices/AllServicesSection';
+import {
+  AllServicesGroup,
+  AllServicesLink,
+  AllServicesSection,
+  isAllServicesGroup,
+  isAllServicesLink,
+} from '../components/AllServices/allServicesLinks';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
 import { getChromeStaticPathname, isBeta } from '../utils/common';
 
@@ -41,7 +46,7 @@ const handleBundleResponse = (bundle: {
     // regular NavItem
     return [...acc, rest];
   }, []);
-  return { id: bundle.data.id as string, title: bundle.data.title as string, links: (flatLinks || []).flat() };
+  return { id: bundle.data.id, title: bundle.data.title, links: (flatLinks || []).flat() };
 };
 
 const parseBundlesToObject = (items: NavItem[]) =>
@@ -102,17 +107,17 @@ const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filte
 };
 
 const findNavItems = (
-  items: (string | AllServicesLink | AllServicesGroup)[],
+  items: (string | AllServicesLink | AllServicesGroup)[] = [],
   availableLinks: { id?: string; title?: string; items: AvailableLinks }[]
 ): (AllServicesLink | AllServicesGroup)[] =>
   items
     .map((item) => {
-      if (isAllServicesGroup(item as AllServicesGroup)) {
+      if (isAllServicesGroup(item)) {
         return {
-          ...(item as AllServicesGroup),
-          links: findNavItems((item as AllServicesGroup).links as string[], availableLinks),
+          ...item,
+          links: findNavItems(item.links, availableLinks),
         };
-      } else if (isAllServicesLink(item as AllServicesLink)) {
+      } else if (isAllServicesLink(item)) {
         return item;
       }
       const [bundle, nav] = (item as string).split('.');
@@ -154,7 +159,11 @@ const useAllServices = () => {
     []
   );
   const fetchSections = useCallback(
-    async (): Promise<AllServicesSection[]> => (await axios.get(`${getChromeStaticPathname('services')}/services.json?ts=${Date.now()}`)).data,
+    async (): Promise<
+      (Omit<AllServicesSection, 'links'> & {
+        links: (string | AllServicesLink | AllServicesGroup)[];
+      })[]
+    > => (await axios.get(`${getChromeStaticPathname('services')}/services.json`)).data,
     []
   );
   useEffect(() => {
@@ -175,7 +184,7 @@ const useAllServices = () => {
               ...acc,
               {
                 ...rest,
-                links: findNavItems((links || []) as string[], availableLinks).filter(Boolean),
+                links: findNavItems(links, availableLinks).filter(Boolean),
               },
             ];
           }, [])
@@ -184,7 +193,7 @@ const useAllServices = () => {
               return false;
             }
 
-            return (links as AllServicesGroup[])?.filter(({ isGroup, links }) => !isGroup || links.length !== 0).flat().length !== 0;
+            return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
           });
         setState((prev) => ({
           ...prev,

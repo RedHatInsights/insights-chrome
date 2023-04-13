@@ -4,17 +4,9 @@ import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
 import AllServicesLink from './AllServicesLink';
-import type { AllServicesGroup as AllServicesGroupType, AllServicesLink as AllServicesLinkType, AllServicesSection } from './allServicesLinks';
+import { AllServicesLink as AllServicesLinkType, AllServicesSection, isAllServicesGroup, isAllServicesLink } from './allServicesLinks';
 
 export type AllServicesSectionProps = AllServicesSection;
-
-export const isAllServicesGroup = (item: AllServicesGroupType | AllServicesLinkType): item is AllServicesGroup => {
-  return (item as AllServicesGroupType).isGroup === true;
-};
-
-export function isAllServicesLink(item: AllServicesLinkType): item is AllServicesLinkType {
-  return !!(item as AllServicesLinkType).href;
-}
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = AllServicesIcons[icon as keyof typeof AllServicesIcons];
@@ -33,10 +25,10 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
             {description || null}
           </Text>
           {filteredLinks.map((link, index) =>
-            isAllServicesGroup(link as AllServicesGroupType) ? (
-              <AllServicesGroup key={index} {...(link as AllServicesGroupType)} />
+            isAllServicesGroup(link) ? (
+              <AllServicesGroup key={index} {...link} />
             ) : (
-              <AllServicesLink key={index} {...(link as AllServicesLinkType)} />
+              isAllServicesLink(link) && <AllServicesLink key={index} {...link} />
             )
           )}
         </TextContent>

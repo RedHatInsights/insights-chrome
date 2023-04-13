@@ -12,7 +12,7 @@ export type AllServicesGroup = {
   isGroup: true;
   title: string;
   ITLess?: boolean;
-  links: (string | AllServicesLink)[];
+  links: AllServicesLink[];
   description?: string;
 };
 export type AllServicesSection = {
@@ -21,8 +21,16 @@ export type AllServicesSection = {
   ITLess?: boolean;
   title: string;
   description?: string;
-  links: (string | AllServicesLink | AllServicesGroup)[];
+  links: (AllServicesLink | AllServicesGroup)[];
 };
+
+export const isAllServicesGroup = (item: unknown): item is AllServicesGroup => {
+  return (item as AllServicesGroup).isGroup === true;
+};
+
+export function isAllServicesLink(item: unknown): item is AllServicesLink {
+  return !!(item as AllServicesLink).href;
+}
 
 const allServicesLinks: AllServicesSection[] = [
   {
