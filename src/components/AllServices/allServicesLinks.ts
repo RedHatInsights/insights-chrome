@@ -45,11 +45,6 @@ const allServicesLinks: AllServicesSection[] = [
         description: 'Send data between event streams and third-party systems with pre-built integrations.',
       },
       {
-        href: '/application-services/service-accounts',
-        title: 'Service Accounts',
-        description: 'Authenticate and connect securely to APIs from multiple services.',
-      },
-      {
         href: '/application-services/service-registry',
         title: 'Service Registry',
         description: 'Discover, publish, and reuse event schemas and API definitions in a shared repository.',
