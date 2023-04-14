@@ -69,6 +69,7 @@ declare global {
       initialize: (config: Record<string, any>) => void;
       flushNow: () => void;
       setGuidesDisabled: (disabled: boolean) => void;
+      startGuides: () => void;
       stopGuides: () => void;
       stopSendingEvents: () => void;
     };
