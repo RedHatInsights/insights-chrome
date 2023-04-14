@@ -94,9 +94,6 @@ describe('<Default layout />', () => {
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
       navItems: [...Array(5)],
-    }).as('allNavs');
-    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json', {
-      navItems: [...Array(5)],
     }).as('navRequest');
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []).as('services');
     const elem = cy
@@ -106,7 +103,6 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
-    cy.wait('@allNavs');
     cy.wait('@navRequest');
     cy.wait('@services');
     elem.get('body').matchImageSnapshot();
@@ -120,9 +116,6 @@ describe('<Default layout />', () => {
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
       navItems: [...Array(30)],
-    }).as('allNavs');
-    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/__cypress-navigation.json', {
-      navItems: [...Array(30)],
     }).as('navRequest');
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []).as('services');
     const elem = cy
@@ -132,7 +125,6 @@ describe('<Default layout />', () => {
         </Wrapper>
       )
       .get('html');
-    cy.wait('@allNavs');
     cy.wait('@services');
     cy.wait('@navRequest');
     elem.get('body').matchImageSnapshot();

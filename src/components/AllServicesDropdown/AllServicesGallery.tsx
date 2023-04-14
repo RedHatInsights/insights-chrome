@@ -13,9 +13,9 @@ const AllServicesGallery = ({ selectedService }: AllServicesGalleryProps) => {
   const links: AllServicesLink[] = [];
   selectedService.links.forEach((link) => {
     if (isAllServicesGroup(link)) {
-      sections.push(link as AllServicesGroup);
+      sections.push(link);
     } else {
-      links.push(link as AllServicesLink);
+      links.push(link);
     }
   });
   return (

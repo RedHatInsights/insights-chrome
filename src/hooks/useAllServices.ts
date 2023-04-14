@@ -71,7 +71,7 @@ const filterAllServicesLinks = (links: (AllServicesLink | AllServicesGroup)[], f
   return links.reduce<(AllServicesLink | AllServicesGroup)[]>((acc, link) => {
     // groups have links nested, we have to filter them as well
     if (isAllServicesGroup(link)) {
-      const groupLinks = filterAllServicesLinks(link.links as AllServicesLink[], filterValue);
+      const groupLinks = filterAllServicesLinks(link.links, filterValue);
       // replace group links with filtered results
       const newGroup: AllServicesGroup = {
         ...link,
@@ -89,9 +89,13 @@ const filterAllServicesLinks = (links: (AllServicesLink | AllServicesGroup)[], f
   }, []);
 };
 
+function isBundleNav(item: unknown): item is BundleNav {
+  return typeof item !== 'undefined';
+}
+
 // remove sections that do not include any relevant items or their title does not match the search term
 const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filterValue: string) => {
-  return allServicesLinks.reduce<AllServicesSection[]>((acc: any, section: any) => {
+  return allServicesLinks.reduce<AllServicesSection[]>((acc, section) => {
     // if a section title matches, include in results
     if (matchStrings(section.title, filterValue)) {
       return [...acc, section];
@@ -147,7 +151,7 @@ const useAllServices = () => {
       Promise.all(
         bundles.map((fragment) =>
           axios
-            .get<BundleNav>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
+            .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
             .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
             .then(handleBundleResponse)
             .catch((err) => {
@@ -155,15 +159,18 @@ const useAllServices = () => {
               return [];
             })
         )
-      ),
+      ).then((data) => data.filter(isBundleNav)),
     []
   );
   const fetchSections = useCallback(
-    async (): Promise<
-      (Omit<AllServicesSection, 'links'> & {
-        links: (string | AllServicesLink | AllServicesGroup)[];
-      })[]
-    > => (await axios.get(`${getChromeStaticPathname('services')}/services.json`)).data,
+    async () =>
+      (
+        await axios.get<
+          (Omit<AllServicesSection, 'links'> & {
+            links: (string | AllServicesLink | AllServicesGroup)[];
+          })[]
+        >(`${getChromeStaticPathname('services')}/services.json`)
+      ).data,
     []
   );
   useEffect(() => {
@@ -172,7 +179,7 @@ const useAllServices = () => {
       const bundleItems = await fetchNavitation();
       const sections = await fetchSections();
       if (isMounted.current) {
-        const availableLinks = (bundleItems as BundleNav[]).map((bundle) => {
+        const availableLinks = bundleItems.map((bundle) => {
           return {
             ...bundle,
             items: parseBundlesToObject(bundle.links?.flat()),
@@ -197,7 +204,7 @@ const useAllServices = () => {
           });
         setState((prev) => ({
           ...prev,
-          availableLinks: bundleItems as BundleNav[],
+          availableLinks: bundleItems,
           availableSections,
           ready: true,
           // no links means all bundle requests have failed

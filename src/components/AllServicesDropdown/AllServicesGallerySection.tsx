@@ -2,7 +2,6 @@ import { Gallery, Title } from '@patternfly/react-core';
 import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
-import type { AllServicesLink as AllServicesLinkType } from '../AllServices/allServicesLinks';
 
 export type AllServicesGallerySectionProps = AllServicesGroup;
 
@@ -15,7 +14,7 @@ const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionPr
       <div>
         <Gallery hasGutter>
           {links.map((link, index) => (
-            <AllServicesGalleryLink {...(link as AllServicesLinkType)} key={index} />
+            <AllServicesGalleryLink {...link} key={index} />
           ))}
         </Gallery>
       </div>

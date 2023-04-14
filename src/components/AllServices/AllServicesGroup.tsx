@@ -4,7 +4,6 @@ import { ITLess } from '../../utils/common';
 
 import AllServicesLink from './AllServicesLink';
 import { AllServicesGroup, isAllServicesLink } from './allServicesLinks';
-import type { AllServicesLink as AllServicesLinkType } from './allServicesLinks';
 
 export type AllServicesGroupProps = AllServicesGroup;
 const AllServicesGroup = ({ title, links }: AllServicesGroupProps) => {
@@ -15,7 +14,7 @@ const AllServicesGroup = ({ title, links }: AllServicesGroupProps) => {
         {title}
       </Text>
       {filteredLinks.map((link, index) => (
-        <AllServicesLink key={index} {...(link as AllServicesLinkType)} />
+        <AllServicesLink key={index} {...link} />
       ))}
     </Fragment>
   );

@@ -4,13 +4,13 @@ import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
 import AllServicesLink from './AllServicesLink';
-import { AllServicesLink as AllServicesLinkType, AllServicesSection, isAllServicesGroup, isAllServicesLink } from './allServicesLinks';
+import { AllServicesSection, isAllServicesGroup, isAllServicesLink } from './allServicesLinks';
 
 export type AllServicesSectionProps = AllServicesSection;
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
-  const TitleIcon = AllServicesIcons[icon as keyof typeof AllServicesIcons];
-  const filteredLinks = ITLess() ? links.filter((link) => (link as AllServicesLinkType).ITLess) : links;
+  const TitleIcon = icon ? AllServicesIcons[icon] : null;
+  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
   return (
     <Card className="pf-u-display-block pf-u-mb-md pf-u-background-color-100">
       <CardTitle>
@@ -25,11 +25,7 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
             {description || null}
           </Text>
           {filteredLinks.map((link, index) =>
-            isAllServicesGroup(link) ? (
-              <AllServicesGroup key={index} {...link} />
-            ) : (
-              isAllServicesLink(link) && <AllServicesLink key={index} {...link} />
-            )
+            isAllServicesGroup(link) ? <AllServicesGroup key={index} {...link} /> : <AllServicesLink key={index} {...link} />
           )}
         </TextContent>
       </CardBody>
