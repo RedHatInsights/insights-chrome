@@ -173,50 +173,50 @@ const useAllServices = () => {
       ).data,
     []
   );
+  const setNavigation = useCallback(async () => {
+    const bundleItems = await fetchNavitation();
+    const sections = await fetchSections();
+    if (isMounted.current) {
+      const availableLinks = bundleItems.map((bundle) => {
+        return {
+          ...bundle,
+          items: parseBundlesToObject(bundle.links?.flat()),
+        };
+      });
+      const availableSections = sections
+        .reduce<AllServicesSection[]>((acc, { links, ...rest }) => {
+          return [
+            ...acc,
+            {
+              ...rest,
+              links: findNavItems(links, availableLinks).filter(Boolean),
+            },
+          ];
+        }, [])
+        .filter(({ links }: AllServicesSection) => {
+          if (links?.length === 0) {
+            return false;
+          }
+
+          return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
+        });
+      setState((prev) => ({
+        ...prev,
+        availableLinks: bundleItems,
+        availableSections,
+        ready: true,
+        // no links means all bundle requests have failed
+        error: availableLinks.flatMap(({ items }) => Object.keys(items || {})).length === 0,
+      }));
+    }
+  }, [fetchSections, fetchNavitation]);
   useEffect(() => {
     isMounted.current = true;
-    const setNavigation = async () => {
-      const bundleItems = await fetchNavitation();
-      const sections = await fetchSections();
-      if (isMounted.current) {
-        const availableLinks = bundleItems.map((bundle) => {
-          return {
-            ...bundle,
-            items: parseBundlesToObject(bundle.links?.flat()),
-          };
-        });
-        const availableSections = sections
-          .reduce<AllServicesSection[]>((acc, { links, ...rest }) => {
-            return [
-              ...acc,
-              {
-                ...rest,
-                links: findNavItems(links, availableLinks).filter(Boolean),
-              },
-            ];
-          }, [])
-          .filter(({ links }: AllServicesSection) => {
-            if (links?.length === 0) {
-              return false;
-            }
-
-            return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
-          });
-        setState((prev) => ({
-          ...prev,
-          availableLinks: bundleItems,
-          availableSections,
-          ready: true,
-          // no links means all bundle requests have failed
-          error: availableLinks.flatMap(({ items }) => Object.keys(items || {})).length === 0,
-        }));
-      }
-    };
     setNavigation();
     return () => {
       isMounted.current = false;
     };
-  }, [fetchSections, fetchNavitation]);
+  }, [setNavigation]);
 
   const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
 

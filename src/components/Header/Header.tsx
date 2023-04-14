@@ -43,9 +43,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const searchEnabled = useFlag('platform.chrome.search.enabled');
   const breadcrumbEnabled = useFlag('platform.chrome.bredcrumbs.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
-  // TODO: remove me!
-  const navDropdownEnabled = true;
-  // TODO: remove me!
+  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();

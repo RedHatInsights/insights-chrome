@@ -4,7 +4,7 @@ import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesIcons from './AllServicesIcons';
 import AllServicesLink from './AllServicesLink';
-import { AllServicesSection, isAllServicesGroup, isAllServicesLink } from './allServicesLinks';
+import { AllServicesSection, isAllServicesGroup } from './allServicesLinks';
 
 export type AllServicesSectionProps = AllServicesSection;
 
