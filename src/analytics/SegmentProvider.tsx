@@ -126,7 +126,7 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
     isBeta: isBeta(),
-    ...(!isProd() && user.identity.user
+    ...(user.identity.user
       ? {
           name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
           email: `${user.identity.user.email}`,
