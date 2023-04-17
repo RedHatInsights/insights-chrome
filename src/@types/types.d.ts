@@ -39,6 +39,7 @@ export type NavItemPermission<T extends keyof VisibilityFunctions = 'isOrgAdmin'
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
+  id?: string;
   filterable?: boolean;
   isExternal?: boolean;
   isFedramp?: boolean;
@@ -53,6 +54,7 @@ export type NavItem = {
   isHidden?: boolean;
   permissions?: NavItemPermission[] | NavItemPermission;
   dynamicNav?: string;
+  description?: string;
 };
 
 export type BundleNavigation = {
@@ -153,6 +155,7 @@ export type ChromeModule = {
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
+    ssoScopes?: string[];
   };
   analytics?: {
     APIKey?: string;

@@ -12,6 +12,7 @@ jest.mock('@unleash/proxy-client-react', () => {
     __esModule: true,
     ...actual,
     // unblock navigation loading
+    useFlag: () => false,
     useFlagsStatus: () => ({ flagsReady: true }),
   };
 });

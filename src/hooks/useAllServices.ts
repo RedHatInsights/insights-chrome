@@ -1,20 +1,30 @@
 import axios from 'axios';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { matchPath } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BundleNavigation, NavItem } from '../@types/types';
-import allServicesLinks, { AllServicesGroup, AllServicesLink, AllServicesSection } from '../components/AllServices/allServicesLinks';
-import { isAllServicesGroup } from '../components/AllServices/AllServicesSection';
+import {
+  AllServicesGroup,
+  AllServicesLink,
+  AllServicesSection,
+  isAllServicesGroup,
+  isAllServicesLink,
+} from '../components/AllServices/allServicesLinks';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
-import { getChromeStaticPathname, isBeta, isProd } from '../utils/common';
+import { getChromeStaticPathname, isBeta } from '../utils/common';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
 };
 
-const isProdEnv = isProd();
+type BundleNav = {
+  id?: string;
+  title?: string;
+  links: NavItem[];
+};
 
-const handleBundleResponse = (bundle: { data: Omit<BundleNavigation, 'id' | 'title'> }): NavItem[] => {
-  const flatLinks = bundle.data.navItems.reduce<(NavItem | NavItem[])[]>((acc, { navItems, routes, expandable, ...rest }) => {
+const handleBundleResponse = (bundle: {
+  data: Omit<BundleNavigation, 'id' | 'title'> & Partial<Pick<BundleNavigation, 'id' | 'title'>>;
+}): BundleNav => {
+  const flatLinks = bundle.data?.navItems?.reduce<(NavItem | NavItem[])[]>((acc, { navItems, routes, expandable, ...rest }) => {
     // item is a group
     if (navItems) {
       return [
@@ -24,7 +34,7 @@ const handleBundleResponse = (bundle: { data: Omit<BundleNavigation, 'id' | 'tit
             ...rest,
             navItems,
           },
-        }),
+        }).links,
       ];
     }
 
@@ -36,11 +46,11 @@ const handleBundleResponse = (bundle: { data: Omit<BundleNavigation, 'id' | 'tit
     // regular NavItem
     return [...acc, rest];
   }, []);
-  return flatLinks.flat();
+  return { id: bundle.data.id, title: bundle.data.title, links: (flatLinks || []).flat() };
 };
 
 const parseBundlesToObject = (items: NavItem[]) =>
-  items.reduce<AvailableLinks>(
+  items?.reduce<AvailableLinks>(
     (acc, curr) =>
       curr.href // Omit items with no href
         ? {
@@ -79,6 +89,10 @@ const filterAllServicesLinks = (links: (AllServicesLink | AllServicesGroup)[], f
   }, []);
 };
 
+function isBundleNav(item: unknown): item is BundleNav {
+  return typeof item !== 'undefined';
+}
+
 // remove sections that do not include any relevant items or their title does not match the search term
 const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filterValue: string) => {
   return allServicesLinks.reduce<AllServicesSection[]>((acc, section) => {
@@ -95,105 +109,122 @@ const filterAllServicesSections = (allServicesLinks: AllServicesSection[], filte
     return acc;
   }, []);
 };
+
+const findNavItems = (
+  items: (string | AllServicesLink | AllServicesGroup)[] = [],
+  availableLinks: { id?: string; title?: string; items: AvailableLinks }[]
+): (AllServicesLink | AllServicesGroup)[] =>
+  items
+    .map((item) => {
+      if (isAllServicesGroup(item)) {
+        return {
+          ...item,
+          links: findNavItems(item.links, availableLinks),
+        };
+      } else if (isAllServicesLink(item)) {
+        return item;
+      }
+      const [bundle, nav] = (item as string).split('.');
+      const currBundle = availableLinks.find(({ id }) => id === bundle)?.items || {};
+      return Object.values(currBundle).find(({ id }) => id === nav);
+    })
+    .filter(Boolean) as (AllServicesLink | AllServicesGroup)[];
+
 const useAllServices = () => {
-  const [{ availableLinks, ready, error }, setState] = useState<{
+  const [{ ready, error, availableSections }, setState] = useState<{
     error: boolean;
     ready: boolean;
-    availableLinks: NavItem[];
+    availableLinks: BundleNav[];
+    availableSections: AllServicesSection[];
   }>({
     ready: false,
     availableLinks: [],
     error: false,
+    availableSections: [],
   });
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
   // TODO: move constant once the AppFilter is fully replaced
   const bundles = requiredBundles;
+  const fetchNavitation = useCallback(
+    () =>
+      Promise.all(
+        bundles.map((fragment) =>
+          axios
+            .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
+            .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
+            .then(handleBundleResponse)
+            .catch((err) => {
+              console.error('Unable to load appfilter bundle', err, fragment);
+              return [];
+            })
+        )
+      ).then((data) => data.filter(isBundleNav)),
+    []
+  );
+  const fetchSections = useCallback(
+    async () =>
+      (
+        await axios.get<
+          (Omit<AllServicesSection, 'links'> & {
+            links: (string | AllServicesLink | AllServicesGroup)[];
+          })[]
+        >(`${getChromeStaticPathname('services')}/services.json`)
+      ).data,
+    []
+  );
+  const setNavigation = useCallback(async () => {
+    const bundleItems = await fetchNavitation();
+    const sections = await fetchSections();
+    if (isMounted.current) {
+      const availableLinks = bundleItems.map((bundle) => {
+        return {
+          ...bundle,
+          items: parseBundlesToObject(bundle.links?.flat()),
+        };
+      });
+      const availableSections = sections
+        .reduce<AllServicesSection[]>((acc, { links, ...rest }) => {
+          return [
+            ...acc,
+            {
+              ...rest,
+              links: findNavItems(links, availableLinks).filter(Boolean),
+            },
+          ];
+        }, [])
+        .filter(({ links }: AllServicesSection) => {
+          if (links?.length === 0) {
+            return false;
+          }
+
+          return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
+        });
+      setState((prev) => ({
+        ...prev,
+        availableLinks: bundleItems,
+        availableSections,
+        ready: true,
+        // no links means all bundle requests have failed
+        error: availableLinks.flatMap(({ items }) => Object.keys(items || {})).length === 0,
+      }));
+    }
+  }, [fetchSections, fetchNavitation]);
   useEffect(() => {
     isMounted.current = true;
-    Promise.all(
-      bundles.map((fragment) =>
-        axios
-          .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
-          // fallback static CSC for EE env
-          .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
-          .then(handleBundleResponse)
-          .catch((err) => {
-            console.error('Unable to load appfilter bundle', err, fragment);
-            return [];
-          })
-      )
-    ).then((bundleItems) => {
-      if (isMounted.current) {
-        const availableLinks = parseBundlesToObject(bundleItems.flat());
-        setState((prev) => ({
-          ...prev,
-          availableLinks: bundleItems.flat(),
-          ready: true,
-          // no links means all bundle requests have failed
-          error: Object.keys(availableLinks).length === 0,
-        }));
-      }
-    });
+    setNavigation();
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [setNavigation]);
 
-  // AllServices pages section
-  // update only on ready status change
-  // FIXME: Remove prod filtering once the data structure is outside of chrome
-  const linkSections = useMemo(() => {
-    // create a flat array of all available link href
-    const linksToMatch = allServicesLinks
-      .flatMap((item) => {
-        return item.links;
-      })
-      .flatMap((item) => {
-        // use router "path/*" to increase number of route matches
-        if (isAllServicesGroup(item)) {
-          // we have to filter items before the structure is offloaded outside of Chrome
-          return item.links.filter((item) => (isProdEnv ? item.prod !== false : true)).map(({ href }) => `${href}/*`);
-        }
-        if (isProdEnv && item.prod === false) {
-          // we have to filter items before the structure is offloaded outside of Chrome
-          return '';
-        }
-        return [`${item.href}/*`];
-      })
-      .filter((item) => item.length > 0);
-
-    // use router match to remove links that are not included in current environment (chrome navigation files)
-    const matchedLinks = availableLinks.reduce<(NavItem & { routeMatch: string })[]>((acc, item) => {
-      const match = linksToMatch.find((link) => matchPath(link, item.href!));
-      if (match) {
-        return [...acc, { ...item, routeMatch: match }];
-      }
-
-      return acc;
-    }, []);
-
-    // pre-filter sections data by filter value
-    // re-create all services section data with links avaiable in current environments
-    return filterAllServicesSections(allServicesLinks, filterValue).reduce<AllServicesSection[]>((acc, curr) => {
-      const sectionLinks = curr.links.filter((item) => {
-        return isAllServicesGroup(item)
-          ? item.links.filter(({ href, isExternal }) => isExternal || matchedLinks.find((link) => matchPath(link.routeMatch, href))).length > 0
-          : item.isExternal || matchedLinks.find((link) => matchPath(link.routeMatch, item.href));
-      });
-      if (sectionLinks.length > 0) {
-        return [...acc, { ...curr, links: sectionLinks }];
-      }
-      return acc;
-    }, []);
-    // run hook after data are loaded or filter value changed
-  }, [ready, filterValue]);
+  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
 
   // Provide a flat list of all avaiable links
   const servicesLinks = useMemo(
     () =>
       linkSections
-        .flatMap(({ links }) => links)
+        .flatMap(({ links }) => links as (AllServicesGroup | AllServicesLink)[])
         .flatMap((item) => (isAllServicesGroup(item) ? item.links : item))
         .flat(),
     [linkSections]

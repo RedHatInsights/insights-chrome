@@ -123,6 +123,10 @@ describe('HelpTopicManager', () => {
         visitedBundles: {},
       },
     });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
+      navItems: [],
+    });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
   });
 
   it('should switch help topics drawer content', () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MenuToggle, Popper } from '@patternfly/react-core';
+import { Backdrop, Bullseye, MenuToggle, Panel, PanelMain, Popper, Spinner } from '@patternfly/react-core';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
@@ -16,7 +16,7 @@ const AllServicesDropdown = () => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const { linkSections } = useAllServices();
+  const { linkSections, ready } = useAllServices();
   const favoritedServices = useFavoritedServices();
 
   useEffect(() => {
@@ -67,13 +67,27 @@ const AllServicesDropdown = () => {
       appendTo={document.body}
       isVisible={isOpen}
       popper={
-        <AllServicesPortal
-          favoritedServices={favoritedServices}
-          linkSections={linkSections}
-          menuRef={menuRef}
-          setIsOpen={setIsOpen}
-          isOpen={isOpen}
-        />
+        ready ? (
+          <AllServicesPortal
+            favoritedServices={favoritedServices}
+            linkSections={linkSections}
+            menuRef={menuRef}
+            setIsOpen={setIsOpen}
+            isOpen={isOpen}
+          />
+        ) : (
+          <div ref={menuRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+            <Backdrop>
+              <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
+                <PanelMain>
+                  <Bullseye>
+                    <Spinner />
+                  </Bullseye>
+                </PanelMain>
+              </Panel>
+            </Backdrop>
+          </div>
+        )
       }
     />
   );

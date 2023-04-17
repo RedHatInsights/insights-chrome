@@ -47,7 +47,7 @@ export const DEFAULT_SSO_ROUTES = {
   },
 };
 
-export const LOGIN_TYPE_STORAGE_KEY = '@chrome/profile-type';
+export const LOGIN_SCOPES_STORAGE_KEY = '@chrome/login-scopes';
 export const chunkLoadErrorRefreshKey = 'ChunkLoadErrorRefreshed';
 export const BLOCK_CLEAR_GATEWAY_ERROR = 'BLOCK_CLEAR_GATEWAY_ERROR';
 
@@ -326,7 +326,7 @@ export const chromeServiceStaticPathname = {
   },
 };
 
-export function getChromeStaticPathname(type: 'modules' | 'navigation') {
+export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services') {
   const stableEnv = isBeta() ? 'beta' : 'stable';
   const prodEnv = isProd() ? 'prod' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
