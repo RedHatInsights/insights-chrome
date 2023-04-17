@@ -14,10 +14,8 @@
     height: calc(100vh - 70px);
   }
   @media screen and (max-width: $pf-global--breakpoint--2xl) {
-    // top: 140px;
-    top: 108px;
-    // height: calc(100vh - 140px);
-    height: calc(100vh - 108px);
+    top: 118px;
+    height: calc(100vh - 118px);
   }
 
   // pos has to be important to override PF styles that get lazy loaded!
