@@ -155,6 +155,7 @@ export type ChromeModule = {
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
+    ssoScopes?: string[];
   };
   analytics?: {
     APIKey?: string;
