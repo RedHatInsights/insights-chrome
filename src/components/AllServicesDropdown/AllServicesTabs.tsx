@@ -13,9 +13,10 @@ export type AllServicesTabsProps = {
   linkSections: AllServicesSectionType[];
   tabContentRef: React.RefObject<HTMLElement>;
   onTabClick: (section: AllServicesSectionType, index: number) => void;
+  activeTabTitle: string;
 };
 
-const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, linkSections, tabContentRef, onTabClick }: AllServicesTabsProps) => {
+const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, linkSections, tabContentRef, onTabClick, activeTabTitle }: AllServicesTabsProps) => {
   return (
     <Tabs
       inset={{
@@ -30,7 +31,7 @@ const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, l
       }}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      toggleText="Containers"
+      toggleText={activeTabTitle}
       aria-label="Tabs in the vertical expandable example"
       role="region"
       className="pf-u-pl-md pf-u-p-md"
