@@ -13,10 +13,10 @@ export const resetIntegrations = (client: AnalyticsBrowser) => {
     }
     // if no pendo destination, teardown pendo if it exists
     if (!pendoDestination && window.pendo) {
-      window.pendo?.flushNow();
-      window.pendo?.setGuidesDisabled(true);
-      window.pendo?.stopGuides();
-      window.pendo?.stopSendingEvents();
+      window.pendo?.flushNow?.();
+      window.pendo?.setGuidesDisabled?.(true);
+      window.pendo?.stopGuides?.();
+      window.pendo?.stopSendingEvents?.();
       window.pendo = undefined;
     }
 
@@ -24,12 +24,12 @@ export const resetIntegrations = (client: AnalyticsBrowser) => {
     if (pendoDestination && window.pendo) {
       if (intercomDestination) {
         // disable pendo guides
-        window.pendo?.setGuidesDisabled(true);
-        window.pendo?.stopGuides();
+        window.pendo?.setGuidesDisabled?.(true);
+        window.pendo?.stopGuides?.();
       } else {
         // (re)enable pendo guides
-        window.pendo?.setGuidesDisabled(false);
-        window.pendo?.startGuides();
+        window.pendo?.setGuidesDisabled?.(false);
+        window.pendo?.startGuides?.();
       }
     }
   });
