@@ -16,7 +16,7 @@ import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
-import useUserProfile from '../../hooks/useUserProfile';
+import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
 
@@ -43,8 +43,8 @@ const RootApp = memo((props: RootAppProps) => {
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
-  // verify if full profile reauth is required
-  useUserProfile();
+  // verify use loged in scopes
+  useUserSSOScopes();
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));
