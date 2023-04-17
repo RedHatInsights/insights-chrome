@@ -189,7 +189,7 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
       cogToken = await getTokenWithAuthorizationCode();
     }
     try {
-      if (user.identity.account_number) {
+      if (user.identity.org_id) {
         data = isITLessEnv
           ? ((await servicesApi(cogToken).servicesGet()) as unknown as typeof data)
           : ((await servicesApi(token.jti).servicesGet()) as unknown as typeof data);

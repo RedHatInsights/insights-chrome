@@ -102,6 +102,7 @@ describe('Gateway errors', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
       navItems: [],
     });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
     // clear the instance
     removeScalprum();
   });
