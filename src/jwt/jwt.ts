@@ -5,7 +5,7 @@ import cookie from 'js-cookie';
 import {
   DEFAULT_SSO_ROUTES,
   ITLess,
-  LOGIN_TYPE_STORAGE_KEY,
+  LOGIN_SCOPES_STORAGE_KEY,
   deleteLocalStorageItems,
   getRouterBasename,
   isBeta as isBetaFunction,
@@ -113,15 +113,19 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
 
     await kc.init(options);
     const partnerScope = getPartnerScope(window.location.pathname);
-    const profileScope = localStorage.getItem(LOGIN_TYPE_STORAGE_KEY);
+    const ssoScopes = localStorage.getItem(LOGIN_SCOPES_STORAGE_KEY);
     const scopes = ['offline_access'];
     if (partnerScope) {
       scopes.push(partnerScope);
     }
 
-    if (profileScope) {
-      // make sure add openid scope when profile scope is used
-      scopes.push('openid', profileScope);
+    if (ssoScopes) {
+      try {
+        // make sure add openid scope when custom scope is used
+        scopes.push('openid', JSON.parse(ssoScopes));
+      } catch {
+        console.error('Unable to parse sso scopes!');
+      }
     }
 
     kc.login({
@@ -288,19 +292,18 @@ export function initError() {
 }
 
 /*** Login/Logout ***/
-export function login(fullProfile = false) {
+export function login(requiredScopes: string[] = []) {
   log('Logging in');
   // Redirect to login
   cookie.set('cs_loggedOut', 'false');
   const redirectUri = location.href;
-  const loginProfile = fullProfile ? 'rhfull' : 'nameandterms';
-  localStorage.setItem(LOGIN_TYPE_STORAGE_KEY, loginProfile);
   // TODO: Remove once ephemeral environment supports full and thin profile
-  const scope = ['openid', ...(location.origin.includes('redhat.com') ? [loginProfile] : [])];
+  const scope = ['openid', ...requiredScopes];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
   }
+  localStorage.setItem(LOGIN_SCOPES_STORAGE_KEY, JSON.stringify(scope));
   // KC scopes are delimited by a space character, hence the join(' ')
   return priv.login({ redirectUri, scope: scope.join(' ') });
 }
@@ -322,7 +325,7 @@ export function logout(bounce?: boolean) {
       key.startsWith('kc-callback') ||
       key.startsWith(GLOBAL_FILTER_KEY)
   );
-  deleteLocalStorageItems([...keys, LOGIN_TYPE_STORAGE_KEY]);
+  deleteLocalStorageItems([...keys, LOGIN_SCOPES_STORAGE_KEY]);
   // Redirect to logout
   if (bounce) {
     const eightSeconds = new Date(new Date().getTime() + 8 * 1000);
