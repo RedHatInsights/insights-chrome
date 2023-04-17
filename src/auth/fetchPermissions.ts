@@ -37,7 +37,7 @@ export const createFetchPermissionsWatcher = () => {
   const currentCall: Record<string, void | Access[]> = {};
   return async (userToken: string, app = '', bypassCache?: boolean) => {
     const user = await window.insights.chrome.auth.getUser();
-    if (user?.identity && [undefined, -1, '-1'].includes(user.identity.account_number)) {
+    if (user?.identity && [undefined, -1, '-1'].includes(user.identity.org_id)) {
       return Promise.resolve([]);
     }
     if (typeof currentCall?.[app] === 'undefined' || bypassCache) {

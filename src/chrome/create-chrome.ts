@@ -34,6 +34,7 @@ import { ChromeModule, FlagTagsFilter } from '../@types/types';
 import { createCognitoAuthObject } from '../cognito';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
 import useBundle from '../hooks/useBundle';
+import { warnDuplicatePkg } from './warnDuplicatePackages';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -175,6 +176,7 @@ export const createChromeContext = ({
     $internal: {
       store,
     },
+    enablePackagesDebug: () => warnDuplicatePkg(),
   };
   return api;
 };
