@@ -14,8 +14,10 @@
     height: calc(100vh - 70px);
   }
   @media screen and (max-width: $pf-global--breakpoint--2xl) {
-    top: 140px;
-    height: calc(100vh - 140px);
+    // top: 140px;
+    top: 108px;
+    // height: calc(100vh - 140px);
+    height: calc(100vh - 108px);
   }
 
   // pos has to be important to override PF styles that get lazy loaded!
@@ -35,26 +37,27 @@
   }
 }
 
-.chr-c-panel-services-nav {
-  .pf-c-tabs.pf-m-vertical {
-    display: flex; // Kafka conflict
-    padding-top: var(--pf-global--spacer--md); // Kafka conflict
-    height: calc(100% - 80px);
+@media (max-width: 768px) {
+  .chr-c-panel-services-nav {
+    .chr-l-flex__item-browse-all-services {
+        background: var(--pf-global--BackgroundColor--200);
+        border-bottom: 1px solid #ccc;
+      }
+    .pf-c-tabs.pf-m-vertical {
+      background: var(--pf-global--BackgroundColor--200);
+      border-bottom: 1px solid #ccc;
+      height: calc(100% - 80px);
+    }
   }
 }
 
 @media (min-width: 768px) {
   .chr-c-panel-services-nav {
-    min-height: 650px;
-    // make sure the card height fills the parent link
-    .chr-c-link-service-card {
-      height: 100%;
+    .chr-l-flex__item-browse-all-services {
+      border-top: 1px solid #ccc;
     }
     .pf-c-card.pf-m-plain {
       --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
-    }
-    .chr-c-icon-service-tab {
-      font-size: 1rem;
     }
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;
