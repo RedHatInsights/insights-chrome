@@ -60,6 +60,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                       linkSections={linkSections}
                       tabContentRef={tabContentRef}
                       onTabClick={onTabClick}
+                      activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
                     />
                   </FlexItem>
                   <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: "1", md: "2" }}>
