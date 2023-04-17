@@ -33,15 +33,15 @@ const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, l
       toggleText="Containers"
       aria-label="Tabs in the vertical expandable example"
       role="region"
-      className="pf-u-pl-md"
+      className="pf-u-pl-md pf-u-p-md"
     >
       <Tab
         eventKey={FAVORITE_TAB_ID}
         title={
           <TabTitleText>
             My favorite services
-            <Icon className="pf-u-ml-md" status="warning">
-              <StarIcon size="sm" className="chr-c-icon-service-tab" />
+            <Icon className="chr-c-icon-service-tab pf-u-ml-md" status="warning" isInline>
+              <StarIcon />
             </Icon>
           </TabTitleText>
         }

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Backdrop, Flex, FlexItem, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
@@ -48,28 +48,33 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
       <Backdrop>
         <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
           <PanelMain>
-            <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
+            <Sidebar>
               <SidebarPanel>
-                <AllServicesTabs
-                  activeTabKey={activeTabKey}
-                  handleTabClick={handleTabClick}
-                  isExpanded={isExpanded}
-                  onToggle={onToggle}
-                  linkSections={linkSections}
-                  tabContentRef={tabContentRef}
-                  onTabClick={onTabClick}
-                />
-                <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
-                <TextContent className="pf-u-pb-md pf-u-text-align-center">
-                  <Text component={TextVariants.p}>
-                    <ChromeLink href="/allservices">
-                      <Icon className="pf-u-mr-sm" isInline>
-                        <BookOpenIcon />
-                      </Icon>
-                      Browse all services
-                    </ChromeLink>
-                  </Text>
-                </TextContent>
+                <Flex className="pf-u-flex-direction-column pf-u-flex-grow-1">
+                  <FlexItem order={{ default: "2", md: "1" }} className="pf-u-w-100">
+                    <AllServicesTabs
+                      activeTabKey={activeTabKey}
+                      handleTabClick={handleTabClick}
+                      isExpanded={isExpanded}
+                      onToggle={onToggle}
+                      linkSections={linkSections}
+                      tabContentRef={tabContentRef}
+                      onTabClick={onTabClick}
+                    />
+                  </FlexItem>
+                  <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: "1", md: "2" }}>
+                    <TextContent className="pf-u-text-align-center-on-md">
+                      <Text component={TextVariants.p}>
+                        <ChromeLink href="/allservices">
+                          <Icon className="pf-u-mr-sm" isInline>
+                            <BookOpenIcon />
+                          </Icon>
+                          Browse all services
+                        </ChromeLink>
+                      </Text>
+                    </TextContent>
+                  </FlexItem>
+                </Flex>
               </SidebarPanel>
               <SidebarContent>
                 <Card isPlain>

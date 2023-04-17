@@ -1,10 +1,13 @@
 @import '~@patternfly/patternfly/patternfly.scss';
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 .chr-c-masthead {
+  .pf-c-masthead__content {
+    height: 48px;
+  }
+
   .chr-c-brand {
     width: 192px;
   }
-
   a.chr-c-button-masthead  {
     background: transparent;
     border: 1px solid var(--pf-global--Color--300);
