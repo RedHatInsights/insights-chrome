@@ -114,6 +114,7 @@ export type QuickstartsApi = {
   set: (key: string, quickstarts: QuickStart[]) => void;
   toggle: (quickstart: string) => void;
   Catalog: typeof QuickStartCatalogPage;
+  activateQuickstart: (name: string) => Promise<void>;
 };
 
 export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;
