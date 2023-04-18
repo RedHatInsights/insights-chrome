@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { QuickStartState } from '@patternfly/quickstarts';
+import { useDispatch, useSelector } from 'react-redux';
+import { QuickStart, QuickStartState } from '@patternfly/quickstarts';
 import { ReduxState } from '../../redux/store';
+import { populateQuickstartsCatalog } from '../../redux/actions';
 
 const useQuickstartsStates = () => {
+  const dispatch = useDispatch();
   const accountId = useSelector(({ chrome }: ReduxState) => chrome?.user?.identity?.internal?.account_id);
   const [allQuickStartStates, setAllQuickStartStatesInternal] = useState<{ [key: string | number]: QuickStartState }>({});
   const [activeQuickStartID, setActiveQuickStartIDInternal] = useState('');
@@ -56,7 +58,40 @@ const useQuickstartsStates = () => {
     }
   }, [accountId]);
 
+  async function activateQuickstart(name: string) {
+    try {
+      const {
+        data: { data },
+      } = await axios.get<{ data: { content: QuickStart }[] }>('/api/quickstarts/v1/quickstarts', {
+        params: {
+          name,
+        },
+      });
+      dispatch(
+        populateQuickstartsCatalog(
+          'default',
+          data.map(({ content }) => content)
+        )
+      );
+
+      setActiveQuickStartID(name);
+    } catch (error) {
+      console.error('Unable to active quickstarts called: ', name, error);
+    }
+  }
+
+  useEffect(() => {
+    // this hook is above the router node this the window location usage
+    const params = new URLSearchParams(window.location.search);
+    // load quickatart if URL param is present
+    const quickstartParam = params.get('quickstart');
+    if (typeof quickstartParam === 'string' && quickstartParam.length > 0) {
+      activateQuickstart(quickstartParam);
+    }
+  }, []);
+
   return {
+    activateQuickstart,
     allQuickStartStates,
     setAllQuickStartStates,
     activeQuickStartID,
