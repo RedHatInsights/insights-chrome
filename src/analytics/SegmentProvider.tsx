@@ -161,14 +161,18 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
 
   const fetchIntercomHash = async () => {
     try {
-      const { data } = await axios.get<{ data: string }>('/api/chrome-service/v1/user/intercom', {
+      const { data } = await axios.get<{ data: { prod?: string; dev?: string } }>('/api/chrome-service/v1/user/intercom', {
         params: {
           // the identifier will change based on the DDIS mapping
           app: activeModule,
-          dev: !isProd(),
         },
       });
-      return data.data;
+      // FIXME: remove after API is in prod fallback for legacy API
+      if (typeof data.data === 'string') {
+        return data.data;
+      }
+      // prod keys are used as fallback if dev does not exist for dev environment
+      return isProd() ? data.data.prod : data.data.dev || data.data.prod;
     } catch (error) {
       console.error('unable to get intercom user hash');
       return undefined;
