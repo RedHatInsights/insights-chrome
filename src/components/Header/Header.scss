@@ -8,30 +8,6 @@
   .chr-c-brand {
     width: 192px;
   }
-  a.chr-c-button-masthead  {
-    background: transparent;
-    border: 1px solid var(--pf-global--Color--300);
-
-    color: var(--pf-global--Color--light-100);
-    text-decoration: none;
-    &:hover {
-       border-bottom: 3px solid var(--pf-global--info-color--100);
-       padding-bottom: 3px;
-       &.disabled {
-         border-bottom: none;
-       }
-     }
-      &.active {
-        border-bottom: 3px solid var(--pf-global--info-color--100);
-        padding-bottom: 3px;
-      }
-      &.disabled {
-       color: var(--pf-global--palette--black-500);
-       .pf-c-icon {
-         --pf-c-icon__content--Color: var(--pf-global--palette--black-500);
-        }
-      }
-    }
 
   .chr-c-beta-switcher {
     --pf-c-switch--FontSize: var(--pf-global--FontSize--sm);

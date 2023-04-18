@@ -5,6 +5,10 @@
   &.pf-c-menu-toggle::after {
     border-bottom: none;
   }
+  &:hover, &.pf-m-expanded {
+    border-bottom: 3px solid var(--pf-global--info-color--100);
+    padding-bottom: 3px;
+  }
 }
 
 .chr-c-page__services-nav-dropdown-menu {
