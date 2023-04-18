@@ -16,7 +16,16 @@ export type AllServicesTabsProps = {
   activeTabTitle: string;
 };
 
-const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, linkSections, tabContentRef, onTabClick, activeTabTitle }: AllServicesTabsProps) => {
+const AllServicesTabs = ({
+  activeTabKey,
+  handleTabClick,
+  isExpanded,
+  onToggle,
+  linkSections,
+  tabContentRef,
+  onTabClick,
+  activeTabTitle,
+}: AllServicesTabsProps) => {
   return (
     <Tabs
       inset={{
@@ -32,9 +41,8 @@ const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, l
       isExpanded={isExpanded}
       onToggle={onToggle}
       toggleText={activeTabTitle}
-      aria-label="Tabs in the vertical expandable example"
       role="region"
-      className="pf-u-pl-md pf-u-p-md"
+      className="pf-u-p-md pf-u-pr-0"
     >
       <Tab
         eventKey={FAVORITE_TAB_ID}

@@ -2,7 +2,6 @@
   &__menu {
     overflow-y: auto;
   }
-
   &__input {
     border-radius: 0;
     width: 100%;
@@ -11,7 +10,7 @@
       &::before, &::after {
         border-color: var(--pf-global--palette--black-800);
         border-radius: 0;
-        border-bottom: 2px solid var(--pf-global--primary-color--100);
+        border-bottom: var(--pf-global--BorderWidth--md) solid var(--pf-global--primary-color--100);
       }
       &:hover {
         .pf-c-text-input-group__icon {
@@ -37,5 +36,4 @@
       font-size: 2rem;
     }
   }
-
 }

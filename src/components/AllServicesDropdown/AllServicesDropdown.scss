@@ -5,14 +5,12 @@
   &.pf-c-menu-toggle::after {
     border-bottom: none;
   }
-  &:hover, &.pf-m-expanded {
-    border-bottom: 3px solid var(--pf-global--info-color--100);
-    padding-bottom: 3px;
+  &.pf-c-menu-toggle:hover::after, &.pf-m-expanded::after {
+    border-bottom: var(--pf-global--BorderWidth--lg) solid var(--pf-global--info-color--100);
   }
 }
 
 .chr-c-page__services-nav-dropdown-menu {
-
   @media screen and (min-width: $pf-global--breakpoint--2xl) {
     top: 70px;
     height: calc(100vh - 70px);
@@ -39,24 +37,33 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $pf-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-flex__item-browse-all-services {
-        background: var(--pf-global--BackgroundColor--200);
-        border-bottom: 1px solid #ccc;
-      }
+      background: var(--pf-global--BackgroundColor--200);
+      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
+    }
     .pf-c-tabs.pf-m-vertical {
       background: var(--pf-global--BackgroundColor--200);
-      border-bottom: 1px solid #ccc;
+      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
       height: calc(100% - 80px);
+    }
+    .pf-c-tabs__toggle-button  {
+      width: 100%;
+    }
+    .pf-c-tabs__toggle-button .pf-c-button {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      padding: var(--pf-global--spacer--sm);
+      width: 100%;
     }
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: $pf-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-flex__item-browse-all-services {
-      border-top: 1px solid #ccc;
+      border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
     }
     .pf-c-card.pf-m-plain {
       --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
@@ -74,7 +81,6 @@
     }
     .pf-c-tabs {
       height: calc(100% - 80px);
-      padding-top: var(--pf-global--spacer--md);
       --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
       --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
       --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);
