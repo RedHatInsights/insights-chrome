@@ -9,7 +9,6 @@ import axios from 'axios';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
-import useBundle from '../hooks/useBundle';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -159,17 +158,21 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
-  const { bundleId } = useBundle();
 
   const fetchIntercomHash = async () => {
     try {
-      const { data } = await axios.get<{ data: string }>('/api/chrome-service/v1/user/intercom', {
+      const { data } = await axios.get<{ data: { prod?: string; dev?: string } }>('/api/chrome-service/v1/user/intercom', {
         params: {
           // the identifier will change based on the DDIS mapping
-          bundle: bundleId,
+          app: activeModule,
         },
       });
-      return data.data;
+      // FIXME: remove after API is in prod fallback for legacy API
+      if (typeof data.data === 'string') {
+        return data.data;
+      }
+      // prod keys are used as fallback if dev does not exist for dev environment
+      return isProd() ? data.data.prod : data.data.dev || data.data.prod;
     } catch (error) {
       console.error('unable to get intercom user hash');
       return undefined;
