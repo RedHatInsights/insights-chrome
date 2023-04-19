@@ -28,7 +28,7 @@ export type RootAppProps = {
 };
 
 const RootApp = memo((props: RootAppProps) => {
-  const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
   const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
@@ -104,6 +104,7 @@ const RootApp = memo((props: RootAppProps) => {
   const quickstartsAPI = {
     version: 1,
     set: updateQuickStarts,
+    activateQuickstart,
     add: addQuickstart,
     toggle: setActiveQuickStartID,
     Catalog: LazyQuickStartCatalog,

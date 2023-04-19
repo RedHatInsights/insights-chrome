@@ -13,6 +13,7 @@ export const bundleMapping: {
   allservices: 'Home',
   iam: 'Identity & Access Management',
   internal: 'Internal',
+  containers: 'Containers',
 };
 
 const useBundle = () => {
