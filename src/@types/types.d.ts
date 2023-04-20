@@ -121,6 +121,7 @@ export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent
 export type GenericCB = (...args: unknown[]) => void;
 
 export type RouteDefinition = {
+  expandable?: boolean;
   absolute?: boolean;
   appId?: string;
   href?: string;
