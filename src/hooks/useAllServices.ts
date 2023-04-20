@@ -189,7 +189,6 @@ const useAllServices = () => {
           items: parseBundlesToObject(bundle.links?.flat()),
         };
       });
-      console.log({ availableLinks });
       const availableSections = sections
         .reduce<AllServicesSection[]>((acc, { links, ...rest }) => {
           return [
