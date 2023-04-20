@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -12,7 +12,7 @@ import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -24,7 +24,7 @@ import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-// import ServicesNewNav from '../../layouts/ServicesNewNav';
+import useEnableBreadcrumbs from '../../hooks/useEnableBreadcrumbs';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -42,17 +42,12 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const searchEnabled = useFlag('platform.chrome.search.enabled');
-  const breadcrumbEnabled = useFlag('platform.chrome.bredcrumbs.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
-  const { pathname } = useLocation();
-  const displayBreadcrumbs = useMemo(
-    () => breadcrumbEnabled && !['/', '/allservices', '/favoritedservices'].includes(pathname),
-    [pathname, breadcrumbEnabled]
-  );
+  const displayBreadcrumbs = useEnableBreadcrumbs();
 
   return (
     <Fragment>

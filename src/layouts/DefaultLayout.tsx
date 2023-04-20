@@ -21,6 +21,8 @@ import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
+import useEnableBreadcrumbs from '../hooks/useEnableBreadcrumbs';
+import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -42,6 +44,7 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
+  const hideHamburger = useEnableBreadcrumbs();
 
   return (
     <Page
@@ -49,6 +52,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
         <Masthead className="chr-c-masthead">
+          {!hideHamburger ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{
               isNavOpen,
