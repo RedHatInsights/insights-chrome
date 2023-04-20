@@ -14,13 +14,14 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
-import { getUrl } from '../utils/common';
+import { getUrl, isProd } from '../utils/common';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
+import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -49,6 +50,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
         <Masthead className="chr-c-masthead">
+          {isProd() ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{
               isNavOpen,
