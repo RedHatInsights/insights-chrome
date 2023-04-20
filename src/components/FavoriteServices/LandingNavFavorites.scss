@@ -1,0 +1,8 @@
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.pf-c-tile {
+  margin: 16px;
+  width: 204px;
+  height: 90px;
+}

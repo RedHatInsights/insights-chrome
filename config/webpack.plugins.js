@@ -33,6 +33,7 @@ const plugins = (dev = false, beta = false) => {
       filename: dev ? 'chrome.js' : 'chrome.[fullhash].js',
       exposes: {
         './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
+        './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
