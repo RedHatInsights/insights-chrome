@@ -49,7 +49,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
-        <Masthead className="chr-c-masthead">
+        <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
           {isProd() ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{

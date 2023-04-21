@@ -1,6 +1,26 @@
 import React, { Fragment } from 'react';
-import { Backdrop, Icon, Panel, PanelMain, Sidebar, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
-import { Button, Card, CardActions, CardBody, CardHeader, Divider, SidebarContent, SidebarPanel, TabContent } from '@patternfly/react-core';
+import {
+  Backdrop,
+  Button,
+  Card,
+  CardActions,
+  CardBody,
+  CardHeader,
+  Flex,
+  FlexItem,
+  Icon,
+  Panel,
+  PanelMain,
+  Sidebar,
+  SidebarContent,
+  SidebarPanel,
+  TabContent,
+  Text,
+  TextContent,
+  TextVariants,
+  Title,
+} from '@patternfly/react-core';
+
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
 import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
@@ -44,36 +64,42 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const tabContentRef = React.createRef<HTMLElement>();
 
   return (
-    <div ref={menuRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+    <div ref={menuRef} className="pf-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
       <Backdrop>
-        <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
+        <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
           <PanelMain>
-            <Sidebar className="pf-u-pt-md pf-u-pt-0-on-md">
+            <Sidebar>
               <SidebarPanel>
-                <AllServicesTabs
-                  activeTabKey={activeTabKey}
-                  handleTabClick={handleTabClick}
-                  isExpanded={isExpanded}
-                  onToggle={onToggle}
-                  linkSections={linkSections}
-                  tabContentRef={tabContentRef}
-                  onTabClick={onTabClick}
-                />
-                <Divider inset={{ default: 'insetNone' }} className="pf-u-pt-md pf-u-pb-sm" />
-                <TextContent className="pf-u-pb-md pf-u-text-align-center">
-                  <Text component={TextVariants.p}>
-                    <ChromeLink href="/allservices">
-                      <Icon className="pf-u-mr-sm" isInline>
-                        <BookOpenIcon />
-                      </Icon>
-                      Browse all services
-                    </ChromeLink>
-                  </Text>
-                </TextContent>
+                <Flex className="pf-u-flex-direction-column pf-u-flex-grow-1">
+                  <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
+                    <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">
+                      <Text component={TextVariants.p}>
+                        <ChromeLink href="/allservices">
+                          <Icon className="pf-u-mr-sm" isInline>
+                            <BookOpenIcon />
+                          </Icon>
+                          Browse all services
+                        </ChromeLink>
+                      </Text>
+                    </TextContent>
+                  </FlexItem>
+                  <FlexItem order={{ default: '2', md: '1' }} className="pf-u-w-100">
+                    <AllServicesTabs
+                      activeTabKey={activeTabKey}
+                      handleTabClick={handleTabClick}
+                      isExpanded={isExpanded}
+                      onToggle={onToggle}
+                      linkSections={linkSections}
+                      tabContentRef={tabContentRef}
+                      onTabClick={onTabClick}
+                      activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                    />
+                  </FlexItem>
+                </Flex>
               </SidebarPanel>
               <SidebarContent>
                 <Card isPlain>
-                  <CardHeader>
+                  <CardHeader className="pf-u-pr-xs pf-u-pr-md-on-md">
                     <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
                     <CardActions>
                       <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>

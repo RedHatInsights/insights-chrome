@@ -13,9 +13,19 @@ export type AllServicesTabsProps = {
   linkSections: AllServicesSectionType[];
   tabContentRef: React.RefObject<HTMLElement>;
   onTabClick: (section: AllServicesSectionType, index: number) => void;
+  activeTabTitle: string;
 };
 
-const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, linkSections, tabContentRef, onTabClick }: AllServicesTabsProps) => {
+const AllServicesTabs = ({
+  activeTabKey,
+  handleTabClick,
+  isExpanded,
+  onToggle,
+  linkSections,
+  tabContentRef,
+  onTabClick,
+  activeTabTitle,
+}: AllServicesTabsProps) => {
   return (
     <Tabs
       inset={{
@@ -30,18 +40,17 @@ const AllServicesTabs = ({ activeTabKey, handleTabClick, isExpanded, onToggle, l
       }}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      toggleText="Containers"
-      aria-label="Tabs in the vertical expandable example"
+      toggleText={activeTabTitle}
       role="region"
-      className="pf-u-pl-md"
+      className="pf-u-p-md pf-u-pr-0"
     >
       <Tab
         eventKey={FAVORITE_TAB_ID}
         title={
           <TabTitleText>
             My favorite services
-            <Icon className="pf-u-ml-md" status="warning">
-              <StarIcon size="sm" className="chr-c-icon-service-tab" />
+            <Icon className="chr-c-icon-service-tab pf-u-ml-md" status="warning" isInline>
+              <StarIcon />
             </Icon>
           </TabTitleText>
         }
