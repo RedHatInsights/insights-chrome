@@ -50,17 +50,23 @@ const handleBundleResponse = (bundle: {
   return { id: bundle.data.id, title: bundle.data.title, links: (flatLinks || []).flat() };
 };
 
-const parseBundlesToObject = (items: NavItem[]) =>
-  items?.reduce<AvailableLinks>(
-    (acc, curr) =>
-      curr.href // Omit items with no href
-        ? {
-            ...acc,
-            [curr.href]: curr,
-          }
-        : acc,
-    {}
-  );
+const parseBundlesToObject = (items: NavItem[]): AvailableLinks =>
+  items?.reduce<AvailableLinks>((acc, curr) => {
+    // make sure nested structures are parsed as well
+    if (curr.expandable && curr.routes) {
+      return {
+        ...acc,
+        ...parseBundlesToObject(curr.routes),
+      };
+    }
+
+    return curr.href
+      ? {
+          ...acc,
+          [curr.href]: curr,
+        }
+      : acc;
+  }, {});
 
 const matchStrings = (value: string, searchTerm: string): boolean => {
   // convert strings to lowercase and remove any white spaces

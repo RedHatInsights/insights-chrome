@@ -224,9 +224,28 @@ export function updateDocumentTitle(title?: string, noSuffix = false) {
   }
 }
 
-const activateChild = (hrefMatch: string, childRoutes: NavItem[]) => {
+const activateChild = (
+  hrefMatch: string,
+  childRoutes: NavItem[]
+): {
+  active: boolean;
+  routes: NavItem[];
+} => {
   let hasActiveChild = false;
   const routes = childRoutes.map((item) => {
+    // If expandable traverse children again
+    if (item.expandable) {
+      const nestedResult = activateChild(hrefMatch, item.routes || []);
+      // mark active if nested child is active
+      if (nestedResult.active) {
+        hasActiveChild = true;
+      }
+      return {
+        ...item,
+        active: nestedResult.active,
+        routes: nestedResult.routes,
+      };
+    }
     const active = item.href === hrefMatch;
     if (active) {
       hasActiveChild = true;
