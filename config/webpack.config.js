@@ -160,6 +160,11 @@ const commonConfig = ({ dev }) => {
               host: `http://localhost:${process.env.CONFIG_PORT}`,
             },
           }),
+          ...(process.env.NAV_CONFIG && {
+            '/api/chrome-service/v1/static': {
+              host: `http://localhost:${process.env.NAV_CONFIG}`,
+            },
+          }),
         },
       }),
     },
