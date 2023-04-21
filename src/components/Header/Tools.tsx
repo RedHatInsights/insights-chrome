@@ -1,6 +1,6 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, Divider, DropdownItem, Switch, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -210,13 +210,8 @@ const Tools = () => {
   };
 
   return (
-    <ToolbarGroup
-      className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
-      alignment={{ default: 'alignRight' }}
-      spaceItems={{ default: 'spaceItemsNone' }}
-      widget-type="InsightsToolbar"
-    >
-      <ToolbarItem className="pf-m-hidden pf-m-visible-on-lg">
+    <>
+      <ToolbarItem>
         <BetaSwitcher />
       </ToolbarItem>
       {localStorage.getItem('chrome:darkmode') === 'true' && (
@@ -225,13 +220,15 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
-      <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>
-      <AboutButton />
-
-      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
+      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+        {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
+      </ToolbarItem>
+      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+        <AboutButton />
+      </ToolbarItem>
+      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
-
       {/* Collapse tools and user dropdown to kebab on small screens  */}
 
       <ToolbarItem visibility={{ lg: 'hidden' }}>
@@ -262,14 +259,13 @@ const Tools = () => {
           ))}
         />
       </ToolbarItem>
-
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
           title={`You're ${isBeta() ? 'now' : 'no longer'} using the preview release.`}
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-    </ToolbarGroup>
+    </>
   );
 };
 
