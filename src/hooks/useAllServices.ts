@@ -10,6 +10,7 @@ import {
 } from '../components/AllServices/allServicesLinks';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
 import { getChromeStaticPathname, isBeta } from '../utils/common';
+import { evaluateVisibility } from '../utils/isNavItemVisible';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
@@ -160,6 +161,10 @@ const useAllServices = () => {
             .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
             .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
             .then(handleBundleResponse)
+            .then(async (bundleNav) => ({
+              ...bundleNav,
+              links: (await Promise.all(bundleNav.links.map(evaluateVisibility))).filter(({ isHidden }) => !isHidden),
+            }))
             .catch((err) => {
               console.error('Unable to load appfilter bundle', err, fragment);
               return [];
