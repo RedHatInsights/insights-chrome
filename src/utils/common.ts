@@ -3,6 +3,7 @@ import { Store } from 'redux';
 import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
+import { Required } from 'utility-types';
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
@@ -399,3 +400,7 @@ export const isGlobalFilterAllowed = () => {
 
   return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
 };
+
+export function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
+  return !!item.expandable;
+}
