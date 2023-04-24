@@ -21,7 +21,7 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>
-        <CardBody>
+        <CardBody className="pf-u-p-md">
           <Split>
             <SplitItem className="pf-m-fill">{name}</SplitItem>
             <SplitItem>
@@ -43,7 +43,11 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
           </Split>
           <TextContent>
             <Text component="small">{bundle}</Text>
-            {description ? <Text component="p">{description}</Text> : null}
+            {description ? (
+              <Text component="small" className="pf-u-color-100">
+                {description}
+              </Text>
+            ) : null}
           </TextContent>
         </CardBody>
       </Card>
