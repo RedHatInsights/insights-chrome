@@ -107,7 +107,7 @@ const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLo
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '') => {
+const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '') => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -193,7 +193,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         activeModule,
       };
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTrais(user, pathname, activeModule);
+      const identityTraits = getIdentityTraits(user, pathname, activeModule);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
