@@ -30,7 +30,7 @@ function getAdobeVisitorId() {
 }
 
 const getPageEventOptions = () => {
-  const path = window.location.pathname.replace(/^(\/beta\/|\/preview\/)/, '/');
+  const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
   const search = new URLSearchParams(window.location.search);
 
   // Do not send keys with undefined values to segment.
