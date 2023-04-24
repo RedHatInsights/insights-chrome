@@ -19,11 +19,9 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
   const segments = useBreadcrumbsLinks();
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePages();
 
-  const activeSegment = useMemo(() => segments.find(({ active }) => active), [segments]);
-  const isFavorited = useMemo(
-    () => favoritePages.find(({ pathname, favorite }) => favorite && pathname === activeSegment?.href),
-    [favoritePages, activeSegment]
-  );
+  const leafHref = segments[segments.length - 1]?.href;
+  const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
+
   return (
     <PageBreadcrumb className="chr-c-breadcrumbs pf-u-pt-0">
       <div className="chr-c-breadcrumbs__alignment">
@@ -44,11 +42,11 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
             ))}
           </Breadcrumb>
         </FlexItem>
-        {activeSegment && (
+        {leafHref && (
           <FlexItem className="pf-u-ml-auto">
             <BreadcrumbsFavorites
-              favoritePage={() => favoritePage(activeSegment.href)}
-              unfavoritePage={() => unfavoritePage(activeSegment.href)}
+              favoritePage={() => favoritePage(leafHref)}
+              unfavoritePage={() => unfavoritePage(leafHref)}
               isFavorited={!!isFavorited}
             />
           </FlexItem>

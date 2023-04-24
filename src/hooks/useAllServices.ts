@@ -9,7 +9,7 @@ import {
   isAllServicesLink,
 } from '../components/AllServices/allServicesLinks';
 import { requiredBundles } from '../components/AppFilter/useAppFilter';
-import { getChromeStaticPathname, isBeta } from '../utils/common';
+import { getChromeStaticPathname, isBeta, isExpandableNav } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 
 export type AvailableLinks = {
@@ -138,14 +138,14 @@ const findNavItems = (
     .filter(Boolean) as (AllServicesLink | AllServicesGroup)[];
 
 const useAllServices = () => {
-  const [{ ready, error, availableSections }, setState] = useState<{
+  const [{ ready, error, availableSections, allLinks }, setState] = useState<{
     error: boolean;
     ready: boolean;
-    availableLinks: BundleNav[];
+    allLinks: NavItem[];
     availableSections: AllServicesSection[];
   }>({
     ready: false,
-    availableLinks: [],
+    allLinks: [],
     error: false,
     availableSections: [],
   });
@@ -194,6 +194,7 @@ const useAllServices = () => {
           items: parseBundlesToObject(bundle.links?.flat()),
         };
       });
+      const allLinks = availableLinks.flatMap((bundle) => bundle.links.flatMap((link) => (isExpandableNav(link) ? link.routes : link)));
       const availableSections = sections
         .reduce<AllServicesSection[]>((acc, { links, ...rest }) => {
           return [
@@ -213,7 +214,7 @@ const useAllServices = () => {
         });
       setState((prev) => ({
         ...prev,
-        availableLinks: bundleItems,
+        allLinks,
         availableSections,
         ready: true,
         // no links means all bundle requests have failed
@@ -231,7 +232,7 @@ const useAllServices = () => {
 
   const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
 
-  // Provide a flat list of all avaiable links
+  // Provide a flat list of all available links
   const servicesLinks = useMemo(
     () =>
       linkSections
@@ -243,6 +244,7 @@ const useAllServices = () => {
 
   return {
     linkSections,
+    allLinks,
     servicesLinks,
     error,
     ready,

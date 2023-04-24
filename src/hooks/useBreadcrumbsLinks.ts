@@ -6,6 +6,7 @@ import { Required } from 'utility-types';
 import { ReduxState } from '../redux/store';
 import useBundle from './useBundle';
 import { NavItem, Navigation } from '../@types/types';
+import { isExpandableNav } from '../utils/common';
 
 function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
   return Array.isArray((navigation as Navigation).navItems);
@@ -13,10 +14,6 @@ function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigatio
 
 function isActiveLeaf(item: NavItem | undefined): item is Required<NavItem, 'href'> {
   return typeof item?.href === 'string' && item?.active === true;
-}
-
-function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
-  return !!item.expandable;
 }
 
 function isGroup(item: NavItem): item is Required<NavItem, 'groupId'> {
