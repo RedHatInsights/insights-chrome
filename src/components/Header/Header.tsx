@@ -99,7 +99,11 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                 <SearchInput />
               </ToolbarGroup>
             ) : null}
-            <ToolbarGroup className="pf-m-icon-button-group" visibility={{ default: 'hidden', '2xl': 'visible' }} widget-type="InsightsToolbar">
+            <ToolbarGroup
+              className="pf-m-icon-button-group pf-u-ml-auto"
+              visibility={{ default: 'hidden', '2xl': 'visible' }}
+              widget-type="InsightsToolbar"
+            >
               <HeaderTools />
             </ToolbarGroup>
           </ToolbarContent>
