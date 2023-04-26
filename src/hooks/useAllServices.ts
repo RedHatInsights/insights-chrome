@@ -131,7 +131,10 @@ const findNavItems = (
       } else if (isAllServicesLink(item)) {
         return item;
       }
-      const [bundle, nav] = (item as string).split('.');
+      if (typeof item !== 'string') {
+        return item;
+      }
+      const [bundle, nav] = item.split('.');
       const currBundle = availableLinks.find(({ id }) => id === bundle)?.items || {};
       return Object.values(currBundle).find(({ id }) => id === nav);
     })
