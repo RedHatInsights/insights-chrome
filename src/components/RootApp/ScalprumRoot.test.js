@@ -53,6 +53,8 @@ describe('ScalprumRoot', () => {
   let mockStore;
   let config;
   const initialProps = {
+    cookieElement: null,
+    setCookieElement: () => undefined,
     helpTopicsAPI: {
       addHelpTopics: jest.fn(),
       disableTopics: jest.fn(),
