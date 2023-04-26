@@ -19,11 +19,12 @@ import useBundle from '../../hooks/useBundle';
 import useUserProfile from '../../hooks/useUserProfile';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
+import { FooterProps } from '../Footer/Footer';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
-export type RootAppProps = {
+export type RootAppProps = FooterProps & {
   config: AppsConfig;
 };
 
