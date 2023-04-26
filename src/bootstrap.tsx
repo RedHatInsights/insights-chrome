@@ -118,6 +118,7 @@ const App = () => {
   const modules = useSelector(({ chrome }: ReduxState) => chrome?.modules);
   const scalprumConfig = useSelector(({ chrome }: ReduxState) => chrome?.scalprumConfig);
   const documentTitle = useSelector(({ chrome }: ReduxState) => chrome?.documentTitle);
+  const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
   const { isReady, libJwt } = useInitialize();
 
   useEffect(() => {
@@ -126,15 +127,19 @@ const App = () => {
   }, [documentTitle]);
 
   if (isITLessEnv) {
-    return isReady && modules && scalprumConfig ? <RootApp config={scalprumConfig} /> : <AppPlaceholder />;
+    return isReady && modules && scalprumConfig ? (
+      <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} config={scalprumConfig} />
+    ) : (
+      <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />
+    );
   }
 
   return isReady && modules && scalprumConfig && libJwt ? (
     <LibtJWTContext.Provider value={libJwt}>
-      <RootApp config={scalprumConfig} />
+      <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} config={scalprumConfig} />
     </LibtJWTContext.Provider>
   ) : (
-    <AppPlaceholder />
+    <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />
   );
 };
 
