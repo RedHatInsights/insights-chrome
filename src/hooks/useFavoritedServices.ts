@@ -5,11 +5,11 @@ import useAllServices from './useAllServices';
 
 const useFavoritedServices = () => {
   const { favoritePages } = useFavoritePages();
-  const { servicesLinks } = useAllServices();
+  const { allLinks } = useAllServices();
 
   // extract human friendly data from the all services data set
   const favoritedServices = favoritePages.reduce<ServiceTileProps[]>((acc, curr) => {
-    const service = servicesLinks.find((service) => !service.isExternal && service.href.includes(curr.pathname)) as AllServicesLink;
+    const service = allLinks.find((service) => !service.isExternal && service.href?.includes(curr.pathname)) as AllServicesLink;
     // only pick favorite link if it is favorited and application exists in our all services registry
     if (curr.favorite && service) {
       return [
