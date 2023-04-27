@@ -57,7 +57,7 @@ const plugins = (dev = false, beta = false) => {
       base: beta ? '/beta/' : '/',
     }),
     new HtmlWebpackPlugin({
-      title: 'Authenticating - console.redhat.com',
+      title: 'Authenticating - Hybrid Cloud Console',
       filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
       inject: false,
       minify: false,

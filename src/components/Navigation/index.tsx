@@ -5,12 +5,13 @@ import NavContext from './navContext';
 import componentMapper from './componentMapper';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../../components/BetaInfoModal';
-import { getUrl, isBeta } from '../../utils/common';
+import { isBeta } from '../../utils/common';
 
 import NavLoader from './Loader';
 import ChromeNavItem from './ChromeNavItem';
 import type { Navigation as NavigationSchema } from '../../@types/types';
 import { useFlag } from '@unleash/proxy-client-react';
+import { getUrl } from '../../hooks/useBundle';
 
 export type NavigationProps = { loaded: boolean; schema: NavigationSchema };
 

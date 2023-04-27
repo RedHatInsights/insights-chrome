@@ -4,6 +4,7 @@ import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
 import { Required } from 'utility-types';
+import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
@@ -172,21 +173,6 @@ export function lastActive(searchString: string, fallback: string) {
   }, fallback);
 }
 
-export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
-
-export function getUrl(type?: string) {
-  if (['/', '/beta', '/beta/', '/preview', '/preview/'].includes(window.location.pathname)) {
-    return 'landing';
-  }
-
-  const sections = window.location.pathname.split('/');
-  if (['beta', 'preview'].includes(sections[1])) {
-    return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
-  }
-
-  return type === 'bundle' ? sections[1] : sections[2 + isAnsible(sections)];
-}
-
 export function getEnv() {
   return Object.entries(DEFAULT_SSO_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
@@ -214,7 +200,7 @@ export function ITLess() {
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {
-  const titleSuffix = '| console.redhat.com';
+  const titleSuffix = `| ${useBundle().bundleTitle}`;
   if (typeof title === 'undefined') {
     return;
   }
