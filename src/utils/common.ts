@@ -404,3 +404,33 @@ export const isGlobalFilterAllowed = () => {
 export function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
   return !!item.expandable;
 }
+
+function isActiveLeaf(item: NavItem | undefined): boolean {
+  return typeof item?.href === 'string' && item?.active === true;
+}
+
+export function findNavLeafPath(
+  navItems: (NavItem | undefined)[],
+  matcher = isActiveLeaf
+): { activeItem: Required<NavItem, 'href'> | undefined; navItems: NavItem[] } {
+  let leaf: Required<NavItem, 'href'> | undefined;
+  // store the parent nodes
+  const leafPath: NavItem[] = [];
+  let index = 0;
+  while (leaf === undefined && index < navItems.length) {
+    const item = navItems[index];
+    index += 1;
+    if (item && isExpandableNav(item)) {
+      const { activeItem, navItems } = findNavLeafPath(item.routes, matcher) || {};
+      if (activeItem) {
+        leaf = activeItem;
+        // append parent nodes of an active item
+        leafPath.push(item, ...navItems);
+      }
+    } else if (matcher(item) && item?.href) {
+      leaf = item as Required<NavItem, 'href'>;
+    }
+  }
+
+  return { activeItem: leaf, navItems: leafPath };
+}
