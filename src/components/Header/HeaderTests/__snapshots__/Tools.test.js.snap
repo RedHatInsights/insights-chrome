@@ -16,7 +16,7 @@ exports[`Tools should render correctly 1`] = `
       for="reversed-switch"
     >
       <input
-        aria-label="Beta switcher"
+        aria-label="Preview switcher"
         class="pf-c-switch__input"
         id="reversed-switch"
         type="checkbox"
@@ -28,13 +28,13 @@ exports[`Tools should render correctly 1`] = `
         aria-hidden="true"
         class="pf-c-switch__label pf-m-on"
       >
-        Beta on
+        Preview on
       </span>
       <span
         aria-hidden="true"
         class="pf-c-switch__label pf-m-off"
       >
-        Beta off
+        Preview off
       </span>
     </label>
   </div>

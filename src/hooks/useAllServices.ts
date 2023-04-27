@@ -165,7 +165,12 @@ const useAllServices = () => {
 
     // use router match to remove links that are not included in current environment (chrome navigation files)
     const matchedLinks = availableLinks.reduce<(NavItem & { routeMatch: string })[]>((acc, item) => {
-      const match = linksToMatch.find((link) => matchPath(link, item.href!));
+      const match = linksToMatch.find((link) => {
+        if (!item.href) {
+          return false;
+        }
+        return matchPath(link, item.href);
+      });
       if (match) {
         return [...acc, { ...item, routeMatch: match }];
       }
