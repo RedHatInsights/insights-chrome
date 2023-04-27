@@ -217,7 +217,6 @@ const SearchInput = () => {
       placeholder="Search for services"
       value={searchValue}
       onChange={handleChange}
-      className="chr-c-search__input"
       onClear={(ev) => {
         setSearchValue('');
         setSearchResults(initialSearchState);
@@ -252,7 +251,7 @@ const SearchInput = () => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input pf-u-stretch">
+    <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
       <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
     </div>
   );
