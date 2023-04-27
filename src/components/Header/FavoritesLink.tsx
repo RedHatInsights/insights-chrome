@@ -6,10 +6,7 @@ import ChromeLink from '../ChromeLink';
 
 const FavoritesLink = () => {
   return (
-    <Button
-      className="chr-c-button-masthead pf-u-px-lg-on-md"
-      component={(props) => <ChromeLink {...props} href="/favoritedservices" documentTitleUpdate="Favorited Services" />}
-    >
+    <Button className="chr-c-button-masthead pf-u-px-lg-on-md" component={(props) => <ChromeLink {...props} href="/favoritedservices" />}>
       <Icon isInline className="ins-m-hide-on-sm">
         <StarIcon />
       </Icon>

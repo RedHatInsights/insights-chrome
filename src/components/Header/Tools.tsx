@@ -88,7 +88,6 @@ const Tools = () => {
       title: 'Settings',
       target: '_self',
       appId: 'sources',
-      documentTitleUpdate: 'Sources',
     },
     ...(enableAuthDropdownOption
       ? [

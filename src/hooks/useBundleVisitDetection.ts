@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { VisitedBundles, useVisitedBundles } from '@redhat-cloud-services/chrome';
-import { getUrl } from '../utils/common';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../redux/store';
+import { getUrl } from './useBundle';
 
 // TMP Insights specific trigger
 const shouldSendVisit = (bundle: string, visits: VisitedBundles) => bundle === 'insights' && !visits[bundle];

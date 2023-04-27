@@ -24,13 +24,14 @@ import AllServicesSection from '../components/AllServices/AllServicesSection';
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
-import { ITLess } from '../utils/common';
+import { ITLess, updateDocumentTitle } from '../utils/common';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
