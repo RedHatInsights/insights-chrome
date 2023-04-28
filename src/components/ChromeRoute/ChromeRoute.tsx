@@ -39,7 +39,7 @@ const ChromeRoute = memo(
           /**
            * Default document title update. If application won't update its title chrome sets a title using module config
            */
-          dispatch(updateDocumentTitle(defaultTitle));
+          dispatch(updateDocumentTitle(defaultTitle || 'Hybrid Cloud Console'));
         }
         dispatch(changeActiveModule(scope));
       });

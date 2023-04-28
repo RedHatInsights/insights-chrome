@@ -5,10 +5,7 @@ import ChromeLink from '../ChromeLink';
 
 const ServicesLink = () => {
   return (
-    <Button
-      className="chr-c-button-masthead pf-u-px-lg-on-md"
-      component={(props) => <ChromeLink {...props} href="/allservices" documentTitleUpdate="All Services" />}
-    >
+    <Button className="chr-c-button-masthead pf-u-px-lg-on-md" component={(props) => <ChromeLink {...props} href="/allservices" />}>
       Services
     </Button>
   );

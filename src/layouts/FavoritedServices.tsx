@@ -10,12 +10,14 @@ import useFavoritedServices from '../hooks/useFavoritedServices';
 import QuickAccess from '../components/FavoriteServices/QuickAccess';
 
 import './FavoritedServices.scss';
+import { updateDocumentTitle } from '../utils/common';
 
 export type FavoritedServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
+  updateDocumentTitle('Favorited Services', true);
   const favoritedServices = useFavoritedServices();
   return (
     <div id="chrome-app-render-root">

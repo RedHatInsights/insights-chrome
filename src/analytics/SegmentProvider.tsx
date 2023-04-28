@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { ITLess, getUrl, isBeta, isProd } from '../utils/common';
+import { ITLess, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
+import { getUrl } from '../hooks/useBundle';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
