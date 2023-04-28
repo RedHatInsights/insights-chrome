@@ -17,9 +17,10 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
 
 import messages from '../../locales/Messages';
-import { getEnv, getUrl, isProd } from '../../utils/common';
+import { getEnv, isProd } from '../../utils/common';
 
 import './Feedback.scss';
+import { getUrl } from '../../hooks/useBundle';
 
 export type FeedbackFormProps = {
   user: DeepRequired<ChromeUser>;

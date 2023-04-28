@@ -24,13 +24,14 @@ import AllServicesSection from '../components/AllServices/AllServicesSection';
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
-import { ITLess } from '../utils/common';
+import { ITLess, updateDocumentTitle } from '../utils/common';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
@@ -47,7 +48,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
-          <Masthead className="chr-c-masthead">
+          <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
             <Header />
           </Masthead>
         }

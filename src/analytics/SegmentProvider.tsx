@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { ITLess, getUrl, isBeta, isProd } from '../utils/common';
+import { ITLess, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
+import { getUrl } from '../hooks/useBundle';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -30,7 +31,7 @@ function getAdobeVisitorId() {
 }
 
 const getPageEventOptions = () => {
-  const path = window.location.pathname.replace(/^(\/beta\/|\/preview\/)/, '/');
+  const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
   const search = new URLSearchParams(window.location.search);
 
   // Do not send keys with undefined values to segment.
@@ -107,7 +108,7 @@ const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLo
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '') => {
+const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '') => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -193,7 +194,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         activeModule,
       };
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTrais(user, pathname, activeModule);
+      const identityTraits = getIdentityTraits(user, pathname, activeModule);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,

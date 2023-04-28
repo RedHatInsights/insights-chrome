@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { getUrl } from '../../utils/common';
 import QuickStartCatalog from '../QuickStart/QuickStartCatalog';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { ReduxState } from '../../redux/store';
+import { getUrl } from '../../hooks/useBundle';
 
 const QuickstartCatalogRoute = () => {
   const intl = useIntl();

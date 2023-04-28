@@ -2,8 +2,8 @@ import omit from 'lodash/omit';
 import flatMap from 'lodash/flatMap';
 import memoize from 'lodash/memoize';
 
-import { getUrl } from '../../utils/common';
 import { FlagTagsFilter, GroupItem } from '../../@types/types';
+import { getUrl } from '../../hooks/useBundle';
 
 export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';

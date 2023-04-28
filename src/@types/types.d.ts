@@ -121,6 +121,7 @@ export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent
 export type GenericCB = (...args: unknown[]) => void;
 
 export type RouteDefinition = {
+  expandable?: boolean;
   absolute?: boolean;
   appId?: string;
   href?: string;
@@ -218,4 +219,10 @@ export type DynamicNavProps = ChromeNavItemProps & {
     currNav?: NavItem[];
   }) => NavItem | NavItem[];
   pathname: string;
+};
+
+export type BundleNav = {
+  id?: string;
+  title?: string;
+  links: NavItem[];
 };

@@ -3,6 +3,8 @@ import { Store } from 'redux';
 import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
+import { Required } from 'utility-types';
+import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
@@ -171,21 +173,6 @@ export function lastActive(searchString: string, fallback: string) {
   }, fallback);
 }
 
-export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
-
-export function getUrl(type?: string) {
-  if (['/', '/beta', '/beta/', '/preview', '/preview/'].includes(window.location.pathname)) {
-    return 'landing';
-  }
-
-  const sections = window.location.pathname.split('/');
-  if (['beta', 'preview'].includes(sections[1])) {
-    return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
-  }
-
-  return type === 'bundle' ? sections[1] : sections[2 + isAnsible(sections)];
-}
-
 export function getEnv() {
   return Object.entries(DEFAULT_SSO_ROUTES).find(([, { url }]) => url.includes(location.hostname))?.[0] || 'qa';
 }
@@ -213,7 +200,7 @@ export function ITLess() {
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {
-  const titleSuffix = '| console.redhat.com';
+  const titleSuffix = `| ${useBundle().bundleTitle}`;
   if (typeof title === 'undefined') {
     return;
   }
@@ -224,9 +211,28 @@ export function updateDocumentTitle(title?: string, noSuffix = false) {
   }
 }
 
-const activateChild = (hrefMatch: string, childRoutes: NavItem[]) => {
+const activateChild = (
+  hrefMatch: string,
+  childRoutes: NavItem[]
+): {
+  active: boolean;
+  routes: NavItem[];
+} => {
   let hasActiveChild = false;
   const routes = childRoutes.map((item) => {
+    // If expandable traverse children again
+    if (item.expandable) {
+      const nestedResult = activateChild(hrefMatch, item.routes || []);
+      // mark active if nested child is active
+      if (nestedResult.active) {
+        hasActiveChild = true;
+      }
+      return {
+        ...item,
+        active: nestedResult.active,
+        routes: nestedResult.routes,
+      };
+    }
     const active = item.href === hrefMatch;
     if (active) {
       hasActiveChild = true;
@@ -380,3 +386,37 @@ export const isGlobalFilterAllowed = () => {
 
   return getUrl('bundle') === 'ansible' && ['inventory', 'drift', 'advisor'].includes(getUrl('app'));
 };
+
+export function isExpandableNav(item: NavItem): item is Required<NavItem, 'routes'> {
+  return !!item.expandable;
+}
+
+function isActiveLeaf(item: NavItem | undefined): boolean {
+  return typeof item?.href === 'string' && item?.active === true;
+}
+
+export function findNavLeafPath(
+  navItems: (NavItem | undefined)[],
+  matcher = isActiveLeaf
+): { activeItem: Required<NavItem, 'href'> | undefined; navItems: NavItem[] } {
+  let leaf: Required<NavItem, 'href'> | undefined;
+  // store the parent nodes
+  const leafPath: NavItem[] = [];
+  let index = 0;
+  while (leaf === undefined && index < navItems.length) {
+    const item = navItems[index];
+    index += 1;
+    if (item && isExpandableNav(item)) {
+      const { activeItem, navItems } = findNavLeafPath(item.routes, matcher) || {};
+      if (activeItem) {
+        leaf = activeItem;
+        // append parent nodes of an active item
+        leafPath.push(item, ...navItems);
+      }
+    } else if (matcher(item) && item?.href) {
+      leaf = item as Required<NavItem, 'href'>;
+    }
+  }
+
+  return { activeItem: leaf, navItems: leafPath };
+}

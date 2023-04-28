@@ -110,12 +110,17 @@ export const visibilityFunctions: VisibilityFunctions = {
   }: Omit<AxiosRequestConfig, 'adapter'> & { accessor?: string; matcher?: keyof typeof matcherMapper }) => {
     const data = await window.insights.chrome.auth.getUser();
 
+    const token = await window.insights.chrome.auth.getToken();
     // this will log a bunch of 403s if the account number isn't present
-    if (data?.identity.account_number) {
+    if (data?.identity.org_id) {
       return instance({
         url,
         method,
         ...options,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...options.headers,
+        },
       })
         .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
         .catch(() => {

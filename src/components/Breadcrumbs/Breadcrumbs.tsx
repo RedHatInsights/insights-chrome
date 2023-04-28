@@ -1,8 +1,5 @@
-import { Breadcrumb, BreadcrumbItem, FlexItem, MastheadToggle, PageBreadcrumb, PageToggleButton } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, FlexItem, PageBreadcrumb } from '@patternfly/react-core';
 import React, { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
-import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
-import { onToggle } from '../../redux/actions';
 
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -10,6 +7,7 @@ import './Breadcrumbs.scss';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
 import { useFavoritePages } from '@redhat-cloud-services/chrome';
+import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -18,35 +16,16 @@ export type Breadcrumbsprops = {
 };
 
 const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
-  const dispatch = useDispatch();
   const segments = useBreadcrumbsLinks();
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePages();
 
-  const activeSegment = useMemo(() => segments.find(({ active }) => active), [segments]);
-  const isFavorited = useMemo(
-    () => favoritePages.find(({ pathname, favorite }) => favorite && pathname === activeSegment?.href),
-    [favoritePages, activeSegment]
-  );
+  const leafHref = segments[segments.length - 1]?.href;
+  const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
+
   return (
     <PageBreadcrumb className="chr-c-breadcrumbs pf-u-pt-0">
       <div className="chr-c-breadcrumbs__alignment">
-        <FlexItem>
-          {!hideNav && (
-            <MastheadToggle>
-              <PageToggleButton
-                variant="plain"
-                aria-label="Global navigation"
-                isNavOpen={isNavOpen}
-                onNavToggle={() => {
-                  setIsNavOpen?.((prev) => !prev);
-                  dispatch(onToggle());
-                }}
-              >
-                <BarsIcon size="sm" />
-              </PageToggleButton>
-            </MastheadToggle>
-          )}
-        </FlexItem>
+        <FlexItem>{!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}</FlexItem>
         <FlexItem>
           <Breadcrumb>
             {segments.map(({ title, href }, index) => (
@@ -63,11 +42,11 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
             ))}
           </Breadcrumb>
         </FlexItem>
-        {activeSegment && (
+        {leafHref && (
           <FlexItem className="pf-u-ml-auto">
             <BreadcrumbsFavorites
-              favoritePage={() => favoritePage(activeSegment.href)}
-              unfavoritePage={() => unfavoritePage(activeSegment.href)}
+              favoritePage={() => favoritePage(leafHref)}
+              unfavoritePage={() => unfavoritePage(leafHref)}
               isFavorited={!!isFavorited}
             />
           </FlexItem>
