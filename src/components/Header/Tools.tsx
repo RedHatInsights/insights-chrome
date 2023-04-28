@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Divider, DropdownItem, Switch, ToolbarItem } from '@patternfly/react-core';
+import { AlertActionLink, AlertVariant, Button, Divider, DropdownItem, Switch, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -19,17 +20,14 @@ import { ReduxState } from '../../redux/store';
 
 const isITLessEnv = ITLess();
 
-export const switchRelease = (isBeta: boolean, pathname: string) => {
+export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
   cookie.set('cs_toggledRelease', 'true');
   const previewFragment = getRouterBasename(pathname);
 
   if (isBeta) {
     return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
   } else {
-    const path = pathname.split('/');
-    // awlays go to beta as a default
-    path[0] = 'beta';
-    return `/beta${pathname}`;
+    return previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
   }
 };
 
@@ -80,6 +78,7 @@ const Tools = () => {
   )}`;
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+  const previewEnabled = useFlag('platform.chrome.preview');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
@@ -88,7 +87,6 @@ const Tools = () => {
       title: 'Settings',
       target: '_self',
       appId: 'sources',
-      documentTitleUpdate: 'Sources',
     },
     ...(enableAuthDropdownOption
       ? [
@@ -158,7 +156,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname)),
+      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -181,11 +179,11 @@ const Tools = () => {
     return (
       <Switch
         id="reversed-switch"
-        label="Beta on"
-        labelOff="Beta off"
-        aria-label="Beta switcher"
+        label="Preview on"
+        labelOff="Preview off"
+        aria-label="Preview switcher"
         isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname))}
+        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled))}
         isReversed
         className="chr-c-beta-switcher"
       />
@@ -261,7 +259,31 @@ const Tools = () => {
       </ToolbarItem>
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You're ${isBeta() ? 'now' : 'no longer'} using the preview release.`}
+          className="chr-c-alert-preview"
+          title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
+          variant={AlertVariant.default}
+          actionLinks={
+            <React.Fragment>
+              <AlertActionLink>
+                {/** @ts-ignore*/}
+                <a
+                  href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Learn more link"
+                >
+                  Learn more
+                </a>
+              </AlertActionLink>
+              <AlertActionLink
+                onClick={() => {
+                  window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled);
+                }}
+              >
+                {`${isBeta() ? 'Disable' : 'Enable'} preview`}
+              </AlertActionLink>
+            </React.Fragment>
+          }
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}

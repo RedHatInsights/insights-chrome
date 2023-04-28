@@ -220,3 +220,9 @@ export type DynamicNavProps = ChromeNavItemProps & {
   }) => NavItem | NavItem[];
   pathname: string;
 };
+
+export type BundleNav = {
+  id?: string;
+  title?: string;
+  links: NavItem[];
+};

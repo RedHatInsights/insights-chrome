@@ -19,7 +19,7 @@ import {
   toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
-import { ITLess, getEnv, getEnvDetails, getUrl, isBeta, isProd, updateDocumentTitle } from '../utils/common';
+import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
@@ -33,7 +33,7 @@ import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { ChromeModule, FlagTagsFilter } from '../@types/types';
 import { createCognitoAuthObject } from '../cognito';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
-import useBundle from '../hooks/useBundle';
+import useBundle, { getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
 
 export type CreateChromeContextConfig = {

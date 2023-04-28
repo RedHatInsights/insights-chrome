@@ -15,7 +15,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { chunkLoadErrorRefreshKey, getUrl } from '../../utils/common';
+import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { useSelector } from 'react-redux';
@@ -23,6 +23,7 @@ import { ReduxState } from '../../redux/store';
 import './ErrorComponent.scss';
 import { get3scaleError } from '../../utils/responseInterceptors';
 import GatewayErrorComponent from './GatewayErrorComponent';
+import { getUrl } from '../../hooks/useBundle';
 
 export type DefaultErrorComponentProps = {
   error?: any | Error;
