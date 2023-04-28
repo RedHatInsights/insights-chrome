@@ -23,6 +23,10 @@ objects:
         paths:
           - /
           - /config/chrome
+      akamaiCacheBustPaths:
+        - /config/chrome/fed-modules.json
+        - /apps/chrome/index.html
+        - /apps/chrome/js/fed-mods.json
 parameters:
   - name: ENV_NAME
     required: true
