@@ -1,5 +1,5 @@
-import { Icon, Card, CardBody, Title, Pagination, Gallery, GalleryItem, Text, TextContent, Button } from '@patternfly/react-core';
-import { BookOpenIcon, StarIcon } from '@patternfly/react-icons';
+import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Title, Text, TextContent } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
 import EmptyState from '../FavoriteServices/EmptyState';
@@ -9,19 +9,15 @@ import ChromeLink from '../ChromeLink';
 
 const LandingNavFavorites = () => {
 
-  const favoritedServices  = useFavoritedServices();
+  const favoritedServices = useFavoritedServices();
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = React.useState(5);
+  const [perPage, setPerPage] = React.useState(4);
 
   const onSetPage = (_event: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPage: number) => {
     setPage(newPage);
   };
 
-  const onPerPageSelect = (
-    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
-    newPerPage: number,
-    newPage: number
-  ) => {
+  const onPerPageSelect = (_event: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPerPage: number, newPage: number) => {
     setPerPage(newPerPage);
     setPage(newPage);
   };
@@ -29,7 +25,7 @@ const LandingNavFavorites = () => {
   const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
 
   const buildFavorites = () => {
-    return favoritedServices.slice((page -1)*perPage, page*perPage).map((favorite, index) => (
+    return favoritedServices.slice((page - 1) * perPage, page * perPage).map((favorite, index) => (
       <GalleryItem key={index}>
         <ChromeLink href={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card isFullHeight isFlat isSelectableRaised>
@@ -42,18 +38,17 @@ const LandingNavFavorites = () => {
           </Card>
         </ChromeLink>
       </GalleryItem>
-    ))
-  }
+    ));
+  };
 
   return (
     <React.Fragment>
-      <Title 
-        headingLevel='h2'>
+      <Title headingLevel="h2">
         <Icon className="chr-c-icon-favorites pf-u-ml-md" status="warning">
           <StarIcon />
-        </Icon> 
+        </Icon>
         My favorite services
-        <ChromeLink href="/allservices" className='landing-all-services-link'>
+        <ChromeLink href="/allservices" className="landing-all-services-link">
           View all services
         </ChromeLink>
       </Title>
@@ -71,14 +66,15 @@ const LandingNavFavorites = () => {
             perPage={perPage}
             onPerPageSelect={onPerPageSelect}
             onSetPage={onSetPage}
-            widgetId="favorites-cards-pagination"></Pagination> 
+            widgetId="favorites-cards-pagination"
+          ></Pagination>
           <Gallery hasGutter className="hr-c-tile-landing">
             {buildFavorites()}
           </Gallery>
-          </React.Fragment>
+        </React.Fragment>
       )}
     </React.Fragment>
-  )
-}
+  );
+};
 
 export default LandingNavFavorites;
