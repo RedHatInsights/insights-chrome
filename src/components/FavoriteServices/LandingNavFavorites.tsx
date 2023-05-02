@@ -1,4 +1,4 @@
-import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Card, CardBody, Flex, FlexItem, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
@@ -46,33 +46,39 @@ const LandingNavFavorites = () => {
 
   return (
     <React.Fragment>
-      <TextContent>
-        <Text component={TextVariants.h2} className="pf-u-display-inline pf-u-pr-lg">
-          <Icon className="pf-u-mr-sm" status="warning">
-            <StarIcon />
-          </Icon>
-          My favorite services
-        </Text>
-        <Text component={TextVariants.p} className="pf-u-display-inline">
-          <ChromeLink href="/allservices">View all services</ChromeLink>
-        </Text>
-      </TextContent>
+      <Flex>
+        <FlexItem>
+          <TextContent>
+            <Text component={TextVariants.h2} className="pf-u-display-inline pf-u-pr-lg">
+              <Icon className="pf-u-mr-sm" status="warning">
+                <StarIcon />
+              </Icon>
+              My favorite services
+            </Text>
+            <Text component={TextVariants.p} className="pf-u-display-inline">
+              <ChromeLink href="/allservices">View all services</ChromeLink>
+            </Text>
+            </TextContent>
+          </FlexItem>
+          <FlexItem align={{default: 'alignRight'}}>
+            <Pagination
+                perPageComponent="button"
+                isCompact
+                variant="top"
+                itemCount={favoritedServices.length}
+                page={page}
+                perPage={perPage}
+                onPerPageSelect={onPerPageSelect}
+                onSetPage={onSetPage}
+                widgetId="favorites-cards-pagination"
+              ></Pagination>
+          </FlexItem>
+        </Flex>
 
       {favoritedServices.length === 0 ? (
         <EmptyState />
       ) : (
         <React.Fragment>
-          <Pagination
-            perPageComponent="button"
-            isCompact
-            variant="top"
-            itemCount={favoritedServices.length}
-            page={page}
-            perPage={perPage}
-            onPerPageSelect={onPerPageSelect}
-            onSetPage={onSetPage}
-            widgetId="favorites-cards-pagination"
-          ></Pagination>
           <Gallery hasGutter className="chr-l-gallery-landing-favorites">
             {buildFavorites()}
           </Gallery>
