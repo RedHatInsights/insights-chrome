@@ -202,8 +202,8 @@ const ScalprumRoot = memo(
             path="/allservices"
             element={
               <Suspense fallback={LoadingFallback}>
-                {/* <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} /> */}
-                <LandingNavFavorites />
+                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                {/* <LandingNavFavorites /> */}
               </Suspense>
             }
           />
