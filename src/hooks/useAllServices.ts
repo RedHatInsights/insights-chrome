@@ -16,6 +16,22 @@ export type AvailableLinks = {
   [key: string]: NavItem;
 };
 
+const getFirstChildRoute = (routes: NavItem[]): NavItem | undefined => {
+  const firstLeaf = routes.find((item) => !item.expandable && item.href);
+  if (firstLeaf) {
+    return firstLeaf;
+  }
+  let childRoute: NavItem | undefined;
+  const nestedItems = firstLeaf ? [] : routes.filter((item) => item.expandable);
+  // make sure to find first deeply nested item
+  nestedItems.every((item) => {
+    childRoute = getFirstChildRoute(item.routes || []);
+    return !childRoute;
+  });
+
+  return childRoute;
+};
+
 const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & Partial<Pick<BundleNavigation, 'id' | 'title'>>): BundleNav => {
   const flatLinks = bundle?.navItems?.reduce<(NavItem | NavItem[])[]>((acc, { navItems, routes, expandable, ...rest }) => {
     // item is a group
@@ -27,6 +43,19 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
           navItems,
         }).links,
       ];
+    }
+
+    if (expandable && routes && rest.id) {
+      const childRoute = getFirstChildRoute(routes);
+      if (childRoute) {
+        const expandableLink = {
+          ...childRoute,
+          title: rest.title,
+          description: rest.description,
+          id: rest.id,
+        };
+        return [...acc, ...routes, expandableLink];
+      }
     }
 
     // item is an expandable section
