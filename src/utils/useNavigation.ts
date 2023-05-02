@@ -31,7 +31,7 @@ function cleanNavItemsHref(navItem: NavItem) {
   return result;
 }
 
-const shouldPreseverQuickstartSearch = (prevSearch: string, activeQuickStartID: string) => {
+const shouldPreserveQuickstartSearch = (prevSearch: string, activeQuickStartID: string) => {
   const prevParams = new URLSearchParams(prevSearch);
   return activeQuickStartID !== prevParams.get('quickstart');
 };
@@ -83,11 +83,11 @@ const useNavigation = () => {
         }
 
         setTimeout(() => {
-          if (activeQSId.current && shouldPreseverQuickstartSearch(window.location.search, activeQSId.current)) {
+          if (activeQSId.current && shouldPreserveQuickstartSearch(window.location.search, activeQSId.current)) {
             navigate(
               {
                 ...activeLocation.current,
-                pathname: newPathname.replace(/^\/beta\//, '/'),
+                pathname: newPathname.replace(/^\/(beta|preview)\//, '/'),
                 search: appendQSSearch(window.location.search, activeQSId.current),
               },
               {
