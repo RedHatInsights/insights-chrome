@@ -1,4 +1,4 @@
-import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, Title } from '@patternfly/react-core';
+import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
@@ -28,10 +28,14 @@ const LandingNavFavorites = () => {
       <GalleryItem key={index}>
         <ChromeLink href={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card isFullHeight isFlat isSelectableRaised>
-            <CardBody className="pf-u-p-md">
-              {favorite.name}
-              <TextContent>
-                <Text component="small">{getBundle(favorite.pathname)}</Text>
+            <CardBody className="pf-u-p-lg pf-u-pt-xl">
+              <TextContent className="pf-u-text-align-center">
+                <Text component="p" className="pf-u-mb-sm">
+                  {favorite.name}
+                </Text>
+                <Text component="p" className="pf-u-font-size-xs">
+                  {getBundle(favorite.pathname)}
+                </Text>
               </TextContent>
             </CardBody>
           </Card>
@@ -42,15 +46,17 @@ const LandingNavFavorites = () => {
 
   return (
     <React.Fragment>
-      <Title headingLevel="h2">
-        <Icon className="chr-c-icon-favorites pf-u-ml-md" status="warning">
-          <StarIcon />
-        </Icon>
-        My favorite services
-        <ChromeLink href="/allservices" className="landing-all-services-link">
-          View all services
-        </ChromeLink>
-      </Title>
+      <TextContent>
+        <Text component={TextVariants.h2} className="pf-u-display-inline pf-u-pr-lg">
+          <Icon className="pf-u-mr-sm" status="warning">
+            <StarIcon />
+          </Icon>
+          My favorite services
+        </Text>
+        <Text component={TextVariants.p} className="pf-u-display-inline">
+          <ChromeLink href="/allservices">View all services</ChromeLink>
+        </Text>
+      </TextContent>
 
       {favoritedServices.length === 0 ? (
         <EmptyState />
@@ -67,7 +73,7 @@ const LandingNavFavorites = () => {
             onSetPage={onSetPage}
             widgetId="favorites-cards-pagination"
           ></Pagination>
-          <Gallery hasGutter className="hr-c-tile-landing">
+          <Gallery hasGutter className="chr-l-gallery-landing-favorites">
             {buildFavorites()}
           </Gallery>
         </React.Fragment>

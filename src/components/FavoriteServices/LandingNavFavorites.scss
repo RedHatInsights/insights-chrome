@@ -1,25 +1,6 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
-.pf-c-tile {
-  margin-left: 50px !important;
-  margin-right: 50px !important;
-  width: 204px;
-  height: 90px;
-}
-.hr-c-tile-landing {
-  --pf-l-gallery--m-gutter--GridGap: 10px !important;
-}
-
-.chr-c-icon-favorites {
-  padding-right: 18px !important;
-}
-
 .pf-c-options-menu__toggle {
   display: none !important;
-}
-
-.landing-all-services-link {
-  padding-left: 18px !important;
-  font-size: var(--pf-global--FontSize--md);
 }
