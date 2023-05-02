@@ -18,6 +18,12 @@
   }
   &__menu {
     overflow-y: auto;
+    .pf-c-menu__group-title {
+      padding-bottom: var(--pf-global--spacer--md);
+      &:empty {
+        display: none;
+      }
+    }
   }
   &__empty-state {
     .pf-c-empty-state__icon {
