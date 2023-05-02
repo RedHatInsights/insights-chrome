@@ -1,11 +1,16 @@
 import React from 'react';
-import parseHighlights from './parseHighlight';
+import { Text, TextContent } from '@patternfly/react-core';
 
-import './SearchTitle.scss';
-
-const SearchTitle = ({ title, highlight }: { title: string; highlight?: string[] }) => {
-  const parsedDescription = parseHighlights(title, highlight);
-  return <p className="chr-c-search__title" dangerouslySetInnerHTML={{ __html: parsedDescription }}></p>;
+const SearchTitle = ({ title, bundleTitle }: { title: string; bundleTitle: string }) => {
+  return (
+    <TextContent>
+      <Text component="small" className="pf-u-link-color">
+        {title}
+        <span className="pf-u-px-sm">|</span>
+        {bundleTitle}
+      </Text>
+    </TextContent>
+  );
 };
 
 export default SearchTitle;
