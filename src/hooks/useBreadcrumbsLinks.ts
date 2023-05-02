@@ -1,0 +1,56 @@
+import { useSelector } from 'react-redux';
+import { useEffect, useMemo, useState } from 'react';
+import { matchRoutes, useLocation } from 'react-router-dom';
+import { Required } from 'utility-types';
+
+import { ReduxState } from '../redux/store';
+import useBundle from './useBundle';
+import { NavItem } from '../@types/types';
+import { findNavLeafPath } from '../utils/common';
+import { extractNavItemGroups, isNavItems } from '../utils/fetchNavigationFiles';
+
+const useBreadcrumbsLinks = () => {
+  const { bundleId, bundleTitle } = useBundle();
+  const navigation = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
+  const routes = useSelector(({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes);
+  const { pathname } = useLocation();
+  const [segments, setSegments] = useState<Required<NavItem, 'href'>[]>([]);
+  const wildCardRoutes = useMemo(() => routes.map((item) => ({ ...item, path: `${item.path}/*` })), [routes]);
+
+  useEffect(() => {
+    const segments: Required<NavItem, 'href'>[] = [
+      {
+        title: bundleTitle,
+        href: `/${bundleId}`,
+      },
+    ];
+    const activeNavSegment = navigation[bundleId];
+    if (activeNavSegment && isNavItems(activeNavSegment)) {
+      const activeNavigation = extractNavItemGroups(activeNavSegment);
+      const { activeItem, navItems } = findNavLeafPath(activeNavigation);
+      if (activeItem) {
+        const appFragments = activeItem.href.split('/');
+        appFragments.pop();
+        // Match first parent route. Routes are taken directly from router definitions.
+        const fallbackMatch = matchRoutes(wildCardRoutes, activeItem.href) || [];
+        const fallbackMatchFragments = fallbackMatch?.[0].pathnameBase.split('/');
+        const groupFragments: Required<NavItem, 'href'>[] = navItems.map((item, index) => ({
+          ...item,
+          /**
+           * Must be +3 because:
+           * - first fragment is always empty "" (+1),
+           * - second fragment is always bundle (+1),
+           * - slice is exclusive and the matched index is not included (+1)
+           * Even the root level link should always include the bundle.
+           *  */
+          href: fallbackMatchFragments.slice(0, index + 3).join('/') || `/${bundleId}`,
+        }));
+        segments.push(...groupFragments, activeItem);
+      }
+    }
+    setSegments(segments);
+  }, [pathname, navigation]);
+  return segments;
+};
+
+export default useBreadcrumbsLinks;

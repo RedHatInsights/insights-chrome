@@ -18,11 +18,12 @@ export type ChromeRouteProps = {
   path: string;
   exact?: boolean;
   scopeClass?: string;
+  props?: any;
 };
 
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
-  ({ scope, module, scopeClass, path }: ChromeRouteProps) => {
+  ({ scope, module, scopeClass, path, props }: ChromeRouteProps) => {
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const user = useSelector(({ chrome: { user } }: ReduxState) => user);
@@ -38,7 +39,7 @@ const ChromeRoute = memo(
           /**
            * Default document title update. If application won't update its title chrome sets a title using module config
            */
-          dispatch(updateDocumentTitle(defaultTitle));
+          dispatch(updateDocumentTitle(defaultTitle || 'Hybrid Cloud Console'));
         }
         dispatch(changeActiveModule(scope));
       });
@@ -72,18 +73,20 @@ const ChromeRoute = memo(
     return (
       <div className={classNames(scopeClass, scope)}>
         <ScalprumComponent
-          // TODO: fix in scalprum. The async loader is no triggred when module/scope changes. We had tp abuse the key
+          // TODO: fix in scalprum. The async loader is no triggered when module/scope changes. We had to abuse the key
           key={path}
           ErrorComponent={<ErrorComponent />}
           fallback={LoadingFallback}
           // LoadingFallback={() => LoadingFallback}
           scope={scope}
           module={module}
+          appId={scope}
+          {...props}
         />
       </div>
     );
   },
-  // prevent unecessary re-render that can trigger initialization phase of a module
+  // prevent unnecessary re-render that can trigger initialization phase of a module
   (prevProps, nextProps) =>
     prevProps.scope === nextProps.scope &&
     prevProps.module === nextProps.module &&

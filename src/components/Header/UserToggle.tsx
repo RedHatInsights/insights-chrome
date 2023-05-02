@@ -64,7 +64,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     <React.Fragment key="My user access wrapper">
       <DropdownItem
         component={
-          <ChromeLink href="/settings/my-user-access" appId="rbac">
+          <ChromeLink href="/iam/my-user-access" appId="rbac">
             {intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         }
@@ -112,8 +112,10 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
     };
   });
 
-  const onSelect = () => {
-    setIsOpen(!isOpen);
+  const onSelect = (event: any) => {
+    if (['A', 'BUTTON'].includes(event.target.tagName)) {
+      setIsOpen(!isOpen);
+    }
   };
 
   const onToggle = (isOpen: boolean) => {

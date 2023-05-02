@@ -79,8 +79,13 @@
   }
 }
 
-.chr-c-navigation__isHidden {
-  display: none;
+.chr-c-navigation{
+  &__isHidden {
+    display: none;
+  }
+  &__item {
+    align-items: center;
+  }
 }
 
 .chr-c-app-switcher--loading {

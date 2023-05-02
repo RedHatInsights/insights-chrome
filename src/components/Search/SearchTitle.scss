@@ -1,7 +1,8 @@
 .chr-c-search {
   &__title {
-    span.hl {
+    mark {
       color: var(--pf-global--primary-color--100);
+      background-color: transparent;
     }
   }
 }

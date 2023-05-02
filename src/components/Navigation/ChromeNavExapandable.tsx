@@ -16,7 +16,7 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }: ChromeNav
     });
   }
 
-  if (isHidden || filteredFedrampRoutes.filter(({ appId }) => !!appId).length === 0) {
+  if (isHidden || filteredFedrampRoutes.filter(({ appId, expandable }) => expandable || !!appId).length === 0) {
     return null;
   }
 

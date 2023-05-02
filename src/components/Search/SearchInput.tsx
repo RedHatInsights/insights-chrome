@@ -18,6 +18,7 @@ import { HighlightingResponseType, SearchResponseType, SearchResultItem } from '
 import EmptySearchState from './EmptySearchState';
 
 const REPLACE_TAG = 'REPLACE_TAG';
+const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
 /**
  * The ?q is the search term.
  * ------
@@ -32,9 +33,8 @@ const REPLACE_TAG = 'REPLACE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}~2`); // add query replacement tag and enable fuzzy search with ~1
+BASE_SEARCH.append('q', `${REPLACE_TAG}~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
-BASE_SEARCH.append('fl', 'allTitle, bundle_title, bundle, abstract, href, relative_uri, id'); // list of valid rows
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
 BASE_SEARCH.append('hl.method', 'original'); // choose highlight method
@@ -43,12 +43,11 @@ BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
 BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
 BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
-BASE_SEARCH.append('hl.simple.pre', '<span class="hl">'); // specify HL opening/closing tags
-BASE_SEARCH.append('hl.simple.post', '</span>');
 BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight atrribute to simply tag replacement.
 
 const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
-BASE_URL.search = BASE_SEARCH.toString();
+// search API stopped receiving encoded search string
+BASE_URL.search = decodeURIComponent(BASE_SEARCH.toString());
 const SEARCH_QUERY = BASE_URL.toString();
 
 const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
@@ -80,7 +79,7 @@ const SearchInput = () => {
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
-  const [highlighting, sethigHlighting] = useState<HighlightingResponseType>({});
+  const [highlighting, setHighlighting] = useState<HighlightingResponseType>({});
 
   const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
@@ -186,13 +185,13 @@ const SearchInput = () => {
     };
   }, [isOpen, menuRef]);
 
-  const handleFetch = (value: string) => {
-    return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value))
+  const handleFetch = (value = '') => {
+    return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value).replace(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
       .then((r) => r.json())
       .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
         if (isMounted.current) {
           setSearchResults(response);
-          sethigHlighting(highlighting);
+          setHighlighting(highlighting);
           // make sure to calculate resize when switching from loading to sucess state
           handleWindowResize();
         }
@@ -218,7 +217,6 @@ const SearchInput = () => {
       placeholder="Search for services"
       value={searchValue}
       onChange={handleChange}
-      className="chr-c-search__input"
       onClear={(ev) => {
         setSearchValue('');
         setSearchResults(initialSearchState);
@@ -253,7 +251,7 @@ const SearchInput = () => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input">
+    <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
       <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
     </div>
   );

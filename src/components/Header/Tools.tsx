@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { Button, Divider, DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { useLocation } from 'react-router-dom';
+import { AlertActionLink, AlertVariant, Button, Divider, DropdownItem, Switch, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -8,7 +10,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, getUrl, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -18,18 +20,14 @@ import { ReduxState } from '../../redux/store';
 
 const isITLessEnv = ITLess();
 
-export const switchRelease = (isBeta: boolean, pathname: string) => {
+export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
   cookie.set('cs_toggledRelease', 'true');
   const previewFragment = getRouterBasename(pathname);
 
   if (isBeta) {
-    const [baseUri, pathnameFragment] = previewFragment.includes('beta') ? [/\/beta/, /\/beta\//] : [/\/preview/, /\/preview\//];
-    return `${document.baseURI.replace(baseUri, '')}${pathname.replace(pathnameFragment, '')}`;
+    return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
   } else {
-    const path = pathname.split('/');
-    // awlays go to preview as a default
-    path[0] = 'beta';
-    return document.baseURI.concat(path.join('/'));
+    return previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
   }
 };
 
@@ -72,14 +70,15 @@ const Tools = () => {
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
-  const bundle = getUrl('bundle');
-  const settingsPath = `/settings/my-user-access${bundle ? `?bundle=${bundle}` : ''}`;
+  const location = useLocation();
+  const settingsPath = `/settings/sources`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+  const previewEnabled = useFlag('platform.chrome.preview');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
@@ -87,7 +86,7 @@ const Tools = () => {
       url: settingsPath,
       title: 'Settings',
       target: '_self',
-      appId: 'rbac',
+      appId: 'sources',
     },
     ...(enableAuthDropdownOption
       ? [
@@ -142,7 +141,7 @@ const Tools = () => {
 
     {
       title: `${intl.formatMessage(messages.demoMode)}`,
-      onClick: () => cookie.set('cs_demo', 'true') && location.reload(),
+      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
       isHidden: !isDemoAcc,
     },
   ];
@@ -157,7 +156,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), window.location.pathname)),
+      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled)),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -180,11 +179,11 @@ const Tools = () => {
     return (
       <Switch
         id="reversed-switch"
-        label="Beta on"
-        labelOff="Beta off"
-        aria-label="Beta switcher"
+        label="Preview on"
+        labelOff="Preview off"
+        aria-label="Preview switcher"
         isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), window.location.pathname))}
+        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled))}
         isReversed
         className="chr-c-beta-switcher"
       />
@@ -209,13 +208,8 @@ const Tools = () => {
   };
 
   return (
-    <ToolbarGroup
-      className="pf-m-icon-button-group pf-m-align-right pf-m-spacer-none pf-m-spacer-md-on-md pf-u-mr-0"
-      alignment={{ default: 'alignRight' }}
-      spaceItems={{ default: 'spaceItemsNone' }}
-      widget-type="InsightsToolbar"
-    >
-      <ToolbarItem className="pf-m-hidden pf-m-visible-on-lg">
+    <>
+      <ToolbarItem>
         <BetaSwitcher />
       </ToolbarItem>
       {localStorage.getItem('chrome:darkmode') === 'true' && (
@@ -224,13 +218,15 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
-      <ToolbarItem>{<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}</ToolbarItem>
-      <AboutButton />
-
-      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }} className="pf-u-mr-0">
+      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+        {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
+      </ToolbarItem>
+      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+        <AboutButton />
+      </ToolbarItem>
+      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
-
       {/* Collapse tools and user dropdown to kebab on small screens  */}
 
       <ToolbarItem visibility={{ lg: 'hidden' }}>
@@ -261,14 +257,37 @@ const Tools = () => {
           ))}
         />
       </ToolbarItem>
-
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert
-          title={`You're ${isBeta() ? 'now' : 'no longer'} using the preview release.`}
+          className="chr-c-alert-preview"
+          title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
+          variant={AlertVariant.default}
+          actionLinks={
+            <React.Fragment>
+              <AlertActionLink>
+                {/** @ts-ignore*/}
+                <a
+                  href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Learn more link"
+                >
+                  Learn more
+                </a>
+              </AlertActionLink>
+              <AlertActionLink
+                onClick={() => {
+                  window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled);
+                }}
+              >
+                {`${isBeta() ? 'Disable' : 'Enable'} preview`}
+              </AlertActionLink>
+            </React.Fragment>
+          }
           onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
         />
       ) : null}
-    </ToolbarGroup>
+    </>
   );
 };
 

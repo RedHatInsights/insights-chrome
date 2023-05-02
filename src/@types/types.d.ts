@@ -39,6 +39,7 @@ export type NavItemPermission<T extends keyof VisibilityFunctions = 'isOrgAdmin'
  * TODO: Move to the component once it is migrated to TS
  */
 export type NavItem = {
+  id?: string;
   filterable?: boolean;
   isExternal?: boolean;
   isFedramp?: boolean;
@@ -53,6 +54,7 @@ export type NavItem = {
   isHidden?: boolean;
   permissions?: NavItemPermission[] | NavItemPermission;
   dynamicNav?: string;
+  description?: string;
 };
 
 export type BundleNavigation = {
@@ -69,6 +71,7 @@ declare global {
       initialize: (config: Record<string, any>) => void;
       flushNow: () => void;
       setGuidesDisabled: (disabled: boolean) => void;
+      startGuides: () => void;
       stopGuides: () => void;
       stopSendingEvents: () => void;
     };
@@ -111,12 +114,14 @@ export type QuickstartsApi = {
   set: (key: string, quickstarts: QuickStart[]) => void;
   toggle: (quickstart: string) => void;
   Catalog: typeof QuickStartCatalogPage;
+  activateQuickstart: (name: string) => Promise<void>;
 };
 
 export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;
 export type GenericCB = (...args: unknown[]) => void;
 
 export type RouteDefinition = {
+  expandable?: boolean;
   absolute?: boolean;
   appId?: string;
   href?: string;
@@ -127,6 +132,7 @@ export type RouteDefinition = {
   manifestLocation: string;
   dynamic?: boolean;
   exact?: boolean;
+  props?: any;
 };
 
 export type ModuleRoute =
@@ -135,6 +141,7 @@ export type ModuleRoute =
       pathname: string;
       exact?: boolean;
       dynamic?: boolean;
+      props?: Record<string, unknown>;
     }
   | string;
 
@@ -149,6 +156,8 @@ export type ChromeModule = {
   config?: {
     ssoUrl?: string;
     fullProfile?: boolean;
+    props?: Record<string, unknown>;
+    ssoScopes?: string[];
   };
   analytics?: {
     APIKey?: string;
@@ -158,6 +167,7 @@ export type ChromeModule = {
   modules?: RemoteModule[];
   defaultDocumentTitle?: string;
   fullProfile?: boolean;
+  props?: Record<string, unknown>;
 };
 
 export interface GroupItem {
@@ -209,4 +219,10 @@ export type DynamicNavProps = ChromeNavItemProps & {
     currNav?: NavItem[];
   }) => NavItem | NavItem[];
   pathname: string;
+};
+
+export type BundleNav = {
+  id?: string;
+  title?: string;
+  links: NavItem[];
 };

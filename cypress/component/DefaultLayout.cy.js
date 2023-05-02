@@ -74,7 +74,14 @@ describe('<Default layout />', () => {
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
     cy.intercept('GET', '/api/featureflags/*', {
-      toggles: [],
+      toggles: [
+        {
+          // until the bredcrumbs are enabled by default
+          name: 'platform.chrome.bredcrumbs.enabled',
+          enabled: true,
+          variant: { name: 'disabled', enabled: true },
+        },
+      ],
     });
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
   });
@@ -85,7 +92,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
       navItems: [...Array(5)],
     }).as('navRequest');
     const elem = cy
@@ -105,8 +112,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
       navItems: [...Array(30)],
     }).as('navRequest');
     const elem = cy
@@ -126,8 +132,7 @@ describe('<Default layout />', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],
     });
-
-    cy.intercept('GET', '/config/chrome/__cypress-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json', {
       navItems: [...Array(5)],
     }).as('navRequest');
     const elem = cy
@@ -138,7 +143,6 @@ describe('<Default layout />', () => {
       )
       .get('html');
     cy.wait('@navRequest');
-
     elem.get('body').matchImageSnapshot();
   });
 });

@@ -16,19 +16,20 @@ import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
 import useBundle from '../../hooks/useBundle';
-import useUserProfile from '../../hooks/useUserProfile';
+import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
+import { FooterProps } from '../Footer/Footer';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
-export type RootAppProps = {
+export type RootAppProps = FooterProps & {
   config: AppsConfig;
 };
 
 const RootApp = memo((props: RootAppProps) => {
-  const { allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
   const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
@@ -43,8 +44,8 @@ const RootApp = memo((props: RootAppProps) => {
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
-  // verify if full profile reauth is required
-  useUserProfile();
+  // verify use loged in scopes
+  useUserSSOScopes();
 
   useEffect(() => {
     dispatch(clearQuickstarts(activeQuickStartID));
@@ -104,6 +105,7 @@ const RootApp = memo((props: RootAppProps) => {
   const quickstartsAPI = {
     version: 1,
     set: updateQuickStarts,
+    activateQuickstart,
     add: addQuickstart,
     toggle: setActiveQuickStartID,
     Catalog: LazyQuickStartCatalog,

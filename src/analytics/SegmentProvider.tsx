@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { ITLess, getUrl, isBeta, isProd } from '../utils/common';
+import { ITLess, isBeta, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
-import resetIntegrations from './resetIntegrations';
+import { resetIntegrations } from './resetIntegrations';
+import { getUrl } from '../hooks/useBundle';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -29,7 +31,7 @@ function getAdobeVisitorId() {
 }
 
 const getPageEventOptions = () => {
-  const path = window.location.pathname.replace(/^(\/beta\/|\/preview\/)/, '/');
+  const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
   const search = new URLSearchParams(window.location.search);
 
   // Do not send keys with undefined values to segment.
@@ -106,7 +108,7 @@ const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLo
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '') => {
+const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '') => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -126,7 +128,7 @@ const getIdentityTrais = (user: ChromeUser, pathname: string, activeModule = '')
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
     isBeta: isBeta(),
-    ...(!isProd() && user.identity.user
+    ...(user.identity.user
       ? {
           name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
           email: `${user.identity.user.email}`,
@@ -158,16 +160,31 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
 
+  const fetchIntercomHash = async () => {
+    try {
+      const { data } = await axios.get<{ data: { prod?: string; dev?: string } }>('/api/chrome-service/v1/user/intercom', {
+        params: {
+          // the identifier will change based on the DDIS mapping
+          app: activeModule,
+        },
+      });
+      // FIXME: remove after API is in prod fallback for legacy API
+      if (typeof data.data === 'string') {
+        return data.data;
+      }
+      // prod keys are used as fallback if dev does not exist for dev environment
+      return isProd() ? data.data.prod : data.data.dev || data.data.prod;
+    } catch (error) {
+      console.error('unable to get intercom user hash');
+      return undefined;
+    }
+  };
+
   if (!analytics.current) {
     analytics.current = new AnalyticsBrowser();
   }
 
-  useEffect(() => {
-    const disconnect = registerAnalyticsObserver();
-    return () => disconnect();
-  }, []);
-
-  useEffect(() => {
+  const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
       /**
        * Clean up custom page event data after module change
@@ -177,13 +194,11 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         activeModule,
       };
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTrais(user, pathname, activeModule);
+      const identityTraits = getIdentityTraits(user, pathname, activeModule);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
         },
-        cloud_user_id: user.identity.internal?.account_id,
-        adobe_cloud_visitor_id: getAdobeVisitorId(),
       };
       const groupTraits = {
         account_number: user.identity.account_number,
@@ -193,23 +208,59 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
       };
       if (!initialized.current && analytics.current) {
         window.segment = analytics.current;
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+        const hash = await fetchIntercomHash();
+        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+          ...identityOptions,
+          context: {
+            ...identityOptions.context,
+            ...(hash
+              ? {
+                  Intercom: { user_hash: hash },
+                }
+              : {}),
+          },
+        });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
         analytics.current.page(...getPageEventOptions());
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        resetIntegrations();
+        if (window.segment) {
+          window.segment = undefined;
+        }
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv } }
         );
         window.segment = analytics.current;
-        analytics.current.identify(user.identity.internal?.account_id, identityTraits, identityOptions);
+        resetIntegrations(analytics.current);
+        const hash = await fetchIntercomHash();
+        // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
+        analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
+          ...identityOptions,
+          context: {
+            ...identityOptions.context,
+            ...(hash
+              ? {
+                  Intercom: { user_hash: hash },
+                }
+              : {}),
+          },
+        });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
       }
     }
+  };
+
+  useEffect(() => {
+    const disconnect = registerAnalyticsObserver();
+    return () => disconnect();
+  }, []);
+
+  useEffect(() => {
+    handleModuleUpdate();
   }, [activeModule, user]);
 
   /**
@@ -220,15 +271,11 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
     analyticsLoaded.current = true;
     analytics.current.load(
       {
-        writeKey: getAPIKey(
-          DEV_ENV ? 'dev' : 'prod',
-          // FIXME: Find a better way of getting the initial activeModule ID
-          activeModule as SegmentModules,
-          moduleAPIKey
-        ),
+        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey),
       },
-      { initialPageview: false, integrations: { All: !disableIntegrations } }
+      { initialPageview: false, disableClientPersistence: true, integrations: { All: !disableIntegrations } }
     );
+    resetIntegrations(analytics.current);
   }
 
   return (

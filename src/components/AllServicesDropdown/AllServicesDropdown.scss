@@ -5,19 +5,24 @@
   &.pf-c-menu-toggle::after {
     border-bottom: none;
   }
+  &.pf-c-menu-toggle:hover::after, &.pf-m-expanded::after {
+    border-bottom: var(--pf-global--BorderWidth--lg) solid var(--pf-global--info-color--100);
+  }
 }
 
 .chr-c-page__services-nav-dropdown-menu {
+  @media screen and (min-width: $pf-global--breakpoint--2xl) {
+    top: 70px;
+    height: calc(100vh - 70px);
+  }
+  @media screen and (max-width: $pf-global--breakpoint--2xl) {
+    top: 118px;
+    height: calc(100vh - 118px);
+  }
+
   // pos has to be important to override PF styles that get lazy loaded!
   position: absolute !important;
-  top: 70px;
   z-index: 1000;
-  left: 0;
-  right: 0;
-  height: calc(100vh - 70px);
-  width: 100% !important; // override popper calculated width
-  overflow-y: auto;
-  overflow-x: none;
   .pf-c-dropdown__menu::before {
     z-index: -1000;
   }
@@ -29,32 +34,39 @@
   .pf-c-dropdown__menu {
     position: relative; // make sure to enable scroll within backdrop
     top: 0;
-    @media (max-width: 768px) {
-      top: 118px;
+  }
+}
+
+@media (max-width: $pf-global--breakpoint--md) {
+  .chr-c-panel-services-nav {
+    .chr-l-flex__item-browse-all-services {
+      background: var(--pf-global--BackgroundColor--200);
+      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
+    }
+    .pf-c-tabs.pf-m-vertical {
+      background: var(--pf-global--BackgroundColor--200);
+      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
+      height: calc(100% - 80px);
+    }
+    .pf-c-tabs__toggle-button  {
+      width: 100%;
+    }
+    .pf-c-tabs__toggle-button .pf-c-button {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      padding: var(--pf-global--spacer--sm);
+      width: 100%;
     }
   }
 }
 
-.chr-c-panel-services-nav {
-  .pf-c-tabs.pf-m-vertical {
-    display: flex; // Kafka conflict
-    padding-top: var(--pf-global--spacer--md); // Kafka conflict
-    height: calc(100% - 80px);
-  }
-}
-
-@media (min-width: 768px) {
+@media (min-width: $pf-global--breakpoint--md) {
   .chr-c-panel-services-nav {
-    min-height: 650px;
-    // make sure the card height fills the parent link
-    .chr-c-link-service-card {
-      height: 100%;
+    .chr-l-flex__item-browse-all-services {
+      border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
     }
     .pf-c-card.pf-m-plain {
       --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
-    }
-    .chr-c-icon-service-tab {
-      font-size: 1rem;
     }
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;
@@ -69,7 +81,6 @@
     }
     .pf-c-tabs {
       height: calc(100% - 80px);
-      padding-top: var(--pf-global--spacer--md);
       --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
       --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
       --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);

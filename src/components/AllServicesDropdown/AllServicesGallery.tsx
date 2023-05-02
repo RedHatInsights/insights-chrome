@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { Gallery } from '@patternfly/react-core';
-import { AllServicesGroup, AllServicesLink, AllServicesSection } from '../AllServices/allServicesLinks';
-import { isAllServicesGroup } from '../AllServices/AllServicesSection';
+import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 import AllServicesGallerySection from './AllServicesGallerySection';
 

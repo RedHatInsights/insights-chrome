@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
@@ -23,7 +23,7 @@ import { createChromeContext } from '../../chrome/create-chrome';
 import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
-import Footer from '../Footer/Footer';
+import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
@@ -37,16 +37,15 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   return callback(selectedTags);
 };
 
-export type ScalprumRootProps = {
+export type ScalprumRootProps = FooterProps & {
   config: AppsConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
 
 const ScalprumRoot = memo(
-  ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
+  ({ config, helpTopicsAPI, quickstartsAPI, cookieElement, setCookieElement, ...props }: ScalprumRootProps) => {
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
-    const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
 

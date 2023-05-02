@@ -26,13 +26,16 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
     <ChromeLink isExternal={isExternal} href={href} className="chr-c-favorite-service__tile">
-      <Card className="chr-c-link-service-card" isFullHeight isFlat isSelectableRaised>
+      <Card
+        className={classNames('chr-c-link-service-card chr-c-favorite-trigger', {
+          'chr-c-icon-favorited': isFavorite,
+        })}
+        isFullHeight
+        isFlat
+        isSelectableRaised
+      >
         <CardBody className="pf-u-p-md">
-          <Split
-            className={classNames('chr-c-favorite-trigger', {
-              'chr-c-icon-favorited': isFavorite,
-            })}
-          >
+          <Split>
             <SplitItem className="pf-m-fill">{title}</SplitItem>
             <SplitItem>
               {isExternal ? (

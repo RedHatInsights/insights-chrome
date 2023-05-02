@@ -23,7 +23,8 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
-// import ServicesNewNav from '../../layouts/ServicesNewNav';
+import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import useEnableBreadcrumbs from '../../hooks/useEnableBreadcrumbs';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -39,22 +40,35 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   );
 };
 
-export const Header = () => {
+export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
+  const displayBreadcrumbs = useEnableBreadcrumbs();
 
   return (
     <Fragment>
-      <MastheadMain>
-        <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+      <MastheadMain className="pf-u-pl-lg pf-u-pt-0 pf-u-pb-xs">
+        <MastheadBrand className="pf-u-flex-shrink-0 pf-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
+        <Toolbar isFullHeight>
+          <ToolbarContent>
+            <ToolbarGroup
+              alignment={{ default: 'alignRight' }}
+              className="pf-m-icon-button-group"
+              widget-type="InsightsToolbar"
+              visibility={{ '2xl': 'hidden' }}
+            >
+              <HeaderTools />
+            </ToolbarGroup>
+          </ToolbarContent>
+        </Toolbar>
       </MastheadMain>
-      <MastheadContent>
+      <MastheadContent className="pf-u-mx-md pf-u-mx-0-on-2xl">
         {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
@@ -81,20 +95,25 @@ export const Header = () => {
               )}
             </ToolbarGroup>
             {searchEnabled ? (
-              <ToolbarGroup
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                }}
-                variant="filter-group"
-              >
+              <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
                 <SearchInput />
               </ToolbarGroup>
             ) : null}
-            <HeaderTools />
+            <ToolbarGroup
+              className="pf-m-icon-button-group pf-u-ml-auto"
+              visibility={{ default: 'hidden', '2xl': 'visible' }}
+              widget-type="InsightsToolbar"
+            >
+              <HeaderTools />
+            </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
+      {displayBreadcrumbs && (
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs {...breadcrumbsProps} />
+        </ToolbarGroup>
+      )}
     </Fragment>
   );
 };

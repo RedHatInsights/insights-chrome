@@ -1,5 +1,7 @@
 .chr-c-alert {
   margin-top: var(--pf-global--spacer--xs);
+  // to be above the static favorite button toggle
+  z-index: 10;
   .pf-c-alert__title {
       padding: unset;
   }
@@ -7,4 +9,8 @@
       padding: unset;
       background-color: unset;
   }
+}
+
+.chr-c-alert-preview {
+  min-width: 400px;
 }

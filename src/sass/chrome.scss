@@ -34,10 +34,17 @@ aside {
   height: 100vh;
 }
 
-.pf-c-page.chr-c-page__hasBanner {
-  grid-template-areas: "banner banner"
-                       "header header"
-                       "nav main";
+.pf-c-page.chr-c-page {
+  .pf-c-page__sidebar {
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: var(--pf-global--palette--black-800);
+  }
+  &__hasBanner {
+    grid-template-areas: "banner banner"
+                         "header header"
+                         "nav main";
+  }
 }
 
 #no-access.pf-c-page__main {

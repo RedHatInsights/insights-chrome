@@ -3,11 +3,11 @@ import React, { Fragment } from 'react';
 import { ITLess } from '../../utils/common';
 
 import AllServicesLink from './AllServicesLink';
-import { AllServicesGroup } from './allServicesLinks';
+import { AllServicesGroup, isAllServicesLink } from './allServicesLinks';
 
 export type AllServicesGroupProps = AllServicesGroup;
 const AllServicesGroup = ({ title, links }: AllServicesGroupProps) => {
-  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
+  const filteredLinks = ITLess() ? links.filter((link) => isAllServicesLink(link) && link.ITLess) : links;
   return (
     <Fragment>
       <Text component={TextVariants.p} className="pf-u-pt-xs pf-u-font-weight-bold">

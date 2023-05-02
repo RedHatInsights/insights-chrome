@@ -2,18 +2,19 @@ import { Masthead, MastheadBrand, MastheadMain, Page, PageSidebar } from '@patte
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from '../ChromeLink';
-import Footer from '../Footer/Footer';
+import Footer, { FooterProps } from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
 
 // Component that is displayed as a placeholder before auth init is finished
-const AppPlaceholder = () => {
+const AppPlaceholder = (props: FooterProps) => {
   return (
     <MemoryRouter>
       <Page
+        className="chr-c-page"
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadMain>
+            <MastheadMain className="pf-u-pl-lg">
               <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
                 <Logo />
               </MastheadBrand>
@@ -23,7 +24,7 @@ const AppPlaceholder = () => {
         sidebar={<PageSidebar nav={<NavLoader />} />}
       >
         <div className="chr-render">
-          <Footer cookieElement={null} setCookieElement={() => undefined} />
+          <Footer {...props} />
         </div>
       </Page>
     </MemoryRouter>

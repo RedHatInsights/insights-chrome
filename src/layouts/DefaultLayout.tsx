@@ -1,27 +1,28 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Masthead, MastheadToggle, Page, PageSidebar, PageToggleButton } from '@patternfly/react-core';
+import { Masthead, Page, PageSidebar } from '@patternfly/react-core';
 import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
-import { onToggle } from '../redux/actions';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
+
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
-import { getUrl } from '../utils/common';
+import { isProd } from '../utils/common';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
+import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
+import { getUrl } from '../hooks/useBundle';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -42,31 +43,22 @@ type DefaultLayoutProps = {
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const { loaded, schema, noNav } = useNavigation();
 
   return (
     <Page
-      className={classnames({ 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
+      className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
-        <Masthead className="chr-c-masthead">
-          {!hideNav && (
-            <MastheadToggle>
-              <PageToggleButton
-                variant="plain"
-                aria-label="Global navigation"
-                isNavOpen={isNavOpen}
-                onNavToggle={() => {
-                  setIsNavOpen((prev) => !prev);
-                  dispatch(onToggle());
-                }}
-              >
-                <BarsIcon />
-              </PageToggleButton>
-            </MastheadToggle>
-          )}
-          <Header />
+        <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+          {isProd() ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
+          <Header
+            breadcrumbsProps={{
+              isNavOpen,
+              setIsNavOpen,
+              hideNav,
+            }}
+          />
         </Masthead>
       }
       sidebar={

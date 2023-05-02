@@ -99,9 +99,10 @@ describe('Gateway errors', () => {
     window.localStorage.setItem(BLOCK_CLEAR_GATEWAY_ERROR, 'true');
     cy.intercept('GET', '/api/featureflags/*', { toggles: [] });
     cy.intercept('POST', '/api/featureflags/v0/client/*', {});
-    cy.intercept('GET', '/config/chrome/*-navigation.json?ts=*', {
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
       navItems: [],
     });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
     // clear the instance
     removeScalprum();
   });
