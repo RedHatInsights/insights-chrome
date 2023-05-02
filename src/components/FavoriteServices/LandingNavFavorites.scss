@@ -1,6 +1,9 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
-.pf-c-options-menu__toggle {
-  display: none !important;
+.chr-c-pagination-landing-favorites {
+  .pf-c-options-menu__toggle {
+    display: none !important;
+  }
 }
+

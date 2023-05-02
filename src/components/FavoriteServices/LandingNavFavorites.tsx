@@ -71,6 +71,7 @@ const LandingNavFavorites = () => {
                 onPerPageSelect={onPerPageSelect}
                 onSetPage={onSetPage}
                 widgetId="favorites-cards-pagination"
+                className="chr-c-pagination-landing-favorites"
               ></Pagination>
           </FlexItem>
         </Flex>
