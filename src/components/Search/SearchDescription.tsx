@@ -1,34 +1,19 @@
-import classNames from 'classnames';
 import React from 'react';
+import { Text, TextContent } from '@patternfly/react-core';
 import parseHighlights from './parseHighlight';
 
 import './SearchDescription.scss';
 
-const SearchDescription = ({
-  description,
-  bundleTitle,
-  highlight = [],
-  bundleHighlight = [],
-}: {
-  highlight?: string[];
-  bundleHighlight?: string[];
-  bundle: string;
-  description: string;
-  bundleTitle: string;
-}) => {
+const SearchDescription = ({ description, highlight = [] }: { highlight?: string[]; description: string }) => {
   const parsedDescription = parseHighlights(description, highlight);
   return (
-    <div className="chr-c-search__item__description" style={{ display: 'flex', flexDirection: 'column' }}>
-      <p dangerouslySetInnerHTML={{ __html: parsedDescription }}></p>
-      <span
-        className={classNames({
-          // highlight bundle ig bundle_title or bundle was highlighted
-          hl: bundleHighlight.length > 0,
-        })}
-      >
-        {bundleTitle}
-      </span>
-    </div>
+    <TextContent>
+      <Text
+        component="small"
+        className="chr-c-search__item__description pf-u-color-100 pf-u-text-break-word"
+        dangerouslySetInnerHTML={{ __html: parsedDescription }}
+      ></Text>
+    </TextContent>
   );
 };
 
