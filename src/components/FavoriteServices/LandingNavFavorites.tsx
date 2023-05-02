@@ -79,7 +79,7 @@ const LandingNavFavorites = () => {
         <EmptyState />
       ) : (
         <React.Fragment>
-          <Gallery hasGutter className="chr-l-gallery-landing-favorites">
+          <Gallery hasGutter>
             {buildFavorites()}
           </Gallery>
         </React.Fragment>
