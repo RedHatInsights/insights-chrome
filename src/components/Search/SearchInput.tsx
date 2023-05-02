@@ -228,7 +228,7 @@ const SearchInput = () => {
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-mt-xs chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-u-pt-sm pf-u-px-md chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (

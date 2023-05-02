@@ -1,11 +1,8 @@
 .chr-c-search {
   &__item {
     &__description {
-      .bundle {
-        color: var(--pf-global--palette--black-700);
-      }
       mark {
-        color: var(--pf-global--primary-color--100);
+        font-weight: var(--pf-global--FontWeight--bold);
         background-color: transparent;
       }
     }
