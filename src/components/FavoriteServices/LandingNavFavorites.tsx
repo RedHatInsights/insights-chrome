@@ -1,4 +1,4 @@
-import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Title, Text, TextContent } from '@patternfly/react-core';
+import { Card, CardBody, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, Title } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
@@ -8,7 +8,6 @@ import './LandingNavFavorites.scss';
 import ChromeLink from '../ChromeLink';
 
 const LandingNavFavorites = () => {
-
   const favoritedServices = useFavoritedServices();
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = React.useState(4);
