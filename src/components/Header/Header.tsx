@@ -12,19 +12,18 @@ import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
-import { ITLess, isBeta, isProd } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
-import { useFlag } from '@unleash/proxy-client-react';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-import useEnableBreadcrumbs from '../../hooks/useEnableBreadcrumbs';
+import useEnableSummitFeature from '../../hooks/useEnableSummitFeature';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -42,11 +41,11 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
-  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
-  const displayBreadcrumbs = useEnableBreadcrumbs();
+  const enableSummitFeature = useEnableSummitFeature();
+  const { pathname } = useLocation();
 
   return (
     <Fragment>
@@ -76,7 +75,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               {user && (
                 <ToolbarItem>
                   <>
-                    {navDropdownEnabled ? (
+                    {enableSummitFeature ? (
                       <AllServicesDropdown />
                     ) : (
                       <>
@@ -106,7 +105,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
-      {displayBreadcrumbs && (
+      {pathname !== '/' && enableSummitFeature && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
           <Breadcrumbs {...breadcrumbsProps} />
         </ToolbarGroup>
