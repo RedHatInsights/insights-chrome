@@ -16,7 +16,9 @@ import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
+import { isProd } from '../../utils/common';
 
+const IS_PROD = isProd();
 const REPLACE_TAG = 'REPLACE_TAG';
 const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
 /**
@@ -43,9 +45,9 @@ BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
 BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
 BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
-BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight atrribute to simply tag replacement.
+BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight attribute to simply tag replacement.
 
-const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
+const BASE_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/rest/search/platform/console/`);
 // search API stopped receiving encoded search string
 BASE_URL.search = decodeURIComponent(BASE_SEARCH.toString());
 const SEARCH_QUERY = BASE_URL.toString();
