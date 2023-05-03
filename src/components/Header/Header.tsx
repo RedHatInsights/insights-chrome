@@ -19,7 +19,7 @@ import { DeepRequired } from 'utility-types';
 import './Header.scss';
 import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
-import { ITLess } from '../../utils/common';
+import { ITLess, isBeta, isProd } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -41,7 +41,6 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 };
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
-  const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
@@ -94,11 +93,9 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            {searchEnabled ? (
-              <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
-                <SearchInput />
-              </ToolbarGroup>
-            ) : null}
+            <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
+              <SearchInput />
+            </ToolbarGroup>
             <ToolbarGroup
               className="pf-m-icon-button-group pf-u-ml-auto"
               visibility={{ default: 'hidden', '2xl': 'visible' }}
