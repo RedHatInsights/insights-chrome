@@ -1,4 +1,4 @@
-import { Card, CardBody, Flex, FlexItem, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Card, CardBody, Flex, FlexItem, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
@@ -58,31 +58,29 @@ const LandingNavFavorites = () => {
             <Text component={TextVariants.p} className="pf-u-display-inline">
               <ChromeLink href="/allservices">View all services</ChromeLink>
             </Text>
-            </TextContent>
-          </FlexItem>
-          <FlexItem align={{default: 'alignRight'}}>
-            <Pagination
-                perPageComponent="button"
-                isCompact
-                variant="top"
-                itemCount={favoritedServices.length}
-                page={page}
-                perPage={perPage}
-                onPerPageSelect={onPerPageSelect}
-                onSetPage={onSetPage}
-                widgetId="favorites-cards-pagination"
-                className="chr-c-pagination-landing-favorites"
-              ></Pagination>
-          </FlexItem>
-        </Flex>
+          </TextContent>
+        </FlexItem>
+        <FlexItem align={{ default: 'alignRight' }}>
+          <Pagination
+            perPageComponent="button"
+            isCompact
+            variant="top"
+            itemCount={favoritedServices.length}
+            page={page}
+            perPage={perPage}
+            onPerPageSelect={onPerPageSelect}
+            onSetPage={onSetPage}
+            widgetId="favorites-cards-pagination"
+            className="chr-c-pagination-landing-favorites"
+          ></Pagination>
+        </FlexItem>
+      </Flex>
 
       {favoritedServices.length === 0 ? (
         <EmptyState />
       ) : (
         <React.Fragment>
-          <Gallery hasGutter>
-            {buildFavorites()}
-          </Gallery>
+          <Gallery hasGutter>{buildFavorites()}</Gallery>
         </React.Fragment>
       )}
     </React.Fragment>
