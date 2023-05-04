@@ -61,6 +61,7 @@ export type BundleNavigation = {
   id: string;
   title: string;
   navItems: NavItem[];
+  description?: string;
 };
 
 declare global {

@@ -66,7 +66,17 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
     // regular NavItem
     return [...acc, rest];
   }, []);
-  return { id: bundle.id, title: bundle.title, links: (flatLinks || []).flat() };
+  const bundleFirstLink = getFirstChildRoute(bundle.navItems);
+  if (bundleFirstLink) {
+    const bundleLink: NavItem = {
+      ...bundleFirstLink,
+      title: bundle.title,
+      id: bundle.id,
+      description: bundle.description,
+    };
+    flatLinks.push(bundleLink);
+  }
+  return { id: bundle.id, title: bundle.title, links: flatLinks.flat() };
 };
 
 const parseBundlesToObject = (items: NavItem[]): AvailableLinks =>
@@ -223,6 +233,7 @@ const useAllServices = () => {
 
           return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
         });
+
       setState((prev) => ({
         ...prev,
         allLinks,
