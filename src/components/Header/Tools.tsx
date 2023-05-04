@@ -264,16 +264,14 @@ const Tools = () => {
           variant={AlertVariant.default}
           actionLinks={
             <React.Fragment>
-              <AlertActionLink>
-                {/** @ts-ignore*/}
-                <a
-                  href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Learn more link"
-                >
-                  Learn more
-                </a>
+              <AlertActionLink
+                component="a"
+                href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
+                target="_blank"
+                rel="noreferrer"
+                title="Learn more link"
+              >
+                Learn more
               </AlertActionLink>
               <AlertActionLink
                 onClick={() => {
