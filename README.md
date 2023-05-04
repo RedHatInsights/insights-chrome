@@ -14,13 +14,7 @@ For more detailed information about chrome and what it provides, [look through t
 
 Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
 
-```js
-    // initialize chrome
-    insights.chrome.init();
-
-    // identify yourself (the application). This tells Chrome which global navigation element should be active
-    insights.chrome.identifyApp('advisor');
-```
+Check out the [useChrome hook docs](http://front-end-docs-insights.apps.ocp4.prod.psi.redhat.com/chrome/chrome-api#Chrome)
 
 ## Running the build
 
