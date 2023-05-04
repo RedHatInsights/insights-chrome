@@ -21,7 +21,7 @@ export const requiredBundles = [
   'ansible',
   'settings',
   'iam',
-  'containers',
+  'quay',
   ...(isBeta() && !isProd() ? ['business-services'] : []),
 ];
 
@@ -35,7 +35,7 @@ const bundlesOrder = [
   'cost-management',
   'subscriptions',
   'iam',
-  'containers',
+  'quay',
   'business-services',
 ];
 
