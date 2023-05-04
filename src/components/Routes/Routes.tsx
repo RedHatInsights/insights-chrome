@@ -24,7 +24,7 @@ const redirects = [
   },
   {
     path: '/quay',
-    to: '/quay/organizations',
+    to: '/quay/organization',
   },
 ];
 
