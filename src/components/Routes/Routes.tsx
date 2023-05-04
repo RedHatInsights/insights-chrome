@@ -23,8 +23,8 @@ const redirects = [
     to: '/settings/sources',
   },
   {
-    path: '/containers',
-    to: '/containers/quay',
+    path: '/quay',
+    to: '/quay/organizations',
   },
 ];
 
