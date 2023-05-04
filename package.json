@@ -30,7 +30,7 @@
     "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
     "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test",
-    "postinstall": "rm -rf .cache"
+    "postinstall": "rm -rf .webpack-cache"
   },
   "repository": {
     "type": "git",
@@ -81,7 +81,6 @@
     "jest": "^29.4.3",
     "jest_workaround": "^0.1.14",
     "jest-environment-jsdom": "^29.4.3",
-    "jest-fetch-mock": "^3.0.3",
     "jest-mock-axios": "^4.6.2",
     "jsdom": "^21.1.0",
     "jws": "^4.0.0",

@@ -47,7 +47,7 @@ const commonConfig = ({ dev }) => {
             buildDependencies: {
               config: [__filename],
             },
-            cacheDirectory: path.resolve(__dirname, '../.cache'),
+            cacheDirectory: path.resolve(__dirname, '../.webpack-cache'),
           },
         }
       : {}),
