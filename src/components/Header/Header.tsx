@@ -46,6 +46,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const isITLessEnv = ITLess();
   const enableSummitFeature = useEnableSummitFeature();
   const { pathname } = useLocation();
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
 
   return (
     <Fragment>
@@ -105,7 +106,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
-      {pathname !== '/' && enableSummitFeature && (
+      {noBreadcrumb && enableSummitFeature && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
           <Breadcrumbs {...breadcrumbsProps} />
         </ToolbarGroup>
