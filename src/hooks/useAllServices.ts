@@ -67,7 +67,7 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
     return [...acc, rest];
   }, []);
   const bundleFirstLink = getFirstChildRoute(bundle.navItems);
-  if (bundleFirstLink) {
+  if (bundleFirstLink && bundle.id) {
     const bundleLink: NavItem = {
       ...bundleFirstLink,
       title: bundle.title,
@@ -89,10 +89,10 @@ const parseBundlesToObject = (items: NavItem[]): AvailableLinks =>
       };
     }
 
-    return curr.href
+    return curr.id
       ? {
           ...acc,
-          [curr.href]: curr,
+          [curr.id]: curr,
         }
       : acc;
   }, {});
