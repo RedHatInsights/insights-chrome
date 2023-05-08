@@ -25,7 +25,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
         className="chr-c-favoritedservices"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
-          <Masthead className="chr-c-masthead">
+          <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
             <Header />
           </Masthead>
         }
