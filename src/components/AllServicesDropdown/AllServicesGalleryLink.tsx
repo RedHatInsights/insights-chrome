@@ -12,7 +12,7 @@ import classNames from 'classnames';
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
 const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
-  const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
+  const bundle = bundleMapping[href.split('/')[1]];
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
 
   const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
@@ -65,7 +65,8 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
             </SplitItem>
           </Split>
           <TextContent>
-            <Text component="small">{getBundle(href)}</Text>
+            {/* do not show bundle if the card title matches bundle title */}
+            <Text component="small">{bundle !== title ? bundle : null}</Text>
             <Text component="small" className="pf-u-color-100">
               {description ?? ''}
             </Text>

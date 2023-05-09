@@ -27,8 +27,8 @@ import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { useFlag } from '@unleash/proxy-client-react';
 import { ITLess } from '../../utils/common';
+import useEnableSummitFeature from '../../hooks/useEnableSummitFeature';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -48,13 +48,13 @@ const ScalprumRoot = memo(
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
+    const enableSummitFeature = useEnableSummitFeature();
 
     const libJwt = useContext(LibtJWTContext);
     const store = useStore<ReduxState>();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
-    const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
 
     function isStringArray(arr: EnableTopicsArgs): arr is string[] {
       return typeof arr[0] === 'string';
@@ -182,7 +182,7 @@ const ScalprumRoot = memo(
             path="/"
             element={
               <DefaultLayout
-                Sidebar={navDropdownEnabled ? undefined : LandingNav}
+                Sidebar={enableSummitFeature ? undefined : LandingNav}
                 Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />}
                 {...props}
               />

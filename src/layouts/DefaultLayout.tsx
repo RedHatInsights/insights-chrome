@@ -14,7 +14,6 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
-import { isProd } from '../utils/common';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -23,6 +22,7 @@ import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 import { getUrl } from '../hooks/useBundle';
+import useEnableSummitFeature from '../hooks/useEnableSummitFeature';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -44,6 +44,7 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
+  const enableSummitFeature = useEnableSummitFeature();
 
   return (
     <Page
@@ -51,7 +52,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
         <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
-          {isProd() ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
+          {!enableSummitFeature ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{
               isNavOpen,

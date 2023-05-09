@@ -44,7 +44,6 @@ window.ResizeObserver =
     unobserve: jest.fn(),
   }));
 
-import * as utils from '../../utils/common';
 import * as routerDom from 'react-router-dom';
 import LibtJWTContext from '../LibJWTContext';
 
@@ -112,59 +111,6 @@ describe('ScalprumRoot', () => {
         workloads: {},
       },
     };
-  });
-
-  it('should render PageSidebar with LandingNav component', async () => {
-    /**
-     * Temporarily override the module mock
-     */
-    const isBetaSpy = jest.spyOn(utils, 'isBeta');
-    isBetaSpy.mockReturnValue(true);
-    const getEnvSpy = jest.spyOn(utils, 'getEnv');
-    getEnvSpy.mockReturnValue('ci');
-
-    const store = mockStore({
-      ...initialState,
-      chrome: {
-        ...initialState.chrome,
-        navigation: {
-          landingPage: [],
-        },
-        user: {
-          identity: {
-            account_number: 'foo',
-            user: {},
-          },
-        },
-      },
-    });
-    let container;
-    await act(async () => {
-      const { container: internalContainer } = await render(
-        <LibtJWTContext.Provider
-          value={{
-            initPromise: Promise.resolve(),
-            jwt: {
-              getUserInfo: () => Promise.resolve({}),
-              getEncodedToken: () => '',
-            },
-          }}
-        >
-          <Provider store={store}>
-            <MemoryRouter initialEntries={['/']}>
-              <ScalprumRoot config={config} {...initialProps} />
-            </MemoryRouter>
-          </Provider>
-        </LibtJWTContext.Provider>
-      );
-      container = internalContainer;
-    });
-    expect(container.querySelector('.chr-c-landing-nav')).toBeTruthy();
-    /**
-     * We have to clear the restore the mock to match the mocked module
-     */
-    isBetaSpy.mockReturnValue(false);
-    getEnvSpy.mockReturnValue('qa');
   });
 
   it('should render PageSidebar with SideNav component', async () => {

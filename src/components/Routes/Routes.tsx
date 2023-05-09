@@ -18,6 +18,14 @@ const redirects = [
     path: '/docs',
     to: '/api/docs',
   },
+  {
+    path: '/settings',
+    to: '/settings/sources',
+  },
+  {
+    path: '/quay',
+    to: '/quay/organization',
+  },
 ];
 
 export type RoutesProps = {

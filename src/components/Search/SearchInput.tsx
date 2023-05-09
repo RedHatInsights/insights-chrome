@@ -16,7 +16,9 @@ import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
+import { isProd } from '../../utils/common';
 
+const IS_PROD = isProd();
 const REPLACE_TAG = 'REPLACE_TAG';
 const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
 /**
@@ -33,7 +35,7 @@ const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
+BASE_SEARCH.append('q', `${REPLACE_TAG}*~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
@@ -43,9 +45,9 @@ BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
 BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
 BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
-BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight atrribute to simply tag replacement.
+BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight attribute to simply tag replacement.
 
-const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
+const BASE_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/rest/search/platform/console/`);
 // search API stopped receiving encoded search string
 BASE_URL.search = decodeURIComponent(BASE_SEARCH.toString());
 const SEARCH_QUERY = BASE_URL.toString();
@@ -228,7 +230,7 @@ const SearchInput = () => {
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-mt-xs chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-u-pt-sm pf-u-px-md chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
