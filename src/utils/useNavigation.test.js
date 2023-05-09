@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 import React, { Fragment, useEffect } from 'react';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -83,19 +84,21 @@ describe('useNavigatiom', () => {
       },
     });
     axiosGetSpy.mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
-    const wrapper = ({ children, path }) => (
-      <RouterDummy store={store} path={path}>
-        {children}
-      </RouterDummy>
-    );
+    const createWrapper = (props) => {
+      function Wrapper({ children }) {
+        return (
+          <RouterDummy store={store} {...props}>
+            {children}
+          </RouterDummy>
+        );
+      }
+      return Wrapper;
+    };
 
-    const { result, rerender } = renderHook(() => useNavigation(), {
-      wrapper,
-      initialProps: {
-        path: '/insights',
-      },
+    const { result: inResult } = renderHook(() => useNavigation(), {
+      wrapper: createWrapper({ path: '/insights' }),
     });
-    expect(result.current).toEqual({
+    expect(inResult.current).toEqual({
       loaded: true,
       noNav: false,
       schema: {
@@ -104,8 +107,10 @@ describe('useNavigatiom', () => {
       },
     });
 
-    rerender({ path: '/ansible' });
-    expect(result.current).toEqual({
+    const { result: anResult } = renderHook(() => useNavigation(), {
+      wrapper: createWrapper({ path: '/ansible' }),
+    });
+    expect(anResult.current).toEqual({
       loaded: true,
       noNav: false,
       schema: {
@@ -142,8 +147,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -151,9 +156,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -203,8 +205,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -212,9 +214,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -269,8 +268,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -278,9 +277,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -341,8 +337,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -350,9 +346,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -430,8 +423,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -439,9 +432,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -484,8 +474,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -493,9 +483,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights',
-          },
         });
       });
 
@@ -547,8 +534,8 @@ describe('useNavigatiom', () => {
           },
         })
       );
-      const wrapper = ({ children, path }) => (
-        <RouterDummy store={store} path={path}>
+      const wrapper = ({ children }) => (
+        <RouterDummy store={store} path="/insights/dashboard">
           {children}
         </RouterDummy>
       );
@@ -556,9 +543,6 @@ describe('useNavigatiom', () => {
       await act(async () => {
         await renderHook(() => useNavigation(), {
           wrapper,
-          initialProps: {
-            path: '/insights/dashboard',
-          },
         });
       });
 
