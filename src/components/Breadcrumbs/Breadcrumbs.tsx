@@ -6,8 +6,8 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import './Breadcrumbs.scss';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import MastheadMenuToggle from '../Header/MastheadMenuToggle';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type Breadcrumbsprops = {
   isNavOpen?: boolean;
@@ -17,7 +17,7 @@ export type Breadcrumbsprops = {
 
 const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
   const segments = useBreadcrumbsLinks();
-  const { favoritePages, favoritePage, unfavoritePage } = useFavoritePages();
+  const { favoritePages, favoritePage, unfavoritePage } = useFavoritePagesWrapper();
 
   const leafHref = segments[segments.length - 1]?.href;
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);

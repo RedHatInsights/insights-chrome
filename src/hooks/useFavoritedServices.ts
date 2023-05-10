@@ -1,13 +1,13 @@
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import { ServiceTileProps } from '../components/FavoriteServices/ServiceTile';
 import useAllServices from './useAllServices';
 import { useEffect, useMemo, useState } from 'react';
 import fetchNavigationFiles, { extractNavItemGroups } from '../utils/fetchNavigationFiles';
 import { Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
+import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 
 const useFavoritedServices = () => {
-  const { favoritePages } = useFavoritePages();
+  const { favoritePages } = useFavoritePagesWrapper();
   const { allLinks } = useAllServices();
   const [bundles, setBundles] = useState<Navigation[]>([]);
 
