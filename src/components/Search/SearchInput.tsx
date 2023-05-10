@@ -42,6 +42,7 @@ BASE_SEARCH.append('hl', 'true'); // enable highlight
 BASE_SEARCH.append('hl.method', 'original'); // choose highlight method
 BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
 BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
+BASE_SEARCH.append('hl.fl', 'allTitles'); // highlight title
 BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
 BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
@@ -93,7 +94,13 @@ const SearchInput = () => {
     () =>
       searchResults.docs.reduce<SearchCategories>(
         (acc, curr) => {
-          if (highlighting[curr.id]?.allTitle) {
+          if (highlighting[curr.id]?.allTitles) {
+            return {
+              ...acc,
+              highLevel: [...acc.highLevel, curr],
+            };
+            // FIXME: Once the new response format is in all envs we can delete this branch. New format returns "allTitles" with extra s.
+          } else if (highlighting[curr.id]?.allTitle) {
             return {
               ...acc,
               highLevel: [...acc.highLevel, curr],

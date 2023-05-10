@@ -1,6 +1,7 @@
 export type SearchResultItem = {
   abstract: string;
-  allTitle: string;
+  allTitle?: string;
+  allTitles?: string;
   bundle: string[];
   bundle_title: string[];
   documentKind: string;
@@ -16,7 +17,7 @@ export type SearchResponseType = {
   maxScore: number;
 };
 
-export type SearchHighlight = { allTitle?: string[]; abstract?: string[]; bundle_title?: string[]; bundle?: string[] };
+export type SearchHighlight = { allTitles?: string[]; allTitle?: string[]; abstract?: string[]; bundle_title?: string[]; bundle?: string[] };
 
 export type HighlightingResponseType = {
   [recordId: string]: SearchHighlight;
