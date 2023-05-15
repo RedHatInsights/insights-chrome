@@ -124,9 +124,13 @@ aside {
     }
   }
   
-// fix quickstarts drawer overflow for long quickstart/helptopic content
 #chrome-entry {
+  // fix quickstarts drawer overflow for long quickstart/helptopic content
   height: 100vh;
+  // fix horizontal scrollbar in entire page at smaller breakpoints
+  .pf-c-drawer.pf-m-inline > .pf-c-drawer__main > .pf-c-drawer__content  {
+    overflow: hidden;
+  }
 }
 
 .chr-c-favorite-trigger {
