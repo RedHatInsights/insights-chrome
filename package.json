@@ -124,6 +124,7 @@
     "@patternfly/react-core": "^4.276.6",
     "@patternfly/react-icons": "4.93.6",
     "@patternfly/react-tokens": "4.94.4",
+    "@patternfly/react-user-feedback": "1.0.9",
     "@redhat-cloud-services/chrome": "^0.0.9",
     "@redhat-cloud-services/entitlements-client": "1.2.0",
     "@redhat-cloud-services/frontend-components": "^3.9.27",
