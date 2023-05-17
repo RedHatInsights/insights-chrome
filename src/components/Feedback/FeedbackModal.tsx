@@ -74,7 +74,8 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            description: `${feedbackType} ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number
+            description: `${feedbackType} ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${
+              user.identity.account_number
               }, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`, //eslint-disable-line
             summary: `${addFeedbackTag()} App Feedback`,
             labels: [app, bundle],
@@ -119,10 +120,10 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
           email={user.identity.user.email}
           feedbackLocale={feedbackLocale}
           onShareFeedback={(email, feedback) => {
-            return handleModalSubmission('Feedback', feedback, email ? true : false);
+            return handleModalSubmission('Feedback', feedback, email && email !== '' ? true : false);
           }}
           onReportABug={(email, bug) => {
-            return handleModalSubmission('Feedback', bug, email ? true : false);
+            return handleModalSubmission('Feedback', bug, email && email !== '' ? true : false);
           }}
           onJoinMailingList={(email) => {
             return handleModalSubmission('[Research Opportunities]', email);
