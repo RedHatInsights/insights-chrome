@@ -1,6 +1,7 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 .chr-c-masthead {
   --pf-c-masthead__content--MinHeight: 48px !important;
+  --pf-c-masthead__main--before--Right: 0;
   .chr-c-brand {
     width: 208px;
   }
