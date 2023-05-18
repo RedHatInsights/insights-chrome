@@ -16,7 +16,7 @@ export type AvailableLinks = {
   [key: string]: NavItem;
 };
 
-const getFirstChildRoute = (routes: NavItem[]): NavItem | undefined => {
+const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
   if (firstLeaf) {
     return firstLeaf;
@@ -25,7 +25,7 @@ const getFirstChildRoute = (routes: NavItem[]): NavItem | undefined => {
   const nestedItems = firstLeaf ? [] : routes.filter((item) => item.expandable);
   // make sure to find first deeply nested item
   nestedItems.every((item) => {
-    childRoute = getFirstChildRoute(item.routes || []);
+    childRoute = getFirstChildRoute(item.routes);
     return !childRoute;
   });
 
@@ -76,7 +76,7 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
     };
     flatLinks.push(bundleLink);
   }
-  return { id: bundle.id, title: bundle.title, links: flatLinks.flat() };
+  return { id: bundle.id, title: bundle.title, links: (flatLinks || []).flat() };
 };
 
 const parseBundlesToObject = (items: NavItem[]): AvailableLinks =>
