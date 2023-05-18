@@ -190,6 +190,10 @@ export function isBeta(pathname?: string) {
   return ['beta', 'preview'].includes(previewFragment);
 }
 
+export function isNotificationsEnabled() {
+  return !isProd(); // let's show the notif drawer in stage for now, once it's populated add || isBeta()
+}
+
 export function getRouterBasename(pathname?: string) {
   const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
   return isBeta(pathname) ? `/${previewFragment}` : '/';

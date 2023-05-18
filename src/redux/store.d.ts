@@ -11,6 +11,14 @@ export type InternalNavigation = {
 
 export type AccessRequest = { request_id: string; created: string; seen: boolean };
 
+export type Notifications = {
+  isExpanded: boolean;
+  data: Array<{
+    isRead: boolean;
+  }>;
+  count: number;
+};
+
 export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
@@ -53,6 +61,7 @@ export type ChromeState = {
   };
   documentTitle?: string;
   gatewayError?: ThreeScaleError;
+  notifications?: Notifications;
 };
 
 export type GlobalFilterWorkloads = {

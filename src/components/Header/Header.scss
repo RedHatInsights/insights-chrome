@@ -71,4 +71,11 @@
     // make sure its under the wrapped items on small screens
     grid-row: 3;
   }
+
+  .pf-c-toolbar__item .pf-c-notification-badge {
+    &.pf-m-unread {
+      --pf-c-notification-badge--after--BackgroundColor: var(--pf-global--palette--red-100);
+      &:hover {--pf-c-notification-badge--after--BackgroundColor: var(--pf-global--palette--red-200)}
+    }
+  }
 }

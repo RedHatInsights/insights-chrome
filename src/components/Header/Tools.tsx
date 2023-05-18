@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AlertActionLink, AlertVariant, Button, Divider, DropdownItem, Switch, ToolbarItem } from '@patternfly/react-core';
+import { AlertActionLink, AlertVariant, Button, Divider, DropdownItem, NotificationBadge, Switch, ToolbarItem } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta, isNotificationsEnabled, isProd } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
+import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import { toggleNotificationsDrawer } from '../../redux/actions';
 
 const isITLessEnv = ITLess();
 
@@ -68,6 +70,9 @@ const Tools = () => {
     isDemoAcc: false,
   });
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
+  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => isRead) || []);
+  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
+  const dispatch = useDispatch();
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const location = useLocation();
@@ -209,9 +214,28 @@ const Tools = () => {
 
   return (
     <>
-      <ToolbarItem>
+      <ToolbarItem
+        {...(isNotificationsEnabled() && {
+          spacer: {
+            default: 'spacerMd',
+          },
+        })}
+      >
         <BetaSwitcher />
       </ToolbarItem>
+      {isNotificationsEnabled() && (
+        <ToolbarItem>
+          <NotificationBadge
+            className="chr-c-notification-badge"
+            variant={unreadNotifications.length === 0 ? 'read' : 'unread'}
+            onClick={() => dispatch(toggleNotificationsDrawer())}
+            aria-label="Notifications"
+            isExpanded={isDrawerExpanded}
+          >
+            <BellIcon />
+          </NotificationBadge>
+        </ToolbarItem>
+      )}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>
           <ThemeToggle />

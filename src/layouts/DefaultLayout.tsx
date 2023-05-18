@@ -15,6 +15,8 @@ import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
 
+import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
+
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
@@ -23,6 +25,7 @@ import { NavigationProps } from '../components/Navigation';
 import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 import { getUrl } from '../hooks/useBundle';
 import useEnableSummitFeature from '../hooks/useEnableSummitFeature';
+import { isNotificationsEnabled } from '../utils/common';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -45,7 +48,12 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
   const enableSummitFeature = useEnableSummitFeature();
-
+  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
+  const drawerPanelRef = useRef<HTMLDivElement>();
+  const focusDrawer = () => {
+    const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
+    tabbableElement.focus();
+  };
   return (
     <Page
       className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
@@ -62,6 +70,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           />
         </Masthead>
       }
+      {...(isNotificationsEnabled() && {
+        onNotificationDrawerExpand: focusDrawer,
+        notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
+        isNotificationDrawerExpanded: isDrawerExpanded,
+      })}
       sidebar={
         (noNav || hideNav) && Sidebar
           ? undefined
