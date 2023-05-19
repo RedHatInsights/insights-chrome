@@ -68,8 +68,8 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
       <Backdrop>
         <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
           <PanelMain>
-            <Sidebar>
-              <SidebarPanel>
+            <Sidebar style={{ height: '698px', overflow: 'auto' }}>
+              <SidebarPanel variant="sticky">
                 <Flex className="pf-u-flex-direction-column pf-u-flex-grow-1">
                   <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
                     <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">

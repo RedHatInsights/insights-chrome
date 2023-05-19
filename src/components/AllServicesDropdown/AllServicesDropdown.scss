@@ -43,7 +43,7 @@
       background: var(--pf-global--BackgroundColor--200);
       border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
     }
-    .pf-c-tabs.pf-m-vertical {
+    .pf-c-tabs {
       background: var(--pf-global--BackgroundColor--200);
       border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
       height: calc(100% - 80px);
@@ -65,46 +65,33 @@
     .chr-l-flex__item-browse-all-services {
       border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
     }
-    .pf-c-card.pf-m-plain {
-      --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
-    }
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;
-      &__main {
-        align-items: stretch;
-        background: var(--pf-global--BackgroundColor--200);
-      }
+      --pf-c-sidebar__panel--BackgroundColor: var(--pf-global--BackgroundColor--200);
       &__panel {
-        background: var(--pf-global--BackgroundColor--200);
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
-      }
-    }
-    .pf-c-tabs {
-      height: calc(100% - 80px);
-      --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
-      --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
-      --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);
-      --pf-c-tabs__link--PaddingLeft: var(--pf-global--spacer--md);
-      --pf-c-tabs__item--m-current__link--Color: var(--pf-global--link--Color);
-      --pf-c-tabs--m-vertical--MaxWidth: 100%;
-      --pf-c-tabs--m-vertical__list--before--BorderColor: transparent;
-      &__link::after {
-        border-color: transparent;
-      }
-      .pf-c-tabs__item:hover, .pf-c-tabs__item:focus {
-        button {
-          color: var(--pf-global--primary-color--200)
+        .pf-c-tabs {
+          --pf-c-tabs__item--m-current__link--after--BorderColor: transparent;
+          --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);
+          --pf-c-tabs--m-vertical__link--PaddingBottom: var(--pf-global--spacer--sm);
+          --pf-c-tabs__link--PaddingRight: var(--pf-global--spacer--md);
+          --pf-c-tabs__link--PaddingLeft: var(--pf-global--spacer--md);
+          --pf-c-tabs__item--m-current__link--Color: var(--pf-global--link--Color);
+          --pf-c-tabs--m-vertical--MaxWidth: 100%;
+          --pf-c-tabs--m-vertical__list--before--BorderColor: transparent;
+          .pf-c-tabs__item:hover, .pf-c-tabs__item:focus {
+            button {
+              color: var(--pf-global--primary-color--200)
+            }
+          } 
+          .pf-c-tabs__item.pf-m-current {
+            --pf-c-tabs__link--BackgroundColor: var(--pf-global--BackgroundColor--100);
+          }
         }
-      } 
-      .pf-c-tabs__item.pf-m-current {
-        --pf-c-tabs__link--BackgroundColor: var(--pf-global--BackgroundColor--100);
+      }
+      .pf-c-card {
+        --pf-c-card--first-child--PaddingTop: var(--pf-global--spacer--md);
       }
     }
-  }
-  .pf-c-tabs {
-    --pf-c-tabs__toggle-button--MarginTop: 0;
-    --pf-c-tabs__toggle-button--MarginBottom: 0;
-    --pf-c-tabs__toggle-button--MarginLeft: 0;
-    --pf-c-tabs__toggle--MarginBottom: 0;
   }
 }
