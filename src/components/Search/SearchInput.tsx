@@ -17,6 +17,7 @@ import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
 import { isProd } from '../../utils/common';
+import { useSegment } from '../../analytics/useSegment';
 
 const IS_PROD = isProd();
 const REPLACE_TAG = 'REPLACE_TAG';
@@ -82,6 +83,7 @@ const SearchInput = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
   const [highlighting, setHighlighting] = useState<HighlightingResponseType>({});
+  const { ready, analytics } = useSegment();
 
   const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
@@ -196,6 +198,9 @@ const SearchInput = () => {
           setHighlighting(highlighting);
           // make sure to calculate resize when switching from loading to sucess state
           handleWindowResize();
+        }
+        if (ready && analytics) {
+          analytics.track('chrome.search-query', { query: value });
         }
       })
       .finally(() => {
