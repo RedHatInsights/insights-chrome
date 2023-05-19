@@ -25,7 +25,7 @@ import { NavigationProps } from '../components/Navigation';
 import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 import { getUrl } from '../hooks/useBundle';
 import useEnableSummitFeature from '../hooks/useEnableSummitFeature';
-import { isNotificationsEnabled } from '../utils/common';
+import { useFlag } from '@unleash/proxy-client-react';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -54,6 +54,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
     tabbableElement.focus();
   };
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   return (
     <Page
       className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
@@ -70,7 +71,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           />
         </Masthead>
       }
-      {...(isNotificationsEnabled() && {
+      {...(isNotificationsEnabled && {
         onNotificationDrawerExpand: focusDrawer,
         notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
         isNotificationDrawerExpanded: isDrawerExpanded,

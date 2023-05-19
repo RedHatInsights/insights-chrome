@@ -10,7 +10,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, isBeta, isNotificationsEnabled, isProd } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -84,6 +84,7 @@ const Tools = () => {
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
   const previewEnabled = useFlag('platform.chrome.preview');
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
@@ -215,7 +216,7 @@ const Tools = () => {
   return (
     <>
       <ToolbarItem
-        {...(isNotificationsEnabled() && {
+        {...(isNotificationsEnabled && {
           spacer: {
             default: 'spacerMd',
           },
@@ -223,7 +224,7 @@ const Tools = () => {
       >
         <BetaSwitcher />
       </ToolbarItem>
-      {isNotificationsEnabled() && (
+      {isNotificationsEnabled && (
         <ToolbarItem>
           <NotificationBadge
             className="chr-c-notification-badge"

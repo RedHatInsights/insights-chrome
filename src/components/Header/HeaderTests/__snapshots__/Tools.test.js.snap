@@ -2,7 +2,7 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-c-toolbar__item"
+  class="pf-c-toolbar__item pf-m-spacer-md"
 >
   <label
     class="pf-c-switch pf-m-reverse chr-c-beta-switcher"
