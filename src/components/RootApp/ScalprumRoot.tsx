@@ -28,6 +28,7 @@ import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -51,6 +52,9 @@ const ScalprumRoot = memo(
     const libJwt = useContext(LibtJWTContext);
     const store = useStore<ReduxState>();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
+
+    // initialize WS event handling
+    useChromeServiceEvents();
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
 

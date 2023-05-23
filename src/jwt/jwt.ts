@@ -442,6 +442,8 @@ export async function setCookie(token?: string) {
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=wss://;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=ws://;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/tasks/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/automation-hub;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(tok).exp)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/remediations/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
