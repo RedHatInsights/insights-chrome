@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
-import { ITLess, getChromeStaticPathname, isBeta } from '../../utils/common';
+import { getChromeStaticPathname, isBeta } from '../../utils/common';
 import './LandingNav.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -26,7 +26,7 @@ const LandingNav = () => {
       },
     }: ReduxState) => landingPage
   );
-  const modules = useSelector((state: ReduxState) => state.chrome.modules);
+  //const modules = useSelector((state: ReduxState) => state.chrome.modules);
   useEffect(() => {
     if (showNav) {
       setElementReady(true);
@@ -65,11 +65,9 @@ const LandingNav = () => {
                 isNavOpen,
               }}
             >
-              {schema
-                .filter(({ appId }) => (appId && ITLess() ? modules?.[appId]?.isFedramp === true : true))
-                .map((item, index) => (
-                  <ChromeNavItemFactory key={index} {...item} />
-                ))}
+              {schema.map((item, index) => (
+                <ChromeNavItemFactory key={index} {...item} />
+              ))}
             </NavContext.Provider>
           )}
         </PageContextConsumer>

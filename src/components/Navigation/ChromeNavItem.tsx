@@ -11,7 +11,6 @@ import get from 'lodash/get';
 import { isBeta } from '../../utils/common';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
 import { useDispatch, useSelector } from 'react-redux';
-import useRenderFedramp from '../../utils/useRenderFedramp';
 import { markActiveProduct } from '../../redux/actions';
 import { ChromeNavItemProps } from '../../@types/types';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
@@ -30,7 +29,6 @@ const ChromeNavItem = ({
   notifier = '',
 }: ChromeNavItemProps) => {
   const hasNotifier = useSelector((state) => get(state, notifier));
-  const renderFedramp = useRenderFedramp(appId, href);
   const dispatch = useDispatch();
   const { favoritePages } = useFavoritePagesWrapper();
   const isFavorited = useMemo(() => favoritePages.find(({ favorite, pathname }) => favorite && pathname === href), [href, favoritePages]);
@@ -40,9 +38,6 @@ const ChromeNavItem = ({
       dispatch(markActiveProduct(product));
     }
   }, [active]);
-  if (renderFedramp !== true) {
-    return null;
-  }
 
   if (isHidden) {
     return null;

@@ -325,16 +325,18 @@ export const chromeServiceStaticPathname = {
   beta: {
     stage: '/static/beta/stage',
     prod: '/static/beta/prod',
+    itless: '/static/beta/itless',
   },
   stable: {
     stage: '/static/stable/stage',
     prod: '/static/stable/prod',
+    itless: '/static/stable/itless',
   },
 };
 
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services') {
   const stableEnv = isBeta() ? 'beta' : 'stable';
-  const prodEnv = isProd() ? 'prod' : 'stage';
+  const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
@@ -357,7 +359,7 @@ export const loadFedModules = async () =>
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
   Object.entries(modules)
     .reduce<RouteDefinition[]>(
-      (acc, [scope, { dynamic, manifestLocation, isFedramp, modules = [] }]) => [
+      (acc, [scope, { dynamic, manifestLocation, modules = [] }]) => [
         ...acc,
         ...modules
           .map(({ module, routes }) =>
@@ -365,7 +367,6 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
             routes.map((route) => ({
               scope,
               module,
-              isFedramp: typeof route === 'string' ? isFedramp : route.isFedramp,
               path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
