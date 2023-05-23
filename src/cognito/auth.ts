@@ -56,6 +56,7 @@ export async function getTokenWithAuthorizationCode() {
 
   const redirectUri = dataConfig?.redirectUri;
   if (!code && !refreshToken) {
+    localStorage.clear();
     window.location.href = loginUrl;
   }
   if (refreshToken) {
@@ -68,6 +69,7 @@ export async function getTokenWithAuthorizationCode() {
         body: `grant_type=refresh_token&client_id=${dataConfig?.ClientId}&refresh_token=${localStorage.getItem('REFRESH_TOKEN')}`,
       });
       if (!response.ok) {
+        localStorage.clear();
         window.location.href = loginUrl;
         throw new Error(`Request failed with status code ${response.status}`);
       }

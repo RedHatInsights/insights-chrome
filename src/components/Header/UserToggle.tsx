@@ -6,7 +6,7 @@ import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip'
 import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
-import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, getEnv, isInt, isProd as isProdEnv } from '../../utils/common';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -58,7 +58,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     </React.Fragment>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
-      {!isITLessEnv && (
+      {!isITLessEnv && !isInt() && (
         <DropdownItem
           key="My Profile"
           to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}

@@ -1,8 +1,9 @@
 import consts, { OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
-import { DEFAULT_SSO_ROUTES } from '../utils/common';
+import { DEFAULT_SSO_ROUTES, isEphem, isInt } from '../utils/common';
 
+const int = isInt();
 type Priv = {
   postbackUrl?: string;
   response?: AxiosResponse;
@@ -83,11 +84,12 @@ export function getPostbackUrl() {
 }
 
 export function getPostDataObject(url: string, clientId: string, code: string) {
+  const intRedirectUrl = int ? 'https://console.int.openshiftusgov.com/' : 'https://ephem.outrights.cc';
   return {
     code: code,
     grant_type: 'authorization_code', // eslint-disable-line camelcase
-    client_id: clientId, // eslint-disable-line camelcase
-    redirect_uri: encodeURIComponent(url.split('#')[0]), // eslint-disable-line camelcase
+    client_id: isEphem() ? 'console-dot' : clientId, // eslint-disable-line camelcase
+    redirect_uri: isEphem() ? intRedirectUrl : encodeURIComponent(url.split('#')[0]), // eslint-disable-line camelcase
   };
 }
 

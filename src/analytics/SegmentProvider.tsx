@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { ITLess, isBeta, isProd } from '../utils/common';
+import { ITLess, isBeta, isInt, isProd } from '../utils/common';
 import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -156,8 +156,9 @@ export type SegmentProviderProps = {
 const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> = ({ activeModule, children }) => {
   const initialized = useRef(false);
   const isITLessEnv = ITLess();
-  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;
-  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
+  const isIntEnv = isInt();
+  const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv || isIntEnv;
+  const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv || isIntEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);

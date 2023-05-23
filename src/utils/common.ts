@@ -38,9 +38,19 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://console.stage.openshiftusgov.com',
   },
   frhStage: {
+    url: ['console.stage.openshiftusgov.com'],
+    sso: 'https://ocm-ra-stage-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
+    portal: 'https://console.stage.openshiftusgov.com',
+  },
+  ephem: {
     url: ['ephem.outsrights.cc'],
-    sso: 'https://stage-gov-console.auth.us-east-1.amazoncognito.com/login',
+    sso: 'https://keycloak-fips-test.apps.fips-key.2vn8.p1.openshiftapps.com',
     portal: 'https://ephem.outsrights.cc/',
+  },
+  int: {
+    url: ['console.int.openshiftusgov.com'],
+    sso: 'https://sso.int.openshiftusgov.com/',
+    portal: 'https://console.int.openshiftusgov.com/',
   },
   dev: {
     url: ['dev.foo.redhat.com', 'console.dev.redhat.com', 'us.console.dev.redhat.com'],
@@ -199,6 +209,14 @@ export function ITLess() {
   return getEnv() === 'frh' || getEnv() === 'frhStage';
 }
 
+export function isEphem() {
+  return getEnv() === 'ephem' || getEnv() === 'int';
+}
+
+export function isInt() {
+  return getEnv() === 'int';
+}
+
 export function updateDocumentTitle(title?: string, noSuffix = false) {
   const titleSuffix = `| ${useBundle().bundleTitle}`;
   if (typeof title === 'undefined') {
@@ -325,16 +343,18 @@ export const chromeServiceStaticPathname = {
   beta: {
     stage: '/static/beta/stage',
     prod: '/static/beta/prod',
+    itless: '/static/beta/itless',
   },
   stable: {
     stage: '/static/stable/stage',
     prod: '/static/stable/prod',
+    itless: '/static/stable/itless',
   },
 };
 
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services') {
   const stableEnv = isBeta() ? 'beta' : 'stable';
-  const prodEnv = isProd() ? 'prod' : 'stage';
+  const prodEnv = isProd() ? 'prod' : ITLess() || isEphem() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
@@ -374,7 +394,7 @@ export const loadFedModules = async () =>
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
   Object.entries(modules)
     .reduce<RouteDefinition[]>(
-      (acc, [scope, { dynamic, manifestLocation, isFedramp, modules = [] }]) => [
+      (acc, [scope, { dynamic, manifestLocation, modules = [] }]) => [
         ...acc,
         ...modules
           .map(({ module, routes }) =>
@@ -382,7 +402,6 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
             routes.map((route) => ({
               scope,
               module,
-              isFedramp: typeof route === 'string' ? isFedramp : route.isFedramp,
               path: typeof route === 'string' ? route : route.pathname,
               manifestLocation,
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,

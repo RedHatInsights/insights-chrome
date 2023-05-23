@@ -9,6 +9,7 @@ import {
   deleteLocalStorageItems,
   getRouterBasename,
   isBeta as isBetaFunction,
+  isEphem,
   pageRequiresAuthentication,
 } from '../utils/common';
 import * as Sentry from '@sentry/react';
@@ -28,6 +29,7 @@ const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
 const priv = new Priv();
 const itLessEnv = ITLess();
+const ephem = isEphem();
 
 enum AllowedPartnerScopes {
   aws = 'aws',
@@ -134,7 +136,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
       scopes.push(partnerScope);
     }
 
-    if (ssoScopes) {
+    if (ssoScopes && !ephem) {
       try {
         // make sure add openid scope when custom scope is used
         scopes.push('openid', JSON.parse(ssoScopes));
@@ -197,7 +199,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
     return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_SSO_ROUTES, configSsoUrl)).then((ssoUrl) => {
       //constructor for new Keycloak Object?
       options.url = ssoUrl;
-      options.clientId = 'cloud-services';
+      options.clientId = ephem ? 'console-dot' : 'cloud-services';
       options.realm = 'redhat-external';
 
       //options for keycloak.init method

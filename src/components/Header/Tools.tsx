@@ -17,7 +17,7 @@ import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection, isBeta, isInt } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -139,7 +139,7 @@ const Tools = () => {
       title: `${intl.formatMessage(messages.openSupportCase)}`,
       onClick: () => createSupportCase(user.identity, libjwt),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
-      isHidden: isITLessEnv,
+      isHidden: isITLessEnv || isInt(),
     },
     {
       title: `${intl.formatMessage(messages.statusPage)}`,
