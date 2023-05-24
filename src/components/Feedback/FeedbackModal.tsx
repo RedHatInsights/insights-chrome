@@ -153,7 +153,7 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
             modalTitle={intl.formatMessage(messages.informRedhatDirection)}
             modalDescription={
               <Text>
-                {intl.formatMessage(messages.informDirectionDescription)}
+                {intl.formatMessage(messages.informDirectionDescription)}&nbsp;
                 <Text component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
                   {intl.formatMessage(messages.userResearchTeam)}
                 </Text>
