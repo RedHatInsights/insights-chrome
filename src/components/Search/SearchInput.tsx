@@ -84,6 +84,7 @@ const SearchInput = () => {
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
   const [highlighting, setHighlighting] = useState<HighlightingResponseType>({});
   const { ready, analytics } = useSegment();
+  const blockCloseEvent = useRef(false);
 
   const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
@@ -136,14 +137,19 @@ const SearchInput = () => {
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (isOpen && !menuRef.current?.contains(event.target as Node)) {
+    if (!blockCloseEvent.current && isOpen && !menuRef.current?.contains(event.target as Node)) {
       setIsOpen(false);
     }
+    // unblock the close event to prevent unwanted hanging dropdown menu on subsequent input clicks
+    blockCloseEvent.current = false;
   };
 
-  const onInputClick: SearchInputProps['onClick'] = (ev) => {
-    ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
-    searchResults.numFound > 0 && setIsOpen(true);
+  const onInputClick: SearchInputProps['onClick'] = () => {
+    if (!isOpen && searchResults.numFound > 0) {
+      setIsOpen(true);
+      // can't use event.stoppropagation because it will block other opened menus from triggering their close event
+      blockCloseEvent.current = true;
+    }
   };
 
   const onToggleKeyDown: SearchInputProps['onKeyDown'] = (ev) => {
