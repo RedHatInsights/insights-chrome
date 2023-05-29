@@ -1,0 +1,35 @@
+name: Dev beta build deployment
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - master
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'
+      # cache node modules for all jobs to use
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: | 
+            **/node_modules
+            /home/runner/.cache/Cypress
+            /home/runner/build
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i # use cached modules
+      - run: BETA=true npm run build:dev
+      # TODO: run the deployment script

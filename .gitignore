@@ -29,6 +29,8 @@ cypress/screenshots
 
 # cache
 .cache
+.webpack-cache
+.cypress-cache
 
 #swc
 .swc

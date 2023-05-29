@@ -6,7 +6,6 @@ global.MutationObserver = class {
   observe(element, initObject) {}
 };
 
-global.fetch = require('jest-fetch-mock');
 global.window = Object.create(window);
 
 Object.defineProperty(global.window.document, 'cookie', {

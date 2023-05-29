@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, master-stable ]
+  pull_request:
+    branches: [ master, master-stable ]
+
+jobs:
+  # prerequisite for all jobs, install node modules only once
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'
+      # cache node modules for all jobs to use
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: | 
+            **/node_modules
+            /home/runner/.cache/Cypress
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i # use cached modules
+  # unit testing job
+  test-unit:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: "**/node_modules"
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i
+      - run: npm run test -- --coverage
+      - uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/clover.xml
+  # lint
+  lint:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: "**/node_modules"
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i
+      - run: npm run lint
+  # cypress component testing
+  test-e2e:
+    runs-on: ubuntu-latest
+    needs: [install]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'      
+      # consume installed modules
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: "**/node_modules"
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}        
+      # custom cypress cache, caches cypress and cypress webpack node module dependencies based on lock file
+      - uses: actions/cache@v3
+        id: cypress-cache
+        with:
+          path: | 
+            /home/runner/.cache/Cypress
+            **/.cypress-cache 
+          key: cypress-install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - uses: cypress-io/github-action@v5
+        with:
+            component: true
+            install-command: npm i
+  # build job
+  build:
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.1
+          cache: 'npm'
+      - uses: actions/cache@v3
+        id: node_modules-cache
+        with:
+          path: "**/node_modules"
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i
+      - run: npm run build

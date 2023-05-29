@@ -72,6 +72,13 @@ module.exports = {
     hashFunction: 'xxhash64',
     path: path.resolve(__dirname, 'dist'),
   },
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
+    cacheDirectory: path.resolve(__dirname, '../.cypress-cache'),
+  },
   stats: {
     errorDetails: true,
   },
