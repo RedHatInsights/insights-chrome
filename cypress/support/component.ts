@@ -46,6 +46,7 @@ declare global {
     interface Chainable {
       mount: typeof mount
       matchImageSnapshot: () => void
+      login(): Chainable<void>
     }
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
 // This example support/e2e.ts is processed and
 // loaded automatically before your test files.
@@ -18,3 +19,12 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      E2E_USER: string;
+      E2E_PASSWORD: string;
+    }
+  }
+}

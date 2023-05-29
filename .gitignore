@@ -32,3 +32,4 @@ cypress/screenshots
 
 #swc
 .swc
+.cypress_cache
