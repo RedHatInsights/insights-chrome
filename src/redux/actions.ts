@@ -202,3 +202,7 @@ export const setGatewayError = (error?: ThreeScaleError) => ({
   type: actionTypes.SET_GATEWAY_ERROR,
   payload: error,
 });
+
+export const toggleNotificationsDrawer = () => ({
+  type: actionTypes.TOGGLE_NOTIFICATIONS_DRAWER,
+});

@@ -54,7 +54,7 @@ To run a script you have to install dependencies `npm install`. Then you are fre
     > npm run dev
     ```
 
-3. Open browser at `https://stage.foo.redhat.com:1337/`.
+3. Open browser at `https://stage.foo.redhat.com:1337/` or Open browser at `https://stage.foo.redhat.com:1337/preview`.
 
 ### Running chrome as a host application.
 

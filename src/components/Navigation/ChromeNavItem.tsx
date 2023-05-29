@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useRenderFedramp from '../../utils/useRenderFedramp';
 import { markActiveProduct } from '../../redux/actions';
 import { ChromeNavItemProps } from '../../@types/types';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 const ChromeNavItem = ({
   appId,
@@ -32,7 +32,7 @@ const ChromeNavItem = ({
   const hasNotifier = useSelector((state) => get(state, notifier));
   const renderFedramp = useRenderFedramp(appId, href);
   const dispatch = useDispatch();
-  const { favoritePages } = useFavoritePages();
+  const { favoritePages } = useFavoritePagesWrapper();
   const isFavorited = useMemo(() => favoritePages.find(({ favorite, pathname }) => favorite && pathname === href), [href, favoritePages]);
 
   useEffect(() => {

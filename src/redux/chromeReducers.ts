@@ -332,3 +332,13 @@ export function setGatewayError(state: ChromeState, { payload }: { payload?: Thr
     gatewayError: payload,
   };
 }
+
+export function toggleNotificationsReducer(state: ChromeState) {
+  return {
+    ...state,
+    notifications: {
+      ...state.notifications,
+      isExpanded: !state.notifications?.isExpanded,
+    },
+  };
+}
