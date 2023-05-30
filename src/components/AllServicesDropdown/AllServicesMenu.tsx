@@ -6,7 +6,6 @@ import {
   CardActions,
   CardBody,
   CardHeader,
-  Flex,
   FlexItem,
   Icon,
   Panel,
