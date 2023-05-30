@@ -141,7 +141,7 @@ describe('ScalprumRoot', () => {
           }}
         >
           <Provider store={store}>
-            <MemoryRouter initialEntries={['/']}>
+            <MemoryRouter initialEntries={['/*']}>
               <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
             </MemoryRouter>
           </Provider>
