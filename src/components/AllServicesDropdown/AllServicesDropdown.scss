@@ -63,13 +63,29 @@
 @media (min-width: $pf-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-flex__item-browse-all-services {
-      border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);
+      border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--dark-100);  
+      bottom: 0;
+      position: absolute;
     }
+
     .pf-c-sidebar {
       --pf-c-sidebar__panel--md--FlexBasis: 20rem;
       --pf-c-sidebar__panel--BackgroundColor: var(--pf-global--BackgroundColor--200);
+      &__main {
+        height: 80vh;  
+      }
+      &__content {
+        height: 80vh;  
+        overflow: scroll;
+      }
       &__panel {
+        height: 80vh;
+        position: relative;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
+        .chr-l-flex__item-tabs {
+          overflow: scroll;
+          padding-bottom: var(--pf-global--spacer--2xl);
+        }
         .pf-c-tabs {
           --pf-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-c-tabs--m-vertical__link--PaddingTop: var(--pf-global--spacer--sm);

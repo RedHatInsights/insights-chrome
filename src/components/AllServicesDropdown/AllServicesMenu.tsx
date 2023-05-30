@@ -68,34 +68,32 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
       <Backdrop>
         <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
           <PanelMain>
-            <Sidebar style={{ height: '698px', overflow: 'auto' }}>
-              <SidebarPanel variant="sticky">
-                <Flex className="pf-u-flex-direction-column pf-u-flex-grow-1">
-                  <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
-                    <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">
-                      <Text component={TextVariants.p}>
-                        <ChromeLink href="/allservices">
-                          <Icon className="pf-u-mr-sm" isInline>
-                            <BookOpenIcon />
-                          </Icon>
-                          Browse all services
-                        </ChromeLink>
-                      </Text>
-                    </TextContent>
-                  </FlexItem>
-                  <FlexItem order={{ default: '2', md: '1' }} className="pf-u-w-100">
-                    <AllServicesTabs
-                      activeTabKey={activeTabKey}
-                      handleTabClick={handleTabClick}
-                      isExpanded={isExpanded}
-                      onToggle={onToggle}
-                      linkSections={linkSections}
-                      tabContentRef={tabContentRef}
-                      onTabClick={onTabClick}
-                      activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                    />
-                  </FlexItem>
-                </Flex>
+            <Sidebar>
+              <SidebarPanel className="pf-l-flex pf-u-flex-direction-column">
+                <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
+                  <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">
+                    <Text component={TextVariants.p}>
+                      <ChromeLink href="/allservices">
+                        <Icon className="pf-u-mr-sm" isInline>
+                          <BookOpenIcon />
+                        </Icon>
+                        Browse all services
+                      </ChromeLink>
+                    </Text>
+                  </TextContent>
+                </FlexItem>
+                <FlexItem order={{ default: '2', md: '1' }} className="chr-l-flex__item-tabs pf-u-w-100">
+                  <AllServicesTabs
+                    activeTabKey={activeTabKey}
+                    handleTabClick={handleTabClick}
+                    isExpanded={isExpanded}
+                    onToggle={onToggle}
+                    linkSections={linkSections}
+                    tabContentRef={tabContentRef}
+                    onTabClick={onTabClick}
+                    activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                  />
+                </FlexItem>
               </SidebarPanel>
               <SidebarContent>
                 <Card isPlain>
