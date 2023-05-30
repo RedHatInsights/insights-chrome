@@ -20,7 +20,6 @@ import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/type
 import { createGetUser } from '../../auth';
 import LibtJWTContext from '../LibJWTContext';
 import { createChromeContext } from '../../chrome/create-chrome';
-import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer, { FooterProps } from '../Footer/Footer';
@@ -28,7 +27,6 @@ import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess } from '../../utils/common';
-import useEnableSummitFeature from '../../hooks/useEnableSummitFeature';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -48,7 +46,6 @@ const ScalprumRoot = memo(
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
-    const enableSummitFeature = useEnableSummitFeature();
 
     const libJwt = useContext(LibtJWTContext);
     const store = useStore<ReduxState>();
@@ -180,13 +177,7 @@ const ScalprumRoot = memo(
           <Route
             index
             path="/"
-            element={
-              <DefaultLayout
-                Sidebar={enableSummitFeature ? undefined : LandingNav}
-                Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />}
-                {...props}
-              />
-            }
+            element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
           />
           <Route
             path="/connect/products"

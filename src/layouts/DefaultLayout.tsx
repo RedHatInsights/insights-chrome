@@ -22,9 +22,7 @@ import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
-import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 import { getUrl } from '../hooks/useBundle';
-import useEnableSummitFeature from '../hooks/useEnableSummitFeature';
 import { useFlag } from '@unleash/proxy-client-react';
 
 type ShieldedRootProps = {
@@ -47,7 +45,6 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
-  const enableSummitFeature = useEnableSummitFeature();
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const drawerPanelRef = useRef<HTMLDivElement>();
   const focusDrawer = () => {
@@ -61,7 +58,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
         <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
-          {!enableSummitFeature ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{
               isNavOpen,
