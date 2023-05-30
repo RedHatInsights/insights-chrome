@@ -2,20 +2,20 @@ import React from 'react';
 import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
 import classNames from 'classnames';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
 const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
   const bundle = bundleMapping[href.split('/')[1]];
-  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
+  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
 
-  const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
+  const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {
       unfavoritePage(pathname);
     } else {
@@ -49,7 +49,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleFavouriteToggle(href, isFavorite);
+                    handleFavoriteToggle(href, isFavorite);
                   }}
                   icon={
                     <Icon

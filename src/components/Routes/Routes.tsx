@@ -26,6 +26,10 @@ const redirects = [
     path: '/quay',
     to: '/quay/organization',
   },
+  {
+    path: '/hac',
+    to: '/hac/application-pipeline',
+  },
 ];
 
 export type RoutesProps = {

@@ -22,7 +22,7 @@ export const requiredBundles = [
   'settings',
   'iam',
   'quay',
-  ...(isBeta() && !isProd() ? ['business-services'] : []),
+  ...(isBeta() && !isProd() ? ['business-services', 'subscription-services'] : []),
 ];
 
 const bundlesOrder = [
@@ -37,6 +37,7 @@ const bundlesOrder = [
   'iam',
   'quay',
   'business-services',
+  'subscription-services',
 ];
 
 const isITLessEnv = ITLess();

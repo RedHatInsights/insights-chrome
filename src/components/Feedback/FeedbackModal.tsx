@@ -98,7 +98,6 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
   const env = window.insights.chrome.getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen));
-
   return (
     <React.Fragment>
       <Button

@@ -6,7 +6,7 @@ import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
 
 import './ServiceTile.scss';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type ServiceTileProps = {
   name: React.ReactNode;
@@ -17,7 +17,7 @@ export type ServiceTileProps = {
 
 const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTileProps) => {
   const bundle = bundleMapping[pathname.split('/')[1]];
-  const { unfavoritePage } = useFavoritePages();
+  const { unfavoritePage } = useFavoritePagesWrapper();
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>

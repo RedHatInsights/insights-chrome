@@ -20,7 +20,7 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }: BetaInfoM
             <InfoCircleIcon />
           </Icon>
           <TextContent>
-            <Text component="h2">{`${menuItemClicked} is only available in our Beta Environment`}</Text>
+            <Text component="h2">{`${menuItemClicked} is only available in our Preview Environment`}</Text>
             <Text component="p">{intl.formatMessage(messages.tryThisFeatureInBeta)}</Text>
             <Text component="p">{intl.formatMessage(messages.afterBetaUse)}</Text>
           </TextContent>

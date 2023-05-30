@@ -2,7 +2,7 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
 .chr-c-all-services {
-  .pf-c-text-input-group__icon {
+  .chr-c-all-services-filter .pf-c-text-input-group__icon {
     display: none;
   }
   .chr-c-icon-filter {

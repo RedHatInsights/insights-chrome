@@ -73,8 +73,8 @@ const FeatureFlagsProvider: React.FC = ({ children }) => {
           ...(user
             ? {
                 properties: {
-                  account_number: user.identity.account_number,
-                  email: user.identity.user.email,
+                  account_number: user?.identity.account_number,
+                  email: user?.identity.user.email,
                 },
               }
             : {}),
