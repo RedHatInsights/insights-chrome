@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
@@ -8,12 +8,14 @@ import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import { AllServicesDropdownContext } from './common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
 const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
   const bundle = bundleMapping[href.split('/')[1]];
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
+  const { onLinkClick } = useContext(AllServicesDropdownContext);
 
   const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {
@@ -33,6 +35,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
         isFullHeight
         isFlat
         isSelectableRaised
+        onClick={onLinkClick}
       >
         <CardBody className="pf-u-p-md">
           <Split>
