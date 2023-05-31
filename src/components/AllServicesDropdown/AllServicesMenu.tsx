@@ -63,7 +63,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
 
   const tabContentRef = React.createRef<HTMLElement>();
 
-  return (    
+  return (
     <AllServicesDropdownContext.Provider
       value={{
         onLinkClick() {
