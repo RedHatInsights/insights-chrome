@@ -35,6 +35,8 @@ env:
   global:
     - REPO="git@github.com:RedHatInsights/insights-chrome-build"
     - REPO_DIR="insights-chrome-build"
+    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    - SENTRY_AUTH_KEY=${SENTRY_AUTH_KEY}
 cache:
   directories:
     - "$HOME/.npm"

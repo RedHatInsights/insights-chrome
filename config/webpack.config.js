@@ -51,7 +51,7 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: false,
+    devtool: process.env.BRANCH === 'prod-beta' ? 'hidden-source-map' : false,
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
