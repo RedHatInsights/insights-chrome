@@ -21,7 +21,6 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-import { entries } from 'lodash';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -94,17 +93,15 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         </MastheadBrand>
         <Toolbar isFullHeight style={{ display: 'flex', justifyContent: 'end' }}>
           <ToolbarContent>
-            <div>
-                <div ref={ elementRef1 }>
-                  <ToolbarGroup
-                    alignment={{ default: 'alignRight' }}
-                    className="pf-m-icon-button-group"
-                    widget-type="InsightsToolbar"
-                    visibility={{ '2xl': 'hidden' }}
-                  >
-                    <HeaderTools />
-                  </ToolbarGroup>
-              </div>
+            <div ref={ elementRef1 }>
+              <ToolbarGroup
+                alignment={{ default: 'alignRight' }}
+                className="pf-m-icon-button-group"
+                widget-type="InsightsToolbar"
+                visibility={{ '2xl': 'hidden' }}
+              >
+                <HeaderTools />
+              </ToolbarGroup>
             </div>
           </ToolbarContent>
         </Toolbar>
@@ -130,16 +127,14 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
               <SearchInput />
             </ToolbarGroup>
-            <div>
-              <div ref={ elementRef2 }>
-                <ToolbarGroup
-                  className="pf-m-icon-button-group pf-u-ml-auto"
-                  visibility={{ default: 'hidden', '2xl': 'visible' }}
-                  widget-type="InsightsToolbar"
-                >  
-                  <HeaderTools />   
-                </ToolbarGroup>
-              </div>
+            <div ref={ elementRef2 }>
+              <ToolbarGroup
+                className="pf-m-icon-button-group pf-u-ml-auto"
+                visibility={{ default: 'hidden', '2xl': 'visible' }}
+                widget-type="InsightsToolbar"
+              >  
+                <HeaderTools />   
+              </ToolbarGroup>
             </div>
           </ToolbarContent>
         </Toolbar>
