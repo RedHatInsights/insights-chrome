@@ -99,7 +99,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         <MastheadBrand className="pf-u-flex-shrink-0 pf-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
-        <Toolbar isFullHeight>
+        <Toolbar isFullHeight style={{ display: 'flex', justifyContent: 'end' }}>
           <ToolbarContent>
             <div>
                 <div ref={ elementRef1 }>
@@ -109,7 +109,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                     widget-type="InsightsToolbar"
                     visibility={{ '2xl': 'hidden' }}
                   >
-                        <HeaderTools />
+                    <HeaderTools />
                   </ToolbarGroup>
               </div>
             </div>
@@ -144,7 +144,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                   visibility={{ default: 'hidden', '2xl': 'visible' }}
                   widget-type="InsightsToolbar"
                 >  
-                      <HeaderTools />   
+                  <HeaderTools />   
                 </ToolbarGroup>
               </div>
             </div>
