@@ -54,13 +54,13 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const resizeOperator = () => {
     const windowWidth = window.innerWidth;
     if (windowWidth >= 1450) {
-        setIsElement1Visible(false);
-        setIsElement2Visible(true);
+      setIsElement1Visible(false);
+      setIsElement2Visible(true);
     } else {
-        setIsElement1Visible(true);
-        setIsElement2Visible(false);
+      setIsElement1Visible(true);
+      setIsElement2Visible(false);
     }
-  }
+  };
 
   useEffect(() => {
     setElement1Parent(elementRef1.current!.parentElement);
@@ -69,21 +69,21 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
     window.addEventListener('resize', resizeOperator);
   }, []);
 
-  useEffect (() => {
+  useEffect(() => {
     if (isElement1Visible && element1Parent) {
       element1Parent.appendChild(elementRef1.current!);
     } else {
       elementRef1.current?.parentElement?.removeChild(elementRef1.current);
     }
-  }, [isElement1Visible])
+  }, [isElement1Visible]);
 
-  useEffect (() => {
+  useEffect(() => {
     if (isElement2Visible && element2Parent) {
       element2Parent.appendChild(elementRef2.current!);
     } else {
       elementRef2.current?.parentElement?.removeChild(elementRef2.current);
     }
-  }, [isElement2Visible])
+  }, [isElement2Visible]);
 
   return (
     <Fragment>
@@ -93,7 +93,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         </MastheadBrand>
         <Toolbar isFullHeight style={{ display: 'flex', justifyContent: 'end' }}>
           <ToolbarContent>
-            <div ref={ elementRef1 }>
+            <div ref={elementRef1}>
               <ToolbarGroup
                 alignment={{ default: 'alignRight' }}
                 className="pf-m-icon-button-group"
@@ -127,13 +127,13 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
               <SearchInput />
             </ToolbarGroup>
-            <div ref={ elementRef2 }>
+            <div ref={elementRef2}>
               <ToolbarGroup
                 className="pf-m-icon-button-group pf-u-ml-auto"
                 visibility={{ default: 'hidden', '2xl': 'visible' }}
                 widget-type="InsightsToolbar"
-              >  
-                <HeaderTools />   
+              >
+                <HeaderTools />
               </ToolbarGroup>
             </div>
           </ToolbarContent>
