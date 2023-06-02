@@ -53,7 +53,6 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const [element2Parent, setElement2Parent] = useState<Element | null>(null);
 
   const resizeOperator = () => {
-    console.log(window.innerWidth);
     const windowWidth = window.innerWidth;
     if (windowWidth >= 1450) {
         setIsElement1Visible(false);
@@ -72,23 +71,17 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   }, []);
 
   useEffect (() => {
-    console.log("element 1 changed")
     if (isElement1Visible && element1Parent) {
-      console.log("element 1 add")
       element1Parent.appendChild(elementRef1.current!);
     } else {
-      console.log("element 1 remove")
       elementRef1.current?.parentElement?.removeChild(elementRef1.current);
     }
   }, [isElement1Visible])
 
   useEffect (() => {
-    console.log("element 2 changed")
     if (isElement2Visible && element2Parent) {
-      console.log("element 2 add")
       element2Parent.appendChild(elementRef2.current!);
     } else {
-      console.log("element 2 remove")
       elementRef2.current?.parentElement?.removeChild(elementRef2.current);
     }
   }, [isElement2Visible])
