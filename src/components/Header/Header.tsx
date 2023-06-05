@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -44,6 +44,21 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
 
+  const useWindowWidth = () => {
+    const [lg, setLg] = useState(window.innerWidth >= 1450);
+
+    useEffect(() => {
+      const handleResize = () => {
+        setLg(window.innerWidth >= 1450);
+      };
+      window.addEventListener('resize', handleResize);
+    }, []);
+
+    return {lg};
+  };
+
+  const {lg} = useWindowWidth();
+
   return (
     <Fragment>
       <MastheadMain className="pf-u-pl-lg pf-u-pt-0 pf-u-pb-xs">
@@ -58,7 +73,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               widget-type="InsightsToolbar"
               visibility={{ '2xl': 'hidden' }}
             >
-              <HeaderTools />
+              {!lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
@@ -89,7 +104,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               widget-type="InsightsToolbar"
             >
-              <HeaderTools />
+              {lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
