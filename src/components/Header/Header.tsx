@@ -54,10 +54,10 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
       window.addEventListener('resize', handleResize);
     }, []);
 
-    return {lg};
+    return { lg };
   };
 
-  const {lg} = useWindowWidth();
+  const { lg } = useWindowWidth();
 
   return (
     <Fragment>
