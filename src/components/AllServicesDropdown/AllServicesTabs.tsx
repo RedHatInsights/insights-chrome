@@ -1,9 +1,10 @@
-import React from 'react';
-import { Icon, Tab, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core';
+import React, { useEffect, useRef } from 'react';
+import { Icon, Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
+import { isBeta } from '../../utils/common';
 
 export type AllServicesTabsProps = {
   activeTabKey: string | number;
@@ -14,6 +15,35 @@ export type AllServicesTabsProps = {
   tabContentRef: React.RefObject<HTMLElement>;
   onTabClick: (section: AllServicesSectionType, index: number) => void;
   activeTabTitle: string;
+};
+
+type TabWrapper = Omit<TabProps, 'onMouseLeave' | 'onMouseEnter' | 'ref'>;
+
+const TabWrapper = (props: TabWrapper) => {
+  const tabRef = useRef<HTMLButtonElement>(null);
+  const hoverTimer = useRef<NodeJS.Timeout | undefined>(undefined);
+  const stopHoverEffect = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+    }
+  };
+
+  const handleMouseEnter = () => {
+    stopHoverEffect();
+    const timeout = setTimeout(() => {
+      // should be available only in preview
+      // use refs to supply the required tab events
+      isBeta() && tabRef.current?.click();
+    }, 300);
+    hoverTimer.current = timeout;
+  };
+
+  useEffect(() => {
+    return () => {
+      stopHoverEffect();
+    };
+  }, []);
+  return <Tab {...props} ref={tabRef} onMouseLeave={stopHoverEffect} onMouseEnter={handleMouseEnter} />;
 };
 
 const AllServicesTabs = ({
@@ -44,7 +74,10 @@ const AllServicesTabs = ({
       role="region"
       className="pf-u-p-md pf-u-pr-0"
     >
-      <Tab
+      <TabWrapper
+        onClick={(e) => {
+          handleTabClick?.(e, FAVORITE_TAB_ID);
+        }}
         eventKey={FAVORITE_TAB_ID}
         title={
           <TabTitleText>
@@ -56,7 +89,7 @@ const AllServicesTabs = ({
         }
       />
       {linkSections.map((section, index) => (
-        <Tab
+        <TabWrapper
           key={index}
           eventKey={index}
           title={<TabTitleText>{section.title}</TabTitleText>}

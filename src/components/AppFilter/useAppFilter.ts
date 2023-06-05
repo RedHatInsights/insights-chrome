@@ -21,8 +21,8 @@ export const requiredBundles = [
   'ansible',
   'settings',
   'iam',
-  'containers',
-  ...(isBeta() && !isProd() ? ['business-services'] : []),
+  'quay',
+  ...(isBeta() && !isProd() ? ['business-services', 'subscription-services'] : []),
 ];
 
 const bundlesOrder = [
@@ -35,8 +35,9 @@ const bundlesOrder = [
   'cost-management',
   'subscriptions',
   'iam',
-  'containers',
+  'quay',
   'business-services',
+  'subscription-services',
 ];
 
 const isITLessEnv = ITLess();

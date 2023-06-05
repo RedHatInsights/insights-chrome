@@ -24,6 +24,7 @@ import {
   toggleDebuggerButton,
   toggleDebuggerModal,
   toggleFeedbackModal,
+  toggleNotificationsReducer,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -66,6 +67,7 @@ import {
   TOGGLE_DEBUGGER_BUTTON,
   TOGGLE_DEBUGGER_MODAL,
   TOGGLE_FEEDBACK_MODAL,
+  TOGGLE_NOTIFICATIONS_DRAWER,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
@@ -97,6 +99,7 @@ const reducers = {
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
   [SET_GATEWAY_ERROR]: setGatewayError,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
+  [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
 };
 
 const globalFilter = {
@@ -151,6 +154,11 @@ export default function (): {
         modules: {},
         scalprumConfig: {},
         moduleRoutes: [],
+        notifications: {
+          data: [],
+          isExpanded: false,
+          count: 0,
+        },
       },
       action
     ) => applyReducerHash(reducers)(state, action),

@@ -24,8 +24,8 @@
     "description": "Add description"
   },
   "afterBetaUse": {
-    "defaultMessage": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar.",
-    "description": "After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar."
+    "defaultMessage": "After you use a feature in preview, you’ll stay in the Preview Environment until you manually exit the preview release. Leave the Preview Environment any time by clicking on the settings (gear) icon or preview icon in the top toolbar.",
+    "description": "After you use a feature in preview, you’ll stay in the Preview Environment until you manually exit the preview release. Leave the Preview Environment any time by clicking on the settings (gear) icon or preview icon in the top toolbar."
   },
   "apiDocumentation": {
     "defaultMessage": "API documentation",
@@ -40,8 +40,8 @@
     "description": "Back"
   },
   "betaRelease": {
-    "defaultMessage": "the beta release",
-    "description": "the beta release"
+    "defaultMessage": "the preview release",
+    "description": "the preview release"
   },
   "bugReported": {
     "defaultMessage": "Bug Reported",
@@ -188,8 +188,8 @@
     "description": "Learn more on our blog."
   },
   "learnMoreABoutBeta": {
-    "defaultMessage": "Learn more about Beta Environment",
-    "description": "Learn more about Beta Environment"
+    "defaultMessage": "Learn more about Preview Environment",
+    "description": "Learn more about Preview Environment"
   },
   "loggedOut": {
     "defaultMessage": "You have successfully logged out.",
@@ -366,8 +366,8 @@
     "description": "This filter criteria matches no applications or services. Try changing your input filter."
   },
   "tryThisFeatureInBeta": {
-    "defaultMessage": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.",
-    "description": "Try this feature in our Beta Environment on cloud.redhat.com/beta. The Beta Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance."
+    "defaultMessage": "Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because preview pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.",
+    "description": "Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because preview pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance."
   },
   "tryUsingDifferentAccount": {
     "defaultMessage": "Try using different account",
@@ -386,8 +386,8 @@
     "description": "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number."
   },
   "useFeatureInBeta": {
-    "defaultMessage": "Use feature in beta",
-    "description": "Use feature in beta"
+    "defaultMessage": "Use feature in preview",
+    "description": "Use feature in preview"
   },
   "userPreferences": {
     "defaultMessage": "User Preferences",

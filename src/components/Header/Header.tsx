@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import ServicesLink from './ServicesLink';
-import FavoritesLink from './FavoritesLink';
 import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
@@ -23,7 +21,6 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-import useEnableSummitFeature from '../../hooks/useEnableSummitFeature';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -44,8 +41,8 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
-  const enableSummitFeature = useEnableSummitFeature();
   const { pathname } = useLocation();
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
 
   return (
     <Fragment>
@@ -74,16 +71,8 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <>
-                    {enableSummitFeature ? (
-                      <AllServicesDropdown />
-                    ) : (
-                      <>
-                        <ServicesLink />
-                        {isITLessEnv ? user?.identity?.user?.is_org_admin && <SatelliteLink /> : <FavoritesLink />}
-                      </>
-                    )}
-                  </>
+                  <AllServicesDropdown />
+                  {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
               {user && !isITLessEnv && (
@@ -105,7 +94,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
-      {pathname !== '/' && enableSummitFeature && (
+      {noBreadcrumb && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
           <Breadcrumbs {...breadcrumbsProps} />
         </ToolbarGroup>

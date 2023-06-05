@@ -31,6 +31,14 @@ export default defineConfig({
     },
   },
   e2e: {
+    baseUrl: 'https://stage.foo.redhat.com:1337/beta',
+    env: {
+      E2E_USER: process.env.E2E_USER,
+      E2E_PASSWORD: process.env.E2E_PASSWORD,
+    },
+    screenshotOnRunFailure: false,
+    // required for the SSO redirect
+    chromeWebSecurity: false,
     video: false,
     setupNodeEvents() {
       // implement node event listeners here
