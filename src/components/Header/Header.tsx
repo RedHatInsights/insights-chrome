@@ -21,6 +21,7 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -43,20 +44,6 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const isITLessEnv = ITLess();
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
-
-  const useWindowWidth = () => {
-    const [lg, setLg] = useState(window.innerWidth >= 1450);
-
-    useEffect(() => {
-      const handleResize = () => {
-        setLg(window.innerWidth >= 1450);
-      };
-      window.addEventListener('resize', handleResize);
-    }, []);
-
-    return { lg };
-  };
-
   const { lg } = useWindowWidth();
 
   return (
