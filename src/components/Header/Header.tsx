@@ -44,7 +44,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const isITLessEnv = ITLess();
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
-  const { lg } = useWindowWidth();
+  const lg = useWindowWidth();
 
   return (
     <Fragment>

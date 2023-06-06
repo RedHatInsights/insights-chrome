@@ -8,9 +8,10 @@ const useWindowWidth = () => {
       setLg(window.innerWidth >= 1450);
     };
     window.addEventListener('resize', handleResize);
+    () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return { lg };
+  return lg;
 };
 
 export default useWindowWidth;
