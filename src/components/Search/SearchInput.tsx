@@ -19,6 +19,10 @@ import EmptySearchState from './EmptySearchState';
 import { isProd } from '../../utils/common';
 import { useSegment } from '../../analytics/useSegment';
 
+export type SearchInputprops = {
+  isExpanded?: boolean;
+};
+
 const IS_PROD = isProd();
 const REPLACE_TAG = 'REPLACE_TAG';
 const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
@@ -222,11 +226,14 @@ const SearchInput = () => {
     debouncedFetch(value);
   };
 
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
+  const onToggleExpand = (_event: React.SyntheticEvent<HTMLButtonElement>, isExpanded: boolean) => {
+    setIsExpanded(!isExpanded);
+  };
+
   const toggle = (
     <PFSearchInput
-      onClick={onInputClick}
-      ref={toggleRef}
-      onKeyDown={onToggleKeyDown}
       placeholder="Search for services"
       value={searchValue}
       onChange={handleChange}
@@ -237,6 +244,11 @@ const SearchInput = () => {
         ev.stopPropagation();
         setIsOpen(false);
       }}
+      expandableInput={{ isExpanded, onToggleExpand, toggleAriaLabel: 'Expandable search input toggle' }}
+      onClick={onInputClick}
+      ref={toggleRef}
+      onKeyDown={onToggleKeyDown}
+      className={isExpanded ? "pf-u-flex-grow-1" : "chr-c-search__collapsed"}
     />
   );
 
