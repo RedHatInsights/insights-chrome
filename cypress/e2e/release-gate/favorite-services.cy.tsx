@@ -3,6 +3,7 @@ const dropDownService = "Application services"
 // This is the index within the dropdown service name in the services menu.
 // For example, API Management is 1st service within Application services, thus index == 0
 const serviceIndexInMenu = 0;
+let interceptionCounter = false;
 
 describe('Favorite-services', () => {
     it('check and uncheck favorited services', () => {
@@ -49,7 +50,11 @@ describe('Favorite-services', () => {
     cy.get('.pf-c-menu-toggle__text').click();
     cy.contains(dropDownService).click({ force: true });
     cy.get('.pf-c-icon__content').eq(serviceIndexInMenu+3).click({ force: true });
-    cy.intercept('POST', 'http://localhost:8080/api/chrome-service/v1/favorite-pages');
+    cy.intercept('POST', '/api/chrome-service/v1/favorite-pages').as('postRequest');
+    cy.wait('@postRequest', { timeout: 1200 }) // Set an appropriate timeout value
+    .then((interceptions) => {
+        interceptionCounter = true;
+    });
     cy.screenshot();
     cy.get('.pf-c-brand').click();
     cy.reload();
@@ -109,7 +114,11 @@ describe('Favorite-services', () => {
             }
             }
         }
-        );
+        ).then((interceptions) => {
+            if (interceptionCounter == false) {
+                throw new Error('The request was not intercepted.');
+            }
+        });
         cy.wait(2000);
         cy.contains('API Management').should('exist');
         cy.screenshot();
