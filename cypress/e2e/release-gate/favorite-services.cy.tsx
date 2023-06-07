@@ -51,7 +51,7 @@ describe('Favorite-services', () => {
     cy.contains(dropDownService).click({ force: true });
     cy.get('.pf-c-icon__content').eq(serviceIndexInMenu+3).click({ force: true });
     cy.intercept('POST', '/api/chrome-service/v1/favorite-pages').as('postRequest');
-    cy.wait('@postRequest', { timeout: 1200 }) // Set an appropriate timeout value
+    cy.wait('@postRequest', { timeout: 1200 })
     .then((interceptions) => {
         interceptionCounter = true;
     });
