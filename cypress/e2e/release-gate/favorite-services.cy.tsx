@@ -1,3 +1,9 @@
+const service = "/application-services/api-management"
+const dropDownService = "Application services"
+// This is the index within the dropdown service name in the services menu.
+// For example, API Management is 1st service within Application services, thus index == 0
+const serviceIndexInMenu = 0;
+
 describe('Favorite-services', () => {
     it('check and uncheck favorited services', () => {
         cy.visit('/');
@@ -41,8 +47,8 @@ describe('Favorite-services', () => {
       );
     // check if a favorites link exists on the page
     cy.get('.pf-c-menu-toggle__text').click();
-    cy.contains('Application services').click();
-    cy.get('.pf-c-icon__content').eq(3).click({ force: true });
+    cy.contains(dropDownService).click({ force: true });
+    cy.get('.pf-c-icon__content').eq(serviceIndexInMenu+3).click({ force: true });
     cy.intercept('POST', 'http://localhost:8080/api/chrome-service/v1/favorite-pages', {
         "data": {
             "favoritePages": [
@@ -51,13 +57,14 @@ describe('Favorite-services', () => {
                     "createdAt":"2023-06-05T18:17:26.849084Z",
                     "updatedAt":"2023-06-06T14:32:00.606716Z",
                     "deletedAt":null,
-                    "pathname":"/application-services/api-management",
+                    "pathname":service,
                     "favorite":true,
                     "userIdentityId":245354
                 }
             ]
         }
     });
+    cy.screenshot();
     cy.get('.pf-c-brand').click();
     cy.reload();
     cy.intercept('GET', '/api/chrome-service/v1/user', 
@@ -89,7 +96,7 @@ describe('Favorite-services', () => {
                     "createdAt":"2023-06-05T18:17:26.849084Z",
                     "updatedAt":"2023-06-06T19:23:32.813832Z",
                     "deletedAt":null,
-                    "pathname":"/application-services/api-management",
+                    "pathname":service,
                     "favorite":true,
                     "userIdentityId":453245
                 }
@@ -117,8 +124,9 @@ describe('Favorite-services', () => {
             }
         }
         );
-        cy.wait(1000);
+        cy.wait(2000);
         cy.contains('API Management').should('exist');
+        cy.screenshot();
     });
-  });
+});
   
