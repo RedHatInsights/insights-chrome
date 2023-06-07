@@ -248,7 +248,7 @@ const SearchInput = () => {
       onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
-      className={isExpanded ? "pf-u-flex-grow-1" : "chr-c-search__collapsed"}
+      className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
     />
   );
 
