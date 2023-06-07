@@ -49,21 +49,7 @@ describe('Favorite-services', () => {
     cy.get('.pf-c-menu-toggle__text').click();
     cy.contains(dropDownService).click({ force: true });
     cy.get('.pf-c-icon__content').eq(serviceIndexInMenu+3).click({ force: true });
-    cy.intercept('POST', 'http://localhost:8080/api/chrome-service/v1/favorite-pages', {
-        "data": {
-            "favoritePages": [
-                {
-                    "id":52342352,
-                    "createdAt":"2023-06-05T18:17:26.849084Z",
-                    "updatedAt":"2023-06-06T14:32:00.606716Z",
-                    "deletedAt":null,
-                    "pathname":service,
-                    "favorite":true,
-                    "userIdentityId":245354
-                }
-            ]
-        }
-    });
+    cy.intercept('POST', 'http://localhost:8080/api/chrome-service/v1/favorite-pages');
     cy.screenshot();
     cy.get('.pf-c-brand').click();
     cy.reload();
