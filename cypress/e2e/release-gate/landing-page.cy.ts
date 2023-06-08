@@ -4,9 +4,14 @@ const lastVisitedArray = [{"id":210675,"createdAt":"2023-06-08T17:15:46.584521Z"
 const parsedLastVisited = JSON.parse(lastVisitedJSON);
 const NUM_SLIDE_ELEMENTS = 4;
 
-// NUM_CHILDREN_ELEMENTS are VISIBLE cards under "My favorite services" + "Get started with Hybrid Cloud Console capabilities"
-const NUM_CHILDREN_ELEMENTS = 10;
+// NUM_CHILDREN_ELEMENTS are VISIBLE cards under "Get started with Hybrid Cloud Console capabilities"
+const NUM_CHILDREN_ELEMENTS = 8;
 const FAVORITED_OVERFILLS = ["Inventory", "Remediations"] 
+const FRONT_PAGE_SERVICES = [
+  "Red Hat Insights", "Application and Data Services", "Red Hat OpenShift", "Edge Management",
+  "Ansible Automation Platform", "Subscription Management", "Red Hat Advanced Cluster Security Cloud Service",
+  "Quay.io"
+]
 
 describe('Landing page', () => {
   it('visit landing page', () => {
@@ -125,6 +130,9 @@ describe('Landing page', () => {
       cy.get('.slick-arrow.slick-next').click();
     }
     cy.get('.slick-arrow.slick-next.slick-disabled').should('exist')
-    cy.get('.pf-l-gallery.pf-m-gutter').children().should('have.length', NUM_CHILDREN_ELEMENTS);
+    for (let i = 0; i < FRONT_PAGE_SERVICES.length; i++) {
+      cy.get('.pf-l-gallery.pf-m-gutter').eq(1).find(`article[data-ouia-component-id="OUIA-Generated-Card-${i+1}"]`).find('.pf-u-font-size-lg.pf-u-mt-md').should('contain', FRONT_PAGE_SERVICES[i]);
+    }
+    cy.get('.pf-l-gallery.pf-m-gutter').eq(1).children().should('have.length', NUM_CHILDREN_ELEMENTS);
   });
 });
