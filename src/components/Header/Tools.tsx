@@ -1,7 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AlertActionLink, AlertVariant, Button, Divider, DropdownItem, NotificationBadge, Switch, ToolbarItem } from '@patternfly/react-core';
+import {
+  AlertActionLink,
+  AlertVariant,
+  Button,
+  Divider,
+  DropdownItem,
+  NotificationBadge,
+  Switch,
+  ToolbarItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
@@ -19,6 +29,7 @@ import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
 import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 const isITLessEnv = ITLess();
 
@@ -51,16 +62,19 @@ type SettingsButtonProps = {
 };
 
 const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
-  <ToolbarToggle
-    key="Settings menu"
-    icon={() => <CogIcon />}
-    id="SettingsMenu"
-    ariaLabel="Settings menu"
-    ouiaId="chrome-settings"
-    hasToggleIndicator={null}
-    widget-type="SettingsMenu"
-    dropdownItems={settingsMenuDropdownItems}
-  />
+  <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
+    <ToolbarToggle
+      key="Settings menu"
+      icon={() => <CogIcon />}
+      id="SettingsMenu"
+      ariaLabel="Settings menu"
+      ouiaId="chrome-settings"
+      hasToggleIndicator={null}
+      widget-type="SettingsMenu"
+      dropdownItems={settingsMenuDropdownItems}
+      className="tooltip-button-settings-cy"
+    />
+  </Tooltip>
 );
 
 const Tools = () => {
@@ -69,6 +83,7 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+  const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => isRead) || []);
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
@@ -120,8 +135,8 @@ const Tools = () => {
   const aboutMenuDropdownItems = [
     {
       title: `${intl.formatMessage(messages.apiDocumentation)}`,
-      url: `/docs/api`,
-      appId: 'apiDocs',
+      url: `https://developers.redhat.com/api-catalog/`,
+      isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.openSupportCase)}`,
@@ -170,15 +185,18 @@ const Tools = () => {
 
   /* QuestionMark icon that should be used for "help/support" things */
   const AboutButton = () => (
-    <ToolbarToggle
-      key="Help menu"
-      icon={QuestionCircleIcon}
-      id="HelpMenu"
-      ouiaId="chrome-help"
-      ariaLabel="Help menu"
-      hasToggleIndicator={null}
-      dropdownItems={aboutMenuDropdownItems}
-    />
+    <Tooltip aria="none" aria-live="polite" content={'Help'} flipBehavior={['bottom']} className="tooltip-inner-help-cy">
+      <ToolbarToggle
+        key="Help menu"
+        icon={QuestionCircleIcon}
+        id="HelpMenu"
+        ouiaId="chrome-help"
+        ariaLabel="Help menu"
+        hasToggleIndicator={null}
+        dropdownItems={aboutMenuDropdownItems}
+        className="tooltip-button-help-cy"
+      />
+    </Tooltip>
   );
 
   const BetaSwitcher = () => {
@@ -222,7 +240,7 @@ const Tools = () => {
           },
         })}
       >
-        <BetaSwitcher />
+        {!xs && <BetaSwitcher />}
       </ToolbarItem>
       {isNotificationsEnabled && (
         <ToolbarItem>
@@ -242,7 +260,13 @@ const Tools = () => {
           <ThemeToggle />
         </ToolbarItem>
       )}
-      {isInternal && <ToolbarItem>{<InternalButton />}</ToolbarItem>}
+      {isInternal && (
+        <ToolbarItem>
+          <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
+            <InternalButton />
+          </Tooltip>
+        </ToolbarItem>
+      )}
       <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
         {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
       </ToolbarItem>
@@ -255,32 +279,34 @@ const Tools = () => {
       {/* Collapse tools and user dropdown to kebab on small screens  */}
 
       <ToolbarItem visibility={{ lg: 'hidden' }}>
-        <UserToggle
-          isSmall
-          extraItems={mobileDropdownItems.map((action, key) => (
-            <React.Fragment key={key}>
-              {action.title === 'separator' ? (
-                <Divider component="li" />
-              ) : (
-                <DropdownItem
-                  {...(action.onClick
-                    ? {
-                        component: 'button',
-                        onClick: action.onClick,
-                      }
-                    : {
-                        href: action.url,
-                        component: 'a',
-                        target: '_blank',
-                        rel: 'noopener noreferrer',
-                      })}
-                >
-                  {action.title}
-                </DropdownItem>
-              )}
-            </React.Fragment>
-          ))}
-        />
+        <Tooltip aria="none" aria-live="polite" content={'More options'} flipBehavior={['bottom']}>
+          <UserToggle
+            isSmall
+            extraItems={mobileDropdownItems.map((action, key) => (
+              <React.Fragment key={key}>
+                {action.title === 'separator' ? (
+                  <Divider component="li" />
+                ) : (
+                  <DropdownItem
+                    {...(action.onClick
+                      ? {
+                          component: 'button',
+                          onClick: action.onClick,
+                        }
+                      : {
+                          href: action.url,
+                          component: 'a',
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
+                        })}
+                  >
+                    {action.title}
+                  </DropdownItem>
+                )}
+              </React.Fragment>
+            ))}
+          />
+        </Tooltip>
       </ToolbarItem>
       {cookie.get('cs_toggledRelease') === 'true' ? (
         <HeaderAlert

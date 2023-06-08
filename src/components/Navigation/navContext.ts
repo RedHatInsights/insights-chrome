@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import { ChromeNavExapandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
+import { ChromeNavExpandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
 
 export type OnLinkClick = (
   event: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -12,7 +12,7 @@ interface NavContext {
   inPageLayout?: boolean;
   componentMapper: {
     group: React.FC<ChromeNavGroupProps>;
-    expandable: React.FC<ChromeNavExapandableProps>;
+    expandable: React.FC<ChromeNavExpandableProps>;
     item: React.FC<ChromeNavItemProps>;
     dynamicNav: React.FC<DynamicNavProps>;
   };

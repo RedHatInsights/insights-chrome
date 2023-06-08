@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TableComposable, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 export interface DebuggerTableProps {
   user: ChromeUser;
@@ -18,9 +19,10 @@ const DebuggerTable = (props: DebuggerTableProps) => {
     {}
   );
   const [permissions, setPermissions] = React.useState({});
+  const chrome = useContext(InternalChromeContext);
   React.useEffect(() => {
     async function getPermissions() {
-      const userPermissions = await window.insights.chrome.getUserPermissions();
+      const userPermissions = await chrome.getUserPermissions();
       const userPermissionsList = Object.entries(userPermissions).reduce(
         (acc, [key, userPermission]) => ({
           ...acc,

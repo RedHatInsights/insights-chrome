@@ -30,6 +30,10 @@ const redirects = [
     path: '/hac',
     to: '/hac/application-pipeline',
   },
+  {
+    path: '/subscriptions',
+    to: '/subscriptions/overview',
+  },
 ];
 
 export type RoutesProps = {

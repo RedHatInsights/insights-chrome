@@ -29,6 +29,16 @@ const DEFAULT_COOKIE_NAME = 'cs_jwt';
 const priv = new Priv();
 const itLessEnv = ITLess();
 
+enum AllowedPartnerScopes {
+  aws = 'aws',
+  azure = 'azure',
+  gcp = 'gcp',
+}
+
+function isPartnerScope(scope: string): scope is AllowedPartnerScopes {
+  return Object.values(AllowedPartnerScopes).includes(scope as AllowedPartnerScopes);
+}
+
 // Broadcast Channel
 const authChannel = new BroadcastChannel('auth');
 authChannel.onmessage = (e) => {
@@ -57,7 +67,12 @@ function getPartnerScope(pathname: string) {
   // check if the pathname is connect/:partner
   if (sanitizedPathname.match(/^connect\/.+/)) {
     // return :partner param
-    return `api.partner_link.${sanitizedPathname.split('/')[1]}`;
+    const fragmentScope = sanitizedPathname.split('/')[1];
+    if (isPartnerScope(fragmentScope)) {
+      return `api.partner_link.${fragmentScope}`;
+    }
+    log(`Invalid stratosphere scope: ${fragmentScope}`);
+    return undefined;
   }
 
   return undefined;
@@ -442,6 +457,8 @@ export async function setCookie(token?: string) {
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/ws;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=wss://;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
+      setCookieWrapper(`${cookieName}=${tok};` + `path=ws://;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/tasks/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/automation-hub;` + `secure=true;` + `expires=${getCookieExpires(decodeToken(tok).exp)}`);
       setCookieWrapper(`${cookieName}=${tok};` + `path=/api/remediations/v1;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);

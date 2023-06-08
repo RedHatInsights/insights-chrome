@@ -270,8 +270,10 @@ const useAllServices = () => {
     servicesLinks,
     error,
     ready,
+    availableSections,
     filterValue,
     setFilterValue,
+    findNavItems,
   };
 };
 

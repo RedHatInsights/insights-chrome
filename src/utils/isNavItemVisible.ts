@@ -1,8 +1,9 @@
 import flatMap from 'lodash/flatMap';
-import { visibilityFunctions } from './consts';
 import { NavItem, NavItemPermission } from '../@types/types';
+import { getVisibilityFunctions } from './VisibilitySingleton';
 
 const visibilityHandler = async ({ method, args }: NavItemPermission) => {
+  const visibilityFunctions = getVisibilityFunctions();
   // (null, undefined, true) !== false
   return (await visibilityFunctions[method]?.(...(args || []))) !== false;
 };

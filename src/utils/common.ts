@@ -8,7 +8,7 @@ import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
-    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
+    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
@@ -28,7 +28,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com', 'us.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
@@ -343,11 +343,6 @@ const fedModulesheaders = {
   Pragma: 'no-cache',
   Expires: '0',
 };
-
-export const loadFEOFedModules = () =>
-  axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
-    headers: fedModulesheaders,
-  });
 
 export const loadFedModules = async () =>
   axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 import { useNavigate } from 'react-router-dom';
@@ -6,15 +6,19 @@ import { Modal, ModalVariant, Text, TextContent } from '@patternfly/react-core';
 import { getEnv } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
   const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useState(true);
   const navigate = useNavigate();
   const isAvailable = getEnv() === 'prod';
+  const {
+    auth: { getToken },
+  } = useContext(InternalChromeContext);
 
   async function handleActivationRequest() {
-    const token = await window.insights.chrome.auth.getToken();
+    const token = await getToken();
     if (isAvailable) {
       fetch(`${window.origin}/api/platform-feedback/v1/issues`, {
         method: 'POST',

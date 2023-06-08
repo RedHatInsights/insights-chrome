@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
+import { matchRoutes } from 'react-router-dom';
+
 import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
-import auth, { LibJWT, crossAccountBouncer } from './auth';
+import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, getEnv, loadFEOFedModules, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -18,6 +20,8 @@ import { ReduxState } from './redux/store';
 import qe from './utils/iqeEnablement';
 import initializeJWT from './jwt/initialize-jwt';
 import AppPlaceholder from './components/AppPlaceholder';
+import { initializeVisibilityFunctions } from './utils/VisibilitySingleton';
+import { createGetUser } from './auth';
 
 const language: keyof typeof messages = 'en';
 
@@ -39,8 +43,8 @@ const initializeAccessRequestCookies = () => {
   }
 };
 
-const libjwtSetup = (chromeConfig: { ssoUrl?: string }) => {
-  const libjwt = auth(chromeConfig || {});
+const libjwtSetup = (chromeConfig: { ssoUrl?: string }, ssoScopes: string[] = []) => {
+  const libjwt = auth({ ...chromeConfig, ssoScopes } || { ssoScopes });
 
   libjwt.initPromise.then(() => {
     return libjwt.jwt
@@ -64,37 +68,43 @@ const useInitialize = () => {
   const chromeInstance = useRef({ cache: undefined });
 
   const init = async () => {
+    const pathname = window.location.pathname;
     // We have to use `let` because we want to access it once jwt is initialized
     let libJwt: LibJWT | undefined = undefined;
     // init qe functions, callback for libjwt because we want it to initialize before jwt is ready
     qe.init(store, () => libJwt);
 
-    const { data: feoData } = await loadFEOFedModules();
-    const { chrome: chromeConfig } = feoData;
-    let modulesData = feoData;
+    // Load federated modules before the SSO init phase to obtain scope configuration
+    const { data: modulesData } = await loadFedModules();
+    const { chrome: chromeConfig } = modulesData;
+    const routes = generateRoutesList(modulesData);
+    store.dispatch(loadModulesSchema(modulesData));
+    // ge the initial module UI identifier
+    const initialModuleScope = matchRoutes(
+      routes.map(({ path, ...rest }) => ({
+        ...rest,
+        path: `${path}/*`,
+      })),
+      // modules config does not include the preview fragment
+      pathname.replace(/^\/(preview|beta)/, '')
+    )?.[0]?.route?.scope;
+    const initialModuleConfig = initialModuleScope && modulesData[initialModuleScope]?.config;
     initializeAccessRequestCookies();
     // create JWT instance
-    libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
+    libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig }, initialModuleConfig?.ssoScopes);
 
     await initializeJWT(libJwt, chromeInstance.current);
+    const getUser = createGetUser(libJwt);
+    initializeVisibilityFunctions({
+      getUser,
+      getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
+      getUserPermissions: createGetUserPermissions(libJwt, getUser),
+    });
 
     setState({
       libJwt,
       isReady: true,
     });
-
-    try {
-      const { data } = await loadFedModules();
-      // merge configs with chrome service priority
-      modulesData = {
-        ...feoData,
-        ...data,
-      };
-    } catch (error) {
-      console.error('Unable to fetch fed-modules from chrome service! Falling back to CDN.');
-    }
-
-    store.dispatch(loadModulesSchema(modulesData));
   };
 
   useEffect(() => {
@@ -143,25 +153,28 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-  <IntlProvider
-    locale={language}
-    messages={messages[language]}
-    onError={(error) => {
-      if (
-        (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-        localStorage.getItem('chrome:intl:debug') === 'true' ||
-        !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-      ) {
-        console.error(error);
-      }
-    }}
-  >
-    <Provider store={spinUpStore()?.store}>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </Provider>
-  </IntlProvider>,
-  document.getElementById('chrome-entry')
-);
+const entry = document.getElementById('chrome-entry');
+if (entry) {
+  const reactRoot = createRoot(entry);
+  reactRoot.render(
+    <IntlProvider
+      locale={language}
+      messages={messages[language]}
+      onError={(error) => {
+        if (
+          (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+          localStorage.getItem('chrome:intl:debug') === 'true' ||
+          !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+        ) {
+          console.error(error);
+        }
+      }}
+    >
+      <Provider store={spinUpStore()?.store}>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </Provider>
+    </IntlProvider>
+  );
+}

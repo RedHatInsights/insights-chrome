@@ -1,6 +1,8 @@
 # Navigation
 
-Chrome leverages [Cloud Services Config](https://github.com/redhatinsights/cloud-services-config) (CSC) to build the navigation on a bundle-by-bundle basis.
+Chrome leverages [Cloud Services Config][CSC] (CSC) to build the navigation on a bundle-by-bundle basis.
+
+[CSC]: https://github.com/RedHatInsights/chrome-service-backend/blob/main/docs/cloud-services-config.md
 
 ## Dynamic Navigation
 

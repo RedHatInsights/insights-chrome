@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useContext, useState } from 'react';
 import {
   Button,
   Card,
@@ -28,6 +28,7 @@ import messages from '../../locales/Messages';
 import FeedbackError from './FeedbackError';
 
 import './Feedback.scss';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 export type FeedbackModalProps = {
   user: DeepRequired<ChromeUser>;
@@ -49,7 +50,8 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
   const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
-  const env = window.insights.chrome.getEnvironment();
+  const { getEnvironment } = useContext(InternalChromeContext);
+  const env = getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen));
   const handleCloseModal = () => {

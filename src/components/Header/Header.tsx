@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -21,6 +21,7 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -43,6 +44,11 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const isITLessEnv = ITLess();
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
+  const { md, lg } = useWindowWidth();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const hideAllServices = (isOpen: boolean) => {
+    setSearchOpen(isOpen);
+  };
 
   return (
     <Fragment>
@@ -58,7 +64,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               widget-type="InsightsToolbar"
               visibility={{ '2xl': 'hidden' }}
             >
-              <HeaderTools />
+              {!lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
@@ -71,7 +77,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <AllServicesDropdown />
+                  {!(!md && searchOpen) && <AllServicesDropdown />}
                   {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
@@ -81,15 +87,15 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
-              <SearchInput />
+            <ToolbarGroup className="pf-u-flex-grow-1" variant="filter-group">
+              <SearchInput onStateChange={hideAllServices} />
             </ToolbarGroup>
             <ToolbarGroup
               className="pf-m-icon-button-group pf-u-ml-auto"
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               widget-type="InsightsToolbar"
             >
-              <HeaderTools />
+              {lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>

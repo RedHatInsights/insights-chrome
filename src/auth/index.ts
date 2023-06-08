@@ -11,6 +11,7 @@ import consts, { defaultAuthOptions as defaultOptions } from '../utils/consts';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import qe from '../utils/iqeEnablement';
 import { ChromeModule } from '../@types/types';
+import { createFetchPermissionsWatcher } from './fetchPermissions';
 
 export type LibJWT = {
   getOfflineToken: () => Promise<AxiosResponse<any>>;
@@ -63,10 +64,24 @@ export const createGetUser = (libjwt: LibJWT): (() => Promise<ChromeUser | undef
     });
 };
 
-export default ({ ssoUrl }: { ssoUrl?: string }): LibJWT => {
+export const createGetUserPermissions = (libJwt: LibJWT, getUser: () => Promise<void | ChromeUser>) => {
+  const fetchPermissions = createFetchPermissionsWatcher(getUser);
+  return async (app = '', bypassCache?: boolean) => {
+    if (isITLessEnv) {
+      const cogToken = await getTokenWithAuthorizationCode();
+      return fetchPermissions(cogToken || '', app, bypassCache);
+    } else {
+      await getUser();
+      return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
+    }
+  };
+};
+
+export default ({ ssoUrl, ssoScopes }: { ssoUrl?: string; ssoScopes: string[] }): LibJWT => {
   console.time(TIMER_STR); // eslint-disable-line no-console
   const options = {
     ...defaultOptions,
+    scope: ssoScopes.join(' '),
   };
 
   wipePostbackParamsThatAreNotForUs();
