@@ -17,9 +17,24 @@ jest.mock('../jwt/jwt');
 
 describe('fetchPermissions', () => {
   let fetchPermissions;
+  let getUser = jest.fn().mockImplementation(() =>
+    Promise.resolve({
+      identity: {
+        // eslint-disable-next-line camelcase
+        account_number: '0',
+        type: 'User',
+        org_id: '123',
+      },
+      entitlements: {
+        insights: {
+          // eslint-disable-next-line camelcase
+          is_entitled: true,
+        },
+      },
+    })
+  );
   beforeEach(() => {
-    const chromeInstance = { cache: { getItem: () => undefined, setItem: () => undefined } };
-    fetchPermissions = createFetchPermissionsWatcher(chromeInstance);
+    fetchPermissions = createFetchPermissionsWatcher(getUser);
     global.rbacApiCalled = 0;
   });
 
