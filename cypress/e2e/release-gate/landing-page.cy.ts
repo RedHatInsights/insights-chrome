@@ -129,10 +129,11 @@ describe('Landing page', () => {
       cy.wait(1000);
       cy.get('.slick-arrow.slick-next').click();
     }
-    cy.get('.slick-arrow.slick-next.slick-disabled').should('exist')
+    cy.get('.slick-arrow.slick-next.slick-disabled').should('exist');
     for (let i = 0; i < FRONT_PAGE_SERVICES.length; i++) {
       cy.get('.pf-l-gallery.pf-m-gutter').eq(1).find(`article[data-ouia-component-id="OUIA-Generated-Card-${i+1}"]`).find('.pf-u-font-size-lg.pf-u-mt-md').should('contain', FRONT_PAGE_SERVICES[i]);
     }
     cy.get('.pf-l-gallery.pf-m-gutter').eq(1).children().should('have.length', NUM_CHILDREN_ELEMENTS);
+    cy.screenshot();
   });
 });
