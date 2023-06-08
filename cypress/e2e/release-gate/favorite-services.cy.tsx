@@ -4,6 +4,7 @@ const dropDownService = "Application services"
 // For example, API Management is 1st service within Application services, thus index == 0
 const serviceIndexInMenu = 0;
 let interceptionCounter = false;
+const serviceName = 'API Management';
 
 describe('Favorite-services', () => {
     it('check and uncheck favorited services', () => {
@@ -133,7 +134,7 @@ describe('Favorite-services', () => {
             }
         });
         cy.wait(2000);
-        cy.contains('API Management').should('exist');
+        cy.contains(serviceName).should('exist');
     });
 });
   
