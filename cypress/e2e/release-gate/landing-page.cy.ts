@@ -244,6 +244,7 @@ describe('Landing page', () => {
         .should('contain', FRONT_PAGE_SERVICES[i]);
     }
     cy.get('.pf-l-gallery.pf-m-gutter').eq(1).children().should('have.length', NUM_CHILDREN_ELEMENTS);
+    cy.screenshot();
   });
   it('tooltip is shown when hovering over the gear/question icon', () => {
     cy.login();
