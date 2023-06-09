@@ -15,8 +15,6 @@ const FRONT_PAGE_SERVICES = [
 
 describe('Landing page', () => {
   it('visit landing page', () => {
-    cy.login();
-
     cy.visit('/');
     cy.login();
     cy.reload();
@@ -117,7 +115,6 @@ describe('Landing page', () => {
     for (let i = 0; i < FAVORITED_OVERFILLS.length; i++) {
       cy.get('.chr-c-favorite-service__tile').eq(i).find('.pf-u-mb-sm').should('contain', FAVORITED_OVERFILLS[i]);
     }
-    // check if a favorites link exists on the page
     cy.contains('View my favorite services').should('exist');
     cy.contains('Recently visited').should('exist');
     for (let i = 0; i < lastVisitedArray.length; i++) {
