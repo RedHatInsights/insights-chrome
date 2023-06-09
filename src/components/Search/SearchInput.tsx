@@ -81,8 +81,8 @@ const initialSearchState: SearchResponseType = {
   start: 0,
 };
 
-const SearchInput = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const SearchInput = ({ searchIsOpen, setSearchIsOpen }: { searchIsOpen: boolean; setSearchIsOpen: () => void }) => {
+  const [searchIsOpen, setSearchIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
@@ -129,28 +129,28 @@ const SearchInput = () => {
   );
 
   const handleMenuKeys = (event: KeyboardEvent) => {
-    if (!isOpen) {
+    if (!searchIsOpen) {
       return;
     }
     if (menuRef.current?.contains(event.target as Node) || toggleRef.current?.contains(event.target as Node)) {
       if (event.key === 'Escape' || event.key === 'Tab') {
-        setIsOpen(!isOpen);
+        setSearchIsOpen(!searchIsOpen);
         toggleRef.current?.focus();
       }
     }
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (!blockCloseEvent.current && isOpen && !menuRef.current?.contains(event.target as Node)) {
-      setIsOpen(false);
+    if (!blockCloseEvent.current && searchIsOpen && !menuRef.current?.contains(event.target as Node)) {
+      setSearchIsOpen(false);
     }
     // unblock the close event to prevent unwanted hanging dropdown menu on subsequent input clicks
     blockCloseEvent.current = false;
   };
 
   const onInputClick: SearchInputProps['onClick'] = () => {
-    if (!isOpen && searchResults.numFound > 0) {
-      setIsOpen(true);
+    if (!searchIsOpen && searchResults.numFound > 0) {
+      setSearchIsOpen(true);
       // can't use event.stoppropagation because it will block other opened menus from triggering their close event
       blockCloseEvent.current = true;
     }
@@ -158,15 +158,15 @@ const SearchInput = () => {
 
   const onToggleKeyDown: SearchInputProps['onKeyDown'] = (ev) => {
     ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
-    if (!isOpen) {
-      setIsOpen(true);
+    if (!searchIsOpen) {
+      setSearchIsOpen(true);
     }
 
-    if (isOpen && ev.key === 'ArrowDown' && menuRef.current) {
+    if (searchIsOpen && ev.key === 'ArrowDown' && menuRef.current) {
       const firstElement = menuRef.current.querySelector('li > button:not(:disabled), li > a:not(:disabled)');
       firstElement && (firstElement as HTMLElement).focus();
-    } else if (isOpen && ev.key === 'Escape') {
-      setIsOpen(false);
+    } else if (searchIsOpen && ev.key === 'Escape') {
+      setSearchIsOpen(false);
     }
   };
 
@@ -197,7 +197,7 @@ const SearchInput = () => {
       window.removeEventListener('keydown', handleMenuKeys);
       window.removeEventListener('click', handleClickOutside);
     };
-  }, [isOpen, menuRef]);
+  }, [searchIsOpen, menuRef]);
 
   const handleFetch = (value = '') => {
     return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value).replace(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
@@ -242,7 +242,7 @@ const SearchInput = () => {
         setSearchResults(initialSearchState);
         // make sure the input is not clicked/focused
         ev.stopPropagation();
-        setIsOpen(false);
+        setSearchIsOpen(false);
       }}
       expandableInput={{ isExpanded, onToggleExpand, toggleAriaLabel: 'Expandable search input toggle' }}
       onClick={onInputClick}
@@ -277,7 +277,7 @@ const SearchInput = () => {
 
   return (
     <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
-      <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
+      <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={searchIsOpen} />
     </div>
   );
 };

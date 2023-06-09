@@ -73,7 +73,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <AllServicesDropdown />
+                  {!searchIsOpen && lg && <AllServicesDropdown />}
                   {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
@@ -84,7 +84,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               )}
             </ToolbarGroup>
             <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0" variant="filter-group">
-              <SearchInput />
+              <SearchInput searchIsOpen={searchIsOpen} setSearchIsOpen={setSearchIsOpen} />
             </ToolbarGroup>
             <ToolbarGroup
               className="pf-m-icon-button-group pf-u-ml-auto"
