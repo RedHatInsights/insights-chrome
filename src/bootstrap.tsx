@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { spinUpStore } from './redux/redux-config';
@@ -151,25 +151,28 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-  <IntlProvider
-    locale={language}
-    messages={messages[language]}
-    onError={(error) => {
-      if (
-        (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-        localStorage.getItem('chrome:intl:debug') === 'true' ||
-        !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-      ) {
-        console.error(error);
-      }
-    }}
-  >
-    <Provider store={spinUpStore()?.store}>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </Provider>
-  </IntlProvider>,
-  document.getElementById('chrome-entry')
-);
+const entry = document.getElementById('chrome-entry');
+if (entry) {
+  const reactRoot = createRoot(entry);
+  reactRoot.render(
+    <IntlProvider
+      locale={language}
+      messages={messages[language]}
+      onError={(error) => {
+        if (
+          (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+          localStorage.getItem('chrome:intl:debug') === 'true' ||
+          !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+        ) {
+          console.error(error);
+        }
+      }}
+    >
+      <Provider store={spinUpStore()?.store}>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </Provider>
+    </IntlProvider>
+  );
+}
