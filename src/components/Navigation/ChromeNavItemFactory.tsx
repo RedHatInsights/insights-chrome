@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ChromeNavExapandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
+import { ChromeNavExpandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
 import NavContext from './navContext';
 
 import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
@@ -24,7 +24,7 @@ export type ChromeNavItemFactoryProps = {
   dynamicNav?: string;
 };
 
-const isNavExpandableProps = (props: Record<string, any>, expandable?: boolean): props is ChromeNavExapandableProps => expandable === true;
+const isNavExpandableProps = (props: Record<string, any>, expandable?: boolean): props is ChromeNavExpandableProps => expandable === true;
 const isNavGroupProps = (props: Record<string, any>, groupId?: string): props is ChromeNavGroupProps => typeof groupId === 'string';
 const isDynamicNavProps = (props: Record<string, any>, dynamicNav?: string): props is DynamicNavProps => typeof dynamicNav === 'string';
 

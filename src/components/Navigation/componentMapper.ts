@@ -1,18 +1,18 @@
 import React from 'react';
 import ChromeNavGroup from './ChromeNavGroup';
-import ChromeNavExapandable from './ChromeNavExapandable';
+import ChromeNavExpandable from './ChromeNavExpandable';
 import ChromeNavItem from './ChromeNavItem';
 import DynamicNav from './DynamicNav';
-import { ChromeNavExapandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
+import { ChromeNavExpandableProps, ChromeNavGroupProps, ChromeNavItemProps, DynamicNavProps } from '../../@types/types';
 
 const componentMapper: {
   group: React.FC<ChromeNavGroupProps>;
-  expandable: React.FC<ChromeNavExapandableProps>;
+  expandable: React.FC<ChromeNavExpandableProps>;
   item: React.FC<ChromeNavItemProps>;
   dynamicNav: React.FC<DynamicNavProps>;
 } = {
   group: ChromeNavGroup,
-  expandable: ChromeNavExapandable,
+  expandable: ChromeNavExpandable,
   item: ChromeNavItem,
   dynamicNav: DynamicNav,
 };
