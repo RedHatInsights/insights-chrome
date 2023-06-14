@@ -5,6 +5,7 @@ $pf-global--enable-reset: 'true';
 @import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
 @import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
 @import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
+@import '~pf-5/dist/styles/base.css';
 
 // Quick starts
 @import '~@patternfly/quickstarts/dist/quickstarts.min';

@@ -21,7 +21,7 @@ const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ ch
   return null;
 };
 
-const Wrapper: React.FC<{ initialEntries?: InitialEntry[]; store: Store; changeSpy?: jest.Mock }> = ({
+const Wrapper: React.FC<React.PropsWithChildren<{ initialEntries?: InitialEntry[]; store: Store; changeSpy?: jest.Mock }>> = ({
   changeSpy = jest.fn(),
   store,
   initialEntries,

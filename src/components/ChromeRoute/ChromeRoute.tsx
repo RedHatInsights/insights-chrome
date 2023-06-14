@@ -12,6 +12,10 @@ import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
+import { Button as PF5Button } from 'pf-5/dist/dynamic/components/Button';
+import { Icon } from 'pf-5/dist/dynamic/components/Icon';
+import AdIcon from 'pf-5-icons/dist/dynamic/icons/ad-icon';
+
 export type ChromeRouteProps = {
   scope: string;
   module: string;
@@ -72,6 +76,10 @@ const ChromeRoute = memo(
     }
     return (
       <div className={classNames(scopeClass, scope)}>
+        <Icon iconSize="xl">
+          <AdIcon />
+        </Icon>
+        <PF5Button onClick={() => console.log('PF5 button component')}>This is a PF5 button</PF5Button>
         <ScalprumComponent
           // TODO: fix in scalprum. The async loader is no triggered when module/scope changes. We had to abuse the key
           key={path}

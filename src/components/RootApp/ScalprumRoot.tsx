@@ -99,7 +99,7 @@ const ScalprumRoot = memo(
       };
     }, []);
 
-    const setPageMetadata = useCallback((pageOptions) => {
+    const setPageMetadata = useCallback((pageOptions: any) => {
       window._segment = {
         ...window._segment,
         pageOptions,

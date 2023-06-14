@@ -71,6 +71,7 @@ const DebuggerTable = (props: DebuggerTableProps) => {
           {Object.values(permissions).map((val, index) => {
             return (
               <tr key={index}>
+                {/* @ts-ignore */}
                 <td>{val}</td>
               </tr>
             );

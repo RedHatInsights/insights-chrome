@@ -47,6 +47,10 @@ const plugins = (dev = false, beta = false) => {
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
+        {
+          'pf-5/dist/dynamic/components/Button': { requiredVersion: '5.0.0-prerelease.8' },
+          'pf-5-icons/dist/dynamic/icons/ad-icon': { requiredVersion: '5.0.0-prerelease.3' },
+        },
       ],
     }),
     ChunkMapper,
