@@ -1,3 +1,4 @@
+import { initializeVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { createChromeContext } from './create-chrome';
 
 jest.mock('../jwt/jwt');
@@ -5,6 +6,9 @@ jest.mock('../auth/fetchPermissions');
 
 describe('create chrome', () => {
   let jwt;
+  beforeAll(() => {
+    initializeVisibilityFunctions({});
+  });
   beforeEach(() => {
     jwt = {
       initPromise: new Promise((res) => setTimeout(() => res(), 200)),

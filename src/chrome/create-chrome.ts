@@ -23,7 +23,7 @@ import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } fr
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
-import { PUBLIC_EVENTS, visibilityFunctions } from '../utils/consts';
+import { PUBLIC_EVENTS } from '../utils/consts';
 import { usePendoFeedback } from '../components/Feedback';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
@@ -35,6 +35,7 @@ import { createCognitoAuthObject } from '../cognito';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
 import useBundle, { getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
+import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -61,7 +62,8 @@ export const createChromeContext = ({
   quickstartsAPI,
   helpTopics,
 }: CreateChromeContextConfig): ChromeAPI => {
-  const fetchPermissions = createFetchPermissionsWatcher();
+  const fetchPermissions = createFetchPermissionsWatcher(getUser);
+  const visibilityFunctions = getVisibilityFunctions();
   const dispatch = store.dispatch;
   const actions = {
     appAction: (action: string) => dispatch(appAction(action)),

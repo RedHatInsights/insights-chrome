@@ -21,6 +21,7 @@ jest.mock('axios', () => {
 
 import * as axios from 'axios';
 import FlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
+import { initializeVisibilityFunctions } from './VisibilitySingleton';
 
 jest.mock('@unleash/proxy-client-react', () => {
   const actual = jest.requireActual('@unleash/proxy-client-react');
@@ -51,6 +52,7 @@ const testClient = new UnleashClient({
   appName: 'bar',
   boostrap: [{}],
   environment: 'dev',
+  fetch: () => ({}),
 });
 
 // eslint-disable-next-line react/prop-types
@@ -64,8 +66,17 @@ const RouterDummy = ({ store, children, path }) => (
   </MemoryRouter>
 );
 
-describe('useNavigatiom', () => {
+describe('useNavigation', () => {
   const mockStore = configureStore();
+  beforeAll(() => {
+    initializeVisibilityFunctions({
+      getUser() {
+        return Promise.resolve({});
+      },
+      getToken: () => Promise.resolve('a.a'),
+      getUserPermissions: () => Promise.resolve([]),
+    });
+  });
 
   test('should update on namespace change', async () => {
     const axiosGetSpy = jest.spyOn(axios.default, 'get');

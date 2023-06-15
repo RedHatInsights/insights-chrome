@@ -46,6 +46,7 @@ window.ResizeObserver =
 
 import * as routerDom from 'react-router-dom';
 import LibtJWTContext from '../LibJWTContext';
+import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 
 describe('ScalprumRoot', () => {
   let initialState;
@@ -71,6 +72,7 @@ describe('ScalprumRoot', () => {
   beforeAll(() => {
     global.__webpack_init_sharing__ = () => undefined;
     global.__webpack_share_scopes__ = { default: {} };
+    initializeVisibilityFunctions({});
   });
 
   beforeEach(() => {
