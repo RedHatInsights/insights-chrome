@@ -21,9 +21,9 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
       <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>
-        <CardBody className="pf-u-p-md">
+        <CardBody className="pf-v5-u-p-md">
           <Split>
-            <SplitItem className="pf-m-fill">{name}</SplitItem>
+            <SplitItem className="pf-v5-m-fill">{name}</SplitItem>
             <SplitItem>
               <Button
                 onClick={(e) => {
@@ -32,10 +32,10 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
                   e.preventDefault();
                   unfavoritePage(pathname);
                 }}
-                className="pf-u-p-0"
+                className="pf-v5-u-p-0"
                 variant="plain"
               >
-                <Icon className="pf-u-ml-sm chr-c-icon-star">
+                <Icon className="pf-v5-u-ml-sm chr-c-icon-star">
                   <StarIcon />
                 </Icon>
               </Button>
@@ -44,7 +44,7 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
           <TextContent>
             <Text component="small">{bundle}</Text>
             {description ? (
-              <Text component="small" className="pf-u-color-100">
+              <Text component="small" className="pf-v5-u-color-100">
                 {description}
               </Text>
             ) : null}

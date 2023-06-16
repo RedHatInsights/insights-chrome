@@ -1,47 +1,42 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 .chr-c-search {
-    &__input {
-      .pf-c-input-group {
-        background-color: transparent !important;
-      }
-
-      .pf-c-text-input-group {
-        --pf-c-text-input-group--BackgroundColor: var(--pf-global--palette--black-700);
-        --pf-c-text-input-group__icon--Color: var(--pf-global--primary-color--light-100);
-        --pf-c-text-input-group--placeholder--Color: var(--pf-global--Color--light-300);
-        --pf-c-text-input-group__text--after--BorderBottomColor: var(--pf-global--palette--black-500);
-        --pf-c-text-input-group__text--before--BorderColor: var(--pf-global--palette--black-800);
-        --pf-c-text-input-group__text--hover__icon--Color: var(--pf-global--primary-color--light-100);
-        &:hover {
-          --pf-c-text-input-group--placeholder--Color: var(--pf-global--Color--light-100);
-          --pf-c-text-input-group__text--after--BorderBottomColor: var(--pf-global--active-color--300);
-        }
-        input:focus-visible {
-          outline: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BackgroundColor--dark-100);
-        }
-      }
+  &__input {
+    .pf-v5-c-input-group {
+      background-color: transparent !important;
     }
-    &__menu {
-      overflow-y: auto;
-      .pf-c-menu__group-title {
-        padding-bottom: var(--pf-global--spacer--md);
-        &:empty {
-          display: none;
-        }
+    .pf-v5-c-text-input-group {
+      --pf-v5-c-text-input-group--BackgroundColor: var(--pf-v5-global--palette--black-700);
+      --pf-v5-c-text-input-group__icon--Color: var(--pf-v5-global--primary-color--light-100);
+      --pf-v5-c-text-input-group__text--after--BorderBottomColor: var(--pf-v5-global--palette--black-500);
+      --pf-v5-c-text-input-group__text--before--BorderColor: var(--pf-v5-global--palette--black-800);
+      --pf-v5-c-text-input-group__text--hover__icon--Color: var(--pf-v5-global--primary-color--light-100);
+      input::placeholder {
+        color: var(--pf-v5-global--Color--light-300);
       }
-    }
-    &__empty-state {
-      .pf-c-empty-state__icon {
-        font-size: 2rem;
+      input:hover::placeholder {
+        color: var(--pf-v5-global--Color--light-100) !important;
+      }
+      &:hover {
+        --pf-v5-c-text-input-group__text--after--BorderBottomColor: var(--pf-v5-global--active-color--300);
+      }
+      input:focus-visible {
+        outline: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BackgroundColor--dark-100);
       }
     }
   }
-  @media screen and (max-width: 768px) {
-    .chr-c-search__input .chr-c-search__collapsed {
-      justify-content: flex-end;
-    }
-    .chr-c-search__input input {
-      color: white;
+  &__menu {
+    overflow-y: auto;
+    .pf-v5-c-menu__group-title {
+      padding-bottom: var(--pf-v5-global--spacer--md);
+      &:empty {
+        display: none;
+      }
     }
   }
+  &__empty-state {
+    .pf-v5-c-empty-state__icon {
+      font-size: 2rem;
+    }
+  }
+}

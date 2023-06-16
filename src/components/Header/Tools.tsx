@@ -234,6 +234,7 @@ const Tools = () => {
   return (
     <>
       <ToolbarItem
+        className="pf-v5-u-mr-0"
         {...(isNotificationsEnabled && {
           spacer: {
             default: 'spacerMd',
@@ -261,19 +262,19 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && (
-        <ToolbarItem>
+        <ToolbarItem className="pf-v5-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
       </ToolbarItem>
-      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
@@ -312,7 +313,7 @@ const Tools = () => {
         <HeaderAlert
           className="chr-c-alert-preview"
           title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
-          variant={AlertVariant.default}
+          variant={AlertVariant.info}
           actionLinks={
             <React.Fragment>
               <AlertActionLink

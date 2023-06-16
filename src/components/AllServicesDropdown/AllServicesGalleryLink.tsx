@@ -37,18 +37,18 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle
         isSelectableRaised
         onClick={onLinkClick}
       >
-        <CardBody className="pf-u-p-md">
+        <CardBody className="pf-v5-u-p-md">
           <Split>
-            <SplitItem className="pf-m-fill">{title}</SplitItem>
+            <SplitItem className="pf-v5-m-fill">{title}</SplitItem>
             <SplitItem>
               {isExternal ? (
-                <Icon className="pf-u-ml-sm chr-c-icon-external-link" isInline>
+                <Icon className="pf-v5-u-ml-sm chr-c-icon-external-link" isInline>
                   <ExternalLinkAltIcon />
                 </Icon>
               ) : (
                 <Button
                   variant="plain"
-                  className="pf-u-p-0"
+                  className="pf-v5-u-p-0"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -56,7 +56,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle
                   }}
                   icon={
                     <Icon
-                      className={classNames('pf-u-ml-sm chr-c-icon-star', {
+                      className={classNames('pf-v5-u-ml-sm chr-c-icon-star', {
                         favorite: isFavorite,
                       })}
                     >
@@ -74,7 +74,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle
               do not show bundle if the card title matches bundle title
             */}
             <Text component="small">{subtitle || (bundle !== title ? bundle : null)}</Text>
-            <Text component="small" className="pf-u-color-100">
+            <Text component="small" className="pf-v5-u-color-100">
               {description ?? ''}
             </Text>
           </TextContent>

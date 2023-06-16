@@ -1,69 +1,69 @@
 .chr-c-app-title {
   color: white;
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--lg);
   width: 100%;
-  border-bottom: var(--pf-global--spacer--xs) solid var(--pf-global--Color--300);
-  font-weight: var(--pf-global--FontWeight--semi-bold);
+  border-bottom: var(--pf-v5-global--spacer--xs) solid var(--pf-v5-global--Color--300);
+  font-weight: var(--pf-v5-global--FontWeight--semi-bold);
   white-space: normal;
   text-align: left;
   font-size: 17px;
 }
 
-.pf-c-nav__list {
+.pf-v5-c-nav__list {
   section.chr-c-section-nav {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
     margin-top: 0 !important;
-    h2.pf-c-nav__section-title {
+    h2.pf-v5-c-nav__section-title {
       border: 0;
-      border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
-      color: var(--pf-global--palette--black-500);
-      font-size: var(--pf-global--FontSize--xs);
-      font-weight: var(--pf-global--FontWeight--medium);
-      padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
+      border-top: var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BackgroundColor--dark-200) solid;
+      color: var(--pf-v5-global--palette--black-500);
+      font-size: var(--pf-v5-global--FontSize--xs);
+      font-weight: var(--pf-v5-global--FontWeight--medium);
+      padding: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
     }
     ul
-      > li.pf-c-nav__item {
+      > li.pf-v5-c-nav__item {
         border-top: 0;
-        --pf-c-nav__item--MarginTop: 0;
-        --pf-c-nav__item--before--BorderWidth: 0;
+        --pf-v5-c-nav__item--MarginTop: 0;
+        --pf-v5-c-nav__item--before--BorderWidth: 0;
         &:last-child {
-          margin-bottom: var(--pf-global--spacer--sm);
+          margin-bottom: var(--pf-v5-global--spacer--sm);
         }
-        .pf-c-nav__subnav {
-          padding: 0 0 0 var(--pf-global--spacer--lg);
-          .pf-c-nav__list {
-            .pf-c-nav__item {
-              .pf-c-nav__link{
-                padding-left: var(--pf-global--spacer--lg);
+        .pf-v5-c-nav__subnav {
+          padding: 0 0 0 var(--pf-v5-global--spacer--lg);
+          .pf-v5-c-nav__list {
+            .pf-v5-c-nav__item {
+              .pf-v5-c-nav__link{
+                padding-left: var(--pf-v5-global--spacer--lg);
               }
               &:last-child {
-                margin-bottom: var(--pf-global--spacer--sm);
+                margin-bottom: var(--pf-v5-global--spacer--sm);
               }
             }
           }
         }
-        section.pf-c-nav__subnav {
-          li.pf-c-nav__item {
+        section.pf-v5-c-nav__subnav {
+          li.pf-v5-c-nav__item {
             border: none !important;
           }
         }
       }
     }
-    .pf-c-nav__item.chr-c-navigation__additional-links {
-      .pf-c-nav__link {
-        padding-left: var(--pf-global--spacer--lg);
+    .pf-v5-c-nav__item.chr-c-navigation__additional-links {
+      .pf-v5-c-nav__link {
+        padding-left: var(--pf-v5-global--spacer--lg);
       }
     }
-  > .pf-c-nav__item:not(:first-child) {
-    border-top: var(--pf-global--BorderWidth--sm) var(--pf-global--BackgroundColor--dark-200) solid;
+  > .pf-v5-c-nav__item:not(:first-child) {
+    border-top: var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BackgroundColor--dark-200) solid;
   }   
   svg {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-left: var(--pf-v5-global--spacer--sm);
     width: 12px;  
   }
 }
 
-.pf-c-nav__item {
+.pf-v5-c-nav__item {
   a.chr-c-navigation__with-notifier {
     align-items: center;
     .notifier-icon {
@@ -73,9 +73,9 @@
   }
 }
 
-.pf-c-nav {
+.pf-v5-c-nav {
   .chr-c-navigation__beta-icon {
-    --pf-c-icon__content--Color: var(--pf-global--palette--green-300);
+    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--green-300);
   }
 }
 
@@ -89,5 +89,5 @@
 }
 
 .chr-c-app-switcher--loading {
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg)
+  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--lg)
 }

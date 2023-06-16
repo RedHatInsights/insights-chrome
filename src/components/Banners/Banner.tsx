@@ -15,7 +15,7 @@ const Banner = () => {
   return (
     <div className="chr-banner">
       <Text component={TextVariants.h3}>{intl.formatMessage(messages.changesComing)}</Text>
-      <Button variant="link" isLarge component="a" href={bannerContent.link.href} target="_blank">
+      <Button variant="link" component="a" href={bannerContent.link.href} target="_blank">
         {intl.formatMessage(messages.learnMore)} <ArrowRightIcon />
       </Button>
     </div>

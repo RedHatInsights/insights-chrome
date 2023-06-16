@@ -15,8 +15,8 @@ const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: Ser
             {favoritedServices.map((props, index) => (
               <ServiceTile {...props} key={index} />
             ))}
-            <Card isPlain className="chr-c-card-centered pf-u-background-color-200">
-              <CardBody className="pf-u-pt-lg">
+            <Card isPlain className="chr-c-card-centered pf-v5-u-background-color-200">
+              <CardBody className="pf-v5-u-pt-lg">
                 <TextContent>
                   <Text component="p">Go to the All Services page to tag your favorites.</Text>
                   <Text component="p">

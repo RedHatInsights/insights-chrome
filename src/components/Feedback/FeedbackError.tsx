@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Button, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useIntl } from 'react-intl';
 
@@ -15,7 +15,9 @@ const FeedbackError = ({ onCloseModal }: FeedbackErrorProps) => {
   const intl = useIntl();
   return (
     <div className="chr-c-feedback-success-content">
-      <CheckIcon size="md" color="var(--pf-global--success-color--100)" className="pf-u-mx-auto" />
+      <Icon size="md">
+        <CheckIcon color="var(--pf-v5-global--success-color--100)" className="pf-v5-u-mx-auto" />
+      </Icon>
       <TextContent>
         <Text component={TextVariants.h1}>{intl.formatMessage(messages.somethingWentWrong)}</Text>
         <Text>

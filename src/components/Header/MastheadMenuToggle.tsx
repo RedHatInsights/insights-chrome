@@ -1,5 +1,5 @@
 import React from 'react';
-import { MastheadToggle, PageToggleButton } from '@patternfly/react-core';
+import { Icon, MastheadToggle, PageToggleButton } from '@patternfly/react-core';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useDispatch } from 'react-redux';
 import { onToggle } from '../../redux/actions';
@@ -22,13 +22,15 @@ const MastheadMenuToggle = ({
         className={className}
         variant="plain"
         aria-label="Global navigation"
-        isNavOpen={isNavOpen}
-        onNavToggle={() => {
+        isSidebarOpen={isNavOpen}
+        onSidebarToggle={() => {
           setIsNavOpen?.((prev) => !prev);
           dispatch(onToggle());
         }}
       >
-        <BarsIcon size={iconSize} />
+        <Icon size={iconSize}>
+          <BarsIcon />
+        </Icon>
       </PageToggleButton>
     </MastheadToggle>
   );

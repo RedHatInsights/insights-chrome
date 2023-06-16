@@ -23,11 +23,11 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
 
   return (
-    <PageBreadcrumb className="chr-c-breadcrumbs pf-u-p-0">
-      <div className="pf-u-display-flex pf-u-justify-content-space-between pf-u-pt-sm pf-u-pb-0 pf-u-pl-md">
+    <PageBreadcrumb className="chr-c-breadcrumbs pf-v5-u-p-0">
+      <div className="pf-v5-u-display-flex pf-v5-u-justify-content-space-between pf-v5-u-pt-sm pf-v5-u-pb-0 pf-v5-u-pl-md">
         <FlexItem>{!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}</FlexItem>
-        <FlexItem className="pf-u-flex-grow-1">
-          <Breadcrumb className="pf-u-pt-sm">
+        <FlexItem className="pf-v5-u-flex-grow-1">
+          <Breadcrumb className="pf-v5-u-pt-sm">
             {segments.map(({ title, href }, index) => (
               <BreadcrumbItem
                 to={href}
@@ -36,7 +36,7 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
                 )}
                 key={index}
                 isActive={segments.length - 1 === index}
-                className="pf-u-pb-sm"
+                className="pf-v5-u-pb-sm"
               >
                 {title}
               </BreadcrumbItem>

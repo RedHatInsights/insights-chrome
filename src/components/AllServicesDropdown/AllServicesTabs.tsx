@@ -72,7 +72,7 @@ const AllServicesTabs = ({
       onToggle={onToggle}
       toggleText={activeTabTitle}
       role="region"
-      className="pf-u-p-md pf-u-pr-0"
+      className="pf-v5-u-p-md pf-v5-u-pr-0"
     >
       <TabWrapper
         onClick={(e) => {
@@ -82,22 +82,25 @@ const AllServicesTabs = ({
         title={
           <TabTitleText>
             My favorite services
-            <Icon className="chr-c-icon-service-tab pf-u-ml-md" status="warning" isInline>
+            <Icon className="chr-c-icon-service-tab pf-v5-u-ml-md" status="warning" isInline>
               <StarIcon />
             </Icon>
           </TabTitleText>
         }
       />
-      {linkSections.map((section, index) => (
-        <TabWrapper
-          key={index}
-          eventKey={index}
-          title={<TabTitleText>{section.title}</TabTitleText>}
-          tabContentId={TAB_CONTENT_ID}
-          tabContentRef={tabContentRef}
-          onClick={() => onTabClick(section, index)}
-        />
-      ))}
+      <>
+        {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
+        {linkSections.map((section, index) => (
+          <TabWrapper
+            key={index}
+            eventKey={index}
+            title={<TabTitleText>{section.title}</TabTitleText>}
+            tabContentId={TAB_CONTENT_ID}
+            tabContentRef={tabContentRef}
+            onClick={() => onTabClick(section, index)}
+          />
+        ))}
+      </>
     </Tabs>
   );
 };

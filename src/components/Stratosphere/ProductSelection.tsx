@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bullseye, Flex, Masthead, Page, Stack, StackItem, Text, TextContent, Title } from '@patternfly/react-core';
+import { Bullseye, Flex, Icon, Masthead, Page, Stack, StackItem, Text, TextContent, Title } from '@patternfly/react-core';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 
 import productsList from './products-list';
@@ -19,11 +19,13 @@ const ProductSelection = () => (
         </Masthead>
       }
     >
-      <div className="chr-c-product-selection pf-u-pt-lg pf-u-pb-lg">
+      <div className="chr-c-product-selection pf-v5-u-pt-lg pf-v5-u-pb-lg">
         <Stack hasGutter>
           <StackItem>
             <Bullseye>
-              <CheckCircleIcon size="xl" color="var(--pf-global--success-color--100)" />
+              <Icon iconSize="xl">
+                <CheckCircleIcon color="var(--pf-v5-global--success-color--100)" />
+              </Icon>
             </Bullseye>
           </StackItem>
           <StackItem>

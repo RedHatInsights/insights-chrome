@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownProps, DropdownToggle } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownList, MenuToggle, PopoverPosition } from '@patternfly/react-core';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { isBeta } from '../../utils/common';
@@ -34,7 +34,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
     setIsOpen((prev) => !prev);
   };
 
-  const onToggle = (isOpen: boolean) => setIsOpen(isOpen);
+  const onToggle = () => setIsOpen((prev) => !prev);
 
   const onClickInternal = (
     ev: MouseEvent | React.KeyboardEvent<Element> | React.MouseEvent<any, MouseEvent>,
@@ -51,8 +51,8 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
     }
   };
 
-  // Render the questionmark icon items
-  const dropdownItems: DropdownProps['dropdownItems'] = props.dropdownItems.map(
+  // Render the question mark icon items
+  const dropdownItems = props.dropdownItems.map(
     ({ url, appId, title, onClick, isHidden, isDisabled, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
@@ -60,15 +60,15 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           ouiaId={title}
           disabled={isDisabled}
           component={
-            appId && url ? (
-              <ChromeLink {...rest} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
-                {title}
-              </ChromeLink>
-            ) : url ? (
-              'a'
-            ) : (
-              'button'
-            )
+            appId && url
+              ? () => (
+                  <ChromeLink {...rest} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
+                    {title}
+                  </ChromeLink>
+                )
+              : url
+              ? 'a'
+              : 'button'
           }
           // Because the urls are using 'a', don't use onClick for accessibility
           // If it is a button, use the onClick prop
@@ -91,28 +91,30 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
   );
 
   const toggle = (
-    <DropdownToggle
+    <MenuToggle
+      variant={props.icon ? 'plain' : 'default'}
       className={props.className}
       id={props.id?.toString()}
-      ouiaId={props.id}
-      toggleIndicator={props.hasToggleIndicator}
-      onToggle={onToggle}
+      onClick={onToggle}
       aria-label={props.ariaLabel}
     >
       {props.icon && <props.icon />}
-    </DropdownToggle>
+    </MenuToggle>
   );
 
   return (
     <Dropdown
-      position={DropdownPosition.right}
-      toggle={toggle}
+      popperProps={{
+        position: PopoverPosition.right,
+      }}
+      toggle={() => toggle}
       isOpen={isOpen}
-      dropdownItems={dropdownItems}
       onSelect={onSelect}
       ouiaId={props.ouiaId}
       isPlain
-    />
+    >
+      <DropdownList>{dropdownItems}</DropdownList>
+    </Dropdown>
   );
 };
 

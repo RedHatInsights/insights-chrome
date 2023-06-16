@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Bullseye, ContextSelector, ContextSelectorItem, Spinner, Text, TextContent } from '@patternfly/react-core';
+import { Bullseye, Icon, Spinner, Text, TextContent } from '@patternfly/react-core';
+import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core/deprecated';
+
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -130,7 +132,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
     <ContextSelector
       toggleText={`Account: ${selectedAccountNumber}`}
       className={classNames('chr-c-context-selector', className)}
-      onSearchInputChange={(val) => setSearchValue(val)}
+      onSearchInputChange={(_event, val) => setSearchValue(val)}
       isOpen={isOpen}
       searchInputValue={searchValue}
       onToggle={onSelect}
@@ -143,10 +145,12 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       {user && user?.identity?.account_number!.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
           <TextContent className="chr-c-content-personal-account">
-            <Text className="account-label pf-u-mb-0 sentry-mask data-hj-suppress">
+            <Text className="account-label pf-v5-u-mb-0 sentry-mask data-hj-suppress">
               <span>{user?.identity?.account_number}</span>
               {user?.identity?.account_number === `${selectedAccountNumber}` && (
-                <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+                <Icon size="sm">
+                  <CheckIcon color="var(--pf-v5-global--primary-color--100)" className="pf-v5-u-ml-auto" />
+                </Icon>
               )}
             </Text>
             <Text component="small">{intl.formatMessage(messages.personalAccount)}</Text>
@@ -161,7 +165,9 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
           <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
             {target_account}
             {target_account === selectedAccountNumber && (
-              <CheckIcon size="sm" color="var(--pf-global--primary-color--100)" className="pf-u-ml-auto" />
+              <Icon size="sm">
+                <CheckIcon color="var(--pf-v5-global--primary-color--100)" className="pf-v5-u-ml-auto" />
+              </Icon>
             )}
           </ContextSelectorItem>
         ))

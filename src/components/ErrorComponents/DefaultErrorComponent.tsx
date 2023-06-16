@@ -4,9 +4,9 @@ import {
   Bullseye,
   Button,
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStatePrimary,
   ExpandableSection,
   Flex,
   FlexItem,
@@ -81,7 +81,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   return (
     <Bullseye className="chr-c-error-component">
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
+        <EmptyStateIcon color="var(--pf-v5-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
           {intl.formatMessage(messages.somethingWentWrong)}&nbsp;
           {sentryId && intl.formatMessage(messages.globalRuntimeErrorId, { errorId: sentryId })}
@@ -120,9 +120,9 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
             </FlexItem>
           </Flex>
         </EmptyStateBody>
-        <EmptyStatePrimary>
+        <EmptyStateActions>
           <Button component={() => <a href="/">{intl.formatMessage(messages.returnToHomepage)}</a>} variant="primary" />
-        </EmptyStatePrimary>
+        </EmptyStateActions>
       </EmptyState>
     </Bullseye>
   );

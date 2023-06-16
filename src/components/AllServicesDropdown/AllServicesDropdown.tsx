@@ -56,7 +56,12 @@ const AllServicesDropdown = () => {
   };
 
   const toggle = (
-    <MenuToggle className="pf-m-full-height chr-c-link-service-toggle" ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle
+      className="pf-v5-u-h-100 chr-c-link-service-toggle pf-v5-u-pl-lg pf-v5-u-pr-lg"
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+    >
       Services
     </MenuToggle>
   );
@@ -67,27 +72,29 @@ const AllServicesDropdown = () => {
       appendTo={document.body}
       isVisible={isOpen}
       popper={
-        ready ? (
-          <AllServicesPortal
-            favoritedServices={favoritedServices}
-            linkSections={linkSections}
-            menuRef={menuRef}
-            setIsOpen={setIsOpen}
-            isOpen={isOpen}
-          />
-        ) : (
-          <div ref={menuRef} className="pf-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
-            <Backdrop>
-              <Panel variant="raised" className="pf-c-dropdown__menu pf-u-p-0 pf-u-w-100 chr-c-panel-services-nav ">
-                <PanelMain>
-                  <Bullseye>
-                    <Spinner />
-                  </Bullseye>
-                </PanelMain>
-              </Panel>
-            </Backdrop>
-          </div>
-        )
+        <>
+          {ready ? (
+            <AllServicesPortal
+              favoritedServices={favoritedServices}
+              linkSections={linkSections}
+              menuRef={menuRef}
+              setIsOpen={setIsOpen}
+              isOpen={isOpen}
+            />
+          ) : (
+            <div ref={menuRef} className="pf-v5-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+              <Backdrop>
+                <Panel variant="raised" className="pf-v5-c-dropdown__menu pf-v5-u-p-0 pf-v5-u-w-100 chr-c-panel-services-nav ">
+                  <PanelMain>
+                    <Bullseye>
+                      <Spinner />
+                    </Bullseye>
+                  </PanelMain>
+                </Panel>
+              </Backdrop>
+            </div>
+          )}
+        </>
       }
     />
   );

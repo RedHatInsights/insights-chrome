@@ -11,7 +11,7 @@ const IDPError = () => {
   return (
     <Bullseye>
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--100)" icon={ExclamationCircleIcon} />
+        <EmptyStateIcon color="var(--pf-v5-global--danger-color--100)" icon={ExclamationCircleIcon} />
         <Title headingLevel="h1" size="lg">
           {intl.formatMessage(messages.authFailure)}
         </Title>

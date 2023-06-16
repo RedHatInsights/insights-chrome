@@ -10,7 +10,7 @@ const SearchGroup = ({ items, highlighting }: { items: SearchResultItem[]; highl
     <MenuGroup>
       {items.map(({ id, allTitle, bundle_title, abstract, relative_uri }) => (
         <MenuItem
-          className="pf-u-mb-xs"
+          className="pf-v5-u-mb-xs"
           component={(props) => <ChromeLink {...props} href={relative_uri} />}
           description={<SearchDescription highlight={highlighting[id]?.abstract} description={abstract} />}
           key={id}

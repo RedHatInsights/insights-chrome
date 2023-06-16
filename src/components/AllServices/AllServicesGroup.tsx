@@ -13,7 +13,7 @@ const AllServicesGroup = ({ title, links }: AllServicesGroupProps) => {
   }
   return (
     <Fragment>
-      <Text component={TextVariants.p} className="pf-u-pt-xs pf-u-font-weight-bold">
+      <Text component={TextVariants.p} className="pf-v5-u-pt-xs pf-v5-u-font-weight-bold">
         {title}
       </Text>
       {filteredLinks.map((link, index) => (

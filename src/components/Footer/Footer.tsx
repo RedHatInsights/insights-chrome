@@ -25,20 +25,20 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
 
   return (
     <React.Fragment>
-      <PageSection className="chr-c-footer pf-u-mt-auto pf-u-p-lg pf-m-no-fill pf-u-mt-auto pf-u-background-color-dark-100">
-        <Flex role="contentinfo" className="pf-m-column pf-m-row-on-lg">
-          <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer" className="pf-l-flex">
-            <Icon className="pf-u-mx-md pf-u-mt-xs pf-u-mb-md">
+      <PageSection className="chr-c-footer pf-v5-u-mt-auto pf-v5-u-p-lg pf-v5-m-no-fill pf-v5-u-mt-auto pf-v5-u-background-color-dark-100 pf-v5-u-flex-grow-0">
+        <Flex role="contentinfo" className="pf-m-column pf-v5-u-flex-direction-row-on-lg">
+          <a href="https://www.redhat.com" target="_blank" rel="noopener noreferrer" className="pf-v5-l-flex">
+            <Icon className="pf-v5-u-mx-md pf-v5-u-mt-xs pf-v5-u-mb-md">
               <RedHatIcon />
             </Icon>
           </a>
-          <Flex className="pf-m-column pf-u-align-self-flex-start">
-            <TextContent className="pf-l-flex pf-u-mb-sm">
-              <Text component="p" className="pf-u-color-400 pf-u-font-size-xs">
+          <Flex className="pf-m-column pf-v5-u-align-self-flex-start">
+            <TextContent className="pf-v5-l-flex pf-v5-u-mb-sm">
+              <Text component="p" className="pf-v5-u-color-400 pf-v5-u-font-size-xs">
                 ©2023 Red Hat, Inc.
               </Text>
             </TextContent>
-            <TextContent className="pf-l-flex pf-m-column pf-m-row-on-md pf-u-font-size-xs">
+            <TextContent className="pf-v5-l-flex pf-m-column pf-v5-u-flex-direction-row-on-md pf-v5-u-font-size-xs">
               <Text component="a" onClick={() => setIsModalOpen(true)}>
                 Browser Support
               </Text>

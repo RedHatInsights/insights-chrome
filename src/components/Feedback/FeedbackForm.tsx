@@ -106,14 +106,14 @@ const FeedbackForm = ({
           <FormGroup label={textareaLabel} fieldId="horizontal-form-exp">
             <TextArea
               value={textAreaValue}
-              onChange={(value) => setTextAreaValue(value)}
+              onChange={(_event, value) => setTextAreaValue(value)}
               className="chr-c-feedback-text-area"
               name="feedback-description-text"
               id="feedback-description-text"
             />
           </FormGroup>
         )}
-        <FormGroup className="pf-u-mt-20">
+        <FormGroup className="pf-v5-u-mt-20">
           <Checkbox
             id="feedback-checkbox"
             isChecked={checked}
@@ -125,7 +125,7 @@ const FeedbackForm = ({
       </Form>
       {checked ? (
         <>
-          <div className="pf-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
+          <div className="pf-v5-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
           <Panel variant="raised" className="chr-c-feedback-panel">
             <PanelMain>
               <PanelMainBody className="chr-c-feedback-panel__body">{user.identity.user.email}</PanelMainBody>

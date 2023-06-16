@@ -31,9 +31,9 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
         }
       >
         <RedirectBanner />
-        <PageSection variant={PageSectionVariants.light} className="pf-u-px-2xl-on-md pf-m-fill">
-          <Stack className="pf-u-background-color-100">
-            <StackItem className="pf-u-pb-md">
+        <PageSection variant={PageSectionVariants.light} className="pf-v5-u-px-2xl-on-md pf-v5-m-fill">
+          <Stack className="pf-v5-u-background-color-100">
+            <StackItem className="pf-v5-u-pb-md">
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
             <QuickAccess />

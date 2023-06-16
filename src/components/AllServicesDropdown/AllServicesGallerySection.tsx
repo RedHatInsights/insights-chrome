@@ -10,8 +10,8 @@ const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionPr
     return null;
   }
   return (
-    <div className="pf-u-mb-lg">
-      <Title className="pf-u-mb-md" headingLevel="h3">
+    <div className="pf-v5-u-mb-lg">
+      <Title className="pf-v5-u-mb-md" headingLevel="h3">
         {title}
       </Title>
       <div>

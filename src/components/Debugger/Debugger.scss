@@ -1,18 +1,18 @@
-button.pf-c-button.chr-c-button-debugger {
+button.pf-v5-c-button.chr-c-button-debugger {
   svg {
     transform: rotate(90deg);
   }
   position: fixed;
-  z-index: var(--pf-global--ZIndex--xs);
-  padding: var(--pf-global--BorderWidth--xl);
-  padding-top: var(--pf-global--BorderWidth--lg);
-  padding-bottom: var(--pf-global--BorderWidth--lg);
-  right: var(--pf-global--height-breakpoint--sm);
+  z-index: var(--pf-v5-global--ZIndex--xs);
+  padding: var(--pf-v5-global--BorderWidth--xl);
+  padding-top: var(--pf-v5-global--BorderWidth--lg);
+  padding-bottom: var(--pf-v5-global--BorderWidth--lg);
+  right: var(--pf-v5-global--height-breakpoint--sm);
   bottom: 250px;
   transform: rotate(270deg);
-  background: var(--pf-global--danger-color--100);
+  background: var(--pf-v5-global--danger-color--100);
   &:hover {
-    background: var(--pf-global--palette--red-200);
+    background: var(--pf-v5-global--palette--red-200);
   }
 }
 
@@ -22,18 +22,18 @@ button.pf-c-button.chr-c-button-debugger {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
 
-  .pf-c-content {
-    margin-bottom: var(--pf-c-content--MarginBottom);
+  .pf-v5-c-content {
+    margin-bottom: var(--pf-v5-v5-c-content--MarginBottom);
   }
 
-  .pf-c-modal-box__body {
+  .pf-v5-c-modal-box__body {
     padding: 0;
     margin: 0;
   }
-  .pf-c-modal-box > .pf-c-button + *{
+  .pf-v5-c-modal-box > .pf-v5-c-button + *{
     margin-right: 0;
   }
-  & .pf-c-modal-box__body {
+  & .pf-v5-c-modal-box__body {
     &:last-child {
       padding-bottom: 0;
     }
@@ -43,9 +43,9 @@ button.pf-c-button.chr-c-button-debugger {
 .chr-c-debugger-content {
   display: flex;
   flex-direction: column;
-  padding-right: var(--pf-global--spacer--lg);
-  padding-top: var(--pf-global--spacer--lg);
-  margin: var(--pf-global--spacer--md);
+  padding-right: var(--pf-v5-global--spacer--lg);
+  padding-top: var(--pf-v5-global--spacer--lg);
+  margin: var(--pf-v5-global--spacer--md);
 }
 
 .chr-c-debugger-dropdown {

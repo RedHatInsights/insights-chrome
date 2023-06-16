@@ -1,10 +1,10 @@
 .chr-c-breadcrumbs {
-  background-color: var(--pf-global--BackgroundColor--dark-300) !important;
-  .pf-c-masthead__toggle button {
+  background-color: var(--pf-v5-global--BackgroundColor--dark-300) !important;
+  .pf-v5-c-masthead__toggle button {
     padding-top: 0;
   }
 
   &__link {
-    color: var(--pf-global--link--Color--light)
+    color: var(--pf-v5-global--link--Color--light)
   }
 }

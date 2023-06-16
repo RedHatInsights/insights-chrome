@@ -15,8 +15,8 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }: BetaInfoM
   return (
     <Modal aria-label="Beta info modal" isOpen={isOpen} onClose={onCancel} variant={ModalVariant.medium}>
       <Bullseye>
-        <div className="pf-u-m-md pf-u-text-align-center">
-          <Icon size="xl" iconSize="xl" status="info" className="pf-u-m-md">
+        <div className="pf-v5-u-m-md pf-v5-u-text-align-center">
+          <Icon size="xl" iconSize="xl" status="info" className="pf-v5-u-m-md">
             <InfoCircleIcon />
           </Icon>
           <TextContent>
@@ -24,10 +24,10 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }: BetaInfoM
             <Text component="p">{intl.formatMessage(messages.tryThisFeatureInBeta)}</Text>
             <Text component="p">{intl.formatMessage(messages.afterBetaUse)}</Text>
           </TextContent>
-          <Button key="confirm" variant="primary" onClick={onClick} className="pf-u-mt-md">
+          <Button key="confirm" variant="primary" onClick={onClick} className="pf-v5-u-mt-md">
             {intl.formatMessage(messages.useFeatureInBeta)}
           </Button>
-          <TextContent className="pf-u-mt-md">
+          <TextContent className="pf-v5-u-mt-md">
             <Text component="a" href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">
               {intl.formatMessage(messages.learnMoreABoutBeta)}
             </Text>

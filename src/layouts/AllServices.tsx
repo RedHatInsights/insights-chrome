@@ -48,7 +48,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
-          <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+          <Masthead className="chr-c-masthead pf-v5-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
             <Header />
           </Masthead>
         }
@@ -61,13 +61,13 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         ) : (
           <Fragment>
             <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-              <PageSection variant={PageSectionVariants.light} className="pf-u-px-xl-on-md">
+              <PageSection variant={PageSectionVariants.light} className="pf-v5-u-px-xl-on-md">
                 <Title headingLevel="h2">All Services</Title>
-                <TextContent className="pf-u-mt-sm">
+                <TextContent className="pf-v5-u-mt-sm">
                   <Text component="p">
                     Every service available on Hybrid Cloud Console appears below. Hover over a service and click the star to add it to your
                     favorites.
-                    <Icon status="warning" size="md" className="pf-u-pl-sm" isInline>
+                    <Icon status="warning" size="md" className="pf-v5-u-pl-sm" isInline>
                       <StarIcon />
                     </Icon>
                   </Text>
@@ -76,7 +76,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                   <FilterIcon />
                 </Icon>
                 <SearchInput
-                  className="chr-c-all-services-filter pf-u-mt-md pf-u-mb-sm"
+                  className="chr-c-all-services-filter pf-v5-u-mt-md pf-v5-u-mb-sm"
                   data-ouia-component-id="app-filter-search"
                   placeholder={intl.formatMessage(Messages.findAppOrService)}
                   value={filterValue}
@@ -89,7 +89,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
               </PageSection>
             </PageGroup>
             <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-              <Gallery className="pf-u-display-block" hasGutter>
+              <Gallery className="pf-v5-u-display-block" hasGutter>
                 {sections.map((section, index) => (
                   <AllServicesSection key={index} {...section} />
                 ))}

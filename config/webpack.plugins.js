@@ -27,6 +27,7 @@ const plugins = (dev = false, beta = false) => {
       : []),
     new MiniCssExtractPlugin({
       filename: dev ? '[name].css' : '[name].[fullhash].css',
+      ignoreOrder: true,
     }),
     new ModuleFederationPlugin({
       name: 'chrome',
@@ -48,8 +49,8 @@ const plugins = (dev = false, beta = false) => {
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         {
-          'pf-5/dist/dynamic/components/Button': { requiredVersion: '5.0.0-prerelease.8' },
-          'pf-5-icons/dist/dynamic/icons/ad-icon': { requiredVersion: '5.0.0-prerelease.3' },
+          'pf-5/dist/dynamic/components/Button': { requiredVersion: '5.0.0-prerelease.10' },
+          'pf-5-icons/dist/dynamic/icons/ad-icon': { requiredVersion: '5.0.0-prerelease.5' },
         },
       ],
     }),

@@ -60,7 +60,7 @@ const BreadcrumbsFavorites = ({
       variant="plain"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      className="pf-u-pt-xs pf-u-text-nowrap"
+      className="pf-v5-u-pt-xs pf-v5-u-text-nowrap"
     >
       <Icon
         className={classNames('chr-c-breadcrumbs__favorite', {
@@ -70,7 +70,7 @@ const BreadcrumbsFavorites = ({
       >
         <StarIcon />
       </Icon>
-      <CaretDownIcon className="pf-u-ml-sm" />
+      <CaretDownIcon className="pf-v5-u-ml-sm" />
     </MenuToggle>
   );
 
@@ -101,14 +101,7 @@ const BreadcrumbsFavorites = ({
   );
   return (
     <div ref={containerRef}>
-      <Popper
-        placement="bottom-end"
-        trigger={toggle}
-        popper={menu}
-        isVisible={isOpen}
-        popperMatchesTriggerWidth={false}
-        appendTo={containerRef.current || undefined}
-      />
+      <Popper placement="bottom-end" trigger={toggle} popper={menu} isVisible={isOpen} width="trigger" appendTo={containerRef.current || undefined} />
     </div>
   );
 };

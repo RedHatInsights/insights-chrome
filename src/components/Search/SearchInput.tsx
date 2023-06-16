@@ -287,11 +287,11 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-pt-sm pf-u-px-md chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-v5-u-pt-sm pf-v5-u-px-md chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
-            <Bullseye className="pf-u-p-md">
+            <Bullseye className="pf-v5-u-p-md">
               <Spinner size="xl" />
             </Bullseye>
           ) : (
@@ -310,7 +310,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
+    <div ref={containerRef} className="chr-c-search__input pf-v5-c-search-input pf-v5-u-w-100">
       {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
       {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
     </div>

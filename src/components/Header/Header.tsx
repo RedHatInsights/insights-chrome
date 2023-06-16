@@ -52,24 +52,19 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
 
   return (
     <Fragment>
-      <MastheadMain className="pf-u-pl-lg pf-u-pt-0 pf-u-pb-xs">
-        <MastheadBrand className="pf-u-flex-shrink-0 pf-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+      <MastheadMain className="pf-v5-u-pl-lg pf-v5-u-pt-0 pf-v5-u-pb-xs">
+        <MastheadBrand className="pf-v5-u-flex-shrink-0 pf-v5-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
           <Logo />
         </MastheadBrand>
         <Toolbar isFullHeight>
           <ToolbarContent>
-            <ToolbarGroup
-              alignment={{ default: 'alignRight' }}
-              className="pf-m-icon-button-group"
-              widget-type="InsightsToolbar"
-              visibility={{ '2xl': 'hidden' }}
-            >
+            <ToolbarGroup className="pf-v5-m-icon-button-group pf-v5-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>
               {!lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
       </MastheadMain>
-      <MastheadContent className="pf-u-mx-md pf-u-mx-0-on-2xl">
+      <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
         {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
@@ -82,16 +77,16 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                 </ToolbarItem>
               )}
               {user && !isITLessEnv && (
-                <ToolbarItem className="pf-m-hidden pf-m-visible-on-xl">
+                <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
                   <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
+            <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-md-on-2xl" variant="filter-group">
               <SearchInput onStateChange={hideAllServices} />
             </ToolbarGroup>
             <ToolbarGroup
-              className="pf-m-icon-button-group pf-u-ml-auto"
+              className="pf-v5-m-icon-button-group pf-v5-u-ml-auto"
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               widget-type="InsightsToolbar"
             >

@@ -6,7 +6,7 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
  * Node will be persistent when switching parent component and won't reset its instance and animation
  */
 const LoadingFallback = (
-  <Bullseye className="pf-u-p-xl">
+  <Bullseye className="pf-v5-u-p-xl">
     <Spinner data-ouia-component-id="remote-module-loader" size="xl" />
   </Bullseye>
 );

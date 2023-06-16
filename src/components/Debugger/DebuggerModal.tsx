@@ -7,8 +7,7 @@ import { DeepRequired } from 'utility-types';
 
 import { toggleDebuggerModal } from '../../redux/actions';
 import { ReduxState } from '../../redux/store';
-import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
-import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import { MenuToggle, MenuToggleElement, Select, SelectList, SelectOption } from '@patternfly/react-core';
 import DebuggerTable from './DebuggerTable';
 
 import './Debugger.scss';

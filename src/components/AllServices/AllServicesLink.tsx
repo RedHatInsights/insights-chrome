@@ -41,7 +41,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
       <ChromeLink appId={appId} isExternal={isExternal} href={href}>
         {title}
         {isExternal && (
-          <Icon className="pf-u-ml-sm chr-c-icon-external-link" isInline>
+          <Icon className="pf-v5-u-ml-sm chr-c-icon-external-link" isInline>
             <ExternalLinkAltIcon />
           </Icon>
         )}
@@ -50,7 +50,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
         <Icon
           onClick={() => handleFavouriteToggle(href, isFavorite)}
           aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-          className="pf-u-ml-sm chr-c-icon-star"
+          className="pf-v5-u-ml-sm chr-c-icon-star"
           isInline
         >
           <StarIcon />

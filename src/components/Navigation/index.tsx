@@ -46,13 +46,13 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
       <Nav aria-label="Insights Global Navigation" data-ouia-safe="true" ouiaId="SideNavigation">
         <NavList>
           <PageContextConsumer>
-            {({ isNavOpen }) => (
+            {({ isSidebarOpen }) => (
               <NavContext.Provider
                 value={{
                   componentMapper,
                   onLinkClick,
                   inPageLayout: true,
-                  isNavOpen,
+                  isNavOpen: isSidebarOpen,
                 }}
               >
                 {schema.navItems.map((item, index) => (

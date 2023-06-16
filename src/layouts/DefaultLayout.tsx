@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-import { Masthead, Page, PageSidebar } from '@patternfly/react-core';
+import { Masthead, Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core';
 import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
@@ -57,7 +57,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
-        <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+        <Masthead className="chr-c-masthead pf-v5-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
             breadcrumbsProps={{
               isNavOpen,
@@ -75,7 +75,13 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       sidebar={
         (noNav || hideNav) && Sidebar
           ? undefined
-          : Sidebar && <PageSidebar isNavOpen={isNavOpen} id="chr-c-sidebar" nav={<Sidebar schema={schema} loaded={loaded} />} />
+          : Sidebar && (
+              <PageSidebar isSidebarOpen={isNavOpen} id="chr-c-sidebar">
+                <PageSidebarBody>
+                  <Sidebar schema={schema} loaded={loaded} />
+                </PageSidebarBody>
+              </PageSidebar>
+            )
       }
     >
       <div className={classnames('chr-render')}>
