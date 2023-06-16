@@ -56,12 +56,16 @@ const plugins = (dev = false, beta = false) => {
     }),
     ChunkMapper,
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../src/index.html'),
+      template: path.resolve(__dirname, '../src/index.ejs'),
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
       // FIXME: Change to /preview on May
       base: beta ? '/beta/' : '/',
+      templateParameters: {
+        pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
+        pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
+      },
     }),
     new HtmlWebpackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',

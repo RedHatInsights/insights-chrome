@@ -10,10 +10,13 @@ const proxy = require('@redhat-cloud-services/frontend-components-config-utiliti
 const imageNullLoader = require('./image-null-loader');
 
 // call default generator then pair different variations of uri with each base
-const myGenerator = asGenerator((item, ...rest) => {
+const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
+      if (base.includes('pf-4-styles')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
+      }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
       }
@@ -22,8 +25,9 @@ const myGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
+const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
-  const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
+  /** @type { import("webpack").Configuration } */
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
@@ -112,7 +116,7 @@ const commonConfig = ({ dev }) => {
             {
               loader: 'resolve-url-loader',
               options: {
-                join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
+                join: createJoinFunction('myJoinFn', createJoinImplementation(PFGenerator)),
               },
             },
             {
@@ -183,6 +187,62 @@ const commonConfig = ({ dev }) => {
   };
 };
 
+// PF node module asset compilation config, no need to compile PF assets more than once during a run
+/** @type { import("webpack").Configuration } */
+const pfConfig = {
+  entry: {
+    'pf4-v4': path.resolve(__dirname, '../src/sass/pf-4-assets.scss'),
+    'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
+  },
+  output: {
+    path: path.resolve(__dirname, '../build/js/pf'),
+    // the HMR needs dynamic entry filename to remove name conflicts
+    filename: '[name].js',
+    publicPath,
+  },
+  plugins: [new MiniCssExtractPlugin()],
+  stats: {
+    errorDetails: true,
+  },
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
+    cacheDirectory: path.resolve(__dirname, '../.sass-cache'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.s?[ac]ss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              join: createJoinFunction('myJoinFn', createJoinImplementation(PFGenerator)),
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                outputStyle: 'compressed',
+              },
+              sourceMap: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+        type: 'asset/resource',
+      },
+    ],
+  },
+};
+
 module.exports = function (env) {
   const dev = process.env.DEV_SERVER;
   const config = commonConfig({ dev, publicPath: env.publicPath });
@@ -190,5 +250,5 @@ module.exports = function (env) {
     config.plugins.push(new BundleAnalyzerPlugin());
   }
 
-  return config;
+  return [pfConfig, config];
 };
