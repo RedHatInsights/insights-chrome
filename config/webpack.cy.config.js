@@ -84,7 +84,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name].[fullhash].css',
+      filename: '[name].[contenthash].css',
     }),
     new ModuleFederationPlugin({
       name: 'chrome',

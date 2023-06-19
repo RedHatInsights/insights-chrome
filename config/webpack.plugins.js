@@ -26,12 +26,12 @@ const plugins = (dev = false, beta = false) => {
         ]
       : []),
     new MiniCssExtractPlugin({
-      filename: dev ? '[name].css' : '[name].[fullhash].css',
+      filename: dev ? '[name].css' : '[name].[contenthash].css',
       ignoreOrder: true,
     }),
     new ModuleFederationPlugin({
       name: 'chrome',
-      filename: dev ? 'chrome.js' : 'chrome.[fullhash].js',
+      filename: dev ? 'chrome.js' : 'chrome.[contenthash].js',
       exposes: {
         './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
