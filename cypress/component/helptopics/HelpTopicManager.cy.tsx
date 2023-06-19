@@ -11,7 +11,7 @@ import RootApp from '../../../src/components/RootApp/RootApp';
 import chromeReducer, { chromeInitialState } from '../../../src/redux';
 
 import testUser from '../../fixtures/testUser.json';
-import { Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import LibtJWTContext from '../../../src/components/LibJWTContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../../../src/auth';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavExpandable } from '@patternfly/react-core';
+import { NavExpandable } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import { useSelector } from 'react-redux';
 import { ITLess } from '../../utils/common';

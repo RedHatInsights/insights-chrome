@@ -1,22 +1,16 @@
 import React, { Fragment } from 'react';
 import { useIntl } from 'react-intl';
-import {
-  Bullseye,
-  Gallery,
-  Icon,
-  Masthead,
-  Page,
-  PageGroup,
-  PageSection,
-  PageSectionVariants,
-  SearchInput,
-  Spinner,
-  Text,
-  TextContent,
-  Title,
-} from '@patternfly/react-core';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageGroup, PageSection, PageSectionVariants } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';

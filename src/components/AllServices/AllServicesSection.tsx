@@ -1,4 +1,6 @@
-import { Card, CardBody, CardTitle, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React from 'react';
 import { ITLess } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';

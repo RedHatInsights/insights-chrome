@@ -1,5 +1,6 @@
 import React from 'react';
-import { Bullseye, Spinner } from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 /**
  * This fallback has to be a react node not a component.

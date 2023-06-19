@@ -1,5 +1,9 @@
 import React from 'react';
-import { Card, CardBody, Gallery, Stack, StackItem, Text, TextContent } from '@patternfly/react-core';
+import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import ServiceTile, { ServiceTileProps } from './ServiceTile';
 import ChromeLink from '../ChromeLink';
 import EmptyState from './EmptyState';

@@ -1,7 +1,11 @@
-import { Flex, Icon, Modal, ModalVariant, PageSection, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
-import RedHatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
+import RedHatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 
 import './Footer.scss';
 

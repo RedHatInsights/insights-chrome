@@ -1,6 +1,8 @@
 import React from 'react';
-import { Button, Icon, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
 import { useIntl } from 'react-intl';
 
 import messages from '../../locales/Messages';

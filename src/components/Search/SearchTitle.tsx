@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextContent } from '@patternfly/react-core';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 
 const SearchTitle = ({ title, bundleTitle }: { title: string; bundleTitle: string }) => {
   return (

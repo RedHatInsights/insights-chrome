@@ -1,13 +1,17 @@
 import React from 'react';
-import { Button, Modal, ModalVariant, TextContent } from '@patternfly/react-core';
-import { BugIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { BugIcon } from '@patternfly/react-icons/dist/dynamic/icons/bug-icon';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeepRequired } from 'utility-types';
 
 import { toggleDebuggerModal } from '../../redux/actions';
 import { ReduxState } from '../../redux/store';
-import { MenuToggle, MenuToggleElement, Select, SelectList, SelectOption } from '@patternfly/react-core';
+import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Select, SelectList, SelectOption } from '@patternfly/react-core/dist/dynamic/components/Select';
+
 import DebuggerTable from './DebuggerTable';
 
 import './Debugger.scss';

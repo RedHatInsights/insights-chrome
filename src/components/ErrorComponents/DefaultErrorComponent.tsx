@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
-import {
-  Bullseye,
-  Button,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateIcon,
-  ExpandableSection,
-  Flex,
-  FlexItem,
-  Text,
-  TextContent,
-  Title,
-} from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateActions, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { useIntl } from 'react-intl';

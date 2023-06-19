@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 
 import ChromeLink from '../ChromeLink';
 

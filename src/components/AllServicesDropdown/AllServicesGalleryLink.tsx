@@ -1,5 +1,10 @@
 import React, { useContext } from 'react';
-import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 

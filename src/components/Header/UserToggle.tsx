@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Divider, Dropdown, DropdownItem, DropdownList, MenuToggle, Tooltip } from '@patternfly/react-core';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
 import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
@@ -10,7 +13,7 @@ import messages from '../../locales/Messages';
 import { ReduxState } from '../../redux/store';
 import { logout } from '../../jwt/jwt';
 import { cogLogout } from '../../cognito/auth';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 
 const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string, isInternal?: boolean, extraItems: React.ReactNode[] = []) => {
   const env = getEnv();

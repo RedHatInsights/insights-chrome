@@ -1,5 +1,5 @@
 import React from 'react';
-import { StackItem } from '@patternfly/react-core';
+import { StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 

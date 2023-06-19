@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Bullseye, Icon, Spinner, Text, TextContent } from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core/deprecated';
 
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';

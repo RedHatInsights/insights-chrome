@@ -1,4 +1,7 @@
-import { Divider, Flex, FlexItem, Level, LevelItem, Text, TextContent } from '@patternfly/react-core';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Level, LevelItem } from '@patternfly/react-core/dist/dynamic/layouts/Level';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React, { VoidFunctionComponent } from 'react';
 
 import './footer.scss';

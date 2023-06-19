@@ -1,4 +1,4 @@
-import { MenuGroup, MenuItem } from '@patternfly/react-core';
+import { MenuGroup, MenuItem } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import React from 'react';
 import ChromeLink from '../ChromeLink';
 import SearchDescription from './SearchDescription';

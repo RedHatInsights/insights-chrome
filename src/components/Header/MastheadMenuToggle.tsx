@@ -1,5 +1,7 @@
 import React from 'react';
-import { Icon, MastheadToggle, PageToggleButton } from '@patternfly/react-core';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { MastheadToggle } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { PageToggleButton } from '@patternfly/react-core/dist/dynamic/components/Page';
 import BarsIcon from '@patternfly/react-icons/dist/js/icons/bars-icon';
 import { useDispatch } from 'react-redux';
 import { onToggle } from '../../redux/actions';

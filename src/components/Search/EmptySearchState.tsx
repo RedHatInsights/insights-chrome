@@ -1,5 +1,8 @@
 import React from 'react';
-import { EmptyState, EmptyStateBody, EmptyStateIcon, Text, TextContent, Title } from '@patternfly/react-core';
+import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 const EmptySearchState = () => {

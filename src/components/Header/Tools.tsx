@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  AlertActionLink,
-  AlertVariant,
-  Button,
-  Divider,
-  DropdownItem,
-  NotificationBadge,
-  Switch,
-  ToolbarItem,
-  Tooltip,
-} from '@patternfly/react-core';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
-import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
+import { AlertActionLink, AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { NotificationBadge } from '@patternfly/react-core/dist/dynamic/components/NotificationBadge';
+import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
+import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
+import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
@@ -27,7 +24,7 @@ import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
-import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
 

@@ -1,23 +1,14 @@
 import React, { Fragment } from 'react';
-import {
-  Backdrop,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  FlexItem,
-  Icon,
-  Panel,
-  PanelMain,
-  Sidebar,
-  SidebarContent,
-  SidebarPanel,
-  TabContent,
-  Text,
-  TextContent,
-  TextVariants,
-  Title,
-} from '@patternfly/react-core';
+import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ChromeLink from '../ChromeLink';
 import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
@@ -77,7 +68,10 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
             <PanelMain>
               <Sidebar>
                 <SidebarPanel className="pf-v5-l-flex pf-v5-u-flex-direction-column">
-                  <FlexItem className="chr-l-flex__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md pf-v5-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
+                  <FlexItem
+                    className="chr-l-flex__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md pf-v5-u-mt-sm-on-md"
+                    order={{ default: '1', md: '2' }}
+                  >
                     <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/allservices">

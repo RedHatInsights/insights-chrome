@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icon, NavGroup } from '@patternfly/react-core';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { NavGroup } from '@patternfly/react-core/dist/dynamic/components/Nav';
 
 import ChromeNavItemFactory, { sectionTitleMapper } from './ChromeNavItemFactory';
 import { ChromeNavGroupProps } from '../../@types/types';

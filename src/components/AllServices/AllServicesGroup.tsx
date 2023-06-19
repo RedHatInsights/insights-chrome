@@ -1,4 +1,4 @@
-import { Text, TextVariants } from '@patternfly/react-core';
+import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React, { Fragment } from 'react';
 import { ITLess } from '../../utils/common';
 

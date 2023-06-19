@@ -1,5 +1,10 @@
-import { Card, CardBody, Flex, FlexItem, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Gallery, GalleryItem } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { StarIcon } from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
 import EmptyState from '../FavoriteServices/EmptyState';

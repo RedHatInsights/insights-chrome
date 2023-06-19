@@ -1,6 +1,6 @@
 import React, { Fragment, VoidFunctionComponent } from 'react';
-import { Text, TextContent } from '@patternfly/react-core';
-import ArrowRightIcon from '@patternfly/react-icons/dist/js/icons/arrow-right-icon';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 import ChromeLink from '../ChromeLink/ChromeLink';
 
 import './product-card.scss';

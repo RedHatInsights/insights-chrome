@@ -1,6 +1,11 @@
 import React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
-import { Bullseye, Button, ButtonProps, Icon, Modal, ModalProps, ModalVariant, Text, TextContent } from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button, ButtonProps } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Modal, ModalProps, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 

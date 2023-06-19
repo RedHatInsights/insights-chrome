@@ -1,5 +1,9 @@
 import React from 'react';
-import { Bullseye, Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { logoutAllTabs } from '../../jwt/jwt';
 import { useIntl } from 'react-intl';

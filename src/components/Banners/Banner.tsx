@@ -1,7 +1,9 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import { Button, Text, TextVariants } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import ArrowRightIcon from '@patternfly/react-icons/dist/js/icons/arrow-right-icon';
 import './Banner.scss';
 

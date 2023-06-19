@@ -1,4 +1,6 @@
-import { Masthead, MastheadBrand, MastheadMain, Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core';
+import { Masthead, MastheadBrand, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from '../ChromeLink';

@@ -1,4 +1,7 @@
-import { Button, StackItem, Text, TextContent } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+
 import React from 'react';
 import ChromeLink from '../ChromeLink';
 

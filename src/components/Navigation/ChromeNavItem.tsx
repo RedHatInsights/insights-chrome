@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { Icon, NavItem, Tooltip } from '@patternfly/react-core';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-import FlaskIcon from '@patternfly/react-icons/dist/js/icons/flask-icon';
-import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { NavItem } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import FlaskIcon from '@patternfly/react-icons/dist/dynamic/icons/flask-icon';
+import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { titleCase } from 'title-case';
 import classNames from 'classnames';
 import get from 'lodash/get';

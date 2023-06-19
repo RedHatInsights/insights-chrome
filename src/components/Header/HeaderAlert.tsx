@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, AlertActionCloseButton, AlertProps, AlertVariant } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, AlertProps, AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import './HeaderAlert.scss';
 import classNames from 'classnames';
 

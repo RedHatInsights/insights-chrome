@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { Masthead, Page, PageSection, PageSectionVariants, Stack, StackItem, Title } from '@patternfly/react-core';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageSection, PageSectionVariants } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';

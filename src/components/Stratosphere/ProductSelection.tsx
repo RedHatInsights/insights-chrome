@@ -1,6 +1,13 @@
 import React from 'react';
-import { Bullseye, Flex, Icon, Masthead, Page, Stack, StackItem, Text, TextContent, Title } from '@patternfly/react-core';
-import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import CheckCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/check-circle-icon';
 
 import productsList from './products-list';
 import ProductCard from './ProductCard';

@@ -1,4 +1,7 @@
-import { Breadcrumb, BreadcrumbItem, FlexItem, PageBreadcrumb } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/components/Breadcrumb';
+import { PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+
 import React, { useMemo } from 'react';
 
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';

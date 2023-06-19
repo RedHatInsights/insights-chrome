@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Header } from '../components/Header/Header';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  ClipboardCopy,
-  List,
-  ListComponent,
-  ListItem,
-  Masthead,
-  OrderType,
-  Page,
-  PageSection,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
+import { List, ListComponent, ListItem, OrderType } from '@patternfly/react-core/dist/dynamic/components/List';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
 
 const SatelliteToken: React.FC = () => {

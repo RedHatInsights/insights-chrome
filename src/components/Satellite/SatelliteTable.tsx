@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { TableComposable, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { Button } from '@patternfly/react-core';
-import { EmptyState } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 
 interface Registration {
   uid: string;

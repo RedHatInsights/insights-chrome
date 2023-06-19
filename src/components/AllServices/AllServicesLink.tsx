@@ -1,5 +1,7 @@
 import React from 'react';
-import { Icon, Text, TextVariants } from '@patternfly/react-core';
+import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+
 import classNames from 'classnames';
 import { matchPath } from 'react-router-dom';
 

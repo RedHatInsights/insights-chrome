@@ -1,4 +1,6 @@
-import { Gallery, Title } from '@patternfly/react-core';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
 import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';

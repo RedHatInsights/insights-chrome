@@ -1,5 +1,6 @@
 import React, { Fragment, useRef, useState } from 'react';
-import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
+import { Nav, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { PageContextConsumer } from '@patternfly/react-core/dist/dynamic/components/Page';
 
 import NavContext from './navContext';
 import componentMapper from './componentMapper';

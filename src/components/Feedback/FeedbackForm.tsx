@@ -1,17 +1,11 @@
 import React, { ReactNode, useContext, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Form,
-  FormGroup,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-  Text,
-  TextArea,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
+import { Form, FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Panel, PanelMain, PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextArea } from '@patternfly/react-core/dist/dynamic/components/TextArea';
+
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';

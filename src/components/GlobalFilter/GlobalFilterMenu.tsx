@@ -6,7 +6,12 @@ import messages from '../../locales/Messages';
 
 import './global-filter-menu.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Chip, ChipGroup, Divider, Skeleton, Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import TagsModal from './TagsModal';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 import { CommonSelectedTag, ReduxState } from '../../redux/store';

@@ -5,7 +5,7 @@ import sanitizeHtml from 'sanitize-html';
 
 import type { ReduxState } from '../../redux/store';
 import ChromeLink from '../ChromeLink/ChromeLink';
-import { Text, TextContent } from '@patternfly/react-core';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { useIntl } from 'react-intl';
 import Messages from '../../locales/Messages';
 import { ThreeScaleError } from '../../utils/responseInterceptors';

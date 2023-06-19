@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop, Bullseye, MenuToggle, Panel, PanelMain, Popper, Spinner } from '@patternfly/react-core';
+import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Popper } from '@patternfly/react-core/dist/js/helpers/Popper/Popper';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
