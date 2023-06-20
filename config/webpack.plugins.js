@@ -8,6 +8,7 @@ const { ProvidePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const getDynamicModules = require('./get-dynamic-modules');
 
 const deps = require('../package.json').dependencies;
 
@@ -47,6 +48,7 @@ const plugins = (dev = false, beta = false) => {
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
+        getDynamicModules(process.cwd()),
       ],
     }),
     ChunkMapper,
