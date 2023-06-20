@@ -15,6 +15,7 @@ import { Button } from '@patternfly/react-core';
 import LibtJWTContext from '../../../src/components/LibJWTContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../../../src/auth';
+import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 
 const jwt = {
   getUserInfo: () => Promise.resolve(testUser as unknown as ChromeUser),
@@ -65,6 +66,15 @@ const TestComponent = () => {
 
 describe('HelpTopicManager', () => {
   let store: Store<any, AnyAction>;
+  before(() => {
+    initializeVisibilityFunctions({
+      getUser() {
+        return Promise.resolve(testUser as unknown as ChromeUser);
+      },
+      getToken: () => Promise.resolve('a.a'),
+      getUserPermissions: () => Promise.resolve([]),
+    });
+  });
   beforeEach(() => {
     const reduxRegistry = new ReducerRegistry({
       ...chromeInitialState,

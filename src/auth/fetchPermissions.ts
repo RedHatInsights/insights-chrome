@@ -1,6 +1,7 @@
 import { Access, AccessPagination } from '@redhat-cloud-services/rbac-client';
 import createRbacAPI from './rbac';
 import logger from '../jwt/logger';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 const log = logger('fetchPermissions.ts');
 
@@ -33,10 +34,10 @@ const fetchPermissions = (userToken: string, app = '') => {
     .catch((error) => log(error));
 };
 
-export const createFetchPermissionsWatcher = () => {
+export const createFetchPermissionsWatcher = (getUser: () => Promise<void | ChromeUser>) => {
   const currentCall: Record<string, void | Access[]> = {};
   return async (userToken: string, app = '', bypassCache?: boolean) => {
-    const user = await window.insights.chrome.auth.getUser();
+    const user = await getUser();
     if (user?.identity && [undefined, -1, '-1'].includes(user.identity.org_id)) {
       return Promise.resolve([]);
     }
