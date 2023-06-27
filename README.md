@@ -4,7 +4,7 @@ The "wrapper" around your application!
 
 Insights Chrome provides:
 
-- Standard header and navigation
+- Standard header and [navigation](https://github.com/redhatinsights/insights-chrome/tree/master/docs/navigation.md)
 - Base CSS/style
 - A Javascript library for interacting with Insights Chrome
 
