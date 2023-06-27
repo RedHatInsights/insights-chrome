@@ -6,8 +6,8 @@ describe('Favorite-services', () => {
   it('check and uncheck favorited services', () => {
     cy.visit('/');
     cy.login();
-    cy.reload();
     cy.visit('/');
+    cy.reload();
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 2435,
