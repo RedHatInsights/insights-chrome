@@ -117,7 +117,11 @@ const FRONT_PAGE_SERVICES = [
   'Ansible Automation Platform',
   'Subscription Management',
   'Red Hat Advanced Cluster Security Cloud Service',
+<<<<<<< HEAD
   'Quay.io',
+=======
+  'Quay.io'
+>>>>>>> 71911b80 (lint issues part 2)
 ];
 
 describe('Landing page', () => {
