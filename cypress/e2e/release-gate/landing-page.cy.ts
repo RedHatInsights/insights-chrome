@@ -124,6 +124,7 @@ describe('Landing page', () => {
   it('visit landing page', () => {
     cy.visit('/');
     cy.login();
+    cy.visit('/');
     cy.reload();
     cy.intercept('POST', '/api/chrome-service/v1/last-visited', lastVisitedJSON);
     cy.intercept('GET', '/api/chrome-service/v1/user', {
@@ -224,11 +225,11 @@ describe('Landing page', () => {
     cy.contains('View my favorite services').should('exist');
     cy.contains('Recently visited').should('exist');
     for (let i = 0; i < lastVisitedArray.length; i++) {
-      cy.get('small[data-ouia-component-type=PF4/Text]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
+      cy.get('small[data-ouia-component-type="PF4/Text"]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
     }
     // Verify that the photo slides exist
     for (let i = 0; i < NUM_SLIDE_ELEMENTS; i++) {
-      cy.get('.slick-track').find(`[data-index=${i}].slick-slide`).should('exist');
+      cy.get('.slick-track').find(`[data-index="${i}"].slick-slide`).should('exist');
     }
     for (let i = 0; i < NUM_SLIDE_ELEMENTS - 1; i++) {
       cy.get('.slick-arrow.slick-next').should('exist');
@@ -239,7 +240,7 @@ describe('Landing page', () => {
     for (let i = 0; i < FRONT_PAGE_SERVICES.length; i++) {
       cy.get('.pf-l-gallery.pf-m-gutter')
         .eq(1)
-        .find(`article[data-ouia-component-id=OUIA-Generated-Card-${i + 1}]`)
+        .find(`article[data-ouia-component-id="OUIA-Generated-Card-${i + 1}"]`)
         .find('.pf-u-font-size-lg.pf-u-mt-md')
         .should('contain', FRONT_PAGE_SERVICES[i]);
     }
