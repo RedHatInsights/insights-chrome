@@ -108,7 +108,7 @@ const NUM_SLIDE_ELEMENTS = 4;
 
 // NUM_CHILDREN_ELEMENTS are VISIBLE cards under Get started with Hybrid Cloud Console capabilities
 const NUM_CHILDREN_ELEMENTS = 8;
-const FAVORITED_OVERFILLS = ['Inventory', 'Remediations']; 
+const FAVORITED_OVERFILLS = ['Inventory', 'Remediations'];
 const FRONT_PAGE_SERVICES = [
   'Red Hat Insights',
   'Application and Data Services',
@@ -117,7 +117,7 @@ const FRONT_PAGE_SERVICES = [
   'Ansible Automation Platform',
   'Subscription Management',
   'Red Hat Advanced Cluster Security Cloud Service',
-  'Quay.io'
+  'Quay.io',
 ];
 
 describe('Landing page', () => {
@@ -238,10 +238,10 @@ describe('Landing page', () => {
     cy.get('.slick-arrow.slick-next.slick-disabled').should('exist');
     for (let i = 0; i < FRONT_PAGE_SERVICES.length; i++) {
       cy.get('.pf-l-gallery.pf-m-gutter')
-      .eq(1)
-      .find(`article[data-ouia-component-id=OUIA-Generated-Card-${i+1}]`)
-      .find('.pf-u-font-size-lg.pf-u-mt-md')
-      .should('contain', FRONT_PAGE_SERVICES[i]);
+        .eq(1)
+        .find(`article[data-ouia-component-id=OUIA-Generated-Card-${i+1}]`)
+        .find('.pf-u-font-size-lg.pf-u-mt-md')
+        .should('contain', FRONT_PAGE_SERVICES[i]);
     }
     cy.get('.pf-l-gallery.pf-m-gutter').eq(1).children().should('have.length', NUM_CHILDREN_ELEMENTS);
     cy.screenshot();
