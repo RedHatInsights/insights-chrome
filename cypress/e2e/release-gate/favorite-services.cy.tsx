@@ -25,7 +25,7 @@ describe('Favorite-services', () => {
           deletedAt: null,
           productsOfInterest: null,
           jobRole: '',
-          userIdentityID: 0
+          userIdentityID: 0,
         },
         visitedBundles: {
           apps: true,
@@ -37,9 +37,9 @@ describe('Favorite-services', () => {
           openshift: true,
           allservices: true,
           favoritedservices: true,
-          'application-services': true
-        }
-      }
+          'application-services': true,
+        },
+      },
     });
     // check if a favorites link exists on the page
     cy.get('.pf-c-menu-toggle__text').click();
@@ -54,13 +54,13 @@ describe('Favorite-services', () => {
           deletedAt: null,
           pathname: service,
           favorite: true,
-          userIdentityId: 1
-        }
+          userIdentityId: 1,
+        },
       ],
       meta: {
         count: 1,
-        total: 1
-      }
+        total: 1,
+      },
     }).then(() => {
       interceptionCounter = true;
     });
@@ -86,10 +86,10 @@ describe('Favorite-services', () => {
             bundle: 'OpenShift',
             pathname: '/',
             title: 'Overview | Red Hat OpenShift Cluster Manager',
-            userIdentityId: 42352345
+            userIdentityId: 42352345,
           },
         ],
-        'favoritePages': [
+        favoritePages: [
           {
             id: 1957,
             createdAt: '2023-06-05T18:17:26.849084Z',
@@ -97,8 +97,8 @@ describe('Favorite-services', () => {
             deletedAt: null,
             pathname: service,
             favorite: true,
-            userIdentityId: 453245
-          }
+            userIdentityId: 453245,
+          },
         ],
         selfReport: {
           createdAt: '0001-01-01T00:00:00Z',
@@ -106,7 +106,7 @@ describe('Favorite-services', () => {
           deletedAt: null,
           productsOfInterest: null,
           jobRole: '',
-          userIdentityID: 0
+          userIdentityID: 0,
         },
         visitedBundles: {
           apps: true,
@@ -118,9 +118,9 @@ describe('Favorite-services', () => {
           openshift: true,
           allservices: true,
           favoritedservices: true,
-          'application-services': true
-        }
-      }
+          'application-services': true,
+        },
+      },
     }).then(() => {
       if (interceptionCounter == false) {
         throw new Error('The request was not intercepted.');
