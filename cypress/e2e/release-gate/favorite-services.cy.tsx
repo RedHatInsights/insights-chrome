@@ -81,7 +81,7 @@ describe('Favorite-services', () => {
           {
             id: 2345234534,
             createdAt: '2023-05-15T18:08:27.506597Z',
-            updatedAt:'2023-06-07T14:09:36.831334Z',
+            updatedAt: '2023-06-07T14:09:36.831334Z',
             deletedAt: null,
             bundle: 'OpenShift',
             pathname: '/',
