@@ -224,11 +224,11 @@ describe('Landing page', () => {
     cy.contains('View my favorite services').should('exist');
     cy.contains('Recently visited').should('exist');
     for (let i = 0; i < lastVisitedArray.length; i++) {
-      cy.get('small[data-ouia-component-type="PF4/Text"]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
+      cy.get('small[data-ouia-component-type=PF4/Text]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
     }
     // Verify that the photo slides exist
     for (let i = 0; i < NUM_SLIDE_ELEMENTS; i++) {
-      cy.get('.slick-track').find(`[data-index="${i}"].slick-slide`).should('exist');
+      cy.get('.slick-track').find(`[data-index=${i}].slick-slide`).should('exist');
     }
     for (let i = 0; i < NUM_SLIDE_ELEMENTS - 1; i++) {
       cy.get('.slick-arrow.slick-next').should('exist');
