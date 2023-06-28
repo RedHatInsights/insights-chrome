@@ -5,9 +5,9 @@ import { useSelector } from 'react-redux';
 import { ITLess } from '../../utils/common';
 import { computeFedrampResult } from '../../utils/useRenderFedramp';
 import { ReduxState } from '../../redux/store';
-import { ChromeNavExapandableProps } from '../../@types/types';
+import { ChromeNavExpandableProps } from '../../@types/types';
 
-const ChromeNavExapandable = ({ title, routes, active, isHidden, id }: ChromeNavExapandableProps) => {
+const ChromeNavExpandable = ({ title, routes, active, isHidden, id }: ChromeNavExpandableProps) => {
   const modules = useSelector((state: ReduxState) => state.chrome.modules);
   let filteredFedrampRoutes = routes;
   if (ITLess()) {
@@ -30,4 +30,4 @@ const ChromeNavExapandable = ({ title, routes, active, isHidden, id }: ChromeNav
   );
 };
 
-export default ChromeNavExapandable;
+export default ChromeNavExpandable;

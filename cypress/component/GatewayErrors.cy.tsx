@@ -18,6 +18,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import type { LibJWT } from '../../src/auth';
 import { RemoteModule } from '../../src/@types/types';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
+import { initializeVisibilityFunctions } from '../../src/utils/VisibilitySingleton';
 
 const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
 
@@ -92,6 +93,15 @@ function createEnv(code?: string) {
 }
 
 describe('Gateway errors', () => {
+  before(() => {
+    initializeVisibilityFunctions({
+      getUser() {
+        return Promise.resolve(testUser);
+      },
+      getToken: () => Promise.resolve('a.a'),
+      getUserPermissions: () => Promise.resolve([]),
+    });
+  });
   after(() => {
     window.localStorage.removeItem(BLOCK_CLEAR_GATEWAY_ERROR);
   });

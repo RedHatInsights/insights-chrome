@@ -21,6 +21,7 @@ import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -43,6 +44,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const isITLessEnv = ITLess();
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
+  const lg = useWindowWidth();
 
   return (
     <Fragment>
@@ -58,7 +60,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               widget-type="InsightsToolbar"
               visibility={{ '2xl': 'hidden' }}
             >
-              <HeaderTools />
+              {!lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
@@ -89,7 +91,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               widget-type="InsightsToolbar"
             >
-              <HeaderTools />
+              {lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>

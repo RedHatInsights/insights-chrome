@@ -1,3 +1,4 @@
+import { TextDecoder, TextEncoder } from 'util';
 global.SVGPathElement = function () {};
 
 global.MutationObserver = class {
@@ -48,3 +49,7 @@ global.window.insights = {
     getBundle: () => '',
   },
 };
+
+// Required for React 18 but not provided by jsdom env. See: https://github.com/jsdom/jsdom/issues/2524
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;

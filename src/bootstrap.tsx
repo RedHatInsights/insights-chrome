@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { spinUpStore } from './redux/redux-config';
@@ -7,7 +7,7 @@ import RootApp from './components/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
-import auth, { LibJWT, crossAccountBouncer } from './auth';
+import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { ITLess, getEnv, loadFEOFedModules, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
@@ -18,6 +18,8 @@ import { ReduxState } from './redux/store';
 import qe from './utils/iqeEnablement';
 import initializeJWT from './jwt/initialize-jwt';
 import AppPlaceholder from './components/AppPlaceholder';
+import { initializeVisibilityFunctions } from './utils/VisibilitySingleton';
+import { createGetUser } from './auth';
 
 const language: keyof typeof messages = 'en';
 
@@ -77,6 +79,12 @@ const useInitialize = () => {
     libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
 
     await initializeJWT(libJwt, chromeInstance.current);
+    const getUser = createGetUser(libJwt);
+    await initializeVisibilityFunctions({
+      getUser,
+      getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
+      getUserPermissions: createGetUserPermissions(libJwt, getUser),
+    });
 
     setState({
       libJwt,
@@ -143,25 +151,28 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-  <IntlProvider
-    locale={language}
-    messages={messages[language]}
-    onError={(error) => {
-      if (
-        (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-        localStorage.getItem('chrome:intl:debug') === 'true' ||
-        !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-      ) {
-        console.error(error);
-      }
-    }}
-  >
-    <Provider store={spinUpStore()?.store}>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </Provider>
-  </IntlProvider>,
-  document.getElementById('chrome-entry')
-);
+const entry = document.getElementById('chrome-entry');
+if (entry) {
+  const reactRoot = createRoot(entry);
+  reactRoot.render(
+    <IntlProvider
+      locale={language}
+      messages={messages[language]}
+      onError={(error) => {
+        if (
+          (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+          localStorage.getItem('chrome:intl:debug') === 'true' ||
+          !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+        ) {
+          console.error(error);
+        }
+      }}
+    >
+      <Provider store={spinUpStore()?.store}>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </Provider>
+    </IntlProvider>
+  );
+}
