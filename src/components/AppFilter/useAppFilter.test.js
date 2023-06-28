@@ -2,7 +2,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import * as axios from 'axios';
 
@@ -41,10 +41,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -87,10 +84,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -140,10 +134,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -189,10 +180,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -239,10 +227,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -295,10 +280,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -359,10 +341,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -437,10 +416,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
@@ -491,10 +467,7 @@ describe('useAppFilter', () => {
     });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: ContextWrapper,
-        initialProps: {
-          store,
-        },
+        wrapper: (props) => <ContextWrapper {...props} store={store} />,
       });
       result = r;
     });
