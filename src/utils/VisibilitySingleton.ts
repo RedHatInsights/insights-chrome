@@ -16,6 +16,10 @@ const matchValue = (value: any, matcher?: keyof typeof matcherMapper) => {
   return typeof match === 'function' ? match(value) : value;
 };
 
+const getValue = (response = {}, accessor: string) => {
+  return get(response || {}, accessor) || get(response || {}, `data.${accessor}`);
+};
+
 let visibilityFunctions: VisibilityFunctions;
 let initialized = false;
 
@@ -113,7 +117,7 @@ const initialize = ({
             ...options.headers,
           },
         })
-          .then((response) => matchValue(accessor ? get(response || {}, accessor) : response, matcher))
+          .then((response) => matchValue(accessor ? getValue(response, accessor) : response, matcher))
           .catch(() => {
             console.log('Unable to retrieve visibility result', { visibilityMethod: 'apiRequest', method, url });
             return false;
