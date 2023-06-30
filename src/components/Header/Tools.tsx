@@ -120,8 +120,8 @@ const Tools = () => {
   const aboutMenuDropdownItems = [
     {
       title: `${intl.formatMessage(messages.apiDocumentation)}`,
-      url: `/docs/api`,
-      appId: 'apiDocs',
+      url: `https://developers.redhat.com/api-catalog/`,
+      isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.openSupportCase)}`,
