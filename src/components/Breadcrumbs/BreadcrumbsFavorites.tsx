@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Menu, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
-import { Popper } from '@patternfly/react-core/dist/js/helpers/Popper/Popper';
+import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
+import CaretDownIcon from '@patternfly/react-icons/dist/dynamic/icons/caret-down-icon';
 import classNames from 'classnames';
 
 import './BreadcrumbsFavorites.scss';

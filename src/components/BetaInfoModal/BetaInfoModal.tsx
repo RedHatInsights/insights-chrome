@@ -1,5 +1,5 @@
 import React from 'react';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/dynamic/icons/info-circle-icon';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Button, ButtonProps } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';

@@ -8,7 +8,7 @@ import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';

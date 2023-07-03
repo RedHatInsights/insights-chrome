@@ -6,7 +6,7 @@ import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/component
 
 import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core/deprecated';
 
-import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
+import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';

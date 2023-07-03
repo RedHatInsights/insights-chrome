@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';

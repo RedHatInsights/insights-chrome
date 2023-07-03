@@ -5,8 +5,8 @@ import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import classNames from 'classnames';
 import { matchPath } from 'react-router-dom';
 
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import ChromeLink from '../ChromeLink';
 import type { AllServicesLink as AllServicesLinkType } from './allServicesLinks';

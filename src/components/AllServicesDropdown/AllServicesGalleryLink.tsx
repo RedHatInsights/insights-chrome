@@ -5,8 +5,8 @@ import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';

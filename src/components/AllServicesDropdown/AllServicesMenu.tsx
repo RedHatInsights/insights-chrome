@@ -11,8 +11,8 @@ import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dyn
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ChromeLink from '../ChromeLink';
-import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
-import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
+import BookOpenIcon from '@patternfly/react-icons/dist/dynamic/icons/book-open-icon';
+import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';

@@ -4,7 +4,7 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { logoutAllTabs } from '../../jwt/jwt';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';

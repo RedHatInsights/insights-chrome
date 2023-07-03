@@ -3,7 +3,7 @@ import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdro
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
-import { Popper } from '@patternfly/react-core/dist/js/helpers/Popper/Popper';
+import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 import './AllServicesDropdown.scss';

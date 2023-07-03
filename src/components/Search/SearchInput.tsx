@@ -3,7 +3,7 @@ import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Menu, MenuContent, MenuGroup, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { SearchInput as PFSearchInput, SearchInputProps } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
-import { Popper } from '@patternfly/react-core/dist/js/helpers/Popper/Popper';
+import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 
 import debounce from 'lodash/debounce';
 

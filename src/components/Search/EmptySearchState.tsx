@@ -3,7 +3,7 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-co
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 const EmptySearchState = () => {
   return (
