@@ -124,6 +124,21 @@ const RootApp = memo((props: RootAppProps) => {
           </Suspense>
           <ChromeProvider bundle={bundleTitle}>
             <QuickStartContainer {...quickStartProps}>
+              const drawerProps: QuickStartContainerProps = {
+                markdown: {
+                    extensions: [
+                      // Variable substitution example
+                      // This replaces the strings [PROJECT_NAME]
+                      {
+                        type: 'output',
+                        filter: function(html: string) {
+                          html.replace(/[(.+)]{{(product_name) ([\w-]+)}}/g, 'App Studio');
+                          return html;
+                        },
+                      },
+                    ],
+                  },
+                };
               <HelpTopicContainer helpTopics={helpTopics}>
                 <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
               </HelpTopicContainer>
