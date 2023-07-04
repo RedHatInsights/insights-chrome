@@ -2,6 +2,14 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
 
+jest.mock('@scalprum/core', () => {
+  return {
+    __esModule: true,
+    initSharedScope: jest.fn(),
+    getSharedScope: jest.fn().mockReturnValue({}),
+  };
+});
+
 const userMock: ChromeUser = {
   identity: {
     // eslint-disable-next-line camelcase
