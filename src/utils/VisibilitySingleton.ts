@@ -1,10 +1,11 @@
-import { ChromeAPI, VisibilityFunctions } from '@redhat-cloud-services/types';
+import { ChromeAPI } from '@redhat-cloud-services/types';
 import { isBeta, isProd } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
+import { getSharedScope, initSharedScope } from '@scalprum/core';
 
 const matcherMapper = {
   isEmpty,
@@ -19,9 +20,6 @@ const matchValue = (value: any, matcher?: keyof typeof matcherMapper) => {
 const getValue = (response = {}, accessor: string) => {
   return get(response || {}, accessor) || get(response || {}, `data.${accessor}`);
 };
-
-let visibilityFunctions: VisibilityFunctions;
-let initialized = false;
 
 const initialize = ({
   getUserPermissions,
@@ -43,7 +41,7 @@ const initialize = ({
     return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
   };
 
-  visibilityFunctions = {
+  const visibilityFunctions = {
     isOrgAdmin: async () => {
       const data = await getUser();
       try {
@@ -131,15 +129,24 @@ const initialize = ({
       getFeatureFlagsError() !== true && unleashClient?.isEnabled(flagName) === expectedValue,
   };
 
-  initialized = true;
+  // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
+  initSharedScope();
+  const scope = getSharedScope();
+  scope['@chrome/visibilityFunctions'] = {
+    '*': {
+      loaded: 1,
+      get: () => visibilityFunctions,
+    },
+  };
 };
 
 export const getVisibilityFunctions = () => {
-  if (!initialized) {
-    throw new Error('Visibility functions were not initialized!. Call the initialized function first.');
+  const visibilityFunctions = getSharedScope()['@chrome/visibilityFunctions'];
+  if (!visibilityFunctions) {
+    throw new Error('Visibility functions were not initialized! Call the initialized function first.');
   }
 
-  return visibilityFunctions;
+  return visibilityFunctions['*'].get();
 };
 
 export const initializeVisibilityFunctions = initialize;

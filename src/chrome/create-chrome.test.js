@@ -1,6 +1,14 @@
 import { initializeVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { createChromeContext } from './create-chrome';
 
+jest.mock('@scalprum/core', () => {
+  return {
+    __esModule: true,
+    initSharedScope: jest.fn(),
+    getSharedScope: jest.fn().mockReturnValue({}),
+  };
+});
+
 jest.mock('../jwt/jwt');
 jest.mock('../auth/fetchPermissions');
 
