@@ -80,7 +80,7 @@ const useInitialize = () => {
 
     await initializeJWT(libJwt, chromeInstance.current);
     const getUser = createGetUser(libJwt);
-    await initializeVisibilityFunctions({
+    initializeVisibilityFunctions({
       getUser,
       getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
       getUserPermissions: createGetUserPermissions(libJwt, getUser),
