@@ -7,7 +7,7 @@ import RootApp from './components/RootApp';
 import { loadModulesSchema } from './redux/actions';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/consts';
-import auth, { LibJWT, crossAccountBouncer } from './auth';
+import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { ITLess, getEnv, loadFEOFedModules, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
@@ -18,6 +18,8 @@ import { ReduxState } from './redux/store';
 import qe from './utils/iqeEnablement';
 import initializeJWT from './jwt/initialize-jwt';
 import AppPlaceholder from './components/AppPlaceholder';
+import { initializeVisibilityFunctions } from './utils/VisibilitySingleton';
+import { createGetUser } from './auth';
 
 const language: keyof typeof messages = 'en';
 
@@ -77,6 +79,12 @@ const useInitialize = () => {
     libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig });
 
     await initializeJWT(libJwt, chromeInstance.current);
+    const getUser = createGetUser(libJwt);
+    initializeVisibilityFunctions({
+      getUser,
+      getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
+      getUserPermissions: createGetUserPermissions(libJwt, getUser),
+    });
 
     setState({
       libJwt,

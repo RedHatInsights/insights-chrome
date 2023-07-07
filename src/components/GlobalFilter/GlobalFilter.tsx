@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
@@ -9,6 +9,7 @@ import { storeFilter } from './filterApi';
 import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -124,6 +125,7 @@ const GlobalFilterWrapper = () => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
   const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
   const { pathname } = useLocation();
+  const { getUserPermissions } = useContext(InternalChromeContext);
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -136,7 +138,7 @@ const GlobalFilterWrapper = () => {
   useEffect(() => {
     let mounted = true;
     const fetchPermissions = async () => {
-      const permissions = await window.insights?.chrome?.getUserPermissions?.('inventory');
+      const permissions = await getUserPermissions?.('inventory');
       if (mounted) {
         setHasAccess(
           permissions?.some((item) =>
