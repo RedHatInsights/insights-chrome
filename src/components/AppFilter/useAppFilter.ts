@@ -13,7 +13,7 @@ export type AppFilterBucket = {
   links: NavItem[];
 };
 
-const previewBunldes = ['business-services', 'subscription-services'];
+const previewBundles = ['business-services', 'subscriptions'];
 
 export const requiredBundles = [
   'application-services',
@@ -24,7 +24,7 @@ export const requiredBundles = [
   'settings',
   'iam',
   'quay',
-  ...(!isProd() ? previewBunldes : isBeta() ? previewBunldes : []),
+  ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ];
 
 const bundlesOrder = [
@@ -39,7 +39,6 @@ const bundlesOrder = [
   'iam',
   'quay',
   'business-services',
-  'subscription-services',
 ];
 
 const isITLessEnv = ITLess();
