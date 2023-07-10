@@ -2,12 +2,18 @@
 
 Chrome comes with a JavaScript API that allows applications to control navigation, global filters, etc.
 
-```js
-    // initialize chrome
-    insights.chrome.init();
+The API is available via the `useChrome` hook exposed from the frontend components package.
 
-    // identify yourself (the application). This tells Chrome which global navigation element should be active
-    insights.chrome.identifyApp('advisor');
+```jsx
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+
+const Component = () => {
+    const chrome = useChrome()
+    // use the API
+    return (
+        <div>...</div>
+    )
+}
 ```
 
 ## Full list of chrome functions
@@ -43,13 +49,13 @@ Please do not update title directly via `document.title`. Use one of following o
 ### While identifying app
 This is prefered way if the document title stays the same on each app page.
 ```js
-insights.chrome.identifyApp('advisor', 'App title');
+chrome.identifyApp('advisor', 'App title');
 ```
 
 ### Using updateDocumentTitle function
 Can be used for changing app title in different app pages with a ` | console.redhat.com` suffix added automatically if not disabled by a second param.
 ```js
-insights.chrome.updateDocumentTitle('New title without suffix', true)
+chrome.updateDocumentTitle('New title without suffix', true)
 ```
 
 ## Global events
@@ -61,12 +67,9 @@ The following events can be observed:
 
 ## Global actions
 
-* `insights.chrome.appNavClick({id: 'some-id'})` is deprecated and has no effect on the navigation highlight. Navigation highlight is based purely on the current browser location
-* ~~To activate certain app within your app (your app is using some kind of router and you want to activate certain part of navigation programatically) you can call function `insights.chrome.appNavClick({id: 'some-id'})` for first level nav and for second level navs you have to call `insights.chrome.appNavClick({id: 'ocp-on-aws', parentId: 'some-parent', secondaryNav: true})`~~
+* You can also use Chrome to update a page action and object ID for OUIA. Functions are available from the `useChrome` hook. You can use `appAction('action')` to activate a certain action, and `appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `appAction('edit-name')` and then `appObjectId(5)`. Once the user is done editing, you have to call `appAction()` and `appObjectId()` in order to indicate that the action is done.
 
-* You can also use Chrome to update a page action and object ID for OUIA. You can use `insights.chrome.appAction('action')` to activate a certain action, and `insights.chrome.appObjectId('object-id')` to activate a certain ID. For instance, if you want to open the "edit name" dialog for an entity with id=5, you should call `insights.chrome.appAction('edit-name')` and then `insights.chrome.appObjectId(5)`. Once the user is done editing, you have to call `insights.chrome.appAction()` and `insights.chrome.appObjectId()` in order to indicate that the action is done.
-
-* If you want to scope global filter to specific source you can do that by firing `insights.chrome.globalFilterScope('insights')` (this will populate global filter with tags for systems only from insights source).
+* If you want to scope global filter to specific source you can do that by firing `globalFilterScope('insights')` (this will populate global filter with tags for systems only from insights source).
 
 ## Global filter
 
@@ -81,7 +84,8 @@ By default subscribing to `GLOBAL_FILTER_UPDATE` will return you an object with 
 Usefull if you know the partials and want to deal with the RAW data.
 
 ```js
-insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+const chrome = useChrome()
+chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
     /*
     do something with data object, the shape of this object is
     { 'namespace with spaces': { val: { isSelected: true, value: 'something' } } }
@@ -97,11 +101,12 @@ insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
 
 #### Basic usage of `mapGlobalFilter` function
 
-If you simply want to filter systems based on these values we provide a helper function `insights.chrome.mapGlobalFilter` which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
+If you simply want to filter systems based on these values we provide a helper function `mapGlobalFilter` from the `useChrome` hook, which transforms object into one level array with tags in `${namespace}/${key}=${value}` shape. This function accepts one parameter, that is the filter object returned from `GLOBAL_FILTER_UPDATE` event.
 
 ```js
-insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    const selectedTags = insights.chrome?.mapGlobalFilter?.(data);
+const chrome = useChrome()
+chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const selectedTags = chrome.mapGlobalFilter?.(data);
     // [namespace with spaces/val=something] if you are using axios, this is the correct shape
 });
 ```
@@ -111,8 +116,9 @@ insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
 If you want to encode tag partials (namespace, key or value) you can pass `true` as second parameter to this function to enable `uriEncoding`.
 
 ```js
-insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    const selectedTags = insights.chrome?.mapGlobalFilter?.(data, true);
+const chrome = useChrome()
+chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const selectedTags = chrome.mapGlobalFilter.(data, true);
     // [namespace%20with%20spaces/val=something] if you are not using axios, this is the correct way
     // be careful when using this approach as it can escape twice (once manually and second time when sending data)
 });
@@ -125,8 +131,9 @@ If you want to consume each partial (workoads, SID and tags) as seperate entitie
 Usage with preformatted filter
 
 ```js
-insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-    const [ workloads, SID, selectedTags ] = insights.chrome?.mapGlobalFilter?.(data, false, true);
+const chrome = useChrome()
+chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    const [ workloads, SID, selectedTags ] = chrome.mapGlobalFilter.(data, false, true);
     // workloads = { SAP: { isSelected: true } }
     // SID = [1543, 48723, 'AAA'] (only selected SIDs)
     // selectedTags = [namespace with spaces/val=something]
@@ -135,13 +142,25 @@ insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
 
 ### Toggle global filter on certain pages
 
-If you wish to hide the global filter on any route simply call `insights.chrome.hideGlobalFilter()` once you do that global filter will be hidden on all pages in your application.
+If you wish to hide the global filter on any route simply call `hideGlobalFilter()` from the `useChrome` hook. Once you do that global filter will be hidden on all pages in your application.
 
-If you want to hide it on certain screens call `insights.chrome.hideGlobalFilter()` on them (preferably in `componentDidMount` function) and on screens you want to show it call `insights.chrome.hideGlobalFilter(false)`.
+If you want to hide it on certain screens call `hideGlobalFilter()` on them (preferably in `useEffect` after component mounts) and on screens you want to show it call `hideGlobalFilter(false)`.
+
+```js
+const chrome = ueChrome()
+
+chrome.hideGlobalFilter()
+```
 
 ## Creating Support Cases
 
-You can access the ability to create support cases by calling `window.insights.chrome.createCase()`.
+You can access the ability to create support cases by calling a function from the `useChrome` hook.
+
+```js
+const chrome = ueChrome()
+
+chrome.createCase()
+```
 
 By default, the fields that are sent are:
 
@@ -154,7 +173,9 @@ By default, the fields that are sent are:
 You have the ability to add a few custom fields with the following API:
 
 ``` js
-window.insights.chrome.createCase({
+const chrome = useChrome()
+
+chrome.createCase({
     caseFields: {
         key: 'any case specific values'
     },
@@ -167,11 +188,11 @@ window.insights.chrome.createCase({
 
 ## Deprecated functions
 
-* `insights.chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
+* `chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
 
 ## Register custom module
 
-If you want to register custom federated module you can do so by simply calling `insights.chrome.registerModule(module)`.
+If you want to register custom federated module you can do so by simply calling `chrome.registerModule(module)`.
 
 Where the `module` is name of the application that exposes fed-mods.json for loading federated modules. This function also consumes second parameter `manifest` to point where the manifest is located. For instance if your manifest is located at `/apps/$APP_NAME/js/static/manifest.json` where `$APP_NAME` is name of your application you want to pass in your path.
 
@@ -196,7 +217,8 @@ This example requires the RBAC application to expose module `Detail` in the modu
 #### Without manifest
 
 ```JS
-insights.chrome.registerModule('rbac')
+const chrome = useChrome()
+chrome.registerModule('rbac')
 ```
 
 This will register new module with name `rbac` with calculated manifest location.
@@ -204,7 +226,8 @@ This will register new module with name `rbac` with calculated manifest location
 #### With manifest location
 
 ```JS
-insights.chrome.registerModule('rbac', `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/js/fed-mods.json`)
+const chrome = useChrome()
+chrome.registerModule('rbac', `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/${payload?.module}/js/fed-mods.json`)
 ```
 
 This will register new module with name `rbac` and passes your own manifest location.

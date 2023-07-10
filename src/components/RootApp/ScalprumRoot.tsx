@@ -27,6 +27,7 @@ import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess } from '../../utils/common';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -172,44 +173,46 @@ const ScalprumRoot = memo(
        * - copy these functions to window
        * - add deprecation warning to the window functions
        */
-      <ScalprumProvider {...scalprumProviderProps}>
-        <Routes>
-          <Route
-            index
-            path="/"
-            element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
-          />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+      <InternalChromeContext.Provider value={chromeApi}>
+        <ScalprumProvider {...scalprumProviderProps}>
+          <Routes>
             <Route
-              path="/favoritedservices"
+              index
+              path="/"
+              element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
+            />
+            <Route
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
-          <Route path="/security" element={<DefaultLayout {...props} />} />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
-        </Routes>
-      </ScalprumProvider>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                  </Suspense>
+                }
+              />
+            )}
+            {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
+            <Route path="/security" element={<DefaultLayout {...props} />} />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
+          </Routes>
+        </ScalprumProvider>
+      </InternalChromeContext.Provider>
     );
   },
   // config rarely changes
