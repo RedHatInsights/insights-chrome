@@ -7,7 +7,6 @@ describe('Favorite-services', () => {
     cy.visit('/');
     cy.login();
     cy.visit('/');
-    cy.reload();
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 2435,
@@ -42,6 +41,12 @@ describe('Favorite-services', () => {
         },
       },
     });
+    cy.intercept({
+      method: 'GET',
+      url: '**/services/services.json',
+    }).as('services');
+
+    cy.wait('@services').its('response.statusCode').should('equal', 200);
     // check if a favorites link exists on the page
     cy.get('.pf-c-menu-toggle__text').click();
     cy.contains('View all services').click();
@@ -67,7 +72,6 @@ describe('Favorite-services', () => {
     });
     cy.contains(serviceName).parent('.chr-c-favorite-trigger.chr-c-icon-favorited').should('exist');
     cy.get('.pf-c-brand').click();
-    cy.reload();
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 24353452,

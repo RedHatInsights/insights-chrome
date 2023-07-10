@@ -1,5 +1,6 @@
 describe('empty spec', () => {
   it('passes', () => {
-    cy.visit('https://example.cypress.io');
+    // authenticate the session
+    cy.login();
   });
 });
