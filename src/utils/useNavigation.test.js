@@ -19,6 +19,14 @@ jest.mock('axios', () => {
   };
 });
 
+jest.mock('@scalprum/core', () => {
+  return {
+    __esModule: true,
+    initSharedScope: jest.fn(),
+    getSharedScope: jest.fn().mockReturnValue({}),
+  };
+});
+
 import * as axios from 'axios';
 import FlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
 import { initializeVisibilityFunctions } from './VisibilitySingleton';

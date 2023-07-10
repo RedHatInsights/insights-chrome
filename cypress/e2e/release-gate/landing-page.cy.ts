@@ -12,6 +12,6 @@ describe('Landing page', () => {
     cy.wait('@services').its('response.statusCode').should('equal', 200);
 
     // check if a favorites link exists on the page
-    cy.contains('View my favorite services').should('exist');
+    cy.contains('My favorite services').should('exist');
   });
 });
