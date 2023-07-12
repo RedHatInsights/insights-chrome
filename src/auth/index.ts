@@ -48,6 +48,7 @@ export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUs
   doOffline: () =>
     libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
   getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
+  getRefreshToken: () => libjwt.jwt.getRefreshToken(),
   getUser,
   qe: {
     ...qe,

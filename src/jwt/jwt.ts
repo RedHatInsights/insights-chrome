@@ -407,6 +407,9 @@ function refreshTokens() {
   setCookie(priv.getToken());
   authChannel.postMessage({ type: 'refresh' });
 }
+export function getRefreshToken() {
+  return priv.getRefershToken();
+}
 
 // Actually update the token
 export function updateToken() {

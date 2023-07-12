@@ -88,7 +88,7 @@ const Tools = () => {
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const location = useLocation();
-  const settingsPath = `/settings/sources`;
+  const settingsPath = isInt() ? `/settings/my-user-access` : `/settings/sources`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
@@ -148,7 +148,7 @@ const Tools = () => {
     },
     {
       title: `${intl.formatMessage(messages.supportOptions)}`,
-      onClick: () => window.open('https://access.redhat.com/support', '_blank'),
+      url: isInt() ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support',
       isHidden: isITLessEnv,
     },
     {
