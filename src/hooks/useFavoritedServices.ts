@@ -5,13 +5,27 @@ import fetchNavigationFiles, { extractNavItemGroups } from '../utils/fetchNaviga
 import { NavItem, Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
-import { AllServicesGroup } from '../components/AllServices/allServicesLinks';
+import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 
 const useFavoritedServices = () => {
   const { favoritePages } = useFavoritePagesWrapper();
   const { allLinks, availableSections } = useAllServices();
-  const [fakeBundle, setFakeBundle] = useState<Navigation | undefined>(undefined);
   const [bundles, setBundles] = useState<Navigation[]>([]);
+
+  const fakeBundle: NavItem[] = useMemo(() => {
+    // escape early if we have no services
+    if (availableSections.length === 0) {
+      return [];
+    }
+
+    // map services links to nav links
+    return availableSections.reduce<NavItem[]>((acc, curr) => {
+      const fakeNavItems: NavItem[] = curr.links.filter(isAllServicesLink);
+      // no need to recreate the reduce array
+      acc.push(...fakeNavItems);
+      return acc;
+    }, []);
+  }, [availableSections]);
 
   useEffect(() => {
     fetchNavigationFiles()
@@ -21,23 +35,9 @@ const useFavoritedServices = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (availableSections.length !== 0 && !fakeBundle) {
-      const navItems = availableSections
-        .reduce<NavItem[]>((acc, curr) => {
-          const fakeLink = curr.links.filter((link) => (link as AllServicesGroup).isGroup !== true);
-          return [...acc, fakeLink as NavItem];
-        }, [])
-        .flat();
-      setFakeBundle({
-        navItems: navItems,
-      } as Navigation);
-    }
-  }, [availableSections, fakeBundle]);
-
   const linksWithFragments = useMemo(() => {
     // push items with unique hrefs from our fake bundle for leaf creation
-    fakeBundle?.navItems.forEach((item) => {
+    fakeBundle.forEach((item) => {
       if (!allLinks.some((link) => link.href === item.href)) {
         allLinks.push(item);
       }
