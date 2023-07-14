@@ -14,7 +14,11 @@ export type AccessRequest = { request_id: string; created: string; seen: boolean
 export type Notifications = {
   isExpanded: boolean;
   data: Array<{
-    isRead: boolean;
+    title: string;
+    description: string;
+    read: boolean;
+    source: string;
+    created: string;
   }>;
   count: number;
 };

@@ -32,7 +32,8 @@ function isGenericEvent(event: unknown): event is GenericEvent {
 const useChromeServiceEvents = () => {
   const connection = useRef<WebSocket | undefined>();
   const dispatch = useDispatch();
-  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  // const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const isNotificationsEnabled = true;
 
   const handlerMap: { [key in EventTypes]: (payload: Payload) => void } = useMemo(
     () => ({
