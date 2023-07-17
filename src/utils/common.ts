@@ -344,11 +344,6 @@ const fedModulesheaders = {
   Expires: '0',
 };
 
-export const loadFEOFedModules = () =>
-  axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
-    headers: fedModulesheaders,
-  });
-
 export const loadFedModules = async () =>
   axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
     headers: fedModulesheaders,
