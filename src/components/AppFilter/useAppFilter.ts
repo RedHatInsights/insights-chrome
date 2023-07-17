@@ -26,6 +26,8 @@ export const requiredBundles = [
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ];
 
+export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
+
 const bundlesOrder = [
   'application-services',
   'openshift',
