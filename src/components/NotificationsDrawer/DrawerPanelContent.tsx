@@ -11,6 +11,7 @@ import {
   DropdownSeparator,
   DropdownPosition,
   NotificationDrawer,
+  NotificationDrawerList,
   NotificationDrawerBody,
   NotificationDrawerHeader,
   Text,
@@ -73,10 +74,10 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     setIsFilterDropdownOpen(isOpen);
   };
 
-  // TODO: IGNORE REPEATING SOURCES (ONLY COUNT ONCE)
   const filterDropdownItems = () => {
-    return notifications.map(( notification, index ) => (
-      <DropdownItem key={index}>{notification.source}</DropdownItem>
+    const uniqueSources = new Set(notifications.map(notification => notification.source));
+    return Array.from(uniqueSources).map((source, index) => (
+      <DropdownItem key={index}>{source}</DropdownItem>
     ));     
   };
  
@@ -104,8 +105,12 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
           id="notification-dropdown"
         />
       </NotificationDrawerHeader>
-      <NotificationDrawerBody>
-        {notifications.length === 0 ? <EmptyNotifications /> : <NotificationItem notifications={notifications} />}
+        <NotificationDrawerBody>
+          <NotificationDrawerList>
+            {notifications.length === 0 ? <EmptyNotifications /> : notifications.map((notification, index) => (
+              <NotificationItem key={index} notification={notification} />
+            ))}
+          </NotificationDrawerList>
       </NotificationDrawerBody>
     </NotificationDrawer>
   );
