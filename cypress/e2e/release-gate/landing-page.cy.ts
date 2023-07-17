@@ -222,7 +222,7 @@ describe('Landing page', () => {
     for (let i = 0; i < FAVORITED_OVERFILLS.length; i++) {
       cy.get('.chr-c-favorite-service__tile').eq(i).find('.pf-u-mb-sm').should('contain', FAVORITED_OVERFILLS[i]);
     }
-    cy.contains('View my favorite services').should('exist');
+    cy.contains('My favorite services').should('exist');
     cy.contains('Recently visited').should('exist');
     for (let i = 0; i < lastVisitedArray.length; i++) {
       cy.get('small[data-ouia-component-type="PF4/Text"]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
@@ -248,9 +248,24 @@ describe('Landing page', () => {
     cy.screenshot();
   });
 
-  it('tooltip is shown when hovering over the gear/question icon', () => {
+  it('View favorited services', () => {
+    cy.visit('/');
     cy.login();
+    cy.visit('/');
+    cy.reload();
 
+    cy.intercept({
+      method: 'GET',
+      url: '**/services/services.json',
+    }).as('services');
+
+    cy.wait('@services').its('response.statusCode').should('equal', 200);
+
+    // check if a favorites link exists on the page
+    cy.contains('My favorite services').should('exist');
+  });
+
+  it('tooltip is shown when hovering over the gear/question icon', () => {
     cy.visit('/');
     cy.wait(4000);
     cy.get('.tooltip-button-settings-cy').invoke('show').trigger('mouseenter').wait(1000);
