@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
+import debounce from 'lodash/debounce';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -17,7 +18,7 @@ const useLoadTags = (hasAccess = false) => {
   const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
   const dispatch = useDispatch();
   return useCallback(
-    (activeTags, search) => {
+    debounce((activeTags, search) => {
       storeFilter(activeTags, hasAccess && !isDisabled, navigate);
       batch(() => {
         dispatch(
@@ -42,7 +43,7 @@ const useLoadTags = (hasAccess = false) => {
           })
         );
       });
-    },
+    }, 600),
     [registeredWith, hasAccess]
   );
 };
@@ -93,6 +94,10 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   ); // TODO: Fix types in FEC
 
   const loadTags = useLoadTags(hasAccess);
+  const selectTags = useCallback(
+    debounce((selectedTags: FlagTagsFilter) => dispatch(globalFilterChange(selectedTags)), 600),
+    [globalFilterChange]
+  );
 
   useEffect(() => {
     setValue(() => generateFilter());
@@ -101,7 +106,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   useEffect(() => {
     if (hasAccess && !isDisabled) {
       loadTags(selectedTags, filterTagsBy);
-      dispatch(globalFilterChange(selectedTags));
+      selectTags(selectedTags);
     }
   }, [selectedTags, filterTagsBy, hasAccess, isDisabled]);
 
