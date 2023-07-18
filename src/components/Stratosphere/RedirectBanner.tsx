@@ -7,18 +7,30 @@ import { ReduxState } from '../../redux/store';
 // TODO: Figure out what param chrome should expect
 export const AWS_BANNER_NAME = 'from-aws';
 export const AZURE_BANNER_NAME = 'from-azure';
+export const GCP_BANNER_NAME = 'from-gcp';
+
+const partnerMapper: { [partner: string]: string } = {
+  [AWS_BANNER_NAME]: 'AWS',
+  [AZURE_BANNER_NAME]: 'Microsoft Azure',
+  [GCP_BANNER_NAME]: 'Google Cloud',
+};
+const possibleParams = [AWS_BANNER_NAME, AZURE_BANNER_NAME, GCP_BANNER_NAME];
+
+const hasPartner = (params: URLSearchParams) => possibleParams.find((param) => params.has(param));
 
 const RedirectBanner = () => {
   const { pathname, search, hash, state } = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(search);
-  const partner = params.has(AWS_BANNER_NAME) ? 'AWS' : params.has(AZURE_BANNER_NAME) ? 'Microsoft Azure' : null;
+  const isVisible = hasPartner(params);
+  const partner = isVisible ? partnerMapper[isVisible] : null;
   const product = useSelector<ReduxState, string | undefined>((state) => state.chrome.activeProduct);
 
   const handleClose = () => {
     // remove only the flag search param
     params.delete(AWS_BANNER_NAME);
     params.delete(AZURE_BANNER_NAME);
+    params.delete(GCP_BANNER_NAME);
     // only change the search params
     navigate(
       {
@@ -33,7 +45,7 @@ const RedirectBanner = () => {
     );
   };
   // show the banner only if correct search param exists
-  return params.has(AWS_BANNER_NAME) || params.has(AZURE_BANNER_NAME) ? (
+  return isVisible ? (
     <Alert
       actionClose={<AlertActionCloseButton data-testid="stratosphere-banner-close" onClose={handleClose} />}
       isInline
