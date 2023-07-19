@@ -5,7 +5,7 @@ import { ReduxState } from '../redux/store';
 import { LOGIN_SCOPES_STORAGE_KEY } from '../utils/common';
 
 /**
- * If required, attempt to reauthenticated current user with full profile login.
+ * If required, attempt to reauthenticate current user with full profile login.
  */
 const useUserSSOScopes = () => {
   const getCurrentScopes = (): string[] => {
@@ -18,6 +18,8 @@ const useUserSSOScopes = () => {
   };
   // get scope module definition
   const activeModule = useSelector(({ chrome: { activeModule, modules } }: ReduxState) => (activeModule ? (modules || {})[activeModule] : undefined));
+  const requiredScopes = activeModule?.config?.ssoScopes || [];
+
   useEffect(() => {
     const currentScopes = getCurrentScopes();
     const requiredScopes = activeModule?.config?.ssoScopes || [];
@@ -32,7 +34,7 @@ const useUserSSOScopes = () => {
     if (shouldReAuth) {
       login(requiredScopes);
     }
-  }, [activeModule, activeModule?.fullProfile]);
+  }, [requiredScopes, activeModule?.fullProfile]);
 };
 
 export default useUserSSOScopes;

@@ -33,7 +33,7 @@ const useBreadcrumbsLinks = () => {
         appFragments.pop();
         // Match first parent route. Routes are taken directly from router definitions.
         const fallbackMatch = matchRoutes(wildCardRoutes, activeItem.href) || [];
-        const fallbackMatchFragments = fallbackMatch?.[0].pathnameBase.split('/');
+        const fallbackMatchFragments = fallbackMatch?.[0]?.pathnameBase.split('/');
         const groupFragments: Required<NavItem, 'href'>[] = navItems.map((item, index) => ({
           ...item,
           /**

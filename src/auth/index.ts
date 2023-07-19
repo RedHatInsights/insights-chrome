@@ -77,10 +77,11 @@ export const createGetUserPermissions = (libJwt: LibJWT, getUser: () => Promise<
   };
 };
 
-export default ({ ssoUrl }: { ssoUrl?: string }): LibJWT => {
+export default ({ ssoUrl, ssoScopes }: { ssoUrl?: string; ssoScopes: string[] }): LibJWT => {
   console.time(TIMER_STR); // eslint-disable-line no-console
   const options = {
     ...defaultOptions,
+    scope: ssoScopes.join(' '),
   };
 
   wipePostbackParamsThatAreNotForUs();

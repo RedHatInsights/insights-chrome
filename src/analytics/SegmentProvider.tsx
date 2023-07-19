@@ -75,7 +75,12 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   }[env]?.[module] ||
   KEY_FALLBACK[env];
 
+let observer: MutationObserver | undefined;
 const registerAnalyticsObserver = () => {
+  // never override the observer
+  if (observer) {
+    return;
+  }
   /**
    * We ignore hash changes
    * Hashes only have frontend effect
@@ -83,7 +88,7 @@ const registerAnalyticsObserver = () => {
   let oldHref = document.location.href.replace(/#.*$/, '');
 
   const bodyList = document.body;
-  const observer = new MutationObserver((mutations) => {
+  observer = new MutationObserver((mutations) => {
     mutations.forEach(() => {
       const newLocation = document.location.href.replace(/#.*$/, '');
       if (oldHref !== newLocation) {
@@ -99,7 +104,6 @@ const registerAnalyticsObserver = () => {
     childList: true,
     subtree: true,
   });
-  return observer.disconnect;
 };
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
@@ -255,8 +259,11 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
   };
 
   useEffect(() => {
-    const disconnect = registerAnalyticsObserver();
-    return () => disconnect();
+    registerAnalyticsObserver();
+    return () => {
+      observer?.disconnect();
+      observer = undefined;
+    };
   }, []);
 
   useEffect(() => {
