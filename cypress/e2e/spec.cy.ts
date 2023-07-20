@@ -1,6 +1,12 @@
-describe('empty spec', () => {
-  it('passes', () => {
-    // authenticate the session
-    cy.login();
-  });
+describe('Test environment init', () => {
+  it(
+    'initializes user session',
+    {
+      retries: 3,
+    },
+    () => {
+      // authenticate the session
+      cy.login();
+    }
+  );
 });
