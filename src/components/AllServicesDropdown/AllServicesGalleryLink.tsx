@@ -12,7 +12,7 @@ import { AllServicesDropdownContext } from './common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
+const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle }: AllServicesGalleryLinkProps) => {
   const bundle = bundleMapping[href.split('/')[1]];
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
   const { onLinkClick } = useContext(AllServicesDropdownContext);
@@ -68,8 +68,12 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
             </SplitItem>
           </Split>
           <TextContent>
-            {/* do not show bundle if the card title matches bundle title */}
-            <Text component="small">{bundle !== title ? bundle : null}</Text>
+            {/* 
+              if subtitle is not set use bundle
+
+              do not show bundle if the card title matches bundle title
+            */}
+            <Text component="small">{subtitle || (bundle !== title ? bundle : null)}</Text>
             <Text component="small" className="pf-u-color-100">
               {description ?? ''}
             </Text>

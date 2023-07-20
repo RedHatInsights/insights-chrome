@@ -3,6 +3,7 @@ import AllServicesIcons from './AllServicesIcons';
 export type AllServicesLink = {
   href: string;
   title: string;
+  subtitle?: string;
   description?: string;
   isExternal?: boolean;
   prod?: boolean;
