@@ -338,6 +338,10 @@ export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'servic
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
+function getChromeDynamicPaths() {
+  return `${isBeta() ? '/beta' : ''}/apps/chrome/operator-generated/fed-modules.json`;
+}
+
 const fedModulesheaders = {
   'Cache-Control': 'no-cache',
   Pragma: 'no-cache',
@@ -345,8 +349,14 @@ const fedModulesheaders = {
 };
 
 export const loadFedModules = async () =>
-  axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
-    headers: fedModulesheaders,
+  Promise.all([
+    axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+      headers: fedModulesheaders,
+    }),
+    axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
+  ]).then(([staticConfig, feoConfig]) => {
+    staticConfig.data.chrome = feoConfig?.data?.chrome;
+    return staticConfig;
   });
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
