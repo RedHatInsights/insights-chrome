@@ -348,11 +348,21 @@ const fedModulesheaders = {
   Expires: '0',
 };
 
+// FIXME: Remove once qaprodauth is dealt with
+// can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
+// Always use stable
+const loadCSCFedModules = () =>
+  axios.get(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+    headers: fedModulesheaders,
+  });
+
 export const loadFedModules = async () =>
   Promise.all([
-    axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
-      headers: fedModulesheaders,
-    }),
+    axios
+      .get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+        headers: fedModulesheaders,
+      })
+      .catch(loadCSCFedModules),
     axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
   ]).then(([staticConfig, feoConfig]) => {
     staticConfig.data.chrome = feoConfig?.data?.chrome;
