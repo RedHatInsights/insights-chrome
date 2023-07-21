@@ -53,6 +53,7 @@ pipeline {
             steps {
                 sh """
                     echo 'build'
+
                     #./deploy/build_deploy.sh
                 """
             }
