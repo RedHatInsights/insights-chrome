@@ -52,6 +52,11 @@ export const DEFAULT_SSO_ROUTES = {
     sso: 'https://sso.int.openshiftusgov.com/',
     portal: 'https://console.int.openshiftusgov.com/',
   },
+  scr: {
+    url: ['console01.stage.openshiftusgov.com'],
+    sso: 'https://sso01.stage.openshiftusgov.com/',
+    portal: 'https://console01.stage.openshiftusgov.com',
+  },
   dev: {
     url: ['dev.foo.redhat.com', 'console.dev.redhat.com', 'us.console.dev.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
@@ -214,7 +219,7 @@ export function isEphem() {
 }
 
 export function isInt() {
-  return getEnv() === 'int';
+  return getEnv() === 'int' || getEnv() === 'scr';
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {
