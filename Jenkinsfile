@@ -5,7 +5,9 @@ pipeline {
     }
     stages {
         stage('Initial Setup') {
-            sh 'echo Placeholder Jenkinsfile'
+            step {
+                sh 'echo Placeholder Jenkinsfile'
+            }
         }
     }
 }
