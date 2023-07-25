@@ -3,6 +3,7 @@ pipeline {
     options {
         timestamps()
     }
+
     environment {
         MASTER_BRANCH="master"
         MASTER_STABLE_BRANCH="master-stable"
@@ -66,3 +67,4 @@ def DefineEnv(branch) {
     echo 'Git branch is not "master" or "master-stable"'
     return
 }
+
