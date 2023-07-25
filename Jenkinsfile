@@ -27,6 +27,7 @@ pipeline {
         IMG_TAG=$(script: "git rev-parse --short=8 HEAD", stdout: true).trim()
 
     }
+
     stages {
         stage('Initial Setup') {
             steps {
