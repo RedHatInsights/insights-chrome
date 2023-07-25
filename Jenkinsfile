@@ -66,24 +66,24 @@ pipeline {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
                                 sh '''
-                                ./ci/lint.sh
+                                    ./ci/lint.sh
                                 '''
                             }
                         }
                     }
                 }
 
-                // stage('Test E2E') {
-                //     steps {
-                //         script {
-                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                //                 sh '''
-                //                     echo "Running Cypress Tests
-                //                 '''
-                //             }
-                //         }
-                //     }
-                // }
+                stage('Test E2E') {
+                    steps {
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/cypress.sh
+                                '''
+                            }
+                        }
+                    }
+                }
 
                 stage('Build') {
                     steps {
