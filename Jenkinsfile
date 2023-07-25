@@ -3,19 +3,6 @@ pipeline {
     options {
         timestamps()
     }
-    stages {
-        stage('Initial Setup') {
-            steps {
-                sh 'echo Placeholder Jenkinsfile'
-            }
-        }
-    }
-}
-pipeline {
-    agent { label 'insights' }
-    options {
-        timestamps()
-    }
     environment {
         MASTER_BRANCH="master"
         MASTER_STABLE_BRANCH="master-stable"
