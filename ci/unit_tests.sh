@@ -11,8 +11,8 @@ docker build -t "${TEST_CONT}:${IMG_TAG}" -f Dockerfile.test .
 docker run -i \
     "${TEST_CONT}:${IMG_TAG}" \
     npm run test -- --coverage
-UNIT_TEST_RESULT=$?
+RESULT=$?
 
-if [[ $UNIT_TEST_RESULT -ne 0 ]]; then
-    exit $UNIT_TEST_RESULT
+if [[ $RESULT -ne 0 ]]; then
+    exit $RESULT
 fi

@@ -10,7 +10,7 @@ docker build -t "${TEST_CONT}:${IMG_TAG}" -f Dockerfile.test .
 
 docker run -i \
     "${TEST_CONT}:${IMG_TAG}" \
-    npm run lint
+    npm run build
 RESULT=$?
 
 if [[ $RESULT -ne 0 ]]; then

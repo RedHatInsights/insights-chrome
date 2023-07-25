@@ -52,34 +52,26 @@ pipeline {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
                                 sh '''
-                                    source ./ci/helpers.sh
-
-                                    docker login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
-
-                                    docker build -t "$TEST_CONT" -f Dockerfile.test .
-                                    
-                                    docker run --name "${TEST_CONT}:${IMG_TAG}" \
-                                        npm i && npm run test -- --coverage
+                                    ./ci/unit_tests.sh
                                 '''
                             }
                         }
                     }
                 }
 
-                // stage('Lint') {
-                //     steps {
-                //         sh "echo 'Lint'"
+                stage('Lint') {
+                    steps {
+                        sh "echo 'Lint'"
 
-                //         script {
-                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                //                 sh '''
-                //                     npm i
-                //                     npm run lint
-                //                 '''
-                //             }
-                //         }
-                //     }
-                // }
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                ./ci/lint.sh
+                                '''
+                            }
+                        }
+                    }
+                }
 
                 // stage('Test E2E') {
                 //     steps {
@@ -93,18 +85,17 @@ pipeline {
                 //     }
                 // }
 
-                // stage('Build') {
-                //     steps {
-                //         script {
-                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                //                 sh '''
-                //                     npm i
-                //                     npm run build
-                //                 '''
-                //             }
-                //         }
-                //     }
-                // }
+                stage('Build') {
+                    steps {
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/build.sh
+                                '''
+                            }
+                        }
+                    }
+                }
             }
         }
     }
