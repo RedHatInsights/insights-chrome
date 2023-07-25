@@ -1,5 +1,10 @@
-FROM registry.access.redhat.com/ubi8/nodejs-16:1-111.1689167503
+FROM registry.access.redhat.com/ubi9/nodejs-18:1-53
+USER 0
 
 WORKDIR /workspace
+
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install
 
 COPY . .
