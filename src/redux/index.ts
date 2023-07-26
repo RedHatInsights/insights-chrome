@@ -59,11 +59,11 @@ import {
   LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
-  MARK_REQUEST_NOTIFICATION_SEEN,
-  MARK_NOTIFICATION_AS_READ,
-  MARK_NOTIFICATION_AS_UNREAD,
   MARK_ALL_NOTIFICATION_AS_READ,
   MARK_ALL_NOTIFICATION_AS_UNREAD,
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
+  MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
   SET_GATEWAY_ERROR,
@@ -163,7 +163,8 @@ export default function (): {
         modules: {},
         scalprumConfig: {},
         moduleRoutes: [],
-        notifications: { //TODO: Figure out why this is the difference from chromeReducers
+        notifications: {
+          //TODO: Figure out why this is the difference from chromeReducers
           data: [],
           isExpanded: false,
           count: 0,

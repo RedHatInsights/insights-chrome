@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { useFlag } from '@unleash/proxy-client-react';
+// import { useFlag } from '@unleash/proxy-client-react';
 
 import { getEncodedToken, setCookie } from '../jwt/jwt';
 

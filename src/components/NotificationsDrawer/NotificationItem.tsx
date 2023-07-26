@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Label,
+  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownPosition,
-  Checkbox,
   KebabToggle,
+  Label,
   NotificationDrawerList,
   NotificationDrawerListItem,
   NotificationDrawerListItemBody,
@@ -13,48 +13,30 @@ import {
 } from '@patternfly/react-core';
 import { useDispatch } from 'react-redux';
 import { Notifications } from '../../redux/store';
-import {
-  MARK_NOTIFICATION_AS_READ,
-  MARK_NOTIFICATION_AS_UNREAD,
-} from '../../redux/action-types';
+import { MARK_NOTIFICATION_AS_READ, MARK_NOTIFICATION_AS_UNREAD } from '../../redux/action-types';
 
-const NotificationItem = ({ notification }: { notification: Notifications["data"][0] }) => {
+const NotificationItem = ({ notification }: { notification: Notifications['data'][0] }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   console.log('This is my current notification item: ', notification);
 
   const onDropdownToggle = (isOpen: boolean) => {
     setIsDropdownOpen(isOpen);
-  }
-
-  const onCheckboxToggle = () => {
-    if(!notification.read)
-      dispatch({ type: MARK_NOTIFICATION_AS_READ, payload: notification.id });
-    else
-      dispatch({ type: MARK_NOTIFICATION_AS_UNREAD, payload: notification.id });
   };
 
-  const dropdownItems = [
-    <DropdownItem key='read' onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>,
-  ]
+  const onCheckboxToggle = () => {
+    if (!notification.read) dispatch({ type: MARK_NOTIFICATION_AS_READ, payload: notification.id });
+    else dispatch({ type: MARK_NOTIFICATION_AS_UNREAD, payload: notification.id });
+  };
+
+  const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
 
   return (
     <React.Fragment>
       <NotificationDrawerList>
-        <NotificationDrawerListItem 
-          variant="info"
-          isRead={notification.read}
-        >
-          <NotificationDrawerListItemHeader
-            title={notification.title}
-            srTitle="Info notification:"
-          >
-            <Checkbox
-              isChecked={notification.read}
-              onChange={onCheckboxToggle}
-              id="read-checkbox"
-              name="read-checkbox"
-            />        
+        <NotificationDrawerListItem variant="info" isRead={notification.read}>
+          <NotificationDrawerListItemHeader title={notification.title} srTitle="Info notification:">
+            <Checkbox isChecked={notification.read} onChange={onCheckboxToggle} id="read-checkbox" name="read-checkbox" />
             <Dropdown
               position={DropdownPosition.right}
               toggle={<KebabToggle onToggle={onDropdownToggle} id="kebab-toggle" />}
@@ -64,11 +46,13 @@ const NotificationItem = ({ notification }: { notification: Notifications["data"
               id="notification-dropdown"
             />
           </NotificationDrawerListItemHeader>
-             {/* TODO: Modify timestamp to only show correct "x minutes ago" */} 
-            <NotificationDrawerListItemBody timestamp={`${notification.created}`}> 
-              <Label variant="outline" isCompact className='pf-u-mb-md'>{notification.source}</Label>
-              <span className='pf-u-display-block'>{notification.description}</span>
-            </NotificationDrawerListItemBody>
+          {/* TODO: Modify timestamp to only show correct "x minutes ago" */}
+          <NotificationDrawerListItemBody timestamp={`${notification.created}`}>
+            <Label variant="outline" isCompact className="pf-u-mb-md">
+              {notification.source}
+            </Label>
+            <span className="pf-u-display-block">{notification.description}</span>
+          </NotificationDrawerListItemBody>
         </NotificationDrawerListItem>
       </NotificationDrawerList>
     </React.Fragment>

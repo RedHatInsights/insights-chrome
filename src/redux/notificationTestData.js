@@ -39,4 +39,4 @@ export const testData = [
     source: 'OpenShift',
     created: new Date().toString(),
   },
-]
+];

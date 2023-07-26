@@ -26,7 +26,7 @@ import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
-import { useFlag } from '@unleash/proxy-client-react';
+// import { useFlag } from '@unleash/proxy-client-react';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
