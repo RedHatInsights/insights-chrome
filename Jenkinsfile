@@ -13,20 +13,75 @@ def secrets = [
         [envVar: 'RH_REGISTRY_TOKEN', vaultKey: 'token']]],
 ]
 
+def configuration = [vaultUrl: params.VAULT_ADDRESS, vaultCredentialId: params.VAULT_CREDS_ID, engineVersion: 1]
+
 pipeline {
     agent { label 'insights' }
     options {
         timestamps()
     }
+
     environment {
         PROJECT_NAME="insights-chrome"
+
+        MASTER_BRANCH="master"
+        MASTER_STABLE_BRANCH="master-stable"
+
+        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        NODE_BASE_IMAGE="registry.access.redhat.com/ubi9/nodejs-18:1-53"
     }
 
     stages {
-        stage('Placeholder') {
+        stage('Unit Testing') {
             steps {
-                sh 'echo Placeholder Jenkinsfile'
+                script {
+                    TEST_CONT="${PROJECT_NAME}-unit-tests"
+
+                    withVault([configuration: configuration, vaultSecrets: secrets]) {
+                        sh '''
+                            ./ci/unit_tests.sh
+                        '''
+                    }
+                }
             }
         }
+
+                // stage('Lint') {
+                //     steps {
+                //         sh "echo 'Lint'"
+
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/lint.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
+
+                // stage('Test E2E') {
+                //     steps {
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/cypress.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
+
+                // stage('Build') {
+                //     steps {
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/build.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
     }
 }
