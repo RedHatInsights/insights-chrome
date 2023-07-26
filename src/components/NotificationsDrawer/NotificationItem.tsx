@@ -11,12 +11,16 @@ import {
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
+import { useDispatch } from 'react-redux';
 import { Notifications } from '../../redux/store';
+import {
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
+} from '../../redux/action-types';
 
-// TODO: Switch from local state to redux management. Needed for "mark all visible" functionality from the panel.
 const NotificationItem = ({ notification }: { notification: Notifications["data"][0] }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isNotificationRead, setIsNotificationRead] = useState(false);
+  const dispatch = useDispatch();
   console.log('This is my current notification item: ', notification);
 
   const onDropdownToggle = (isOpen: boolean) => {
@@ -24,11 +28,14 @@ const NotificationItem = ({ notification }: { notification: Notifications["data"
   }
 
   const onCheckboxToggle = () => {
-    setIsNotificationRead(!isNotificationRead);
-  }
+    if(!notification.read)
+      dispatch({ type: MARK_NOTIFICATION_AS_READ, payload: notification.id });
+    else
+      dispatch({ type: MARK_NOTIFICATION_AS_UNREAD, payload: notification.id });
+  };
 
   const dropdownItems = [
-    <DropdownItem key='read' onClick={onCheckboxToggle}>{`Mark as ${!isNotificationRead ? 'read' : 'unread'}`}</DropdownItem>,
+    <DropdownItem key='read' onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>,
   ]
 
   return (
@@ -36,14 +43,14 @@ const NotificationItem = ({ notification }: { notification: Notifications["data"
       <NotificationDrawerList>
         <NotificationDrawerListItem 
           variant="info"
-          isRead={isNotificationRead}
+          isRead={notification.read}
         >
           <NotificationDrawerListItemHeader
             title={notification.title}
             srTitle="Info notification:"
           >
             <Checkbox
-              isChecked={isNotificationRead}
+              isChecked={notification.read}
               onChange={onCheckboxToggle}
               id="read-checkbox"
               name="read-checkbox"

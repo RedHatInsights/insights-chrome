@@ -15,6 +15,7 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
+  notificationsReducer,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
@@ -59,6 +60,10 @@ import {
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
   MARK_REQUEST_NOTIFICATION_SEEN,
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
+  MARK_ALL_NOTIFICATION_AS_READ,
+  MARK_ALL_NOTIFICATION_AS_UNREAD,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
   SET_GATEWAY_ERROR,
@@ -100,6 +105,10 @@ const reducers = {
   [SET_GATEWAY_ERROR]: setGatewayError,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
   [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
+  [MARK_NOTIFICATION_AS_READ]: notificationsReducer,
+  [MARK_NOTIFICATION_AS_UNREAD]: notificationsReducer,
+  [MARK_ALL_NOTIFICATION_AS_READ]: notificationsReducer,
+  [MARK_ALL_NOTIFICATION_AS_UNREAD]: notificationsReducer,
 };
 
 const globalFilter = {
@@ -154,7 +163,7 @@ export default function (): {
         modules: {},
         scalprumConfig: {},
         moduleRoutes: [],
-        notifications: {
+        notifications: { //TODO: Figure out why this is the difference from chromeReducers
           data: [],
           isExpanded: false,
           count: 0,

@@ -4,8 +4,14 @@ import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { ChromeModule, NavItem, Navigation } from '../@types/types';
 import { ITLess, generateRoutesList, highlightItems, isBeta, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
-import { AccessRequest, ChromeState } from './store';
+import { AccessRequest, ChromeState, Notifications, NotificationData } from './store';
 import { testData } from './notificationTestData';
+import { 
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
+  MARK_ALL_NOTIFICATION_AS_READ,
+  MARK_ALL_NOTIFICATION_AS_UNREAD,
+} from './action-types';
 
 export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
   return {
@@ -344,3 +350,56 @@ export function toggleNotificationsReducer(state: ChromeState) {
     },
   };
 }
+
+export function notificationsReducer(state: ChromeState, action: { type: string; payload?: number }): ChromeState {
+  console.log('Looking at our state bfore updating: ', state.notifications?.data);
+  switch(action.type) {
+    case MARK_NOTIFICATION_AS_READ:
+      return {
+        ...state,
+        notifications: {
+          isExpanded: state.notifications?.isExpanded || false,
+          count: state.notifications?.count || 0,
+          data: (state.notifications?.data || []).map((notification: NotificationData) => 
+            notification.id === action.payload ? { ...notification, read: true } : notification
+          ),
+        },
+      };
+    case MARK_NOTIFICATION_AS_UNREAD:
+      return {
+        ...state,
+        notifications: {
+          isExpanded: state.notifications?.isExpanded || false,
+          count: state.notifications?.count || 0,
+          data: (state.notifications?.data || []).map((notification: NotificationData) => 
+            notification.id === action.payload ? { ...notification, read: false } : notification
+          ),
+        },
+      };
+    case MARK_ALL_NOTIFICATION_AS_READ:
+      return {
+        ...state,
+        notifications: {
+          isExpanded: state.notifications?.isExpanded || false,
+          count: state.notifications?.count || 0,
+          data: (state.notifications?.data || []).map((notification) => (
+            { ...notification, read: true }
+          )),
+        },
+      };
+    case MARK_ALL_NOTIFICATION_AS_UNREAD:
+      return {
+        ...state,
+        notifications: {
+          isExpanded: state.notifications?.isExpanded || false,
+          count: state.notifications?.count || 0,
+          data: (state.notifications?.data || []).map((notification) => (
+            { ...notification, read: false }
+          )),
+        },
+      };
+    default:
+      return state;
+  };
+};
+

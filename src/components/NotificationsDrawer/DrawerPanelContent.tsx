@@ -18,25 +18,22 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleNotificationsDrawer } from '../../redux/actions';
-import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
-import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
-import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-square-alt-icon';
+import { 
+  toggleNotificationsDrawer,
+  markAllNotificationsAsRead,
+  markAllNotificationsAsUnread,
+} from '../../redux/actions';
+import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
 import { ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
+import { MARK_ALL_NOTIFICATION_AS_READ } from '../../redux/action-types';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
 };
-
-const dropdownItems = [
-  <DropdownItem key="read all">Mark visible as read</DropdownItem>,
-  <DropdownItem key="unread all">Mark visible as unread</DropdownItem>,
-  <DropdownSeparator key="separator" />,
-  <DropdownItem icon={ ExternalLinkSquareAltIcon }>View event log</DropdownItem>,
-  <DropdownItem icon={ ExternalLinkSquareAltIcon }>Configure notifications settings</DropdownItem>,
-  <DropdownItem icon={ ExternalLinkSquareAltIcon }>Manage my notification preferences</DropdownItem>,
-];
 
 const EmptyNotifications = () => (
   <EmptyState>
@@ -73,6 +70,38 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const onFilterDropdownToggle = (isOpen: boolean) => {
     setIsFilterDropdownOpen(isOpen);
   };
+
+  // const onMarkAllAsRead = () => {
+  //   console.log('MARKING ALL AS READ');
+
+  //   notifications.map((notification, index) => {
+  //     if(!notification.read){
+  //       notification.read = true; // TODO: Switch to redux state changes
+  //     }
+  //   });
+  // }
+
+  const onMarkAllAsRead = () => {
+    console.log('MARKING ALL AS READ');
+    dispatch({ type: MARK_ALL_NOTIFICATION_AS_READ });
+  };
+
+  const onMarkAllAsUnread = () => {
+    notifications.map((notification, index) => {
+      if(notification.read){
+        notification.read = false;
+      }
+    });
+  }
+
+  const dropdownItems = [
+    <DropdownItem key="read all" onClick={onMarkAllAsRead}>Mark visible as read</DropdownItem>,
+    <DropdownItem key="unread all" onClick={onMarkAllAsUnread}>Mark visible as unread</DropdownItem>,
+    <DropdownSeparator key="separator" />,
+    <DropdownItem icon={ ExternalLinkSquareAltIcon }>View event log</DropdownItem>,
+    <DropdownItem icon={ ExternalLinkSquareAltIcon }>Configure notifications settings</DropdownItem>,
+    <DropdownItem icon={ ExternalLinkSquareAltIcon }>Manage my notification preferences</DropdownItem>,
+  ];
 
   const filterDropdownItems = () => {
     const uniqueSources = new Set(notifications.map(notification => notification.source));
