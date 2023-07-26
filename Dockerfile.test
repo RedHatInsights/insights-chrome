@@ -1,0 +1,10 @@
+FROM registry.access.redhat.com/ubi9/nodejs-18:1-53
+USER 0
+
+WORKDIR /workspace
+
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install
+
+COPY . .

@@ -279,9 +279,19 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
     analyticsLoaded.current = true;
     analytics.current.load(
       {
+        cdnURL: '/connections/cdn',
         writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey),
       },
-      { initialPageview: false, disableClientPersistence: true, integrations: { All: !disableIntegrations } }
+      {
+        initialPageview: false,
+        disableClientPersistence: true,
+        integrations: {
+          All: !disableIntegrations,
+          'Segment.io': {
+            apiHost: document.location.host + '/connections/api/v1',
+          },
+        },
+      }
     );
     resetIntegrations(analytics.current);
   }
