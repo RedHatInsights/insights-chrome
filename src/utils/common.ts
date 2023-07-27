@@ -215,7 +215,7 @@ export function ITLess() {
 }
 
 export function isEphem() {
-  return getEnv() === 'ephem' || getEnv() === 'int';
+  return getEnv() === 'ephem' || getEnv() === 'int' || getEnv() === 'scr';
 }
 
 export function isInt() {
