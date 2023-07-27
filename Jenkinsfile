@@ -64,17 +64,17 @@ pipeline {
                     }
                 }
 
-                // stage('Test E2E') {
-                //     steps {
-                //         script {
-                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                //                 sh '''
-                //                     ./ci/cypress.sh
-                //                 '''
-                //             }
-                //         }
-                //     }
-                // }
+                stage('Test E2E') {
+                    steps {
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/cypress.sh
+                                '''
+                            }
+                        }
+                    }
+                }
 
                 stage('Build') {
                     agent { label 'insights' }
