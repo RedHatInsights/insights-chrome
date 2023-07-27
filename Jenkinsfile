@@ -64,7 +64,7 @@ pipeline {
                     }
                 }
 
-                stage('Test E2E') {
+                stage('E2E Testing') {
                     steps {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {

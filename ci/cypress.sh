@@ -10,4 +10,4 @@ docker cp . "${TEST_CONT}-${IMG_TAG}:/opt/app-root/src/"
 
 docker exec -i -w "/opt/app-root/src/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
-docker exec -i -w "/opt/app-root/src/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:e2e"
+docker exec -i -w "/opt/app-root/src/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:ct"
