@@ -29,6 +29,7 @@ pipeline {
 
         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
         NODE_BASE_IMAGE="registry.access.redhat.com/ubi9/nodejs-18:1-53"
+        CYPRESS_TEST_IMAGE="quay.io/clodservices/cypress-e2e-image"
     }
 
     stages {
