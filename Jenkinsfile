@@ -20,96 +20,13 @@ pipeline {
     }
     environment {
         PROJECT_NAME="insights-chrome"
-
-        MASTER_BRANCH="master"
-        MASTER_STABLE_BRANCH="master-stable"
-
-        IMG_TAG=$(script: "git rev-parse --short=8 HEAD", stdout: true).trim()
-
     }
 
     stages {
-        stage('Initial Setup') {
+        stage('Placeholder') {
             steps {
-                script {
-                    env.ENV_TEST = DefineEnv(env.ghprbTargetBranch)
-
-                    echo "environment: ${ENV_NAME}"
-                    echo "Source branch: ${ghprbSourceBranch}"
-                }
-            }
-        }
-
-        stage('Parallel Stages') {
-            parallel {
-                stage('Unit Testing') {
-                    environment {
-                        TEST_CONT="${PROJECT_NAME}-unit-tests"
-                    }
-                    steps {
-                        sh "echo 'ephemeral testing'"
-
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/unit_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-
-                stage('Lint') {
-                    steps {
-                        sh "echo 'Lint'"
-
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/lint.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-
-                stage('Test E2E') {
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/cypress.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-
-                stage('Build') {
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/build.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+                sh 'echo Placeholder Jenkinsfile'
             }
         }
     }
-}
-
-def DefineEnv(branch) {
-    if (ghprbTargetBranch == 'main') {
-        echo 'Setting environment to "stage-preview"'
-        return env.ENV_NAME="stage-preview"
-    } else if (ghprbTargetBranch == 'stable') {
-        echo 'Setting environment to "stage-stable"'
-        return env.ENV_NAME="stage-stable"
-    }
-
-    echo 'Git branch is not "master" or "master-stable"'
-    return
 }
