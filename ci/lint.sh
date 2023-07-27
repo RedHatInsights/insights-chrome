@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_NAME="insights-chrome"
-TEST_CONT="${PROJECT_NAME}-unit-tests"
+TEST_CONT="${PROJECT_NAME}-lint"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 
 docker run --name "${TEST_CONT}-${IMG_TAG}" -d -i "${NODE_BASE_IMAGE}" /bin/sh
