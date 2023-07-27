@@ -35,6 +35,7 @@ pipeline {
         stage("PLACEHOLDER NAME") {
             parallel {
                 stage('Unit Testing') {
+                    agent { label 'insights' }
                     steps {
                         script {
                             TEST_CONT="${PROJECT_NAME}-unit-tests"
@@ -49,6 +50,7 @@ pipeline {
                 }
 
                 stage('Lint') {
+                    agent { label 'insights' }
                     steps {
                         sh "echo 'Lint'"
 
@@ -75,6 +77,7 @@ pipeline {
                 // }
 
                 stage('Build') {
+                    agent { label 'insights' }
                     steps {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
