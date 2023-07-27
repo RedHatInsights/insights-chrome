@@ -32,56 +32,60 @@ pipeline {
     }
 
     stages {
-        stage('Unit Testing') {
-            steps {
-                script {
-                    TEST_CONT="${PROJECT_NAME}-unit-tests"
+        stage("PLACEHOLDER NAME") {
+            parallel {
+                stage('Unit Testing') {
+                    steps {
+                        script {
+                            TEST_CONT="${PROJECT_NAME}-unit-tests"
 
-                    withVault([configuration: configuration, vaultSecrets: secrets]) {
-                        sh '''
-                            ./ci/unit_tests.sh
-                        '''
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/unit_tests.sh
+                                '''
+                            }
+                        }
+
+                        stage('Lint') {
+                            steps {
+                                sh "echo 'Lint'"
+
+                                script {
+                                    withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                        sh '''
+                                            ./ci/lint.sh
+                                        '''
+                                    }
+                                }
+                            }
+                        }
+
+                        // stage('Test E2E') {
+                        //     steps {
+                        //         script {
+                        //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                        //                 sh '''
+                        //                     ./ci/cypress.sh
+                        //                 '''
+                        //             }
+                        //         }
+                        //     }
+                        // }
+
+                        stage('Build') {
+                            steps {
+                                script {
+                                    withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                        sh '''
+                                            ./ci/build.sh
+                                        '''
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
-                stage('Lint') {
-                    steps {
-                        sh "echo 'Lint'"
-
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/lint.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-
-                // stage('Test E2E') {
-                //     steps {
-                //         script {
-                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                //                 sh '''
-                //                     ./ci/cypress.sh
-                //                 '''
-                //             }
-                //         }
-                //     }
-                // }
-
-                stage('Build') {
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/build.sh
-                                '''
-                            }
-                        }
-                    }
-                }
     }
 }
