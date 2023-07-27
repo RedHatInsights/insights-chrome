@@ -45,42 +45,42 @@ pipeline {
                                 '''
                             }
                         }
+                    }
+                }
 
-                        stage('Lint') {
-                            steps {
-                                sh "echo 'Lint'"
+                stage('Lint') {
+                    steps {
+                        sh "echo 'Lint'"
 
-                                script {
-                                    withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                        sh '''
-                                            ./ci/lint.sh
-                                        '''
-                                    }
-                                }
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/lint.sh
+                                '''
                             }
                         }
+                    }
+                }
 
-                        // stage('Test E2E') {
-                        //     steps {
-                        //         script {
-                        //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-                        //                 sh '''
-                        //                     ./ci/cypress.sh
-                        //                 '''
-                        //             }
-                        //         }
-                        //     }
-                        // }
+                // stage('Test E2E') {
+                //     steps {
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/cypress.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
 
-                        stage('Build') {
-                            steps {
-                                script {
-                                    withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                        sh '''
-                                            ./ci/build.sh
-                                        '''
-                                    }
-                                }
+                stage('Build') {
+                    steps {
+                        script {
+                            withVault([configuration: configuration, vaultSecrets: secrets]) {
+                                sh '''
+                                    ./ci/build.sh
+                                '''
                             }
                         }
                     }
