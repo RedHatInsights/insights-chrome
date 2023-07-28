@@ -14,4 +14,4 @@ docker exec -i -w "/e2e/" "${TEST_CONT}-${IMG_TAG}" sh -c "ls -l"
 
 docker exec -i -w "/e2e/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
-docker exec -i -w "/e2e/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:e2e"
+docker exec -i -w "/e2e/" "${TEST_CONT}-${IMG_TAG}" sh -c "cd /e2e && npm run test:e2e"
