@@ -10,8 +10,6 @@ docker run --name "${TEST_CONT}-${IMG_TAG}" -d -i "${CYPRESS_TEST_IMAGE}" /bin/b
 
 docker cp . "${TEST_CONT}-${IMG_TAG}:/e2e/"
 
-docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "rm package-lock.json"
-
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:ct"
