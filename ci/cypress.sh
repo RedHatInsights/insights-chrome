@@ -14,4 +14,4 @@ docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "pwd"
 
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
-docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:e2e"
+docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:ct"
