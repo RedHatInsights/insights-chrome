@@ -65,7 +65,7 @@ pipeline {
                     }
                 }
 
-                stage('E2E Testing') {
+                stage('Cypress Component Testing') {
                     steps {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
