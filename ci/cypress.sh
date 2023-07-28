@@ -4,8 +4,6 @@ PROJECT_NAME="insights-chrome"
 TEST_CONT="${PROJECT_NAME}-cypress"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 
-chown -R node:node package*.json
-
 docker login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
 
 docker run --name "${TEST_CONT}-${IMG_TAG}" -d -i "${CYPRESS_TEST_IMAGE}" /bin/sh
