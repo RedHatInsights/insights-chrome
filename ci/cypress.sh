@@ -1,6 +1,5 @@
 #!/bin/bash
 
-PROJECT_NAME="insights-chrome"
 TEST_CONT="${PROJECT_NAME}-cypress"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 
