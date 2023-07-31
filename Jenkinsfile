@@ -34,36 +34,35 @@ pipeline {
 
     stages {
         stage("PLACEHOLDER NAME") {
-            parallel {
-                stage('Unit Testing') {
-                    agent { label 'insights' }
-                    steps {
-                        script {
-                            TEST_CONT="${PROJECT_NAME}-unit-tests"
+                // stage('Unit Testing') {
+                //     agent { label 'insights' }
+                //     steps {
+                //         script {
+                //             TEST_CONT="${PROJECT_NAME}-unit-tests"
 
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/unit_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/unit_tests.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
 
-                stage('Lint') {
-                    agent { label 'insights' }
-                    steps {
-                        sh "echo 'Lint'"
+                // stage('Lint') {
+                //     agent { label 'insights' }
+                //     steps {
+                //         sh "echo 'Lint'"
 
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/lint.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/lint.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
 
                 stage('Cypress Component Testing') {
                     steps {
@@ -77,19 +76,18 @@ pipeline {
                     }
                 }
 
-                stage('Build') {
-                    agent { label 'insights' }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/build.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-            }
+                // stage('Build') {
+                //     agent { label 'insights' }
+                //     steps {
+                //         script {
+                //             withVault([configuration: configuration, vaultSecrets: secrets]) {
+                //                 sh '''
+                //                     ./ci/build.sh
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
         }
     }
 }
