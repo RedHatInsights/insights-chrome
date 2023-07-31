@@ -14,6 +14,12 @@ docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -lrd ."
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -l *"
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "whoami"
 
+docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "chown -R tester ."
+
+docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -lrd ."
+docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -l *"
+docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "whoami"
+
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:ct"
