@@ -16,7 +16,11 @@ def secrets = [
 def configuration = [vaultUrl: params.VAULT_ADDRESS, vaultCredentialId: params.VAULT_CREDS_ID, engineVersion: 1]
 
 pipeline {
-    agent { label 'insights' }
+    agent {
+        docker {
+            image 'quay.io/cloudservices/cypress-e2e-image:06b70f3'
+            label 'insights'
+        }
     options {
         timestamps()
     }
@@ -33,70 +37,13 @@ pipeline {
     }
 
     stages {
-        // stage('Unit Testing') {
-        //     agent { label 'insights' }
-        //     steps {
-        //         script {
-        //             TEST_CONT="${PROJECT_NAME}-unit-tests"
-
-        //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-        //                 sh '''
-        //                     ./ci/unit_tests.sh
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Lint') {
-        //     agent { label 'insights' }
-        //     steps {
-        //         sh "echo 'Lint'"
-
-        //         script {
-        //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-        //                 sh '''
-        //                     ./ci/lint.sh
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Cypress Component Testing') {
+        stage("Stage one") {
             steps {
-                script {
-                    withVault([configuration: configuration, vaultSecrets: secrets]) {
-                        sh '''
-                            ./ci/cypress.sh
-                        '''
-                    }
-                }
-            }
-        }
-        stage('test container') {
-            agent {
-                docker CYPRESS_TEST_IMAGE
-            }
-            steps {
-                sh '''
-                    pwd
+                sh """
                     ls -lrt
-                '''
+                    pwd
+                """
             }
         }
-
-        // stage('Build') {
-        //     agent { label 'insights' }
-        //     steps {
-        //         script {
-        //             withVault([configuration: configuration, vaultSecrets: secrets]) {
-        //                 sh '''
-        //                     ./ci/build.sh
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
