@@ -18,7 +18,7 @@ def configuration = [vaultUrl: params.VAULT_ADDRESS, vaultCredentialId: params.V
 pipeline {
     agent {
         docker {
-            image 'quay.io/cloudservices/cypress-e2e-image:06b70f3'
+            image 'cypress/included:3.4.0'
             label 'insights'
         }
     }
