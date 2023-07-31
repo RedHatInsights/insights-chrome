@@ -21,6 +21,7 @@ pipeline {
             image 'quay.io/cloudservices/cypress-e2e-image:06b70f3'
             label 'insights'
         }
+    }
     options {
         timestamps()
     }
