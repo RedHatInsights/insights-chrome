@@ -74,6 +74,11 @@ pipeline {
                 }
             }
         }
+        stage('test container') {
+            agent {
+                docker CYPRESS_TEST_IMAGE
+            }
+        }
 
         // stage('Build') {
         //     agent { label 'insights' }
