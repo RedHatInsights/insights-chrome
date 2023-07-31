@@ -4,7 +4,7 @@ PROJECT_NAME="insights-chrome"
 TEST_CONT="${PROJECT_NAME}-cypress"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 
-chown -R tester:tester /e2e
+chown -R tester /e2e
 
 docker login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
 
