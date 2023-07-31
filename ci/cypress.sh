@@ -10,10 +10,6 @@ docker run --name "${TEST_CONT}-${IMG_TAG}" -d -i "${CYPRESS_TEST_IMAGE}" /bin/b
 
 docker cp -a . "${TEST_CONT}-${IMG_TAG}:/e2e/"
 
-docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -lrd ."
-docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "ls -l *"
-docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "whoami"
-
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
 
 docker exec -i "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test:ct"
