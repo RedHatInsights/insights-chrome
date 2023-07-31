@@ -78,6 +78,12 @@ pipeline {
             agent {
                 docker CYPRESS_TEST_IMAGE
             }
+            steps {
+                sh '''
+                    pwd
+                    ls -lrt
+                '''
+            }
         }
 
         // stage('Build') {
