@@ -33,6 +33,14 @@ pipeline {
     }
 
     stages {
+        stage('Install') {
+            steps {
+                sh '''
+                    ./ci/install.sh
+                '''
+            }
+        }
+
         stage('Tests/Build for Frontends') {
             parallel {
                 stage('Unit Testing') {
