@@ -1,17 +1,21 @@
 #!/bin/bash
 
 TEST_CONT="${PROJECT_NAME}-unit-tests"
+CONTAINER_NAME="${TEST_CONT}-${IMG_TAG}" 
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 
-docker run --name "${TEST_CONT}-${IMG_TAG}" -d -i --rm "${NODE_BASE_IMAGE}" /bin/sh
 
-docker exec -it "${TEST_CONT}-${IMG_TAG}" ls -lrt
+docker run --name "${CONTAINER_NAME}" -d -it --rm "${NODE_BASE_IMAGE}" /bin/sh
+
+docker exec -it "$CONTAINER_NAME" ls -lrt
 echo "copying..."
-time docker cp . "${TEST_CONT}-${IMG_TAG}:/opt/app-root/src/"
-docker exec -it "${TEST_CONT}-${IMG_TAG}" ls -lrt
+time docker cp . "${CONTAINER_NAME}:/opt/app-root/src/"
+docker exec -it "$CONTAINER_NAME" ls -lrt
 echo "installing ..."
-time docker exec -i -w "/opt/app-root/src/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm install"
-docker exec -it "${TEST_CONT}-${IMG_TAG}" ls -lrt
+time docker exec -i -w "/opt/app-root/src/" "$CONTAINER_NAME" sh -c "npm install"
+docker exec -it "$CONTAINER_NAME" ls -lrt
 echo "running tests..."
-time docker exec -i -w "/opt/app-root/src/" "${TEST_CONT}-${IMG_TAG}" sh -c "npm run test -- --coverage"
-docker exec -it "${TEST_CONT}-${IMG_TAG}" ls -lrt
+time docker exec -i -w "/opt/app-root/src/" "$CONTAINER_NAME" sh -c "npm run test -- --coverage"
+docker exec -it "${CONTAINER_NAME}" ls -lrt
+
+docker stop 
