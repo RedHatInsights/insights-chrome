@@ -45,13 +45,14 @@ pipeline {
         stage('Tests/Build for Frontends') {
             parallel {
                 stage('Unit Testing') {
-                    agent { label 'insights' }
                     steps {
                         script {
                             TEST_CONT="${PROJECT_NAME}-unit-tests"
 
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
                                 sh '''
+                                    ls -lrt
+                                    echo "outside"
                                     ./ci/unit_tests.sh
                                 '''
                             }
@@ -60,7 +61,6 @@ pipeline {
                 }
 
                 stage('Lint') {
-                    agent { label 'insights' }
                     steps {
                         sh "echo 'Lint'"
 
@@ -87,7 +87,6 @@ pipeline {
                 }
 
                 stage('Build') {
-                    agent { label 'insights' }
                     steps {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {

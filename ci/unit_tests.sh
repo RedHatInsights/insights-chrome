@@ -4,8 +4,11 @@ TEST_CONT="${PROJECT_NAME}-unit-tests"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 CONTAINER_NAME="${TEST_CONT}-${IMG_TAG}" 
 
-
 docker run --name "${CONTAINER_NAME}" -d -t --rm --entrypoint bash "${NODE_BASE_IMAGE}"
+
+ls -lrt 
+pwd
+echo "here"
 
 docker exec "$CONTAINER_NAME" ls -lrt
 docker exec "$CONTAINER_NAME" pwd
