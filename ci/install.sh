@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+
+
 TEST_CONT="${PROJECT_NAME}-install"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 CONTAINER_NAME="${TEST_CONT}-${IMG_TAG}" 
