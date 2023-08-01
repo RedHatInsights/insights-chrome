@@ -3,14 +3,15 @@
 TEST_CONT="${PROJECT_NAME}-cypress"
 IMG_TAG=$(git rev-parse --short=8 HEAD)
 CONTAINER_NAME="${TEST_CONT}-${IMG_TAG}" 
+CONTAINER_WORKDIR="/e2e"
 
 docker login -u="$QUAY_USER" -p="$QUAY_TOKEN" quay.io
 
-docker run --name "$CONTAINER_NAME" -d -i --rm "${CYPRESS_TEST_IMAGE}" /bin/bash
+docker run --name "$CONTAINER_NAME" -d --rm -t --entrypoint bash \
+    -v "node_modules:${CONTAINER_WORKDIR}/node_modules" "${NODE_BASE_IMAGE}"
 
-docker cp -a . "${CONTAINER_NAME}:/e2e/"
+docker cp ./. "${CONTAINER_NAME}:${CONTAINER_WORKDIR}"
 
-docker exec -i "$CONTAINER_NAME" sh -c "npm install"
-
-docker exec -i "$CONTAINER_NAME" sh -c "npm run test:ct"
+docker exec -it "$CONTAINER_NAME" "npm install"
+docker exec -it "$CONTAINER_NAME" "npm run test:ct"
 docker stop "$CONTAINER_NAME"

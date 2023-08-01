@@ -33,11 +33,7 @@ pipeline {
         stage('Install') {
             steps {
                 sh '''
-                    ls -lrt
-                    echo "before install"
                     ./ci/install.sh
-                    echo "after install"
-                    ls -lrt
                 '''
             }
         }
