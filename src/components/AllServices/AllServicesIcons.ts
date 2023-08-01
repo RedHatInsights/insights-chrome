@@ -12,6 +12,7 @@ import InfrastructureIcon from '@patternfly/react-icons/dist/js/icons/infrastruc
 import RocketIcon from '@patternfly/react-icons/dist/js/icons/rocket-icon';
 import ShoppingCartIcon from '@patternfly/react-icons/dist/js/icons/shopping-cart-icon';
 import UsersIcon from '@patternfly/react-icons/dist/js/icons/users-icon';
+import MonitoringIcon from '@patternfly/react-icons/dist/js/icons/monitoring-icon';
 
 const AllServicesIcons = {
   CloudUploadAltIcon,
@@ -28,6 +29,7 @@ const AllServicesIcons = {
   ShoppingCartIcon,
   CubeIcon,
   BoxesIcon,
+  MonitoringIcon,
 };
 
 export default AllServicesIcons;
