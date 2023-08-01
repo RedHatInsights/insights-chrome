@@ -9,7 +9,7 @@ CONTAINER_NAME="${TEST_CONT}-${IMG_TAG}"
 CONTAINER_WORKDIR="/opt/app-root/src"
 
 # --ignore : ignore volume creation if already exists - DEBUG purposes only.
-docker volume create node_modules --ignore
+docker volume create node_modules
 docker run --name "$CONTAINER_NAME" -d --rm -t --entrypoint bash \
     -v "node_modules:${CONTAINER_WORKDIR}/node_modules" "${NODE_BASE_IMAGE}"
 
