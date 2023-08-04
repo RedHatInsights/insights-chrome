@@ -114,8 +114,18 @@ aside {
   z-index: 19001;
   position: fixed;
   bottom: 0;
+  padding-left: var(--pf-global--spacer--xl);
+  padding-right: var(--pf-global--spacer--xl);
   width: 100%;
+
+  @media only screen and (max-width: $pf-global--breakpoint--lg) {
+    .truste-banner {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 }
+
 
 // centers modals when a quick start drawer is open
 .pfext-quick-start-drawer__body {
