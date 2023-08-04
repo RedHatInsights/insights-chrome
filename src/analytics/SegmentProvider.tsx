@@ -236,7 +236,7 @@ const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, childre
         }
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
-          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv } }
+          { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
         );
         window.segment = analytics.current;
         resetIntegrations(analytics.current);
