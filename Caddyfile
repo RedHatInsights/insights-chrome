@@ -46,7 +46,7 @@
     }
 
     @config_match {
-        path_regexp /config/(.*)
+        path /config*
     }
     handle @config_match {
         uri strip_prefix /config
