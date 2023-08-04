@@ -26,8 +26,6 @@ pipeline {
     environment {
         PROJECT_NAME="insights-chrome"
 
-        COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
-
         MASTER_BRANCH="master"
         MASTER_STABLE_BRANCH="master-stable"
 
@@ -165,6 +163,20 @@ pipeline {
                                 '''
                             }
                         }
+                    }
+                }
+
+                stage('Frontend Build') {
+                    agent { label 'insights' }
+                    environment {
+                        COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
+                    }
+                    steps {
+                        sh '''
+                            # source is preferred to | bash -s in this case to avoid a subshell
+                            source <(curl -sSL ${COMMON_BUILDER}/src/frontend-build.sh)
+                            BUILD_RESULTS=$?
+                        '''
                     }
                 }
             }
