@@ -37,7 +37,7 @@
         path /preview/apps/chrome*
     }
     handle @preview_match {
-        uri strip_prefix /preview/apps/preview
+        uri strip_prefix /preview/apps/chrome
         file_server * {
             root /opt/app-root/src/build/preview
             index opt/app-root/src/build/preview/index.html
