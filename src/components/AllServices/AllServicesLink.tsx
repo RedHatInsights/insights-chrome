@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon, Text, TextVariants } from '@patternfly/react-core';
 import classNames from 'classnames';
-import useFavoritePages from '@redhat-cloud-services/chrome/useFavoritePages';
 import { matchPath } from 'react-router-dom';
 
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
@@ -11,6 +10,7 @@ import ChromeLink from '../ChromeLink';
 import type { AllServicesLink as AllServicesLinkType } from './allServicesLinks';
 import { shallowEqual, useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type AllServicesLinkProps = AllServicesLinkType;
 
@@ -20,7 +20,7 @@ const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
     ({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes.find(({ path }) => matchPath(path, href) || matchPath(`${path}/*`, href))?.scope,
     shallowEqual
   );
-  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
+  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
 
   const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {

@@ -31,8 +31,19 @@ export default defineConfig({
     },
   },
   e2e: {
+    blockHosts: ['static.redhat.com', 'consent.trustarc.com', 'www.redhat.com/en/cms/ajax/site-switcher'],
+    baseUrl: 'https://stage.foo.redhat.com:1337/beta',
+    env: {
+      E2E_USER: process.env.E2E_USER,
+      E2E_PASSWORD: process.env.E2E_PASSWORD,
+    },
+    screenshotOnRunFailure: false,
+    // required for the SSO redirect
+    chromeWebSecurity: false,
     video: false,
-    setupNodeEvents() {
+    setupNodeEvents(on, config) {
+      require('cypress-localstorage-commands/plugin')(on, config);
+      return config;
       // implement node event listeners here
     },
   },

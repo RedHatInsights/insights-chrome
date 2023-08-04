@@ -1,21 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Card, CardBody, Icon, Split, SplitItem, Text, TextContent } from '@patternfly/react-core';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import { bundleMapping } from '../../hooks/useBundle';
 import classNames from 'classnames';
+import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import { AllServicesDropdownContext } from './common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
-  const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
-  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePages();
+const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle }: AllServicesGalleryLinkProps) => {
+  const bundle = bundleMapping[href.split('/')[1]];
+  const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
+  const { onLinkClick } = useContext(AllServicesDropdownContext);
 
-  const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
+  const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {
       unfavoritePage(pathname);
     } else {
@@ -33,6 +35,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
         isFullHeight
         isFlat
         isSelectableRaised
+        onClick={onLinkClick}
       >
         <CardBody className="pf-u-p-md">
           <Split>
@@ -49,7 +52,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleFavouriteToggle(href, isFavorite);
+                    handleFavoriteToggle(href, isFavorite);
                   }}
                   icon={
                     <Icon
@@ -65,7 +68,12 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
             </SplitItem>
           </Split>
           <TextContent>
-            <Text component="small">{getBundle(href)}</Text>
+            {/* 
+              if subtitle is not set use bundle
+
+              do not show bundle if the card title matches bundle title
+            */}
+            <Text component="small">{subtitle || (bundle !== title ? bundle : null)}</Text>
             <Text component="small" className="pf-u-color-100">
               {description ?? ''}
             </Text>

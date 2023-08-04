@@ -13,6 +13,8 @@ export type AppFilterBucket = {
   links: NavItem[];
 };
 
+const previewBundles = ['business-services', 'subscriptions'];
+
 export const requiredBundles = [
   'application-services',
   'openshift',
@@ -21,8 +23,8 @@ export const requiredBundles = [
   'ansible',
   'settings',
   'iam',
-  'containers',
-  ...(isBeta() && !isProd() ? ['business-services'] : []),
+  'quay',
+  ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ];
 
 const bundlesOrder = [
@@ -35,7 +37,7 @@ const bundlesOrder = [
   'cost-management',
   'subscriptions',
   'iam',
-  'containers',
+  'quay',
   'business-services',
 ];
 

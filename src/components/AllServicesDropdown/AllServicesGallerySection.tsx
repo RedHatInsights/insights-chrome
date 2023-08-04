@@ -6,6 +6,9 @@ import AllServicesGalleryLink from './AllServicesGalleryLink';
 export type AllServicesGallerySectionProps = AllServicesGroup;
 
 const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionProps) => {
+  if (links.length === 0) {
+    return null;
+  }
   return (
     <div className="pf-u-mb-lg">
       <Title className="pf-u-mb-md" headingLevel="h3">

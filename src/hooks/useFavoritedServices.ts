@@ -1,15 +1,31 @@
-import { useFavoritePages } from '@redhat-cloud-services/chrome';
 import { ServiceTileProps } from '../components/FavoriteServices/ServiceTile';
 import useAllServices from './useAllServices';
 import { useEffect, useMemo, useState } from 'react';
 import fetchNavigationFiles, { extractNavItemGroups } from '../utils/fetchNavigationFiles';
-import { Navigation } from '../@types/types';
+import { NavItem, Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
+import useFavoritePagesWrapper from './useFavoritePagesWrapper';
+import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 
 const useFavoritedServices = () => {
-  const { favoritePages } = useFavoritePages();
-  const { allLinks } = useAllServices();
+  const { favoritePages } = useFavoritePagesWrapper();
+  const { allLinks, availableSections } = useAllServices();
   const [bundles, setBundles] = useState<Navigation[]>([]);
+
+  const fakeBundle: NavItem[] = useMemo(() => {
+    // escape early if we have no services
+    if (availableSections.length === 0) {
+      return [];
+    }
+
+    // map services links to nav links
+    return availableSections.reduce<NavItem[]>((acc, curr) => {
+      const fakeNavItems: NavItem[] = curr.links.filter(isAllServicesLink);
+      // no need to recreate the reduce array
+      acc.push(...fakeNavItems);
+      return acc;
+    }, []);
+  }, [availableSections]);
 
   useEffect(() => {
     fetchNavigationFiles()
@@ -18,11 +34,18 @@ const useFavoritedServices = () => {
         console.error('Unable to fetch favorite services', error);
       });
   }, []);
+
   const linksWithFragments = useMemo(() => {
+    // push items with unique hrefs from our fake bundle for leaf creation
+    fakeBundle.forEach((item) => {
+      if (!allLinks.some((link) => link.href === item.href)) {
+        allLinks.push(item);
+      }
+    });
     return allLinks.map((link) => {
       let linkLeaf: ReturnType<typeof findNavLeafPath> | undefined;
       // use every to exit early if match was found
-      bundles.every((bundle) => {
+      [...bundles, fakeBundle || []].every((bundle) => {
         const leaf = findNavLeafPath(extractNavItemGroups(bundle), (item) => item?.href === link.href);
         if (leaf.activeItem) {
           linkLeaf = leaf;
@@ -35,7 +58,7 @@ const useFavoritedServices = () => {
         linkLeaf,
       };
     });
-  }, [allLinks, bundles]);
+  }, [allLinks, bundles, fakeBundle]);
 
   // extract human friendly data from the all services data set
   const favoriteServices = favoritePages.reduce<ServiceTileProps[]>((acc, curr) => {

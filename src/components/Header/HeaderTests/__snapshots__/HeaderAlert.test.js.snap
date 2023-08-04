@@ -62,7 +62,6 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
       </svg>
     </button>
   </div>
-  
 </div>
 `;
 
@@ -128,6 +127,5 @@ exports[`HeaderAlert should render correctly not dismissable 1`] = `
       </svg>
     </button>
   </div>
-  
 </div>
 `;

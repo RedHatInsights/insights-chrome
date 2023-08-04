@@ -6,7 +6,6 @@ import {
   CardActions,
   CardBody,
   CardHeader,
-  Flex,
   FlexItem,
   Icon,
   Panel,
@@ -30,6 +29,7 @@ import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import QuickAccess from '../FavoriteServices/QuickAccess';
+import { AllServicesDropdownContext } from './common';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -64,13 +64,20 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const tabContentRef = React.createRef<HTMLElement>();
 
   return (
-    <div ref={menuRef} className="pf-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
-      <Backdrop>
-        <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
-          <PanelMain>
-            <Sidebar>
-              <SidebarPanel>
-                <Flex className="pf-u-flex-direction-column pf-u-flex-grow-1">
+    <AllServicesDropdownContext.Provider
+      value={{
+        onLinkClick() {
+          // close modal on any link click
+          setIsOpen(false);
+        },
+      }}
+    >
+      <div ref={menuRef} className="pf-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+        <Backdrop>
+          <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
+            <PanelMain>
+              <Sidebar>
+                <SidebarPanel className="pf-l-flex pf-u-flex-direction-column">
                   <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
                     <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">
                       <Text component={TextVariants.p}>
@@ -83,7 +90,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                       </Text>
                     </TextContent>
                   </FlexItem>
-                  <FlexItem order={{ default: '2', md: '1' }} className="pf-u-w-100">
+                  <FlexItem order={{ default: '2', md: '1' }} className="chr-l-flex__item-tabs pf-u-w-100">
                     <AllServicesTabs
                       activeTabKey={activeTabKey}
                       handleTabClick={handleTabClick}
@@ -95,37 +102,37 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                       activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
                     />
                   </FlexItem>
-                </Flex>
-              </SidebarPanel>
-              <SidebarContent>
-                <Card isPlain>
-                  <CardHeader className="pf-u-pr-xs pf-u-pr-md-on-md">
-                    <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
-                    <CardActions>
-                      <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                        <TimesIcon />
-                      </Button>
-                    </CardActions>
-                  </CardHeader>
-                  <CardBody>
-                    <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>
-                      {activeTabKey === FAVORITE_TAB_ID ? (
-                        <Fragment>
-                          <QuickAccess />
-                          <FavoriteServicesGallery favoritedServices={favoritedServices} />
-                        </Fragment>
-                      ) : (
-                        <AllServicesGallery selectedService={selectedService} />
-                      )}
-                    </TabContent>
-                  </CardBody>
-                </Card>
-              </SidebarContent>
-            </Sidebar>
-          </PanelMain>
-        </Panel>
-      </Backdrop>
-    </div>
+                </SidebarPanel>
+                <SidebarContent>
+                  <Card isPlain>
+                    <CardHeader className="pf-u-pr-xs pf-u-pr-md-on-md">
+                      <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
+                      <CardActions>
+                        <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
+                          <TimesIcon />
+                        </Button>
+                      </CardActions>
+                    </CardHeader>
+                    <CardBody>
+                      <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>
+                        {activeTabKey === FAVORITE_TAB_ID ? (
+                          <Fragment>
+                            <QuickAccess />
+                            <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                          </Fragment>
+                        ) : (
+                          <AllServicesGallery selectedService={selectedService} />
+                        )}
+                      </TabContent>
+                    </CardBody>
+                  </Card>
+                </SidebarContent>
+              </Sidebar>
+            </PanelMain>
+          </Panel>
+        </Backdrop>
+      </div>
+    </AllServicesDropdownContext.Provider>
   );
 };
 

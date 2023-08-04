@@ -47,7 +47,7 @@ const commonConfig = ({ dev }) => {
             buildDependencies: {
               config: [__filename],
             },
-            cacheDirectory: path.resolve(__dirname, '../.cache'),
+            cacheDirectory: path.resolve(__dirname, '../.webpack-cache'),
           },
         }
       : {}),
@@ -152,6 +152,18 @@ const commonConfig = ({ dev }) => {
         proxyVerbose: true,
         isChrome: true,
         routes: {
+          ...(process.env.CHROME_SERVICE && {
+            // web sockets
+            '/wss/chrome-service/': {
+              target: `ws://localhost:${process.env.CHROME_SERVICE}`,
+              // To upgrade the connection
+              ws: true,
+            },
+            // REST API
+            '/api/chrome-service/v1/': {
+              host: `http://localhost:${process.env.CHROME_SERVICE}`,
+            },
+          }),
           ...(process.env.CONFIG_PORT && {
             '/beta/config': {
               host: `http://localhost:${process.env.CONFIG_PORT}`,

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -21,6 +21,7 @@ import { getEnv, isProd } from '../../utils/common';
 
 import './Feedback.scss';
 import { getUrl } from '../../hooks/useBundle';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 export type FeedbackFormProps = {
   user: DeepRequired<ChromeUser>;
@@ -59,9 +60,12 @@ const FeedbackForm = ({
   const bundle = getUrl('bundle');
   const isAvailable = env === 'prod' || env === 'stage';
   const addFeedbackTag = () => (isProd() ? `[${bundle}]` : '[PRE-PROD]');
+  const {
+    auth: { getToken },
+  } = useContext(InternalChromeContext);
 
   async function handleModalSubmission() {
-    const token = await window.insights.chrome.auth.getToken();
+    const token = await getToken();
     if (isAvailable) {
       try {
         await fetch(`${window.origin}/api/platform-feedback/v1/issues`, {

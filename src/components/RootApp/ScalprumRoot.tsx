@@ -20,15 +20,15 @@ import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/type
 import { createGetUser } from '../../auth';
 import LibtJWTContext from '../LibJWTContext';
 import { createChromeContext } from '../../chrome/create-chrome';
-import LandingNav from '../LandingNav';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
 import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { useFlag } from '@unleash/proxy-client-react';
 import { ITLess } from '../../utils/common';
+import InternalChromeContext from '../../utils/internalChromeContext';
+import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -53,8 +53,10 @@ const ScalprumRoot = memo(
     const store = useStore<ReduxState>();
     const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
+    // initialize WS event handling
+    useChromeServiceEvents();
+
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
-    const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
 
     function isStringArray(arr: EnableTopicsArgs): arr is string[] {
       return typeof arr[0] === 'string';
@@ -175,50 +177,46 @@ const ScalprumRoot = memo(
        * - copy these functions to window
        * - add deprecation warning to the window functions
        */
-      <ScalprumProvider {...scalprumProviderProps}>
-        <Routes>
-          <Route
-            index
-            path="/"
-            element={
-              <DefaultLayout
-                Sidebar={navDropdownEnabled ? undefined : LandingNav}
-                Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />}
-                {...props}
-              />
-            }
-          />
-          <Route
-            path="/connect/products"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <ProductSelection />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/allservices"
-            element={
-              <Suspense fallback={LoadingFallback}>
-                <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-              </Suspense>
-            }
-          />
-          {!ITLess() && (
+      <InternalChromeContext.Provider value={chromeApi}>
+        <ScalprumProvider {...scalprumProviderProps}>
+          <Routes>
             <Route
-              path="/favoritedservices"
+              index
+              path="/"
+              element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
+            />
+            <Route
+              path="/connect/products"
               element={
                 <Suspense fallback={LoadingFallback}>
-                  <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                  <ProductSelection />
                 </Suspense>
               }
             />
-          )}
-          {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
-          <Route path="/security" element={<DefaultLayout {...props} />} />
-          <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
-        </Routes>
-      </ScalprumProvider>
+            <Route
+              path="/allservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                </Suspense>
+              }
+            />
+            {!ITLess() && (
+              <Route
+                path="/favoritedservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                  </Suspense>
+                }
+              />
+            )}
+            {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
+            <Route path="/security" element={<DefaultLayout {...props} />} />
+            <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
+          </Routes>
+        </ScalprumProvider>
+      </InternalChromeContext.Provider>
     );
   },
   // config rarely changes

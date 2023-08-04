@@ -39,3 +39,5 @@ export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';
 export const CLEAR_QUICKSTARTS = '@@chrome/clear-quickstarts';
 
 export const SET_GATEWAY_ERROR = '@@chrome/set-gateway-error';
+
+export const TOGGLE_NOTIFICATIONS_DRAWER = '@@chrome/toggle-notifications-drawer';

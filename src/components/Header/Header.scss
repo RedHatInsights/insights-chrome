@@ -1,6 +1,7 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 .chr-c-masthead {
   --pf-c-masthead__content--MinHeight: 48px !important;
+  --pf-c-masthead__main--before--Right: 0;
   .chr-c-brand {
     width: 208px;
   }
@@ -69,5 +70,12 @@
     grid-column: 2 / span 2;
     // make sure its under the wrapped items on small screens
     grid-row: 3;
+  }
+
+  .pf-c-toolbar__item .pf-c-notification-badge {
+    &.pf-m-unread {
+      --pf-c-notification-badge--after--BackgroundColor: var(--pf-global--palette--red-100);
+      &:hover {--pf-c-notification-badge--after--BackgroundColor: var(--pf-global--palette--red-200)}
+    }
   }
 }
