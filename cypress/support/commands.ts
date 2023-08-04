@@ -42,7 +42,14 @@ Cypress.Commands.add('login', () => {
     () => {
       cy.intercept({ url: '/beta/apps/*', times: 1 }, {});
       cy.intercept({ url: '/api/', times: 4 }, {});
+      // This JS file causes randomly an uncaught exception on login page which blocks the tests
+      // Cannot read properties of undefined (reading 'setAttribute')
+      cy.intercept({ url: 'https://sso.stage.redhat.com/auth/resources/0833r/login/rhd-theme/dist/pfelements/bundle.js' }, {});
       cy.visit('/');
+      // disable analytics integrations
+      cy.setLocalStorage('chrome:analytics:disable', 'true');
+      cy.setLocalStorage('chrome:segment:disable', 'true');
+
       cy.wait(1000);
       // login into the session
       cy.get('#username-verification').type(Cypress.env('E2E_USER'));
