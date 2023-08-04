@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
+import debounce from 'lodash/debounce';
 import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
 import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,6 +10,7 @@ import { storeFilter } from './filterApi';
 import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ const useLoadTags = (hasAccess = false) => {
   const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
   const dispatch = useDispatch();
   return useCallback(
-    (activeTags, search) => {
+    debounce((activeTags, search) => {
       storeFilter(activeTags, hasAccess && !isDisabled, navigate);
       batch(() => {
         dispatch(
@@ -41,7 +43,7 @@ const useLoadTags = (hasAccess = false) => {
           })
         );
       });
-    },
+    }, 600),
     [registeredWith, hasAccess]
   );
 };
@@ -92,6 +94,10 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   ); // TODO: Fix types in FEC
 
   const loadTags = useLoadTags(hasAccess);
+  const selectTags = useCallback(
+    debounce((selectedTags: FlagTagsFilter) => dispatch(globalFilterChange(selectedTags)), 600),
+    [globalFilterChange]
+  );
 
   useEffect(() => {
     setValue(() => generateFilter());
@@ -100,7 +106,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   useEffect(() => {
     if (hasAccess && !isDisabled) {
       loadTags(selectedTags, filterTagsBy);
-      dispatch(globalFilterChange(selectedTags));
+      selectTags(selectedTags);
     }
   }, [selectedTags, filterTagsBy, hasAccess, isDisabled]);
 
@@ -124,6 +130,7 @@ const GlobalFilterWrapper = () => {
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
   const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
   const { pathname } = useLocation();
+  const { getUserPermissions } = useContext(InternalChromeContext);
 
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
@@ -136,7 +143,7 @@ const GlobalFilterWrapper = () => {
   useEffect(() => {
     let mounted = true;
     const fetchPermissions = async () => {
-      const permissions = await window.insights?.chrome?.getUserPermissions?.('inventory');
+      const permissions = await getUserPermissions?.('inventory');
       if (mounted) {
         setHasAccess(
           permissions?.some((item) =>

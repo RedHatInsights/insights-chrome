@@ -4,6 +4,11 @@ const log = logger('insights/url.js');
 
 // Parse through keycloak options routes
 export default async (env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) => {
+  // we have to use hard coded value for console.dev.redhat.com
+  // ugly hack
+  if (location.hostname === 'console.dev.redhat.com') {
+    return DEFAULT_SSO_ROUTES.dev.sso;
+  }
   if (configSsoUrl) {
     return configSsoUrl;
   }

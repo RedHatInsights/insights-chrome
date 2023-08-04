@@ -61,6 +61,7 @@ export type BundleNavigation = {
   id: string;
   title: string;
   navItems: NavItem[];
+  description?: string;
 };
 
 declare global {
@@ -195,7 +196,7 @@ export type ChromeNavItemProps = {
   product?: string;
 };
 
-export type ChromeNavExapandableProps = {
+export type ChromeNavExpandableProps = {
   title: string;
   routes: RouteDefinition[];
   active?: boolean;

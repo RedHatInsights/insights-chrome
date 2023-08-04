@@ -304,8 +304,8 @@ export default defineMessages({
   },
   betaRelease: {
     id: 'betaRelease',
-    description: 'the beta release',
-    defaultMessage: 'the beta release',
+    description: 'the preview release',
+    defaultMessage: 'the preview release',
   },
   supportOptions: {
     id: 'supportOptions',
@@ -429,26 +429,26 @@ export default defineMessages({
   tryThisFeatureInBeta: {
     id: 'tryThisFeatureInBeta',
     description:
-      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because preview pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
     defaultMessage:
-      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because beta pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
+      'Try this feature in our Preview Environment on console.redhat.com/preview. The Preview Environment allows you to interact with new features in an active development space. Because preview pre-release software is still being developed, you may encounter bugs or flaws in availability, stability, data, or performance.',
   },
   afterBetaUse: {
     id: 'afterBetaUse',
     description:
-      'After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar.',
+      'After you use a feature in preview, you’ll stay in the Preview Environment until you manually exit the preview release. Leave the Preview Environment any time by clicking on the settings (gear) icon or preview icon in the top toolbar.',
     defaultMessage:
-      'After you use a feature in beta, you’ll stay in the Beta Environment until you manually exit the beta release. Leave the Beta Environment any time by clicking on the settings (gear) icon or beta icon in the top toolbar.',
+      'After you use a feature in preview, you’ll stay in the Preview Environment until you manually exit the preview release. Leave the Preview Environment any time by clicking on the settings (gear) icon or preview icon in the top toolbar.',
   },
   useFeatureInBeta: {
     id: 'useFeatureInBeta',
-    description: 'Use feature in beta',
-    defaultMessage: 'Use feature in beta',
+    description: 'Use feature in preview',
+    defaultMessage: 'Use feature in preview',
   },
   learnMoreABoutBeta: {
     id: 'learnMoreABoutBeta',
-    description: 'Learn more about Beta Environment',
-    defaultMessage: 'Learn more about Beta Environment',
+    description: 'Learn more about Preview Environment',
+    defaultMessage: 'Learn more about Preview Environment',
   },
   permissionErrorDescription: {
     id: 'permissionErrorDescription',

@@ -1,5 +1,12 @@
-describe('empty spec', () => {
-  it('passes', () => {
-    cy.visit('https://example.cypress.io');
-  });
+describe('Test environment init', () => {
+  it(
+    'initializes user session',
+    {
+      retries: 3,
+    },
+    () => {
+      // authenticate the session
+      cy.login();
+    }
+  );
 });

@@ -17,7 +17,10 @@ function isGroup(item: NavItem): item is Required<NavItem, 'groupId'> {
 }
 
 export function extractNavItemGroups(activeNavigation: Navigation | NavItem[]) {
-  return (isNavItems(activeNavigation) ? activeNavigation.navItems.map((item) => (isGroup(item) ? item.navItems : item)) : activeNavigation).flat();
+  return (
+    (isNavItems(activeNavigation) ? activeNavigation.navItems.map((item) => (isGroup(item) ? item.navItems : item)) : activeNavigation)?.flat?.() ||
+    []
+  );
 }
 
 const CACHE_TIMEOUT = 5 * 60_000; // 5 minutes cache window

@@ -84,6 +84,10 @@ describe('<Default layout />', () => {
       ],
     });
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
+    cy.intercept('GET', '/config/chrome/*-navigation.json*', {
+      navItems: [],
+    });
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
   });
 
   it('render correctly with few nav items', () => {

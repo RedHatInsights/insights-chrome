@@ -1,10 +1,8 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import ServicesLink from './ServicesLink';
-import FavoritesLink from './FavoritesLink';
 import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
@@ -12,7 +10,7 @@ import Activation from '../Activation';
 import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -22,9 +20,8 @@ import { activationRequestURLs } from '../../utils/consts';
 import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
-import { useFlag } from '@unleash/proxy-client-react';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
-import useEnableBreadcrumbs from '../../hooks/useEnableBreadcrumbs';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
 const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   const paths =
@@ -41,13 +38,17 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
 };
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
-  const searchEnabled = useFlag('platform.chrome.search.enabled');
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
-  const navDropdownEnabled = useFlag('platform.chrome.navigation-dropdown');
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
-  const displayBreadcrumbs = useEnableBreadcrumbs();
+  const { pathname } = useLocation();
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
+  const { md, lg } = useWindowWidth();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const hideAllServices = (isOpen: boolean) => {
+    setSearchOpen(isOpen);
+  };
 
   return (
     <Fragment>
@@ -63,7 +64,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               widget-type="InsightsToolbar"
               visibility={{ '2xl': 'hidden' }}
             >
-              <HeaderTools />
+              {!lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
@@ -76,16 +77,8 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
             <ToolbarGroup variant="filter-group">
               {user && (
                 <ToolbarItem>
-                  <>
-                    {navDropdownEnabled ? (
-                      <AllServicesDropdown />
-                    ) : (
-                      <>
-                        <ServicesLink />
-                        {isITLessEnv ? user?.identity?.user?.is_org_admin && <SatelliteLink /> : <FavoritesLink />}
-                      </>
-                    )}
-                  </>
+                  {!(!md && searchOpen) && <AllServicesDropdown />}
+                  {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
               {user && !isITLessEnv && (
@@ -94,22 +87,20 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                 </ToolbarItem>
               )}
             </ToolbarGroup>
-            {searchEnabled ? (
-              <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
-                <SearchInput />
-              </ToolbarGroup>
-            ) : null}
+            <ToolbarGroup className="pf-u-flex-grow-1 pf-u-mr-0 pf-u-mr-md-on-2xl" variant="filter-group">
+              <SearchInput onStateChange={hideAllServices} />
+            </ToolbarGroup>
             <ToolbarGroup
               className="pf-m-icon-button-group pf-u-ml-auto"
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               widget-type="InsightsToolbar"
             >
-              <HeaderTools />
+              {lg && <HeaderTools />}
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
       </MastheadContent>
-      {displayBreadcrumbs && (
+      {noBreadcrumb && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
           <Breadcrumbs {...breadcrumbsProps} />
         </ToolbarGroup>

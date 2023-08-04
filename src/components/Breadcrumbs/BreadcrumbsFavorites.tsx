@@ -54,11 +54,19 @@ const BreadcrumbsFavorites = ({
     };
   }, [isOpen, menuRef]);
   const toggle = (
-    <MenuToggle aria-label="Toggle" ref={toggleRef} variant="plain" onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle
+      aria-label="Toggle"
+      ref={toggleRef}
+      variant="plain"
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      className="pf-u-pt-xs pf-u-text-nowrap"
+    >
       <Icon
         className={classNames('chr-c-breadcrumbs__favorite', {
           isFavorited,
         })}
+        isInline
       >
         <StarIcon />
       </Icon>

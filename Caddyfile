@@ -10,7 +10,7 @@
     {$CADDY_TLS_CERT}
     log
     @app_match {
-        path_regexp /apps/chrome(.*)
+        path /apps/chrome*
     }
     handle @app_match {
         uri strip_prefix /apps/chrome
@@ -22,7 +22,7 @@
     }
     
     @beta_match {
-        path_regexp /beta/apps/chrome(.*)
+        path /beta/apps/chrome*
     }
     handle @beta_match {
         uri strip_prefix /beta/apps/chrome
@@ -34,7 +34,7 @@
     }
 
     @preview_match {
-        path_regexp /preview/apps/chrome(.*)
+        path /preview/apps/chrome*
     }
     handle @preview_match {
         uri strip_prefix /preview/apps/preview
@@ -46,7 +46,7 @@
     }
 
     @config_match {
-        path_regexp /config/(.*)
+        path /config*
     }
     handle @config_match {
         uri strip_prefix /config

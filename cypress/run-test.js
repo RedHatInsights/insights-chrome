@@ -9,7 +9,7 @@ const defaultOptions = {
   updateSnapshots: false,
 };
 
-const defaultCommand = 'npm run cypress run -- --component --browser chrome';
+const defaultCommand = 'npm run cypress run -- --component --browser electron';
 
 if (argv.u || argv.update) {
   defaultOptions.updateSnapshots = true;

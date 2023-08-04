@@ -14,15 +14,16 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
-import { isProd } from '../utils/common';
+
+import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
 import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
-import MastheadMenuToggle from '../components/Header/MastheadMenuToggle';
 import { getUrl } from '../hooks/useBundle';
+import { useFlag } from '@unleash/proxy-client-react';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -44,14 +45,19 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
-
+  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
+  const drawerPanelRef = useRef<HTMLDivElement>();
+  const focusDrawer = () => {
+    const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
+    tabbableElement.focus();
+  };
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   return (
     <Page
       className={classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber })}
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
         <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
-          {isProd() ? <MastheadMenuToggle className="pf-u-pr-0 pf-u-ml-lg" isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} /> : null}
           <Header
             breadcrumbsProps={{
               isNavOpen,
@@ -61,6 +67,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           />
         </Masthead>
       }
+      {...(isNotificationsEnabled && {
+        onNotificationDrawerExpand: focusDrawer,
+        notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
+        isNotificationDrawerExpanded: isDrawerExpanded,
+      })}
       sidebar={
         (noNav || hideNav) && Sidebar
           ? undefined

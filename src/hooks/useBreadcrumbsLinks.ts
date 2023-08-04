@@ -33,17 +33,18 @@ const useBreadcrumbsLinks = () => {
         appFragments.pop();
         // Match first parent route. Routes are taken directly from router definitions.
         const fallbackMatch = matchRoutes(wildCardRoutes, activeItem.href) || [];
-        const fallbackMatchFragments = fallbackMatch?.[0].pathnameBase.split('/');
+        const fallbackMatchFragments = fallbackMatch?.[0]?.pathnameBase.split('/');
         const groupFragments: Required<NavItem, 'href'>[] = navItems.map((item, index) => ({
           ...item,
           /**
-           * Must be +3 because:
+           * Use the longer fragment value. If fragments are shorter than 3, fallback to value 3.
+           * Must be +3 for fallback because:
            * - first fragment is always empty "" (+1),
            * - second fragment is always bundle (+1),
            * - slice is exclusive and the matched index is not included (+1)
            * Even the root level link should always include the bundle.
            *  */
-          href: fallbackMatchFragments.slice(0, index + 3).join('/') || `/${bundleId}`,
+          href: fallbackMatchFragments.slice(0, Math.max(index + 3, index + appFragments.length)).join('/') || `/${bundleId}`,
         }));
         segments.push(...groupFragments, activeItem);
       }
