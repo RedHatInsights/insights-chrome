@@ -1,11 +1,10 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import createMockStore from 'redux-mock-store';
 import NavContext from './navContext';
-import ChromeNavExapandable from './ChromeNavExapandable';
+import ChromeNavExpandable from './ChromeNavExpandable';
 import componentMapper from './componentMapper';
 
 const NavContextWrapper = ({
@@ -24,7 +23,7 @@ const NavContextWrapper = ({
   </MemoryRouter>
 );
 
-describe('ChromeNavExapandable', () => {
+describe('ChromeNavExpandable', () => {
   const mockStore = createMockStore();
   const expandableTitle = 'Foo';
   const testProps = {
@@ -47,7 +46,7 @@ describe('ChromeNavExapandable', () => {
   test('should not render nav item expandable', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
-        <ChromeNavExapandable isHidden {...testProps} />
+        <ChromeNavExpandable isHidden {...testProps} />
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
@@ -57,7 +56,7 @@ describe('ChromeNavExapandable', () => {
   test('should render nav item expandable', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
-        <ChromeNavExapandable {...testProps} />
+        <ChromeNavExpandable {...testProps} />
       </NavContextWrapper>
     );
     expect(container).toMatchSnapshot();
@@ -67,7 +66,7 @@ describe('ChromeNavExapandable', () => {
   test('should render nav item expandable with items', () => {
     const { queryAllByText, container } = render(
       <NavContextWrapper store={store}>
-        <ChromeNavExapandable
+        <ChromeNavExpandable
           {...testProps}
           routes={[
             {

@@ -23,6 +23,21 @@ const checkOrigin = (path: URL | Request | string = '') => {
   return true;
 };
 
+const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
+  let additionalHeaders: any = {};
+  if (options && options.headers) {
+    if (Array.isArray(options.headers)) {
+      for (const el in options.headers) {
+        additionalHeaders[options.headers[el][0]] = options.headers[el].slice(1).join(', ');
+      }
+    } else {
+      additionalHeaders = options.headers;
+    }
+  }
+
+  return additionalHeaders;
+};
+
 function init(store: Store, libJwt?: () => LibJWT | undefined) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
@@ -90,6 +105,8 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
    */
   window.fetch = function fetchReplacement(path = '', options, ...rest) {
     const tid = Math.random().toString(36);
+    const additionalHeaders: any = spreadAdditionalHeaders(options);
+
     const prom = oldFetch.apply(this, [
       path,
       {
@@ -97,7 +114,7 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
         headers: {
           // If app wants to set its own Auth header it can do so
           ...(checkOrigin(path) && libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
-          ...((options && options.headers) || {}),
+          ...additionalHeaders,
         },
       },
       ...rest,
@@ -142,6 +159,7 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
 
 const qe = {
   init,
+  spreadAdditionalHeaders,
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
     xhrResults = xhrResults.filter((result) => result.readyState !== 4 && result.readyState !== 0);

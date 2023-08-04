@@ -5,9 +5,11 @@ import ChromeLink from '../ChromeLink';
 import Footer, { FooterProps } from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
+import { getUrl } from '../../hooks/useBundle';
 
 // Component that is displayed as a placeholder before auth init is finished
 const AppPlaceholder = (props: FooterProps) => {
+  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices'].includes(getUrl('bundle'));
   return (
     <MemoryRouter>
       <Page
@@ -21,7 +23,7 @@ const AppPlaceholder = (props: FooterProps) => {
             </MastheadMain>
           </Masthead>
         }
-        sidebar={<PageSidebar nav={<NavLoader />} />}
+        sidebar={hideNavLoader ? undefined : <PageSidebar nav={<NavLoader />} />}
       >
         <div className="chr-render">
           <Footer {...props} />

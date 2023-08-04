@@ -16,7 +16,15 @@ import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
+import { isProd } from '../../utils/common';
+import { useSegment } from '../../analytics/useSegment';
+import useWindowWidth from '../../hooks/useWindowWidth';
 
+export type SearchInputprops = {
+  isExpanded?: boolean;
+};
+
+const IS_PROD = isProd();
 const REPLACE_TAG = 'REPLACE_TAG';
 const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
 /**
@@ -33,7 +41,7 @@ const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
+BASE_SEARCH.append('q', `${REPLACE_TAG}*~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
@@ -43,9 +51,9 @@ BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
 BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
 BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
 BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
-BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight atrribute to simply tag replacement.
+BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight attribute to simply tag replacement.
 
-const BASE_URL = new URL('https://access.stage.redhat.com/hydra/rest/search/platform/console/');
+const BASE_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/rest/search/platform/console/`);
 // search API stopped receiving encoded search string
 BASE_URL.search = decodeURIComponent(BASE_SEARCH.toString());
 const SEARCH_QUERY = BASE_URL.toString();
@@ -74,17 +82,24 @@ const initialSearchState: SearchResponseType = {
   start: 0,
 };
 
-const SearchInput = () => {
+type SearchInputListener = {
+  onStateChange: (isOpen: boolean) => void;
+};
+
+const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
   const [highlighting, setHighlighting] = useState<HighlightingResponseType>({});
+  const { ready, analytics } = useSegment();
+  const blockCloseEvent = useRef(false);
 
   const isMounted = useRef(false);
   const toggleRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { md } = useWindowWidth();
 
   // sort result items based on matched field and its priority
   const resultCategories = useMemo(
@@ -126,26 +141,40 @@ const SearchInput = () => {
     if (menuRef.current?.contains(event.target as Node) || toggleRef.current?.contains(event.target as Node)) {
       if (event.key === 'Escape' || event.key === 'Tab') {
         setIsOpen(!isOpen);
+        onStateChange(!isOpen);
         toggleRef.current?.focus();
       }
     }
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (isOpen && !menuRef.current?.contains(event.target as Node)) {
+    if (!blockCloseEvent.current && isOpen && !menuRef.current?.contains(event.target as Node)) {
       setIsOpen(false);
+      onStateChange(false);
     }
+    // unblock the close event to prevent unwanted hanging dropdown menu on subsequent input clicks
+    blockCloseEvent.current = false;
   };
 
-  const onInputClick: SearchInputProps['onClick'] = (ev) => {
-    ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
-    searchResults.numFound > 0 && setIsOpen(true);
+  const onInputClick: SearchInputProps['onClick'] = () => {
+    if (!isOpen && searchResults.numFound > 0) {
+      if (!md && isExpanded && searchValue !== '') {
+        setIsOpen(true);
+        onStateChange(true);
+      } else if (md) {
+        setIsOpen(true);
+        onStateChange(true);
+      }
+      // can't use event.stoppropagation because it will block other opened menus from triggering their close event
+      blockCloseEvent.current = true;
+    }
   };
 
   const onToggleKeyDown: SearchInputProps['onKeyDown'] = (ev) => {
     ev.stopPropagation(); // Stop handleClickOutside from handling, it would close the menu
     if (!isOpen) {
       setIsOpen(true);
+      onStateChange(true);
     }
 
     if (isOpen && ev.key === 'ArrowDown' && menuRef.current) {
@@ -153,6 +182,7 @@ const SearchInput = () => {
       firstElement && (firstElement as HTMLElement).focus();
     } else if (isOpen && ev.key === 'Escape') {
       setIsOpen(false);
+      onStateChange(false);
     }
   };
 
@@ -195,6 +225,9 @@ const SearchInput = () => {
           // make sure to calculate resize when switching from loading to sucess state
           handleWindowResize();
         }
+        if (ready && analytics) {
+          analytics.track('chrome.search-query', { query: value });
+        }
       })
       .finally(() => {
         isMounted.current && setIsFetching(false);
@@ -209,26 +242,49 @@ const SearchInput = () => {
     debouncedFetch(value);
   };
 
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
+  const onToggleExpand = (_event: React.SyntheticEvent<HTMLButtonElement>, isExpanded: boolean) => {
+    setIsExpanded(!isExpanded);
+    setSearchValue('');
+  };
+
+  const willExpand = () => {
+    const expanded = isExpanded || searchValue !== '';
+    if (expanded !== isExpanded) {
+      setIsExpanded(expanded);
+    }
+    return expanded;
+  };
+
   const toggle = (
     <PFSearchInput
-      onClick={onInputClick}
-      ref={toggleRef}
-      onKeyDown={onToggleKeyDown}
       placeholder="Search for services"
       value={searchValue}
       onChange={handleChange}
       onClear={(ev) => {
         setSearchValue('');
         setSearchResults(initialSearchState);
-        // make sure the input is not clicked/focused
         ev.stopPropagation();
         setIsOpen(false);
+        onStateChange(false);
       }}
+      {...(!md && {
+        expandableInput: {
+          isExpanded: willExpand(),
+          onToggleExpand,
+          toggleAriaLabel: 'Expandable search input toggle',
+        },
+      })}
+      onClick={onInputClick}
+      ref={toggleRef}
+      onKeyDown={onToggleKeyDown}
+      className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
     />
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-mt-xs chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-u-pt-sm pf-u-px-md chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
@@ -252,7 +308,8 @@ const SearchInput = () => {
 
   return (
     <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
-      <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />
+      {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
+      {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
     </div>
   );
 };

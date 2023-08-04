@@ -8,7 +8,7 @@ import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
   prod: {
-    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com'],
+    url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
@@ -28,7 +28,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com', 'us.console.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
@@ -43,7 +43,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://ephem.outsrights.cc/',
   },
   dev: {
-    url: ['dev.foo.redhat.com', 'console.dev.redhat.com'],
+    url: ['dev.foo.redhat.com', 'console.dev.redhat.com', 'us.console.dev.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
@@ -338,20 +338,37 @@ export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'servic
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
+function getChromeDynamicPaths() {
+  return `${isBeta() ? '/beta' : ''}/apps/chrome/operator-generated/fed-modules.json`;
+}
+
 const fedModulesheaders = {
   'Cache-Control': 'no-cache',
   Pragma: 'no-cache',
   Expires: '0',
 };
 
-export const loadFEOFedModules = () =>
-  axios.get(`${window.location.origin}${isBeta() ? '/beta' : ''}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
+// FIXME: Remove once qaprodauth is dealt with
+// can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
+// Always use stable
+const loadCSCFedModules = () =>
+  axios.get(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
     headers: fedModulesheaders,
   });
 
 export const loadFedModules = async () =>
-  axios.get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
-    headers: fedModulesheaders,
+  Promise.all([
+    axios
+      .get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+        headers: fedModulesheaders,
+      })
+      .catch(loadCSCFedModules),
+    axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
+  ]).then(([staticConfig, feoConfig]) => {
+    if (feoConfig?.data?.chrome) {
+      staticConfig.data.chrome = feoConfig?.data?.chrome;
+    }
+    return staticConfig;
   });
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>

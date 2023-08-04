@@ -16,6 +16,22 @@ export type AvailableLinks = {
   [key: string]: NavItem;
 };
 
+const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
+  const firstLeaf = routes.find((item) => !item.expandable && item.href);
+  if (firstLeaf) {
+    return firstLeaf;
+  }
+  let childRoute: NavItem | undefined;
+  const nestedItems = firstLeaf ? [] : routes.filter((item) => item.expandable);
+  // make sure to find first deeply nested item
+  nestedItems.every((item) => {
+    childRoute = getFirstChildRoute(item.routes);
+    return !childRoute;
+  });
+
+  return childRoute;
+};
+
 const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & Partial<Pick<BundleNavigation, 'id' | 'title'>>): BundleNav => {
   const flatLinks = bundle?.navItems?.reduce<(NavItem | NavItem[])[]>((acc, { navItems, routes, expandable, ...rest }) => {
     // item is a group
@@ -29,6 +45,19 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
       ];
     }
 
+    if (expandable && routes && rest.id) {
+      const childRoute = getFirstChildRoute(routes);
+      if (childRoute) {
+        const expandableLink = {
+          ...childRoute,
+          title: rest.title,
+          description: rest.description,
+          id: rest.id,
+        };
+        return [...acc, ...routes, expandableLink];
+      }
+    }
+
     // item is an expandable section
     if (expandable && routes) {
       return [...acc, ...routes];
@@ -37,6 +66,16 @@ const handleBundleResponse = (bundle: Omit<BundleNavigation, 'id' | 'title'> & P
     // regular NavItem
     return [...acc, rest];
   }, []);
+  const bundleFirstLink = getFirstChildRoute(bundle.navItems);
+  if (bundleFirstLink && bundle.id) {
+    const bundleLink: NavItem = {
+      ...bundleFirstLink,
+      title: bundle.title,
+      id: bundle.id,
+      description: bundle.description,
+    };
+    flatLinks.push(bundleLink);
+  }
   return { id: bundle.id, title: bundle.title, links: (flatLinks || []).flat() };
 };
 
@@ -50,10 +89,10 @@ const parseBundlesToObject = (items: NavItem[]): AvailableLinks =>
       };
     }
 
-    return curr.href
+    return curr.id
       ? {
           ...acc,
-          [curr.href]: curr,
+          [curr.id]: curr,
         }
       : acc;
   }, {});
@@ -194,6 +233,7 @@ const useAllServices = () => {
 
           return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
         });
+
       setState((prev) => ({
         ...prev,
         allLinks,
@@ -230,8 +270,10 @@ const useAllServices = () => {
     servicesLinks,
     error,
     ready,
+    availableSections,
     filterValue,
     setFilterValue,
+    findNavItems,
   };
 };
 
