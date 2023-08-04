@@ -28,7 +28,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://access.redhat.com',
   },
   stage: {
-    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com', 'us.stage.redhat.com'],
+    url: ['stage.foo.redhat.com', 'cloud.stage.redhat.com', 'console.stage.redhat.com', 'fetest.stage.redhat.com', 'us.console.stage.redhat.com'],
     sso: 'https://sso.stage.redhat.com/auth',
     portal: 'https://access.stage.redhat.com',
   },
@@ -43,7 +43,7 @@ export const DEFAULT_SSO_ROUTES = {
     portal: 'https://ephem.outsrights.cc/',
   },
   dev: {
-    url: ['dev.foo.redhat.com', 'console.dev.redhat.com'],
+    url: ['dev.foo.redhat.com', 'console.dev.redhat.com', 'us.console.dev.redhat.com'],
     sso: 'https://sso.redhat.com/auth',
     portal: 'https://access.redhat.com',
   },
