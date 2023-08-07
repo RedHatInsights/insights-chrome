@@ -172,11 +172,13 @@ pipeline {
                         COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
                     }
                     steps {
-                        sh '''
-                            curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh" > .frontend-build.sh
-                            source ./.frontend-build.sh
-                            BUILD_RESULTS=$?
-                        '''
+                        withVault([configuration: configuration, vaultSecrets: secrets]) {
+                            sh '''
+                                curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh" > .frontend-build.sh
+                                source ./.frontend-build.sh
+                                BUILD_RESULTS=$?
+                            '''
+                        }
                     }
                 }
             }
