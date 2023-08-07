@@ -173,8 +173,7 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            # source is preferred to | bash -s in this case to avoid a subshell
-                            source <(curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh")
+                            source "<(curl -sSL ${COMMON_BUILDER}/src/frontend-build.sh)"
                             BUILD_RESULTS=$?
                         '''
                     }
