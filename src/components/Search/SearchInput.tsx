@@ -41,7 +41,7 @@ const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}*~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
+BASE_SEARCH.append('q', `*${REPLACE_TAG}~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}*~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~ and wildcards
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
@@ -216,7 +216,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   }, [isOpen, menuRef]);
 
   const handleFetch = (value = '') => {
-    return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value).replace(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
+    return fetch(SEARCH_QUERY.replaceAll(REPLACE_TAG, value).replaceAll(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
       .then((r) => r.json())
       .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
         if (isMounted.current) {
