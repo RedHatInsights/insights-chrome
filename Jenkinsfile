@@ -175,7 +175,7 @@ pipeline {
                     steps {
                         withVault([configuration: configuration, vaultSecrets: secrets]) {
                             sh '''
-                                export JOB_NAME="RedHatInsights-insights-chrome-pipeline-pr-check-master"
+                                export JOB_NAME="RedHatInsights-insights-chrome-frontend-pipeline-pr-check-master"
                                 curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh" > .frontend-build.sh
                                 source ./.frontend-build.sh
                                 BUILD_RESULTS=$?
