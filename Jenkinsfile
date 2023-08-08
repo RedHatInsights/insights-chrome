@@ -155,6 +155,7 @@ pipeline {
                         COMPONENT="rbac"
                         COMPONENT_NAME="rbac"
                     }
+
                     steps {
                         script {
                             withVault([configuration: configuration, vaultSecrets: secrets]) {
