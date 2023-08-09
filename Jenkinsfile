@@ -19,7 +19,7 @@ def secrets = [
 def configuration = [vaultUrl: params.VAULT_ADDRESS, vaultCredentialId: params.VAULT_CREDS_ID, engineVersion: 1]
 
 pipeline {
-    agent none
+    agent { label 'insights' }
     options {
         timestamps()
     }
@@ -39,7 +39,7 @@ pipeline {
         stage('Tests/Build for Frontends') {
             parallel {
                 stage('Unit Testing') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                             IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                             TEST_CONT="${PROJECT_NAME}-unit-tests-${IMG_TAG}"
@@ -56,7 +56,7 @@ pipeline {
                 }
 
                 stage('Lint') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                         TEST_CONT="${PROJECT_NAME}-lint-${IMG_TAG}"
@@ -72,7 +72,7 @@ pipeline {
                     }
                 }
                 stage('Build') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                         TEST_CONT="${PROJECT_NAME}-build-${IMG_TAG}"
@@ -89,7 +89,7 @@ pipeline {
                 }
 
                 stage('Cypress Component Testing') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                         TEST_CONT="${PROJECT_NAME}-cypress-component-tests-${IMG_TAG}"
@@ -106,7 +106,7 @@ pipeline {
                 }
 
                 stage('Cypress E2E Tests') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                         TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
@@ -127,7 +127,7 @@ pipeline {
                 }
 
                 stage('IQE Tests') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
                         TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
@@ -163,14 +163,14 @@ pipeline {
                                     ./ci/iqe_tests.sh
                                 '''
 
-                                archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                                //archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                             }
                         }
                     }
                 }
 
                 stage('Frontend Build') {
-                    agent { label 'insights' }
+                    //agent { label 'insights' }
                     environment {
                         COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
 
@@ -214,4 +214,11 @@ pipeline {
     //         }
     //     }
     // } 
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+            junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+        }
+    } 
 }
