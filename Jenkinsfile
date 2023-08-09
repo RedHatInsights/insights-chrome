@@ -190,7 +190,7 @@ pipeline {
         stage('test') {
             agent { label 'insights' }
             steps {
-                sh 'echo Hello'
+                sh 'mkdir artifacts'
             }
         }
     }
