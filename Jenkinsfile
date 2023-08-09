@@ -190,9 +190,10 @@ pipeline {
     }
 
     post {
-       always {
+        agent { label 'insights' }
+        always {
             archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
             junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
-       }
+        }
     } 
 }
