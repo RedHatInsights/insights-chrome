@@ -162,6 +162,8 @@ pipeline {
                                 sh '''
                                     ./ci/iqe_tests.sh
                                 '''
+
+                                archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                             }
                         }
                     }
@@ -202,14 +204,14 @@ pipeline {
         // }
     }
 
-    post {
-        always {
-            node('insights') {
-                script {
-                    archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
-                    junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
-                }
-            }
-        }
-    } 
+    // post {
+    //     always {
+    //         node('insights') {
+    //             script {
+    //                 archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+    //                 junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+    //             }
+    //         }
+    //     }
+    // } 
 }
