@@ -71,6 +71,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.3",
     "cypress": "^12.7.0",
+    "cypress-localstorage-commands": "^2.2.3",
     "eslint": "^8.35.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
     "git-revision-webpack-plugin": "^5.0.0",
