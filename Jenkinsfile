@@ -198,8 +198,10 @@ pipeline {
     post {
         always {
             node('insights') {
-                archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
-                junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+                script {
+                    archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                    junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+                }
             }
         }
     } 
