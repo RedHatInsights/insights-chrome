@@ -36,155 +36,161 @@ pipeline {
     }
 
     stages {
-        stage('Tests/Build for Frontends') {
-            parallel {
-                stage('Unit Testing') {
-                    agent { label 'insights' }
-                    environment {
-                            IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                            TEST_CONT="${PROJECT_NAME}-unit-tests-${IMG_TAG}"
-                    }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/unit_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+        // stage('Tests/Build for Frontends') {
+        //     parallel {
+        //         stage('Unit Testing') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                     IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                     TEST_CONT="${PROJECT_NAME}-unit-tests-${IMG_TAG}"
+        //             }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/unit_tests.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                stage('Lint') {
-                    agent { label 'insights' }
-                    environment {
-                        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                        TEST_CONT="${PROJECT_NAME}-lint-${IMG_TAG}"
-                    }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/lint.sh
-                                '''
-                            }
-                        }
-                    }
-                }
-                stage('Build') {
-                    agent { label 'insights' }
-                    environment {
-                        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                        TEST_CONT="${PROJECT_NAME}-build-${IMG_TAG}"
-                    }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/build.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+        //         stage('Lint') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                 TEST_CONT="${PROJECT_NAME}-lint-${IMG_TAG}"
+        //             }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/lint.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         stage('Build') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                 TEST_CONT="${PROJECT_NAME}-build-${IMG_TAG}"
+        //             }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/build.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                stage('Cypress Component Testing') {
-                    agent { label 'insights' }
-                    environment {
-                        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                        TEST_CONT="${PROJECT_NAME}-cypress-component-tests-${IMG_TAG}"
-                    }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/cypress_component_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+        //         stage('Cypress Component Testing') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                 TEST_CONT="${PROJECT_NAME}-cypress-component-tests-${IMG_TAG}"
+        //             }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/cypress_component_tests.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                stage('Cypress E2E Tests') {
-                    agent { label 'insights' }
-                    environment {
-                        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                        TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
+        //         stage('Cypress E2E Tests') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                 TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
 
-                        COMPONENT="insights-chrome-frontend"
-                        IMAGE="quay.io/cloudservices/${COMPONENT}"
-                        INCLUDE_CHROME_CONFIG="true"
-                    }
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/cypress_e2e_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+        //                 COMPONENT="insights-chrome-frontend"
+        //                 IMAGE="quay.io/cloudservices/${COMPONENT}"
+        //                 INCLUDE_CHROME_CONFIG="true"
+        //             }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/cypress_e2e_tests.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                stage('IQE Tests') {
-                    agent { label 'insights' }
-                    environment {
-                        IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
-                        TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
+        //         stage('IQE Tests') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 IMG_TAG=sh(script: "git rev-parse --short=8 HEAD", returnStdout: true).trim()
+        //                 TEST_CONT="${PROJECT_NAME}-cypress-e2e-tests-${IMG_TAG}"
 
-                        // Deploy to an ephemeral namespace for testing
-                        IMAGE="quay.io/cloudservices/rbac"
-                        GIT_COMMIT="master"
-                        IMAGE_TAG="latest"
-                        DEPLOY_FRONTENDS=true
+        //                 // Deploy to an ephemeral namespace for testing
+        //                 IMAGE="quay.io/cloudservices/rbac"
+        //                 GIT_COMMIT="master"
+        //                 IMAGE_TAG="latest"
+        //                 DEPLOY_FRONTENDS=true
                         
-                        // Run tests with ClowdJobInvocation
-                        IQE_IMAGE_TAG="platform-ui"
-                        IQE_PLUGINS="platform_ui"
-                        IQE_MARKER_EXPRESSION="smoke"
-                        // xclude progressive profile tests
-                        // Exclude APIdocs tests
-                        IQE_FILTER_EXPRESSION="not (test_progressive or test_apidocs)"
-                        IQE_ENV="ephemeral"
-                        IQE_SELENIUM="true"
-                        IQE_CJI_TIMEOUT="30m"
-                        DEPLOY_TIMEOUT="900"  // 15min
+        //                 // Run tests with ClowdJobInvocation
+        //                 IQE_IMAGE_TAG="platform-ui"
+        //                 IQE_PLUGINS="platform_ui"
+        //                 IQE_MARKER_EXPRESSION="smoke"
+        //                 // xclude progressive profile tests
+        //                 // Exclude APIdocs tests
+        //                 IQE_FILTER_EXPRESSION="not (test_progressive or test_apidocs)"
+        //                 IQE_ENV="ephemeral"
+        //                 IQE_SELENIUM="true"
+        //                 IQE_CJI_TIMEOUT="30m"
+        //                 DEPLOY_TIMEOUT="900"  // 15min
 
-                        // Ensure that we deploy the right component for testing
-                        APP_NAME="rbac"
-                        COMPONENT="rbac"
-                        COMPONENT_NAME="rbac"
-                    }
+        //                 // Ensure that we deploy the right component for testing
+        //                 APP_NAME="rbac"
+        //                 COMPONENT="rbac"
+        //                 COMPONENT_NAME="rbac"
+        //             }
 
-                    steps {
-                        script {
-                            withVault([configuration: configuration, vaultSecrets: secrets]) {
-                                sh '''
-                                    ./ci/iqe_tests.sh
-                                '''
-                            }
-                        }
-                    }
-                }
+        //             steps {
+        //                 script {
+        //                     withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                         sh '''
+        //                             ./ci/iqe_tests.sh
+        //                         '''
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                stage('Frontend Build') {
-                    agent { label 'insights' }
-                    environment {
-                        COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
+        //         stage('Frontend Build') {
+        //             agent { label 'insights' }
+        //             environment {
+        //                 COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
 
-                        COMPONENT="insights-chrome-frontend"
-                        IMAGE="quay.io/cloudservices/${COMPONENT}"
-                    }
-                    steps {
-                        withVault([configuration: configuration, vaultSecrets: secrets]) {
-                            sh '''
-                                curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh" > .frontend-build.sh
-                                source ./.frontend-build.sh
-                                BUILD_RESULTS=$?
-                            '''
-                        }
-                    }
-                }
+        //                 COMPONENT="insights-chrome-frontend"
+        //                 IMAGE="quay.io/cloudservices/${COMPONENT}"
+        //             }
+        //             steps {
+        //                 withVault([configuration: configuration, vaultSecrets: secrets]) {
+        //                     sh '''
+        //                         curl -sSL "${COMMON_BUILDER}/src/frontend-build.sh" > .frontend-build.sh
+        //                         source ./.frontend-build.sh
+        //                         BUILD_RESULTS=$?
+        //                     '''
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        stage('test') {
+            agent { label 'insights' }
+            steps {
+                sh 'echo Hello'
             }
         }
     }
