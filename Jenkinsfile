@@ -190,7 +190,10 @@ pipeline {
         stage('test') {
             agent { label 'insights' }
             steps {
-                sh 'mkdir artifacts'
+                sh '''
+                mkdir artifacts
+                touch artifacts/test.yml
+                '''
                 script {
                     archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                 }
