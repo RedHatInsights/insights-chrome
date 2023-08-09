@@ -191,6 +191,9 @@ pipeline {
             agent { label 'insights' }
             steps {
                 sh 'mkdir artifacts'
+                script {
+                    archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                }
             }
         }
     }
