@@ -15,7 +15,10 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
-  notificationsReducer,
+  markNotificationAsRead,
+  markNotificationAsUnread,
+  markAllNotificationsAsRead,
+  markAllNotificationsAsUnread,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
@@ -105,10 +108,10 @@ const reducers = {
   [SET_GATEWAY_ERROR]: setGatewayError,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
   [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
-  [MARK_NOTIFICATION_AS_READ]: notificationsReducer,
-  [MARK_NOTIFICATION_AS_UNREAD]: notificationsReducer,
-  [MARK_ALL_NOTIFICATION_AS_READ]: notificationsReducer,
-  [MARK_ALL_NOTIFICATION_AS_UNREAD]: notificationsReducer,
+  [MARK_NOTIFICATION_AS_READ]: markNotificationAsRead,
+  [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
+  [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
+  [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
 };
 
 const globalFilter = {
@@ -145,7 +148,6 @@ export default function (): {
   chrome: (state: ChromeState, action: AnyAction) => ChromeState;
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
-  // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
 
   return {
     chrome: (
@@ -164,8 +166,7 @@ export default function (): {
         scalprumConfig: {},
         moduleRoutes: [],
         notifications: {
-          //TODO: Figure out why this is the difference from chromeReducers
-          data: [],
+          data: [], 
           isExpanded: false,
           count: 0,
         },

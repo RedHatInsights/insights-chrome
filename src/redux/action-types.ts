@@ -42,8 +42,7 @@ export const SET_GATEWAY_ERROR = '@@chrome/set-gateway-error';
 
 export const TOGGLE_NOTIFICATIONS_DRAWER = '@@chrome/toggle-notifications-drawer';
 
-// TODO: Verify that this format is acceptable
-export const MARK_NOTIFICATION_AS_READ = 'MARK_NOTIFICATION_AS_READ';
-export const MARK_NOTIFICATION_AS_UNREAD = 'MARK_NOTIFICATION_AS_UNREAD';
-export const MARK_ALL_NOTIFICATION_AS_READ = 'MARK_ALL_NOTIFICATION_AS_READ';
-export const MARK_ALL_NOTIFICATION_AS_UNREAD = 'MARK_ALL_NOTIFICATION_AS_UNREAD';
+export const MARK_NOTIFICATION_AS_READ = '@@chrome/mark-notification-as-read';
+export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread';
+export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
+export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';

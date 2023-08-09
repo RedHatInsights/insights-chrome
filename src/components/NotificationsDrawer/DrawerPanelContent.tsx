@@ -64,27 +64,19 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     dispatch(toggleNotificationsDrawer());
   };
 
-  const onDropdownToggle = (isOpen: boolean) => {
-    setIsDropdownOpen(isOpen);
-  };
-
-  const onFilterDropdownToggle = (isOpen: boolean) => {
-    setIsFilterDropdownOpen(isOpen);
-  };
-
   const onMarkAllAsRead = () => {
     dispatch({ type: MARK_ALL_NOTIFICATION_AS_READ });
-    onDropdownToggle(false);
+    setIsDropdownOpen(false);
   };
 
   const onMarkAllAsUnread = () => {
     dispatch({ type: MARK_ALL_NOTIFICATION_AS_UNREAD });
-    onDropdownToggle(false);
+    setIsDropdownOpen(false);
   };
 
   const onFilterSelect = (chosenFilter: string) => {
     setFilteredNotifications(notifications.filter((notification) => notification.source === chosenFilter));
-    onFilterDropdownToggle(false);
+    setIsFilterDropdownOpen(false);
   };
 
   const dropdownItems = [
@@ -132,7 +124,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       <NotificationDrawerHeader onClose={() => onNotificationsDrawerClose()}>
         <Dropdown
           toggle={
-            <DropdownToggle toggleIndicator={null} onToggle={onFilterDropdownToggle} id="filter-toggle">
+            <DropdownToggle toggleIndicator={null} onToggle={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle">
               <FilterIcon />
             </DropdownToggle>
           }
@@ -144,7 +136,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         />
         <Dropdown
           position={DropdownPosition.right}
-          toggle={<KebabToggle onToggle={onDropdownToggle} id="kebab-toggle" />}
+          toggle={<KebabToggle onToggle={() => setIsDropdownOpen(!isDropdownOpen)} id="kebab-toggle" />}
           isOpen={isDropdownOpen}
           isPlain
           dropdownItems={dropdownItems}

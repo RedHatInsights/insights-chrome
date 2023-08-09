@@ -13,20 +13,19 @@ import {
 } from '@patternfly/react-core';
 import { useDispatch } from 'react-redux';
 import { Notifications } from '../../redux/store';
-import { MARK_NOTIFICATION_AS_READ, MARK_NOTIFICATION_AS_UNREAD } from '../../redux/action-types';
+import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
 
 const NotificationItem = ({ notification }: { notification: Notifications['data'][0] }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-  console.log('This is my current notification item: ', notification);
 
   const onDropdownToggle = (isOpen: boolean) => {
     setIsDropdownOpen(isOpen);
   };
 
   const onCheckboxToggle = () => {
-    if (!notification.read) dispatch({ type: MARK_NOTIFICATION_AS_READ, payload: notification.id });
-    else dispatch({ type: MARK_NOTIFICATION_AS_UNREAD, payload: notification.id });
+    if (!notification.read) dispatch(markNotificationAsRead(notification.id));
+    else dispatch(markNotificationAsUnread(notification.id));
   };
 
   const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
