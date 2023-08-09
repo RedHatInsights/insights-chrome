@@ -191,8 +191,7 @@ pipeline {
 
     post {
         always {
-            agent { label 'insights' }
-            script {
+            node('insights') {
                 archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
                 junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
             }
