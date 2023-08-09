@@ -171,6 +171,9 @@ pipeline {
                     agent { label 'insights' }
                     environment {
                         COMMON_BUILDER="https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master"
+
+                        COMPONENT="insights-chrome-frontend"
+                        IMAGE="quay.io/cloudservices/${COMPONENT}"
                     }
                     steps {
                         withVault([configuration: configuration, vaultSecrets: secrets]) {
