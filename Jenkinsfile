@@ -150,8 +150,10 @@ pipeline {
                         }
                     }
                     post {
-                        archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
-                        junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+                        always {
+                            archiveArtifacts artifacts: 'artifacts/**/*', fingerprint: true
+                            junit skipPublishingChecks: true, testResults: 'artifacts/junit-*.xml'
+                        }
                     }
                 }
 
