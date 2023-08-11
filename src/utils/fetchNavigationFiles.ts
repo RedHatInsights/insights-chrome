@@ -2,13 +2,13 @@ import axios from 'axios';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
-import { getChromeStaticPathname, isBeta, isEphem } from './common';
+import { ITLessKeycloak, getChromeStaticPathname, isBeta } from './common';
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
 
-const bundles = isEphem() ? itLessBundles : requiredBundles;
+const bundles = ITLessKeycloak() ? itLessBundles : requiredBundles;
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
   return Array.isArray((navigation as Navigation).navItems);

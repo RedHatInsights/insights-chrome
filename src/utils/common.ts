@@ -211,15 +211,15 @@ export function getRouterBasename(pathname?: string) {
 }
 
 export function ITLess() {
+  return getEnv() === 'frh' || getEnv() === 'frhStage' || getEnv() === 'ephem' || getEnv() === 'int' || getEnv() === 'scr';
+}
+
+export function ITLessCognito() {
   return getEnv() === 'frh' || getEnv() === 'frhStage';
 }
 
-export function isEphem() {
+export function ITLessKeycloak() {
   return getEnv() === 'ephem' || getEnv() === 'int' || getEnv() === 'scr';
-}
-
-export function isInt() {
-  return getEnv() === 'int' || getEnv() === 'scr';
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {
@@ -359,7 +359,7 @@ export const chromeServiceStaticPathname = {
 
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services') {
   const stableEnv = isBeta() ? 'beta' : 'stable';
-  const prodEnv = isProd() ? 'prod' : ITLess() || isEphem() ? 'itless' : 'stage';
+  const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 

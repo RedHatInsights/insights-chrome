@@ -12,7 +12,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, generateRoutesList, getEnv, isInt, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, ITLessCognito, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -111,7 +111,7 @@ const useInitialize = () => {
     // setup trust arc
     trustarcScriptSetup();
     // setup adobe analytics
-    if (!isITLessEnv && !isInt() && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
+    if (!isITLessEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
       registerAnalyticsObserver();
     }
@@ -135,7 +135,7 @@ const App = () => {
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
 
-  if (isITLessEnv) {
+  if (ITLessCognito()) {
     return isReady && modules && scalprumConfig ? (
       <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} config={scalprumConfig} />
     ) : (

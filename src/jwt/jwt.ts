@@ -4,12 +4,12 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import {
   DEFAULT_SSO_ROUTES,
-  ITLess,
+  ITLessCognito,
+  ITLessKeycloak,
   LOGIN_SCOPES_STORAGE_KEY,
   deleteLocalStorageItems,
   getRouterBasename,
   isBeta as isBetaFunction,
-  isEphem,
   pageRequiresAuthentication,
 } from '../utils/common';
 import * as Sentry from '@sentry/react';
@@ -28,8 +28,8 @@ const log = logger('jwt.js');
 const DEFAULT_COOKIE_NAME = 'cs_jwt';
 
 const priv = new Priv();
-const itLessEnv = ITLess();
-const ephem = isEphem();
+const itLessCognito = ITLessCognito();
+const itLessKeycloakEnv = ITLessKeycloak();
 
 enum AllowedPartnerScopes {
   aws = 'aws',
@@ -136,7 +136,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
       scopes.push(partnerScope);
     }
 
-    if (ssoScopes && !ephem) {
+    if (ssoScopes && !itLessKeycloakEnv) {
       try {
         // make sure add openid scope when custom scope is used
         scopes.push('openid', JSON.parse(ssoScopes));
@@ -170,7 +170,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
   const cookieName = options.cookieName ? options.cookieName : DEFAULT_COOKIE_NAME;
 
   priv.setCookie({ cookieName });
-  if (itLessEnv) {
+  if (itLessCognito) {
     let token;
     let cogUser: CogUser;
 
@@ -199,7 +199,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
     return Promise.resolve(platformUrl(options.routes ? options.routes : DEFAULT_SSO_ROUTES, configSsoUrl)).then((ssoUrl) => {
       //constructor for new Keycloak Object?
       options.url = ssoUrl;
-      options.clientId = ephem ? 'console-dot' : 'cloud-services';
+      options.clientId = itLessKeycloakEnv ? 'console-dot' : 'cloud-services';
       options.realm = 'redhat-external';
 
       //options for keycloak.init method
@@ -295,10 +295,10 @@ export function isExistingValid(token?: string) {
 export async function initSuccess() {
   log('JWT Initialized');
   let cogToken;
-  if (itLessEnv) {
+  if (itLessCognito) {
     cogToken = await getTokenWithAuthorizationCode();
   }
-  const token = itLessEnv ? cogToken : priv.getToken();
+  const token = itLessCognito ? cogToken : priv.getToken();
   setCookie(token);
 }
 
@@ -450,14 +450,14 @@ export async function setCookie(token?: string) {
   log('Setting the cs_jwt cookie');
   let cogToken;
   let cogUser;
-  if (itLessEnv) {
+  if (itLessCognito) {
     cogToken = await getTokenWithAuthorizationCode();
     cogUser = await getUser();
   }
-  const tok = itLessEnv ? cogToken : token;
+  const tok = itLessCognito ? cogToken : token;
   if (tok && tok.length > 10) {
     // FIXME: Fix cognito typing not to use any
-    const tokExpires = itLessEnv ? cogUser.exp : decodeToken(tok).exp;
+    const tokExpires = itLessCognito ? cogUser.exp : decodeToken(tok).exp;
     const cookieName = priv.getCookie()?.cookieName;
     if (cookieName) {
       setCookieWrapper(`${cookieName}=${tok};` + `path=/wss;` + `secure=true;` + `expires=${getCookieExpires(tokExpires)}`);
