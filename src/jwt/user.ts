@@ -5,7 +5,7 @@ import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
-import { createUser, getTokenWithAuthorizationCode } from '../cognito/auth';
+import { createUser } from '../cognito/auth';
 
 export type SSOServiceDetails = {
   is_entitled: boolean;
@@ -184,15 +184,15 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
         is_trial: boolean;
       };
     } = {};
-    let cogToken;
+    // let cogToken;
     if (isITLessEnv) {
-      cogToken = await getTokenWithAuthorizationCode();
+      // cogToken = await getTokenWithAuthorizationCode();
     }
     try {
       if (user.identity.org_id) {
         data = isITLessEnv
-          ? ((await servicesApi(cogToken).servicesGet()) as unknown as typeof data)
-          : ((await servicesApi(token.jti).servicesGet()) as unknown as typeof data);
+          ? ((await servicesApi().servicesGet()) as unknown as typeof data)
+          : ((await servicesApi().servicesGet()) as unknown as typeof data);
       } else {
         console.log('Cannot call entitlements API, no account number');
       }

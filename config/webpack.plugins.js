@@ -13,7 +13,7 @@ const getDynamicModules = require('./get-dynamic-modules');
 const deps = require('../package.json').dependencies;
 
 const plugins = (dev = false, beta = false) => {
-  const ChunkMapper = new (require('@redhat-cloud-services/frontend-components-config-utilities/chunk-mapper'))({
+  const ChunkMapper = new (require('./chunk-mapper'))({
     modules: 'chrome',
     _unstableHotReload: dev,
   });

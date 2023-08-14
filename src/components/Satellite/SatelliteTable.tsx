@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { TableComposable, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 
@@ -56,7 +56,7 @@ const SatelliteTable: React.FC = () => {
     return <EmptyState>There are no registrations</EmptyState>;
   }
   return (
-    <TableComposable aria-label="Misc table">
+    <Table aria-label="Misc table">
       <Thead noWrap>
         <Tr>
           <Th>{columnNames.display_name}</Th>
@@ -83,7 +83,7 @@ const SatelliteTable: React.FC = () => {
           );
         })}
       </Tbody>
-    </TableComposable>
+    </Table>
   );
 };
 

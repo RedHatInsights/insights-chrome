@@ -77,11 +77,12 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
                   {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
-              {user && !isITLessEnv && (
-                <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
-                  <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
-                </ToolbarItem>
-              )}
+              {true ||
+                (user && !isITLessEnv && (
+                  <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
+                    <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
+                  </ToolbarItem>
+                ))}
             </ToolbarGroup>
             <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-md-on-2xl" variant="filter-group">
               <SearchInput onStateChange={hideAllServices} />

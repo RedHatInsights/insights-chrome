@@ -30,7 +30,7 @@ const getDynamicModules = (root) => {
         return {
           ...acc,
           [moduleName]: {
-            requiredVersion,
+            version: requiredVersion,
           },
         };
       }, {})

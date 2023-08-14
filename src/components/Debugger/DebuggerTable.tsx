@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TableComposable, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import InternalChromeContext from '../../utils/internalChromeContext';
 
@@ -18,7 +18,7 @@ const DebuggerTable = (props: DebuggerTableProps) => {
     }),
     {}
   );
-  const [permissions, setPermissions] = React.useState({});
+  const [permissions, setPermissions] = React.useState<{ [key: string]: React.ReactNode }>({});
   const chrome = useContext(InternalChromeContext);
   React.useEffect(() => {
     async function getPermissions() {
@@ -37,7 +37,7 @@ const DebuggerTable = (props: DebuggerTableProps) => {
 
   if (props.selected === 'Entitlements') {
     table = (
-      <TableComposable variant="compact">
+      <Table variant="compact">
         <Thead>
           <Tr>
             <Th>Entitlements given to {props.user.identity.user?.username}</Th>
@@ -57,11 +57,11 @@ const DebuggerTable = (props: DebuggerTableProps) => {
             }
           })}
         </Tbody>
-      </TableComposable>
+      </Table>
     );
   } else if (props.selected === 'Roles') {
     table = (
-      <TableComposable variant="compact">
+      <Table variant="compact">
         <Thead>
           <Tr>
             <Th>Roles given to {props.user.identity.user?.username}</Th>
@@ -71,13 +71,12 @@ const DebuggerTable = (props: DebuggerTableProps) => {
           {Object.values(permissions).map((val, index) => {
             return (
               <tr key={index}>
-                {/* @ts-ignore */}
                 <td>{val}</td>
               </tr>
             );
           })}
         </Tbody>
-      </TableComposable>
+      </Table>
     );
   }
   return <React.Fragment>{table}</React.Fragment>;

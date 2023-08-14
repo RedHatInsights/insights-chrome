@@ -8,7 +8,7 @@ const log = logger('fetchPermissions.ts');
 const perPage = 1000;
 
 const fetchPermissions = (userToken: string, app = '') => {
-  const rbacApi = createRbacAPI(userToken);
+  const rbacApi = createRbacAPI();
   return rbacApi
     .getPrincipalAccess(app, undefined, undefined, perPage)
     .then((resp) => {
