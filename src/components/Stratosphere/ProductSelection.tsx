@@ -19,7 +19,7 @@ import useMarketplacePartner from '../../hooks/useMarketplacePartner';
 import './product-selection.scss';
 
 const ProductSelection = () => {
-  const { partner } = useMarketplacePartner();
+  const { partner, partnerId } = useMarketplacePartner();
   return (
     <div id="chrome-app-render-root">
       <Page
@@ -54,22 +54,26 @@ const ProductSelection = () => {
                 </StackItem>
               </Stack>
             </StackItem>
-            <StackItem>
-              <Bullseye>
-                <TextContent>
-                  <Text>To get started using your Red Hat products, follow the links below</Text>
-                </TextContent>
-              </Bullseye>
-            </StackItem>
-            <StackItem>
-              <Flex>
-                <div className="chr-c-product-selection__layout">
-                  {productsList.map((item, i) => (
-                    <ProductCard key={i} {...item} order={i} />
-                  ))}
-                </div>
-              </Flex>
-            </StackItem>
+            {partnerId !== 'from-azure' && (
+              <>
+                <StackItem>
+                  <Bullseye>
+                    <TextContent>
+                      <Text>To get started using your Red Hat products, follow the links below</Text>
+                    </TextContent>
+                  </Bullseye>
+                </StackItem>
+                <StackItem>
+                  <Flex>
+                    <div className="chr-c-product-selection__layout">
+                      {productsList.map((item, i) => (
+                        <ProductCard key={i} {...item} order={i} />
+                      ))}
+                    </div>
+                  </Flex>
+                </StackItem>
+              </>
+            )}
             <StackItem>
               <Bullseye>
                 <TextContent>
