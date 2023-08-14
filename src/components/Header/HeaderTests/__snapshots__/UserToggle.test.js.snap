@@ -2,43 +2,33 @@
 
 exports[`UserToggle should render correctly as org admin 1`] = `
 <div>
-  <div
-    aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right pf-m-full-height chr-c-dropdown-user-toggle"
-    data-ouia-component-id="chrome-user-menu"
-    data-ouia-component-type="PF4/Dropdown"
-    data-ouia-safe="true"
+  <button
+    aria-expanded="false"
+    class="pf-v5-c-menu-toggle pf-m-full-height data-hj-suppress sentry-mask"
+    type="button"
   >
-    <button
-      aria-expanded="false"
-      aria-haspopup="true"
-      class="pf-c-dropdown__toggle data-hj-suppress sentry-mask"
-      data-ouia-component-id="OUIA-Generated-DropdownToggle-2"
-      data-ouia-component-type="PF4/DropdownToggle"
-      data-ouia-safe="true"
-      id="UserMenu"
-      type="button"
-      widget-type="UserMenu"
+    <span
+      class="pf-v5-c-menu-toggle__icon"
+    >
+      &lt;UserIcon /&gt;
+    </span>
+    <span
+      class="pf-v5-c-menu-toggle__text"
+    >
+      someFirstName someLastName
+    </span>
+    <span
+      class="pf-v5-c-menu-toggle__controls"
     >
       <span
-        class="pf-c-dropdown__toggle-image"
-      >
-        &lt;UserIcon /&gt;
-      </span>
-      <span
-        class="pf-c-dropdown__toggle-text"
-      >
-        someFirstName someLastName
-      </span>
-      <span
-        class="pf-c-dropdown__toggle-icon"
+        class="pf-v5-c-menu-toggle__toggle-icon"
       >
         <svg
           aria-hidden="true"
+          class="pf-v5-svg"
           fill="currentColor"
           height="1em"
           role="img"
-          style="vertical-align: -0.125em;"
           viewBox="0 0 320 512"
           width="1em"
         >
@@ -47,50 +37,40 @@ exports[`UserToggle should render correctly as org admin 1`] = `
           />
         </svg>
       </span>
-    </button>
-  </div>
+    </span>
+  </button>
 </div>
 `;
 
 exports[`UserToggle should render correctly with isSmall false 1`] = `
 <div>
-  <div
-    aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right pf-m-full-height chr-c-dropdown-user-toggle"
-    data-ouia-component-id="chrome-user-menu"
-    data-ouia-component-type="PF4/Dropdown"
-    data-ouia-safe="true"
+  <button
+    aria-expanded="false"
+    class="pf-v5-c-menu-toggle pf-m-full-height data-hj-suppress sentry-mask"
+    type="button"
   >
-    <button
-      aria-expanded="false"
-      aria-haspopup="true"
-      class="pf-c-dropdown__toggle data-hj-suppress sentry-mask"
-      data-ouia-component-id="OUIA-Generated-DropdownToggle-1"
-      data-ouia-component-type="PF4/DropdownToggle"
-      data-ouia-safe="true"
-      id="UserMenu"
-      type="button"
-      widget-type="UserMenu"
+    <span
+      class="pf-v5-c-menu-toggle__icon"
+    >
+      &lt;UserIcon /&gt;
+    </span>
+    <span
+      class="pf-v5-c-menu-toggle__text"
+    >
+      someFirstName someLastName
+    </span>
+    <span
+      class="pf-v5-c-menu-toggle__controls"
     >
       <span
-        class="pf-c-dropdown__toggle-image"
-      >
-        &lt;UserIcon /&gt;
-      </span>
-      <span
-        class="pf-c-dropdown__toggle-text"
-      >
-        someFirstName someLastName
-      </span>
-      <span
-        class="pf-c-dropdown__toggle-icon"
+        class="pf-v5-c-menu-toggle__toggle-icon"
       >
         <svg
           aria-hidden="true"
+          class="pf-v5-svg"
           fill="currentColor"
           height="1em"
           role="img"
-          style="vertical-align: -0.125em;"
           viewBox="0 0 320 512"
           width="1em"
         >
@@ -99,42 +79,233 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           />
         </svg>
       </span>
-    </button>
+    </span>
+  </button>
+  <div
+    aria-label="Overflow actions"
+    class="pf-v5-c-menu chr-c-dropdown-user-toggle"
+    data-ouia-component-id="chrome-user-menu"
+    data-ouia-component-type="PF5/Dropdown"
+    data-ouia-safe="true"
+    style="position: absolute; left: 0px; top: 0px; z-index: 9999;"
+  >
+    <div
+      class="pf-v5-c-menu__content"
+    >
+      <ul
+        class="pf-v5-c-menu__list"
+        role="menu"
+      >
+        <li
+          class="pf-v5-c-menu__list-item pf-m-disabled"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-1"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          role="none"
+        >
+          <button
+            class="pf-v5-c-menu__item"
+            disabled=""
+            role="menuitem"
+            tabindex="-1"
+            type="button"
+          >
+            <span
+              class="pf-v5-c-menu__item-main"
+            >
+              <span
+                class="pf-v5-c-menu__item-text"
+              >
+                <dl
+                  class="chr-c-dropdown-item__stack"
+                >
+                  <dt
+                    class="chr-c-dropdown-item__stack--header"
+                  >
+                    Username:
+                  </dt>
+                  <dd
+                    class="chr-c-dropdown-item__stack--value data-hj-suppress sentry-mask"
+                  >
+                    someUsername
+                  </dd>
+                </dl>
+              </span>
+            </span>
+          </button>
+        </li>
+        <li
+          class="pf-v5-c-menu__list-item disabled-pointer"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-2"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          role="none"
+        >
+          <span
+            class="pf-v5-c-menu__item disabled-pointer"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <span
+              class="pf-v5-c-menu__item-main"
+            >
+              <span
+                class="pf-v5-c-menu__item-text"
+              >
+                <dl
+                  class="chr-c-dropdown-item__stack"
+                >
+                  <dt
+                    class="chr-c-dropdown-item__stack--header"
+                  >
+                    Account number:
+                    <span
+                      class="visible-pointer pf-v5-u-ml-sm"
+                    >
+                      <div
+                        style="display: contents;"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="pf-v5-svg"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          viewBox="0 0 512 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"
+                          />
+                        </svg>
+                      </div>
+                    </span>
+                  </dt>
+                  <dd
+                    class="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress"
+                  >
+                    some accountNumber
+                  </dd>
+                </dl>
+              </span>
+            </span>
+          </span>
+        </li>
+        <li
+          class="pf-v5-c-divider"
+          role="separator"
+        />
+        <li
+          class="pf-v5-c-menu__list-item"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-3"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
+          rel="noopener noreferrer"
+          role="none"
+          target="_blank"
+        >
+          <button
+            class="pf-v5-c-menu__item"
+            role="menuitem"
+            tabindex="0"
+            type="button"
+          >
+            <span
+              class="pf-v5-c-menu__item-main"
+            >
+              <span
+                class="pf-v5-c-menu__item-text"
+              >
+                My profile
+              </span>
+            </span>
+          </button>
+        </li>
+        <li
+          class="pf-v5-c-menu__list-item"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-4"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          role="none"
+        >
+          <a
+            class=""
+            data-quickstart-id="iam_my-user-access"
+            data-testid="router-link"
+            href="/iam/my-user-access"
+          >
+            My User Access
+          </a>
+        </li>
+        <li
+          class="pf-v5-c-menu__list-item"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-5"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          role="none"
+        >
+          <a
+            class=""
+            data-quickstart-id="user-preferences_notifications"
+            data-testid="router-link"
+            href="/user-preferences/notifications"
+          >
+            User Preferences
+          </a>
+        </li>
+        <li
+          class="pf-v5-c-menu__list-item"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-6"
+          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-safe="true"
+          role="none"
+        >
+          <button
+            class="pf-v5-c-menu__item"
+            role="menuitem"
+            tabindex="-1"
+            type="button"
+          >
+            <span
+              class="pf-v5-c-menu__item-main"
+            >
+              <span
+                class="pf-v5-c-menu__item-text"
+              >
+                Log out
+              </span>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 `;
 
 exports[`UserToggle should render correctly with isSmall true 1`] = `
 <div>
-  <div
-    aria-label="Overflow actions"
-    class="pf-c-dropdown pf-m-align-right pf-m-full-height chr-c-dropdown-user-toggle"
-    data-ouia-component-id="chrome-user-menu"
-    data-ouia-component-type="PF4/Dropdown"
-    data-ouia-safe="true"
+  <button
+    aria-expanded="false"
+    class="pf-v5-c-menu-toggle pf-m-plain pf-m-full-height data-hj-suppress sentry-mask pf-v5-u-pr-lg pf-v5-u-pl-lg"
+    id="UserMenu"
+    type="button"
+    widget-type="UserMenu"
   >
-    <button
-      aria-expanded="false"
-      aria-haspopup="true"
-      aria-label="Actions"
-      class="pf-c-dropdown__toggle data-hj-suppress sentry-mask"
-      id="pf-dropdown-toggle-id-0"
-      type="button"
+    <svg
+      aria-hidden="true"
+      class="pf-v5-svg"
+      fill="currentColor"
+      height="1em"
+      role="img"
+      viewBox="0 0 192 512"
+      width="1em"
     >
-      <svg
-        aria-hidden="true"
-        fill="currentColor"
-        height="1em"
-        role="img"
-        style="vertical-align: -0.125em;"
-        viewBox="0 0 192 512"
-        width="1em"
-      >
-        <path
-          d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"
-        />
-      </svg>
-    </button>
-  </div>
+      <path
+        d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"
+      />
+    </svg>
+  </button>
 </div>
 `;

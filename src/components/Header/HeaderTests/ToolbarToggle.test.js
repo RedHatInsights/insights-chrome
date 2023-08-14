@@ -46,11 +46,11 @@ describe('ToolbarToggle', () => {
     act(() => {
       fireEvent.click(toggleButton);
     });
-    expect(container.querySelectorAll('.pf-c-dropdown__menu-item')).toHaveLength(2);
+    expect(container.querySelectorAll('.pf-v5-c-menu__list-item')).toHaveLength(2);
     act(() => {
       fireEvent.click(toggleButton);
     });
-    expect(container.querySelectorAll('.pf-c-dropdown__menu-item')).toHaveLength(0);
+    expect(container.querySelectorAll('.pf-v5-c-menu__list-item')).toHaveLength(0);
   });
 
   it('should call onClick menu item callback', () => {
@@ -59,7 +59,7 @@ describe('ToolbarToggle', () => {
     act(() => {
       fireEvent.click(toggleButton);
     });
-    const actionButton = container.querySelector('button.pf-c-dropdown__menu-item');
+    const actionButton = container.querySelector('button.pf-v5-c-menu__item');
     expect(actionButton).toBeTruthy();
     act(() => {
       fireEvent.click(actionButton);
