@@ -19,11 +19,12 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import '../../src/sass/chrome.scss'
+import '../../src/sass/pf-5-assets.scss'
+import { mount } from 'cypress/react18'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import { mount } from 'cypress/react'
 const { addMatchImageSnapshotCommand,  } = require('@simonsmith/cypress-image-snapshot/command');
 
 // configure the matcher to be less precise to adjust between the headless and normal browser rendering differences

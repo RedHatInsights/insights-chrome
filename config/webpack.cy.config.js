@@ -6,10 +6,13 @@ const { ModuleFederationPlugin } = require('webpack').container;
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 
 // call default generator then pair different variations of uri with each base
-const myGenerator = asGenerator((item, ...rest) => {
+const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
+      if (base.includes('pf-4-styles')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
+      }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
       }
@@ -18,7 +21,8 @@ const myGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-module.exports = {
+/** @type { import("webpack").Configuration } */
+const JSConfig = {
   module: {
     rules: [
       {
@@ -44,7 +48,7 @@ module.exports = {
           {
             loader: 'resolve-url-loader',
             options: {
-              join: createJoinFunction('myJoinFn', createJoinImplementation(myGenerator)),
+              join: createJoinFunction('myJoinFn', createJoinImplementation(PFGenerator)),
             },
           },
           {
@@ -102,3 +106,5 @@ module.exports = {
     }),
   ],
 };
+
+module.exports = JSConfig;

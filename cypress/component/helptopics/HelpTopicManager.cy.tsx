@@ -161,8 +161,8 @@ describe('HelpTopicManager', () => {
     cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Create a new environment');
 
     // open help topics context menu
-    cy.get('button#helptopics-toggle').click();
-    cy.get('button.pf-v5-c-options-menu__menu-item').contains('Automatic Deployment').click();
+    cy.get('.pfext-quick-start-panel-content__title>button').click();
+    cy.get('button.pf-v5-c-menu__item').contains('Automatic Deployment').click();
     cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Automatic Deployment');
 
     // switch from external button back to first topic
