@@ -7,6 +7,8 @@ import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { createUser } from '../cognito/auth';
 
+const serviceAPI = servicesApi();
+
 export type SSOServiceDetails = {
   is_entitled: boolean;
   is_trial: boolean;
@@ -191,8 +193,8 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
     try {
       if (user.identity.org_id) {
         data = isITLessEnv
-          ? ((await servicesApi().servicesGet()) as unknown as typeof data)
-          : ((await servicesApi().servicesGet()) as unknown as typeof data);
+          ? ((await serviceAPI.servicesGet()) as unknown as typeof data)
+          : ((await serviceAPI.servicesGet()) as unknown as typeof data);
       } else {
         console.log('Cannot call entitlements API, no account number');
       }

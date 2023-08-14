@@ -1,5 +1,4 @@
 import localforage from 'localforage';
-
 import { deleteLocalStorageItems, isBeta, lastActive } from './common';
 
 export const createCacheStore = (endpoint: string, cacheKey: string) => {

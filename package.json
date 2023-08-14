@@ -148,6 +148,7 @@
     "abortcontroller-polyfill": "^1.7.5",
     "amazon-cognito-identity-js": "^6.1.2",
     "axios": "^0.27.2",
+    "axios-cache-interceptor": "^0.10.3",
     "axios-mock-adapter": "^1.21.2",
     "broadcast-channel": "^4.20.2",
     "classnames": "^2.3.2",

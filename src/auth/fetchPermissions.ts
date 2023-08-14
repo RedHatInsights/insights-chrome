@@ -6,9 +6,9 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 const log = logger('fetchPermissions.ts');
 
 const perPage = 1000;
+const rbacApi = createRbacAPI();
 
 const fetchPermissions = (userToken: string, app = '') => {
-  const rbacApi = createRbacAPI();
   return rbacApi
     .getPrincipalAccess(app, undefined, undefined, perPage)
     .then((resp) => {
