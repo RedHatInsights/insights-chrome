@@ -137,6 +137,7 @@ const ScalprumRoot = memo(
 
     const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
       // set the deprecated chrome API to window
+      // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
       window.insights.chrome = chromeApiWrapper(chromeApi);
       return {
         config,

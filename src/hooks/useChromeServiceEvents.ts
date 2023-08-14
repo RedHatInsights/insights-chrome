@@ -8,7 +8,7 @@ const NOTIFICATION_DRAWER = 'notifications.drawer';
 const SAMPLE_EVENT = 'sample.type';
 
 const ALL_TYPES = [NOTIFICATION_DRAWER, SAMPLE_EVENT] as const;
-type EventTypes = typeof ALL_TYPES[number];
+type EventTypes = (typeof ALL_TYPES)[number];
 
 type SamplePayload = {
   foo: string;
