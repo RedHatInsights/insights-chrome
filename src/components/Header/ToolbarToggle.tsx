@@ -63,8 +63,8 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           disabled={isDisabled}
           component={
             appId && url
-              ? () => (
-                  <ChromeLink {...rest} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
+              ? ({ className: itemClassName }) => (
+                  <ChromeLink {...rest} className={itemClassName} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
                     {title}
                   </ChromeLink>
                 )
@@ -92,28 +92,28 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
       )
   );
 
-  const toggle = (
-    <MenuToggle
-      variant={props.icon ? 'plain' : 'default'}
-      className={props.className}
-      id={props.id?.toString()}
-      onClick={onToggle}
-      aria-label={props.ariaLabel}
-    >
-      {props.icon && <props.icon />}
-    </MenuToggle>
-  );
-
   return (
     <Dropdown
       popperProps={{
         position: PopoverPosition.right,
       }}
-      toggle={() => toggle}
+      onOpenChange={setIsOpen}
+      toggle={(toggleRef) => (
+        <MenuToggle
+          ref={toggleRef}
+          variant={props.icon ? 'plain' : 'default'}
+          className={props.className}
+          id={props.id?.toString()}
+          onClick={onToggle}
+          aria-label={props.ariaLabel}
+          isExpanded={isOpen}
+        >
+          {props.icon && <props.icon />}
+        </MenuToggle>
+      )}
       isOpen={isOpen}
       onSelect={onSelect}
       ouiaId={props.ouiaId}
-      isPlain
     >
       <DropdownList>{dropdownItems}</DropdownList>
     </Dropdown>

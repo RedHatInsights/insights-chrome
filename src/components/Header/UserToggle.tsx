@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
@@ -14,6 +14,9 @@ import { ReduxState } from '../../redux/store';
 import { logout } from '../../jwt/jwt';
 import { cogLogout } from '../../cognito/auth';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
+import classNames from 'classnames';
+
+import './UserToggle.scss';
 
 const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string, isInternal?: boolean, extraItems: React.ReactNode[] = []) => {
   const env = getEnv();
@@ -22,6 +25,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
   const intl = useIntl();
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
+  const questionMarkRef = useRef(null);
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -32,24 +36,24 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     </DropdownItem>,
     <React.Fragment key="account wrapper">
       {accountNumber && (
-        <DropdownItem component="span" key="Account" className="disabled-pointer">
-          <dl className="chr-c-dropdown-item__stack">
-            {!isITLessEnv && (
-              <>
-                <dt className="chr-c-dropdown-item__stack--header">
-                  {intl.formatMessage(messages.accountNumber)}
-                  <span className="visible-pointer pf-v5-u-ml-sm">
-                    <Tooltip id="accountNumber-tooltip" content={accountNumberTooltip}>
+        <Tooltip triggerRef={questionMarkRef} id="accountNumber-tooltip" content={accountNumberTooltip}>
+          <DropdownItem component="span" key="Account" className="chr-c-disabled-pointer">
+            <dl className="chr-c-dropdown-item__stack">
+              {!isITLessEnv && (
+                <>
+                  <dt className="chr-c-dropdown-item__stack--header">
+                    {intl.formatMessage(messages.accountNumber)}
+                    <span ref={questionMarkRef} className="visible-pointer pf-v5-u-ml-sm">
                       <QuestionCircleIcon />
-                    </Tooltip>
-                  </span>
-                </dt>
-                <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
-              </>
-            )}
-            {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
-          </dl>
-        </DropdownItem>
+                    </span>
+                  </dt>
+                  <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
+                </>
+              )}
+              {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
+            </dl>
+          </DropdownItem>
+        </Tooltip>
       )}
     </React.Fragment>,
     <Divider component="li" key="separator" />,
@@ -57,9 +61,10 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
       {!isITLessEnv && (
         <DropdownItem
           key="My Profile"
-          href={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
+          to={`https://www.${prefix}redhat.com/wapps/ugc/protected/personalInfo.html`}
           target="_blank"
           rel="noopener noreferrer"
+          component="a"
         >
           {intl.formatMessage(messages.myProfile)}
         </DropdownItem>
@@ -67,8 +72,8 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     </React.Fragment>,
     <React.Fragment key="My user access wrapper">
       <DropdownItem
-        component={() => (
-          <ChromeLink href="/iam/my-user-access" appId="rbac">
+        component={({ className }) => (
+          <ChromeLink className={className} href="/iam/my-user-access" appId="rbac">
             {intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         )}
@@ -77,8 +82,8 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
       <DropdownItem
-        component={() => (
-          <ChromeLink href="/user-preferences/notifications" appId="userPreferences">
+        component={({ className }) => (
+          <ChromeLink className={className} href="/user-preferences/notifications" appId="userPreferences">
             {intl.formatMessage(messages.userPreferences)}
           </ChromeLink>
         )}
@@ -125,22 +130,6 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const onToggle = () => {
     setIsOpen((prev) => !prev);
   };
-  const toggle = isSmall ? (
-    <MenuToggle
-      variant="plain"
-      isFullHeight
-      id="UserMenu"
-      className="data-hj-suppress sentry-mask pf-v5-u-pr-lg pf-v5-u-pl-lg"
-      widget-type="UserMenu"
-      onClick={onToggle}
-    >
-      <EllipsisVIcon />
-    </MenuToggle>
-  ) : (
-    <MenuToggle isFullHeight icon={<UserIcon />} onClick={onToggle} className="data-hj-suppress sentry-mask">
-      {account.name}
-    </MenuToggle>
-  );
   return (
     <Dropdown
       popperProps={{
@@ -149,7 +138,27 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
       aria-label="Overflow actions"
       ouiaId="chrome-user-menu"
       onSelect={onSelect}
-      toggle={() => toggle}
+      onOpenChange={setIsOpen}
+      toggle={(toggleRef) => (
+        <MenuToggle
+          ref={toggleRef}
+          isExpanded={isOpen}
+          isFullHeight
+          onClick={onToggle}
+          variant={isSmall ? 'plain' : undefined}
+          className={classNames('data-hj-suppress', 'sentry-mask', { 'pf-v5-u-pr-lg pf-v5-u-pl-lg': isSmall })}
+          {...(isSmall
+            ? {
+                id: 'UserMenu',
+                'widget-type': 'UserMenu',
+              }
+            : {
+                icon: <UserIcon />,
+              })}
+        >
+          {isSmall ? <EllipsisVIcon /> : account.name}
+        </MenuToggle>
+      )}
       className="chr-c-dropdown-user-toggle"
       isOpen={isOpen}
     >

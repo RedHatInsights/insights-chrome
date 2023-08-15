@@ -105,7 +105,7 @@ const BreadcrumbsFavorites = ({
   );
   return (
     <div ref={containerRef}>
-      <Popper placement="bottom-end" trigger={toggle} popper={menu} isVisible={isOpen} width="trigger" appendTo={containerRef.current || undefined} />
+      <Popper placement="bottom-end" trigger={toggle} popper={menu} isVisible={isOpen} appendTo={containerRef.current || undefined} />
     </div>
   );
 };
