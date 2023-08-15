@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { MastheadToggle } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { PageToggleButton } from '@patternfly/react-core/dist/dynamic/components/Page';
 import BarsIcon from '@patternfly/react-icons/dist/dynamic/icons/bars-icon';
@@ -10,12 +9,10 @@ const MastheadMenuToggle = ({
   isNavOpen,
   setIsNavOpen,
   className,
-  iconSize = 'sm',
 }: {
   isNavOpen?: boolean;
   setIsNavOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
-  iconSize?: 'sm' | 'md' | 'lg';
 }) => {
   const dispatch = useDispatch();
   return (
@@ -30,9 +27,7 @@ const MastheadMenuToggle = ({
           dispatch(onToggle());
         }}
       >
-        <Icon size={iconSize}>
-          <BarsIcon />
-        </Icon>
+        <BarsIcon />
       </PageToggleButton>
     </MastheadToggle>
   );
