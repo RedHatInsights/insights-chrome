@@ -59,8 +59,18 @@
         }
     }
 
+    handle /preview* {
+        root * /opt/app-root/src/build/preview
+        file_server
+        try_files {path} {path}/ /index.html
+    }
+    handle /beta* {
+        root * /opt/app-root/src/build/beta
+        file_server
+        try_files {path} {path}/ /index.html
+    }
     handle * {
-        root * /opt/app-root/src/build
+        root * /opt/app-root/src/build/stable
         file_server
         try_files {path} {path}/ /index.html
     }
