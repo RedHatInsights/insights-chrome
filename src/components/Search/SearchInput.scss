@@ -14,7 +14,7 @@
       input::placeholder {
         color: var(--pf-v5-global--Color--light-300);
       }
-      input:hover::placeholder {
+      input, input:hover::placeholder {
         color: var(--pf-v5-global--Color--light-100) !important;
       }
       &:hover {
