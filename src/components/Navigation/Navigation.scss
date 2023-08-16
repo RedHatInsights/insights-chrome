@@ -10,6 +10,7 @@
 }
 
 .pf-v5-c-nav__list {
+  padding-top: 0;
   section.chr-c-section-nav {
     margin-bottom: var(--pf-v5-global--spacer--md);
     margin-top: 0 !important;
@@ -19,6 +20,7 @@
       color: var(--pf-v5-global--palette--black-500);
       font-size: var(--pf-v5-global--FontSize--xs);
       font-weight: var(--pf-v5-global--FontWeight--medium);
+      margin-bottom: 0;
       padding: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
     }
     ul
