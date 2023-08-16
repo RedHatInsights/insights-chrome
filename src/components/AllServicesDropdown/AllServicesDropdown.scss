@@ -57,6 +57,9 @@
       padding: var(--pf-v5-global--spacer--sm);
       width: 100%;
     }
+    .pf-v5-c-sidebar__panel {
+      --pf-v5-l-flex--RowGap: 0;
+    }
   }
 }
 
