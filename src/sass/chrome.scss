@@ -57,6 +57,16 @@ aside {
   }
 }
 
+// temp replacement for non-working PF4 variables
+.pf-c-page__main-section {
+  // padding: var(--pf-c-page__main-section--PaddingTop) var(--pf-c-page__main-section--PaddingRight) var(--pf-c-page__main-section--PaddingBottom) var(--pf-c-page__main-section--PaddingLeft);
+  padding: 24px;
+}
+.pf-c-page__main-section.pf-m-light {
+  // --pf-c-page__main-section--BackgroundColor: var(--pf-c-page__main-section--m-light--BackgroundColor);
+  --pf-c-page__main-section--BackgroundColor: #fff;
+}
+
 // Landing page logout alert
 .pf-v5-c-alert.chr-c-alert {
   position: absolute;
