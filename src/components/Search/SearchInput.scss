@@ -1,6 +1,9 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 .chr-c-search {
+  &__collapsed {
+    justify-content: flex-end;
+  }
   &__input {
     .pf-v5-c-input-group {
       background-color: transparent !important;
@@ -24,6 +27,7 @@
         outline: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BackgroundColor--dark-100);
       }
     }
+
   }
   &__menu {
     overflow-y: auto;
