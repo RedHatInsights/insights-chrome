@@ -351,8 +351,14 @@ export function markNotificationAsRead(state: ChromeState, payload: Number): Chr
     notifications: {
       isExpanded: state.notifications?.isExpanded || false,
       count: state.notifications?.count || 0,
-      data: (state.notifications?.data || []).map((notification: NotificationData) =>
-        notification.id === payload ? { ...notification, read: true } : notification
+      data: (state.notifications?.data || []).map((notification: NotificationData) => {
+        console.log('VIENDO EL notification en state: ', notification);
+        console.log('VIENDO mi payload: ', payload);
+        if (notification.id === payload){
+          console.log('PUTA MADRE', notification);
+        }
+        return notification.id === payload ? { ...notification, read: true } : notification
+      }
       ),
     },
   };

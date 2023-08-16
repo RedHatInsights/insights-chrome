@@ -24,7 +24,7 @@ import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-ico
 import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { MARK_ALL_NOTIFICATION_AS_READ, MARK_ALL_NOTIFICATION_AS_UNREAD } from '../../redux/action-types';
+import { markAllNotificationsAsRead, markAllNotificationsAsUnread } from '../../redux/actions';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -65,12 +65,12 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const onMarkAllAsRead = () => {
-    dispatch({ type: MARK_ALL_NOTIFICATION_AS_READ });
+    dispatch(markAllNotificationsAsRead());
     setIsDropdownOpen(false);
   };
 
   const onMarkAllAsUnread = () => {
-    dispatch({ type: MARK_ALL_NOTIFICATION_AS_UNREAD });
+    dispatch(markAllNotificationsAsUnread());
     setIsDropdownOpen(false);
   };
 
@@ -91,7 +91,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       View event log
     </DropdownItem>,
     <DropdownItem key="notification settings" icon={ExternalLinkSquareAltIcon}>
-      Configure notificatio settings
+      Configure notification settings
     </DropdownItem>,
     <DropdownItem key="notification preferences" icon={ExternalLinkSquareAltIcon}>
       Manage my notification preferences
@@ -117,6 +117,11 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     } else {
       return notifications.map((notification, index) => <NotificationItem key={index} notification={notification} />);
     }
+
+    return (filteredNotifications?.length > 0 
+      ? filteredNotifications
+      : notifications 
+    ).map((notification, index) => <NotificationItem key={index} notification={notification} />);
   };
 
   return (

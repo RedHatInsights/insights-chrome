@@ -12,16 +12,12 @@ import {
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { useDispatch } from 'react-redux';
-import { Notifications } from '../../redux/store';
+import { NotificationData } from '../../redux/store';
 import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
 
-const NotificationItem = ({ notification }: { notification: Notifications['data'][0] }) => {
+const NotificationItem = ({ notification }: { notification: NotificationData }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-
-  const onDropdownToggle = (isOpen: boolean) => {
-    setIsDropdownOpen(isOpen);
-  };
 
   const onCheckboxToggle = () => {
     if (!notification.read) dispatch(markNotificationAsRead(notification.id));
@@ -35,10 +31,10 @@ const NotificationItem = ({ notification }: { notification: Notifications['data'
       <NotificationDrawerList>
         <NotificationDrawerListItem variant="info" isRead={notification.read}>
           <NotificationDrawerListItemHeader title={notification.title} srTitle="Info notification:">
-            <Checkbox isChecked={notification.read} onChange={onCheckboxToggle} id="read-checkbox" name="read-checkbox" />
+            <Checkbox isChecked={notification.read} onChange={() => onCheckboxToggle()} id="read-checkbox" name="read-checkbox" />
             <Dropdown
               position={DropdownPosition.right}
-              toggle={<KebabToggle onToggle={onDropdownToggle} id="kebab-toggle" />}
+              toggle={<KebabToggle onToggle={() => setIsDropdownOpen(!isDropdownOpen)} id="kebab-toggle" />}
               isOpen={isDropdownOpen}
               isPlain
               dropdownItems={dropdownItems}
