@@ -2,15 +2,15 @@ export const testData = [
   {
     id: 1,
     title: 'TEST NOTIFICATION',
-    description: 'This is a notification test bro, bet, no cap, on god.',
+    description: 'This is a notification test.',
     read: false,
-    source: 'ur mom lolz',
+    source: 'ROSA',
     created: new Date().toString(),
   },
   {
     id: 2,
     title: 'PRUEBA DE NOTIFICACIONES',
-    description: 'This is a notification test bro, bet, no cap, on god.',
+    description: 'This is a notification test.',
     read: false,
     source: 'RHEL',
     created: new Date().toString(),
@@ -18,7 +18,7 @@ export const testData = [
   {
     id: 3,
     title: 'NOTIFICATION TEST',
-    description: 'This is a notification test bro, bet, no cap, on god.',
+    description: 'This is a notification test.',
     read: false,
     source: 'RBAC',
     created: new Date().toString(),
@@ -26,7 +26,7 @@ export const testData = [
   {
     id: 4,
     title: 'ALERT',
-    description: 'This is a notification test bro, bet, no cap, on god.',
+    description: 'This is a notification test.',
     read: false,
     source: 'REMEDIATIONS',
     created: new Date().toString(),
@@ -34,7 +34,7 @@ export const testData = [
   {
     id: 5,
     title: 'HONEY I BLEW UP THE BACKEND AGAIN',
-    description: 'This is a notification test bro, bet, no cap, on god.',
+    description: 'This is a notification test.',
     read: false,
     source: 'OpenShift',
     created: new Date().toString(),

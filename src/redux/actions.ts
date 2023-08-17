@@ -222,5 +222,5 @@ export const markAllNotificationsAsRead = () => ({
 });
 
 export const markAllNotificationsAsUnread = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_READ,
+  type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
 });
