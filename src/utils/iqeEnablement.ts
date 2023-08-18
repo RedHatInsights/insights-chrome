@@ -103,9 +103,25 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
    * Check response errors for cross_account requests.
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
-  window.fetch = function fetchReplacement(path = '', options, ...rest) {
+  window.fetch = function fetchReplacement(path: URL | RequestInfo = '', options, ...rest) {
     const tid = Math.random().toString(36);
     const additionalHeaders: any = spreadAdditionalHeaders(options);
+
+    /**
+     * If path is a Request object, it may contain headers. Those headers will be overwritten, not merged,
+     * by the headers property containing the authorization headers and additionalHeaders in options. Therefore,
+     * we need to merge any headers present in the Request object into additionalHeaders.
+     */
+
+    function isRequest(p: URL | RequestInfo): p is Request {
+      return !(p instanceof URL) && typeof p !== 'string';
+    }
+
+    if (isRequest(path)) {
+      for (const pair of path.headers.entries()) {
+        additionalHeaders[pair[0]] = pair[1];
+      }
+    }
 
     const prom = oldFetch.apply(this, [
       path,
