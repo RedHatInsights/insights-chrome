@@ -20,8 +20,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
   const dispatch = useDispatch();
 
   const onCheckboxToggle = () => {
-    if (!notification.read) dispatch(markNotificationAsRead(notification.id));
-    else dispatch(markNotificationAsUnread(notification.id));
+    dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
   };
 
   const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
@@ -42,7 +41,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
             />
           </NotificationDrawerListItemHeader>
           {/* TODO: Modify timestamp to only show correct "x minutes ago" */}
-          <NotificationDrawerListItemBody timestamp={`${notification.created}`}>
+          <NotificationDrawerListItemBody timestamp={`${notification.created.split('GMT')[0].trim()}`}>
             <Label variant="outline" isCompact className="pf-u-mb-md">
               {notification.source}
             </Label>

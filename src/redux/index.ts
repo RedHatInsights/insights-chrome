@@ -15,10 +15,10 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
-  markNotificationAsRead,
-  markNotificationAsUnread,
   markAllNotificationsAsRead,
   markAllNotificationsAsUnread,
+  markNotificationAsRead,
+  markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
@@ -148,7 +148,6 @@ export default function (): {
   chrome: (state: ChromeState, action: AnyAction) => ChromeState;
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
-
   return {
     chrome: (
       state = {
@@ -166,7 +165,7 @@ export default function (): {
         scalprumConfig: {},
         moduleRoutes: [],
         notifications: {
-          data: [], 
+          data: [],
           isExpanded: false,
           count: 0,
         },

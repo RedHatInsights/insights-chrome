@@ -26,7 +26,7 @@ import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
-// import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag } from '@unleash/proxy-client-react';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -54,8 +54,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
     tabbableElement.focus();
   };
-  // const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const isNotificationsEnabled = true;
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+
   return (
     <Page
       className={

@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Badge,
   Button,
+  Checkbox,
   Dropdown,
+  DropdownGroup,
   DropdownItem,
   DropdownPosition,
   DropdownSeparator,
-  DropdownToggle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   KebabToggle,
+  MenuToggle,
   NotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerHeader,
@@ -55,12 +58,22 @@ const EmptyNotifications = () => (
 const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>([]);
   const dispatch = useDispatch();
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
 
+  useEffect(() => {
+    const modifiedNotifications = (activeFilters || []).reduce(
+      (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
+      []
+    );
+
+    setFilteredNotifications(modifiedNotifications);
+  }, [activeFilters]);
+
   const onNotificationsDrawerClose = () => {
-    setFilteredNotifications([]);
+    setActiveFilters([]);
     dispatch(toggleNotificationsDrawer());
   };
 
@@ -75,8 +88,9 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const onFilterSelect = (chosenFilter: string) => {
-    setFilteredNotifications(notifications.filter((notification) => notification.source === chosenFilter));
-    setIsFilterDropdownOpen(false);
+    activeFilters.includes(chosenFilter)
+      ? setActiveFilters(activeFilters.filter((filter) => filter !== chosenFilter))
+      : setActiveFilters([...activeFilters, chosenFilter]);
   };
 
   const dropdownItems = [
@@ -99,12 +113,24 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   ];
 
   const filterDropdownItems = () => {
-    const uniqueSources = new Set(notifications.map((notification) => notification.source));
-    return Array.from(uniqueSources).map((source, index) => (
-      <DropdownItem key={index} onClick={() => onFilterSelect(source)}>
-        {source}
-      </DropdownItem>
-    ));
+    const sources = notifications.reduce((acc: string[], { source }) => (acc.includes(source) ? acc : [...acc, source]), []);
+
+    return [
+      <DropdownGroup key="filter-label" label="Show notifications for...">
+        {sources.map((source, index) => (
+          <DropdownItem key={index} onClick={() => onFilterSelect(source)}>
+            <Checkbox isChecked={activeFilters.includes(source)} id={index.toString()} className="pf-u-mr-xs" />
+            {source}
+          </DropdownItem>
+        ))}
+        <DropdownSeparator />
+        <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
+          <Button variant="link" isInline>
+            Reset filters
+          </Button>
+        </DropdownItem>
+      </DropdownGroup>,
+    ];
   };
 
   const renderNotifications = () => {
@@ -112,26 +138,23 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       return <EmptyNotifications />;
     }
 
-    if (filteredNotifications?.length > 0) {
-      return filteredNotifications?.map((notification, index) => <NotificationItem key={index} notification={notification} />);
-    } else {
-      return notifications.map((notification, index) => <NotificationItem key={index} notification={notification} />);
-    }
+    // TODO: Add sorting by timestamps as primary sort, then by read/unread.
+    const sortedNotifications = (filteredNotifications?.length > 0 ? filteredNotifications : notifications).sort(
+      (currentNotification, nextNotification) => (currentNotification.read === nextNotification.read ? 0 : currentNotification.read ? 1 : -1)
+    );
 
-    return (filteredNotifications?.length > 0 
-      ? filteredNotifications
-      : notifications 
-    ).map((notification, index) => <NotificationItem key={index} notification={notification} />);
+    return sortedNotifications.map((notification, index) => <NotificationItem key={index} notification={notification} />);
   };
 
   return (
     <NotificationDrawer ref={innerRef}>
       <NotificationDrawerHeader onClose={() => onNotificationsDrawerClose()}>
+        {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
           toggle={
-            <DropdownToggle toggleIndicator={null} onToggle={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle">
+            <MenuToggle onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle" isFullWidth variant="plainText">
               <FilterIcon />
-            </DropdownToggle>
+            </MenuToggle>
           }
           isOpen={isFilterDropdownOpen}
           dropdownItems={filterDropdownItems()}
