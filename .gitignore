@@ -1,5 +1,6 @@
 build/
 node_modules/
+public/
 
 #emacs
 *[#]*[#]
@@ -31,6 +32,7 @@ cypress/screenshots
 .cache
 .webpack-cache
 .cypress-cache
+.sass-cache
 
 #swc
 .swc

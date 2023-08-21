@@ -1,9 +1,11 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import UserToggle from '../UserToggle';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 
 jest.mock('../UserIcon', () => () => '<UserIcon />');
 
@@ -29,14 +31,18 @@ describe('UserToggle', () => {
       },
     };
   });
-  it('should render correctly with isSmall false', () => {
+  it('should render correctly with isSmall false', async () => {
     const store = mockStore(initialState);
     const { container } = render(
-      <Provider store={store}>
-        <UserToggle />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store}>
+          <UserToggle />
+        </Provider>
+      </MemoryRouter>
     );
-    container.querySelector(`[data-ouia-component-id='chrome-user-menu']`).click();
+    await act(async () => {
+      await screen.getByText('someFirstName someLastName').click();
+    });
     expect(container).toMatchSnapshot();
   });
 

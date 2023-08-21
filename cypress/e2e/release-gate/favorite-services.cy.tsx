@@ -48,9 +48,9 @@ describe('Favorite-services', () => {
 
     cy.wait('@services').its('response.statusCode').should('equal', 200);
     // check if a favorites link exists on the page
-    cy.get('.pf-c-menu-toggle__text').click();
+    cy.get('button').contains('Services').click();
     cy.contains('View all services').click();
-    cy.contains(serviceName).parent('.chr-c-favorite-trigger').find('.pf-c-icon__content').click({ force: true });
+    cy.contains(serviceName).parent('.chr-c-favorite-trigger').find('.pf-v5-c-icon').click({ force: true });
     cy.intercept('POST', '/api/chrome-service/v1/favorite-pages', {
       data: [
         {
@@ -71,7 +71,7 @@ describe('Favorite-services', () => {
       interceptionCounter = true;
     });
     cy.contains(serviceName).parent('.chr-c-favorite-trigger.chr-c-icon-favorited').should('exist');
-    cy.get('.pf-c-brand').click();
+    cy.get('.pf-v5-c-brand').click();
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 24353452,
@@ -132,6 +132,6 @@ describe('Favorite-services', () => {
       }
     });
     cy.wait(2000);
-    cy.get('.chr-c-favorite-service__tile').find('.pf-u-mb-sm').should('contain', serviceName);
+    cy.get('.chr-c-favorite-service__tile').find('.pf-v5-u-mb-sm').should('contain', serviceName);
   });
 });

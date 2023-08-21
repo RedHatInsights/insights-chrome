@@ -11,7 +11,7 @@ import RootApp from '../../../src/components/RootApp/RootApp';
 import chromeReducer, { chromeInitialState } from '../../../src/redux';
 
 import testUser from '../../fixtures/testUser.json';
-import { Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import LibtJWTContext from '../../../src/components/LibJWTContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { LibJWT } from '../../../src/auth';
@@ -155,26 +155,26 @@ describe('HelpTopicManager', () => {
     cy.mount(<Wrapper store={store}></Wrapper>);
     // open drawer
     cy.get('#open-one').click();
-    cy.get(`h1.pf-c-title`).should('be.visible').contains('Configure components');
+    cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Configure components');
     // switch from external button
     cy.get('#open-two').click();
-    cy.get(`h1.pf-c-title`).should('be.visible').contains('Create a new environment');
+    cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Create a new environment');
 
     // open help topics context menu
-    cy.get('button#helptopics-toggle').click();
-    cy.get('button.pf-c-options-menu__menu-item').contains('Automatic Deployment').click();
-    cy.get(`h1.pf-c-title`).should('be.visible').contains('Automatic Deployment');
+    cy.get('.pfext-quick-start-panel-content__title>button').click();
+    cy.get('button.pf-v5-c-menu__item').contains('Automatic Deployment').click();
+    cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Automatic Deployment');
 
     // switch from external button back to first topic
     cy.get('#open-one').click();
-    cy.get(`h1.pf-c-title`).should('be.visible').contains('Configure components');
+    cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Configure components');
 
     // close drawer
     cy.get('div.pfext-quick-start-panel-content__close-button').click();
-    cy.get(`h1.pf-c-title`).contains('Configure components').should('not.exist');
+    cy.get(`h1.pf-v5-c-title`).contains('Configure components').should('not.exist');
 
     // open second help topic
     cy.get('#open-two').click();
-    cy.get(`h1.pf-c-title`).should('be.visible').contains('Create a new environment');
+    cy.get(`h1.pf-v5-c-title`).should('be.visible').contains('Create a new environment');
   });
 });

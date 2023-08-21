@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { AlertVariant } from '@patternfly/react-core';
+import { AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import Login from './Login';
 import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';

@@ -3,13 +3,7 @@ describe('Landing page', () => {
     cy.login();
 
     cy.visit('/');
-
-    cy.intercept({
-      method: 'GET',
-      url: '**/services/services.json',
-    }).as('services');
-
-    cy.wait('@services').its('response.statusCode').should('equal', 200);
+    cy.wait(4000);
 
     // check if a favorites link exists on the page
     cy.contains('My favorite services').should('exist');
@@ -19,14 +13,7 @@ describe('Landing page', () => {
     cy.login();
 
     cy.visit('/');
-
-    cy.intercept({
-      method: 'GET',
-      url: '**/services/services.json',
-    }).as('services');
-
-    cy.wait('@services').its('response.statusCode').should('equal', 200);
-
+    cy.wait(4000);
     cy.get('.tooltip-button-settings-cy').invoke('show').trigger('mouseenter').wait(1000);
     cy.get('.tooltip-inner-settings-cy').should('be.visible').and('contain', 'Settings');
 

@@ -2,21 +2,20 @@
 
 exports[`HeaderAlert should render correctly dismissable 1`] = `
 <div
-  aria-label="Info Alert"
-  class="pf-c-alert pf-m-info chr-c-alert"
+  class="pf-v5-c-alert pf-m-info chr-c-alert"
   data-ouia-component-id="OUIA-Generated-Alert-info-2"
-  data-ouia-component-type="PF4/Alert"
+  data-ouia-component-type="PF5/Alert"
   data-ouia-safe="true"
 >
   <div
-    class="pf-c-alert__icon"
+    class="pf-v5-c-alert__icon"
   >
     <svg
       aria-hidden="true"
+      class="pf-v5-svg"
       fill="currentColor"
       height="1em"
       role="img"
-      style="vertical-align: -0.125em;"
       viewBox="0 0 512 512"
       width="1em"
     >
@@ -26,33 +25,33 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
     </svg>
   </div>
   <h4
-    class="pf-c-alert__title"
+    class="pf-v5-c-alert__title"
   >
     <span
-      class="pf-u-screen-reader"
+      class="pf-v5-u-screen-reader"
     >
       Info alert:
     </span>
     test
   </h4>
   <div
-    class="pf-c-alert__action"
+    class="pf-v5-c-alert__action"
   >
     <button
       aria-disabled="false"
       aria-label="Close Info alert: alert: test"
-      class="pf-c-button pf-m-plain"
+      class="pf-v5-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-2"
-      data-ouia-component-type="PF4/Button"
+      data-ouia-component-type="PF5/Button"
       data-ouia-safe="true"
       type="button"
     >
       <svg
         aria-hidden="true"
+        class="pf-v5-svg"
         fill="currentColor"
         height="1em"
         role="img"
-        style="vertical-align: -0.125em;"
         viewBox="0 0 352 512"
         width="1em"
       >
@@ -67,21 +66,20 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
 
 exports[`HeaderAlert should render correctly not dismissable 1`] = `
 <div
-  aria-label="Info Alert"
-  class="pf-c-alert pf-m-info chr-c-alert"
+  class="pf-v5-c-alert pf-m-info chr-c-alert"
   data-ouia-component-id="OUIA-Generated-Alert-info-1"
-  data-ouia-component-type="PF4/Alert"
+  data-ouia-component-type="PF5/Alert"
   data-ouia-safe="true"
 >
   <div
-    class="pf-c-alert__icon"
+    class="pf-v5-c-alert__icon"
   >
     <svg
       aria-hidden="true"
+      class="pf-v5-svg"
       fill="currentColor"
       height="1em"
       role="img"
-      style="vertical-align: -0.125em;"
       viewBox="0 0 512 512"
       width="1em"
     >
@@ -91,33 +89,33 @@ exports[`HeaderAlert should render correctly not dismissable 1`] = `
     </svg>
   </div>
   <h4
-    class="pf-c-alert__title"
+    class="pf-v5-c-alert__title"
   >
     <span
-      class="pf-u-screen-reader"
+      class="pf-v5-u-screen-reader"
     >
       Info alert:
     </span>
     test
   </h4>
   <div
-    class="pf-c-alert__action"
+    class="pf-v5-c-alert__action"
   >
     <button
       aria-disabled="false"
       aria-label="Close Info alert: alert: test"
-      class="pf-c-button pf-m-plain"
+      class="pf-v5-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-1"
-      data-ouia-component-type="PF4/Button"
+      data-ouia-component-type="PF5/Button"
       data-ouia-safe="true"
       type="button"
     >
       <svg
         aria-hidden="true"
+        class="pf-v5-svg"
         fill="currentColor"
         height="1em"
         role="img"
-        style="vertical-align: -0.125em;"
         viewBox="0 0 352 512"
         width="1em"
       >

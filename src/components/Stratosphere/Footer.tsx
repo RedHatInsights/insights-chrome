@@ -1,4 +1,7 @@
-import { Divider, Flex, FlexItem, Level, LevelItem, Text, TextContent } from '@patternfly/react-core';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Level, LevelItem } from '@patternfly/react-core/dist/dynamic/layouts/Level';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React, { VoidFunctionComponent } from 'react';
 
 import './footer.scss';
@@ -17,14 +20,14 @@ const Footer = () => (
   <div className="chr-c-footer">
     <Level>
       <LevelItem>
-        <img className="chr-c-footer__logo pf-u-mr-3xl" src="/apps/frontend-assets/red-hat-logos/logo.svg" />
+        <img className="chr-c-footer__logo pf-v5-u-mr-3xl" src="/apps/frontend-assets/red-hat-logos/logo.svg" />
       </LevelItem>
-      <LevelItem className="pf-u-mr-2xl">
+      <LevelItem className="pf-v5-u-mr-2xl">
         <TextContent>
           <Text component="small">Copyright c 2023 Red Hat, Inc.</Text>
         </TextContent>
       </LevelItem>
-      <LevelItem className="pf-u-mr-auto">
+      <LevelItem className="pf-v5-u-mr-auto">
         <Flex>
           <FlexItem>
             <FooterLink href="https://www.redhat.com/en/about/privacy-policy" label="Privacy statement" />

@@ -62,7 +62,7 @@ localStorage.setItem(UNLEASH_ERROR_KEY, 'false');
 export let unleashClient: UnleashClient;
 export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
 
-const FeatureFlagsProvider: React.FC = ({ children }) => {
+const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const user = useSelector<DeepRequired<ReduxState>, DeepRequired<ChromeUser>>((state) => state.chrome.user);
   unleashClient = useMemo(
     () =>

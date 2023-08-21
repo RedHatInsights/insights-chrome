@@ -1,19 +1,14 @@
 import React, { memo, useContext, useState } from 'react';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Grid,
-  GridItem,
-  Label,
-  Modal,
-  ModalVariant,
-  Text,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon, OutlinedCommentsIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Grid, GridItem } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-comments-icon';
+
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownProps, DropdownToggle } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { isBeta } from '../../utils/common';
@@ -34,7 +36,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
     setIsOpen((prev) => !prev);
   };
 
-  const onToggle = (isOpen: boolean) => setIsOpen(isOpen);
+  const onToggle = () => setIsOpen((prev) => !prev);
 
   const onClickInternal = (
     ev: MouseEvent | React.KeyboardEvent<Element> | React.MouseEvent<any, MouseEvent>,
@@ -51,8 +53,8 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
     }
   };
 
-  // Render the questionmark icon items
-  const dropdownItems: DropdownProps['dropdownItems'] = props.dropdownItems.map(
+  // Render the question mark icon items
+  const dropdownItems = props.dropdownItems.map(
     ({ url, appId, title, onClick, isHidden, isDisabled, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
@@ -60,15 +62,15 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           ouiaId={title}
           disabled={isDisabled}
           component={
-            appId && url ? (
-              <ChromeLink {...rest} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
-                {title}
-              </ChromeLink>
-            ) : url ? (
-              'a'
-            ) : (
-              'button'
-            )
+            appId && url
+              ? ({ className: itemClassName }) => (
+                  <ChromeLink {...rest} className={itemClassName} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
+                    {title}
+                  </ChromeLink>
+                )
+              : url
+              ? 'a'
+              : 'button'
           }
           // Because the urls are using 'a', don't use onClick for accessibility
           // If it is a button, use the onClick prop
@@ -90,29 +92,31 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
       )
   );
 
-  const toggle = (
-    <DropdownToggle
-      className={props.className}
-      id={props.id?.toString()}
-      ouiaId={props.id}
-      toggleIndicator={props.hasToggleIndicator}
-      onToggle={onToggle}
-      aria-label={props.ariaLabel}
-    >
-      {props.icon && <props.icon />}
-    </DropdownToggle>
-  );
-
   return (
     <Dropdown
-      position={DropdownPosition.right}
-      toggle={toggle}
+      popperProps={{
+        position: PopoverPosition.right,
+      }}
+      onOpenChange={setIsOpen}
+      toggle={(toggleRef) => (
+        <MenuToggle
+          ref={toggleRef}
+          variant={props.icon ? 'plain' : 'default'}
+          className={props.className}
+          id={props.id?.toString()}
+          onClick={onToggle}
+          aria-label={props.ariaLabel}
+          isExpanded={isOpen}
+        >
+          {props.icon && <props.icon />}
+        </MenuToggle>
+      )}
       isOpen={isOpen}
-      dropdownItems={dropdownItems}
       onSelect={onSelect}
       ouiaId={props.ouiaId}
-      isPlain
-    />
+    >
+      <DropdownList>{dropdownItems}</DropdownList>
+    </Dropdown>
   );
 };
 
