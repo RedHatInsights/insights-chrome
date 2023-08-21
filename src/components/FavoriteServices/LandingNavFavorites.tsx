@@ -10,7 +10,7 @@ import useFavoritedServices from '../../hooks/useFavoritedServices';
 import EmptyState from '../FavoriteServices/EmptyState';
 import { bundleMapping } from '../../hooks/useBundle';
 import './LandingNavFavorites.scss';
-import ChromeLink from '../ChromeLink';
+import { Link } from 'react-router-dom';
 
 const LandingNavFavorites = () => {
   const favoritedServices = useFavoritedServices();
@@ -31,7 +31,7 @@ const LandingNavFavorites = () => {
   const buildFavorites = () => {
     return favoritedServices.slice((page - 1) * perPage, page * perPage).map((favorite, index) => (
       <GalleryItem key={index}>
-        <ChromeLink href={favorite.pathname} className="chr-c-favorite-service__tile">
+        <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card isFullHeight isFlat isSelectableRaised>
             <CardBody className="pf-v5-u-p-lg pf-v5-u-pt-xl">
               <TextContent className="pf-v5-u-text-align-center">
@@ -44,7 +44,7 @@ const LandingNavFavorites = () => {
               </TextContent>
             </CardBody>
           </Card>
-        </ChromeLink>
+        </Link>
       </GalleryItem>
     ));
   };
@@ -61,7 +61,7 @@ const LandingNavFavorites = () => {
               My favorite services
             </Text>
             <Text component={TextVariants.p} className="pf-v5-u-display-inline">
-              <ChromeLink href="/allservices">View all services</ChromeLink>
+              <Link to="/allservices">View all services</Link>
             </Text>
           </TextContent>
         </FlexItem>
