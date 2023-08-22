@@ -5,6 +5,7 @@ import { ChromeModule, NavItem, Navigation } from '../@types/types';
 import { ITLess, generateRoutesList, highlightItems, isBeta, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState, NotificationData } from './store';
+import { testData } from '../../testData';
 
 export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
   return {
@@ -338,7 +339,7 @@ export function toggleNotificationsReducer(state: ChromeState) {
     ...state,
     notifications: {
       ...state.notifications,
-      data: [],
+      data: testData,
       isExpanded: !state.notifications?.isExpanded,
     },
   };

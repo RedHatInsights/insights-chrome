@@ -3,16 +3,16 @@ import {
   Badge,
   Button,
   Checkbox,
+  Divider,
   Dropdown,
   DropdownGroup,
   DropdownItem,
-  DropdownPosition,
-  DropdownSeparator,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  KebabToggle,
+  Icon,
   MenuToggle,
+  MenuToggleElement,
   NotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerHeader,
@@ -25,6 +25,7 @@ import { toggleNotificationsDrawer } from '../../redux/actions';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
 import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
+import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
 import { markAllNotificationsAsRead, markAllNotificationsAsUnread } from '../../redux/actions';
@@ -100,14 +101,23 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     <DropdownItem key="unread all" onClick={onMarkAllAsUnread}>
       Mark visible as unread
     </DropdownItem>,
-    <DropdownSeparator key="separator" />,
-    <DropdownItem key="event log" icon={ExternalLinkSquareAltIcon}>
+    <Divider />,
+    <DropdownItem key="event log">
+      <Icon>
+        <ExternalLinkSquareAltIcon />
+      </Icon>
       View event log
     </DropdownItem>,
-    <DropdownItem key="notification settings" icon={ExternalLinkSquareAltIcon}>
+    <DropdownItem key="notification settings">
+      <Icon>
+        <ExternalLinkSquareAltIcon />
+      </Icon>
       Configure notification settings
     </DropdownItem>,
-    <DropdownItem key="notification preferences" icon={ExternalLinkSquareAltIcon}>
+    <DropdownItem key="notification preferences">
+      <Icon>
+        <ExternalLinkSquareAltIcon />
+      </Icon>
       Manage my notification preferences
     </DropdownItem>,
   ];
@@ -123,7 +133,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
             {source}
           </DropdownItem>
         ))}
-        <DropdownSeparator />
+        <Divider />
         <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
           <Button variant="link" isInline>
             Reset filters
@@ -151,25 +161,42 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       <NotificationDrawerHeader onClose={() => onNotificationsDrawerClose()}>
         {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
-          toggle={
-            <MenuToggle onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle" isFullWidth variant="plainText">
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+              id="filter-toggle"
+              isFullWidth
+              variant="plainText"
+            >
               <FilterIcon />
             </MenuToggle>
-          }
+          )}
           isOpen={isFilterDropdownOpen}
-          dropdownItems={filterDropdownItems()}
           id="filter-dropdown"
           aria-label="Notifications filter"
           isPlain
-        />
+        >
+          {filterDropdownItems()}
+        </Dropdown>
         <Dropdown
-          position={DropdownPosition.right}
-          toggle={<KebabToggle onToggle={() => setIsDropdownOpen(!isDropdownOpen)} id="kebab-toggle" />}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              variant="plainText"
+              id="kebab-toggle"
+              isFullWidth
+            >
+              <EllipsisVIcon/>
+            </MenuToggle>
+          )}
           isOpen={isDropdownOpen}
           isPlain
-          dropdownItems={dropdownItems}
           id="notification-dropdown"
-        />
+        >
+          {dropdownItems.map((dropdownItem) => dropdownItem)}
+        </Dropdown>
       </NotificationDrawerHeader>
       <NotificationDrawerBody>
         <NotificationDrawerList>{renderNotifications()}</NotificationDrawerList>

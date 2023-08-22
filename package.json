@@ -128,7 +128,7 @@
     "@data-driven-forms/react-form-renderer": "^3.20.2",
     "@formatjs/cli": "4.8.4",
     "@openshift/dynamic-plugin-sdk": "^3.0.0",
-    "@patternfly/patternfly": "^5.0.0",
+    "@patternfly/patternfly": "^5.0.2",
     "@patternfly/quickstarts": "^5.0.0",
     "@patternfly/react-charts": "^7.0.0",
     "@patternfly/react-core": "^5.0.0",

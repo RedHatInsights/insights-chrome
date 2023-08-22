@@ -3,14 +3,15 @@ import {
   Checkbox,
   Dropdown,
   DropdownItem,
-  DropdownPosition,
-  KebabToggle,
   Label,
+  MenuToggle,
+  MenuToggleElement,
   NotificationDrawerList,
   NotificationDrawerListItem,
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
+import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { useDispatch } from 'react-redux';
 import { NotificationData } from '../../redux/store';
 import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
@@ -21,6 +22,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
 
   const onCheckboxToggle = () => {
     dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
@@ -32,13 +34,24 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
           <NotificationDrawerListItemHeader title={notification.title} srTitle="Info notification:">
             <Checkbox isChecked={notification.read} onChange={() => onCheckboxToggle()} id="read-checkbox" name="read-checkbox" />
             <Dropdown
-              position={DropdownPosition.right}
-              toggle={<KebabToggle onToggle={() => setIsDropdownOpen(!isDropdownOpen)} id="kebab-toggle" />}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle 
+                  ref={toggleRef}
+                  aria-label="Notification actions dropdown"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  id="kebab-toggle" 
+                  isExpanded={isDropdownOpen} 
+                  variant="plain"
+                >
+                  <EllipsisVIcon />
+                </MenuToggle>
+              )}
               isOpen={isDropdownOpen}
               isPlain
-              dropdownItems={dropdownItems}
               id="notification-dropdown"
-            />
+            >
+              {dropdownItems.map((dropDownItem) => dropDownItem)}
+            </Dropdown>
           </NotificationDrawerListItemHeader>
           {/* TODO: Modify timestamp to only show correct "x minutes ago" */}
           <NotificationDrawerListItemBody timestamp={`${notification.created.split('GMT')[0].trim()}`}>

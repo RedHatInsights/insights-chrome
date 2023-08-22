@@ -96,8 +96,8 @@ const Tools = () => {
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
   const previewEnabled = useFlag('platform.chrome.preview');
-  // const isNotificationsEnabled = true;
-  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const isNotificationsEnabled = true;
+  // const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
