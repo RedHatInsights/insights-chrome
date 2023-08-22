@@ -132,7 +132,7 @@
     "@patternfly/react-tokens": "^5.0.0",
     "@redhat-cloud-services/chrome": "^0.0.11",
     "@redhat-cloud-services/entitlements-client": "1.2.0",
-    "@redhat-cloud-services/frontend-components": "4.0.0-beta.2",
+    "@redhat-cloud-services/frontend-components": "4.0.0-beta.3",
     "@redhat-cloud-services/frontend-components-notifications": "4.0.0-beta.0",
     "@redhat-cloud-services/frontend-components-pdf-generator": "4.0.0-beta.0",
     "@redhat-cloud-services/frontend-components-utilities": "4.0.0-beta.0",
