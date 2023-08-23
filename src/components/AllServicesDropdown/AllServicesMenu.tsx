@@ -1,28 +1,18 @@
 import React, { Fragment } from 'react';
-import {
-  Backdrop,
-  Button,
-  Card,
-  CardActions,
-  CardBody,
-  CardHeader,
-  FlexItem,
-  Icon,
-  Panel,
-  PanelMain,
-  Sidebar,
-  SidebarContent,
-  SidebarPanel,
-  TabContent,
-  Text,
-  TextContent,
-  TextVariants,
-  Title,
-} from '@patternfly/react-core';
+import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ChromeLink from '../ChromeLink';
-import BookOpenIcon from '@patternfly/react-icons/dist/js/icons/book-open-icon';
-import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
+import BookOpenIcon from '@patternfly/react-icons/dist/dynamic/icons/book-open-icon';
+import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
@@ -57,7 +47,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     setActiveTabKey(index);
   };
 
-  const onToggle = (isExpanded: boolean) => {
+  const onToggle = (_e: React.MouseEvent<any>, isExpanded: boolean) => {
     setIsExpanded(isExpanded);
   };
 
@@ -72,17 +62,20 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
         },
       }}
     >
-      <div ref={menuRef} className="pf-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+      <div ref={menuRef} className="pf-v5-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
         <Backdrop>
-          <Panel variant="raised" className="pf-u-p-0 chr-c-panel-services-nav">
+          <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav">
             <PanelMain>
               <Sidebar>
-                <SidebarPanel className="pf-l-flex pf-u-flex-direction-column">
-                  <FlexItem className="chr-l-flex__item-browse-all-services pf-u-w-100 pf-u-p-md pf-u-mt-sm-on-md" order={{ default: '1', md: '2' }}>
-                    <TextContent className="pf-u-text-align-center-on-md pf-u-pl-sm pf-u-pl-0-on-md">
+                <SidebarPanel className="pf-v5-l-flex pf-v5-u-flex-direction-column">
+                  <FlexItem
+                    className="chr-l-flex__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md pf-v5-u-mt-sm-on-md"
+                    order={{ default: '1', md: '2' }}
+                  >
+                    <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
                       <Text component={TextVariants.p}>
                         <ChromeLink href="/allservices">
-                          <Icon className="pf-u-mr-sm" isInline>
+                          <Icon className="pf-v5-u-mr-sm" isInline>
                             <BookOpenIcon />
                           </Icon>
                           Browse all services
@@ -90,7 +83,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                       </Text>
                     </TextContent>
                   </FlexItem>
-                  <FlexItem order={{ default: '2', md: '1' }} className="chr-l-flex__item-tabs pf-u-w-100">
+                  <FlexItem order={{ default: '2', md: '1' }} className="chr-l-flex__item-tabs pf-v5-u-w-100">
                     <AllServicesTabs
                       activeTabKey={activeTabKey}
                       handleTabClick={handleTabClick}
@@ -105,13 +98,17 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>
-                    <CardHeader className="pf-u-pr-xs pf-u-pr-md-on-md">
+                    <CardHeader
+                      actions={{
+                        actions: [
+                          <Button key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
+                            <TimesIcon />
+                          </Button>,
+                        ],
+                      }}
+                      className="pf-v5-u-pr-xs pf-v5-u-pr-md-on-md"
+                    >
                       <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
-                      <CardActions>
-                        <Button variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                          <TimesIcon />
-                        </Button>
-                      </CardActions>
                     </CardHeader>
                     <CardBody>
                       <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService.description}>

@@ -16,6 +16,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "types": ["node", "jest", "@testing-library/jest-dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "include": ["src/**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx"]

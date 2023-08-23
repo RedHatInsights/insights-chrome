@@ -1,12 +1,17 @@
 import React, { FormEvent, Fragment, MouseEventHandler, useMemo } from 'react';
-import { Group, GroupFilter, groupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { Group, GroupFilter, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
 import messages from '../../locales/Messages';
 
 import './global-filter-menu.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Chip, ChipGroup, Divider, Skeleton, Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import TagsModal from './TagsModal';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 import { CommonSelectedTag, ReduxState } from '../../redux/store';
@@ -14,8 +19,7 @@ import { updateSelected } from './globalFilterApi';
 import { fetchAllTags } from '../../redux/actions';
 import { FlagTagsFilter } from '../../@types/types';
 
-export type GlobalFilterMenuGroupKeys = keyof typeof groupType;
-export type GlobalFilterMenuGroupValues = typeof groupType[GlobalFilterMenuGroupKeys];
+export type GlobalFilterMenuGroupKeys = GroupType;
 
 export type FilterMenuItem = {
   value: string;
@@ -32,7 +36,7 @@ export type FilterMenuGroup = {
   value: string;
   label: string;
   id: string;
-  type: GlobalFilterMenuGroupValues;
+  type: GroupType;
   items: FilterMenuItem[];
 };
 
@@ -113,27 +117,32 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
                 className="chr-c-menu-global-filter__select"
                 selected={selectedTags}
                 isDisabled={isDisabled}
-                groups={filter.groups?.map((group) => ({
-                  ...group,
-                  items: group.items.map((item) => ({
-                    ...item,
-                    onClick: (
-                      e: FormEvent | MouseEventHandler<HTMLInputElement> | undefined,
-                      selected: any,
-                      group: number | undefined,
-                      currItem: boolean | undefined,
-                      groupName: string | undefined,
-                      itemName: string | undefined
-                    ) => {
-                      generateGlobalFilterEvent((selected?.[groupName as string]?.[itemName as string] as Group)?.isSelected as boolean, item.value);
-                      item.onClick?.(e, selected, group, currItem, groupName, itemName);
-                    },
-                  })),
-                }))}
+                groups={
+                  filter.groups?.map((group) => ({
+                    ...group,
+                    items: group.items?.map((item) => ({
+                      ...item,
+                      onClick: (
+                        e: FormEvent | MouseEventHandler<HTMLInputElement> | undefined,
+                        selected: any,
+                        group: number | undefined,
+                        currItem: boolean | undefined,
+                        groupName: string | undefined,
+                        itemName: string
+                      ) => {
+                        generateGlobalFilterEvent(
+                          (selected?.[groupName as string]?.[itemName as string] as Group)?.isSelected as boolean,
+                          item.value
+                        );
+                        // item.onClick?.(e, selected, group, currItem, groupName, itemName);
+                      },
+                    })),
+                  })) || ([] as unknown as any)
+                }
                 onChange={filter.onChange}
                 placeholder={intl.formatMessage(messages.filterByTags)}
                 isFilterable
-                onFilter={filter.onFilter}
+                onFilter={filter.onFilter || (() => undefined)}
                 filterBy={filter.filterBy as string}
                 showMoreTitle={intl.formatMessage(messages.showMore)}
                 onShowMore={() => setIsOpen(true)}

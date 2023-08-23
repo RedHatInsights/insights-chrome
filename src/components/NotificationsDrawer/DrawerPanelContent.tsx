@@ -1,20 +1,15 @@
 import React from 'react';
-import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  NotificationDrawer,
-  NotificationDrawerHeader,
-  Text,
-  Title,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { NotificationDrawer, NotificationDrawerHeader } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleNotificationsDrawer } from '../../redux/actions';
-import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
+import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
+import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
+import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
+import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-square-alt-icon';
 import { ReduxState } from '../../redux/store';
 
 export type DrawerPanelProps = {

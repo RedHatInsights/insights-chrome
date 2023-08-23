@@ -4,13 +4,13 @@
   width: 100%;
   padding: 2px 0 2px 20px;
   font-size: 10px;
-  background-color: var(--pf-global--palette--blue-200);
-  color: var(--pf-global--Color--100);
+  background-color: var(--pf-v5-global--palette--blue-200);
+  color: var(--pf-v5-global--Color--100);
   opacity: 1;
   grid-area: banner;
 }
 
-.pf-c-page.chr-c-page__account-banner {
+.pf-v5-c-page.chr-c-page__account-banner {
   grid-template-areas:
     "header header"
     "banner banner"
@@ -19,7 +19,7 @@
 }
 
 @media screen and (max-width: 1200px) {
-  .pf-c-page.chr-c-page__account-banner {
+  .pf-v5-c-page.chr-c-page__account-banner {
     grid-template-areas:
       "header header"
       "main main";

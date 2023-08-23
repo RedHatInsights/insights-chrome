@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Icon, Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
@@ -72,7 +74,7 @@ const AllServicesTabs = ({
       onToggle={onToggle}
       toggleText={activeTabTitle}
       role="region"
-      className="pf-u-p-md pf-u-pr-0"
+      className="pf-v5-u-p-md pf-v5-u-pr-0"
     >
       <TabWrapper
         onClick={(e) => {
@@ -82,22 +84,25 @@ const AllServicesTabs = ({
         title={
           <TabTitleText>
             My favorite services
-            <Icon className="chr-c-icon-service-tab pf-u-ml-md" status="warning" isInline>
+            <Icon className="chr-c-icon-service-tab pf-v5-u-ml-md" status="warning" isInline>
               <StarIcon />
             </Icon>
           </TabTitleText>
         }
       />
-      {linkSections.map((section, index) => (
-        <TabWrapper
-          key={index}
-          eventKey={index}
-          title={<TabTitleText>{section.title}</TabTitleText>}
-          tabContentId={TAB_CONTENT_ID}
-          tabContentRef={tabContentRef}
-          onClick={() => onTabClick(section, index)}
-        />
-      ))}
+      <>
+        {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
+        {linkSections.map((section, index) => (
+          <TabWrapper
+            key={index}
+            eventKey={index}
+            title={<TabTitleText>{section.title}</TabTitleText>}
+            tabContentId={TAB_CONTENT_ID}
+            tabContentRef={tabContentRef}
+            onClick={() => onTabClick(section, index)}
+          />
+        ))}
+      </>
     </Tabs>
   );
 };

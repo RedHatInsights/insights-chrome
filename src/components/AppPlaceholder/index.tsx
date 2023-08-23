@@ -1,4 +1,6 @@
-import { Masthead, MastheadBrand, MastheadMain, Page, PageSidebar } from '@patternfly/react-core';
+import { Masthead, MastheadBrand, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from '../ChromeLink';
@@ -16,14 +18,22 @@ const AppPlaceholder = (props: FooterProps) => {
         className="chr-c-page"
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadMain className="pf-u-pl-lg">
+            <MastheadMain className="pf-v5-u-pl-lg">
               <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
                 <Logo />
               </MastheadBrand>
             </MastheadMain>
           </Masthead>
         }
-        sidebar={hideNavLoader ? undefined : <PageSidebar nav={<NavLoader />} />}
+        sidebar={
+          hideNavLoader ? undefined : (
+            <PageSidebar>
+              <PageSidebarBody>
+                <NavLoader />
+              </PageSidebarBody>
+            </PageSidebar>
+          )
+        }
       >
         <div className="chr-render">
           <Footer {...props} />

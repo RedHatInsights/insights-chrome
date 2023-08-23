@@ -13,7 +13,7 @@ const IDPStatuses = {
   ERROR: 'ERROR',
 };
 
-const IDPChecker: React.FunctionComponent = ({ children }) => {
+const IDPChecker: React.FunctionComponent<React.PropsWithChildren> = ({ children }) => {
   const ITLessEnv = ITLess();
   const missingIDP = useSelector(({ chrome }: ReduxState) => chrome?.missingIDP);
   const [status, setStatus] = useState(() => {

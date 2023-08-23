@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Header } from '../components/Header/Header';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  ClipboardCopy,
-  List,
-  ListComponent,
-  ListItem,
-  Masthead,
-  OrderType,
-  Page,
-  PageSection,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
+import { List, ListComponent, ListItem, OrderType } from '@patternfly/react-core/dist/dynamic/components/List';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
 
 const SatelliteToken: React.FC = () => {
@@ -57,7 +49,7 @@ const SatelliteToken: React.FC = () => {
               <div>
                 <Button onClick={generateToken}>Generate Token</Button>
               </div>
-              <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+              <ClipboardCopy className="pf-v5-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
                 {token}
               </ClipboardCopy>
             </CardBody>
@@ -70,14 +62,14 @@ const SatelliteToken: React.FC = () => {
               <List component={ListComponent.ol} type={OrderType.number}>
                 <ListItem>Copy the registration token above</ListItem>
                 <ListItem>Run the following command from your Satellite server to get the organization id you want to register</ListItem>
-                <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+                <ClipboardCopy className="pf-v5-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
                   hammer organization list
                 </ClipboardCopy>
                 <ListItem>
                   {`Run the Hybrid Cloud registration task to register your Red Hat Satellite organization, replacing "<organization_id>" with the organization id from
                   Step 2. You will prompted to enter the token from Step 1.`}
                 </ListItem>
-                <ClipboardCopy className="pf-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
+                <ClipboardCopy className="pf-v5-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
                   {`SATELLITE_RH_CLOUD_URL=https://mtls.console.stage.openshiftusgov.com org_id=<organization_id> foreman-rake rh_cloud:hybridcloud_register`}
                 </ClipboardCopy>
               </List>

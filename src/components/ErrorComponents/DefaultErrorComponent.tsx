@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
-import {
-  Bullseye,
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStatePrimary,
-  ExpandableSection,
-  Flex,
-  FlexItem,
-  Text,
-  TextContent,
-  Title,
-} from '@patternfly/react-core';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateActions, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -81,7 +75,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   return (
     <Bullseye className="chr-c-error-component">
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--200)" icon={ExclamationCircleIcon} />
+        <EmptyStateIcon color="var(--pf-v5-global--danger-color--200)" icon={ExclamationCircleIcon} />
         <Title size="lg" headingLevel="h1">
           {intl.formatMessage(messages.somethingWentWrong)}&nbsp;
           {sentryId && intl.formatMessage(messages.globalRuntimeErrorId, { errorId: sentryId })}
@@ -120,9 +114,9 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
             </FlexItem>
           </Flex>
         </EmptyStateBody>
-        <EmptyStatePrimary>
+        <EmptyStateActions>
           <Button component={() => <a href="/">{intl.formatMessage(messages.returnToHomepage)}</a>} variant="primary" />
-        </EmptyStatePrimary>
+        </EmptyStateActions>
       </EmptyState>
     </Bullseye>
   );
