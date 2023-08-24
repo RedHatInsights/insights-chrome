@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// FIXME: Figure out what are the issues with the JS client
 /* eslint-disable camelcase */
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { AAP_KEY, INVENTORY_API_BASE, MSSQL_KEY, flatTags } from './globalFilterApi';
@@ -65,7 +67,8 @@ export function getAllTags({ search, activeTags, registeredWith }: TagFilterOpti
     undefined,
     undefined,
     undefined,
-    registeredWith ? [registeredWith] : undefined,
+    // @ts-ignore
+    registeredWith ? registeredWith : undefined,
     undefined,
     {
       query: generateFilter(buildFilter(workloads, SID)),
@@ -82,7 +85,8 @@ export function getAllSIDs({ search, activeTags, registeredWith }: TagFilterOpti
     (pagination && pagination.perPage) || 10,
     (pagination && pagination.page) || 1,
     undefined, // staleness,
-    registeredWith ? [registeredWith] : undefined,
+    // @ts-ignore
+    registeredWith ? registeredWith : undefined,
     undefined,
     {
       query: generateFilter(buildFilter(workloads, SID)),
@@ -98,7 +102,8 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       (pagination && pagination.perPage) || 10,
       (pagination && pagination.page) || 1,
       undefined, // staleness,
-      registeredWith ? [registeredWith] : undefined,
+      // @ts-ignore
+      registeredWith ? registeredWith : undefined,
       undefined,
       {
         query: generateFilter(buildFilter(workloads, SID)),
@@ -118,7 +123,8 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       selectedTags,
-      registeredWith ? [registeredWith] : undefined,
+      // @ts-ignore
+      registeredWith ? registeredWith : undefined,
       undefined,
       undefined,
       {
@@ -147,7 +153,8 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       selectedTags,
-      registeredWith ? [registeredWith] : undefined,
+      // @ts-ignore
+      registeredWith ? registeredWith : undefined,
       undefined,
       undefined,
       {

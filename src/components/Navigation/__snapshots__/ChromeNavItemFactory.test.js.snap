@@ -3,30 +3,30 @@
 exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
 <div>
   <li
-    class="pf-c-nav__item pf-m-expandable"
+    class="pf-v5-c-nav__item pf-m-expandable"
     data-ouia-component-id="OUIA-Generated-NavExpandable-1"
-    data-ouia-component-type="PF4/NavExpandable"
+    data-ouia-component-type="PF5/NavExpandable"
     data-ouia-safe="true"
     data-quickstart-id="bar"
   >
     <button
       aria-expanded="false"
-      class="pf-c-nav__link"
+      class="pf-v5-c-nav__link"
       id="test-id"
     >
       bar
       <span
-        class="pf-c-nav__toggle"
+        class="pf-v5-c-nav__toggle"
       >
         <span
-          class="pf-c-nav__toggle-icon"
+          class="pf-v5-c-nav__toggle-icon"
         >
           <svg
             aria-hidden="true"
+            class="pf-v5-svg"
             fill="currentColor"
             height="1em"
             role="img"
-            style="vertical-align: -0.125em;"
             viewBox="0 0 256 512"
             width="1em"
           >
@@ -39,20 +39,21 @@ exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
     </button>
     <section
       aria-labelledby="test-id"
-      class="pf-c-nav__subnav"
+      class="pf-v5-c-nav__subnav"
       hidden=""
     >
       <ul
-        class="pf-c-nav__list"
+        class="pf-v5-c-nav__list"
+        role="list"
       >
         <li
-          class="pf-c-nav__item chr-c-navigation__item"
+          class="pf-v5-c-nav__item chr-c-navigation__item"
           data-ouia-component-id="Foo"
-          data-ouia-component-type="PF4/NavItem"
+          data-ouia-component-type="PF5/NavItem"
           data-ouia-safe="true"
         >
           <a
-            class="pf-c-nav__link chr-c-navigation__item"
+            class="pf-v5-c-nav__link chr-c-navigation__item"
             data-quickstart-id="foo"
             data-testid="router-link"
             href="/foo"
@@ -71,25 +72,26 @@ exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
 <div>
   <section
     aria-labelledby="group"
-    class="pf-c-nav__section chr-c-section-nav"
+    class="pf-v5-c-nav__section chr-c-section-nav"
   >
     <h2
-      class="pf-c-nav__section-title"
+      class="pf-v5-c-nav__section-title"
       id="group"
     >
       <div>
         <span
-          class="pf-c-icon pf-m-inline pf-m-sm pf-u-mr-sm"
+          class="pf-v5-c-icon pf-m-inline pf-m-sm pf-v5-u-mr-sm"
         >
           <span
-            class="pf-c-icon__content"
+            class="pf-v5-c-icon__content"
           />
         </span>
         group
       </div>
     </h2>
     <ul
-      class="pf-c-nav__list chr-c-section-nav"
+      class="pf-v5-c-nav__list chr-c-section-nav"
+      role="list"
     />
   </section>
 </div>
@@ -98,13 +100,13 @@ exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
 exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
 <div>
   <li
-    class="pf-c-nav__item chr-c-navigation__item"
+    class="pf-v5-c-nav__item chr-c-navigation__item"
     data-ouia-component-id="Foo"
-    data-ouia-component-type="PF4/NavItem"
+    data-ouia-component-type="PF5/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link chr-c-navigation__item"
+      class="pf-v5-c-nav__link chr-c-navigation__item"
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"

@@ -1,17 +1,11 @@
 import React, { ReactNode, useContext, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Form,
-  FormGroup,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-  Text,
-  TextArea,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
+import { Form, FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Panel, PanelMain, PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextArea } from '@patternfly/react-core/dist/dynamic/components/TextArea';
+
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
@@ -106,14 +100,14 @@ const FeedbackForm = ({
           <FormGroup label={textareaLabel} fieldId="horizontal-form-exp">
             <TextArea
               value={textAreaValue}
-              onChange={(value) => setTextAreaValue(value)}
+              onChange={(_event, value) => setTextAreaValue(value)}
               className="chr-c-feedback-text-area"
               name="feedback-description-text"
               id="feedback-description-text"
             />
           </FormGroup>
         )}
-        <FormGroup className="pf-u-mt-20">
+        <FormGroup className="pf-v5-u-mt-20">
           <Checkbox
             id="feedback-checkbox"
             isChecked={checked}
@@ -125,7 +119,7 @@ const FeedbackForm = ({
       </Form>
       {checked ? (
         <>
-          <div className="pf-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
+          <div className="pf-v5-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
           <Panel variant="raised" className="chr-c-feedback-panel">
             <PanelMain>
               <PanelMainBody className="chr-c-feedback-panel__body">{user.identity.user.email}</PanelMainBody>

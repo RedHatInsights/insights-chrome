@@ -29,7 +29,7 @@ export interface LinkWrapperProps extends RefreshLinkProps {
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
-  const moduleEntry = useMemo(() => moduleRoutes.find((route) => href?.includes(route.path)), [href, appId]);
+  const moduleEntry = useMemo(() => moduleRoutes?.find((route) => href?.includes(route.path)), [href, appId]);
   const preloadTimeout = useRef<NodeJS.Timeout>();
   let actionId = href.split('/').slice(2).join('/');
   if (actionId.includes('/')) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar } from '@patternfly/react-core';
+import { Avatar } from '@patternfly/react-core/dist/dynamic/components/Avatar';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 

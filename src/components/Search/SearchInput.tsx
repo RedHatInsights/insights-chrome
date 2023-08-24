@@ -1,15 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Bullseye,
-  Menu,
-  MenuContent,
-  MenuGroup,
-  MenuList,
-  SearchInput as PFSearchInput,
-  Popper,
-  SearchInputProps,
-  Spinner,
-} from '@patternfly/react-core';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Menu, MenuContent, MenuGroup, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { SearchInput as PFSearchInput, SearchInputProps } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
+
 import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
@@ -41,7 +36,10 @@ const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append('q', `${REPLACE_TAG}*~${FUZZY_RANGE_TAG}`); // add query replacement tag and enable fuzzy search with ~1
+BASE_SEARCH.append(
+  'q',
+  `${REPLACE_TAG} OR *${REPLACE_TAG}~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}*~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}~${FUZZY_RANGE_TAG}`
+); // add query replacement tag and enable fuzzy search with ~ and wildcards
 BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
 BASE_SEARCH.append('rows', '10'); // request 10 results
 BASE_SEARCH.append('hl', 'true'); // enable highlight
@@ -216,7 +214,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   }, [isOpen, menuRef]);
 
   const handleFetch = (value = '') => {
-    return fetch(SEARCH_QUERY.replace(REPLACE_TAG, value).replace(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
+    return fetch(SEARCH_QUERY.replaceAll(REPLACE_TAG, value).replaceAll(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
       .then((r) => r.json())
       .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
         if (isMounted.current) {
@@ -284,11 +282,11 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   );
 
   const menu = (
-    <Menu ref={menuRef} className="pf-u-pt-sm pf-u-px-md chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-v5-u-pt-sm pf-v5-u-px-md chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
-            <Bullseye className="pf-u-p-md">
+            <Bullseye className="pf-v5-u-p-md">
               <Spinner size="xl" />
             </Bullseye>
           ) : (
@@ -307,7 +305,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input pf-c-search-input pf-u-stretch">
+    <div ref={containerRef} className="chr-c-search__input pf-v5-c-search-input pf-v5-u-w-100">
       {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
       {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
     </div>

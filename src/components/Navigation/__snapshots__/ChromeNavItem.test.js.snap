@@ -5,13 +5,13 @@ exports[`ChromeNavItem should not render nav item 1`] = `<div />`;
 exports[`ChromeNavItem should render nav item 1`] = `
 <div>
   <li
-    class="pf-c-nav__item chr-c-navigation__item"
+    class="pf-v5-c-nav__item chr-c-navigation__item"
     data-ouia-component-id="Foo"
-    data-ouia-component-type="PF4/NavItem"
+    data-ouia-component-type="PF5/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link chr-c-navigation__item"
+      class="pf-v5-c-nav__link chr-c-navigation__item"
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
@@ -26,13 +26,13 @@ exports[`ChromeNavItem should render nav item 1`] = `
 exports[`ChromeNavItem should render nav item with a node title 1`] = `
 <div>
   <li
-    class="pf-c-nav__item chr-c-navigation__item"
+    class="pf-v5-c-nav__item chr-c-navigation__item"
     data-ouia-component-id="[object Object]"
-    data-ouia-component-type="PF4/NavItem"
+    data-ouia-component-type="PF5/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link chr-c-navigation__item"
+      class="pf-v5-c-nav__link chr-c-navigation__item"
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
@@ -51,13 +51,13 @@ exports[`ChromeNavItem should render nav item with a node title 1`] = `
 exports[`ChromeNavItem should render nav item with an external icon 1`] = `
 <div>
   <li
-    class="pf-c-nav__item chr-c-navigation__item"
+    class="pf-v5-c-nav__item chr-c-navigation__item"
     data-ouia-component-id="Foo"
-    data-ouia-component-type="PF4/NavItem"
+    data-ouia-component-type="PF5/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link chr-c-navigation__item"
+      class="pf-v5-c-nav__link chr-c-navigation__item"
       data-quickstart-id="/foo"
       data-testid="native-link"
       href="/foo"
@@ -68,17 +68,17 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
       Foo
        
       <span
-        class="pf-c-icon pf-m-inline"
+        class="pf-v5-c-icon pf-m-inline"
       >
         <span
-          class="pf-c-icon__content"
+          class="pf-v5-c-icon__content"
         >
           <svg
             aria-hidden="true"
+            class="pf-v5-svg"
             fill="currentColor"
             height="1em"
             role="img"
-            style="vertical-align: -0.125em;"
             viewBox="0 0 512 512"
             width="1em"
           >
@@ -96,40 +96,44 @@ exports[`ChromeNavItem should render nav item with an external icon 1`] = `
 exports[`ChromeNavItem should render nav item with beta badge 1`] = `
 <div>
   <li
-    class="pf-c-nav__item chr-c-navigation__item"
+    class="pf-v5-c-nav__item chr-c-navigation__item"
     data-ouia-component-id="Foo"
-    data-ouia-component-type="PF4/NavItem"
+    data-ouia-component-type="PF5/NavItem"
     data-ouia-safe="true"
   >
     <a
-      class="pf-c-nav__link chr-c-navigation__item"
+      class="pf-v5-c-nav__link chr-c-navigation__item"
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
     >
       Foo
        
-      <span
-        class="pf-c-icon pf-m-inline chr-c-navigation__beta-icon"
+      <div
+        style="display: contents;"
       >
         <span
-          class="pf-c-icon__content"
+          class="pf-v5-c-icon pf-m-inline chr-c-navigation__beta-icon"
         >
-          <svg
-            aria-hidden="true"
-            fill="currentColor"
-            height="1em"
-            role="img"
-            style="vertical-align: -0.125em;"
-            viewBox="0 0 448 512"
-            width="1em"
+          <span
+            class="pf-v5-c-icon__content"
           >
-            <path
-              d="M437.2 403.5L320 215V64h8c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24H120c-13.3 0-24 10.7-24 24v16c0 13.3 10.7 24 24 24h8v151L10.8 403.5C-18.5 450.6 15.3 512 70.9 512h306.2c55.7 0 89.4-61.5 60.1-108.5zM137.9 320l48.2-77.6c3.7-5.2 5.8-11.6 5.8-18.4V64h64v160c0 6.9 2.2 13.2 5.8 18.4l48.2 77.6h-172z"
-            />
-          </svg>
+            <svg
+              aria-hidden="true"
+              class="pf-v5-svg"
+              fill="currentColor"
+              height="1em"
+              role="img"
+              viewBox="0 0 448 512"
+              width="1em"
+            >
+              <path
+                d="M437.2 403.5L320 215V64h8c13.3 0 24-10.7 24-24V24c0-13.3-10.7-24-24-24H120c-13.3 0-24 10.7-24 24v16c0 13.3 10.7 24 24 24h8v151L10.8 403.5C-18.5 450.6 15.3 512 70.9 512h306.2c55.7 0 89.4-61.5 60.1-108.5zM137.9 320l48.2-77.6c3.7-5.2 5.8-11.6 5.8-18.4V64h64v160c0 6.9 2.2 13.2 5.8 18.4l48.2 77.6h-172z"
+              />
+            </svg>
+          </span>
         </span>
-      </span>
+      </div>
     </a>
   </li>
 </div>

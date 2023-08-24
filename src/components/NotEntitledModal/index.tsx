@@ -1,4 +1,7 @@
-import { Button, Modal, ModalVariant, Stack, StackItem, Title } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import notEntitledData from './notEntitledData';

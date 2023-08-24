@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import Portal, { PortalNotificationConfig } from '@redhat-cloud-services/frontend-components-notifications/Portal';
-import { AlertVariant } from '@patternfly/react-core';
+import { AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_ACCOUNT_SWITCH_NOTIFICATION } from '../../utils/consts';
 import useAccessRequestNotifier from '../../utils/useAccessRequestNotifier';
 import ChromeLink from '../ChromeLink';

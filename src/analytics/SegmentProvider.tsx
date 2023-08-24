@@ -153,7 +153,7 @@ export type SegmentProviderProps = {
   activeModule?: string;
 };
 
-const SegmentProvider: React.FC<SegmentProviderProps> = ({ activeModule, children }) => {
+const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> = ({ activeModule, children }) => {
   const initialized = useRef(false);
   const isITLessEnv = ITLess();
   const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;

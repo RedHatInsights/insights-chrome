@@ -2,7 +2,7 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
 
 .chr-c-all-services {
-  .chr-c-all-services-filter .pf-c-text-input-group__icon {
+  .chr-c-all-services-filter .pf-v5-c-text-input-group__icon {
     display: none;
   }
   .chr-c-icon-filter {
@@ -14,11 +14,11 @@
   .chr-c-all-services-filter {
     max-width: 300px;
   }
-  .pf-l-gallery {
+  .pf-v5-l-gallery {
     column-count: auto;
     column-width: 330px;
   }
-  .pf-c-card {
+  .pf-v5-c-card {
     overflow: hidden;
     break-inside: avoid-column;
     .chr-c-icon-not-favorited {
@@ -26,7 +26,7 @@
     }
   }
 
-  @media screen and (max-width: $pf-global--breakpoint--md) {
+  @media screen and (max-width: $pf-v5-global--breakpoint--md) {
     .chr-c-all-services-filter {
       max-width: 100%;
       width: 100%;

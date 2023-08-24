@@ -1,22 +1,16 @@
 import React, { Fragment } from 'react';
 import { useIntl } from 'react-intl';
-import {
-  Bullseye,
-  Gallery,
-  Icon,
-  Masthead,
-  Page,
-  PageGroup,
-  PageSection,
-  PageSectionVariants,
-  SearchInput,
-  Spinner,
-  Text,
-  TextContent,
-  Title,
-} from '@patternfly/react-core';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Page, PageGroup, PageSection, PageSectionVariants } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
@@ -48,7 +42,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         header={
-          <Masthead className="chr-c-masthead pf-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+          <Masthead className="chr-c-masthead pf-v5-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
             <Header />
           </Masthead>
         }
@@ -61,13 +55,13 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         ) : (
           <Fragment>
             <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-              <PageSection variant={PageSectionVariants.light} className="pf-u-px-xl-on-md">
+              <PageSection variant={PageSectionVariants.light} className="pf-v5-u-px-xl-on-md">
                 <Title headingLevel="h2">All Services</Title>
-                <TextContent className="pf-u-mt-sm">
+                <TextContent className="pf-v5-u-mt-sm">
                   <Text component="p">
                     Every service available on Hybrid Cloud Console appears below. Hover over a service and click the star to add it to your
                     favorites.
-                    <Icon status="warning" size="md" className="pf-u-pl-sm" isInline>
+                    <Icon status="warning" size="md" className="pf-v5-u-pl-sm" isInline>
                       <StarIcon />
                     </Icon>
                   </Text>
@@ -76,7 +70,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                   <FilterIcon />
                 </Icon>
                 <SearchInput
-                  className="chr-c-all-services-filter pf-u-mt-md pf-u-mb-sm"
+                  className="chr-c-all-services-filter pf-v5-u-mt-md pf-v5-u-mb-sm"
                   data-ouia-component-id="app-filter-search"
                   placeholder={intl.formatMessage(Messages.findAppOrService)}
                   value={filterValue}
@@ -89,7 +83,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
               </PageSection>
             </PageGroup>
             <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
-              <Gallery className="pf-u-display-block" hasGutter>
+              <Gallery className="pf-v5-u-display-block" hasGutter>
                 {sections.map((section, index) => (
                   <AllServicesSection key={index} {...section} />
                 ))}

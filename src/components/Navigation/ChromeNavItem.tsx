@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { Icon, NavItem, Tooltip } from '@patternfly/react-core';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-import FlaskIcon from '@patternfly/react-icons/dist/js/icons/flask-icon';
-import BellIcon from '@patternfly/react-icons/dist/js/icons/bell-icon';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { NavItem } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import FlaskIcon from '@patternfly/react-icons/dist/dynamic/icons/flask-icon';
+import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { titleCase } from 'title-case';
 import classNames from 'classnames';
 import get from 'lodash/get';
@@ -57,7 +59,11 @@ const ChromeNavItem = ({
       isActive={active}
       to={href}
       ouiaId={title}
-      component={(props: LinkWrapperProps) => <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />}
+      component={
+        ((props: LinkWrapperProps) => (
+          <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />
+        )) as unknown as React.ReactNode
+      }
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title}{' '}
       {isExternal && (
@@ -72,8 +78,16 @@ const ChromeNavItem = ({
           </Icon>
         </Tooltip>
       )}
-      {isFavorited && <StarIcon color="var(--pf-global--palette--gold-400)" />}
-      {hasNotifier && <BellIcon size="md" className="notifier-icon" color="var(--pf-global--default-color--200)" />}
+      {isFavorited && (
+        <Icon>
+          <StarIcon color="var(--pf-v5-global--palette--gold-400)" />
+        </Icon>
+      )}
+      {hasNotifier && (
+        <Icon size="md">
+          <BellIcon className="notifier-icon" color="var(--pf-v5-global--default-color--200)" />
+        </Icon>
+      )}
     </NavItem>
   );
 };
