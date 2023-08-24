@@ -39,10 +39,8 @@ const searchResponse = {
       bundle: ['<mark>openshift</mark>'],
     },
     'hcc-module-/openshift/releases-openshift.releases': {
-      abstract: [
-        'View general information on the most recent <mark>OpenShift</mark> Container Platform <mark>release</mark> versions that you can install.',
-      ],
-      allTitle: ['<mark>Releases</mark>'],
+      abstract: ['View general information on the most recent <mark>OpenShift</mark> Container Platform release versions that you can install.'],
+      allTitle: ['Releases'],
       bundle: ['<mark>openshift</mark>'],
     },
   },
@@ -64,8 +62,8 @@ describe('Search', () => {
     cy.get('@search.all').should('have.length', 1);
     cy.screenshot();
     cy.get('.chr-c-search__input').should('contain', 'Top 2 results');
-    cy.get('.chr-c-search__input .pf-c-menu__list-item').first().should('contain', 'Azure');
-    cy.get('.chr-c-search__input .pf-c-menu__list-item').last().should('contain', 'Releases').click();
+    cy.get('.chr-c-search__input li').first().should('contain', 'Azure');
+    cy.get('.chr-c-search__input li').last().should('contain', 'Releases').click();
     cy.url().should('contain', '/openshift/releases');
   });
 });
