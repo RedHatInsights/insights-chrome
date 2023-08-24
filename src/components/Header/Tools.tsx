@@ -132,7 +132,7 @@ const Tools = () => {
   const aboutMenuDropdownItems = [
     {
       title: `${intl.formatMessage(messages.apiDocumentation)}`,
-      url: `https://developers.redhat.com/api-catalog/`,
+      onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
@@ -143,17 +143,17 @@ const Tools = () => {
     },
     {
       title: `${intl.formatMessage(messages.statusPage)}`,
-      url: 'https://status.redhat.com/',
+      onClick: () => window.open('https://status.redhat.com/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.supportOptions)}`,
-      url: 'https://access.redhat.com/support',
+      onClick: () => window.open('https://access.redhat.com/support', '_blank'),
       isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
-      url: `https://access.redhat.com/documentation/en-us/red_hat_insights`,
+      onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
 
