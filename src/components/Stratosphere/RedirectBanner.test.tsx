@@ -6,7 +6,8 @@ import configureStore from 'redux-mock-store';
 import { InitialEntry } from 'history';
 import { Store } from 'redux';
 
-import RedirectBanner, { AWS_BANNER_NAME, AZURE_BANNER_NAME } from './RedirectBanner';
+import RedirectBanner from './RedirectBanner';
+import { AWS_BANNER_NAME, AZURE_BANNER_NAME } from '../../hooks/useMarketplacePartner';
 
 const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
   const { search, pathname, hash, state } = useLocation();
