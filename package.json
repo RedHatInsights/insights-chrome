@@ -30,7 +30,11 @@
     "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
     "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test",
-    "postinstall": "rm -rf .webpack-cache"
+    "postinstall": "rm -rf .webpack-cache",
+    "ci:unit-tests": "run-s test",
+    "ci:lint": "run-s lint",
+    "ci:cypress-component-tests": "run-s test:ct",
+    "ci:cypress-e2e-tests": "run-s test:e2e"
   },
   "repository": {
     "type": "git",
