@@ -96,7 +96,7 @@
     "mkdir": "^0.0.2",
     "ncp": "^2.0.0",
     "node-sass-package-importer": "^5.3.2",
-    "node-vault": "^0.9.22",
+    "node-vault": "^0.10.2",
     "npm-run-all": "^4.1.5",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
