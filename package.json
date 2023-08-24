@@ -55,7 +55,7 @@
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.6",
     "@redhat-cloud-services/frontend-components-config-utilities": "^3.0.0-beta.0",
     "@redhat-cloud-services/types": "^0.0.22",
-    "@simonsmith/cypress-image-snapshot": "^6.0.1",
+    "@simonsmith/cypress-image-snapshot": "^8.0.2",
     "@swc/core": "^1.3.76",
     "@swc/jest": "^0.2.29",
     "@testing-library/jest-dom": "^5.16.5",
