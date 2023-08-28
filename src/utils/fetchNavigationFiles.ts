@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
-import { requiredBundles } from '../components/AppFilter/useAppFilter';
-import { getChromeStaticPathname, isBeta } from './common';
+import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
+import { ITLessKeycloak, getChromeStaticPathname, isBeta } from './common';
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
+
+const bundles = ITLessKeycloak() ? itLessBundles : requiredBundles;
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
   return Array.isArray((navigation as Navigation).navItems);
@@ -48,7 +50,7 @@ const fetchNavigationFiles = async () => {
   }
 
   filesCache.existingRequest = Promise.all(
-    requiredBundles.map((fragment) =>
+    bundles.map((fragment) =>
       axios
         .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
         .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))

@@ -1,4 +1,4 @@
-import { ITLess, getRouterBasename, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
+import { ITLessCognito, getRouterBasename, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
 import servicesApi from './entitlements';
 import logger from './logger';
 import { SSOParsedToken } from './Priv';
@@ -14,7 +14,7 @@ export type SSOServiceDetails = {
   is_trial: boolean;
 };
 
-const isITLessEnv = ITLess();
+const isITLessCognito = ITLessCognito();
 const bounceInvocationLock: { [service: string]: boolean } = {
   // not_entitled modal should appear only once for insights bundle
   insights: false,
@@ -167,7 +167,7 @@ export function tryBounceIfUnentitled(
 }
 
 export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
-  const user = isITLessEnv ? await createUser() : buildUser(token);
+  const user = isITLessCognito ? await createUser() : buildUser(token);
 
   const pathName = getWindow().location.pathname.split('/');
   pathName.shift();
@@ -187,12 +187,12 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
       };
     } = {};
     // let cogToken;
-    if (isITLessEnv) {
+    if (isITLessCognito) {
       // cogToken = await getTokenWithAuthorizationCode();
     }
     try {
       if (user.identity.org_id) {
-        data = isITLessEnv
+        data = isITLessCognito
           ? ((await serviceAPI.servicesGet()) as unknown as typeof data)
           : ((await serviceAPI.servicesGet()) as unknown as typeof data);
       } else {

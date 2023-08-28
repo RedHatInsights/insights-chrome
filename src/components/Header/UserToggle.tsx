@@ -6,7 +6,7 @@ import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip'
 import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
 import UserIcon from './UserIcon';
 import { useSelector } from 'react-redux';
-import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, ITLessCognito, getEnv, isProd as isProdEnv } from '../../utils/common';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -97,7 +97,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
         </DropdownItem>
       )}
     </React.Fragment>,
-    <DropdownItem key="logout" component="button" onClick={() => (isITLessEnv ? cogLogout() : logout(true))}>
+    <DropdownItem key="logout" component="button" onClick={() => (ITLessCognito() ? cogLogout() : logout(true))}>
       {intl.formatMessage(messages.logout)}
     </DropdownItem>,
     extraItems,

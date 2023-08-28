@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
 import { ReduxState } from '../../redux/store';
-import { ITLess, getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
+import { getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
-import { computeFedrampResult } from '../../utils/useRenderFedramp';
 
 export type AppFilterBucket = {
   id: string;
@@ -27,6 +26,8 @@ export const requiredBundles = [
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ];
 
+export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
+
 const bundlesOrder = [
   'application-services',
   'openshift',
@@ -41,8 +42,6 @@ const bundlesOrder = [
   'business-services',
 ];
 
-const isITLessEnv = ITLess();
-
 function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules'> = { modules: [] }) {
   const routes = (modules || [])
     .flatMap(({ routes }) => routes.map((route) => (typeof route === 'string' ? route : route.pathname)))
@@ -55,7 +54,6 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }:
   const subscriptionsLinks: NavItem[] = [];
   let url = href;
   let appId = rest.appId!;
-  let isFedramp = computeFedrampResult(isITLessEnv, url, modules[appId]);
   if (expandable) {
     routes?.forEach(({ href, title, ...rest }) => {
       if (href?.includes('/openshift/cost-management') && rest.filterable !== false) {
@@ -65,7 +63,6 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }:
       if (rest.filterable !== false && (href?.includes('/insights/subscriptions') || href?.includes('/openshift/subscriptions'))) {
         subscriptionsLinks.push({
           ...rest,
-          isFedramp: false, // openshift and subs are never visible on fedramp.
           href,
           title,
         });
@@ -76,14 +73,12 @@ function getBundleLink({ title, isExternal, href, routes, expandable, ...rest }:
         const truncatedRoute = href.split('/').slice(0, 3).join('/');
         url = isExternal ? href : moduleRoute.length > truncatedRoute.length ? moduleRoute : truncatedRoute;
         appId = rest.appId ? rest.appId : appId;
-        isFedramp = computeFedrampResult(isITLessEnv, url, modules[appId]);
       }
     });
   }
 
   return {
     ...rest,
-    isFedramp,
     appId,
     isExternal,
     title,
@@ -142,7 +137,6 @@ const useAppFilter = () => {
         }, [])
         .flat()
         .map((link) => getBundleLink(link, modules || {}))
-        .filter(({ isFedramp }) => (isITLessEnv ? !!isFedramp : true))
         .filter(({ filterable }) => filterable !== false) || [];
     const bundleLinks: NavItem[] = [];
     const extraLinks: { cost: NavItem[]; subs: NavItem[] } = {
