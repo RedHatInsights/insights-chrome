@@ -19,7 +19,7 @@ import {
   toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
-import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
+import { ITLess, ITLessCognito, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
@@ -99,10 +99,11 @@ export const createChromeContext = ({
   };
 
   const isITLessEnv = ITLess();
+  const isITLessCognito = ITLessCognito();
 
   const api: ChromeAPI = {
     ...actions,
-    auth: isITLessEnv ? createCognitoAuthObject(store) : createAuthObject(libJwt, getUser, store, modulesConfig),
+    auth: isITLessCognito ? createCognitoAuthObject(store) : createAuthObject(libJwt, getUser, store, modulesConfig),
     initialized: true,
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
@@ -113,7 +114,7 @@ export const createChromeContext = ({
     getEnvironmentDetails: () => getEnvDetails(),
     createCase: (fields?: any) => getUser().then((user) => createSupportCase(user!.identity, libJwt, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
-      if (isITLessEnv) {
+      if (isITLessCognito) {
         const cogToken = await getTokenWithAuthorizationCode();
         return fetchPermissions(cogToken || '', app, bypassCache);
       } else {
