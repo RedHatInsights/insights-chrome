@@ -5,7 +5,7 @@ export const testData = [
     description: 'Testing of notification',
     read: false,
     source: 'RHEL', // the origin of the message
-    created: '5 mins ago',
+    created: '2023-08-18T12:00:00Z',
   },
   {
     id: 2,
@@ -13,7 +13,7 @@ export const testData = [
     description: 'Testing of notification',
     read: false,
     source: 'RBAC', // the origin of the message
-    created: '10 mins ago',
+    created: '2023-08-18T12:05:00Z',
   },
   {
     id: 3,
@@ -21,7 +21,7 @@ export const testData = [
     description: 'Testin of notification',
     read: false,
     source: 'SATURN', // the origin of the message
-    created: '15 mins ago',
+    created: '2023-08-18T12:10:00Z',
   },
 ];
 

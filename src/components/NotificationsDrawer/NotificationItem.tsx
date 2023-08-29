@@ -22,7 +22,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
 
   const onCheckboxToggle = () => {
     dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen(false);
   };
 
   const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
@@ -35,12 +35,12 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
             <Checkbox isChecked={notification.read} onChange={() => onCheckboxToggle()} id="read-checkbox" name="read-checkbox" />
             <Dropdown
               toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                <MenuToggle 
+                <MenuToggle
                   ref={toggleRef}
                   aria-label="Notification actions dropdown"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  id="kebab-toggle" 
-                  isExpanded={isDropdownOpen} 
+                  id="kebab-toggle"
+                  isExpanded={isDropdownOpen}
                   variant="plain"
                 >
                   <EllipsisVIcon />

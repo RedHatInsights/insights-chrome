@@ -21,14 +21,14 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleNotificationsDrawer } from '../../redux/actions';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
 import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import { orderBy } from 'lodash';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { markAllNotificationsAsRead, markAllNotificationsAsUnread } from '../../redux/actions';
+import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -95,13 +95,13 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const dropdownItems = [
-    <DropdownItem key="read all" onClick={onMarkAllAsRead}>
+    <DropdownItem key="read all" onClick={() => onMarkAllAsRead()}>
       Mark visible as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={onMarkAllAsUnread}>
+    <DropdownItem key="unread all" onClick={() => onMarkAllAsUnread()}>
       Mark visible as unread
     </DropdownItem>,
-    <Divider />,
+    <Divider key="divider" />,
     <DropdownItem key="event log">
       <Icon>
         <ExternalLinkSquareAltIcon />
@@ -148,9 +148,10 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       return <EmptyNotifications />;
     }
 
-    // TODO: Add sorting by timestamps as primary sort, then by read/unread.
-    const sortedNotifications = (filteredNotifications?.length > 0 ? filteredNotifications : notifications).sort(
-      (currentNotification, nextNotification) => (currentNotification.read === nextNotification.read ? 0 : currentNotification.read ? 1 : -1)
+    const sortedNotifications = orderBy(
+      filteredNotifications?.length > 0 ? filteredNotifications : notifications,
+      ['read', 'created'],
+      ['asc', 'asc']
     );
 
     return sortedNotifications.map((notification, index) => <NotificationItem key={index} notification={notification} />);
@@ -181,14 +182,8 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         </Dropdown>
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle
-              ref={toggleRef}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              variant="plainText"
-              id="kebab-toggle"
-              isFullWidth
-            >
-              <EllipsisVIcon/>
+            <MenuToggle ref={toggleRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)} variant="plainText" id="kebab-toggle" isFullWidth>
+              <EllipsisVIcon />
             </MenuToggle>
           )}
           isOpen={isDropdownOpen}
