@@ -391,3 +391,18 @@ export function markAllNotificationsAsUnread(state: ChromeState): ChromeState {
     },
   };
 }
+
+export function updateNotificationsReducer(state: ChromeState, payload: NotificationData) {
+  return {
+    ...state,
+    notifications: {
+      ...state.notification,
+      data: [
+        {
+          isRead: false,
+          ...payload,
+        },
+      ],
+    },
+  };
+}

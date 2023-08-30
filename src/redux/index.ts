@@ -29,6 +29,7 @@ import {
   toggleDebuggerModal,
   toggleFeedbackModal,
   toggleNotificationsReducer,
+  updateNotificationsReducer,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -78,6 +79,7 @@ import {
   TOGGLE_NOTIFICATIONS_DRAWER,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
+  UPDATE_NOTIFICATIONS,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
@@ -112,6 +114,7 @@ const reducers = {
   [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
   [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
   [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
+  [UPDATE_NOTIFICATIONS]: updateNotificationsReducer,
 };
 
 const globalFilter = {

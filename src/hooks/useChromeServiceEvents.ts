@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFlag } from '@unleash/proxy-client-react';
+import { UPDATE_NOTIFICATIONS } from '../redux/action-types';
 
 import { getEncodedToken, setCookie } from '../jwt/jwt';
 
@@ -36,7 +37,7 @@ const useChromeServiceEvents = () => {
 
   const handlerMap: { [key in EventTypes]: (payload: Payload) => void } = useMemo(
     () => ({
-      [NOTIFICATION_DRAWER]: (data: Payload) => dispatch({ type: 'foo', payload: data }),
+      [NOTIFICATION_DRAWER]: (data: Payload) => dispatch({ type: UPDATE_NOTIFICATIONS, payload: data }),
       [SAMPLE_EVENT]: (data: Payload) => console.log('Received sample payload', data),
     }),
     []
