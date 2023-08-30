@@ -12,6 +12,7 @@ import {
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
 import { NotificationData } from '../../redux/store';
 import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
@@ -53,8 +54,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
               {dropdownItems.map((dropDownItem) => dropDownItem)}
             </Dropdown>
           </NotificationDrawerListItemHeader>
-          {/* TODO: Modify timestamp to only show correct "x minutes ago" */}
-          <NotificationDrawerListItemBody timestamp={`${notification.created.split('GMT')[0].trim()}`}>
+          <NotificationDrawerListItemBody timestamp={<DateFormat date={notification.created} />}>
             <Label variant="outline" isCompact className="pf-u-mb-md">
               {notification.source}
             </Label>

@@ -163,13 +163,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle
-              ref={toggleRef}
-              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-              id="filter-toggle"
-              isFullWidth
-              variant="plainText"
-            >
+            <MenuToggle ref={toggleRef} onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle" isFullWidth variant="plain">
               <FilterIcon />
             </MenuToggle>
           )}
@@ -182,7 +176,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         </Dropdown>
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle ref={toggleRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)} variant="plainText" id="kebab-toggle" isFullWidth>
+            <MenuToggle ref={toggleRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)} variant="plain" id="kebab-toggle" isFullWidth>
               <EllipsisVIcon />
             </MenuToggle>
           )}
