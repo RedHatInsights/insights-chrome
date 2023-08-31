@@ -198,7 +198,7 @@ const pfConfig = {
     path: path.resolve(__dirname, '../build/js/pf'),
     // the HMR needs dynamic entry filename to remove name conflicts
     filename: '[name].js',
-    publicPath: `${publicPath}pf/`,
+    publicPath: `auto`,
   },
   plugins: [new MiniCssExtractPlugin()],
   stats: {
