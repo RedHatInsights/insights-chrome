@@ -103,38 +103,15 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
    * Check response errors for cross_account requests.
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
-  window.fetch = function fetchReplacement(path: URL | RequestInfo = '', options, ...rest) {
+  window.fetch = function fetchReplacement(input: URL | RequestInfo = '', init?: RequestInit | undefined, ...rest) {
     const tid = Math.random().toString(36);
-    const additionalHeaders: any = spreadAdditionalHeaders(options);
+    const request: Request = new Request(input, init);
 
-    /**
-     * If path is a Request object, it may contain headers. Those headers will be overwritten, not merged,
-     * by the headers property containing the authorization headers and additionalHeaders in options. Therefore,
-     * we need to merge any headers present in the Request object into additionalHeaders.
-     */
-
-    function isRequest(p: URL | RequestInfo): p is Request {
-      return !(p instanceof URL) && typeof p !== 'string';
+    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated()) {
+      request.headers.append('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
     }
 
-    if (isRequest(path)) {
-      for (const pair of path.headers.entries()) {
-        additionalHeaders[pair[0]] = pair[1];
-      }
-    }
-
-    const prom = oldFetch.apply(this, [
-      path,
-      {
-        ...(options || {}),
-        headers: {
-          // If app wants to set its own Auth header it can do so
-          ...(checkOrigin(path) && libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
-          ...additionalHeaders,
-        },
-      },
-      ...rest,
-    ]);
+    const prom = oldFetch.apply(this, [request, ...rest]);
     if (iqeEnabled) {
       fetchResults[tid] = arguments[0];
       prom
