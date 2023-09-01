@@ -1,34 +1,33 @@
 import React, { useEffect, useState } from 'react';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
+import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Dropdown, DropdownGroup, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import {
-  Badge,
-  Button,
-  Checkbox,
-  Divider,
-  Dropdown,
-  DropdownGroup,
-  DropdownItem,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  Icon,
-  MenuToggle,
-  MenuToggleElement,
   NotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerHeader,
   NotificationDrawerList,
-  Text,
-  Title,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { useDispatch, useSelector } from 'react-redux';
-import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-square-alt-icon';
-import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
+import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
+import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-square-alt-icon';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import { orderBy } from 'lodash';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
 import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
+import { filterConfig } from './notificationDrawerUtils';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -63,6 +62,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>([]);
   const dispatch = useDispatch();
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
+  const isOrgAdmin = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.is_org_admin);
 
   useEffect(() => {
     const modifiedNotifications = (activeFilters || []).reduce(
@@ -95,47 +95,59 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const dropdownItems = [
-    <DropdownItem key="read all" onClick={() => onMarkAllAsRead()}>
+    <DropdownItem key="read all" onClick={() => onMarkAllAsRead()} isDisabled={notifications.length === 0}>
       Mark visible as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={() => onMarkAllAsUnread()}>
+    <DropdownItem key="unread all" onClick={() => onMarkAllAsUnread()} isDisabled={notifications.length === 0}>
       Mark visible as unread
     </DropdownItem>,
     <Divider key="divider" />,
     <DropdownItem key="event log">
-      <Icon>
-        <ExternalLinkSquareAltIcon />
-      </Icon>
-      View event log
+      <Flex>
+        <FlexItem>View event log</FlexItem>
+        <FlexItem align={{ default: 'alignRight' }}>
+          <Icon className="pf-v5-u-ml-auto">
+            <ExternalLinkAltIcon />
+          </Icon>
+        </FlexItem>
+      </Flex>
     </DropdownItem>,
-    <DropdownItem key="notification settings">
-      <Icon>
-        <ExternalLinkSquareAltIcon />
-      </Icon>
-      Configure notification settings
-    </DropdownItem>,
+    isOrgAdmin && (
+      <DropdownItem key="notification settings">
+        <Flex>
+          <FlexItem>Configure notification settings</FlexItem>
+          <FlexItem align={{ default: 'alignRight' }}>
+            <Icon className="pf-v5-u-ml-auto">
+              <ExternalLinkAltIcon />
+            </Icon>
+          </FlexItem>
+        </Flex>
+      </DropdownItem>
+    ),
     <DropdownItem key="notification preferences">
-      <Icon>
-        <ExternalLinkSquareAltIcon />
-      </Icon>
-      Manage my notification preferences
+      <Flex>
+        <FlexItem>Manage my notification preferences</FlexItem>
+        <FlexItem align={{ default: 'alignRight' }}>
+          <Icon className="pf-v5-u-ml-auto">
+            <ExternalLinkAltIcon />
+          </Icon>
+        </FlexItem>
+      </Flex>
     </DropdownItem>,
   ];
 
   const filterDropdownItems = () => {
-    const sources = notifications.reduce((acc: string[], { source }) => (acc.includes(source) ? acc : [...acc, source]), []);
-
     return [
       <DropdownGroup key="filter-label" label="Show notifications for...">
-        {sources.map((source, index) => (
-          <DropdownItem key={index} onClick={() => onFilterSelect(source)}>
-            <Checkbox isChecked={activeFilters.includes(source)} id={index.toString()} className="pf-u-mr-xs" />
-            {source}
+        {filterConfig.map((source, index) => (
+          <DropdownItem key={index} onClick={() => onFilterSelect(source.value)}>
+            <Checkbox isChecked={activeFilters.includes(source.value)} id={index.toString()} className="pf-v5-u-mr-sm" />
+            {source.title}
           </DropdownItem>
         ))}
         <Divider />
         <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
-          <Button variant="link" isInline>
+          <Button variant="link" isDisabled={activeFilters.length === 0} isInline>
             Reset filters
           </Button>
         </DropdownItem>
@@ -163,26 +175,44 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle ref={toggleRef} onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)} id="filter-toggle" isFullWidth variant="plain">
+            <MenuToggle
+              ref={toggleRef}
+              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+              id="notifications-filter-toggle"
+              isFullWidth
+              variant="plain"
+            >
               <FilterIcon />
             </MenuToggle>
           )}
           isOpen={isFilterDropdownOpen}
-          id="filter-dropdown"
+          onOpenChange={setIsFilterDropdownOpen}
+          popperProps={{
+            position: PopoverPosition.right,
+          }}
+          id="notifications-filter-dropdown"
           aria-label="Notifications filter"
-          isPlain
         >
           {filterDropdownItems()}
         </Dropdown>
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle ref={toggleRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)} variant="plain" id="kebab-toggle" isFullWidth>
+            <MenuToggle
+              ref={toggleRef}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              variant="plain"
+              id="notifications-actions-toggle"
+              isFullWidth
+            >
               <EllipsisVIcon />
             </MenuToggle>
           )}
           isOpen={isDropdownOpen}
-          isPlain
-          id="notification-dropdown"
+          onOpenChange={setIsDropdownOpen}
+          popperProps={{
+            position: PopoverPosition.right,
+          }}
+          id="notifications-actions-dropdown"
         >
           {dropdownItems.map((dropdownItem) => dropdownItem)}
         </Dropdown>

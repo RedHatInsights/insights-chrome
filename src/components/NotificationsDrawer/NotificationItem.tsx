@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Checkbox,
-  Dropdown,
-  DropdownItem,
-  Label,
-  MenuToggle,
-  MenuToggleElement,
   NotificationDrawerList,
   NotificationDrawerListItem,
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
+import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Dropdown, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
@@ -40,7 +39,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
                   ref={toggleRef}
                   aria-label="Notification actions dropdown"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  id="kebab-toggle"
+                  id="notification-item-toggle"
                   isExpanded={isDropdownOpen}
                   variant="plain"
                 >
@@ -48,10 +47,13 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
                 </MenuToggle>
               )}
               isOpen={isDropdownOpen}
-              isPlain
-              id="notification-dropdown"
+              onOpenChange={setIsDropdownOpen}
+              popperProps={{
+                position: PopoverPosition.right,
+              }}
+              id="notification-item-dropdown"
             >
-              {dropdownItems.map((dropDownItem) => dropDownItem)}
+              {dropdownItems}
             </Dropdown>
           </NotificationDrawerListItemHeader>
           <NotificationDrawerListItemBody timestamp={<DateFormat date={notification.created} />}>
