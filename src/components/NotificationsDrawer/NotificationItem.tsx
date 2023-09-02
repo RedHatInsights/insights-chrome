@@ -10,7 +10,7 @@ import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbo
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Dropdown, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
 import { NotificationData } from '../../redux/store';
@@ -25,14 +25,12 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
     setIsDropdownOpen(false);
   };
 
-  const dropdownItems = [<DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>];
-
   return (
     <React.Fragment>
       <NotificationDrawerList>
         <NotificationDrawerListItem variant="info" isRead={notification.read}>
           <NotificationDrawerListItemHeader title={notification.title} srTitle="Info notification:">
-            <Checkbox isChecked={notification.read} onChange={() => onCheckboxToggle()} id="read-checkbox" name="read-checkbox" />
+            <Checkbox isChecked={notification.read} onChange={onCheckboxToggle} id="read-checkbox" name="read-checkbox" />
             <Dropdown
               toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                 <MenuToggle
@@ -53,7 +51,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
               }}
               id="notification-item-dropdown"
             >
-              {dropdownItems}
+              <DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>
             </Dropdown>
           </NotificationDrawerListItemHeader>
           <NotificationDrawerListItemBody timestamp={<DateFormat date={notification.created} />}>

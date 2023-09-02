@@ -23,7 +23,8 @@ import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash
 import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-square-alt-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
-import { orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
+import { useNavigate } from 'react-router-dom';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
 import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
@@ -60,6 +61,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>([]);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
   const isOrgAdmin = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.is_org_admin);
@@ -95,14 +97,14 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const dropdownItems = [
-    <DropdownItem key="read all" onClick={() => onMarkAllAsRead()} isDisabled={notifications.length === 0}>
+    <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
       Mark visible as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={() => onMarkAllAsUnread()} isDisabled={notifications.length === 0}>
+    <DropdownItem key="unread all" onClick={onMarkAllAsUnread} isDisabled={notifications.length === 0}>
       Mark visible as unread
     </DropdownItem>,
     <Divider key="divider" />,
-    <DropdownItem key="event log">
+    <DropdownItem key="event log" onClick={() => navigate('/settings/notifications/eventlog')}>
       <Flex>
         <FlexItem>View event log</FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
@@ -113,7 +115,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       </Flex>
     </DropdownItem>,
     isOrgAdmin && (
-      <DropdownItem key="notification settings">
+      <DropdownItem key="notification settings" onClick={() => navigate('/settings/notifications/configure-events')}>
         <Flex>
           <FlexItem>Configure notification settings</FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
@@ -124,7 +126,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         </Flex>
       </DropdownItem>
     ),
-    <DropdownItem key="notification preferences">
+    <DropdownItem key="notification preferences" onClick={() => navigate('/settings/notifications/user-preferences')}>
       <Flex>
         <FlexItem>Manage my notification preferences</FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
@@ -139,9 +141,9 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const filterDropdownItems = () => {
     return [
       <DropdownGroup key="filter-label" label="Show notifications for...">
-        {filterConfig.map((source, index) => (
-          <DropdownItem key={index} onClick={() => onFilterSelect(source.value)}>
-            <Checkbox isChecked={activeFilters.includes(source.value)} id={index.toString()} className="pf-v5-u-mr-sm" />
+        {filterConfig.map((source) => (
+          <DropdownItem key={source.value} onClick={() => onFilterSelect(source.value)}>
+            <Checkbox isChecked={activeFilters.includes(source.value)} id={source.value} className="pf-v5-u-mr-sm" />
             {source.title}
           </DropdownItem>
         ))}
@@ -166,12 +168,12 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       ['asc', 'asc']
     );
 
-    return sortedNotifications.map((notification, index) => <NotificationItem key={index} notification={notification} />);
+    return sortedNotifications.map((notification) => <NotificationItem key={notification.id} notification={notification} />);
   };
 
   return (
     <NotificationDrawer ref={innerRef}>
-      <NotificationDrawerHeader onClose={() => onNotificationsDrawerClose()}>
+      <NotificationDrawerHeader onClose={onNotificationsDrawerClose}>
         {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
