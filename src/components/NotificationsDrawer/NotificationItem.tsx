@@ -15,16 +15,24 @@ import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
 import { NotificationData } from '../../redux/store';
 import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationItem = ({ notification }: { notification: NotificationData }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onCheckboxToggle = () => {
     dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
     setIsDropdownOpen(false);
   };
 
+  const notificationDropdownItems = [
+    <DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>,
+    <DropdownItem key="manage-event" onClick={() => navigate('settings/notifications/configure-events')}>
+      Manage this event
+    </DropdownItem>,
+  ];
   return (
     <React.Fragment>
       <NotificationDrawerList>
@@ -51,7 +59,7 @@ const NotificationItem = ({ notification }: { notification: NotificationData }) 
               }}
               id="notification-item-dropdown"
             >
-              <DropdownItem key="read" onClick={onCheckboxToggle}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>
+              {notificationDropdownItems}
             </Dropdown>
           </NotificationDrawerListItemHeader>
           <NotificationDrawerListItemBody timestamp={<DateFormat date={notification.created} />}>

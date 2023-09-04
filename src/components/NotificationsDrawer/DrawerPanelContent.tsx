@@ -173,7 +173,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
 
   return (
     <NotificationDrawer ref={innerRef}>
-      <NotificationDrawerHeader onClose={onNotificationsDrawerClose}>
+      <NotificationDrawerHeader onClose={onNotificationsDrawerClose} title="Notifications" className="pf-u-align-items-center">
         {activeFilters.length > 0 && <Badge isRead>{activeFilters.length}</Badge>}
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -181,7 +181,6 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
               ref={toggleRef}
               onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
               id="notifications-filter-toggle"
-              isFullWidth
               variant="plain"
             >
               <FilterIcon />

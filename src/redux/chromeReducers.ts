@@ -338,7 +338,7 @@ export function toggleNotificationsReducer(state: ChromeState) {
     ...state,
     notifications: {
       ...state.notifications,
-      data: [],
+      data: state.notifications?.data || [],
       isExpanded: !state.notifications?.isExpanded,
     },
   };
@@ -349,7 +349,7 @@ export function markNotificationAsRead(state: ChromeState, { payload }: { payloa
     ...state,
     notifications: {
       isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.count || 0,
+      count: state.notifications?.data?.length || 0,
       data: (state.notifications?.data || []).map((notification: NotificationData) =>
         notification.id === payload ? { ...notification, read: true } : notification
       ),
@@ -362,7 +362,7 @@ export function markNotificationAsUnread(state: ChromeState, { payload }: { payl
     ...state,
     notifications: {
       isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.count || 0,
+      count: state.notifications?.data?.length || 0,
       data: (state.notifications?.data || []).map((notification: NotificationData) =>
         notification.id === payload ? { ...notification, read: false } : notification
       ),
@@ -386,7 +386,7 @@ export function markAllNotificationsAsUnread(state: ChromeState): ChromeState {
     ...state,
     notifications: {
       isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.count || 0,
+      count: state.notifications?.data?.length || 0,
       data: (state.notifications?.data || []).map((notification) => ({ ...notification, read: false })),
     },
   };
