@@ -4,7 +4,7 @@ import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
 import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
-import { Dropdown, DropdownGroup, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
@@ -96,6 +96,11 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       : setActiveFilters([...activeFilters, chosenFilter]);
   };
 
+  const onNavigateTo = (link: string) => {
+    navigate(link);
+    onNotificationsDrawerClose();
+  };
+
   const dropdownItems = [
     <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
       Mark visible as read
@@ -104,7 +109,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       Mark visible as unread
     </DropdownItem>,
     <Divider key="divider" />,
-    <DropdownItem key="event log" onClick={() => navigate('/settings/notifications/eventlog')}>
+    <DropdownItem key="event log" onClick={() => onNavigateTo('/settings/notifications/eventlog')}>
       <Flex>
         <FlexItem>View event log</FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
@@ -115,7 +120,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       </Flex>
     </DropdownItem>,
     isOrgAdmin && (
-      <DropdownItem key="notification settings" onClick={() => navigate('/settings/notifications/configure-events')}>
+      <DropdownItem key="notification settings" onClick={() => onNavigateTo('/settings/notifications/configure-events')}>
         <Flex>
           <FlexItem>Configure notification settings</FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
@@ -126,7 +131,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         </Flex>
       </DropdownItem>
     ),
-    <DropdownItem key="notification preferences" onClick={() => navigate('/settings/notifications/user-preferences')}>
+    <DropdownItem key="notification preferences" onClick={() => onNavigateTo('/settings/notifications/user-preferences')}>
       <Flex>
         <FlexItem>Manage my notification preferences</FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
@@ -141,18 +146,20 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const filterDropdownItems = () => {
     return [
       <DropdownGroup key="filter-label" label="Show notifications for...">
-        {filterConfig.map((source) => (
-          <DropdownItem key={source.value} onClick={() => onFilterSelect(source.value)}>
-            <Checkbox isChecked={activeFilters.includes(source.value)} id={source.value} className="pf-v5-u-mr-sm" />
-            {source.title}
+        <DropdownList>
+          {filterConfig.map((source) => (
+            <DropdownItem key={source.value} onClick={() => onFilterSelect(source.value)} isDisabled={notifications.length === 0}>
+              <Checkbox isChecked={activeFilters.includes(source.value)} id={source.value} className="pf-v5-u-mr-sm" />
+              {source.title}
+            </DropdownItem>
+          ))}
+          <Divider />
+          <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
+            <Button variant="link" isDisabled={activeFilters.length === 0} isInline>
+              Reset filters
+            </Button>
           </DropdownItem>
-        ))}
-        <Divider />
-        <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
-          <Button variant="link" isDisabled={activeFilters.length === 0} isInline>
-            Reset filters
-          </Button>
-        </DropdownItem>
+        </DropdownList>
       </DropdownGroup>,
     ];
   };
@@ -162,13 +169,11 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       return <EmptyNotifications />;
     }
 
-    const sortedNotifications = orderBy(
-      filteredNotifications?.length > 0 ? filteredNotifications : notifications,
-      ['read', 'created'],
-      ['asc', 'asc']
-    );
+    const sortedNotifications = orderBy(activeFilters?.length > 0 ? filteredNotifications : notifications, ['read', 'created'], ['asc', 'asc']);
 
-    return sortedNotifications.map((notification) => <NotificationItem key={notification.id} notification={notification} />);
+    return sortedNotifications.map((notification) => (
+      <NotificationItem key={notification.id} notification={notification} onNavigateTo={onNavigateTo} />
+    ));
   };
 
   return (
@@ -215,7 +220,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
           }}
           id="notifications-actions-dropdown"
         >
-          {dropdownItems.map((dropdownItem) => dropdownItem)}
+          <DropdownList>{dropdownItems}</DropdownList>
         </Dropdown>
       </NotificationDrawerHeader>
       <NotificationDrawerBody>
