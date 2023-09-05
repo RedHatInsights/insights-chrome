@@ -140,6 +140,11 @@ export const chromeInitialState: ReduxState = {
       quickstarts: {},
     },
     moduleRoutes: [],
+    notifications: {
+      data: [],
+      isExpanded: false,
+      count: 0,
+    },
   },
   globalFilter: globalFilterDefaultState,
 };
