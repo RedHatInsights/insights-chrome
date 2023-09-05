@@ -15,6 +15,7 @@ def secrets = [
         [envVar: 'CHROME_ACCOUNT', vaultKey: 'account'],
         [envVar: 'CHROME_PASSWORD', vaultKey: 'password']]],
 ]
+
 def configuration = [vaultUrl: params.VAULT_ADDRESS, vaultCredentialId: params.VAULT_CREDS_ID, engineVersion: 1]
 
 pipeline {
