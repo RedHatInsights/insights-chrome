@@ -55,7 +55,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     tabbableElement.focus();
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-
   return (
     <Page
       className={
