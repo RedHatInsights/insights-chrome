@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
-import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
@@ -148,16 +147,19 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       <DropdownGroup key="filter-label" label="Show notifications for...">
         <DropdownList>
           {filterConfig.map((source) => (
-            <DropdownItem key={source.value} onClick={() => onFilterSelect(source.value)} isDisabled={notifications.length === 0}>
-              <Checkbox isChecked={activeFilters.includes(source.value)} id={source.value} className="pf-v5-u-mr-sm" />
+            <DropdownItem
+              key={source.value}
+              onClick={() => onFilterSelect(source.value)}
+              isDisabled={notifications.length === 0}
+              isSelected={activeFilters.includes(source.value)}
+              hasCheckbox
+            >
               {source.title}
             </DropdownItem>
           ))}
           <Divider />
-          <DropdownItem key="reset-filters" onClick={() => setActiveFilters([])}>
-            <Button variant="link" isDisabled={activeFilters.length === 0} isInline>
-              Reset filters
-            </Button>
+          <DropdownItem key="reset-filters" isDisabled={activeFilters.length === 0} onClick={() => setActiveFilters([])}>
+            Reset filters
           </DropdownItem>
         </DropdownList>
       </DropdownGroup>,
