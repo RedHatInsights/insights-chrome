@@ -9,7 +9,7 @@ import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/
 import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
-import { Dropdown, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { Dropdown, DropdownList, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
@@ -61,7 +61,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
               }}
               id="notification-item-dropdown"
             >
-              {notificationDropdownItems}
+              <DropdownList>{notificationDropdownItems}</DropdownList>
             </Dropdown>
           </NotificationDrawerListItemHeader>
           <NotificationDrawerListItemBody timestamp={<DateFormat date={notification.created} />}>

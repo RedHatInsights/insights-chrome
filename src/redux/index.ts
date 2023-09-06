@@ -153,6 +153,8 @@ export default function (): {
   chrome: (state: ChromeState, action: AnyAction) => ChromeState;
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
+  // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
+
   return {
     chrome: (
       state = {
