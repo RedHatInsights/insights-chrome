@@ -15,6 +15,10 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
+  markAllNotificationsAsRead,
+  markAllNotificationsAsUnread,
+  markNotificationAsRead,
+  markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
@@ -58,6 +62,10 @@ import {
   LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
+  MARK_ALL_NOTIFICATION_AS_READ,
+  MARK_ALL_NOTIFICATION_AS_UNREAD,
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
@@ -100,6 +108,10 @@ const reducers = {
   [SET_GATEWAY_ERROR]: setGatewayError,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
   [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
+  [MARK_NOTIFICATION_AS_READ]: markNotificationAsRead,
+  [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
+  [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
+  [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
 };
 
 const globalFilter = {
@@ -128,6 +140,11 @@ export const chromeInitialState: ReduxState = {
       quickstarts: {},
     },
     moduleRoutes: [],
+    notifications: {
+      data: [],
+      isExpanded: false,
+      count: 0,
+    },
   },
   globalFilter: globalFilterDefaultState,
 };

@@ -11,11 +11,18 @@ export type InternalNavigation = {
 
 export type AccessRequest = { request_id: string; created: string; seen: boolean };
 
+export type NotificationData = {
+  id: number;
+  title: string;
+  description: string;
+  read: boolean;
+  source: string;
+  created: string;
+};
+
 export type Notifications = {
   isExpanded: boolean;
-  data: Array<{
-    isRead: boolean;
-  }>;
+  data: NotificationData[];
   count: number;
 };
 

@@ -206,3 +206,21 @@ export const setGatewayError = (error?: ThreeScaleError) => ({
 export const toggleNotificationsDrawer = () => ({
   type: actionTypes.TOGGLE_NOTIFICATIONS_DRAWER,
 });
+
+export const markNotificationAsRead = (id: number) => ({
+  type: actionTypes.MARK_NOTIFICATION_AS_READ,
+  payload: id,
+});
+
+export const markNotificationAsUnread = (id: number) => ({
+  type: actionTypes.MARK_NOTIFICATION_AS_UNREAD,
+  payload: id,
+});
+
+export const markAllNotificationsAsRead = () => ({
+  type: actionTypes.MARK_ALL_NOTIFICATION_AS_READ,
+});
+
+export const markAllNotificationsAsUnread = () => ({
+  type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
+});
