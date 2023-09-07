@@ -38,7 +38,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
   return (
     <React.Fragment>
       <NotificationDrawerList>
-        <NotificationDrawerListItem variant="info" isRead={notification.read}>
+        <NotificationDrawerListItem aria-label={`Notification item ${notification.id}`} variant="info" isRead={notification.read}>
           <NotificationDrawerListItemHeader title={notification.title} srTitle="Info notification:">
             <Checkbox isChecked={notification.read} onChange={onCheckboxToggle} id="read-checkbox" name="read-checkbox" />
             <Dropdown

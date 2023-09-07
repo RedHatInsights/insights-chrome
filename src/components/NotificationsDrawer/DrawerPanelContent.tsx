@@ -189,6 +189,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
               onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
               id="notifications-filter-toggle"
               variant="plain"
+              aria-label="Notifications filter"
             >
               <FilterIcon />
             </MenuToggle>
@@ -199,7 +200,6 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
             position: PopoverPosition.right,
           }}
           id="notifications-filter-dropdown"
-          aria-label="Notifications filter"
         >
           {filterDropdownItems()}
         </Dropdown>
@@ -210,6 +210,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               variant="plain"
               id="notifications-actions-toggle"
+              aria-label="Notifications actions dropdown"
               isFullWidth
             >
               <EllipsisVIcon />
