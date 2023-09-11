@@ -1,6 +1,6 @@
 @import '~@patternfly/patternfly/sass-utilities/_all';
 .chr-c-context-selector {
-  --pf-c-masthead--c-context-selector--Width: 224px;
+  --pf-v5-c-masthead--c-context-selector--Width: 224px;
   .chr-c-content-personal-account {
     .account-label {
       display: flex;
@@ -8,7 +8,7 @@
       align-items: center;
     }
   }
-  .pf-c-context-selector__menu-list-item {
+  .pf-v5-c-context-selector__menu-list-item {
     svg {
       font-size: 9px;
     }

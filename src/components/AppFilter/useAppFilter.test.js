@@ -368,13 +368,11 @@ describe('useAppFilter', () => {
             appId: 'foo',
             href: '/openshift/subscriptions/foo',
             title: 'subs-nested-ins',
-            isFedramp: false,
           },
           {
             appId: 'foo',
             href: '/insights/subscriptions/foo',
             title: 'subs-nested-o',
-            isFedramp: false,
           },
         ],
         title: 'Subscriptions',

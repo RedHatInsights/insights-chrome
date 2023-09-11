@@ -103,22 +103,15 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
    * Check response errors for cross_account requests.
    * If we get error response with specific cross account error message, we kick the user out of the corss account session.
    */
-  window.fetch = function fetchReplacement(path = '', options, ...rest) {
+  window.fetch = function fetchReplacement(input: URL | RequestInfo = '', init?: RequestInit | undefined, ...rest) {
     const tid = Math.random().toString(36);
-    const additionalHeaders: any = spreadAdditionalHeaders(options);
+    const request: Request = new Request(input, init);
 
-    const prom = oldFetch.apply(this, [
-      path,
-      {
-        ...(options || {}),
-        headers: {
-          // If app wants to set its own Auth header it can do so
-          ...(checkOrigin(path) && libJwt?.()?.jwt.isAuthenticated() && { Authorization: `Bearer ${libJwt?.()?.jwt.getEncodedToken()}` }),
-          ...additionalHeaders,
-        },
-      },
-      ...rest,
-    ]);
+    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated() && !request.headers.has('Authorization')) {
+      request.headers.append('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+    }
+
+    const prom = oldFetch.apply(this, [request, ...rest]);
     if (iqeEnabled) {
       fetchResults[tid] = arguments[0];
       prom

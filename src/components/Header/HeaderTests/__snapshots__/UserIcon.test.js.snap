@@ -3,7 +3,7 @@
 exports[`<UserIcon /> should render correctly with initial state 1`] = `
 <img
   alt="User Avatar"
-  class="pf-c-avatar"
+  class="pf-v5-c-avatar"
   src="test-file-stub"
 />
 `;

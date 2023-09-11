@@ -1,6 +1,10 @@
 import React from 'react';
-import { Bullseye, Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { logoutAllTabs } from '../../jwt/jwt';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -11,7 +15,7 @@ const IDPError = () => {
   return (
     <Bullseye>
       <EmptyState>
-        <EmptyStateIcon color="var(--pf-global--danger-color--100)" icon={ExclamationCircleIcon} />
+        <EmptyStateIcon color="var(--pf-v5-global--danger-color--100)" icon={ExclamationCircleIcon} />
         <Title headingLevel="h1" size="lg">
           {intl.formatMessage(messages.authFailure)}
         </Title>

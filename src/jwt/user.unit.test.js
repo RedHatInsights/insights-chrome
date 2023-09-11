@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 jest.mock('./entitlements');
 
-const mockedEntitlements = require('./entitlements');
 const token = require('../../testdata/token.json');
 const userOutput = require('../../testdata/user.json');
 const user = require('./user');
@@ -117,10 +116,6 @@ describe('User', () => {
       const o = await user.default(token);
       expect(o).toHaveProperty('entitlements', { foo: 'bar' });
       expect(o).toHaveProperty('identity');
-    });
-    test('uses the token.jti field as a cache key', () => {
-      expect(mockedEntitlements.default).toBeCalledWith(token.jti);
-      user.default(token);
     });
   });
 });

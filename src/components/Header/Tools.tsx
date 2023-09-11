@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  AlertActionLink,
-  AlertVariant,
-  Button,
-  Divider,
-  DropdownItem,
-  NotificationBadge,
-  Switch,
-  ToolbarItem,
-  Tooltip,
-} from '@patternfly/react-core';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
-import CogIcon from '@patternfly/react-icons/dist/js/icons/cog-icon';
-import RedhatIcon from '@patternfly/react-icons/dist/js/icons/redhat-icon';
+import { AlertActionLink, AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { NotificationBadge } from '@patternfly/react-core/dist/dynamic/components/NotificationBadge';
+import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
+import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
+import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import HeaderAlert from './HeaderAlert';
@@ -27,7 +24,7 @@ import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
-import BellIcon from '@patternfly/react-icons/dist/esm/icons/bell-icon';
+import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
 
@@ -85,13 +82,13 @@ const Tools = () => {
   });
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => isRead) || []);
+  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => !isRead) || []);
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const dispatch = useDispatch();
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const location = useLocation();
-  const settingsPath = `/settings/sources`;
+  const settingsPath = isITLessEnv ? `/settings/my-user-access` : `/settings/sources`;
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
@@ -135,7 +132,7 @@ const Tools = () => {
   const aboutMenuDropdownItems = [
     {
       title: `${intl.formatMessage(messages.apiDocumentation)}`,
-      url: `https://developers.redhat.com/api-catalog/`,
+      onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
@@ -146,17 +143,16 @@ const Tools = () => {
     },
     {
       title: `${intl.formatMessage(messages.statusPage)}`,
-      url: 'https://status.redhat.com/',
+      onClick: () => window.open('https://status.redhat.com/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
       title: `${intl.formatMessage(messages.supportOptions)}`,
-      url: 'https://access.redhat.com/support',
-      isHidden: isITLessEnv,
+      url: isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support',
     },
     {
       title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
-      url: `https://access.redhat.com/documentation/en-us/red_hat_insights`,
+      onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
 
@@ -234,6 +230,7 @@ const Tools = () => {
   return (
     <>
       <ToolbarItem
+        className="pf-v5-u-mr-0"
         {...(isNotificationsEnabled && {
           spacer: {
             default: 'spacerMd',
@@ -261,19 +258,19 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && (
-        <ToolbarItem>
+        <ToolbarItem className="pf-v5-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
       </ToolbarItem>
-      <ToolbarItem visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
@@ -312,7 +309,7 @@ const Tools = () => {
         <HeaderAlert
           className="chr-c-alert-preview"
           title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
-          variant={AlertVariant.default}
+          variant={AlertVariant.info}
           actionLinks={
             <React.Fragment>
               <AlertActionLink

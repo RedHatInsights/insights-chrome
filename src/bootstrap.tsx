@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider, useSelector, useStore } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
@@ -12,7 +12,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, ITLessCognito, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -65,7 +65,6 @@ const isITLessEnv = ITLess();
 const useInitialize = () => {
   const [{ isReady, libJwt }, setState] = useState<{ isReady: boolean; libJwt?: LibJWT }>({ isReady: false, libJwt: undefined });
   const store = useStore();
-  const chromeInstance = useRef({ cache: undefined });
 
   const init = async () => {
     const pathname = window.location.pathname;
@@ -93,7 +92,7 @@ const useInitialize = () => {
     // create JWT instance
     libJwt = libjwtSetup({ ...chromeConfig?.config, ...chromeConfig }, initialModuleConfig?.ssoScopes);
 
-    await initializeJWT(libJwt, chromeInstance.current);
+    await initializeJWT(libJwt);
     const getUser = createGetUser(libJwt);
     initializeVisibilityFunctions({
       getUser,
@@ -136,7 +135,7 @@ const App = () => {
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
 
-  if (isITLessEnv) {
+  if (ITLessCognito()) {
     return isReady && modules && scalprumConfig ? (
       <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} config={scalprumConfig} />
     ) : (

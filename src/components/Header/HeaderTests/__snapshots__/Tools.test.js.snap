@@ -2,33 +2,33 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-c-toolbar__item pf-m-spacer-md"
+  class="pf-v5-c-toolbar__item pf-m-spacer-md pf-v5-u-mr-0"
 >
   <label
-    class="pf-c-switch pf-m-reverse chr-c-beta-switcher"
+    class="pf-v5-c-switch pf-m-reverse chr-c-beta-switcher"
     data-ouia-component-id="OUIA-Generated-Switch-2"
-    data-ouia-component-type="PF4/Switch"
+    data-ouia-component-type="PF5/Switch"
     data-ouia-safe="true"
     for="reversed-switch"
   >
     <input
       aria-label="Preview switcher"
-      class="pf-c-switch__input"
+      class="pf-v5-c-switch__input"
       id="reversed-switch"
       type="checkbox"
     />
     <span
-      class="pf-c-switch__toggle"
+      class="pf-v5-c-switch__toggle"
     />
     <span
       aria-hidden="true"
-      class="pf-c-switch__label pf-m-on"
+      class="pf-v5-c-switch__label pf-m-on"
     >
       Preview on
     </span>
     <span
       aria-hidden="true"
-      class="pf-c-switch__label pf-m-off"
+      class="pf-v5-c-switch__label pf-m-off"
     >
       Preview off
     </span>

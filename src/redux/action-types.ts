@@ -41,3 +41,8 @@ export const CLEAR_QUICKSTARTS = '@@chrome/clear-quickstarts';
 export const SET_GATEWAY_ERROR = '@@chrome/set-gateway-error';
 
 export const TOGGLE_NOTIFICATIONS_DRAWER = '@@chrome/toggle-notifications-drawer';
+
+export const MARK_NOTIFICATION_AS_READ = '@@chrome/mark-notification-as-read';
+export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread';
+export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
+export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';

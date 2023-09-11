@@ -18,7 +18,7 @@ const useLoadTags = (hasAccess = false) => {
   const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
   const dispatch = useDispatch();
   return useCallback(
-    debounce((activeTags, search) => {
+    debounce((activeTags: any, search: any) => {
       storeFilter(activeTags, hasAccess && !isDisabled, navigate);
       batch(() => {
         dispatch(

@@ -1,13 +1,13 @@
 .chr-c-footer {
-  .pf-c-icon {
-    --pf-c-icon__content--Color: var(--pf-global--palette--black-500);
-    --pf-c-icon__content--FontSize: 2.5em;
+  .pf-v5-c-icon {
+    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--black-500);
+    --pf-v5-c-icon__content--FontSize: 2.5em;
     &:hover {
-      --pf-c-icon__content--Color: var(--pf-global--palette--black-400);
+      --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--black-400);
     }
   }
-  .pf-c-content {
-    --pf-c-content--a--Color: var(--pf-global--Color--light-100);
-    --pf-c-content--a--hover--Color: var(--pf-global--Color--light-100);
+  .pf-v5-c-content {
+    --pf-v5-c-content--a--Color: var(--pf-v5-global--Color--light-100);
+    --pf-v5-c-content--a--hover--Color: var(--pf-v5-global--Color--light-100);
   }
 }

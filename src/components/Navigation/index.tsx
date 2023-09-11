@@ -1,5 +1,6 @@
 import React, { Fragment, useRef, useState } from 'react';
-import { Nav, NavList, PageContextConsumer } from '@patternfly/react-core';
+import { Nav, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { PageContextConsumer } from '@patternfly/react-core/dist/dynamic/components/Page';
 
 import NavContext from './navContext';
 import componentMapper from './componentMapper';
@@ -46,13 +47,13 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
       <Nav aria-label="Insights Global Navigation" data-ouia-safe="true" ouiaId="SideNavigation">
         <NavList>
           <PageContextConsumer>
-            {({ isNavOpen }) => (
+            {({ isSidebarOpen }) => (
               <NavContext.Provider
                 value={{
                   componentMapper,
                   onLinkClick,
                   inPageLayout: true,
-                  isNavOpen,
+                  isNavOpen: isSidebarOpen,
                 }}
               >
                 {schema.navItems.map((item, index) => (

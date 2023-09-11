@@ -1,4 +1,6 @@
-import { Gallery, Title } from '@patternfly/react-core';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+
 import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
@@ -10,8 +12,8 @@ const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionPr
     return null;
   }
   return (
-    <div className="pf-u-mb-lg">
-      <Title className="pf-u-mb-md" headingLevel="h3">
+    <div className="pf-v5-u-mb-lg">
+      <Title className="pf-v5-u-mb-md" headingLevel="h3">
         {title}
       </Title>
       <div>

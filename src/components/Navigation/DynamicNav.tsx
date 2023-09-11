@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useLoadModule } from '@scalprum/react-core';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
-import { NavItem } from '@patternfly/react-core';
+import { NavItem } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';

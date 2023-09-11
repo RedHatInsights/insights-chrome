@@ -22,7 +22,7 @@ describe('<AllServicesDropdown />', () => {
 
   it('should close all services dropdown in link matches current pathname', () => {
     function checkMenuClosed() {
-      cy.get('.pf-c-menu-toggle__text').click();
+      cy.get('.pf-v5-c-menu-toggle__text').click();
       cy.contains('Browse all services').should('exist');
       cy.contains('Favorites').click();
       cy.contains('Test section').click();

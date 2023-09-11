@@ -6,7 +6,7 @@ import { Store } from 'redux';
 
 import * as jwt from '../jwt/jwt';
 import { getTokenWithAuthorizationCode } from '../cognito/auth';
-import { ITLess } from '../utils/common';
+import { ITLessCognito } from '../utils/common';
 import consts, { defaultAuthOptions as defaultOptions } from '../utils/consts';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import qe from '../utils/iqeEnablement';
@@ -20,7 +20,7 @@ export type LibJWT = {
 };
 
 const TIMER_STR = '[JWT][jwt.js] Auth time';
-const isITLessEnv = ITLess();
+const isITLessCognito = ITLessCognito();
 function bouncer() {
   if (!jwt.isAuthenticated()) {
     cookie.remove(defaultOptions.cookieName);
@@ -48,6 +48,7 @@ export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUs
   doOffline: () =>
     libjwt.jwt.doOffline(consts.noAuthParam, consts.offlineToken, globalConfig?.chrome?.ssoUrl || globalConfig?.chrome?.config?.ssoUrl),
   getToken: () => libjwt.initPromise.then(() => libjwt.jwt.getUserInfo().then(() => libjwt.jwt.getEncodedToken())),
+  getRefreshToken: () => libjwt.jwt.getRefreshToken(),
   getUser,
   qe: {
     ...qe,
@@ -67,7 +68,7 @@ export const createGetUser = (libjwt: LibJWT): (() => Promise<ChromeUser | undef
 export const createGetUserPermissions = (libJwt: LibJWT, getUser: () => Promise<void | ChromeUser>) => {
   const fetchPermissions = createFetchPermissionsWatcher(getUser);
   return async (app = '', bypassCache?: boolean) => {
-    if (isITLessEnv) {
+    if (isITLessCognito) {
       const cogToken = await getTokenWithAuthorizationCode();
       return fetchPermissions(cogToken || '', app, bypassCache);
     } else {
@@ -98,7 +99,7 @@ export default ({ ssoUrl, ssoScopes }: { ssoUrl?: string; ssoScopes: string[] })
   const promise = jwt.init(options, ssoUrl).then(bouncer);
 
   return {
-    getOfflineToken: () => (isITLessEnv ? getTokenWithAuthorizationCode() : getOfflineToken(options.realm, options.clientId, ssoUrl)),
+    getOfflineToken: () => (isITLessCognito ? getTokenWithAuthorizationCode() : getOfflineToken(options.realm, options.clientId, ssoUrl)),
     jwt: jwt,
     initPromise: promise,
   };

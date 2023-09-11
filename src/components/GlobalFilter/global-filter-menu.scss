@@ -1,8 +1,8 @@
 .chr-c-global-filter {
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
-  background: var(--pf-global--BackgroundColor--100);
-  .pf-c-chip-group { margin-right: var(--pf-global--spacer--xs); }
-  .chr-c-chip { background: var(--pf-global--palette--blue-50); }
+  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--lg);
+  background: var(--pf-v5-global--BackgroundColor--100);
+  .pf-v5-c-chip-group { margin-right: var(--pf-v5-global--spacer--xs); }
+  .chr-c-chip { background: var(--pf-v5-global--palette--blue-50); }
 }
 
 .chr-c-menu-global-filter {
@@ -19,18 +19,18 @@
   }
   &.expanded, &.pf-m-expanded {
     width: 450px;
-    .pf-c-menu-toggle__text {
+    .pf-v5-c-menu-toggle__text {
       width: 390px;
     }
   }
-  .pf-c-select__toggle-text {
+  .pf-v5-c-select__toggle-text {
     flex-grow: 1;
-    > input.pf-c-form-control {
+    > input.pf-v5-c-form-control {
       border: none;
     }
   }
 
-  .pf-c-check__label {
+  .pf-v5-c-check__label {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -39,7 +39,7 @@
       max-width: 340px;
       overflow: hidden;
     }
-    .pf-c-badge {
+    .pf-v5-c-badge {
         margin-left: 8px;
         padding-top: 3px;
     }

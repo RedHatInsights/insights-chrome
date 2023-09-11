@@ -1,11 +1,16 @@
-import { Card, CardBody, Flex, FlexItem, Gallery, GalleryItem, Icon, Pagination, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Gallery, GalleryItem } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { StarIcon } from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import React, { useState } from 'react';
 import useFavoritedServices from '../../hooks/useFavoritedServices';
 import EmptyState from '../FavoriteServices/EmptyState';
 import { bundleMapping } from '../../hooks/useBundle';
 import './LandingNavFavorites.scss';
-import ChromeLink from '../ChromeLink';
+import { Link } from 'react-router-dom';
 
 const LandingNavFavorites = () => {
   const favoritedServices = useFavoritedServices();
@@ -26,20 +31,20 @@ const LandingNavFavorites = () => {
   const buildFavorites = () => {
     return favoritedServices.slice((page - 1) * perPage, page * perPage).map((favorite, index) => (
       <GalleryItem key={index}>
-        <ChromeLink href={favorite.pathname} className="chr-c-favorite-service__tile">
+        <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card isFullHeight isFlat isSelectableRaised>
-            <CardBody className="pf-u-p-lg pf-u-pt-xl">
-              <TextContent className="pf-u-text-align-center">
-                <Text component="p" className="pf-u-mb-sm">
+            <CardBody className="pf-v5-u-p-lg pf-v5-u-pt-xl">
+              <TextContent className="pf-v5-u-text-align-center">
+                <Text component="p" className="pf-v5-u-mb-sm">
                   {favorite.name}
                 </Text>
-                <Text component="p" className="pf-u-font-size-xs">
+                <Text component="p" className="pf-v5-u-font-size-xs">
                   {getBundle(favorite.pathname)}
                 </Text>
               </TextContent>
             </CardBody>
           </Card>
-        </ChromeLink>
+        </Link>
       </GalleryItem>
     ));
   };
@@ -49,20 +54,19 @@ const LandingNavFavorites = () => {
       <Flex>
         <FlexItem>
           <TextContent>
-            <Text component={TextVariants.h2} className="pf-u-display-inline pf-u-pr-lg">
-              <Icon className="pf-u-mr-sm" status="warning">
+            <Text component={TextVariants.h2} className="pf-v5-u-display-inline pf-v5-u-pr-lg">
+              <Icon className="pf-v5-u-mr-sm" status="warning">
                 <StarIcon />
               </Icon>
               My favorite services
             </Text>
-            <Text component={TextVariants.p} className="pf-u-display-inline">
-              <ChromeLink href="/allservices">View all services</ChromeLink>
+            <Text component={TextVariants.p} className="pf-v5-u-display-inline">
+              <Link to="/allservices">View all services</Link>
             </Text>
           </TextContent>
         </FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
           <Pagination
-            perPageComponent="button"
             isCompact
             variant="top"
             itemCount={favoritedServices.length}
@@ -72,7 +76,7 @@ const LandingNavFavorites = () => {
             onSetPage={onSetPage}
             widgetId="favorites-cards-pagination"
             className="chr-c-pagination-landing-favorites"
-          ></Pagination>
+          />
         </FlexItem>
       </Flex>
 

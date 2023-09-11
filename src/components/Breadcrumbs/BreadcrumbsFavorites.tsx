@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Icon, Menu, MenuItem, MenuList, MenuToggle, Popper } from '@patternfly/react-core';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Menu, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
+
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
+import CaretDownIcon from '@patternfly/react-icons/dist/dynamic/icons/caret-down-icon';
 import classNames from 'classnames';
 
 import './BreadcrumbsFavorites.scss';
@@ -60,7 +64,7 @@ const BreadcrumbsFavorites = ({
       variant="plain"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      className="pf-u-pt-xs pf-u-text-nowrap"
+      className="pf-v5-u-pt-xs pf-v5-u-text-nowrap"
     >
       <Icon
         className={classNames('chr-c-breadcrumbs__favorite', {
@@ -70,7 +74,7 @@ const BreadcrumbsFavorites = ({
       >
         <StarIcon />
       </Icon>
-      <CaretDownIcon className="pf-u-ml-sm" />
+      <CaretDownIcon className="pf-v5-u-ml-sm" />
     </MenuToggle>
   );
 
@@ -101,14 +105,7 @@ const BreadcrumbsFavorites = ({
   );
   return (
     <div ref={containerRef}>
-      <Popper
-        placement="bottom-end"
-        trigger={toggle}
-        popper={menu}
-        isVisible={isOpen}
-        popperMatchesTriggerWidth={false}
-        appendTo={containerRef.current || undefined}
-      />
+      <Popper placement="bottom-end" trigger={toggle} popper={menu} isVisible={isOpen} appendTo={containerRef.current || undefined} />
     </div>
   );
 };

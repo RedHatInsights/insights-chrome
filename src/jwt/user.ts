@@ -1,18 +1,20 @@
-import { ITLess, getRouterBasename, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
+import { ITLessCognito, getRouterBasename, isBeta, isValidAccountNumber, pageAllowsUnentitled } from '../utils/common';
 import servicesApi from './entitlements';
 import logger from './logger';
 import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
-import { createUser, getTokenWithAuthorizationCode } from '../cognito/auth';
+import { createUser } from '../cognito/auth';
+
+const serviceAPI = servicesApi();
 
 export type SSOServiceDetails = {
   is_entitled: boolean;
   is_trial: boolean;
 };
 
-const isITLessEnv = ITLess();
+const isITLessCognito = ITLessCognito();
 const bounceInvocationLock: { [service: string]: boolean } = {
   // not_entitled modal should appear only once for insights bundle
   insights: false,
@@ -165,7 +167,7 @@ export function tryBounceIfUnentitled(
 }
 
 export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
-  const user = isITLessEnv ? await createUser() : buildUser(token);
+  const user = isITLessCognito ? await createUser() : buildUser(token);
 
   const pathName = getWindow().location.pathname.split('/');
   pathName.shift();
@@ -184,15 +186,15 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
         is_trial: boolean;
       };
     } = {};
-    let cogToken;
-    if (isITLessEnv) {
-      cogToken = await getTokenWithAuthorizationCode();
+    // let cogToken;
+    if (isITLessCognito) {
+      // cogToken = await getTokenWithAuthorizationCode();
     }
     try {
       if (user.identity.org_id) {
-        data = isITLessEnv
-          ? ((await servicesApi(cogToken).servicesGet()) as unknown as typeof data)
-          : ((await servicesApi(token.jti).servicesGet()) as unknown as typeof data);
+        data = isITLessCognito
+          ? ((await serviceAPI.servicesGet()) as unknown as typeof data)
+          : ((await serviceAPI.servicesGet()) as unknown as typeof data);
       } else {
         console.log('Cannot call entitlements API, no account number');
       }
