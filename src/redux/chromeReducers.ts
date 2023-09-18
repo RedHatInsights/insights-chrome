@@ -4,7 +4,7 @@ import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { ChromeModule, NavItem, Navigation } from '../@types/types';
 import { ITLess, generateRoutesList, highlightItems, isBeta, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
-import { AccessRequest, ChromeState, NotificationData } from './store';
+import { AccessRequest, ChromeState, NotificationData, Notifications } from './store';
 
 export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
   return {
@@ -344,6 +344,16 @@ export function toggleNotificationsReducer(state: ChromeState) {
   };
 }
 
+export function populateNotificationsReducer(state: ChromeState, { payload: { data } }: { payload: { data: NotificationData[] } }) {
+  return {
+    ...state,
+    notifications: {
+      ...state.notifications,
+      data,
+    },
+  };
+}
+
 export function markNotificationAsRead(state: ChromeState, { payload }: { payload: number }): ChromeState {
   return {
     ...state,
@@ -392,17 +402,12 @@ export function markAllNotificationsAsUnread(state: ChromeState): ChromeState {
   };
 }
 
-export function updateNotificationsReducer(state: ChromeState, payload: NotificationData) {
+export function updateNotificationsReducer(state: ChromeState, payload: Notifications) {
   return {
     ...state,
     notifications: {
-      ...state.notification,
-      data: [
-        {
-          isRead: false,
-          ...payload,
-        },
-      ],
+      ...state.notifications,
+      data: state.notifications?.data ? [...state.notifications.data, payload.data] : [payload.data],
     },
   };
 }

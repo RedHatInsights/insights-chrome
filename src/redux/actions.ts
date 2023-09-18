@@ -3,7 +3,7 @@ import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFil
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
 import type { ChromeModule, FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
-import type { AccessRequest, NotificationsPayload } from './store';
+import type { AccessRequest, NotificationData, NotificationsPayload } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 import type { ThreeScaleError } from '../utils/responseInterceptors';
 
@@ -207,6 +207,8 @@ export const toggleNotificationsDrawer = () => ({
   type: actionTypes.TOGGLE_NOTIFICATIONS_DRAWER,
 });
 
+export const populateNotifications = (data: NotificationData[]) => ({ type: actionTypes.POPULATE_NOTIFICATIONS, payload: { data } });
+
 export const markNotificationAsRead = (id: number) => ({
   type: actionTypes.MARK_NOTIFICATION_AS_READ,
   payload: id,
@@ -224,9 +226,8 @@ export const markAllNotificationsAsRead = () => ({
 export const markAllNotificationsAsUnread = () => ({
   type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
 });
-export function updateNotifications(payload: NotificationsPayload) {
-  return {
-    type: actionTypes.UPDATE_NOTIFICATIONS,
-    payload,
-  };
-}
+
+export const updateNotifications = (payload: NotificationsPayload) => ({
+  type: actionTypes.UPDATE_NOTIFICATIONS,
+  payload,
+});

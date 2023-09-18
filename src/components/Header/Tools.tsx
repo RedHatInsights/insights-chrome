@@ -82,7 +82,7 @@ const Tools = () => {
   });
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => !isRead) || []);
+  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((Read) => !Read) || []);
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const dispatch = useDispatch();
   const libjwt = useContext(LibtJWTContext);

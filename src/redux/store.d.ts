@@ -27,16 +27,17 @@ export type Notifications = {
 };
 
 export type NotificationsPayload = {
-  payload: {
+  data: {
+    id: string;
     description: string;
     title: string;
+    created: string;
+    read: boolean;
+    source: string;
   };
   // cloud events sub protocol metadata
   datacontenttype: string;
-  id: string;
-  source: string;
   specversion: string;
-  time: string;
   // a type field used to identify message purpose
   type: string;
 };
@@ -84,7 +85,6 @@ export type ChromeState = {
   documentTitle?: string;
   gatewayError?: ThreeScaleError;
   notifications?: Notifications;
-  notification?: NotificationsPayload;
 };
 
 export type GlobalFilterWorkloads = {
