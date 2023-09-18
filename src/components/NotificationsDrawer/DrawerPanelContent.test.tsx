@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureMockStore, { MockStore } from 'redux-mock-store';
 import DrawerPanel from './DrawerPanelContent';
@@ -66,73 +66,111 @@ describe('Drawer panel functionality', () => {
     expect(renderedResult.getByText('Test Notification 1')).toBeInTheDocument();
   });
 
-  test('Marking notification as read successfully', () => {
+  test('Marking notification as read successfully', async () => {
     const store = mockStore(stateWithNotifications);
 
     const renderedResult = renderComponent(store);
 
     const checkbox = renderedResult.getAllByRole('checkbox');
-    fireEvent.click(checkbox[0]);
+
+    act(() => {
+      fireEvent.click(checkbox[0]);
+    });
 
     const actions = store.getActions();
-    expect(actions).toContainEqual(markNotificationAsRead(1));
+
+    await waitFor(() => {
+      expect(actions).toContainEqual(markNotificationAsRead(1));
+    });
   });
 
-  test('Mark notification as unread successfully', () => {
+  test('Mark notification as unread successfully', async () => {
     const store = mockStore(stateWithReadNotifications);
 
     const renderedResult = renderComponent(store);
 
     const checkbox = renderedResult.getAllByRole('checkbox');
-    fireEvent.click(checkbox[0]);
+
+    act(() => {
+      fireEvent.click(checkbox[0]);
+    });
 
     const actions = store.getActions();
-    expect(actions).toContainEqual(markNotificationAsUnread(1));
+
+    await waitFor(() => {
+      expect(actions).toContainEqual(markNotificationAsUnread(1));
+    });
   });
 
-  test('Mark all notifications as read successfully', () => {
+  test('Mark all notifications as read successfully', async () => {
     const store = mockStore(stateWithNotifications);
 
     const renderedResult = renderComponent(store);
 
     const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
-    fireEvent.click(actionMenuButton);
 
-    const actionDropdownItems = renderedResult.getAllByRole('menuitem');
-    fireEvent.click(actionDropdownItems[0]);
+    act(() => {
+      fireEvent.click(actionMenuButton);
+    });
+
+    const actionDropdownItems = await renderedResult.getAllByRole('menuitem');
+
+    act(() => {
+      fireEvent.click(actionDropdownItems[0]);
+    });
 
     const actions = store.getActions();
-    expect(actions).toContainEqual(markAllNotificationsAsRead());
+
+    await waitFor(() => {
+      expect(actions).toContainEqual(markAllNotificationsAsRead());
+    });
   });
 
-  test('Mark all notifications as unread successfully', () => {
+  test('Mark all notifications as unread successfully', async () => {
     const store = mockStore(stateWithReadNotifications);
 
     const renderedResult = renderComponent(store);
 
     const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
-    fireEvent.click(actionMenuButton);
 
-    const actionDropdownItems = renderedResult.getAllByRole('menuitem');
-    fireEvent.click(actionDropdownItems[1]);
+    act(() => {
+      fireEvent.click(actionMenuButton);
+    });
+
+    const actionDropdownItems = await renderedResult.getAllByRole('menuitem');
+
+    act(() => {
+      fireEvent.click(actionDropdownItems[1]);
+    });
 
     const actions = store.getActions();
-    expect(actions).toContainEqual(markAllNotificationsAsUnread());
+
+    await waitFor(() => {
+      expect(actions).toContainEqual(markAllNotificationsAsUnread());
+    });
   });
 
-  test('Select filter successfully', () => {
+  test('Select filter successfully', async () => {
     const store = mockStore(stateWithNotifications);
 
     const renderedResult = renderComponent(store);
 
     const filterMenuButton = renderedResult.getByRole('button', { name: /Notifications filter/i });
-    fireEvent.click(filterMenuButton);
 
-    const filterMenuItems = renderedResult.getAllByRole('menuitem');
-    fireEvent.click(filterMenuItems[2]);
+    act(() => {
+      fireEvent.click(filterMenuButton);
+    });
 
-    const filteredNotification = renderedResult.getAllByRole('listitem');
+    const filterMenuItems = await renderedResult.getAllByRole('menuitem');
 
-    expect(filteredNotification.length === 1);
+    act(() => {
+      fireEvent.click(filterMenuItems[2]);
+    });
+
+    const filteredNotification = await renderedResult.getAllByRole('listitem');
+
+    await waitFor(() => {
+      expect(filteredNotification.length === 1);
+    });
   });
 });

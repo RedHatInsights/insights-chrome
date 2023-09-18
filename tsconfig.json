@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "module": "esnext",
     "target": "esnext",
-    "jsx": "react-jsx",
+    "jsx": "react",
     "allowJs": true,
     "moduleResolution": "node",
     "removeComments": false,
