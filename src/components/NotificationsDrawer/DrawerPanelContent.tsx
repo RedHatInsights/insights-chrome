@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
@@ -27,7 +26,7 @@ import orderBy from 'lodash/orderBy';
 import { useNavigate } from 'react-router-dom';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { markAllNotificationsAsRead, markAllNotificationsAsUnread, populateNotifications, toggleNotificationsDrawer } from '../../redux/actions';
+import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
 import { filterConfig } from './notificationDrawerUtils';
 
 export type DrawerPanelProps = {
@@ -66,17 +65,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
   const isOrgAdmin = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.is_org_admin);
 
-  async function getNotifications() {
-    try {
-      const notifications = await axios.get('/api/notifications/v1/notifications/drawer');
-      dispatch(populateNotifications(notifications.data.data));
-    } catch (error) {
-      console.error('Unable to get Notifications ', error);
-    }
-  }
-
   useEffect(() => {
-    getNotifications();
     const modifiedNotifications = (activeFilters || []).reduce(
       (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
       []

@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import axios from 'axios';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
-import { shallowEqual, useSelector, useStore } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import isEqual from 'lodash/isEqual';
@@ -29,6 +30,7 @@ import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
+import { populateNotifications } from '../../redux/actions';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -46,6 +48,7 @@ export type ScalprumRootProps = FooterProps & {
 const ScalprumRoot = memo(
   ({ config, helpTopicsAPI, quickstartsAPI, cookieElement, setCookieElement, ...props }: ScalprumRootProps) => {
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
+    const dispatch = useDispatch();
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
 
@@ -55,6 +58,15 @@ const ScalprumRoot = memo(
 
     // initialize WS event handling
     useChromeServiceEvents();
+
+    async function getNotifications() {
+      try {
+        const notifications = await axios.get('/api/notifications/v1/notifications/drawer');
+        dispatch(populateNotifications(notifications.data.data));
+      } catch (error) {
+        console.error('Unable to get Notifications ', error);
+      }
+    }
 
     const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
 
@@ -91,6 +103,8 @@ const ScalprumRoot = memo(
     useEffect(() => {
       // prepare webpack module sharing scope overrides
       updateSharedScope();
+      // get notifications drawer api
+      getNotifications();
       const unregister = chromeHistory.listen(historyListener);
       return () => {
         if (typeof unregister === 'function') {
