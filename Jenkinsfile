@@ -1,5 +1,4 @@
 def secrets = [
-
     [path: params.VAULT_PATH_SVC_ACCOUNT_EPHEMERAL, engineVersion: 1, secretValues: [
         [envVar: 'OC_LOGIN_TOKEN', vaultKey: 'oc-login-token'],
         [envVar: 'OC_LOGIN_SERVER', vaultKey: 'oc-login-server']]],
