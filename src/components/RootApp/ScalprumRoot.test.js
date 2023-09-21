@@ -91,6 +91,7 @@ describe('ScalprumRoot', () => {
             user: { username: 'foo', first_name: 'foo', last_name: 'foo', is_org_admin: false, is_internal: false },
           },
         },
+        notifications: { data: [] },
         activeApp: 'some-app',
         activeLocation: 'some-location',
         appId: 'app-id',
