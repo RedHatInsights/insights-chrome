@@ -1,5 +1,5 @@
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
-import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 
 import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
@@ -13,9 +13,7 @@ const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionPr
   }
   return (
     <div className="pf-v5-u-mb-lg">
-      <Title className="pf-v5-u-mb-md" headingLevel="h3">
-        {title}
-      </Title>
+      <Label className="pf-v5-u-mb-md">{title}</Label>
       <div>
         <Gallery hasGutter>
           {links.map((link, index) => (
