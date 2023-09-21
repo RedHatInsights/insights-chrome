@@ -240,7 +240,7 @@ const Tools = () => {
         {!xs && <BetaSwitcher />}
       </ToolbarItem>
       {isNotificationsEnabled && (
-        <ToolbarItem>
+        <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
           <NotificationBadge
             className="chr-c-notification-badge"
             variant={unreadNotifications.length === 0 ? 'read' : 'unread'}
