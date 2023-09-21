@@ -4,6 +4,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { UPDATE_NOTIFICATIONS } from '../redux/action-types';
 
 import { getEncodedToken, setCookie } from '../jwt/jwt';
+import { NotificationsPayload } from '../redux/store';
 
 const NOTIFICATION_DRAWER = 'notifications.drawer';
 const SAMPLE_EVENT = 'sample.type';
@@ -15,12 +16,7 @@ type SamplePayload = {
   foo: string;
 };
 
-type NotificationPayload = {
-  title: string;
-  description: string;
-};
-
-type Payload = NotificationPayload | SamplePayload;
+type Payload = NotificationsPayload | SamplePayload;
 interface GenericEvent<T extends Payload = Payload> {
   type: EventTypes;
   data: T;
@@ -35,15 +31,17 @@ const useChromeServiceEvents = () => {
   const dispatch = useDispatch();
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
-  const handlerMap: { [key in EventTypes]: (payload: Payload) => void } = useMemo(
+  const handlerMap: { [key in EventTypes]: (payload: GenericEvent<Payload>) => void } = useMemo(
     () => ({
-      [NOTIFICATION_DRAWER]: (data: Payload) => dispatch({ type: UPDATE_NOTIFICATIONS, payload: data }),
-      [SAMPLE_EVENT]: (data: Payload) => console.log('Received sample payload', data),
+      [NOTIFICATION_DRAWER]: (data: GenericEvent<Payload>) => {
+        dispatch({ type: UPDATE_NOTIFICATIONS, payload: data });
+      },
+      [SAMPLE_EVENT]: (data: GenericEvent<Payload>) => console.log('Received sample payload', data),
     }),
     []
   );
 
-  function handleEvent(type: EventTypes, data: Payload): void {
+  function handleEvent(type: EventTypes, data: GenericEvent<Payload>): void {
     handlerMap[type](data);
   }
 
@@ -64,7 +62,7 @@ const useChromeServiceEvents = () => {
         try {
           const payload = JSON.parse(data);
           if (isGenericEvent(payload)) {
-            handleEvent(payload.type, payload.data);
+            handleEvent(payload.type, payload);
           } else {
             throw new Error(`Unable to handle event type: ${event.type}. The payload does not have required shape! ${event}`);
           }

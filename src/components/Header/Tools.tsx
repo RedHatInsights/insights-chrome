@@ -82,7 +82,7 @@ const Tools = () => {
   });
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((Read) => !Read) || []);
+  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const dispatch = useDispatch();
   const libjwt = useContext(LibtJWTContext);
@@ -243,7 +243,7 @@ const Tools = () => {
         <ToolbarItem>
           <NotificationBadge
             className="chr-c-notification-badge"
-            variant={unreadNotifications.length === 0 ? 'read' : 'unread'}
+            variant={unreadNotifications ? 'unread' : 'read'}
             onClick={() => dispatch(toggleNotificationsDrawer())}
             aria-label="Notifications"
             isExpanded={isDrawerExpanded}

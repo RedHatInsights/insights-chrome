@@ -209,12 +209,12 @@ export const toggleNotificationsDrawer = () => ({
 
 export const populateNotifications = (data: NotificationData[]) => ({ type: actionTypes.POPULATE_NOTIFICATIONS, payload: { data } });
 
-export const markNotificationAsRead = (id: number) => ({
+export const markNotificationAsRead = (id: string) => ({
   type: actionTypes.MARK_NOTIFICATION_AS_READ,
   payload: id,
 });
 
-export const markNotificationAsUnread = (id: number) => ({
+export const markNotificationAsUnread = (id: string) => ({
   type: actionTypes.MARK_NOTIFICATION_AS_UNREAD,
   payload: id,
 });
