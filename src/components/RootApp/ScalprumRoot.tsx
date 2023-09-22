@@ -62,7 +62,7 @@ const ScalprumRoot = memo(
     async function getNotifications() {
       try {
         const notifications = await axios.get('/api/notifications/v1/notifications/drawer');
-        dispatch(populateNotifications(notifications.data.data));
+        dispatch(populateNotifications(notifications.data?.data || []));
       } catch (error) {
         console.error('Unable to get Notifications ', error);
       }
