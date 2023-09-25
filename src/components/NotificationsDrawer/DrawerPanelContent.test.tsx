@@ -80,7 +80,7 @@ describe('Drawer panel functionality', () => {
     const actions = store.getActions();
 
     await waitFor(() => {
-      expect(actions).toContainEqual(markNotificationAsRead(1));
+      expect(actions).toContainEqual(markNotificationAsRead('1'));
     });
   });
 
@@ -98,7 +98,7 @@ describe('Drawer panel functionality', () => {
     const actions = store.getActions();
 
     await waitFor(() => {
-      expect(actions).toContainEqual(markNotificationAsUnread(1));
+      expect(actions).toContainEqual(markNotificationAsUnread('1'));
     });
   });
 
