@@ -73,7 +73,7 @@ describe('Drawer panel functionality', () => {
 
     const checkbox = renderedResult.getAllByRole('checkbox');
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(checkbox[0]);
     });
 
@@ -91,7 +91,7 @@ describe('Drawer panel functionality', () => {
 
     const checkbox = renderedResult.getAllByRole('checkbox');
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(checkbox[0]);
     });
 
@@ -109,13 +109,13 @@ describe('Drawer panel functionality', () => {
 
     const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(actionMenuButton);
     });
 
     const actionDropdownItems = await renderedResult.getAllByRole('menuitem');
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(actionDropdownItems[0]);
     });
 
@@ -133,7 +133,7 @@ describe('Drawer panel functionality', () => {
 
     const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(actionMenuButton);
     });
 
@@ -157,13 +157,13 @@ describe('Drawer panel functionality', () => {
 
     const filterMenuButton = renderedResult.getByRole('button', { name: /Notifications filter/i });
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(filterMenuButton);
     });
 
     const filterMenuItems = await renderedResult.getAllByRole('menuitem');
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(filterMenuItems[2]);
     });
 
