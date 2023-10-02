@@ -132,6 +132,6 @@ describe('Favorite-services', () => {
       }
     });
     cy.wait(2000);
-    cy.get('.chr-c-favorite-service__tile').find('.pf-v5-u-mb-sm').should('contain', serviceName);
+    cy.get('.chr-c-favorite-service__tile').find('.pf-v5-u-pb-0').should('contain', serviceName);
   });
 });

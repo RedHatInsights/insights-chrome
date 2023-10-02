@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Gallery, GalleryItem } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
@@ -32,17 +32,11 @@ const LandingNavFavorites = () => {
     return favoritedServices.slice((page - 1) * perPage, page * perPage).map((favorite, index) => (
       <GalleryItem key={index}>
         <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
-          <Card isFullHeight isFlat isSelectableRaised>
-            <CardBody className="pf-v5-u-p-lg pf-v5-u-pt-xl">
-              <TextContent className="pf-v5-u-text-align-center">
-                <Text component="p" className="pf-v5-u-mb-sm">
-                  {favorite.name}
-                </Text>
-                <Text component="p" className="pf-v5-u-font-size-xs">
-                  {getBundle(favorite.pathname)}
-                </Text>
-              </TextContent>
-            </CardBody>
+          <Card isClickable>
+            <CardHeader selectableActions={{ selectableActionId: 'id', selectableActionAriaLabelledby: 'clickable-card' }} className="pf-v5-u-pb-0">
+              <CardTitle className="pf-v5-u-text-align-center pf-v5-u-active-color-100 pf-v5-u-font-size-sm">{favorite.name}</CardTitle>
+            </CardHeader>
+            <CardBody className="pf-v5-u-text-align-center pf-v5-u-color-100 pf-v5-u-font-size-xs">{getBundle(favorite.pathname)}</CardBody>
           </Card>
         </Link>
       </GalleryItem>
@@ -84,7 +78,9 @@ const LandingNavFavorites = () => {
         <EmptyState />
       ) : (
         <React.Fragment>
-          <Gallery hasGutter>{buildFavorites()}</Gallery>
+          <Gallery className="pf-v5-u-pt-md" hasGutter>
+            {buildFavorites()}
+          </Gallery>
         </React.Fragment>
       )}
     </React.Fragment>
