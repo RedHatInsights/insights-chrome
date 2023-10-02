@@ -12,7 +12,7 @@ import ServicesIcon from './icon-services';
 import SubscriptionsIcon from './icon-subscriptions';
 import TrustedContentIcon from './icon-trusted-content';
 
-export const AllServicesDropdownIcons = {
+const AllServicesDropdownIcons = {
   ACSIcon,
   AnsibleIcon,
   AppServicesIcon,
@@ -27,3 +27,5 @@ export const AllServicesDropdownIcons = {
   SubscriptionsIcon,
   TrustedContentIcon,
 };
+
+export default AllServicesDropdownIcons;

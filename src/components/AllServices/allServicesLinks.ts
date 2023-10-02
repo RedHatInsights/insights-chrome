@@ -1,5 +1,5 @@
 import AllServicesIcons from './AllServicesIcons';
-import AllServicesDropdownIcons from './AllServicesDropdownIcons';
+import AllServicesDropdownIcons from '../AllServicesDropdown/AllServicesDropdownIcons';
 
 export type AllServicesLink = {
   href: string;

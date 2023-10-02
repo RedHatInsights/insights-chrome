@@ -9,7 +9,7 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
-import { AllServicesDropdownIcons } from './AllServicesDropdownIcons';
+import AllServicesDropdownIcons from './AllServicesDropdownIcons';
 import ChromeLink from '../ChromeLink';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
