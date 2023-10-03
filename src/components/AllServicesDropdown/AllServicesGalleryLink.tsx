@@ -9,6 +9,7 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
+import AllServicesDropdownIcons from './AllServicesDropdownIcons';
 import ChromeLink from '../ChromeLink';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
@@ -16,9 +17,10 @@ import { AllServicesDropdownContext } from './common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllServicesGalleryLinkProps) => {
+const AllServicesGalleryLink = ({ href, title, icon, description, isExternal }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
   const { onLinkClick } = useContext(AllServicesDropdownContext);
+  const TitleIcon = icon ? AllServicesDropdownIcons[icon] : null;
 
   const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {
@@ -42,6 +44,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal }: AllSer
       >
         <CardBody className="pf-v5-u-p-md">
           <Split>
+            <SplitItem className="pf-v5-u-mr-sm">{TitleIcon && <TitleIcon />}</SplitItem>
             <SplitItem className="pf-v5-m-fill">
               <div className="pf-v5-u-mb-sm">{title}</div>
             </SplitItem>
