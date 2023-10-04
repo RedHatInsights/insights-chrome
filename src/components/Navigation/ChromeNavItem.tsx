@@ -57,7 +57,7 @@ const ChromeNavItem = ({
       component={
         ((props: LinkWrapperProps) => (
           <ChromeLink {...props} isBeta={isBetaEnv} isExternal={isExternal} appId={appId} />
-        )) as unknown as React.ReactNode
+        )) as unknown as React.ComponentType
       }
     >
       {typeof title === 'string' && !ignoreCase ? titleCase(title) : title}{' '}
