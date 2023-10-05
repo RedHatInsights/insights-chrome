@@ -241,15 +241,17 @@ const Tools = () => {
       </ToolbarItem>
       {isNotificationsEnabled && (
         <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
-          <NotificationBadge
-            className="chr-c-notification-badge"
-            variant={unreadNotifications ? 'unread' : 'read'}
-            onClick={() => dispatch(toggleNotificationsDrawer())}
-            aria-label="Notifications"
-            isExpanded={isDrawerExpanded}
-          >
-            <BellIcon />
-          </NotificationBadge>
+          <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
+            <NotificationBadge
+              className="chr-c-notification-badge"
+              variant={unreadNotifications ? 'unread' : 'read'}
+              onClick={() => dispatch(toggleNotificationsDrawer())}
+              aria-label="Notifications"
+              isExpanded={isDrawerExpanded}
+            >
+              <BellIcon />
+            </NotificationBadge>
+          </Tooltip>
         </ToolbarItem>
       )}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
