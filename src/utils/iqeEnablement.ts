@@ -107,7 +107,7 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
     const tid = Math.random().toString(36);
     const request: Request = new Request(input, init);
 
-    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated()) {
+    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated() && !request.headers.has('Authorization')) {
       request.headers.append('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
     }
 

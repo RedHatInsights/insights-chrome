@@ -15,9 +15,14 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
+  markAllNotificationsAsRead,
+  markAllNotificationsAsUnread,
+  markNotificationAsRead,
+  markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
   onRegisterModule,
+  populateNotificationsReducer,
   populateQuickstartsReducer,
   setGatewayError,
   setPendoFeedbackFlag,
@@ -25,6 +30,7 @@ import {
   toggleDebuggerModal,
   toggleFeedbackModal,
   toggleNotificationsReducer,
+  updateNotificationsReducer,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -58,7 +64,12 @@ import {
   LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
+  MARK_ALL_NOTIFICATION_AS_READ,
+  MARK_ALL_NOTIFICATION_AS_UNREAD,
+  MARK_NOTIFICATION_AS_READ,
+  MARK_NOTIFICATION_AS_UNREAD,
   MARK_REQUEST_NOTIFICATION_SEEN,
+  POPULATE_NOTIFICATIONS,
   POPULATE_QUICKSTARTS_CATALOG,
   REGISTER_MODULE,
   SET_GATEWAY_ERROR,
@@ -70,6 +81,7 @@ import {
   TOGGLE_NOTIFICATIONS_DRAWER,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
+  UPDATE_NOTIFICATIONS,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
@@ -100,6 +112,12 @@ const reducers = {
   [SET_GATEWAY_ERROR]: setGatewayError,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
   [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
+  [POPULATE_NOTIFICATIONS]: populateNotificationsReducer,
+  [MARK_NOTIFICATION_AS_READ]: markNotificationAsRead,
+  [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
+  [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
+  [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
+  [UPDATE_NOTIFICATIONS]: updateNotificationsReducer,
 };
 
 const globalFilter = {
@@ -128,6 +146,11 @@ export const chromeInitialState: ReduxState = {
       quickstarts: {},
     },
     moduleRoutes: [],
+    notifications: {
+      data: [],
+      isExpanded: false,
+      count: 0,
+    },
   },
   globalFilter: globalFilterDefaultState,
 };

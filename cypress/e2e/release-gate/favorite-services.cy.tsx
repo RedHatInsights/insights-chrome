@@ -49,7 +49,7 @@ describe('Favorite-services', () => {
     cy.wait('@services').its('response.statusCode').should('equal', 200);
     // check if a favorites link exists on the page
     cy.get('button').contains('Services').click();
-    cy.contains('View all services').click();
+    cy.contains('View all services').click({ force: true });
     cy.contains(serviceName).parent('.chr-c-favorite-trigger').find('.pf-v5-c-icon').click({ force: true });
     cy.intercept('POST', '/api/chrome-service/v1/favorite-pages', {
       data: [
@@ -132,6 +132,6 @@ describe('Favorite-services', () => {
       }
     });
     cy.wait(2000);
-    cy.get('.chr-c-favorite-service__tile').find('.pf-v5-u-mb-sm').should('contain', serviceName);
+    cy.get('.chr-c-favorite-service__tile').find('.pf-v5-u-pb-0').should('contain', serviceName);
   });
 });

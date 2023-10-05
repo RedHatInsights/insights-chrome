@@ -29,39 +29,39 @@ describe('ToolbarToggle', () => {
     clickSpy.mockReset();
   });
 
-  it('should render correctly', () => {
+  it('should render correctly', async () => {
     const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
     const toggleButton = container.querySelector('#foo');
     expect(toggleButton).toBeTruthy();
-    act(() => {
+    await act(async () => {
       fireEvent.click(toggleButton);
     });
     expect(container.querySelector('div')).toMatchSnapshot();
   });
 
-  it('should open/close menu correctly', () => {
+  it('should open/close menu correctly', async () => {
     const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
     const toggleButton = container.querySelector('#foo');
     expect(toggleButton).toBeTruthy();
-    act(() => {
+    await act(async () => {
       fireEvent.click(toggleButton);
     });
     expect(container.querySelectorAll('.pf-v5-c-menu__list-item')).toHaveLength(2);
-    act(() => {
+    await act(async () => {
       fireEvent.click(toggleButton);
     });
     expect(container.querySelectorAll('.pf-v5-c-menu__list-item')).toHaveLength(0);
   });
 
-  it('should call onClick menu item callback', () => {
+  it('should call onClick menu item callback', async () => {
     const { container } = render(<ToolbarToggle {...toolbarToggleProps} />);
     const toggleButton = container.querySelector('#foo');
-    act(() => {
+    await act(async () => {
       fireEvent.click(toggleButton);
     });
     const actionButton = container.querySelector('button.pf-v5-c-menu__item');
     expect(actionButton).toBeTruthy();
-    act(() => {
+    await act(async () => {
       fireEvent.click(actionButton);
     });
     expect(clickSpy).toHaveBeenCalled();
