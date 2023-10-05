@@ -27,6 +27,7 @@ import { PUBLIC_EVENTS } from '../utils/consts';
 import { usePendoFeedback } from '../components/Feedback';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
+import { clearProductTrialFlag, isProductTrialFlagActive, setProductTrialFlag } from '../utils/isProductTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
 import { STORE_INITIAL_HASH } from '../redux/action-types';
@@ -162,6 +163,9 @@ export const createChromeContext = ({
     clearAnsibleTrialFlag,
     isAnsibleTrialFlagActive,
     setAnsibleTrialFlag,
+    clearProductTrialFlag,
+    isProductTrialFlagActive,
+    setProductTrialFlag,
     chromeHistory,
     analytics: analytics!,
     // FIXME: Update types once merged
