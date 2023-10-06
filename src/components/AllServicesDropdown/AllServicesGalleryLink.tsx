@@ -9,18 +9,18 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
+import AllServicesDropdownIcons from './AllServicesDropdownIcons';
 import ChromeLink from '../ChromeLink';
-import { bundleMapping } from '../../hooks/useBundle';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 import { AllServicesDropdownContext } from './common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle }: AllServicesGalleryLinkProps) => {
-  const bundle = bundleMapping[href.split('/')[1]];
+const AllServicesGalleryLink = ({ href, title, icon, description, isExternal }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
   const { onLinkClick } = useContext(AllServicesDropdownContext);
+  const TitleIcon = icon ? AllServicesDropdownIcons[icon] : null;
 
   const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {
@@ -44,7 +44,10 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle
       >
         <CardBody className="pf-v5-u-p-md">
           <Split>
-            <SplitItem className="pf-v5-m-fill">{title}</SplitItem>
+            <SplitItem className="pf-v5-u-mr-sm">{TitleIcon && <TitleIcon />}</SplitItem>
+            <SplitItem className="pf-v5-m-fill">
+              <div className="pf-v5-u-mb-sm">{title}</div>
+            </SplitItem>
             <SplitItem>
               {isExternal ? (
                 <Icon className="pf-v5-u-ml-sm chr-c-icon-external-link" isInline>
@@ -73,15 +76,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, subtitle
             </SplitItem>
           </Split>
           <TextContent>
-            {/* 
-              if subtitle is not set use bundle
-
-              do not show bundle if the card title matches bundle title
-            */}
-            <Text component="small">{subtitle || (bundle !== title ? bundle : null)}</Text>
-            <Text component="small" className="pf-v5-u-color-100">
-              {description ?? ''}
-            </Text>
+            <Text className="pf-v5-u-font-size-xs pf-v5-u-color-100">{description ?? ''}</Text>
           </TextContent>
         </CardBody>
       </Card>

@@ -11,12 +11,30 @@ export type InternalNavigation = {
 
 export type AccessRequest = { request_id: string; created: string; seen: boolean };
 
+export type NotificationData = {
+  id: string;
+  title: string;
+  description: string;
+  read: boolean;
+  source: string;
+  created: string;
+};
+
 export type Notifications = {
   isExpanded: boolean;
-  data: Array<{
-    isRead: boolean;
-  }>;
+  data: NotificationData[];
   count: number;
+};
+
+export type NotificationsPayload = {
+  data: NotificationData;
+  source: string;
+  // cloud events sub protocol metadata
+  datacontenttype: string;
+  specversion: string;
+  // a type field used to identify message purpose
+  type: string;
+  time: string;
 };
 
 export type ChromeState = {
@@ -61,7 +79,7 @@ export type ChromeState = {
   };
   documentTitle?: string;
   gatewayError?: ThreeScaleError;
-  notifications?: Notifications;
+  notifications: Notifications;
 };
 
 export type GlobalFilterWorkloads = {

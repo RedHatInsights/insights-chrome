@@ -6,7 +6,10 @@ exports[`ToolbarToggle should render correctly 1`] = `
   data-ouia-component-id="OUIA-Generated-Dropdown-1"
   data-ouia-component-type="PF5/Dropdown"
   data-ouia-safe="true"
-  style="position: absolute; left: 0px; top: 0px; z-index: 9999; min-width: 0px;"
+  data-popper-escaped="true"
+  data-popper-placement="bottom-end"
+  data-popper-reference-hidden="true"
+  style="position: absolute; left: 0px; top: 0px; z-index: 9999; min-width: 0px; transform: translate(0px, 0px);"
 >
   <div
     class="pf-v5-c-menu__content"
