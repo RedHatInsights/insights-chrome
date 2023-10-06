@@ -131,33 +131,33 @@ const Tools = () => {
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
-      title: `${intl.formatMessage(messages.apiDocumentation)}`,
+      title: intl.formatMessage(messages.apiDocumentation),
       onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
-      title: `${intl.formatMessage(messages.openSupportCase)}`,
+      title: intl.formatMessage(messages.openSupportCase),
       onClick: () => createSupportCase(user.identity, libjwt),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },
     {
-      title: `${intl.formatMessage(messages.statusPage)}`,
+      title: intl.formatMessage(messages.statusPage),
       onClick: () => window.open('https://status.redhat.com/', '_blank'),
       isHidden: isITLessEnv,
     },
     {
-      title: `${intl.formatMessage(messages.supportOptions)}`,
+      title: intl.formatMessage(messages.supportOptions),
       url: isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support',
     },
     {
-      title: `${intl.formatMessage(messages.insightsRhelDocumentation)}`,
+      title: intl.formatMessage(messages.insightsRhelDocumentation),
       onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
 
     {
-      title: `${intl.formatMessage(messages.demoMode)}`,
+      title: intl.formatMessage(messages.demoMode),
       onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
       isHidden: !isDemoAcc,
     },
