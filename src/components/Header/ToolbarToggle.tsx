@@ -60,7 +60,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
         <DropdownItem
           key={title}
           ouiaId={title}
-          disabled={isDisabled}
+          isDisabled={isDisabled}
           component={
             appId && url
               ? ({ className: itemClassName }) => (
