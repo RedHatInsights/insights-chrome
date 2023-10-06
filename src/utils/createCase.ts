@@ -77,7 +77,9 @@ export async function createSupportCase(
   }
 ) {
   const currentProduct = registerProduct() || 'Other';
-  const { src_hash, app_name } = await getProductData();
+  const productData = await getProductData();
+  // a temporary fallback to getUrl() until all apps are redeployed, which will fix getProductData() - remove after some time
+  const { src_hash, app_name } = { src_hash: productData?.src_hash, app_name: productData?.app_name ?? getUrl('app') };
   const portalUrl = `${getEnvDetails()?.portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
 

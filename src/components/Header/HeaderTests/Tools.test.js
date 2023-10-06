@@ -26,7 +26,7 @@ describe('Tools', () => {
     await act(async () => {
       container = render(
         <MemoryRouter>
-          <Provider store={createStore((state = { chrome: { user: {} } }) => state)}>
+          <Provider store={createStore((state = { chrome: { user: {}, notifications: { data: [] } } }) => state)}>
             <Tools onClick={mockClick} />
           </Provider>
         </MemoryRouter>
