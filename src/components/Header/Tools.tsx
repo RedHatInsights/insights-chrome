@@ -82,7 +82,7 @@ const Tools = () => {
   });
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data?.filter((isRead) => isRead) || []);
+  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const dispatch = useDispatch();
   const libjwt = useContext(LibtJWTContext);
@@ -240,16 +240,18 @@ const Tools = () => {
         {!xs && <BetaSwitcher />}
       </ToolbarItem>
       {isNotificationsEnabled && (
-        <ToolbarItem>
-          <NotificationBadge
-            className="chr-c-notification-badge"
-            variant={unreadNotifications.length === 0 ? 'read' : 'unread'}
-            onClick={() => dispatch(toggleNotificationsDrawer())}
-            aria-label="Notifications"
-            isExpanded={isDrawerExpanded}
-          >
-            <BellIcon />
-          </NotificationBadge>
+        <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
+          <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
+            <NotificationBadge
+              className="chr-c-notification-badge"
+              variant={unreadNotifications ? 'unread' : 'read'}
+              onClick={() => dispatch(toggleNotificationsDrawer())}
+              aria-label="Notifications"
+              isExpanded={isDrawerExpanded}
+            >
+              <BellIcon />
+            </NotificationBadge>
+          </Tooltip>
         </ToolbarItem>
       )}
       {localStorage.getItem('chrome:darkmode') === 'true' && (

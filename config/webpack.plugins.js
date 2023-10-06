@@ -76,6 +76,14 @@ const plugins = (dev = false, beta = false) => {
       Buffer: ['buffer', 'Buffer'],
     }),
     new ForkTsCheckerWebpackPlugin(),
+    /**
+     * Removes error for a missing logger function
+     * https://github.com/getsentry/sentry-javascript/issues/6596
+     * https://docs.sentry.io/platforms/javascript/guides/react/configuration/tree-shaking/#tree-shaking-optional-code
+     */
+    new webpack.DefinePlugin({
+      __SENTRY_DEBUG__: false,
+    }),
     ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
   ];
 };
