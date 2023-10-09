@@ -9,7 +9,7 @@ import debounce from 'lodash/debounce';
 
 import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
-import { HighlightingResponseType, SearchResponseType, SearchResultItem } from './SearchTypes';
+import { AUTOSUGGEST_HIGHLIGHT_TAG, AUTOSUGGEST_TERM_DELIMITER, SearchResponseType, SearchResultItem } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
 import { isProd } from '../../utils/common';
 import { useSegment } from '../../analytics/useSegment';
@@ -36,22 +36,20 @@ const FUZZY_RANGE_TAG = 'FUZZY_RANGE_TAG';
  */
 
 const BASE_SEARCH = new URLSearchParams();
-BASE_SEARCH.append(
-  'q',
-  `${REPLACE_TAG} OR *${REPLACE_TAG}~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}*~${FUZZY_RANGE_TAG} OR ${REPLACE_TAG}~${FUZZY_RANGE_TAG}`
-); // add query replacement tag and enable fuzzy search with ~ and wildcards
-BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
-BASE_SEARCH.append('rows', '10'); // request 10 results
-BASE_SEARCH.append('hl', 'true'); // enable highlight
-BASE_SEARCH.append('hl.method', 'original'); // choose highlight method
-BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
-BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
-BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
-BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
-BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
-BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight attribute to simply tag replacement.
+BASE_SEARCH.append('redhat_client', 'console'); // required client id
+BASE_SEARCH.append('q', REPLACE_TAG); // add query replacement tag and enable fuzzy search with ~ and wildcards
+// BASE_SEARCH.append('fq', 'documentKind:ModuleDefinition'); // search for ModuleDefinition documents
+BASE_SEARCH.append('suggest.count', '10'); // request 10 results
+// BASE_SEARCH.append('hl', 'true'); // enable highlight
+// BASE_SEARCH.append('hl.method', 'original'); // choose highlight method
+// BASE_SEARCH.append('hl.fl', 'abstract'); // highlight description
+// BASE_SEARCH.append('hl.fl', 'allTitle'); // highlight title
+// BASE_SEARCH.append('hl.fl', 'bundle_title'); // highlight bundle title
+// BASE_SEARCH.append('hl.fl', 'bundle'); // highlight bundle id
+// BASE_SEARCH.append('hl.snippets', '3'); // enable up to 3 highlights in a single string
+// BASE_SEARCH.append('hl.mergeContiguous', 'true'); // Use only one highlight attribute to simply tag replacement.
 
-const BASE_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/rest/search/platform/console/`);
+const BASE_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/proxy/gss-diag/rs/search/autosuggest`);
 // search API stopped receiving encoded search string
 BASE_URL.search = decodeURIComponent(BASE_SEARCH.toString());
 const SEARCH_QUERY = BASE_URL.toString();
@@ -74,10 +72,9 @@ type SearchCategories = {
 };
 
 const initialSearchState: SearchResponseType = {
-  docs: [],
-  maxScore: 0,
-  numFound: 0,
-  start: 0,
+  suggest: {
+    default: {},
+  },
 };
 
 type SearchInputListener = {
@@ -89,7 +86,6 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResponseType>(initialSearchState);
-  const [highlighting, setHighlighting] = useState<HighlightingResponseType>({});
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
 
@@ -99,19 +95,22 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { md } = useWindowWidth();
 
+  const resultCount = searchResults?.suggest?.default[searchValue]?.numFound || 0;
+
   // sort result items based on matched field and its priority
   const resultCategories = useMemo(
     () =>
-      searchResults.docs.reduce<SearchCategories>(
+      (searchResults?.suggest?.default[searchValue]?.suggestions || []).reduce<SearchCategories>(
         (acc, curr) => {
-          if (highlighting[curr.id]?.allTitle) {
+          const [allTitle, , abstract] = curr.term.split(AUTOSUGGEST_TERM_DELIMITER);
+          if (allTitle.includes(AUTOSUGGEST_HIGHLIGHT_TAG)) {
             return {
               ...acc,
               highLevel: [...acc.highLevel, curr],
             };
           }
 
-          if (highlighting[curr.id]?.abstract) {
+          if (abstract.includes(AUTOSUGGEST_HIGHLIGHT_TAG)) {
             return {
               ...acc,
               midLevel: [...acc.midLevel, curr],
@@ -129,7 +128,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
           lowLevel: [],
         }
       ),
-    [searchResults.docs, highlighting]
+    [searchResults, searchValue]
   );
 
   const handleMenuKeys = (event: KeyboardEvent) => {
@@ -155,7 +154,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   };
 
   const onInputClick: SearchInputProps['onClick'] = () => {
-    if (!isOpen && searchResults.numFound > 0) {
+    if (!isOpen && resultCount > 0) {
       if (!md && isExpanded && searchValue !== '') {
         setIsOpen(true);
         onStateChange(true);
@@ -216,10 +215,9 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleFetch = (value = '') => {
     return fetch(SEARCH_QUERY.replaceAll(REPLACE_TAG, value).replaceAll(FUZZY_RANGE_TAG, value.length > 3 ? '2' : '1'))
       .then((r) => r.json())
-      .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
+      .then((response: SearchResponseType) => {
         if (isMounted.current) {
           setSearchResults(response);
-          setHighlighting(highlighting);
           // make sure to calculate resize when switching from loading to sucess state
           handleWindowResize();
         }
@@ -280,7 +278,6 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
       className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
     />
   );
-
   const menu = (
     <Menu ref={menuRef} className="pf-v5-u-pt-sm pf-v5-u-px-md chr-c-search__menu">
       <MenuContent>
@@ -291,14 +288,14 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             </Bullseye>
           ) : (
             <>
-              <MenuGroup label={searchResults.numFound > 0 ? `Top ${searchResults.docs.length} results` : undefined}>
-                <SearchGroup highlighting={highlighting} items={resultCategories.highLevel} />
-                <SearchGroup highlighting={highlighting} items={resultCategories.midLevel} />
-                <SearchGroup highlighting={highlighting} items={resultCategories.lowLevel} />
+              <MenuGroup label={resultCount > 0 ? `Top ${resultCount} results` : undefined}>
+                <SearchGroup items={resultCategories.highLevel} />
+                <SearchGroup items={resultCategories.midLevel} />
+                <SearchGroup items={resultCategories.lowLevel} />
               </MenuGroup>
             </>
           )}
-          {searchResults.numFound === 0 && !isFetching && <EmptySearchState />}
+          {resultCount === 0 && !isFetching && <EmptySearchState />}
         </MenuList>
       </MenuContent>
     </Menu>
