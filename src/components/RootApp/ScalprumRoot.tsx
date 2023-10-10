@@ -27,7 +27,7 @@ import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess } from '../../utils/common';
+import { ITLess, isBeta } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import { populateNotifications } from '../../redux/actions';
@@ -170,15 +170,16 @@ const ScalprumRoot = memo(
                   loadScripts: [],
                 };
               }
-              return {
+              const newManifest = {
                 ...manifest,
                 // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
-                baseURL: '/',
+                baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isBeta() ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
                 loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
                   `${manifest.baseURL ?? ''}plugin-entry.js`,
                 ],
                 registrationMethod: manifest.registrationMethod ?? 'callback',
               };
+              return newManifest;
             },
           },
         },
