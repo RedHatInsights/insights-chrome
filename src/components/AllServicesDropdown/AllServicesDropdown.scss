@@ -87,9 +87,10 @@
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
         .chr-l-flex__item-tabs {
           overflow: auto;
-          padding-bottom: var(--pf-v5-global--spacer--2xl);
+          padding-bottom: var(--pf-v5-global--spacer--3xl);
         }
         .pf-v5-c-tabs {
+          overflow: scroll;
           --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-v5-c-tabs--m-vertical__link--PaddingTop: var(--pf-v5-global--spacer--sm);
           --pf-v5-c-tabs--m-vertical__link--PaddingBottom: var(--pf-v5-global--spacer--sm);
@@ -105,6 +106,9 @@
           } 
           .pf-v5-c-tabs__item.pf-m-current {
             --pf-v5-c-tabs__link--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+          }
+          &__list {
+            overflow-x: visible;
           }
         }
       }
