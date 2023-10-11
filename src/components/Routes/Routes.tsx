@@ -22,6 +22,10 @@ const redirects = [
     to: '/settings/sources',
   },
   {
+    path: '/user-preferences',
+    to: '/user-preferences/notifications',
+  },
+  {
     path: '/quay',
     to: '/quay/organization',
   },

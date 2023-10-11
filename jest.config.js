@@ -10,9 +10,7 @@ module.exports = {
   testEnvironmentOptions: {
     url: 'https://test.com',
   },
-  transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!@redhat-cloud-services|@openshift|lodash-es|@patternfly/react-core/components|@patternfly/react-core/next|@patternfly/react-core/helpers|@patternfly/react-tokens/dist/esm|@patternfly/react-icons/dist/esm).+(js|jsx)$',
-  ],
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@patternfly/react-tokens/dist/esm|@patternfly/react-icons/dist/esm).+(js|jsx)$'],
   transform: {
     '^.+\\.(ts|js)x?$': [
       '@swc/jest',
