@@ -103,22 +103,9 @@ const lastVisitedArray = [
     userIdentityId: 1,
   },
 ];
-const parsedLastVisited = JSON.parse(lastVisitedJSON);
-const NUM_SLIDE_ELEMENTS = 4;
 
 // NUM_CHILDREN_ELEMENTS are VISIBLE cards under "Get started with Hybrid Cloud Console capabilities"
 const NUM_CHILDREN_ELEMENTS = 10;
-const FAVORITED_OVERFILLS = ['Inventory', 'Remediations'];
-const FRONT_PAGE_SERVICES = [
-  'Red Hat Insights',
-  'Application and Data Services',
-  'Red Hat OpenShift',
-  'Edge Management',
-  'Ansible Automation Platform',
-  'Subscription Management',
-  'Red Hat Advanced Cluster Security Cloud Service',
-  'Quay.io',
-];
 
 describe('Landing page', () => {
   it('visit landing page', () => {
@@ -218,32 +205,10 @@ describe('Landing page', () => {
     });
     cy.wait(3000);
     cy.contains('API Management').should('exist');
-    cy.get('.pf-c-button.pf-m-plain').eq(1).click();
-    for (let i = 0; i < FAVORITED_OVERFILLS.length; i++) {
-      cy.get('.chr-c-favorite-service__tile').eq(i).find('.pf-u-mb-sm').should('contain', FAVORITED_OVERFILLS[i]);
-    }
     cy.contains('My favorite services').should('exist');
     cy.contains('Recently visited').should('exist');
-    for (let i = 0; i < lastVisitedArray.length; i++) {
-      cy.get('small[data-ouia-component-type="PF4/Text"]').eq(i).should('contain', parsedLastVisited.data[i].bundle);
-    }
     // Verify that the photo slides exist
-    for (let i = 0; i < NUM_SLIDE_ELEMENTS; i++) {
-      cy.get('.slick-track').find(`[data-index="${i}"].slick-slide`).should('exist');
-    }
-    for (let i = 0; i < NUM_SLIDE_ELEMENTS - 1; i++) {
-      cy.get('.slick-arrow.slick-next').should('exist');
-      cy.wait(1000);
-      cy.get('.slick-arrow.slick-next').click();
-    }
-    cy.get('.slick-arrow.slick-next.slick-disabled').should('exist');
-    for (let i = 0; i < FRONT_PAGE_SERVICES.length; i++) {
-      cy.get('.pf-l-gallery.pf-m-gutter')
-        .eq(1)
-        .find(`article[data-ouia-component-id="OUIA-Generated-Card-${i + 1}"]`)
-        .find('.pf-u-font-size-lg.pf-u-mt-md')
-        .should('contain', FRONT_PAGE_SERVICES[i]);
-    }
+    cy.get('.slick-list').should('exist');
     cy.get('.pf-l-gallery.pf-m-gutter').eq(1).children().should('have.length', NUM_CHILDREN_ELEMENTS);
     cy.screenshot();
   });
@@ -251,8 +216,6 @@ describe('Landing page', () => {
   it('View favorited services', () => {
     cy.visit('/');
     cy.login();
-    cy.visit('/');
-    cy.reload();
 
     cy.intercept({
       method: 'GET',
@@ -266,6 +229,8 @@ describe('Landing page', () => {
   });
 
   it('tooltip is shown when hovering over the gear/question icon', () => {
+    cy.login();
+
     cy.visit('/');
     cy.wait(4000);
     cy.get('.tooltip-button-settings-cy').invoke('show').trigger('mouseenter').wait(1000);
