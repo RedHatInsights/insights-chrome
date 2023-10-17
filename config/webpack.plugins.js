@@ -12,7 +12,7 @@ const getDynamicModules = require('./get-dynamic-modules');
 
 const deps = require('../package.json').dependencies;
 
-const plugins = (dev = false, beta = false) => {
+const plugins = (dev = false, beta = false, restricted = false) => {
   const ChunkMapper = new (require('./chunk-mapper'))({
     modules: 'chrome',
     _unstableHotReload: dev,
@@ -53,7 +53,7 @@ const plugins = (dev = false, beta = false) => {
     }),
     ChunkMapper,
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../src/index.ejs'),
+      template: restricted ? path.resolve(__dirname, '../src/indexRes.ejs') : path.resolve(__dirname, '../src/index.ejs'),
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',

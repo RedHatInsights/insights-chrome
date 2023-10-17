@@ -12,6 +12,7 @@
     "build": "NODE_ENV=production webpack --config config/webpack.config.js  --mode=production",
     "build:beta": "BETA=true npm run build",
     "build:dev": "NODE_ENV=development webpack --config config/webpack.config.js  --mode=development",
+    "build:res": "NODE_ENV=restricted webpack --config config/webpack.config.js --mode=production",
     "cypress": "cypress",
     "cypress:run": "cypress run --browser electron",
     "dev": "DEV_SERVER=true webpack serve --config config/webpack.config.js --mode=development",
