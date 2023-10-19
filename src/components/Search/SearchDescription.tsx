@@ -2,14 +2,16 @@ import React from 'react';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 
 import './SearchDescription.scss';
+import parseHighlights from './parseHighlight';
 
-const SearchDescription = ({ description }: { description: string }) => {
+const SearchDescription = ({ description, highlight = [] }: { highlight?: string[]; description: string }) => {
+  const parsedDescription = parseHighlights(description, highlight);
   return (
     <TextContent>
       <Text
         component="small"
         className="chr-c-search__item__description pf-v5-u-color-100 pf-v5-u-text-break-word"
-        dangerouslySetInnerHTML={{ __html: description }}
+        dangerouslySetInnerHTML={{ __html: parsedDescription }}
       ></Text>
     </TextContent>
   );
