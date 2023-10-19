@@ -7,6 +7,7 @@ import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import isEqual from 'lodash/isEqual';
 import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
+import { ChromeProvider } from '@redhat-cloud-services/chrome';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
@@ -195,42 +196,44 @@ const ScalprumRoot = memo(
        */
       <InternalChromeContext.Provider value={chromeApi}>
         <ScalprumProvider {...scalprumProviderProps}>
-          <Routes>
-            <Route
-              index
-              path="/"
-              element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
-            />
-            <Route
-              path="/connect/products"
-              element={
-                <Suspense fallback={LoadingFallback}>
-                  <ProductSelection />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/allservices"
-              element={
-                <Suspense fallback={LoadingFallback}>
-                  <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
-                </Suspense>
-              }
-            />
-            {!ITLess() && (
+          <ChromeProvider>
+            <Routes>
               <Route
-                path="/favoritedservices"
+                index
+                path="/"
+                element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
+              />
+              <Route
+                path="/connect/products"
                 element={
                   <Suspense fallback={LoadingFallback}>
-                    <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                    <ProductSelection />
                   </Suspense>
                 }
               />
-            )}
-            {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
-            <Route path="/security" element={<DefaultLayout {...props} />} />
-            <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
-          </Routes>
+              <Route
+                path="/allservices"
+                element={
+                  <Suspense fallback={LoadingFallback}>
+                    <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                  </Suspense>
+                }
+              />
+              {!ITLess() && (
+                <Route
+                  path="/favoritedservices"
+                  element={
+                    <Suspense fallback={LoadingFallback}>
+                      <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                    </Suspense>
+                  }
+                />
+              )}
+              {ITLess() && <Route path="/insights/satellite" element={<SatelliteToken />} />}
+              <Route path="/security" element={<DefaultLayout {...props} />} />
+              <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
+            </Routes>
+          </ChromeProvider>
         </ScalprumProvider>
       </InternalChromeContext.Provider>
     );

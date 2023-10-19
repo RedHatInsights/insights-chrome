@@ -1,7 +1,6 @@
 import React, { Suspense, lazy, memo, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
-import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
@@ -15,7 +14,6 @@ import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
 import { AppsConfig } from '@scalprum/core';
 import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
-import useBundle from '../../hooks/useBundle';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
@@ -40,7 +38,6 @@ const RootApp = memo((props: RootAppProps) => {
       },
     }: ReduxState) => Object.values(quickstarts).flat()
   );
-  const { bundleTitle } = useBundle();
   const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
   const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
@@ -122,13 +119,11 @@ const RootApp = memo((props: RootAppProps) => {
           <Suspense fallback={null}>
             {user?.identity?.account_number && !ITLess() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
           </Suspense>
-          <ChromeProvider bundle={bundleTitle}>
-            <QuickStartContainer {...quickStartProps}>
-              <HelpTopicContainer helpTopics={helpTopics}>
-                <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
-              </HelpTopicContainer>
-            </QuickStartContainer>
-          </ChromeProvider>
+          <QuickStartContainer {...quickStartProps}>
+            <HelpTopicContainer helpTopics={helpTopics}>
+              <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+            </HelpTopicContainer>
+          </QuickStartContainer>
         </FeatureFlagsProvider>
       </SegmentProvider>
     </HistoryRouter>
