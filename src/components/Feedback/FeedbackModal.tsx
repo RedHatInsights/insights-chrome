@@ -124,7 +124,7 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
             modalDescription={
               <Text>
                 {intl.formatMessage(messages.describeReportBug)}{' '}
-                <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/open-case?caseCreate=true" target="_blank">
+                <Text component="a" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" target="_blank">
                   {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
                 </Text>
               </Text>
