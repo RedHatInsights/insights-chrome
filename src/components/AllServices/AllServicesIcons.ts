@@ -7,7 +7,7 @@ import CloudUploadAltIcon from '@patternfly/react-icons/dist/dynamic/icons/cloud
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import CreditCardIcon from '@patternfly/react-icons/dist/dynamic/icons/credit-card-icon';
 import CubeIcon from '@patternfly/react-icons/dist/dynamic/icons/cube-icon';
-import DatabaseIcon from '@patternfly/react-icons/dist/dynamic/icons/database-icon';
+import LightBulbIcon from '@patternfly/react-icons/dist/dynamic/icons/lightbulb-icon';
 import InfrastructureIcon from '@patternfly/react-icons/dist/dynamic/icons/infrastructure-icon';
 import RocketIcon from '@patternfly/react-icons/dist/dynamic/icons/rocket-icon';
 import ShoppingCartIcon from '@patternfly/react-icons/dist/dynamic/icons/shopping-cart-icon';
@@ -17,7 +17,7 @@ import MonitoringIcon from '@patternfly/react-icons/dist/dynamic/icons/monitorin
 const AllServicesIcons = {
   CloudUploadAltIcon,
   AutomationIcon,
-  DatabaseIcon,
+  LightBulbIcon,
   RocketIcon,
   UsersIcon,
   InfrastructureIcon,
