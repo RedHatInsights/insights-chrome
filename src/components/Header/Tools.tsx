@@ -150,7 +150,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.supportOptions),
-      url: isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support',
+      onClick: () => (window.location.href = isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support'),
     },
     {
       title: intl.formatMessage(messages.insightsRhelDocumentation),
