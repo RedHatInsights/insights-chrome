@@ -132,7 +132,7 @@ const Tools = () => {
 
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
-  }
+  };
 
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
@@ -154,7 +154,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.supportOptions),
-      onClick: () => window.location.href = supportOptionsUrl(),
+      onClick: () => (window.location.href = supportOptionsUrl()),
     },
     {
       title: intl.formatMessage(messages.insightsRhelDocumentation),
