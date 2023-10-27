@@ -6,11 +6,15 @@ import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner'
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 
 import debounce from 'lodash/debounce';
+import uniq from 'lodash/uniq';
 
 import './SearchInput.scss';
 import SearchGroup from './SearchGroup';
 import {
-  AUTOSUGGEST_HIGHLIGHT_TAG,
+  AUTOSUGGEST_BUNDLE_CLOSE_TAG,
+  AUTOSUGGEST_BUNDLE_OPEN_TAG,
+  AUTOSUGGEST_HIGHLIGHT_CLOSE_TAG,
+  AUTOSUGGEST_HIGHLIGHT_OPEN_TAG,
   AUTOSUGGEST_TERM_DELIMITER,
   HighlightingResponseType,
   SearchAutoSuggestionResponseType,
@@ -123,14 +127,14 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     const categories = (searchResults?.suggest?.default[searchValue]?.suggestions || []).reduce<SearchCategories>(
       (acc, curr) => {
         const [allTitle, , abstract] = curr.term.split(AUTOSUGGEST_TERM_DELIMITER);
-        if (allTitle.includes(AUTOSUGGEST_HIGHLIGHT_TAG)) {
+        if (allTitle.includes(AUTOSUGGEST_HIGHLIGHT_OPEN_TAG)) {
           return {
             ...acc,
             highLevel: [...acc.highLevel, curr],
           };
         }
 
-        if (abstract.includes(AUTOSUGGEST_HIGHLIGHT_TAG)) {
+        if (abstract.includes(AUTOSUGGEST_HIGHLIGHT_OPEN_TAG)) {
           return {
             ...acc,
             midLevel: [...acc.midLevel, curr],
@@ -244,16 +248,38 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   }, [isOpen, menuRef]);
 
   const handleFetch = (value = '') => {
-    let results: SearchResponseAggregate = initialSearchState;
     return fetch(SUGGEST_SEARCH_QUERY.replaceAll(REPLACE_TAG, value))
       .then((r) => r.json())
       .then((response: SearchAutoSuggestionResponseType) => {
-        results = { ...results, ...response };
-        return fetch(SEARCH_QUERY.replaceAll(REPLACE_TAG, value));
+        let valueToSearch = value;
+        const autoSuggestions = (response?.suggest?.default[value]?.suggestions || []).map((suggestion) => {
+          const [allTitle, bundle_title, abstract] = suggestion.term.split(AUTOSUGGEST_TERM_DELIMITER);
+          // TODO it is not safe to assume only one field will have a highlight. Need to revisit this and above logic
+          let matched;
+          if (allTitle.includes(AUTOSUGGEST_HIGHLIGHT_OPEN_TAG)) {
+            matched = allTitle;
+          } else if (bundle_title.includes(AUTOSUGGEST_HIGHLIGHT_OPEN_TAG)) {
+            matched = bundle_title;
+          } else {
+            matched = abstract;
+          }
+          const result = matched
+            .replaceAll(AUTOSUGGEST_HIGHLIGHT_OPEN_TAG, '')
+            .replaceAll(AUTOSUGGEST_HIGHLIGHT_CLOSE_TAG, '')
+            .replaceAll(AUTOSUGGEST_BUNDLE_OPEN_TAG, '')
+            .replaceAll(AUTOSUGGEST_BUNDLE_CLOSE_TAG, '')
+            .trim();
+          // wrap multiple terms in quotes - otherwise search treats each as an individual term to search
+          return `"${result}"`;
+        });
+        if (autoSuggestions.length > 0) {
+          valueToSearch = uniq(autoSuggestions).join('+OR+');
+        }
+        return fetch(SEARCH_QUERY.replaceAll(REPLACE_TAG, valueToSearch));
       })
       .then((r) => r.json())
       .then(({ response, highlighting }: { highlighting: HighlightingResponseType; response: SearchResponseType }) => {
-        results = { ...results, ...response };
+        const results: SearchResponseAggregate = { ...initialSearchState, ...response };
         if (isMounted.current) {
           setSearchResults(results);
           setHighlighting(highlighting);

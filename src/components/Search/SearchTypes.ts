@@ -45,6 +45,12 @@ export type HighlightingResponseType = {
   [recordId: string]: SearchHighlight;
 };
 
-export const AUTOSUGGEST_HIGHLIGHT_TAG = '<b>';
+export const AUTOSUGGEST_HIGHLIGHT_OPEN_TAG = '<b>';
+
+export const AUTOSUGGEST_HIGHLIGHT_CLOSE_TAG = '</b>';
+
+export const AUTOSUGGEST_BUNDLE_OPEN_TAG = '[';
+
+export const AUTOSUGGEST_BUNDLE_CLOSE_TAG = ']';
 
 export const AUTOSUGGEST_TERM_DELIMITER = '|';
