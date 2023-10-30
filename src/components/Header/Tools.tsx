@@ -27,7 +27,6 @@ import { ReduxState } from '../../redux/store';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
-import { usePreviewFlag } from '../../utils/usePreviewFlag';
 
 const isITLessEnv = ITLess();
 
@@ -81,7 +80,7 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
-  const enableIntegrations = usePreviewFlag('platform.sources.integrations');
+  const enableIntegrations = useFlag('platform.sources.integrations');
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
