@@ -1,22 +1,23 @@
-import React, { useRef, useState } from 'react';
-import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
-import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
-import UserIcon from './UserIcon';
-import { useSelector } from 'react-redux';
-import { ITLess, ITLessCognito, getEnv, isProd as isProdEnv } from '../../utils/common';
-import ChromeLink from '../ChromeLink/ChromeLink';
-import { useIntl } from 'react-intl';
-import messages from '../../locales/Messages';
-import { ReduxState } from '../../redux/store';
-import { logout } from '../../jwt/jwt';
-import { cogLogout } from '../../cognito/auth';
-import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
-import classNames from 'classnames';
-
 import './UserToggle.scss';
+
+import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { ITLess, ITLessCognito, getEnv, isProd as isProdEnv } from '../../utils/common';
+import React, { useRef, useState } from 'react';
+
+import ChromeLink from '../ChromeLink/ChromeLink';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
+import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
+import { ReduxState } from '../../redux/store';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import UserIcon from './UserIcon';
+import classNames from 'classnames';
+import { cogLogout } from '../../cognito/auth';
+import { logout } from '../../jwt/jwt';
+import messages from '../../locales/Messages';
+import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string, isInternal?: boolean, extraItems: React.ReactNode[] = []) => {
   const env = getEnv();
@@ -26,6 +27,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
+  isInternal = true;
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -92,9 +94,14 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
     </React.Fragment>,
     <React.Fragment key="internal wrapper">
       {isInternal && isProd && (
-        <DropdownItem key="Internal" href="./internal">
-          {intl.formatMessage(messages.internal)}
-        </DropdownItem>
+        <DropdownItem
+          key="Internal"
+          component={({ className }) => (
+            <ChromeLink className={className} href="/internal" appId="internal">
+              {intl.formatMessage(messages.internal)}
+            </ChromeLink>
+          )}
+        />
       )}
     </React.Fragment>,
     <DropdownItem key="logout" component="button" onClick={() => (ITLessCognito() ? cogLogout() : logout(true))}>
