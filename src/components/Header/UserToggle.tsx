@@ -27,7 +27,6 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
-  isInternal = true;
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
