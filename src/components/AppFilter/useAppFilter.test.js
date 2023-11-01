@@ -91,7 +91,7 @@ describe('useAppFilter', () => {
     await act(async () => {
       result.current.setIsOpen(true);
     });
-    expect(axiosGetSpy).toHaveBeenCalledTimes(10);
+    expect(axiosGetSpy).toHaveBeenCalledTimes(11);
     for (let index = 0; index < 8; index++) {
       expect(axiosGetSpy.mock.calls[index]).toEqual([
         `/api/chrome-service/v1/static/stable/stage/navigation/${requiredBundles[index]}-navigation.json?ts=666`,
