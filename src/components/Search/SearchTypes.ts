@@ -1,5 +1,3 @@
-import { EitherNotBoth } from '@openshift/dynamic-plugin-sdk';
-
 export type SearchResultItem = {
   abstract: string;
   allTitle: string;
@@ -16,8 +14,6 @@ export type SearchAutoSuggestionResultItem = {
   weight: string;
   payload: string;
 };
-
-export type SearchResultItemAggregate = EitherNotBoth<SearchResultItem, SearchAutoSuggestionResultItem>;
 
 export type SearchResponseType = {
   docs: SearchResultItem[];
@@ -36,21 +32,5 @@ export type SearchAutoSuggestionResponseType = {
     };
   };
 };
-
-export type SearchResponseAggregate = SearchResponseType & SearchAutoSuggestionResponseType;
-
-export type SearchHighlight = { allTitle?: string[]; abstract?: string[]; bundle_title?: string[]; bundle?: string[] };
-
-export type HighlightingResponseType = {
-  [recordId: string]: SearchHighlight;
-};
-
-export const AUTOSUGGEST_HIGHLIGHT_OPEN_TAG = '<b>';
-
-export const AUTOSUGGEST_HIGHLIGHT_CLOSE_TAG = '</b>';
-
-export const AUTOSUGGEST_BUNDLE_OPEN_TAG = '[';
-
-export const AUTOSUGGEST_BUNDLE_CLOSE_TAG = ']';
 
 export const AUTOSUGGEST_TERM_DELIMITER = '|';
