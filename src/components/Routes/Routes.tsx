@@ -5,7 +5,7 @@ import ChromeRoute from '../ChromeRoute';
 import NotFoundRoute from '../NotFoundRoute';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
-import { usePreviewFlag } from '../../utils/usePreviewFlag';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const INTEGRATION_SOURCES = 'platform.sources.integrations';
 
@@ -23,7 +23,7 @@ const redirects = [
   {
     path: '/settings',
     to: '/settings/integrations',
-    previewFlag: {
+    featureFlag: {
       value: true,
       name: INTEGRATION_SOURCES,
     },
@@ -31,7 +31,7 @@ const redirects = [
   {
     path: '/settings',
     to: '/settings/sources',
-    previewFlag: {
+    featureFlag: {
       value: false,
       name: INTEGRATION_SOURCES,
     },
@@ -67,8 +67,8 @@ export type RoutesProps = {
 };
 
 const ChromeRoutes = ({ routesProps }: RoutesProps) => {
-  const enableIntegrations = usePreviewFlag(INTEGRATION_SOURCES);
-  const previewFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
+  const enableIntegrations = useFlag(INTEGRATION_SOURCES);
+  const featureFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
   const moduleRoutes = useSelector(({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
@@ -84,10 +84,10 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
           }
         />
       )}
-      {redirects.map(({ path, to, previewFlag }) => {
-        if (previewFlag) {
-          const found = Object.keys(previewFlags).find((item) => item === previewFlag.name);
-          if (previewFlags[found as string] !== previewFlag.value) {
+      {redirects.map(({ path, to, featureFlag }) => {
+        if (featureFlag) {
+          const found = Object.keys(featureFlags).find((item) => item === featureFlag.name);
+          if (featureFlags[found as string] !== featureFlag.value) {
             return null;
           }
         }
