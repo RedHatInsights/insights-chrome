@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-import parseHighlights from './parseHighlight';
 
 import './SearchDescription.scss';
+import parseHighlights from './parseHighlight';
 
 const SearchDescription = ({ description, highlight = [] }: { highlight?: string[]; description: string }) => {
   const parsedDescription = parseHighlights(description, highlight);

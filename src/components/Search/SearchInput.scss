@@ -37,6 +37,9 @@
         display: none;
       }
     }
+    small {
+      display: inline-block;
+    }
   }
   &__empty-state {
     .pf-v5-c-empty-state__icon {
