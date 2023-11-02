@@ -5,7 +5,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 
 import * as jwt from '../jwt/jwt';
-import { getTokenWithAuthorizationCode } from '../cognito/auth';
+import { createUser, getTokenWithAuthorizationCode } from '../cognito/auth';
 import { ITLessCognito } from '../utils/common';
 import consts, { defaultAuthOptions as defaultOptions } from '../utils/consts';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
@@ -59,10 +59,14 @@ export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUs
 });
 
 export const createGetUser = (libjwt: LibJWT): (() => Promise<ChromeUser | undefined | void>) => {
-  return () =>
-    libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
-      libjwt.jwt.logoutAllTabs();
-    });
+  if (isITLessCognito) {
+    return () => createUser();
+  } else {
+    return () =>
+      libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
+        libjwt.jwt.logoutAllTabs();
+      });
+  }
 };
 
 export const createGetUserPermissions = (libJwt: LibJWT, getUser: () => Promise<void | ChromeUser>) => {

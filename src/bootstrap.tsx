@@ -22,6 +22,7 @@ import initializeJWT from './jwt/initialize-jwt';
 import AppPlaceholder from './components/AppPlaceholder';
 import { initializeVisibilityFunctions } from './utils/VisibilitySingleton';
 import { createGetUser } from './auth';
+import { getTokenWithAuthorizationCode } from './cognito/auth';
 
 const language: keyof typeof messages = 'en';
 
@@ -46,16 +47,18 @@ const initializeAccessRequestCookies = () => {
 const libjwtSetup = (chromeConfig: { ssoUrl?: string }, ssoScopes: string[] = []) => {
   const libjwt = auth({ ...chromeConfig, ssoScopes } || { ssoScopes });
 
-  libjwt.initPromise.then(() => {
-    return libjwt.jwt
-      .getUserInfo()
-      .then((chromeUser) => {
-        if (chromeUser) {
-          sentry(chromeUser);
-        }
-      })
-      .catch(noop);
-  });
+  if (!ITLess()) {
+    libjwt.initPromise.then(() => {
+      return libjwt.jwt
+        .getUserInfo()
+        .then((chromeUser) => {
+          if (chromeUser) {
+            sentry(chromeUser);
+          }
+        })
+        .catch(noop);
+    });
+  }
 
   return libjwt;
 };
@@ -96,7 +99,10 @@ const useInitialize = () => {
     const getUser = createGetUser(libJwt);
     initializeVisibilityFunctions({
       getUser,
-      getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
+      getToken: () =>
+        ITLessCognito()
+          ? getTokenWithAuthorizationCode()
+          : libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
       getUserPermissions: createGetUserPermissions(libJwt, getUser),
     });
 
