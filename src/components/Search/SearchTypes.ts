@@ -9,6 +9,12 @@ export type SearchResultItem = {
   view_uri: string;
 };
 
+export type SearchAutoSuggestionResultItem = {
+  term: string;
+  weight: string;
+  payload: string;
+};
+
 export type SearchResponseType = {
   docs: SearchResultItem[];
   start: number;
@@ -16,8 +22,15 @@ export type SearchResponseType = {
   maxScore: number;
 };
 
-export type SearchHighlight = { allTitle?: string[]; abstract?: string[]; bundle_title?: string[]; bundle?: string[] };
-
-export type HighlightingResponseType = {
-  [recordId: string]: SearchHighlight;
+export type SearchAutoSuggestionResponseType = {
+  suggest: {
+    default: {
+      [recordId: string]: {
+        numFound: number;
+        suggestions: SearchAutoSuggestionResultItem[];
+      };
+    };
+  };
 };
+
+export const AUTOSUGGEST_TERM_DELIMITER = '|';
