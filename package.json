@@ -131,7 +131,7 @@
     "@formatjs/cli": "4.8.4",
     "@openshift/dynamic-plugin-sdk": "^4.0.0",
     "@patternfly/patternfly": "^5.0.4",
-    "@patternfly/quickstarts": "^5.0.0",
+    "@patternfly/quickstarts": "^5.1.0",
     "@patternfly/react-charts": "^7.0.0",
     "@patternfly/react-core": "^5.0.1",
     "@patternfly/react-icons": "^5.0.1",
