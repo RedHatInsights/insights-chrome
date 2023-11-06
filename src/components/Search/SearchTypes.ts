@@ -24,6 +24,12 @@ export type SearchResponseType = {
 
 export type SearchAutoSuggestionResponseType = {
   suggest: {
+    improvedInfixSuggester: {
+      [recordId: string]: {
+        numFound: number;
+        suggestions: SearchAutoSuggestionResultItem[];
+      };
+    };
     default: {
       [recordId: string]: {
         numFound: number;
