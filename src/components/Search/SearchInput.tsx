@@ -10,7 +10,7 @@ import uniq from 'lodash/uniq';
 import uniqWith from 'lodash/uniqWith';
 
 import './SearchInput.scss';
-import { AUTOSUGGEST_TERM_DELIMITER, SearchAutoSuggestionResponseType, SearchResponseType } from './SearchTypes';
+import { AUTOSUGGEST_TERM_DELIMITER, SearchAutoSuggestionResponseType, SearchAutoSuggestionResultItem, SearchResponseType } from './SearchTypes';
 import EmptySearchState from './EmptySearchState';
 import { isProd } from '../../utils/common';
 import { useSegment } from '../../analytics/useSegment';
@@ -52,6 +52,8 @@ const SUGGEST_SEARCH = new URLSearchParams();
 SUGGEST_SEARCH.append('redhat_client', 'console'); // required client id
 SUGGEST_SEARCH.append('q', REPLACE_TAG); // add query replacement tag and enable fuzzy search with ~ and wildcards
 SUGGEST_SEARCH.append('suggest.count', '10'); // request 10 results
+SUGGEST_SEARCH.append('suggest.dictionary', 'improvedInfixSuggester'); // console  new suggest dictionary
+SUGGEST_SEARCH.append('suggest.dictionary', 'default');
 
 const SUGGEST_URL = new URL(`https://access.${IS_PROD ? '' : 'stage.'}redhat.com/hydra/proxy/gss-diag/rs/search/autosuggest`);
 // search API stopped receiving encoded search string
@@ -79,6 +81,22 @@ type SearchItem = {
 type SearchInputListener = {
   onStateChange: (isOpen: boolean) => void;
 };
+
+function parseSuggestions(suggestions: SearchAutoSuggestionResultItem[] = []) {
+  return suggestions.map((suggestion) => {
+    const [allTitle, bundleTitle, abstract] = suggestion.term.split(AUTOSUGGEST_TERM_DELIMITER);
+    const url = new URL(suggestion.payload);
+    return {
+      item: {
+        title: allTitle,
+        bundleTitle,
+        description: abstract,
+        pathname: url.pathname,
+      },
+      allTitle,
+    };
+  });
+}
 
 const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -180,27 +198,21 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleFetch = async (value = '') => {
     const response = (await fetch(SUGGEST_SEARCH_QUERY.replaceAll(REPLACE_TAG, value)).then((r) => r.json())) as SearchAutoSuggestionResponseType;
 
-    const items = (response?.suggest?.default[value]?.suggestions || []).map((suggestion) => {
-      const [allTitle, bundleTitle, abstract] = suggestion.term.split(AUTOSUGGEST_TERM_DELIMITER);
-      const url = new URL(suggestion.payload);
-      const pathname = url.pathname;
-      const item = {
-        title: allTitle,
-        bundleTitle,
-        description: abstract,
-        pathname,
-      };
-      // wrap multiple terms in quotes - otherwise search treats each as an individual term to search
-      return { item, allTitle };
-    });
+    // parse default suggester
+    // parse improved suggester
+    let items: { item: SearchItem; allTitle: string }[] = [];
+    items = items
+      .concat(
+        parseSuggestions(response?.suggest?.default[value]?.suggestions),
+        parseSuggestions(response?.suggest?.improvedInfixSuggester[value]?.suggestions)
+      )
+      .slice(0, 10);
     const suggests = uniq(items.map(({ allTitle }) => allTitle.replace(/(<b>|<\/b>)/gm, '').trim()));
     let searchItems = items.map(({ item }) => item);
-    console.log(suggests);
     if (items.length < 10) {
-      console.log({ value });
       const altTitleResults = (await fetch(
         BASE_URL.toString()
-          .replaceAll(REPLACE_TAG, `(${suggests.join(' OR ')} OR ${value})`)
+          .replaceAll(REPLACE_TAG, `(${suggests.length > 0 ? suggests.join(' OR ') + ' OR ' : ''}${value})`)
           .replaceAll(REPLACE_COUNT_TAG, '10')
       ).then((r) => r.json())) as { response: SearchResponseType };
       searchItems = searchItems.concat(
