@@ -264,7 +264,7 @@ const Tools = () => {
           <ThemeToggle />
         </ToolbarItem>
       )}
-      {isInternal && (
+      {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v5-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
