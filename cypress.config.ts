@@ -31,7 +31,7 @@ export default defineConfig({
     },
   },
   e2e: {
-    blockHosts: ['static.redhat.com', 'consent.trustarc.com', 'www.redhat.com/en/cms/ajax/site-switcher'],
+    blockHosts: ['consent.trustarc.com'],
     baseUrl: 'https://stage.foo.redhat.com:1337/beta',
     env: {
       E2E_USER: process.env.E2E_USER,
