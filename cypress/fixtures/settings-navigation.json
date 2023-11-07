@@ -1,0 +1,107 @@
+{
+    "id": "settings",
+    "title": "Settings",
+    "navItems": [
+        {
+            "id": "sources",
+            "appId": "sources",
+            "title": "Integrations",
+            "description": "Integrations provide a way for applications to collect data outside of the Red Hat Hybrid Cloud Console through either a direct connection to the source or indirectly.",
+            "href": "/settings/integrations",
+            "icon": "PlaceholderIcon",
+            "alt_title": [
+                "providers",
+                "cloud providers",
+                "cloud sources",
+                "Red Hat sources",
+                "integrations",
+                "cloud integrations",
+                "cloud connection",
+                "aws",
+                "Amazon",
+                "Google",
+                "cloud",
+                "IBM",
+                "Microsoft",
+                "secrets",
+                "Azure",
+                "Oracle",
+                "Infrastructure",
+                "prediction",
+                "cost",
+                "subscriptions",
+                "account",
+                "credentials"
+            ]
+        },
+        {
+            "id": "learningResources",
+            "appId": "learningResources",
+            "title": "Learning Resources",
+            "href": "/settings/learning-resources"
+        },
+        {
+            "id": "idmsvc",
+            "appId": "idmsvc",
+            "title": "Directory & Domain Services",
+            "description": "Directory and Domain Services for console.redhat.com",
+            "href": "/settings/idmsvc",
+            "icon": "PlaceholderIcon"
+        },
+        {
+            "title": "Notifications",
+            "id": "notifications",
+            "description": "A standardized way of notifying users of events for supported services on the Hybrid Cloud Console.",
+            "expandable": true,
+            "routes": [
+                {
+                    "id": "notificationOverview",
+                    "appId": "notifications",
+                    "icon": "PlaceholderIcon",
+                    "title": "Overview",
+                    "href": "/settings/notifications"
+                },
+                {
+                    "id": "configureEvents",
+                    "appId": "notifications",
+                    "title": "Configure Events",
+                    "href": "/settings/notifications/configure-events",
+                    "permissions": [
+                      {
+                        "method": "isOrgAdmin"
+                      }
+                    ]
+                },
+                {
+                    "id": "eventLog",
+                    "appId": "notifications",
+                    "title": "Event Log",
+                    "href": "/settings/notifications/eventlog",
+                    "permissions": [
+                      {
+                        "method": "isOrgAdmin"
+                      }
+                    ]
+                },
+                {
+                    "id": "notificationsLog",
+                    "appId": "notifications",
+                    "title": "Notifications Log",
+                    "href": "/settings/notifications/notificationslog",
+                    "permissions": [
+                      {
+                        "method": "featureFlag",
+                        "args": ["platform.chrome.notifications-drawer", true]
+                      }
+                    ]
+                },
+                {
+                    "id": "myUserPreferences",
+                    "appId": "notifications",
+                    "title": "My User Preferences",
+                    "href": "/settings/notifications/user-preferences"
+                }
+            ]
+        }
+    ]
+}

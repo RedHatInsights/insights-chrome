@@ -107,6 +107,9 @@ const filterAllServicesLinks = (links: (AllServicesLink | AllServicesGroup)[], f
   return links.reduce<(AllServicesLink | AllServicesGroup)[]>((acc, link) => {
     // groups have links nested, we have to filter them as well
     if (isAllServicesGroup(link)) {
+      if (matchStrings(link.title, filterValue)) {
+        return [...acc, link];
+      }
       const groupLinks = filterAllServicesLinks(link.links, filterValue);
       // replace group links with filtered results
       const newGroup: AllServicesGroup = {
