@@ -26,7 +26,7 @@ export const requiredBundles = [
   'business-services',
   'subscriptions',
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
-];
+].filter(Boolean);
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 

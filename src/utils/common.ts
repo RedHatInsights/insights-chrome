@@ -34,12 +34,12 @@ export const DEFAULT_SSO_ROUTES = {
   },
   frhStage: {
     url: ['console.stage.openshiftusgov.com'],
-    sso: 'https://ocm-ra-stage-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
+    sso: 'https://sso.stage.openshiftusgov.com/auth',
     portal: 'https://console.stage.openshiftusgov.com',
   },
   frh: {
     url: ['console.openshiftusgov.com'],
-    sso: 'https://ocm-ra-stage-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
+    sso: 'https://ocm-ra-prod-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
     portal: 'https://console.openshiftusgov.com',
   },
   ephem: {
@@ -215,11 +215,11 @@ export function ITLess() {
 }
 
 export function ITLessCognito() {
-  return getEnv() === 'frhStage' || getEnv() === 'frh';
+  return getEnv() === 'frh';
 }
 
 export function ITLessKeycloak() {
-  return getEnv() === 'ephem' || getEnv() === 'int' || getEnv() === 'scr';
+  return getEnv() === 'ephem' || getEnv() === 'int' || getEnv() === 'scr' || getEnv() === 'frhStage';
 }
 
 export function updateDocumentTitle(title?: string, noSuffix = false) {

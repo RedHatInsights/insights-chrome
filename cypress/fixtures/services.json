@@ -1,0 +1,508 @@
+[
+    {
+      "id": "dataset",
+      "icon": "LightBulbIcon",
+      "title": "AI/ML",
+      "description": "Create, manage, and migrate relational and non-relational databases.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Application and Data Services",
+          "links": [
+            "application-services.dataScience"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "automation",
+      "title": "Automation",
+      "icon": "AutomationIcon",
+      "description": "Solve problems once, in one place, and scale up.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            "rhel.remediations",
+            "rhel.tasks"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Ansible",
+          "links": [
+            {
+              "title": "Ansible Hub",
+              "href": "/ansible/automation-hub/",
+              "icon": "AnsibleIcon"
+            },
+            {
+              "title": "Automation Analytics",
+              "href": "/ansible/automation-analytics/reports",
+              "icon": "AnsibleIcon",
+              "description": "Plan, measure, and scale your automation using actionable data."
+            },
+            "ansible.inventory",
+            {
+              "title": "Register Systems",
+              "filterable": false,
+              "href": "/ansible/registration",
+              "icon": "AnsibleIcon"
+            },
+            "ansible.tasks"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "containers",
+      "title": "Containers",
+      "icon": "CubeIcon",
+      "description": "Run your applications in a consistent and isolated environment.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "OpenShift",
+          "links": [
+            {
+              "title": "Clusters",
+              "href": "/openshift",
+              "icon": "OpenShiftIcon",
+              "description": "View, Register, or Create an OpenShift Cluster."
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Quay.io",
+          "links": [
+            "quay.quayOrganizations"
+          ]
+        },      
+        {
+          "isGroup": true,
+          "title": "Application and Data Services",
+          "links": [
+            "application-services.trustedContentOverview",
+            "application-services.apiManagement"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "icon": "RocketIcon",
+      "title": "Deploy",
+      "description": "Create RHEL images, systems at the Edge, and OpenShift clusters.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            "rhel.imageBuilder"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Quay.io",
+          "links": [
+            "quay.quayRepositories"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Edge",
+          "links": [
+            {
+              "title": "Images",
+              "href": "/edge/manage-images",
+              "icon": "EdgeIcon",
+              "description": "Manage the lifecycle and enhance security of your RHEL systems at the edge."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iam",
+      "icon": "UsersIcon",
+      "title": "Identity and Access Management",
+      "description": "Ensure that the right users have the appropriate access to technology resources.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "IAM",
+          "links": [
+            "iam.users",
+            "iam.groups",
+            "iam.authFactors"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Application and Data Services",
+          "links": [
+            {
+              "title": "Service Accounts",
+              "href": "/application-services/service-accounts",
+              "icon": "ServicesIcon",
+              "description": "Authenticate and connect securely to APIs from multiple services."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "integrations-notifications",
+      "icon": "BellIcon",
+      "title": "Integrations and Notifications",
+      "description": "Alerts users to events, using email and integrations such as webhooks.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Console Settings",
+          "links": [
+            "settings.integrations",
+            "settings.notifications"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "inventories",
+      "icon": "BoxesIcon",
+      "title": "Inventories",
+      "description": "View OpenShift clusters, Edge systems, RHEL hosts, and your organization's subscriptions.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            "rhel.imageBuilder",
+            "rhel.subscriptionsInventory",
+            "rhel.inventory",
+          {
+            "title": "Inventory Groups",
+            "href": "/insights/inventory/groups",
+            "icon": "InsightsIcon"
+          }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "OpenShift",
+          "links": [
+            "openshift.clusters"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Ansible",
+          "links": [
+            "ansible.inventory"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Subscription Services",
+          "links": [
+            "subscriptions.subscriptionsInventory"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "icon": "ChartLineIcon",
+      "title": "Observability and Monitoring",
+      "description": "Monitor, troubleshoot, and improve application performance.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            "rhel.advisories",
+            "rhel.repositories",
+            {
+              "href": "/insights/patch/systems",
+              "title": "Patch",
+              "icon": "InsightsIcon"
+            },
+            {
+              "href": "/insights/advisor/recommendations",
+              "title": "Advisor",
+              "icon": "InsightsIcon",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "View details about your Red Hat Enterprise Linux systems."
+            },
+            {
+              "href": "/insights/drift",
+              "title": "Drift",
+              "icon": "InsightsIcon",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "Compare systems in your Red Hat Enterprise Linux inventory to one another or against a set baseline."
+            },
+            "rhel.policies"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "OpenShift",
+          "links": [
+            {
+              "href": "/openshift/insights/advisor/recommendations",
+              "icon": "OpenShiftIcon",
+              "title": "Advisor",
+              "subtitle": "Red Hat Insights for OpenShift",
+              "description": "See targeted recommendations to optimize your OpenShift clusters’ availability, performance, and security."
+            },
+            {
+              "href": "/openshift/insights/vulnerability/cves",
+              "icon": "OpenShiftIcon",
+              "title": "Vulnerability",
+              "subtitle": "Red Hat Insights for OpenShift",
+              "description": "Identify and prioritize security vulnerabilities within your OpenShift clusters based on severity and frequency."
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Ansible",
+          "links": [
+            {
+              "href": "/ansible/advisor/recommendations",
+              "title": "Advisor",
+              "subtitle": "Red Hat Insights for Ansible",
+              "icon": "AnsibleIcon",
+              "description": "See targeted recommendations to optimize your Ansible hosts’ availability, performance, and security."
+            },
+            {
+              "title": "Drift",
+              "href": "/ansible/drift",
+              "icon": "AnsibleIcon",
+              "subtitle": "Red Hat Insights for Ansible",
+              "description": "Compare systems in your Ansible inventory to one another or against a set baseline."
+            },
+            "ansible.policies"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Subscription Services",
+          "links": [
+            {
+              "id": "openshift",
+              "title": "Subscriptions Usage",
+              "icon": "OpenShiftIcon",
+              "href": "/subscriptions/usage/openshift"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "icon": "CloudSecurityIcon",
+      "title": "Security",
+      "description": "Meet your policy and compliance objectives.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            "rhel.advisories",
+            {
+              "href": "/insights/advisor/recommendations",
+              "title": "Advisor",
+              "icon": "InsightsIcon",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "View details about your Red Hat Enterprise Linux systems."
+            },
+            {
+              "href": "/insights/vulnerability/cves",
+              "icon": "InsightsIcon",
+              "title": "Vulnerability",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "Identify and prioritize security vulnerabilities within your Red Hat Enterprise Linux systems based on severity and frequency."
+            },
+            {
+              "href": "/insights/compliance/reports",
+              "icon": "InsightsIcon",
+              "title": "Compliance",
+              "subtitle":"Red Hat Insights for RHEL",
+              "description": "Evaluate your Red Hat Enterprise systems’ compliance with security or regulatory standards."
+            },
+            {
+              "href": "/insights/malware/signatures",
+              "title": "Malware",
+              "icon": "InsightsIcon",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "Identify potential malware on your Red Hat Enterprise Linux systems."
+            },
+            "rhel.remediations"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "OpenShift",
+          "links": [
+            {
+              "href": "/openshift/insights/vulnerability/cves",
+              "icon": "OpenShiftIcon",
+              "title": "Vulnerability",
+              "subtitle": "Red Hat Insights for OpenShift"
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Ansible",
+          "links": [
+            "ansible.remediations"
+          ]
+        },
+         {
+          "isGroup": true,
+          "title": "Quay.io",
+          "links": [
+            "quay.quayOrganizations"
+          ]
+        },     
+        {
+          "isGroup": true,
+          "title": "Application and Data Services",
+          "links": [
+            "application-services.trustedContentOverview",
+           {
+             "title": "Advanced Cluster Security",
+             "href": "/application-services/acs/overview",
+             "icon": "ACSIcon",
+             "description": "Securely build, deploy, and run your cloud applications using Kubernetes-native architecture."
+           }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subscriptions",
+      "icon": "CreditCardIcon",
+      "title": "Subscriptions and Spend",
+      "description": "Subscription Services empower buying decisions. SaMS provides software usage reporting that is designed to make your subscription choices data-driven.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            {
+              "title": "Subscriptions",
+              "href": "/insights/subscriptions/rhel",
+              "icon": "OpenShiftIcon"
+            },
+            {
+              "title": "Resource Optimization",
+              "filterable": false,
+              "href": "/insights/ros",
+              "icon": "OpenShiftIcon"
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "OpenShift",
+          "links": [
+            {
+              "title": "Subscriptions",
+              "href": "/openshift/subscriptions/openshift",
+              "icon": "OpenShiftIcon"
+            },
+            {
+              "title": "Cost Management",
+              "filterable": false,
+              "href": "/openshift/cost-management",
+              "icon": "OpenShiftIcon"
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Subscription Services",
+          "links": [ 
+            "subscriptions.subscriptionsInventory",
+            "subscriptions.subscriptionsUsage",
+            "hybridCommittedSpend.hybridCommittedSpend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "systemConfiguration",
+      "icon": "CogIcon",
+      "title": "System Configuration",
+      "description": "Connect your RHEL systems to Hybrid Cloud Console services.",
+      "links": [
+        {
+          "isGroup": true,
+          "title": "Red Hat Enterprise Linux",
+          "links": [
+            {
+              "href": "/insights/connector",
+              "title": "Remote Host Configuration (RHC)",
+              "icon": "InsightsIcon",
+              "subtitle": "Red Hat Insights for RHEL",
+              "description": "Configure your systems to execute Ansible Playbooks."
+            },
+            "settings.manageConfiguration",
+            "rhel.activationKeys",
+            "rhel.manifests",
+            "rhel.registerSystems",
+            "rhel.stalenessAndDeletion"
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Ansible",
+          "links": [
+            {
+              "title": "Register Systems",
+              "filterable": false,
+              "href": "/ansible/registration",
+              "icon": "AnsibleIcon"
+            }
+          ]
+        },
+        {
+          "isGroup": true,
+          "title": "Console Settings",
+          "links": [
+            "settings.integrations",
+            "settings.notifications"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tryBuy",
+      "icon": "ShoppingCartIcon",
+      "title": "Try and Buy",
+      "description": "Our no-cost trials help you gain hands-on experience, prepare for a certification, or assess if a product is right for your organization.",
+      "links": [
+        "openshift.developerSandbox",
+        {
+          "isExternal": true,
+          "href": "https://marketplace.redhat.com/en-us",
+          "title": "Red Hat Marketplace",
+          "icon": "RHIcon",
+          "description": "Find, try, purchase, and deploy your software across clouds."
+        },
+        {
+          "isExternal": true,
+          "href": "https://www.redhat.com/en/products/trials",
+          "title": "Red Hat Product Trials",
+          "icon": "RHIcon",
+          "description": "Gain hands-on experience and assess if a product is right for you in a no-cost trial."
+        }
+      ]
+    }
+  ]
+  

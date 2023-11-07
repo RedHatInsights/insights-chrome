@@ -8,6 +8,7 @@ import { List, ListComponent, ListItem, OrderType } from '@patternfly/react-core
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
+import { getEnv } from '../utils/common';
 
 const SatelliteToken: React.FC = () => {
   const [token, setToken] = useState('');
@@ -24,6 +25,8 @@ const SatelliteToken: React.FC = () => {
         setError(err);
       });
   };
+  const itlessProd = getEnv() === 'frh';
+  const satelliteUrl = itlessProd ? 'https://mtls.console.openshiftusgov.com' : 'https://mtls.console.stage.openshiftusgov.com';
   useEffect(() => {
     if (token.length < 1 && error === null) {
       generateToken();
@@ -70,7 +73,7 @@ const SatelliteToken: React.FC = () => {
                   Step 2. You will prompted to enter the token from Step 1.`}
                 </ListItem>
                 <ClipboardCopy className="pf-v5-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
-                  {`SATELLITE_RH_CLOUD_URL=https://mtls.console.stage.openshiftusgov.com org_id=<organization_id> foreman-rake rh_cloud:hybridcloud_register`}
+                  {`SATELLITE_RH_CLOUD_URL=${satelliteUrl} org_id=<organization_id> foreman-rake rh_cloud:hybridcloud_register`}
                 </ClipboardCopy>
               </List>
             </CardBody>
