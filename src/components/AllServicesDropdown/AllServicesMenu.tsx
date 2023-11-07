@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
-import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
@@ -11,7 +11,6 @@ import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dyn
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ChromeLink from '../ChromeLink';
-import BookOpenIcon from '@patternfly/react-icons/dist/dynamic/icons/book-open-icon';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
@@ -67,34 +66,34 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
           <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav">
             <PanelMain>
               <Sidebar>
-                <SidebarPanel className="pf-v5-l-flex pf-v5-u-flex-direction-column">
-                  <FlexItem
-                    className="chr-l-flex__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md pf-v5-u-mt-sm-on-md"
-                    order={{ default: '1', md: '2' }}
-                  >
-                    <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
-                      <Text component={TextVariants.p}>
-                        <ChromeLink href="/allservices">
-                          <Icon className="pf-v5-u-mr-sm" isInline>
-                            <BookOpenIcon />
-                          </Icon>
-                          Browse all services
-                        </ChromeLink>
-                      </Text>
-                    </TextContent>
-                  </FlexItem>
-                  <FlexItem order={{ default: '2', md: '1' }} className="chr-l-flex__item-tabs pf-v5-u-w-100">
-                    <AllServicesTabs
-                      activeTabKey={activeTabKey}
-                      handleTabClick={handleTabClick}
-                      isExpanded={isExpanded}
-                      onToggle={onToggle}
-                      linkSections={linkSections}
-                      tabContentRef={tabContentRef}
-                      onTabClick={onTabClick}
-                      activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                    />
-                  </FlexItem>
+                <SidebarPanel>
+                  <Stack>
+                    <StackItem
+                      className="chr-l-stack__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md"
+                    >
+                      <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
+                        <Text component={TextVariants.p}>
+                          <ChromeLink href="/allservices">
+                            <Button isBlock>
+                              All services
+                            </Button>
+                          </ChromeLink>
+                        </Text>
+                      </TextContent>
+                    </StackItem>
+                    <StackItem className="pf-v5-u-w-100">
+                      <AllServicesTabs
+                        activeTabKey={activeTabKey}
+                        handleTabClick={handleTabClick}
+                        isExpanded={isExpanded}
+                        onToggle={onToggle}
+                        linkSections={linkSections}
+                        tabContentRef={tabContentRef}
+                        onTabClick={onTabClick}
+                        activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                      />
+                    </StackItem>
+                  </Stack>
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>

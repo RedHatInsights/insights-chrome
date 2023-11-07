@@ -13,11 +13,11 @@
 .chr-c-page__services-nav-dropdown-menu {
   @media screen and (min-width: $pf-v5-global--breakpoint--2xl) {
     top: 70px;
-    height: calc(100vh - 70px);
+    height: 100vh;
   }
   @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
     top: 118px;
-    height: calc(100vh - 118px);
+    height: 100vh;
   }
 
   // pos has to be important to override PF styles that get lazy loaded!
@@ -39,23 +39,14 @@
 
 @media (max-width: $pf-v5-global--breakpoint--md) {
   .chr-c-panel-services-nav {
-    .chr-l-flex__item-browse-all-services {
+    .chr-l-stack__item-browse-all-services {
       background: var(--pf-v5-global--BackgroundColor--200);
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
     }
     .pf-v5-c-tabs {
       background: var(--pf-v5-global--BackgroundColor--200);
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
-      height: calc(100% - 80px);
-    }
-    .pf-v5-c-tabs__toggle-button  {
-      width: 100%;
-    }
-    .pf-v5-c-tabs__toggle-button .pf-v5-c-button {
-      flex-direction: row-reverse;
-      justify-content: space-between;
-      padding: var(--pf-v5-global--spacer--sm);
-      width: 100%;
+      height: 100%;
     }
     .pf-v5-c-sidebar__panel {
       --pf-v5-l-flex--RowGap: 0;
@@ -65,30 +56,22 @@
 
 @media (min-width: $pf-v5-global--breakpoint--md) {
   .chr-c-panel-services-nav {
-    .chr-l-flex__item-browse-all-services {
-      border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);  
-      bottom: 0;
-      position: absolute;
+    .chr-l-stack__item-browse-all-services {
+      border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);  
     }
-
     .pf-v5-c-sidebar {
       --pf-v5-c-sidebar__panel--md--FlexBasis: 20rem;
       --pf-v5-c-sidebar__panel--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
       &__main {
-        height: 80vh;  
+        height: 630px;
       }
       &__content {
-        height: 80vh;  
+        height: 630px;  
         overflow: auto;
       }
       &__panel {
-        height: 80vh;
-        position: relative;
+        height: 630px;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
-        .chr-l-flex__item-tabs {
-          overflow: auto;
-          padding-bottom: var(--pf-v5-global--spacer--2xl);
-        }
         .pf-v5-c-tabs {
           --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-v5-c-tabs--m-vertical__link--PaddingTop: var(--pf-v5-global--spacer--sm);
