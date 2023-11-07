@@ -3,7 +3,6 @@ import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdro
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
@@ -68,15 +67,11 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
               <Sidebar>
                 <SidebarPanel>
                   <Stack>
-                    <StackItem
-                      className="chr-l-stack__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md"
-                    >
+                    <StackItem className="chr-l-stack__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md">
                       <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
                         <Text component={TextVariants.p}>
                           <ChromeLink href="/allservices">
-                            <Button isBlock>
-                              All services
-                            </Button>
+                            <Button isBlock>All services</Button>
                           </ChromeLink>
                         </Text>
                       </TextContent>
