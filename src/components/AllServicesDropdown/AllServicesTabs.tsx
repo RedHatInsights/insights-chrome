@@ -83,8 +83,8 @@ const AllServicesTabs = ({
         eventKey={FAVORITE_TAB_ID}
         title={
           <TabTitleText>
-            My favorite services
-            <Icon className="chr-c-icon-service-tab pf-v5-u-ml-md" status="warning" isInline>
+            Favorites
+            <Icon className="chr-c-icon-service-tab pf-v5-u-ml-sm" status="warning" isInline>
               <StarIcon />
             </Icon>
           </TabTitleText>
