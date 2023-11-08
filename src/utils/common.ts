@@ -34,7 +34,7 @@ export const DEFAULT_SSO_ROUTES = {
   },
   frhStage: {
     url: ['console.stage.openshiftusgov.com'],
-    sso: 'https://sso.stage.openshiftusgov.com/auth',
+    sso: 'https://sso.stage.openshiftusgov.com',
     portal: 'https://console.stage.openshiftusgov.com',
   },
   frh: {
