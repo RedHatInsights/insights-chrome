@@ -14,10 +14,10 @@ describe('Navigation', () => {
     cy.get('.chr-c-link-service-toggle').click();
 
     // check if favorite services links exist
-    cy.contains('.pf-v5-c-tabs__link', 'My favorite services');
+    cy.contains('.pf-v5-c-tabs__link', 'Favorites');
 
     // click on all services
-    cy.get('.chr-l-flex__item-browse-all-services a').click();
+    cy.get('.chr-l-stack__item-browse-all-services a').click();
 
     // get users link
     cy.get('p:contains("Users")').click();
