@@ -24,7 +24,7 @@ const FeedbackError = ({ onCloseModal }: FeedbackErrorProps) => {
         <Text component={TextVariants.h1}>{intl.formatMessage(messages.somethingWentWrong)}</Text>
         <Text>
           {intl.formatMessage(messages.problemProcessingRequest)}{' '}
-          <a target="_blank" href="https://access.redhat.com/support" rel="noreferrer">
+          <a target="_blank" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" rel="noreferrer">
             {intl.formatMessage(messages.redHatSupport)}
           </a>
         </Text>

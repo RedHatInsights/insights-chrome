@@ -4,6 +4,7 @@ import { BroadcastChannel } from 'broadcast-channel';
 import cookie from 'js-cookie';
 import {
   DEFAULT_SSO_ROUTES,
+  ITLess,
   ITLessCognito,
   ITLessKeycloak,
   LOGIN_SCOPES_STORAGE_KEY,
@@ -136,7 +137,7 @@ export const doOffline = (key: string, val: string, configSsoUrl?: string) => {
       scopes.push(partnerScope);
     }
 
-    if (ssoScopes && !itLessKeycloakEnv) {
+    if (ssoScopes && !ITLess()) {
       try {
         // make sure add openid scope when custom scope is used
         scopes.push('openid', JSON.parse(ssoScopes));

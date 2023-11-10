@@ -24,7 +24,7 @@ const useBreadcrumbsLinks = () => {
         href: `/${bundleId}`,
       },
     ];
-    const activeNavSegment = navigation[bundleId];
+    const activeNavSegment = navigation?.[bundleId];
     if (activeNavSegment && isNavItems(activeNavSegment)) {
       const activeNavigation = extractNavItemGroups(activeNavSegment);
       const { activeItem, navItems } = findNavLeafPath(activeNavigation);

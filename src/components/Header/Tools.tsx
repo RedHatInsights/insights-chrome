@@ -80,6 +80,7 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+  const enableIntegrations = useFlag('platform.sources.integrations');
   const { xs } = useWindowWidth();
   const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
@@ -88,7 +89,7 @@ const Tools = () => {
   const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const location = useLocation();
-  const settingsPath = isITLessEnv ? `/settings/my-user-access` : `/settings/sources`;
+  const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
   const identityAndAccessManagmentPath = '/iam/user-access/users';
   const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
@@ -128,6 +129,10 @@ const Tools = () => {
     }
   }, [user]);
 
+  const supportOptionsUrl = () => {
+    return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
+  };
+
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
     {
@@ -148,7 +153,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.supportOptions),
-      url: isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support',
+      onClick: () => (window.location.href = supportOptionsUrl()),
     },
     {
       title: intl.formatMessage(messages.insightsRhelDocumentation),
@@ -259,7 +264,7 @@ const Tools = () => {
           <ThemeToggle />
         </ToolbarItem>
       )}
-      {isInternal && (
+      {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v5-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />

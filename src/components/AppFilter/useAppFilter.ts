@@ -12,7 +12,7 @@ export type AppFilterBucket = {
   links: NavItem[];
 };
 
-const previewBundles = ['subscriptions'];
+const previewBundles = [''];
 
 export const requiredBundles = [
   'application-services',
@@ -24,8 +24,9 @@ export const requiredBundles = [
   'iam',
   'quay',
   'business-services',
+  'subscriptions',
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
-];
+].filter(Boolean);
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 
