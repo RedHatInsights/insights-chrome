@@ -35,11 +35,19 @@ export type ContextSwitcherProps = {
   className?: string;
 };
 
+// These attributes are present in the response based on the open API spec.
+// TODO: Migrate to the new RBAC JS client when it is ready.
+type CrossAccountRequestInternal = CrossAccountRequest & {
+  first_name?: string | null;
+  last_name?: string | null;
+  email: string;
+};
+
 const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const isOpen = useSelector(({ chrome }: ReduxState) => chrome?.contextSwitcherOpen);
-  const [data, setData] = useState<CrossAccountRequest[]>([]);
+  const [data, setData] = useState<CrossAccountRequestInternal[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
@@ -98,7 +106,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
         }
       }
       axios
-        .get<{ data: CrossAccountRequest[] }>('/api/rbac/v1/cross-account-requests/', {
+        .get<{ data: CrossAccountRequestInternal[] }>('/api/rbac/v1/cross-account-requests/', {
           params: {
             status: 'approved',
             order_by: '-created',
@@ -109,7 +117,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
           if (mounted) {
             setData(
               data
-                .reduce<CrossAccountRequest[]>((acc, curr) => {
+                .reduce<CrossAccountRequestInternal[]>((acc, curr) => {
                   const request = acc.find(({ target_account }) => target_account === curr.target_account);
                   if (request) {
                     return acc;
@@ -148,16 +156,18 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
     >
       {user && user?.identity?.account_number?.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
-          <TextContent className="chr-c-content-personal-account">
+          <TextContent className="chr-c-content-account">
             <Text className="account-label pf-v5-u-mb-0 sentry-mask data-hj-suppress">
               <span>{user?.identity?.account_number}</span>
               {user?.identity?.account_number === `${selectedAccountNumber}` && (
-                <Icon size="sm">
-                  <CheckIcon color="var(--pf-v5-global--primary-color--100)" className="pf-v5-u-ml-auto" />
+                <Icon size="sm" className="pf-v5-u-ml-auto">
+                  <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
                 </Icon>
               )}
             </Text>
-            <Text component="small">{intl.formatMessage(messages.personalAccount)}</Text>
+            <Text className="account-name" component="small">
+              {intl.formatMessage(messages.personalAccount)}
+            </Text>
           </TextContent>
         </ContextSelectorItem>
       ) : (
@@ -165,14 +175,21 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       )}
       {filteredData?.length === 0 ? <ContextSelectorItem>{intl.formatMessage(messages.noResults)}</ContextSelectorItem> : <Fragment />}
       {filteredData ? (
-        filteredData.map(({ target_account, request_id, end_date, target_org }) => (
+        filteredData.map(({ target_account, request_id, end_date, target_org, email, first_name, last_name }) => (
           <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
-            {target_account}
-            {target_account === selectedAccountNumber && (
-              <Icon size="sm">
-                <CheckIcon color="var(--pf-v5-global--primary-color--100)" className="pf-v5-u-ml-auto" />
-              </Icon>
-            )}
+            <TextContent className="chr-c-content-account">
+              <Text className="account-label">
+                <span>{target_account}</span>
+                {target_account === selectedAccountNumber && (
+                  <Icon size="sm" className="pf-v5-u-ml-auto">
+                    <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
+                  </Icon>
+                )}
+              </Text>
+              <Text className="account-name" component="small">
+                {first_name && last_name ? `${first_name} ${last_name}` : email}
+              </Text>
+            </TextContent>
           </ContextSelectorItem>
         ))
       ) : (
