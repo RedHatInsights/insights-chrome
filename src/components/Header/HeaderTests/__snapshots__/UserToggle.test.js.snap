@@ -90,7 +90,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
     data-popper-escaped="true"
     data-popper-placement="bottom-end"
     data-popper-reference-hidden="true"
-    style="position: absolute; left: 0px; top: 0px; z-index: 9999; min-width: 0px; transform: translate(0px, 0px);"
+    style="position: absolute; left: 0px; top: 0px; z-index: 9999; opacity: 1; transition: opacity 0ms cubic-bezier(.54, 1.5, .38, 1.11); min-width: 0px; transform: translate(0px, 0px);"
   >
     <div
       class="pf-v5-c-menu__content"
@@ -199,15 +199,15 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           data-ouia-component-id="OUIA-Generated-DropdownItem-3"
           data-ouia-component-type="PF5/DropdownItem"
           data-ouia-safe="true"
-          rel="noopener noreferrer"
           role="none"
-          target="_blank"
         >
           <a
             class="pf-v5-c-menu__item"
             href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
+            rel="noopener noreferrer"
             role="menuitem"
             tabindex="0"
+            target="_blank"
           >
             <span
               class="pf-v5-c-menu__item-main"
