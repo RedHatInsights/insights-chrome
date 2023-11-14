@@ -32,6 +32,16 @@ const JSConfig = {
           loader: 'swc-loader',
           options: {
             jsc: {
+              experimental: {
+                plugins: [
+                  [
+                    'swc-plugin-coverage-instrument',
+                    {
+                      compact: false,
+                    },
+                  ],
+                ],
+              },
               parser: {
                 syntax: 'typescript',
                 tsx: true,
