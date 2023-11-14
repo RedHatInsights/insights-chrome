@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, memo, useContext, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
+import { useAtomValue } from 'jotai';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
@@ -18,6 +19,7 @@ import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
 import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { activeModuleAtom } from '../../state/atoms';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -29,7 +31,7 @@ const RootApp = memo((props: RootAppProps) => {
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
-  const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
+  const activeModule = useAtomValue(activeModuleAtom);
   const quickStarts = useSelector(
     ({
       chrome: {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider, useSelector } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
+import { Provider as JotaiProvider } from 'jotai';
 
 import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
@@ -11,6 +12,7 @@ import { ReduxState } from './redux/store';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
+import chromeStore from './state/chromeStore';
 
 const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
@@ -46,26 +48,28 @@ const entry = document.getElementById('chrome-entry');
 if (entry) {
   const reactRoot = createRoot(entry);
   reactRoot.render(
-    <Provider store={spinUpStore()?.store}>
-      <AuthProvider>
-        <IntlProvider
-          locale={language}
-          messages={messages[language]}
-          onError={(error) => {
-            if (
-              (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-              localStorage.getItem('chrome:intl:debug') === 'true' ||
-              !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-            ) {
-              console.error(error);
-            }
-          }}
-        >
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </IntlProvider>
-      </AuthProvider>
-    </Provider>
+    <JotaiProvider store={chromeStore}>
+      <Provider store={spinUpStore()?.store}>
+        <AuthProvider>
+          <IntlProvider
+            locale={language}
+            messages={messages[language]}
+            onError={(error) => {
+              if (
+                (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+                localStorage.getItem('chrome:intl:debug') === 'true' ||
+                !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+              ) {
+                console.error(error);
+              }
+            }}
+          >
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </IntlProvider>
+        </AuthProvider>
+      </Provider>
+    </JotaiProvider>
   );
 }

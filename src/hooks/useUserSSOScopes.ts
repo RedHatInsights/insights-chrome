@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { ReduxState } from '../redux/store';
 import { LOGIN_SCOPES_STORAGE_KEY } from '../utils/common';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../state/atoms';
 
 /**
  * If required, attempt to reauthenticate current user with full profile login.
@@ -17,8 +19,9 @@ const useUserSSOScopes = () => {
       return [];
     }
   };
+  const activeModuleId = useAtomValue(activeModuleAtom);
   // get scope module definition
-  const activeModule = useSelector(({ chrome: { activeModule, modules } }: ReduxState) => (activeModule ? (modules || {})[activeModule] : undefined));
+  const activeModule = useSelector(({ chrome: { modules } }: ReduxState) => (activeModuleId ? (modules || {})[activeModuleId] : undefined));
   const requiredScopes = activeModule?.config?.ssoScopes || [];
 
   useEffect(() => {

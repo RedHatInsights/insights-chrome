@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux';
-import { ReduxState } from '../redux/store';
+import { useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSegment } from '../analytics/useSegment';
+import { activeModuleAtom } from '../state/atoms';
 
 const badgeQuery = 'div[id^="_pendo-badge_"]';
 const RETRY_ATTEMPS = 10;
@@ -9,7 +9,7 @@ const RETRY_INTERVAL = 2000;
 const SEGMENT_EVENT_NAME = 'pendo-badge-clicked';
 
 const useTrackPendoUsage = () => {
-  const activeModule = useSelector<ReduxState>((state) => state.chrome.activeModule);
+  const activeModule = useAtomValue(activeModuleAtom);
   const mutableData = useRef({ activeModule });
   const { analytics } = useSegment();
   const setupEventTracking = useCallback(() => {

@@ -9,6 +9,8 @@ import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/component
 import { useIntl } from 'react-intl';
 import Messages from '../../locales/Messages';
 import { ThreeScaleError } from '../../utils/responseInterceptors';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms';
 
 export type GatewayErrorComponentProps = {
   error: ThreeScaleError;
@@ -48,8 +50,10 @@ const Description = ({ detail, complianceError }: DescriptionProps) => {
 };
 
 const GatewayErrorComponent = ({ error }: GatewayErrorComponentProps) => {
+  const activeModule = useAtomValue(activeModuleAtom);
+  const activeProduct = useSelector((state: ReduxState) => state.chrome.activeProduct);
   // get active product, fallback to module name if product is not defined
-  const serviceName = useSelector((state: ReduxState) => state.chrome.activeProduct || state.chrome.activeModule);
+  const serviceName = activeProduct || activeModule;
   return <NotAuthorized description={<Description complianceError={error.complianceError} detail={error.detail} />} serviceName={serviceName} />;
 };
 

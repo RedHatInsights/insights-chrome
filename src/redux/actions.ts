@@ -119,11 +119,6 @@ export const loadModulesSchema = (schema: { [key: string]: ChromeModule }) => ({
   },
 });
 
-export const changeActiveModule = (module: string) => ({
-  type: actionTypes.CHANGE_ACTIVE_MODULE,
-  payload: module,
-});
-
 /**
  * @deprecated
  */

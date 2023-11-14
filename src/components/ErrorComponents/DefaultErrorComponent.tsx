@@ -12,12 +12,12 @@ import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/ex
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import { useSelector } from 'react-redux';
-import { ReduxState } from '../../redux/store';
 import './ErrorComponent.scss';
 import { get3scaleError } from '../../utils/responseInterceptors';
 import GatewayErrorComponent from './GatewayErrorComponent';
 import { getUrl } from '../../hooks/useBundle';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms';
 
 export type DefaultErrorComponentProps = {
   error?: any | Error;
@@ -30,7 +30,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const intl = useIntl();
   const [sentryId, setSentryId] = useState<string | undefined>();
 
-  const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
+  const activeModule = useAtomValue(activeModuleAtom);
   const exceptionMessage = (props.error as Error)?.message ? (props.error as Error).message : 'Unhandled UI runtime error';
   useEffect(() => {
     const sentryId =
