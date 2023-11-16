@@ -13,9 +13,9 @@ const useDisablePendoOnLanding = () => {
 
   const toggleGuides = () => {
     if (window.pendo && activeModule === 'landing') {
-      window.pendo.stopGuides();
+      window.pendo.stopGuides?.();
     } else {
-      window.pendo?.startGuides();
+      window.pendo?.startGuides?.();
     }
   };
 
