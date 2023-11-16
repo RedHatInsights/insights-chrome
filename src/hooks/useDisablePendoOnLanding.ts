@@ -12,12 +12,13 @@ function retry(fn: () => void, retriesLeft = 10, interval = 100) {
   try {
     return fn();
   } catch (error) {
-    console.error(error);
     const newRetry = retriesLeft - 1;
     if (newRetry > 0) {
       setTimeout(() => {
         retry(fn, newRetry, interval);
       }, interval);
+    } else {
+      console.error('Pendo retries exhausted: ', error);
     }
   }
 }
