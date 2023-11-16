@@ -31,13 +31,13 @@ const useDisablePendoOnLanding = () => {
       if (window.pendo && activeModule === 'landing') {
         // pendo functions might not be ready for what ever reason, we will have to retry a few times to give it a shot
         retry(() => {
-          window.pendo?.setGuidesDisabled?.(true);
-          window.pendo?.stopGuides?.();
+          window.pendo?.setGuidesDisabled(true);
+          window.pendo?.stopGuides();
         });
       } else if (window.pendo) {
         retry(() => {
-          window.pendo?.setGuidesDisabled?.(false);
-          window.pendo?.startGuides?.();
+          window.pendo?.setGuidesDisabled(false);
+          window.pendo?.startGuides();
         });
       }
     });
