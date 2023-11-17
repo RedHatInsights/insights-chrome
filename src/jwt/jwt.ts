@@ -193,6 +193,7 @@ export const init = (options: JWTInitOptions, configSsoUrl?: string) => {
     }
     return getTokenWithAuthorizationCode().then((res) => {
       priv.setToken(res);
+      initSuccess();
       token = res;
       return token;
     });
