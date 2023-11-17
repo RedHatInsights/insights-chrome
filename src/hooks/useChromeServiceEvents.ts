@@ -6,7 +6,7 @@ import { UPDATE_NOTIFICATIONS } from '../redux/action-types';
 import { getEncodedToken, setCookie } from '../jwt/jwt';
 import { NotificationsPayload } from '../redux/store';
 
-const NOTIFICATION_DRAWER = 'notifications.drawer';
+const NOTIFICATION_DRAWER = 'com.redhat.console.notifications.drawer';
 const SAMPLE_EVENT = 'sample.type';
 
 const ALL_TYPES = [NOTIFICATION_DRAWER, SAMPLE_EVENT] as const;

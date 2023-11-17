@@ -32,6 +32,8 @@ import { ITLess, isBeta } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import { populateNotifications } from '../../redux/actions';
+import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
+import useDisablePendoOnLanding from '../../hooks/useDisablePendoOnLanding';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -59,6 +61,10 @@ const ScalprumRoot = memo(
 
     // initialize WS event handling
     useChromeServiceEvents();
+    // track pendo usage
+    useTrackPendoUsage();
+    // disable guides on landing page
+    useDisablePendoOnLanding();
 
     async function getNotifications() {
       try {

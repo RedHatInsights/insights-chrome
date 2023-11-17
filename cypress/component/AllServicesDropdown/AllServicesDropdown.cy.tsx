@@ -23,11 +23,11 @@ describe('<AllServicesDropdown />', () => {
   it('should close all services dropdown in link matches current pathname', () => {
     function checkMenuClosed() {
       cy.get('.pf-v5-c-menu-toggle__text').click();
-      cy.contains('Browse all services').should('exist');
+      cy.contains('All services').should('exist');
       cy.contains('Favorites').click();
       cy.contains('Test section').click();
       cy.contains('Test link').click();
-      cy.contains('Browse all services').should('not.exist');
+      cy.contains('All services').should('not.exist');
     }
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services.json', [
       {
