@@ -190,11 +190,17 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
     if (isITLessCognito) {
       // cogToken = await getTokenWithAuthorizationCode();
     }
+    const params = new URLSearchParams(getWindow().location.search);
+    const opts = {
+      cache: {
+        override: params.has('trial_activated', 'true'),
+      },
+    };
     try {
       if (user.identity.org_id) {
         data = isITLessCognito
-          ? ((await serviceAPI.servicesGet()) as unknown as typeof data)
-          : ((await serviceAPI.servicesGet()) as unknown as typeof data);
+          ? ((await serviceAPI.servicesGet(opts)) as unknown as typeof data)
+          : ((await serviceAPI.servicesGet(opts)) as unknown as typeof data);
       } else {
         console.log('Cannot call entitlements API, no account number');
       }
