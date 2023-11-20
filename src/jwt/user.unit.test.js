@@ -52,21 +52,21 @@ describe('User', () => {
 
     test('should *not* bounce if the section is unkown', () => {
       ents.insights.is_entitled = false;
-      user.tryBounceIfUnentitled(ents, 'apps');
-      user.tryBounceIfUnentitled(ents, 'foo');
-      user.tryBounceIfUnentitled(ents, 'test');
+      user.tryBounceIfUnentitled(ents, ['apps']);
+      user.tryBounceIfUnentitled(ents, ['foo']);
+      user.tryBounceIfUnentitled(ents, ['test']);
       expect(replaceMock).not.toBeCalled();
     });
 
     test('should bounce if unentitled', () => {
       const historySpy = jest.spyOn(chromeHistory.default, 'replace');
-      user.tryBounceIfUnentitled(ents, 'insights');
+      user.tryBounceIfUnentitled(ents, ['insights']);
       expect(historySpy).lastCalledWith({ pathname: '/', search: '?not_entitled=insights' });
 
-      user.tryBounceIfUnentitled(ents, 'cost-management');
+      user.tryBounceIfUnentitled(ents, ['cost-management']);
       expect(historySpy).lastCalledWith({ pathname: '/', search: '?not_entitled=cost_management' });
 
-      user.tryBounceIfUnentitled(ents, 'ansible');
+      user.tryBounceIfUnentitled(ents, ['ansible']);
       expect(historySpy).lastCalledWith({ pathname: '/ansible/ansible-dashboard/trial', search: '' });
       historySpy.mockRestore();
     });
@@ -78,12 +78,12 @@ describe('User', () => {
       setAnsibleTrialFlag(Date.now());
       // advance time by one minute. user should not be bounced
       jest.advanceTimersByTime(1 * 60 * 1000);
-      user.tryBounceIfUnentitled(ents, 'ansible');
+      user.tryBounceIfUnentitled(ents, ['ansible']);
       expect(historySpy).not.toBeCalled();
 
       // advace time by additional 10 minutes. user should be bounced to /trial/expired
       jest.advanceTimersByTime(10 * 60 * 1000);
-      user.tryBounceIfUnentitled(ents, 'ansible');
+      user.tryBounceIfUnentitled(ents, ['ansible']);
       expect(historySpy).toBeCalledTimes(1);
       expect(historySpy).toHaveBeenLastCalledWith({ pathname: '/ansible/ansible-dashboard/trial/expired', search: '' });
       historySpy.mockClear();
@@ -95,7 +95,7 @@ describe('User', () => {
             is_entitled: true,
           },
         },
-        'ansible'
+        ['ansible']
       );
       expect(historySpy).not.toBeCalled();
 
@@ -105,7 +105,7 @@ describe('User', () => {
 
     test('should *not* bounce if entitled', () => {
       ents.insights.is_entitled = true;
-      user.tryBounceIfUnentitled(ents, 'insights');
+      user.tryBounceIfUnentitled(ents, ['insights']);
       expect(replaceMock).not.toBeCalled();
     });
   });

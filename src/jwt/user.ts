@@ -4,6 +4,7 @@ import logger from './logger';
 import { SSOParsedToken } from './Priv';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isAnsibleTrialFlagActive } from '../utils/isAnsibleTrialFlagActive';
+import { isProductTrialFlagActive } from '../utils/isProductTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { createUser } from '../cognito/auth';
 
@@ -31,6 +32,7 @@ const pathMapper = {
   settings: 'settings',
   'user-preferences': 'user_preferences',
   internal: 'internal',
+  'application-services': 'application_services',
 };
 
 const REDIRECT_BASE = `${document.location.origin}${isBeta() ? getRouterBasename() : ''}`;
@@ -100,10 +102,11 @@ export function tryBounceIfUnentitled(
     | {
         [key: string]: SSOServiceDetails;
       },
-  section: string
+  pathName: string[]
 ) {
   // only test this on the apps that are in valid sections
   // we need to keep /apps and other things functional
+  const section = pathName[0];
   if (
     section !== 'insights' &&
     section !== 'openshift' &&
@@ -112,7 +115,8 @@ export function tryBounceIfUnentitled(
     section !== 'ansible' &&
     section !== 'subscriptions' &&
     section !== 'user-preferences' &&
-    section !== 'internal'
+    section !== 'internal' &&
+    section !== 'application-services'
   ) {
     return;
   }
@@ -120,6 +124,12 @@ export function tryBounceIfUnentitled(
   const ansibleActive = isAnsibleTrialFlagActive();
   // test temporary ansible trial flag
   if (section === 'ansible' && ansibleActive) {
+    return;
+  }
+
+  const productActive = pathName.some((path) => isProductTrialFlagActive(path));
+  // test temporary product trial flag
+  if (productActive) {
     return;
   }
 
@@ -225,7 +235,7 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
     // we "force" a bounce here because the entitlements API
     // was never called
     if (!isValidAccountNumber(user.identity.account_number)) {
-      tryBounceIfUnentitled(true, pathName[0]);
+      tryBounceIfUnentitled(true, pathName);
       // always return user regardless of the entitlements result
       // required for insights accounts with invalid account number
       return {
@@ -234,7 +244,7 @@ export default async (token: SSOParsedToken): Promise<ChromeUser | void> => {
       };
     }
 
-    tryBounceIfUnentitled(data as unknown as { [key: string]: SSOServiceDetails }, pathName[0]);
+    tryBounceIfUnentitled(data as unknown as { [key: string]: SSOServiceDetails }, pathName);
 
     return {
       ...user,
