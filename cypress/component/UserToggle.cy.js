@@ -6,16 +6,7 @@ import chromeReducer, { chromeInitialState } from '../../src/redux';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { IntlProvider } from 'react-intl';
 import UserToggle from '../../src/components/Header/UserToggle';
-
-const Wrapper = ({ children, store }) => (
-  <IntlProvider locale="en">
-    <ScalprumProvider config={{}}>
-      <Provider store={store}>
-        <BrowserRouter>{children}</BrowserRouter>
-      </Provider>
-    </ScalprumProvider>
-  </IntlProvider>
-);
+import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
 
 const testUser = {
   identity: {
@@ -38,6 +29,33 @@ const testUser = {
     },
   },
 };
+
+const chromeAuthContextValue = {
+  doOffline: () => Promise.resolve(),
+  getOfflineToken: () => Promise.resolve(),
+  getToken: () => Promise.resolve(''),
+  getUser: () => Promise.resolve(testUser),
+  login: () => Promise.resolve(),
+  loginAllTabs: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+  logoutAllTabs: () => Promise.resolve(),
+  ready: true,
+  token: '',
+  tokenExpires: 0,
+  user: testUser,
+};
+
+const Wrapper = ({ children, store }) => (
+  <IntlProvider locale="en">
+    <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+      <ScalprumProvider config={{}}>
+        <Provider store={store}>
+          <BrowserRouter>{children}</BrowserRouter>
+        </Provider>
+      </ScalprumProvider>
+    </ChromeAuthContext.Provider>
+  </IntlProvider>
+);
 
 describe('<UserToggle />', () => {
   let store;

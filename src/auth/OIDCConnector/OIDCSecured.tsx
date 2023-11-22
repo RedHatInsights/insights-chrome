@@ -79,7 +79,7 @@ export function OIDCSecured({
   const dispatch = useDispatch();
   const [state, setState] = useState<ChromeAuthContextValue>({
     ready: false,
-    logoutAllTabs: (bounce) => {
+    logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
       logout(auth, bounce);
     },
@@ -164,7 +164,9 @@ export function OIDCSecured({
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
   useEffect(() => {
-    startChrome();
+    if (!auth.error) {
+      startChrome();
+    }
   }, [auth]);
 
   if (!auth.isAuthenticated || !state.ready) {

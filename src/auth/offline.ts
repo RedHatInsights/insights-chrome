@@ -18,7 +18,7 @@ type OfflineSingleton = {
   response?: AxiosResponse<OfflineTokenResponse>;
 };
 
-const offline: OfflineSingleton = {};
+export const offline: OfflineSingleton = {};
 
 export function getPostbackUrl() {
   // let folks only do this once
@@ -62,14 +62,19 @@ export function getPostDataObject(redirectUrl: string, clientId: string, code: s
 }
 
 export function parseHashString(str: string) {
-  return str
-    .split('#')[1]
-    .split('&')
-    .reduce<Record<string, string>>((result, item) => {
-      const parts = item.split('=');
-      result[parts[0]] = parts[1];
-      return result;
-    }, {});
+  try {
+    return str
+      .split('#')[1]
+      .split('&')
+      .reduce<Record<string, string>>((result, item) => {
+        const parts = item.split('=');
+        result[parts[0]] = parts[1];
+        return result;
+      }, {});
+  } catch {
+    console.error('failed to parse hash string', str);
+    return {};
+  }
 }
 
 function getPostDataString(obj: Record<string, string>) {
