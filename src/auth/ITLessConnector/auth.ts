@@ -1,6 +1,7 @@
-import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
-import { getEnv } from '../utils/common';
-import { isBeta } from '../utils/common';
+import { AuthenticationDetails, CognitoUser, CognitoUserPool, CognitoUserSession } from 'amazon-cognito-identity-js';
+import { getEnv } from '../../utils/common';
+import { isBeta } from '../../utils/common';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 export interface CogUser {
   auth_time: number;
@@ -24,6 +25,7 @@ export interface CogUser {
   token_use: string;
   username: string;
   version: number;
+  is_active?: boolean;
 }
 
 async function fetchData() {
@@ -104,7 +106,7 @@ export async function getTokenWithAuthorizationCode() {
   }
 }
 
-export async function getUser(): Promise<any> {
+export async function getUser(): Promise<CogUser> {
   const token = localStorage.getItem('ACCESS_TOKEN');
 
   const requestOptions = {
@@ -148,38 +150,41 @@ export async function getEntitlements() {
   }
 }
 
+export function mapCogUserToChromeUser(cogUser: CogUser, entitlements: ChromeUser['entitlements']): ChromeUser {
+  return {
+    identity: {
+      account_number: cogUser.org_id,
+      org_id: cogUser.org_id,
+      type: 'User',
+      user: {
+        username: cogUser.username,
+        email: cogUser.email,
+        first_name: cogUser.first_name,
+        last_name: cogUser.last_name,
+        is_active: cogUser?.is_active || true,
+        is_org_admin: cogUser.is_org_admin,
+        is_internal: cogUser.is_internal,
+        locale: cogUser.locale,
+      },
+      internal: {
+        org_id: cogUser.org_id,
+        account_id: cogUser.id,
+      },
+    },
+    entitlements,
+  };
+}
+
 export async function createUser() {
   const userRes = await getUser();
   const entitlementRes = await getEntitlements();
 
-  const user = {
-    entitlements: entitlementRes,
-    identity: {
-      account_number: '1234',
-      org_id: userRes.org_id,
-      type: 'User',
-      user: {
-        username: userRes.username,
-        email: userRes.email,
-        first_name: userRes.first_name,
-        last_name: userRes.last_name,
-        is_active: userRes?.is_active || true,
-        is_org_admin: userRes.is_org_admin,
-        is_internal: userRes.is_internal,
-        locale: userRes.locale,
-      },
-      internal: {
-        org_id: userRes.org_id,
-        account_id: userRes.id,
-      },
-    },
-  };
-  return user;
+  return mapCogUserToChromeUser(userRes, entitlementRes);
 }
 
 export async function login(username: string, password: string) {
   const data = await fetchData();
-  return new Promise((resolve, reject) => {
+  return new Promise<CognitoUserSession>((resolve, reject) => {
     const authenticationData = {
       Username: username,
       Password: password,
