@@ -1,6 +1,5 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { LibJWT, createAuthObject } from '../auth';
-import { AppNavigationCB, ChromeAPI, ChromeUser, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
+import { AppNavigationCB, ChromeAPI, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
@@ -30,37 +29,33 @@ import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } 
 import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
 import { STORE_INITIAL_HASH } from '../redux/action-types';
-import { ChromeModule, FlagTagsFilter } from '../@types/types';
+import { FlagTagsFilter } from '../@types/types';
 import useBundle, { getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
 import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
+import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
+import qe from '../utils/iqeEnablement';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
-  libJwt: LibJWT;
-  getUser: () => Promise<void | ChromeUser>;
   store: Store<ReduxState>;
-  modulesConfig?: {
-    [key: string]: ChromeModule;
-  };
   setPageMetadata: (pageOptions: any) => any;
   analytics: AnalyticsBrowser;
   quickstartsAPI: ChromeAPI['quickStarts'];
   helpTopics: ChromeAPI['helpTopics'];
+  chromeAuth: ChromeAuthContextValue;
 };
 
 export const createChromeContext = ({
   useGlobalFilter,
-  libJwt,
-  getUser,
   store,
-  modulesConfig,
   setPageMetadata,
   analytics,
   quickstartsAPI,
   helpTopics,
+  chromeAuth,
 }: CreateChromeContextConfig): ChromeAPI => {
-  const fetchPermissions = createFetchPermissionsWatcher(getUser);
+  const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
   const dispatch = store.dispatch;
   const actions = {
@@ -100,7 +95,18 @@ export const createChromeContext = ({
 
   const api: ChromeAPI = {
     ...actions,
-    auth: createAuthObject(libJwt, getUser, store, modulesConfig),
+    auth: {
+      getToken: chromeAuth.getToken,
+      getUser: chromeAuth.getUser,
+      logout: chromeAuth.logout,
+      login: chromeAuth.login,
+      doOffline: chromeAuth.doOffline,
+      getOfflineToken: chromeAuth.getOfflineToken,
+      qe: {
+        ...qe,
+        init: () => qe.init(store, chromeAuth.token),
+      },
+    },
     initialized: true,
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
@@ -109,10 +115,10 @@ export const createChromeContext = ({
     getApp: () => getUrl('app'),
     getEnvironment: () => getEnv(),
     getEnvironmentDetails: () => getEnvDetails(),
-    createCase: (fields?: any) => getUser().then((user) => createSupportCase(user!.identity, libJwt, fields)),
+    createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
-      await getUser();
-      return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
+      const token = await chromeAuth.getToken();
+      return fetchPermissions(token, app, bypassCache);
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {

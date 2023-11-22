@@ -8,11 +8,10 @@ import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dyn
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-comments-icon';
-
+import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { DeepRequired } from 'utility-types';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';
 import FeedbackForm from './FeedbackForm';
@@ -23,13 +22,9 @@ import messages from '../../locales/Messages';
 import FeedbackError from './FeedbackError';
 
 import InternalChromeContext from '../../utils/internalChromeContext';
-import LibtJWTContext from '../LibJWTContext';
 import { createSupportCase } from '../../utils/createCase';
 import './Feedback.scss';
-
-export type FeedbackModalProps = {
-  user: DeepRequired<ChromeUser>;
-};
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 export type FeedbackPages =
   | 'feedbackHome'
@@ -41,14 +36,15 @@ export type FeedbackPages =
   | 'bugReportSuccess'
   | 'informDirectionSuccess';
 
-const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
+const FeedbackModal = memo(() => {
   const intl = useIntl();
   const usePendoFeedback = useSelector<ReduxState, boolean | undefined>(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
   const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
   const dispatch = useDispatch();
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const { getEnvironment } = useContext(InternalChromeContext);
-  const libjwt = useContext(LibtJWTContext);
+  const chromeAuth = useContext(ChromeAuthContext);
+  const user = chromeAuth.user as DeepRequired<ChromeUser>;
   const env = getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
   const setIsModalOpen = (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen));
@@ -76,7 +72,7 @@ const FeedbackModal = memo(({ user }: FeedbackModalProps) => {
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
               <br />
-              <Card isSelectableRaised isCompact onClick={() => createSupportCase(user.identity, libjwt)}>
+              <Card isSelectableRaised isCompact onClick={() => createSupportCase(user.identity, chromeAuth.token)}>
                 <CardTitle className="chr-c-feedback-card-title">
                   <Text>
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
