@@ -164,7 +164,6 @@
     "history": "^5.3.0",
     "js-cookie": "^3.0.1",
     "js-yaml": "^4.1.0",
-    "keycloak-js": "^21.0.0",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "oidc-client-ts": "^2.4.0",

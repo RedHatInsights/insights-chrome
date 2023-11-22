@@ -10,6 +10,7 @@ import { init } from '../../utils/iqeEnablement';
 import logger from '../logger';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { loadFedModules } from '../../utils/common';
+import { setCookie } from '../setCookie';
 
 const authChannel = new BroadcastChannel('auth');
 const log = logger('ITLessProvider.tsx');
@@ -59,6 +60,7 @@ const ITLessProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const token = await getTokenWithAuthorizationCode();
     const chromeUser = mapCogUserToChromeUser(user, entitlementRes);
     init(store, token);
+    setCookie(token, user.exp);
     initializeVisibilityFunctions({
       getUser: createUser,
       getToken: getTokenWithAuthorizationCode,
