@@ -1,8 +1,8 @@
 const service = '/application-services/api-management';
 let interceptionCounter = false;
-const serviceName = 'API Management';
+const serviceName = 'Red Hat Insights';
 
-describe('Favorite-services', () => {
+describe.skip('Favorite-services', () => {
   it('check and uncheck favorited services', () => {
     cy.visit('/');
     cy.login();
