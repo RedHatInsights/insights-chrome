@@ -26,12 +26,18 @@ const useUserSSOScopes = () => {
     const requiredScopes = activeModule?.config?.ssoScopes || [];
     const missingScope = requiredScopes.some((scope) => !currentScopes.includes(scope));
 
+    const shouldReAuth =
+      // normal scenario for account that was not authenticated with required scopes
+      missingScope ||
+      // scenario accounts that were redirected from sso and might not have completed required steps (like completing full profile registration)
+      (requiredScopes.length > 0 && !missingScope && document.referrer.match(/sso\.[a-z]+\.redhat\.com/));
+
     /**
      * FIXME: RHFULL scope (and all legacy scopes??) are not showing up in the token response, so we don't know if the scope was authenticated
      * Work with #forum-ciam and the `@ciam-s-client-integration-sre` to fix that
      *  */
     // if current login scope is not full profile and scope requires it, trigger full profile login`
-    if (missingScope) {
+    if (shouldReAuth) {
       login(Array.from(new Set([...requiredScopes, ...currentScopes])));
     }
   }, [requiredScopes, activeModule?.fullProfile]);

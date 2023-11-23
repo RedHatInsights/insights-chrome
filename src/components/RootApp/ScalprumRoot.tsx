@@ -197,7 +197,6 @@ const ScalprumRoot = memo(
       return null;
     }
 
-    console.log({ scalprumProviderProps })
     return (
       /**
        * Once all applications are migrated to chrome 2:
