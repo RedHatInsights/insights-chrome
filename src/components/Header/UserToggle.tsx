@@ -1,7 +1,7 @@
 import './UserToggle.scss';
 
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { ITLess, ITLessCognito, getEnv, isProd as isProdEnv } from '../../utils/common';
+import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
 import React, { useRef, useState } from 'react';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -13,7 +13,6 @@ import { ReduxState } from '../../redux/store';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import UserIcon from './UserIcon';
 import classNames from 'classnames';
-import { cogLogout } from '../../cognito/auth';
 import { logout } from '../../jwt/jwt';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
@@ -103,7 +102,7 @@ const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string,
         />
       )}
     </React.Fragment>,
-    <DropdownItem key="logout" component="button" onClick={() => (ITLessCognito() ? cogLogout() : logout(true))}>
+    <DropdownItem key="logout" component="button" onClick={() => logout(true)}>
       {intl.formatMessage(messages.logout)}
     </DropdownItem>,
     extraItems,

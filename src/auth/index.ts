@@ -5,8 +5,6 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 
 import * as jwt from '../jwt/jwt';
-import { createUser, getTokenWithAuthorizationCode } from '../cognito/auth';
-import { ITLessCognito } from '../utils/common';
 import consts, { defaultAuthOptions as defaultOptions } from '../utils/consts';
 import { ACCOUNT_REQUEST_TIMEOUT, ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER, CROSS_ACCESS_ORG_ID } from '../utils/consts';
 import qe from '../utils/iqeEnablement';
@@ -20,7 +18,6 @@ export type LibJWT = {
 };
 
 const TIMER_STR = '[JWT][jwt.js] Auth time';
-const isITLessCognito = ITLessCognito();
 function bouncer() {
   if (!jwt.isAuthenticated()) {
     cookie.remove(defaultOptions.cookieName);
@@ -59,26 +56,17 @@ export const createAuthObject = (libjwt: LibJWT, getUser: () => Promise<ChromeUs
 });
 
 export const createGetUser = (libjwt: LibJWT): (() => Promise<ChromeUser | undefined | void>) => {
-  if (isITLessCognito) {
-    return () => createUser();
-  } else {
-    return () =>
-      libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
-        libjwt.jwt.logoutAllTabs();
-      });
-  }
+  return () =>
+    libjwt.initPromise.then(libjwt.jwt.getUserInfo).catch(() => {
+      libjwt.jwt.logoutAllTabs();
+    });
 };
 
 export const createGetUserPermissions = (libJwt: LibJWT, getUser: () => Promise<void | ChromeUser>) => {
   const fetchPermissions = createFetchPermissionsWatcher(getUser);
   return async (app = '', bypassCache?: boolean) => {
-    if (isITLessCognito) {
-      const cogToken = await getTokenWithAuthorizationCode();
-      return fetchPermissions(cogToken || '', app, bypassCache);
-    } else {
-      await getUser();
-      return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
-    }
+    await getUser();
+    return fetchPermissions(libJwt.jwt.getEncodedToken() || '', app, bypassCache);
   };
 };
 
@@ -103,7 +91,7 @@ export default ({ ssoUrl, ssoScopes }: { ssoUrl?: string; ssoScopes: string[] })
   const promise = jwt.init(options, ssoUrl).then(bouncer);
 
   return {
-    getOfflineToken: () => (isITLessCognito ? getTokenWithAuthorizationCode() : getOfflineToken(options.realm, options.clientId, ssoUrl)),
+    getOfflineToken: () => getOfflineToken(options.realm, options.clientId, ssoUrl),
     jwt: jwt,
     initPromise: promise,
   };

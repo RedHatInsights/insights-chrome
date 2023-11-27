@@ -1,6 +1,6 @@
 import cookie from 'js-cookie';
 import { data as encodedToken } from '../../../testdata/encodedToken.json';
-import { ITLessKeycloak } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 
 class Keycloak {
   scope: any;
@@ -32,7 +32,7 @@ class Keycloak {
     this.responseMode = 'fragment';
     this.responseType = 'code';
     this.flow = 'standard';
-    this.clientId = ITLessKeycloak() ? 'console-dot' : 'cloud-services';
+    this.clientId = ITLess() ? 'console-dot' : 'cloud-services';
     this.authServerUrl = 'https://sso.qa.redhat.com/auth';
     this.realm = 'redhat-external';
     this.endpoints = {};
