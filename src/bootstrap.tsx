@@ -12,7 +12,7 @@ import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from './utils/cons
 import auth, { LibJWT, createGetUserPermissions, crossAccountBouncer } from './auth';
 import sentry from './utils/sentry';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, ITLessCognito, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
+import { ITLess, generateRoutesList, getEnv, loadFedModules, noop, trustarcScriptSetup } from './utils/common';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import LibtJWTContext from './components/LibJWTContext';
@@ -22,7 +22,6 @@ import initializeJWT from './jwt/initialize-jwt';
 import AppPlaceholder from './components/AppPlaceholder';
 import { initializeVisibilityFunctions } from './utils/VisibilitySingleton';
 import { createGetUser } from './auth';
-import { getTokenWithAuthorizationCode } from './cognito/auth';
 
 const language: keyof typeof messages = 'en';
 
@@ -47,18 +46,16 @@ const initializeAccessRequestCookies = () => {
 const libjwtSetup = (chromeConfig: { ssoUrl?: string }, ssoScopes: string[] = []) => {
   const libjwt = auth({ ...chromeConfig, ssoScopes } || { ssoScopes });
 
-  if (!ITLess()) {
-    libjwt.initPromise.then(() => {
-      return libjwt.jwt
-        .getUserInfo()
-        .then((chromeUser) => {
-          if (chromeUser) {
-            sentry(chromeUser);
-          }
-        })
-        .catch(noop);
-    });
-  }
+  libjwt.initPromise.then(() => {
+    return libjwt.jwt
+      .getUserInfo()
+      .then((chromeUser) => {
+        if (chromeUser) {
+          sentry(chromeUser);
+        }
+      })
+      .catch(noop);
+  });
 
   return libjwt;
 };
@@ -99,10 +96,7 @@ const useInitialize = () => {
     const getUser = createGetUser(libJwt);
     initializeVisibilityFunctions({
       getUser,
-      getToken: () =>
-        ITLessCognito()
-          ? getTokenWithAuthorizationCode()
-          : libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
+      getToken: () => libJwt!.initPromise.then(() => libJwt!.jwt.getUserInfo().then(() => libJwt!.jwt.getEncodedToken())),
       getUserPermissions: createGetUserPermissions(libJwt, getUser),
     });
 
@@ -140,14 +134,6 @@ const App = () => {
     const title = typeof documentTitle === 'string' ? `${documentTitle} | ` : '';
     document.title = `${title}console.redhat.com`;
   }, [documentTitle]);
-
-  if (ITLessCognito()) {
-    return isReady && modules && scalprumConfig ? (
-      <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} config={scalprumConfig} />
-    ) : (
-      <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />
-    );
-  }
 
   return isReady && modules && scalprumConfig && libJwt ? (
     <LibtJWTContext.Provider value={libJwt}>

@@ -1,7 +1,7 @@
 import consts, { OFFLINE_REDIRECT_STORAGE_KEY } from '../utils/consts';
 import insightsUrl from './url';
 import axios, { AxiosResponse } from 'axios';
-import { DEFAULT_SSO_ROUTES, ITLessKeycloak, getEnv } from '../utils/common';
+import { DEFAULT_SSO_ROUTES, ITLess, getEnv } from '../utils/common';
 
 type Priv = {
   postbackUrl?: string;
@@ -93,8 +93,8 @@ export function getPostDataObject(url: string, clientId: string, code: string) {
   return {
     code: code,
     grant_type: 'authorization_code', // eslint-disable-line camelcase
-    client_id: ITLessKeycloak() ? 'console-dot' : clientId, // eslint-disable-line camelcase
-    redirect_uri: ITLessKeycloak() ? redirectUrl : encodeURIComponent(url.split('#')[0]), // eslint-disable-line camelcase
+    client_id: ITLess() ? 'console-dot' : clientId, // eslint-disable-line camelcase
+    redirect_uri: ITLess() ? redirectUrl : encodeURIComponent(url.split('#')[0]), // eslint-disable-line camelcase
   };
 }
 

@@ -1,4 +1,4 @@
-import { ITLess, ITLessKeycloak } from './common';
+import { ITLess } from './common';
 import { AppNavigationCB, ChromeAuthOptions, GenericCB, NavDOMEvent } from '../@types/types';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import { APP_NAV_CLICK, GLOBAL_FILTER_UPDATE } from '../redux/action-types';
@@ -65,7 +65,7 @@ export const activationRequestURLs = [
 // Global Defaults
 export const defaultAuthOptions: ChromeAuthOptions = {
   realm: 'redhat-external',
-  clientId: ITLessKeycloak() ? 'console-dot' : 'cloud-services',
+  clientId: ITLess() ? 'console-dot' : 'cloud-services',
   cookieName: 'cs_jwt',
 };
 
