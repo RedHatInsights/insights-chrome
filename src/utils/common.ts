@@ -39,7 +39,7 @@ export const DEFAULT_SSO_ROUTES = {
   },
   frh: {
     url: ['console.openshiftusgov.com'],
-    sso: 'https://ocm-ra-prod-domain.auth-fips.us-gov-west-1.amazoncognito.com/login',
+    sso: 'https://sso.openshiftusgov.com',
     portal: 'https://console.openshiftusgov.com',
   },
   ephem: {
