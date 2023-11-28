@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { DEFAULT_SSO_ROUTES, loadFedModules } from '../../utils/common';
+import { DEFAULT_SSO_ROUTES, ITLess, isBeta, loadFedModules } from '../../utils/common';
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 import { WebStorageStateStore } from 'oidc-client-ts';
 import platformUrl from '../platformUrl';
 import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
+
+const betaPartial = isBeta() ? '/beta' : '';
 
 const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
@@ -39,8 +41,8 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const authProviderProps: AuthProviderProps = useMemo(
     () => ({
-      client_id: 'cloud-services',
-      silent_redirect_uri: `https://${window.location.host}/beta/apps/chrome/silent-check-sso.html`,
+      client_id: ITLess() ? 'console-dot' : 'cloud-services',
+      silent_redirect_uri: `https://${window.location.host}${betaPartial}/apps/chrome/silent-check-sso.html`,
       automaticSilentRenew: true,
       redirect_uri: `${window.location.origin}`,
       authority: `${state?.ssoUrl}`,
@@ -50,7 +52,7 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         authorization_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/auth`,
         token_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/token`,
         end_session_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/logout`,
-        check_session_iframe: `https://${window.location.host}/beta/apps/chrome/silent-check-sso.html`,
+        check_session_iframe: `https://${window.location.host}${betaPartial}/apps/chrome/silent-check-sso.html`,
         revocation_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/revoke`,
       },
       // removes code_challenge query param from the url

@@ -9,13 +9,12 @@ import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
 import { ReduxState } from './redux/store';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
-import ITLessProvider from './auth/ITLessConnector/ITLessProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 
 const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
-const AuthProvider = isITLessEnv ? ITLessProvider : OIDCProvider;
+const AuthProvider = OIDCProvider;
 
 const useInitializeAnalytics = () => {
   useEffect(() => {
