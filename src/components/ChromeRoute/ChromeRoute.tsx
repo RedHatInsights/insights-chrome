@@ -11,6 +11,7 @@ import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
 import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -26,7 +27,7 @@ const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props }: ChromeRouteProps) => {
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
-    const user = useSelector(({ chrome: { user } }: ReduxState) => user);
+    const { user } = useContext(ChromeAuthContext);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
     const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
     const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => modules?.[scope]?.defaultDocumentTitle || scope);

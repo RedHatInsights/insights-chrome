@@ -1,4 +1,6 @@
 import { TextDecoder, TextEncoder } from 'util';
+import 'whatwg-fetch';
+
 global.SVGPathElement = function () {};
 
 global.MutationObserver = class {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
 import type { Store } from 'redux';
-import { LibJWT, crossAccountBouncer } from '../auth';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
+import crossAccountBouncer from '../auth/crossAccountBouncer';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
@@ -38,7 +38,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-function init(store: Store, libJwt?: () => LibJWT | undefined) {
+export function init(store: Store, token: string) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -74,10 +74,10 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url) && libJwt?.()?.jwt.isAuthenticated()) {
+    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url)) {
       if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
-        this.setRequestHeader('Auth', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+        this.setRequestHeader('Auth', `Bearer ${token}`);
       }
     }
     // eslint-disable-line func-names
@@ -107,8 +107,8 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
     const tid = Math.random().toString(36);
     const request: Request = new Request(input, init);
 
-    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated() && !request.headers.has('Authorization')) {
-      request.headers.append('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+    if (checkOrigin(input) && !request.headers.has('Authorization')) {
+      request.headers.append('Authorization', `Bearer ${token}`);
     }
 
     const prom = oldFetch.apply(this, [request, ...rest]);

@@ -45,13 +45,53 @@ window.ResizeObserver =
   }));
 
 import * as routerDom from 'react-router-dom';
-import LibtJWTContext from '../LibJWTContext';
 import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 describe('ScalprumRoot', () => {
   let initialState;
   let mockStore;
   let config;
+  const chromeContextMockValue = {
+    getToken() {
+      return Promise.resolve('a.a');
+    },
+    user: {
+      identity: {
+        account_number: '0',
+        type: 'User',
+        org_id: '123',
+        user: {
+          username: 'foo',
+          first_name: 'foo',
+          last_name: 'foo',
+          is_org_admin: false,
+          is_internal: false,
+        },
+      },
+    },
+    getUser() {
+      return Promise.resolve({
+        identity: {
+          account_number: '0',
+          type: 'User',
+          org_id: '123',
+          user: {
+            username: 'foo',
+            first_name: 'foo',
+            last_name: 'foo',
+            is_org_admin: false,
+            is_internal: false,
+          },
+        },
+        entitlements: {
+          insights: {
+            is_entitled: true,
+          },
+        },
+      });
+    },
+  };
   const initialProps = {
     cookieElement: null,
     setCookieElement: () => undefined,
@@ -134,21 +174,13 @@ describe('ScalprumRoot', () => {
     let getByLabelText;
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
-        <LibtJWTContext.Provider
-          value={{
-            initPromise: Promise.resolve(),
-            jwt: {
-              getUserInfo: () => Promise.resolve({}),
-              getEncodedToken: () => '',
-            },
-          }}
-        >
-          <Provider store={store}>
+        <Provider store={store}>
+          <ChromeAuthContext.Provider value={chromeContextMockValue}>
             <MemoryRouter initialEntries={['/*']}>
               <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
             </MemoryRouter>
-          </Provider>
-        </LibtJWTContext.Provider>
+          </ChromeAuthContext.Provider>
+        </Provider>
       );
       getByLabelText = internalGetByLabelText;
     });
@@ -156,6 +188,7 @@ describe('ScalprumRoot', () => {
   });
 
   it('should render GlobalFilter', async () => {
+    const fetchSpy = jest.spyOn(window, 'fetch').mockImplementationOnce(() => Promise.resolve({ ok: true, json: () => ({}) }));
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
     Object.defineProperty(window, 'location', {
@@ -181,24 +214,17 @@ describe('ScalprumRoot', () => {
     });
 
     const { container } = render(
-      <LibtJWTContext.Provider
-        value={{
-          initPromise: Promise.resolve(),
-          jwt: {
-            getUserInfo: () => Promise.resolve({}),
-            getEncodedToken: () => '',
-          },
-        }}
-      >
-        <Provider store={store}>
+      <Provider store={store}>
+        <ChromeAuthContext.Provider value={chromeContextMockValue}>
           <MemoryRouter initialEntries={['/insights']}>
             <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
           </MemoryRouter>
-        </Provider>
-      </LibtJWTContext.Provider>
+        </ChromeAuthContext.Provider>
+      </Provider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeTruthy());
 
     useLocationSpy.mockRestore();
+    fetchSpy.mockRestore();
   });
 });

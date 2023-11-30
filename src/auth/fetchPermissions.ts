@@ -1,6 +1,6 @@
 import { Access, AccessPagination } from '@redhat-cloud-services/rbac-client';
 import createRbacAPI from './rbac';
-import logger from '../jwt/logger';
+import logger from './logger';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
 const log = logger('fetchPermissions.ts');
@@ -17,9 +17,9 @@ const fetchPermissions = (userToken: string, app = '') => {
        * We should come up with a nice pattern to work around the interceptors
        * */
       const { data, meta } = resp as unknown as Required<AccessPagination>;
-      if (meta.count! > perPage) {
+      if (meta.count && meta.count > perPage) {
         return Promise.all(
-          [...new Array(Math.ceil(meta.count! / perPage))].map((_empty, key) =>
+          [...new Array(Math.ceil(meta.count / perPage))].map((_empty, key) =>
             rbacApi
               .getPrincipalAccess(app, undefined, undefined, perPage, (key + 1) * perPage)
               .then(({ data }) => data as unknown as AccessPagination['data'])

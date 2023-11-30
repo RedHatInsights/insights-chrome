@@ -1,9 +1,9 @@
 import { DEFAULT_SSO_ROUTES } from '../utils/common';
 import logger from './logger';
-const log = logger('insights/url.js');
+const log = logger('auth/platform.ts');
 
 // Parse through keycloak options routes
-export default async (env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) => {
+export default function platformUlr(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) {
   // we have to use hard coded value for console.dev.redhat.com
   // ugly hack
   if (location.hostname === 'console.dev.redhat.com') {
@@ -21,7 +21,7 @@ export default async (env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) => 
     return ssoEnv?.[1].sso;
   } else {
     log('SSO url: not found, defaulting to qa');
-    log('Current env: not found, defaultint to qa');
+    log('Current env: not found, defaulting to qa');
     return 'https://sso.qa.redhat.com/auth';
   }
-};
+}

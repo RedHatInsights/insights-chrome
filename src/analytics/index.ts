@@ -1,5 +1,3 @@
-'use strict';
-
 import { isBeta, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
 import {
@@ -15,6 +15,16 @@ import { evaluateVisibility } from '../utils/isNavItemVisible';
 export type AvailableLinks = {
   [key: string]: NavItem;
 };
+
+const allServicesFetchCache: {
+  [qeury: string]: Promise<
+    AxiosResponse<
+      (Omit<AllServicesSection, 'links'> & {
+        links: (string | AllServicesLink | AllServicesGroup)[];
+      })[]
+    >
+  >;
+} = {};
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
@@ -197,17 +207,23 @@ const useAllServices = () => {
         ),
     []
   );
-  const fetchSections = useCallback(
-    async () =>
-      (
-        await axios.get<
-          (Omit<AllServicesSection, 'links'> & {
-            links: (string | AllServicesLink | AllServicesGroup)[];
-          })[]
-        >(`${getChromeStaticPathname('services')}/services.json`)
-      ).data,
-    []
-  );
+  const fetchSections = useCallback(async () => {
+    const query = `${getChromeStaticPathname('services')}/services.json`;
+    let request = allServicesFetchCache[query];
+    if (!request) {
+      request = axios.get<
+        (Omit<AllServicesSection, 'links'> & {
+          links: (string | AllServicesLink | AllServicesGroup)[];
+        })[]
+      >(query);
+      allServicesFetchCache[query] = request;
+    }
+
+    const response = await request;
+    // clear the cache
+    delete allServicesFetchCache[query];
+    return response.data;
+  }, []);
   const setNavigation = useCallback(async () => {
     const bundleItems = await fetchNavigation();
     const sections = await fetchSections();
