@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
@@ -75,33 +75,34 @@ export function OIDCSecured({
   setCookieElement,
 }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any> } & FooterProps>) {
   const auth = useAuth();
+  const authRef = useRef(auth);
   const store = useStore();
   const dispatch = useDispatch();
   const [state, setState] = useState<ChromeAuthContextValue>({
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
-      logout(auth, bounce);
+      logout(authRef.current, bounce);
     },
     logout: () => {
-      logout(auth, true);
+      logout(authRef.current, true);
     },
-    login: (requiredScopes) => login(auth, requiredScopes),
+    login: (requiredScopes) => login(authRef.current, requiredScopes),
     loginAllTabs: () => {
       authChannel.postMessage({ type: 'login' });
     },
-    getToken: () => Promise.resolve(auth.user?.access_token ?? ''),
+    getToken: () => Promise.resolve(authRef.current.user?.access_token ?? ''),
     getOfflineToken: () =>
       getOfflineToken(
-        auth.settings.metadata?.token_endpoint ?? '',
-        auth.settings.client_id,
-        encodeURIComponent((auth.settings.metadata?.token_endpoint ?? '').split('#')[0])
+        authRef.current.settings.metadata?.token_endpoint ?? '',
+        authRef.current.settings.client_id,
+        encodeURIComponent((authRef.current.settings.metadata?.token_endpoint ?? '').split('#')[0])
       ),
-    doOffline: () => login(auth, ['offline_access'], prepareOfflineRedirect()),
-    getUser: () => Promise.resolve(mapOIDCUserToChromeUser(auth.user ?? {}, {})),
-    token: auth.user?.access_token ?? '',
-    tokenExpires: auth.user?.expires_at ?? 0,
-    user: mapOIDCUserToChromeUser(auth.user ?? {}, {}),
+    doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
+    getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
+    token: authRef.current.user?.access_token ?? '',
+    tokenExpires: authRef.current.user?.expires_at ?? 0,
+    user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
   });
 
   const startChrome = async () => {
@@ -167,6 +168,10 @@ export function OIDCSecured({
     if (!auth.error) {
       startChrome();
     }
+  }, [auth]);
+
+  useEffect(() => {
+    authRef.current = auth;
   }, [auth]);
 
   if (!auth.isAuthenticated || !state.ready) {
