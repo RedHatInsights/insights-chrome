@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
@@ -5,30 +6,37 @@ import UserToggle from '../UserToggle';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
-import ChromeAuthContext from '../../../auth/ChromeAuthContext';
 
 jest.mock('../UserIcon', () => () => '<UserIcon />');
 
 describe('UserToggle', () => {
-  const contextValueMock = {
-    user: {
-      identity: {
-        account_number: 'some accountNumber',
+  let initialState;
+  let mockStore;
+
+  beforeEach(() => {
+    mockStore = configureStore();
+    initialState = {
+      chrome: {
         user: {
-          username: 'someUsername',
-          first_name: 'someFirstName',
-          last_name: 'someLastName',
+          identity: {
+            account_number: 'some accountNumber',
+            user: {
+              username: 'someUsername',
+              first_name: 'someFirstName',
+              last_name: 'someLastName',
+              is_org_admin: false,
+            },
+          },
         },
       },
-    },
-  };
+    };
+  });
   it('should render correctly with isSmall false', async () => {
+    const store = mockStore(initialState);
     const { container } = render(
       <MemoryRouter>
-        <Provider store={configureStore()({ chrome: {} })}>
-          <ChromeAuthContext.Provider value={contextValueMock}>
-            <UserToggle />
-          </ChromeAuthContext.Provider>
+        <Provider store={store}>
+          <UserToggle />
         </Provider>
       </MemoryRouter>
     );
@@ -39,26 +47,36 @@ describe('UserToggle', () => {
   });
 
   it('should render correctly with isSmall true', () => {
+    const store = mockStore(initialState);
     const { container } = render(
-      <ChromeAuthContext.Provider value={contextValueMock}>
+      <Provider store={store}>
         <UserToggle isSmall />
-      </ChromeAuthContext.Provider>
+      </Provider>
     );
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly as org admin', () => {
-    const { container } = render(
-      <ChromeAuthContext.Provider
-        value={{
-          user: {
-            ...contextValueMock.user,
-            is_org_admin: true,
+    const store = mockStore({
+      ...initialState,
+      chrome: {
+        ...initialState.chrome,
+        user: {
+          ...initialState.chrome.user,
+          identity: {
+            ...initialState.chrome.user.identity,
+            user: {
+              ...initialState.chrome.user.identity.user,
+              is_org_admin: true,
+            },
           },
-        }}
-      >
+        },
+      },
+    });
+    const { container } = render(
+      <Provider store={store}>
         <UserToggle />
-      </ChromeAuthContext.Provider>
+      </Provider>
     );
     expect(container).toMatchSnapshot();
   });

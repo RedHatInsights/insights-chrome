@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
@@ -27,7 +27,6 @@ import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -173,8 +172,7 @@ export type RootAppProps = {
 const DefaultLayoutRoot = ({ Sidebar, Footer }: RootAppProps) => {
   const ouiaTags = useOuiaTags();
   const initialized = useScalprum(({ initialized }) => initialized);
-  const { user } = useContext(ChromeAuthContext);
-  const hideNav = !user || !Sidebar;
+  const hideNav = useSelector(({ chrome: { user } }: ReduxState) => !user || !Sidebar);
 
   return (
     <div id="chrome-app-render-root" {...ouiaTags}>

@@ -1,10 +1,10 @@
-import { useContext, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFlag } from '@unleash/proxy-client-react';
 import { UPDATE_NOTIFICATIONS } from '../redux/action-types';
+
+import { getEncodedToken, setCookie } from '../jwt/jwt';
 import { NotificationsPayload } from '../redux/store';
-import { setCookie } from '../auth/setCookie';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 const NOTIFICATION_DRAWER = 'com.redhat.console.notifications.drawer';
 const SAMPLE_EVENT = 'sample.type';
@@ -30,7 +30,6 @@ const useChromeServiceEvents = () => {
   const connection = useRef<WebSocket | undefined>();
   const dispatch = useDispatch();
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const { token, tokenExpires } = useContext(ChromeAuthContext);
 
   const handlerMap: { [key in EventTypes]: (payload: GenericEvent<Payload>) => void } = useMemo(
     () => ({
@@ -47,10 +46,11 @@ const useChromeServiceEvents = () => {
   }
 
   const createConnection = async () => {
+    const token = getEncodedToken();
     if (token) {
       const socketUrl = `${document.location.origin.replace(/^.+:\/\//, 'wss://')}/wss/chrome-service/v1/ws`;
       // ensure the cookie exists before we try to establish connection
-      await setCookie(token, tokenExpires);
+      await setCookie(token);
 
       // create WS URL from current origin
       // ensure to use the cloud events sub protocol

@@ -1,13 +1,12 @@
 import axios from 'axios';
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { REQUESTS_COUNT, REQUESTS_DATA } from './consts';
 import { markAccessRequestNotification, updateAccessRequestsNotifications } from '../redux/actions';
 import { ReduxState } from '../redux/store';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 const useAccessRequestNotifier = (): [ReduxState['chrome']['accessRequests'], (id: string | number) => void] => {
-  const { user } = useContext(ChromeAuthContext);
+  const user = useSelector(({ chrome }: ReduxState) => chrome?.user);
   const isMounted = useRef(false);
   const state = useSelector(({ chrome: { accessRequests } }: ReduxState) => accessRequests);
   const dispatch = useDispatch();

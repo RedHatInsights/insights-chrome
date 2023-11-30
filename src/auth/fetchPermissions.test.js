@@ -13,6 +13,8 @@ jest.mock('./rbac', () => () => {
 
 import { createFetchPermissionsWatcher } from './fetchPermissions';
 
+jest.mock('../jwt/jwt');
+
 describe('fetchPermissions', () => {
   let fetchPermissions;
   let getUser = jest.fn().mockImplementation(() =>

@@ -12,31 +12,15 @@ import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import { loadModulesSchema, userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
+import LibtJWTContext from '../../src/components/LibJWTContext';
 import testUserJson from '../fixtures/testUser.json';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import type { LibJWT } from '../../src/auth';
 import { RemoteModule } from '../../src/@types/types';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
 import { initializeVisibilityFunctions } from '../../src/utils/VisibilitySingleton';
-import ChromeAuthContext, { ChromeAuthContextValue } from '../../src/auth/ChromeAuthContext';
 
 const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
-
-const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
-
-const chromeAuthContextValue: ChromeAuthContextValue = {
-  doOffline: () => Promise.resolve(),
-  getOfflineToken: () => Promise.resolve({} as any),
-  getToken: () => Promise.resolve(''),
-  getUser: () => Promise.resolve(chromeUser),
-  login: () => Promise.resolve(),
-  loginAllTabs: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
-  logoutAllTabs: () => Promise.resolve(),
-  ready: true,
-  token: '',
-  tokenExpires: 0,
-  user: chromeUser,
-};
 
 function createEnv(code?: string) {
   if (!code) {
@@ -46,7 +30,7 @@ function createEnv(code?: string) {
   // initialize user object for feature flags
   reduxStore.dispatch(userLogIn(testUser));
   // initializes request interceptors
-  qe.init(reduxStore, 'foo');
+  qe.init(reduxStore);
   reduxStore.dispatch(
     loadModulesSchema({
       [code]: {
@@ -63,9 +47,19 @@ function createEnv(code?: string) {
   );
 
   const Component = () => (
-    <MemoryRouter initialEntries={[`/${code}`]}>
-      <Provider store={reduxStore}>
-        <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+    <LibtJWTContext.Provider
+      value={
+        {
+          initPromise: Promise.resolve(),
+          jwt: {
+            getUserInfo: () => Promise.resolve(),
+            getEncodedToken: () => '',
+          },
+        } as LibJWT
+      }
+    >
+      <MemoryRouter initialEntries={[`/${code}`]}>
+        <Provider store={reduxStore}>
           <IntlProvider locale="en">
             <FeatureFlagsProvider>
               <ScalprumRoot
@@ -91,9 +85,9 @@ function createEnv(code?: string) {
               />
             </FeatureFlagsProvider>
           </IntlProvider>
-        </ChromeAuthContext.Provider>
-      </Provider>
-    </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
+    </LibtJWTContext.Provider>
   );
   return Component;
 }

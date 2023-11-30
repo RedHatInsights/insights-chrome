@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
 import { ITLess, isBeta, isProd } from '../utils/common';
@@ -10,7 +10,6 @@ import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
 import { getUrl } from '../hooks/useBundle';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -161,7 +160,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> =
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
-  const { user } = useContext(ChromeAuthContext);
+  const user = useSelector(({ chrome: { user } }: { chrome: { user: ChromeUser } }) => user);
   const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
   const { pathname } = useLocation();
 
@@ -269,8 +268,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> =
 
   useEffect(() => {
     handleModuleUpdate();
-    // need the json stringify to prevent the effect from running on every user update if not necessary
-  }, [activeModule, JSON.stringify(user)]);
+  }, [activeModule, user]);
 
   /**
    * This needs to happen in a condition and during first valid render!

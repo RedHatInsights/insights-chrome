@@ -22,11 +22,11 @@ import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
+import LibtJWTContext from '../LibJWTContext';
 import { ReduxState } from '../../redux/store';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const isITLessEnv = ITLess();
 
@@ -82,10 +82,11 @@ const Tools = () => {
   });
   const enableIntegrations = useFlag('platform.sources.integrations');
   const { xs } = useWindowWidth();
-  const { user, token } = useContext(ChromeAuthContext);
+  const user = useSelector(({ chrome: { user } }: ReduxState) => user!);
   const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
   const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
   const dispatch = useDispatch();
+  const libjwt = useContext(LibtJWTContext);
   const intl = useIntl();
   const location = useLocation();
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
@@ -141,7 +142,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token),
+      onClick: () => createSupportCase(user.identity, libjwt),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },

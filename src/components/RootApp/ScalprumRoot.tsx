@@ -19,7 +19,8 @@ import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
 import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
-// import { createGetUser } from '../../auth';
+import { createGetUser } from '../../auth';
+import LibtJWTContext from '../LibJWTContext';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
@@ -33,7 +34,6 @@ import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import { populateNotifications } from '../../redux/actions';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
 import useDisablePendoOnLanding from '../../hooks/useDisablePendoOnLanding';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -54,10 +54,10 @@ const ScalprumRoot = memo(
     const dispatch = useDispatch();
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
-    const chromeAuth = useContext(ChromeAuthContext);
 
+    const libJwt = useContext(LibtJWTContext);
     const store = useStore<ReduxState>();
-    const mutableChromeApi = useRef<ChromeAPI>();
+    const modulesConfig = useSelector(({ chrome: { modules } }: ReduxState) => modules);
 
     // initialize WS event handling
     useChromeServiceEvents();
@@ -127,6 +127,7 @@ const ScalprumRoot = memo(
       };
     }, []);
 
+    const getUser = useCallback(createGetUser(libJwt), [libJwt]);
     const helpTopicsChromeApi = useMemo(
       () => ({
         ...helpTopicsAPI,
@@ -139,31 +140,30 @@ const ScalprumRoot = memo(
       }),
       []
     );
-
-    useMemo(() => {
-      mutableChromeApi.current = createChromeContext({
-        analytics: analytics!,
-        helpTopics: helpTopicsChromeApi,
-        quickstartsAPI,
-        useGlobalFilter,
-        store,
-        setPageMetadata,
-        chromeAuth,
-      });
-      // reset chrome object after token (user) updates/changes
-    }, [chromeAuth.token]);
+    const chromeApi = useMemo(
+      () =>
+        createChromeContext({
+          analytics: analytics!,
+          getUser,
+          helpTopics: helpTopicsChromeApi,
+          libJwt,
+          modulesConfig,
+          quickstartsAPI,
+          useGlobalFilter,
+          store,
+          setPageMetadata,
+        }),
+      []
+    );
 
     const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
-      if (!mutableChromeApi.current) {
-        throw new Error('Chrome API failed to initialize.');
-      }
       // set the deprecated chrome API to window
       // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
-      window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
+      window.insights.chrome = chromeApiWrapper(chromeApi);
       return {
         config,
         api: {
-          chrome: mutableChromeApi.current,
+          chrome: chromeApi,
         },
         pluginSDKOptions: {
           pluginLoaderOptions: {
@@ -191,11 +191,7 @@ const ScalprumRoot = memo(
           },
         },
       };
-    }, [chromeAuth.token]);
-
-    if (!mutableChromeApi.current) {
-      return null;
-    }
+    }, []);
 
     return (
       /**
@@ -204,7 +200,7 @@ const ScalprumRoot = memo(
        * - copy these functions to window
        * - add deprecation warning to the window functions
        */
-      <InternalChromeContext.Provider value={mutableChromeApi.current}>
+      <InternalChromeContext.Provider value={chromeApi}>
         <ScalprumProvider {...scalprumProviderProps}>
           <ChromeProvider>
             <Routes>

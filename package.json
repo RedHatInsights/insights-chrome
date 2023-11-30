@@ -125,7 +125,6 @@
     "webpack-bundle-analyzer": "^4.8.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1",
-    "whatwg-fetch": "^3.6.19",
     "yargs": "^17.7.1"
   },
   "dependencies": {
@@ -165,14 +164,13 @@
     "history": "^5.3.0",
     "js-cookie": "^3.0.1",
     "js-yaml": "^4.1.0",
+    "keycloak-js": "^21.0.0",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
-    "oidc-client-ts": "^2.4.0",
     "pf-4-styles": "npm:@patternfly/patternfly@^4.224.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intl": "^6.2.10",
-    "react-oidc-context": "^2.3.1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.2",
     "redux": "^4.2.1",

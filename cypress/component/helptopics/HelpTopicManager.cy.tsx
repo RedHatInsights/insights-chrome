@@ -12,34 +12,38 @@ import chromeReducer, { chromeInitialState } from '../../../src/redux';
 
 import testUser from '../../fixtures/testUser.json';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import LibtJWTContext from '../../../src/components/LibJWTContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { LibJWT } from '../../../src/auth';
 import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
-import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
 
-const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
-
-const chromeAuthContextValue: ChromeAuthContextValue = {
-  doOffline: () => Promise.resolve(),
-  getOfflineToken: () => Promise.resolve({} as any),
-  getToken: () => Promise.resolve(''),
-  getUser: () => Promise.resolve(chromeUser),
-  login: () => Promise.resolve(),
-  loginAllTabs: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
-  logoutAllTabs: () => Promise.resolve(),
-  ready: true,
-  token: '',
-  tokenExpires: 0,
-  user: chromeUser,
+const jwt = {
+  getUserInfo: () => Promise.resolve(testUser as unknown as ChromeUser),
+  getEncodedToken: () => '',
 };
 
 const Wrapper = ({ store }: { store: Store }) => (
   <IntlProvider locale="en">
-    <Provider store={store}>
-      <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-        <RootApp setCookieElement={() => undefined} cookieElement={null} />
-      </ChromeAuthContext.Provider>
-    </Provider>
+    <LibtJWTContext.Provider
+      value={
+        {
+          initPromise: Promise.resolve(),
+          jwt,
+        } as unknown as LibJWT
+      }
+    >
+      <Provider store={store}>
+        <RootApp
+          config={{
+            TestApp: {
+              name: 'TestApp',
+              appId: 'TestApp',
+              manifestLocation: '/foo/bar.json',
+            },
+          }}
+        />
+      </Provider>
+    </LibtJWTContext.Provider>
   </IntlProvider>
 );
 
@@ -77,13 +81,6 @@ describe('HelpTopicManager', () => {
       chrome: {
         modules: {},
         ...chromeInitialState.chrome,
-        scalprumConfig: {
-          TestApp: {
-            name: 'TestApp',
-            appId: 'TestApp',
-            manifestLocation: '/foo/bar.json',
-          },
-        },
         moduleRoutes: [
           {
             absolute: true,
@@ -142,7 +139,7 @@ describe('HelpTopicManager', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services.json', []);
   });
 
-  it.only('should switch help topics drawer content', () => {
+  it('should switch help topics drawer content', () => {
     // change screen size
     cy.viewport(1280, 720);
     cy.window().then((win) => {

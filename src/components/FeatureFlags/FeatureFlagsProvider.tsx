@@ -1,9 +1,11 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-client-react';
 import { DeepRequired } from 'utility-types';
+import { useSelector } from 'react-redux';
 import { captureException } from '@sentry/react';
+import { ReduxState } from '../../redux/store';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import * as Sentry from '@sentry/react';
-import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -61,7 +63,7 @@ export let unleashClient: UnleashClient;
 export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
 
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
+  const user = useSelector<DeepRequired<ReduxState>, DeepRequired<ChromeUser>>((state) => state.chrome.user);
   unleashClient = useMemo(
     () =>
       new UnleashClient({

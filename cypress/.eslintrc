@@ -18,7 +18,6 @@
     "cy": "readonly"
   },
   "rules": {
-    "react/prop-types": "off",
-    "no-restricted-imports": "off"
+    "react/prop-types": "off"
   }
 }

@@ -1,12 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { login } from '../../jwt/jwt';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const Login = () => {
   const intl = useIntl();
-  const { login } = useContext(ChromeAuthContext);
   return (
     <Button
       ouiaId="top-right-login-button"

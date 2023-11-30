@@ -2,33 +2,23 @@ import './UserToggle.scss';
 
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { ITLess, getEnv, isProd as isProdEnv } from '../../utils/common';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
+import { ReduxState } from '../../redux/store';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import UserIcon from './UserIcon';
 import classNames from 'classnames';
+import { logout } from '../../jwt/jwt';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useSelector } from 'react-redux';
 
-const DropdownItems = ({
-  username = '',
-  isOrgAdmin,
-  accountNumber,
-  isInternal,
-  extraItems = [],
-}: {
-  username?: string;
-  isOrgAdmin?: boolean;
-  accountNumber?: string;
-  isInternal?: boolean;
-  extraItems?: React.ReactNode[];
-}) => {
+const buildItems = (username = '', isOrgAdmin?: boolean, accountNumber?: string, isInternal?: boolean, extraItems: React.ReactNode[] = []) => {
   const env = getEnv();
   const isProd = isProdEnv();
   const isITLessEnv = ITLess();
@@ -36,7 +26,6 @@ const DropdownItems = ({
   const prefix = isProd ? '' : `${env === 'ci' ? 'qa' : env}.`;
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
-  const { logout } = useContext(ChromeAuthContext);
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -113,7 +102,7 @@ const DropdownItems = ({
         />
       )}
     </React.Fragment>,
-    <DropdownItem key="logout" component="button" onClick={logout}>
+    <DropdownItem key="logout" component="button" onClick={() => logout(true)}>
       {intl.formatMessage(messages.logout)}
     </DropdownItem>,
     extraItems,
@@ -127,12 +116,15 @@ export type UserToggleProps = {
 
 const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    user: {
-      identity: { user, account_number },
-    },
-  } = useContext(ChromeAuthContext);
-  const name = user?.first_name + ' ' + user?.last_name;
+  const account = useSelector(({ chrome }: ReduxState) => {
+    return {
+      number: chrome.user?.identity.account_number,
+      username: chrome.user?.identity.user?.username,
+      isOrgAdmin: chrome.user?.identity.user?.is_org_admin,
+      isInternal: chrome.user?.identity.user?.is_internal,
+      name: `${chrome.user?.identity.user?.first_name || ''} ${chrome.user?.identity.user?.last_name || ''}`,
+    };
+  });
 
   const onSelect = (event: any) => {
     if (['A', 'BUTTON'].includes(event.target.tagName)) {
@@ -169,24 +161,13 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
                 icon: <UserIcon />,
               })}
         >
-          {isSmall ? <EllipsisVIcon /> : name}
+          {isSmall ? <EllipsisVIcon /> : account.name}
         </MenuToggle>
       )}
       className="chr-c-dropdown-user-toggle"
       isOpen={isOpen}
     >
-      <DropdownList>
-        {/* Bad PF typings, child nodes can be used */}
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/* @ts-ignore */}
-        <DropdownItems
-          username={user?.username}
-          isOrgAdmin={user?.is_org_admin}
-          accountNumber={account_number}
-          isInternal={user?.is_internal}
-          extraItems={extraItems}
-        />
-      </DropdownList>
+      <DropdownList>{buildItems(account.username, account.isOrgAdmin, account.number, account.isInternal, extraItems)}</DropdownList>
     </Dropdown>
   );
 };
