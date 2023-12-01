@@ -6,6 +6,7 @@ import { act } from 'react-dom/test-utils';
 import configureStore from 'redux-mock-store';
 import * as utils from '../../utils/common';
 import IDPChecker from './IDPChecker';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
@@ -48,11 +49,20 @@ describe('<IDPChecker />', () => {
     ITLessSpy.mockReturnValueOnce(false);
     const store = mockStore(initialState);
     const { container, queryAllByTestId } = render(
-      <Provider store={store}>
-        <IDPChecker>
-          <span data-testid="foo">OK</span>
-        </IDPChecker>
-      </Provider>
+      <ChromeAuthContext.Provider
+        value={{
+          ready: true,
+          user: {
+            foo: 'bar',
+          },
+        }}
+      >
+        <Provider store={store}>
+          <IDPChecker>
+            <span data-testid="foo">OK</span>
+          </IDPChecker>
+        </Provider>
+      </ChromeAuthContext.Provider>
     );
 
     expect(queryAllByTestId('foo')).toHaveLength(1);
@@ -69,11 +79,20 @@ describe('<IDPChecker />', () => {
 
     await act(async () => {
       render(
-        <Provider store={store}>
-          <IDPChecker>
-            <span data-testid="foo">OK</span>
-          </IDPChecker>
-        </Provider>
+        <ChromeAuthContext.Provider
+          value={{
+            ready: true,
+            user: {
+              foo: 'bar',
+            },
+          }}
+        >
+          <Provider store={store}>
+            <IDPChecker>
+              <span data-testid="foo">OK</span>
+            </IDPChecker>
+          </Provider>
+        </ChromeAuthContext.Provider>
       );
     });
 
@@ -94,11 +113,20 @@ describe('<IDPChecker />', () => {
 
     await act(async () => {
       render(
-        <Provider store={store}>
-          <IDPChecker>
-            <span data-testid="foo">OK</span>
-          </IDPChecker>
-        </Provider>
+        <ChromeAuthContext.Provider
+          value={{
+            ready: true,
+            user: {
+              foo: 'bar',
+            },
+          }}
+        >
+          <Provider store={store}>
+            <IDPChecker>
+              <span data-testid="foo">OK</span>
+            </IDPChecker>
+          </Provider>
+        </ChromeAuthContext.Provider>
       );
     });
 
@@ -111,11 +139,20 @@ describe('<IDPChecker />', () => {
 
     await act(async () => {
       render(
-        <Provider store={store}>
-          <IDPChecker>
-            <span data-testid="foo">OK</span>
-          </IDPChecker>
-        </Provider>
+        <ChromeAuthContext.Provider
+          value={{
+            ready: true,
+            user: {
+              foo: 'bar',
+            },
+          }}
+        >
+          <Provider store={store}>
+            <IDPChecker>
+              <span data-testid="foo">OK</span>
+            </IDPChecker>
+          </Provider>
+        </ChromeAuthContext.Provider>
       );
     });
 

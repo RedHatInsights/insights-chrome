@@ -1,10 +1,11 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 import { ITLess } from '../../utils/common';
 import IDPError from '../ErrorComponents/IDPError';
 import { ReduxState } from '../../redux/store';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const IDPStatuses = {
   OK: 'OK',
@@ -22,11 +23,11 @@ const IDPChecker: React.FunctionComponent<React.PropsWithChildren> = ({ children
     }
     return IDPStatuses.OK;
   });
-  const hasUser = useSelector(({ chrome: { user } }: ReduxState) => Object.keys(user || {}).length > 0);
+  const auth = useContext(ChromeAuthContext);
   const allowStateChange = useRef(ITLessEnv);
 
   useEffect(() => {
-    if (ITLessEnv && status !== IDPStatuses.PENDING && hasUser) {
+    if (ITLessEnv && status !== IDPStatuses.PENDING && auth.ready) {
       allowStateChange.current && setStatus(IDPStatuses.PENDING);
       axios
         .get('/api/entitlements/v1/services')
@@ -38,7 +39,7 @@ const IDPChecker: React.FunctionComponent<React.PropsWithChildren> = ({ children
           allowStateChange.current && setStatus(authError ? IDPStatuses.ERROR : IDPStatuses.OK);
         });
     }
-  }, [hasUser, missingIDP]);
+  }, [auth.ready, missingIDP]);
 
   useEffect(() => {
     if (missingIDP === true) {

@@ -11,6 +11,7 @@ import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../r
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -128,7 +129,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 const GlobalFilterWrapper = () => {
   const [hasAccess, setHasAccess] = useState(false);
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
-  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
+  const chromeAuth = useContext(ChromeAuthContext);
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
 
@@ -157,7 +158,7 @@ const GlobalFilterWrapper = () => {
       mounted = false;
     };
   }, []);
-  return isGlobalFilterEnabled && userLoaded ? <GlobalFilter hasAccess={hasAccess} /> : null;
+  return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 
 export default GlobalFilterWrapper;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
@@ -28,6 +28,7 @@ import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
 import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
 import { filterConfig } from './notificationDrawerUtils';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -63,7 +64,8 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
-  const isOrgAdmin = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.is_org_admin);
+  const auth = useContext(ChromeAuthContext);
+  const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
 
   useEffect(() => {
     const modifiedNotifications = (activeFilters || []).reduce(
