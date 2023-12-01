@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import * as axios from 'axios';
 
 import useQuickstartsStates from './useQuickstartsStates';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 jest.mock('axios', () => {
   const axios = jest.requireActual('axios');
@@ -26,26 +27,27 @@ jest.mock('../../utils/common', () => {
   };
 });
 
+const mockChromeContextValue = {
+  user: {
+    identity: {
+      internal: {
+        account_id: 666,
+      },
+    },
+  },
+  ready: true,
+};
+
+const emptyStore = createStore(() => ({}));
+const WrapperComponent = ({ children, store = emptyStore, contextValue = mockChromeContextValue }) => (
+  <ChromeAuthContext.Provider value={contextValue}>
+    <Provider store={store}>{children}</Provider>
+  </ChromeAuthContext.Provider>
+);
+
 describe('useQuickstartsStates stage', () => {
   const getSpy = jest.spyOn(axios.default, 'get');
   const postSpy = jest.spyOn(axios.default, 'post');
-  const accountStore = createStore(() => ({
-    chrome: {
-      user: {
-        identity: {
-          internal: {
-            account_id: 666,
-          },
-        },
-      },
-    },
-  }));
-
-  const emptyStore = createStore(() => ({
-    chrome: {
-      user: undefined,
-    },
-  }));
 
   afterEach(() => {
     getSpy.mockReset();
@@ -53,7 +55,7 @@ describe('useQuickstartsStates stage', () => {
   });
 
   test('should not call API if no account Id exists', () => {
-    const wrapper = ({ children }) => <Provider store={emptyStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent contextValue={{ ready: false, user: {} }}>{children}</WrapperComponent>;
 
     const { result } = renderHook(() => useQuickstartsStates(), { wrapper });
 
@@ -64,7 +66,7 @@ describe('useQuickstartsStates stage', () => {
   test('should call quickstarts progress API if account id exists', async () => {
     getSpy.mockImplementationOnce(() => Promise.resolve({ data: { data: [] } }));
 
-    const wrapper = ({ children }) => <Provider store={accountStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
       const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
@@ -91,7 +93,7 @@ describe('useQuickstartsStates stage', () => {
       })
     );
 
-    const wrapper = ({ children }) => <Provider store={accountStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
       const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
@@ -108,7 +110,7 @@ describe('useQuickstartsStates stage', () => {
   });
 
   test('should set active quickstart id', () => {
-    const wrapper = ({ children }) => <Provider store={emptyStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
 
     const { result } = renderHook(() => useQuickstartsStates(), { wrapper });
 
@@ -119,7 +121,7 @@ describe('useQuickstartsStates stage', () => {
   });
 
   test('should set quickstarts states from object', () => {
-    const wrapper = ({ children }) => <Provider store={emptyStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
 
     const { result } = renderHook(() => useQuickstartsStates(), { wrapper });
 
@@ -130,7 +132,7 @@ describe('useQuickstartsStates stage', () => {
   });
 
   test('should set quickstarts states from function', async () => {
-    const wrapper = ({ children }) => <Provider store={emptyStore}>{children}</Provider>;
+    const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
 
     const { result } = renderHook(() => useQuickstartsStates(), { wrapper });
 
@@ -147,7 +149,22 @@ describe('useQuickstartsStates stage', () => {
         progress: 'updated-state',
       })
     );
-    const wrapper = ({ children }) => <Provider store={emptyStore}>{children}</Provider>;
+    const wrapper = ({ children }) => (
+      <WrapperComponent
+        contextValue={{
+          ready: true,
+          user: {
+            identity: {
+              internal: {
+                account_id: NaN,
+              },
+            },
+          },
+        }}
+      >
+        {children}
+      </WrapperComponent>
+    );
 
     const { result } = renderHook(() => useQuickstartsStates(), { wrapper });
 

@@ -1,13 +1,14 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { QuickStart, QuickStartState } from '@patternfly/quickstarts';
-import { ReduxState } from '../../redux/store';
 import { populateQuickstartsCatalog } from '../../redux/actions';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const useQuickstartsStates = () => {
   const dispatch = useDispatch();
-  const accountId = useSelector(({ chrome }: ReduxState) => chrome?.user?.identity?.internal?.account_id);
+  const auth = useContext(ChromeAuthContext);
+  const accountId = auth.user.identity?.internal?.account_id;
   const [allQuickStartStates, setAllQuickStartStatesInternal] = useState<{ [key: string | number]: QuickStartState }>({});
   const [activeQuickStartID, setActiveQuickStartIDInternal] = useState('');
 

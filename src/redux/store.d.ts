@@ -1,5 +1,4 @@
 import { QuickStart } from '@patternfly/quickstarts';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { ChromeModule, FlagTagsFilter, NavItem, Navigation, RouteDefinition } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
@@ -48,7 +47,6 @@ export type ChromeState = {
    */
   appId?: string;
   missingIDP?: boolean;
-  user?: ChromeUser;
   pageAction?: string;
   pageObjectId?: string;
   modules?: { [key: string]: ChromeModule };

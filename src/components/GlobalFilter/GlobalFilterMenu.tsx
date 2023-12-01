@@ -1,4 +1,4 @@
-import React, { FormEvent, Fragment, MouseEventHandler, useMemo } from 'react';
+import React, { FormEvent, Fragment, MouseEventHandler, useContext, useMemo } from 'react';
 import { Group, GroupFilter, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
@@ -18,6 +18,7 @@ import { CommonSelectedTag, ReduxState } from '../../redux/store';
 import { updateSelected } from './globalFilterApi';
 import { fetchAllTags } from '../../redux/actions';
 import { FlagTagsFilter } from '../../@types/types';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 export type GlobalFilterMenuGroupKeys = GroupType;
 
@@ -91,7 +92,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
    * */
   const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
   const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
-  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
+  const auth = useContext(ChromeAuthContext);
   const intl = useIntl();
   const dispatch = useDispatch();
   const GroupFilterWrapper = useMemo(
@@ -102,7 +103,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
     <Fragment>
       <Split id="global-filter" hasGutter className="chr-c-global-filter">
         <SplitItem>
-          {userLoaded && allowed !== undefined ? (
+          {auth.ready && allowed !== undefined ? (
             <GroupFilterWrapper
               content={
                 !allowed || isDisabled

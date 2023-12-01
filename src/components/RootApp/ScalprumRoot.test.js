@@ -56,6 +56,7 @@ describe('ScalprumRoot', () => {
     getToken() {
       return Promise.resolve('a.a');
     },
+    ready: true,
     user: {
       identity: {
         account_number: '0',

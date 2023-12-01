@@ -25,7 +25,6 @@ export function loginReducer(state: ChromeState, { payload }: { payload: ChromeU
   return {
     ...state,
     missingIDP,
-    user: payload,
   };
 }
 
