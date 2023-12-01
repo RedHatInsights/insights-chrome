@@ -61,6 +61,9 @@ describe('create chrome', () => {
     getToken() {
       return Promise.resolve('string');
     },
+    getRefreshToken() {
+      return Promise.resolve('string');
+    },
     getUser() {
       return Promise.resolve(mockUser);
     },

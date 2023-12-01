@@ -92,6 +92,7 @@ export function OIDCSecured({
       authChannel.postMessage({ type: 'login' });
     },
     getToken: () => Promise.resolve(authRef.current.user?.access_token ?? ''),
+    getRefreshToken: () => Promise.resolve(authRef.current.user?.refresh_token ?? ''),
     getOfflineToken: () =>
       getOfflineToken(
         authRef.current.settings.metadata?.token_endpoint ?? '',
