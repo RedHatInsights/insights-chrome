@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '../redux/store';
-import { isProd } from '../utils/common';
 import { isITLessEnv } from '../utils/consts';
 
 // interval timing is short because we want to catch the bubble before ASAP so it does not cover the VA button
-const RETRY_ATTEMPS = 500;
+const RETRY_ATTEMPS = 2000;
 const RETRY_INTERVAL = 50;
 
-function retry(fn: () => void, retriesLeft = 10, interval = 100) {
+function retry(fn: () => void, retriesLeft = 50, interval = 100) {
   try {
     return fn();
   } catch (error) {
@@ -64,7 +63,7 @@ const useDisablePendoOnLanding = () => {
     }
 
     return () => {
-      if (interval && !isProd() && !isITLessEnv) {
+      if (interval && !isITLessEnv) {
         clearInterval(interval);
       }
     };
