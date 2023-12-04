@@ -2,15 +2,21 @@ import { DEFAULT_SSO_ROUTES } from '../utils/common';
 import logger from './logger';
 const log = logger('auth/platform.ts');
 
+// add trailing slash if missing
+function sanitizeUrl(url: string) {
+  return `${url.replace(/\/$/, '')}/`;
+}
+
 // Parse through keycloak options routes
 export default function platformUlr(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) {
   // we have to use hard coded value for console.dev.redhat.com
   // ugly hack
+
   if (location.hostname === 'console.dev.redhat.com') {
-    return DEFAULT_SSO_ROUTES.dev.sso;
+    return sanitizeUrl(DEFAULT_SSO_ROUTES.dev.sso);
   }
   if (configSsoUrl) {
-    return configSsoUrl;
+    return sanitizeUrl(configSsoUrl);
   }
 
   const ssoEnv = Object.entries(env).find(([, { url }]) => url.includes(location.hostname));
@@ -18,7 +24,7 @@ export default function platformUlr(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl
   if (ssoEnv) {
     log(`SSO Url: ${ssoEnv?.[1].sso}`);
     log(`Current env: ${ssoEnv?.[0]}`);
-    return ssoEnv?.[1].sso;
+    return sanitizeUrl(ssoEnv?.[1].sso);
   } else {
     log('SSO url: not found, defaulting to qa');
     log('Current env: not found, defaulting to qa');

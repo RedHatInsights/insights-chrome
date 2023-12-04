@@ -26,9 +26,7 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           config: { ssoUrl },
         },
       } = data;
-      // add trailing slash if missing
-      const sanitizedSSOUrl = `${ssoUrl.replace(/\/$/, '')}/`;
-      setState({ ssoUrl: platformUrl(DEFAULT_SSO_ROUTES, sanitizedSSOUrl), microFrontendConfig: data });
+      setState({ ssoUrl: platformUrl(DEFAULT_SSO_ROUTES, ssoUrl), microFrontendConfig: data });
     } catch (error) {
       setState({ ssoUrl: platformUrl(DEFAULT_SSO_ROUTES), microFrontendConfig: data });
     }
