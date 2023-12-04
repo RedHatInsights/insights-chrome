@@ -17,7 +17,7 @@ describe('platformUrl', () => {
   it('should return dev sso url if env is set to console.dev', () => {
     window.location.hostname = 'console.dev.redhat.com';
     const ssourl = platformUrl(DEFAULT_SSO_ROUTES);
-    expect(ssourl).toBe(DEFAULT_SSO_ROUTES.dev.sso);
+    expect(ssourl).toBe(DEFAULT_SSO_ROUTES.dev.sso + '/');
     // don't forget to reset the hostname for other tests
     window.location.hostname = '';
   });
@@ -25,7 +25,7 @@ describe('platformUrl', () => {
   it('should return custom sso url if provided', () => {
     const customSsoUrl = 'https://custom.sso.url';
     const ssourl = platformUrl(DEFAULT_SSO_ROUTES, customSsoUrl);
-    expect(ssourl).toBe(customSsoUrl);
+    expect(ssourl).toBe(customSsoUrl + '/');
   });
 
   // test for all envs using the DEFAULT_SSO_ROUTES
@@ -34,7 +34,9 @@ describe('platformUrl', () => {
       it(`should return ${env} sso url if env is set to ${url}`, () => {
         window.location.hostname = url;
         const ssourl = platformUrl(DEFAULT_SSO_ROUTES);
-        expect(ssourl).toBe(DEFAULT_SSO_ROUTES[env as keyof typeof DEFAULT_SSO_ROUTES].sso);
+        expect(ssourl).toMatch(new RegExp(DEFAULT_SSO_ROUTES[env as keyof typeof DEFAULT_SSO_ROUTES].sso));
+        // Must always end with trailing slash
+        expect(ssourl).toMatch(/\/$/);
         // don't forget to reset the hostname for other tests
         window.location.hostname = '';
       });
