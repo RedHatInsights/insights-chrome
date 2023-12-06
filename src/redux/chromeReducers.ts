@@ -154,14 +154,6 @@ export function loadModulesSchemaReducer(
   };
 }
 
-export function changeActiveModuleReducer(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  return {
-    ...state,
-    activeModule: payload,
-    appId: payload,
-  };
-}
-
 export function setPendoFeedbackFlag(
   state: ChromeState,
   {

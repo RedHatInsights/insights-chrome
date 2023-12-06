@@ -4,7 +4,6 @@ import {
   accessRequestsNotificationsReducer,
   addQuickstartstoApp,
   appNavClick,
-  changeActiveModuleReducer,
   clearQuickstartsReducer,
   contextSwitcherBannerReducer,
   disableQuickstartsReducer,
@@ -48,7 +47,6 @@ import {
 import {
   ADD_QUICKSTARTS_TO_APP,
   APP_NAV_CLICK,
-  CHANGE_ACTIVE_MODULE,
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
@@ -97,7 +95,6 @@ const reducers = {
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
-  [CHANGE_ACTIVE_MODULE]: changeActiveModuleReducer,
   [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [TOGGLE_DEBUGGER_MODAL]: toggleDebuggerModal,

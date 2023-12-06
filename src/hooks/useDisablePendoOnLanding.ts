@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { ReduxState } from '../redux/store';
 import { isITLessEnv } from '../utils/consts';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../state/atoms';
 
 // interval timing is short because we want to catch the bubble before ASAP so it does not cover the VA button
 const RETRY_ATTEMPS = 2000;
@@ -23,7 +23,7 @@ function retry(fn: () => void, retriesLeft = 50, interval = 100) {
 }
 
 const useDisablePendoOnLanding = () => {
-  const activeModule = useSelector((state: ReduxState) => state.chrome.activeModule);
+  const activeModule = useAtomValue(activeModuleAtom);
 
   const toggleGuides = () => {
     // push the call to the end of the event loop to make sure the pendo script is loaded and initialized

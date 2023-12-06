@@ -28,7 +28,7 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
     class="pf-v5-c-alert__title"
   >
     <span
-      class="pf-v5-u-screen-reader"
+      class="pf-v5-screen-reader"
     >
       Info alert:
     </span>
@@ -92,7 +92,7 @@ exports[`HeaderAlert should render correctly not dismissable 1`] = `
     class="pf-v5-c-alert__title"
   >
     <span
-      class="pf-v5-u-screen-reader"
+      class="pf-v5-screen-reader"
     >
       Info alert:
     </span>

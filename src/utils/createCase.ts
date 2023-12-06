@@ -5,9 +5,10 @@ const log = logger('createCase.js');
 
 import { getEnvDetails, isBeta, isProd } from './common';
 import { HYDRA_ENDPOINT } from './consts';
-import { spinUpStore } from '../redux/redux-config';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { getUrl } from '../hooks/useBundle';
+import chromeStore from '../state/chromeStore';
+import { activeModuleAtom } from '../state/atoms';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -62,9 +63,8 @@ async function getAppInfo(activeModule: string) {
 }
 
 async function getProductData() {
-  const { store } = spinUpStore();
-  const activeModule = store.getState().chrome.activeModule || '';
-  const appData = await getAppInfo(activeModule);
+  const activeModule = chromeStore.get(activeModuleAtom);
+  const appData = await getAppInfo(activeModule ?? '');
   return appData;
 }
 

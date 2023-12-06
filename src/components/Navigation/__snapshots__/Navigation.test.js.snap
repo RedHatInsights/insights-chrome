@@ -31,7 +31,7 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
       class="pf-v5-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
     >
       <span
-        class="pf-v5-u-screen-reader"
+        class="pf-v5-screen-reader"
       />
     </div>
   </section>
@@ -60,7 +60,7 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
             class="pf-v5-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
             <span
-              class="pf-v5-u-screen-reader"
+              class="pf-v5-screen-reader"
             />
           </div>
         </a>
@@ -79,7 +79,7 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
             class="pf-v5-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
             <span
-              class="pf-v5-u-screen-reader"
+              class="pf-v5-screen-reader"
             />
           </div>
         </a>
@@ -98,7 +98,7 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
             class="pf-v5-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
             <span
-              class="pf-v5-u-screen-reader"
+              class="pf-v5-screen-reader"
             />
           </div>
         </a>
@@ -117,7 +117,7 @@ exports[`ChromeNavItem should render navigation loader if schema was not loaded 
             class="pf-v5-c-skeleton ins-c-skeleton ins-c-skeleton__lg ins-m-dark"
           >
             <span
-              class="pf-v5-u-screen-reader"
+              class="pf-v5-screen-reader"
             />
           </div>
         </a>

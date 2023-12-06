@@ -39,7 +39,6 @@ export type NotificationsPayload = {
 export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
-  activeModule?: string;
   activeProduct?: string;
   /**
    * @deprecated
