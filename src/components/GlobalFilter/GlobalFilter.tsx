@@ -12,6 +12,8 @@ import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -63,7 +65,9 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     }),
     shallowEqual
   );
-  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
+  const globalFilterHidden = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isDisabled = globalFilterHidden || !activeModule;
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (
     useTagsFilter as unknown as (
