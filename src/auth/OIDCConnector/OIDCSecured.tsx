@@ -28,6 +28,7 @@ const log = logger('OIDCSecured.tsx');
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
   return {
+    scope: [],
     entitlements,
     identity: {
       org_id: user.profile?.org_id as any,

@@ -21,6 +21,7 @@ export type ChromeAuthContextValue<LoginResponse = void> = {
 };
 
 const blankUser: ChromeUser = {
+  scope: [],
   entitlements: {},
   identity: {
     org_id: '',
