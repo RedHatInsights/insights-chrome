@@ -40,11 +40,6 @@ export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
   activeProduct?: string;
-  /**
-   * @deprecated
-   * App id is replaced by active module. It is still required until we completely remove usage of main.yml
-   */
-  appId?: string;
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
