@@ -2,7 +2,7 @@ import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { ChromeModule, NavItem, Navigation } from '../@types/types';
-import { ITLess, generateRoutesList, highlightItems, isBeta, levelArray } from '../utils/common';
+import { ITLess, generateRoutesList, highlightItems, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState, NotificationData, NotificationsPayload } from './store';
 
@@ -129,27 +129,10 @@ export function loadModulesSchemaReducer(
     };
   }
 ): ChromeState {
-  const scalprumConfig = Object.entries(schema).reduce(
-    (acc, [name, config]) => ({
-      ...acc,
-      [name]: {
-        name,
-        module: `${name}#./RootApp`,
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}${config.manifestLocation}?ts=${Date.now()}`,
-      },
-    }),
-    {
-      chrome: {
-        name: 'chrome',
-        manifestLocation: `${window.location.origin}${isBeta() ? '/beta' : ''}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
-      },
-    }
-  );
   const moduleRoutes = generateRoutesList(schema);
   return {
     ...state,
     modules: schema,
-    scalprumConfig,
     moduleRoutes,
   };
 }

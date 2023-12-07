@@ -15,6 +15,8 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
+import { useAtom } from 'jotai';
+import { ScalprumConfig, scalprumConfigAtom } from '../../../src/state/atoms/scalprumConfigAtom';
 
 const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
 
@@ -33,15 +35,33 @@ const chromeAuthContextValue: ChromeAuthContextValue = {
   user: chromeUser,
 };
 
-const Wrapper = ({ store }: { store: Store }) => (
-  <IntlProvider locale="en">
-    <Provider store={store}>
-      <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-        <RootApp setCookieElement={() => undefined} cookieElement={null} />
-      </ChromeAuthContext.Provider>
-    </Provider>
-  </IntlProvider>
-);
+const initialScalprumConfig = {
+  TestApp: {
+    name: 'TestApp',
+    appId: 'TestApp',
+    manifestLocation: '/foo/bar.json',
+  },
+};
+
+const Wrapper = ({ store, config = initialScalprumConfig }: { store: Store; config?: ScalprumConfig }) => {
+  const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
+  useEffect(() => {
+    setScalprumConfig(config);
+  }, []);
+  if (Object.keys(scalprumConfig).length === 0) {
+    return null;
+  }
+
+  return (
+    <IntlProvider locale="en">
+      <Provider store={store}>
+        <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+          <RootApp setCookieElement={() => undefined} cookieElement={null} />
+        </ChromeAuthContext.Provider>
+      </Provider>
+    </IntlProvider>
+  );
+};
 
 const TestComponent = () => {
   const chrome = useChrome();
@@ -77,13 +97,6 @@ describe('HelpTopicManager', () => {
       chrome: {
         modules: {},
         ...chromeInitialState.chrome,
-        scalprumConfig: {
-          TestApp: {
-            name: 'TestApp',
-            appId: 'TestApp',
-            manifestLocation: '/foo/bar.json',
-          },
-        },
         moduleRoutes: [
           {
             absolute: true,
