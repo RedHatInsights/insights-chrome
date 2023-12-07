@@ -20,7 +20,6 @@ jest.mock('@scalprum/core', () => {
 jest.mock('../auth/fetchPermissions');
 
 const mockUser: ChromeUser = {
-  scope: [],
   entitlements: {},
   identity: {
     org_id: '1234',
@@ -68,6 +67,9 @@ describe('create chrome', () => {
     getUser() {
       return Promise.resolve(mockUser);
     },
+    reAuthWithScopes() {
+      return Promise.resolve();
+    },
     login() {
       return Promise.resolve();
     },
@@ -106,8 +108,10 @@ describe('create chrome', () => {
       toggle() {
         return;
       },
+      activateQuickstart() {
+        return Promise.resolve();
+      },
       version: 2,
-      activateQuickstart: jest.fn(),
     },
     setPageMetadata: jest.fn(),
     useGlobalFilter: jest.fn(),

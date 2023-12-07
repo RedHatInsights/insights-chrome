@@ -50,25 +50,25 @@ if (entry) {
   reactRoot.render(
     <JotaiProvider store={chromeStore}>
       <Provider store={spinUpStore()?.store}>
-        <AuthProvider>
-          <IntlProvider
-            locale={language}
-            messages={messages[language]}
-            onError={(error) => {
-              if (
-                (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-                localStorage.getItem('chrome:intl:debug') === 'true' ||
-                !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-              ) {
-                console.error(error);
-              }
-            }}
-          >
-            <ErrorBoundary>
+        <IntlProvider
+          locale={language}
+          messages={messages[language]}
+          onError={(error) => {
+            if (
+              (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+              localStorage.getItem('chrome:intl:debug') === 'true' ||
+              !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+            ) {
+              console.error(error);
+            }
+          }}
+        >
+          <ErrorBoundary>
+            <AuthProvider>
               <App />
-            </ErrorBoundary>
-          </IntlProvider>
-        </AuthProvider>
+            </AuthProvider>
+          </ErrorBoundary>
+        </IntlProvider>
       </Provider>
     </JotaiProvider>
   );
