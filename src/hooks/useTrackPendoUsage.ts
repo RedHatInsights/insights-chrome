@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSegment } from '../analytics/useSegment';
-import { activeModuleAtom } from '../state/atoms';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 
 const badgeQuery = 'div[id^="_pendo-badge_"]';
 const RETRY_ATTEMPS = 10;

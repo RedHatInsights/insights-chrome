@@ -19,7 +19,7 @@ import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
 import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));

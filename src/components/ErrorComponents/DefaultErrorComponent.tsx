@@ -17,7 +17,7 @@ import { get3scaleError } from '../../utils/responseInterceptors';
 import GatewayErrorComponent from './GatewayErrorComponent';
 import { getUrl } from '../../hooks/useBundle';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 export type DefaultErrorComponentProps = {
   error?: any | Error;

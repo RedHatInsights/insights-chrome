@@ -13,7 +13,7 @@ import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
