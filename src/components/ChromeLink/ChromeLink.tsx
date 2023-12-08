@@ -7,6 +7,8 @@ import { appNavClick } from '../../redux/actions';
 import NavContext, { OnLinkClick } from '../Navigation/navContext';
 import { ReduxState } from '../../redux/store';
 import { NavDOMEvent, RouteDefinition } from '../../@types/types';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
@@ -137,7 +139,7 @@ const RefreshLink: React.FC<RefreshLinkProps> = (props) => {
 
 const ChromeLink: React.FC<LinkWrapperProps> = ({ appId, children, ...rest }) => {
   const { onLinkClick, isNavOpen, inPageLayout } = useContext(NavContext);
-  const currAppId = useSelector(({ chrome }: ReduxState) => chrome?.appId);
+  const currAppId = useAtomValue(activeModuleAtom);
 
   const LinkComponent = !rest.isExternal ? LinkWrapper : RefreshLink;
   return (

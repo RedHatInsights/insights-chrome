@@ -18,7 +18,8 @@ import { activeModuleAtom } from '../../state/atoms';
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
   const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
-  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden || !activeModule);
   const dispatch = useDispatch();
   return useCallback(
     debounce((activeTags: any, search: any) => {
