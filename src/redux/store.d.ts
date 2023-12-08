@@ -1,5 +1,4 @@
 import { QuickStart } from '@patternfly/quickstarts';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { ChromeModule, FlagTagsFilter, NavItem, Navigation, RouteDefinition } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
@@ -40,15 +39,8 @@ export type NotificationsPayload = {
 export type ChromeState = {
   contextSwitcherOpen: boolean;
   activeApp?: string;
-  activeModule?: string;
   activeProduct?: string;
-  /**
-   * @deprecated
-   * App id is replaced by active module. It is still required until we completely remove usage of main.yml
-   */
-  appId?: string;
   missingIDP?: boolean;
-  user?: ChromeUser;
   pageAction?: string;
   pageObjectId?: string;
   modules?: { [key: string]: ChromeModule };

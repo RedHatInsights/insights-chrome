@@ -1,6 +1,7 @@
-import React, { Suspense, lazy, memo, useEffect } from 'react';
+import React, { Suspense, lazy, memo, useContext, useEffect } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
+import { useAtomValue } from 'jotai';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
@@ -12,25 +13,25 @@ import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ReduxState } from '../../redux/store';
-import { AppsConfig } from '@scalprum/core';
 import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
 import { FooterProps } from '../Footer/Footer';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { activeModuleAtom } from '../../state/atoms';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
-export type RootAppProps = FooterProps & {
-  config: AppsConfig;
-};
+export type RootAppProps = FooterProps;
 
 const RootApp = memo((props: RootAppProps) => {
+  const config = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.scalprumConfig);
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
-  const activeModule = useSelector(({ chrome: { activeModule } }: ReduxState) => activeModule);
+  const activeModule = useAtomValue(activeModuleAtom);
   const quickStarts = useSelector(
     ({
       chrome: {
@@ -38,7 +39,7 @@ const RootApp = memo((props: RootAppProps) => {
       },
     }: ReduxState) => Object.values(quickstarts).flat()
   );
-  const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
 
   // verify use loged in scopes
@@ -121,7 +122,7 @@ const RootApp = memo((props: RootAppProps) => {
           </Suspense>
           <QuickStartContainer {...quickStartProps}>
             <HelpTopicContainer helpTopics={helpTopics}>
-              <ScalprumRoot {...props} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+              <ScalprumRoot {...props} config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
             </HelpTopicContainer>
           </QuickStartContainer>
         </FeatureFlagsProvider>

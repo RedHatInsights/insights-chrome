@@ -25,7 +25,6 @@ export function loginReducer(state: ChromeState, { payload }: { payload: ChromeU
   return {
     ...state,
     missingIDP,
-    user: payload,
   };
 }
 
@@ -152,14 +151,6 @@ export function loadModulesSchemaReducer(
     modules: schema,
     scalprumConfig,
     moduleRoutes,
-  };
-}
-
-export function changeActiveModuleReducer(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  return {
-    ...state,
-    activeModule: payload,
-    appId: payload,
   };
 }
 

@@ -11,11 +11,15 @@ import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../r
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
   const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
-  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden || !activeModule);
   const dispatch = useDispatch();
   return useCallback(
     debounce((activeTags: any, search: any) => {
@@ -62,7 +66,9 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     }),
     shallowEqual
   );
-  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden }, chrome: { appId } }: ReduxState) => globalFilterHidden || !appId);
+  const globalFilterHidden = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isDisabled = globalFilterHidden || !activeModule;
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (
     useTagsFilter as unknown as (
@@ -128,7 +134,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 const GlobalFilterWrapper = () => {
   const [hasAccess, setHasAccess] = useState(false);
   const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
-  const userLoaded = useSelector(({ chrome: { user } }: ReduxState) => Boolean(user));
+  const chromeAuth = useContext(ChromeAuthContext);
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
 
@@ -157,7 +163,7 @@ const GlobalFilterWrapper = () => {
       mounted = false;
     };
   }, []);
-  return isGlobalFilterEnabled && userLoaded ? <GlobalFilter hasAccess={hasAccess} /> : null;
+  return isGlobalFilterEnabled && chromeAuth.ready ? <GlobalFilter hasAccess={hasAccess} /> : null;
 };
 
 export default GlobalFilterWrapper;

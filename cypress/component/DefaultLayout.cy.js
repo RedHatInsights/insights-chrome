@@ -10,18 +10,7 @@ import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import Footer from '../../src/components/Footer/Footer';
-
-const Wrapper = ({ children, store }) => (
-  <IntlProvider locale="en">
-    <ScalprumProvider config={{}}>
-      <Provider store={store}>
-        <FeatureFlagsProvider>
-          <BrowserRouter>{children}</BrowserRouter>
-        </FeatureFlagsProvider>
-      </Provider>
-    </ScalprumProvider>
-  </IntlProvider>
-);
+import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
 
 const testUser = {
   identity: {
@@ -44,6 +33,35 @@ const testUser = {
     },
   },
 };
+
+const chromeAuthContextValue = {
+  doOffline: () => Promise.resolve(),
+  getOfflineToken: () => Promise.resolve(),
+  getToken: () => Promise.resolve(''),
+  getUser: () => Promise.resolve(testUser),
+  login: () => Promise.resolve(),
+  loginAllTabs: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+  logoutAllTabs: () => Promise.resolve(),
+  ready: true,
+  token: '',
+  tokenExpires: 0,
+  user: testUser,
+};
+
+const Wrapper = ({ children, store }) => (
+  <IntlProvider locale="en">
+    <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+      <ScalprumProvider config={{}}>
+        <Provider store={store}>
+          <FeatureFlagsProvider>
+            <BrowserRouter>{children}</BrowserRouter>
+          </FeatureFlagsProvider>
+        </Provider>
+      </ScalprumProvider>
+    </ChromeAuthContext.Provider>
+  </IntlProvider>
+);
 
 const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
   if (!loaded) {

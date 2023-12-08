@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
 import type { Store } from 'redux';
-import { LibJWT, crossAccountBouncer } from '../auth';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
+import crossAccountBouncer from '../auth/crossAccountBouncer';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
-const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
+const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
+const AUTH_ALLOWED_ORIGINS = [location.origin, 'https://api.openshift.com', 'https://api.stage.openshift.com'];
 
 const checkOrigin = (path: URL | Request | string = '') => {
-  if (path.constructor.name === 'URL') {
-    return (path as URL).origin === location.origin;
-  } else if (path.constructor.name === 'Request') {
-    return (path as Request).url.includes(location.origin);
-  } else if (path.constructor.name === 'String') {
-    return (path as string).includes(location.origin) || !(path as string).startsWith('http');
+  if (path instanceof URL) {
+    return AUTH_ALLOWED_ORIGINS.includes(path.origin);
+  } else if (path instanceof Request) {
+    return AUTH_ALLOWED_ORIGINS.some((origin) => path.url.includes(origin));
+  } else if (typeof path === 'string') {
+    return AUTH_ALLOWED_ORIGINS.some((origin) => path.includes(origin)) || !path.startsWith('http');
   }
 
   return true;
@@ -38,7 +39,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-function init(store: Store, libJwt?: () => LibJWT | undefined) {
+export function init(store: Store, token: string) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -74,10 +75,10 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url) && libJwt?.()?.jwt.isAuthenticated()) {
+    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url)) {
       if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
-        this.setRequestHeader('Auth', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+        this.setRequestHeader('Auth', `Bearer ${token}`);
       }
     }
     // eslint-disable-line func-names
@@ -87,7 +88,7 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
     this.onload = function () {
       if (this.status >= 400) {
         const gatewayError = get3scaleError(this.response);
-        if (this.status === 403 && this.responseText.includes(DENINED_CROSS_CHECK)) {
+        if (this.status === 403 && this.responseText.includes(DENIED_CROSS_CHECK)) {
           crossAccountBouncer();
           // check for 3scale error
         } else if (gatewayError) {
@@ -107,8 +108,8 @@ function init(store: Store, libJwt?: () => LibJWT | undefined) {
     const tid = Math.random().toString(36);
     const request: Request = new Request(input, init);
 
-    if (checkOrigin(input) && libJwt?.()?.jwt.isAuthenticated() && !request.headers.has('Authorization')) {
-      request.headers.append('Authorization', `Bearer ${libJwt?.()?.jwt.getEncodedToken()}`);
+    if (checkOrigin(input) && !request.headers.has('Authorization')) {
+      request.headers.append('Authorization', `Bearer ${token}`);
     }
 
     const prom = oldFetch.apply(this, [request, ...rest]);

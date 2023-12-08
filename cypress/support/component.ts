@@ -21,6 +21,7 @@ import './commands'
 import '../../src/sass/chrome.scss'
 import '../../src/sass/pf-5-assets.scss'
 import { mount } from 'cypress/react18'
+import '@cypress/code-coverage/support'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

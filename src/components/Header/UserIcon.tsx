@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Avatar } from '@patternfly/react-core/dist/dynamic/components/Avatar';
-import { useSelector } from 'react-redux';
-import { ReduxState } from '../../redux/store';
 
 import ImgAvatar from '../../../static/images/img_avatar.svg';
+import ChromeAuthContext from '../../auth/ChromeAuthContext';
 
 const UserIcon = () => {
-  const username = useSelector(({ chrome }: ReduxState) => chrome.user?.identity.user?.username);
+  const auth = useContext(ChromeAuthContext);
   const [avatar, setAvatar] = useState(ImgAvatar);
 
   const getImage = (img: HTMLImageElement) => {
@@ -17,7 +16,7 @@ const UserIcon = () => {
 
   useEffect(() => {
     const img = new Image();
-    img.src = `https://access.redhat.com/api/users/avatar/${username}/`;
+    img.src = `https://access.redhat.com/api/users/avatar/${auth.user.identity.user?.username ?? ''}/`;
     img.onload = () => getImage(img);
   }, []);
 

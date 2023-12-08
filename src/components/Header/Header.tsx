@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -8,23 +8,21 @@ import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
-import { useSelector } from 'react-redux';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
-import { ReduxState } from '../../redux/store';
 import { activationRequestURLs } from '../../utils/consts';
 import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
+import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
-const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
+const FeedbackRoute = () => {
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
@@ -32,14 +30,14 @@ const FeedbackRoute = ({ user }: { user: DeepRequired<ChromeUser> }) => {
   return (
     <Routes>
       {paths.map((path) => (
-        <Route key={path} path={path} element={<Feedback user={user} />} />
+        <Route key={path} path={path} element={<Feedback />} />
       ))}
     </Routes>
   );
 };
 
 export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbsprops }) => {
-  const user = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.user);
+  const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
   const isITLessEnv = ITLess();
@@ -66,7 +64,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         </Toolbar>
       </MastheadMain>
       <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
-        {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute user={user} />, document.body)}
+        {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
@@ -106,8 +104,8 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
 };
 
 export const HeaderTools = () => {
-  const user = useSelector(({ chrome }: ReduxState) => chrome?.user);
-  if (!user) {
+  const { ready } = useContext(ChromeAuthContext);
+  if (!ready) {
     return <UnAuthtedHeader />;
   }
   return <Tools />;

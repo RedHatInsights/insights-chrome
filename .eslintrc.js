@@ -20,6 +20,33 @@ module.exports = {
       rules: {
         'react/prop-types': 'off',
         '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used' }],
+        'no-restricted-imports': [
+          'error',
+          {
+            // restrict importing auth packages methods directly
+            // Use of the ChromeAuthContext must be enforced
+            paths: [
+              {
+                name: 'react-oidc-context',
+                message: 'Do not import react-oidc-context directly. Use the ChromeAuthContext instead!',
+              },
+              {
+                name: 'oidc-client-ts',
+                message: 'Do not import oidc-client-ts directly. Use the ChromeAuthContext instead!',
+              },
+            ],
+            patterns: [
+              {
+                group: ['**/cognito/*'],
+                message: 'Do not import cognito auth methods directly. Use the ChromeAuthContext instead!',
+              },
+              {
+                group: ['**/OIDCConnector/utils'],
+                message: 'Do not OIDC auth utils directly. Use the ChromeAuthContext instead!',
+              },
+            ],
+          },
+        ],
       },
     },
   ],

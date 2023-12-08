@@ -22,6 +22,8 @@ export default defineConfig({
           launchOptions.preferences.height = 720;
         }
       });
+      require('@cypress/code-coverage/task')(on, config);
+      return config;
     },
     video: false,
     devServer: {
