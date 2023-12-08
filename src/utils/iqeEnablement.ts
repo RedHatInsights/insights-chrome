@@ -9,15 +9,16 @@ import crossAccountBouncer from '../auth/crossAccountBouncer';
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
-const DENINED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
+const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
+const AUTH_ALLOWED_ORIGINS = [location.origin, 'https://api.openshift.com', 'https://api.stage.openshift.com'];
 
 const checkOrigin = (path: URL | Request | string = '') => {
-  if (path.constructor.name === 'URL') {
-    return (path as URL).origin === location.origin;
-  } else if (path.constructor.name === 'Request') {
-    return (path as Request).url.includes(location.origin);
-  } else if (path.constructor.name === 'String') {
-    return (path as string).includes(location.origin) || !(path as string).startsWith('http');
+  if (path instanceof URL) {
+    return AUTH_ALLOWED_ORIGINS.includes(path.origin);
+  } else if (path instanceof Request) {
+    return AUTH_ALLOWED_ORIGINS.some((origin) => path.url.includes(origin));
+  } else if (typeof path === 'string') {
+    return AUTH_ALLOWED_ORIGINS.some((origin) => path.includes(origin)) || !path.startsWith('http');
   }
 
   return true;
@@ -87,7 +88,7 @@ export function init(store: Store, token: string) {
     this.onload = function () {
       if (this.status >= 400) {
         const gatewayError = get3scaleError(this.response);
-        if (this.status === 403 && this.responseText.includes(DENINED_CROSS_CHECK)) {
+        if (this.status === 403 && this.responseText.includes(DENIED_CROSS_CHECK)) {
           crossAccountBouncer();
           // check for 3scale error
         } else if (gatewayError) {
