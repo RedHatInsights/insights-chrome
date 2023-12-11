@@ -96,6 +96,7 @@ export const createChromeContext = ({
   const api: ChromeAPI = {
     ...actions,
     auth: {
+      getRefreshToken: chromeAuth.getRefreshToken,
       getToken: chromeAuth.getToken,
       getUser: chromeAuth.getUser,
       logout: chromeAuth.logout,

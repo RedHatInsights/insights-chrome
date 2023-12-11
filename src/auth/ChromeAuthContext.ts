@@ -14,12 +14,14 @@ export type ChromeAuthContextValue<LoginResponse = void> = {
   login: (requiredScopes?: string[]) => Promise<LoginResponse>;
   tokenExpires: number;
   getToken: () => Promise<string>;
+  getRefreshToken: () => Promise<string>;
   postbackUrl?: string;
   getOfflineToken: () => Promise<AxiosResponse<OfflineTokenResponse>>;
   doOffline: () => Promise<void>;
 };
 
 const blankUser: ChromeUser = {
+  scope: [],
   entitlements: {},
   identity: {
     org_id: '',
@@ -34,6 +36,7 @@ const ChromeAuthContext = createContext<ChromeAuthContextValue>({
   logout: () => undefined,
   login: () => Promise.resolve(),
   getToken: () => Promise.resolve(''),
+  getRefreshToken: () => Promise.resolve(''),
   getOfflineToken: () =>
     Promise.resolve({
       data: {},

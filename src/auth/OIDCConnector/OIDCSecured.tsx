@@ -19,6 +19,7 @@ import { login, logout } from './utils';
 import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
+import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -28,6 +29,7 @@ const log = logger('OIDCSecured.tsx');
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
   return {
+    scope: [],
     entitlements,
     identity: {
       org_id: user.profile?.org_id as any,
@@ -92,12 +94,15 @@ export function OIDCSecured({
       authChannel.postMessage({ type: 'login' });
     },
     getToken: () => Promise.resolve(authRef.current.user?.access_token ?? ''),
-    getOfflineToken: () =>
-      getOfflineToken(
+    getRefreshToken: () => Promise.resolve(authRef.current.user?.refresh_token ?? ''),
+    getOfflineToken: () => {
+      const redirectUri = new URL(localStorage.getItem(OFFLINE_REDIRECT_STORAGE_KEY) || `${window.location.origin}${window.location.pathname}`);
+      return getOfflineToken(
         authRef.current.settings.metadata?.token_endpoint ?? '',
         authRef.current.settings.client_id,
-        encodeURIComponent((authRef.current.settings.metadata?.token_endpoint ?? '').split('#')[0])
-      ),
+        encodeURIComponent(redirectUri.toString().split('#')[0])
+      );
+    },
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
