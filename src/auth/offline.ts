@@ -108,12 +108,14 @@ export function postbackUrlSetup() {
     // nuke the params so that people dont see the ugly
     const url = new URL(window.location.href);
     url.searchParams.delete(noAuthParam);
+    url.hash = '';
     window.history.pushState('offlinePostback', '', url.toString());
   }
 }
 
 export function prepareOfflineRedirect(base = window.location.href) {
   const url = new URL(base);
+  url.hash = '';
   url.searchParams.delete(noAuthParam);
   url.searchParams.append(noAuthParam, offlineToken);
   const redirectUri = url.toString().replace('/?', '?');
