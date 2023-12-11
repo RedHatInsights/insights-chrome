@@ -32,7 +32,7 @@ const LandingNavFavorites = () => {
     return favoritedServices.slice((page - 1) * perPage, page * perPage).map((favorite, index) => (
       <GalleryItem key={index}>
         <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
-          <Card isClickable>
+          <Card className="chr-c-card-landing-fav" isClickable>
             <CardHeader selectableActions={{ selectableActionId: 'id', selectableActionAriaLabelledby: 'clickable-card' }} className="pf-v5-u-pb-0">
               <CardTitle className="pf-v5-u-text-align-center pf-v5-u-active-color-100 pf-v5-u-font-size-sm">{favorite.name}</CardTitle>
             </CardHeader>
