@@ -8,6 +8,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 function buildUser(token: any): DeepRequired<ChromeUser> {
   return {
     entitlements: {},
+    scope: [],
     identity: {
       account_number: token.account_number || '540155',
       type: 'User',

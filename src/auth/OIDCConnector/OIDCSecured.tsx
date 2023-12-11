@@ -28,6 +28,7 @@ const log = logger('OIDCSecured.tsx');
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
   return {
+    scope: [],
     entitlements,
     identity: {
       org_id: user.profile?.org_id as any,
@@ -92,6 +93,7 @@ export function OIDCSecured({
       authChannel.postMessage({ type: 'login' });
     },
     getToken: () => Promise.resolve(authRef.current.user?.access_token ?? ''),
+    getRefreshToken: () => Promise.resolve(authRef.current.user?.refresh_token ?? ''),
     getOfflineToken: () =>
       getOfflineToken(
         authRef.current.settings.metadata?.token_endpoint ?? '',
