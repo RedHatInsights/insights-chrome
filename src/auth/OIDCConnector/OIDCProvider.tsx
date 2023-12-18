@@ -58,7 +58,10 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       response_type: 'code',
       response_mode: 'fragment',
       onSigninCallback: () => {
-        window.history.replaceState({}, document.title, window.location.pathname);
+        const startUrl = new URL(window.location.href);
+        // remove the SSO code params from the URL
+        startUrl.hash = '';
+        window.history.replaceState({}, document.title, startUrl);
       },
       userStore: new WebStorageStateStore({ store: window.localStorage }),
     }),
