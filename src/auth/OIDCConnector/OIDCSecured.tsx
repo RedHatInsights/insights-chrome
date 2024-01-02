@@ -20,6 +20,7 @@ import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { setCookie } from '../setCookie';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -177,6 +178,7 @@ export function OIDCSecured({
 
   useEffect(() => {
     authRef.current = auth;
+    setCookie(authRef.current?.user?.access_token ?? '', authRef.current.user?.expires_at ?? 0);
   }, [auth]);
 
   if (!auth.isAuthenticated || !state.ready) {
