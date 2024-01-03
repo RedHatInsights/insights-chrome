@@ -50,8 +50,8 @@ describe('useQuickstartsStates stage', () => {
   const postSpy = jest.spyOn(axios.default, 'post');
 
   afterEach(() => {
-    getSpy.mockReset();
-    postSpy.mockReset();
+    getSpy.mockClear();
+    postSpy.mockClear();
   });
 
   test('should not call API if no account Id exists', () => {
