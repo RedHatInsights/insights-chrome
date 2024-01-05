@@ -20,6 +20,7 @@ module.exports = {
       rules: {
         'react/prop-types': 'off',
         '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used' }],
+        '@typescript-eslint/no-explicit-any': 'warn',
         'no-restricted-imports': [
           'error',
           {
