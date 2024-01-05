@@ -292,7 +292,22 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             <>
               <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined}>
                 {searchItems.map((item, index) => (
-                  <MenuItem key={index} className="pf-v5-u-mb-xs" component={(props) => <ChromeLink {...props} href={item.pathname} />}>
+                  <MenuItem
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        /**
+                         * Needs pushed to the end of the execution queue to not "swallow" the event
+                         * First the navigation event must execute and
+                         *  */
+                        setTimeout(() => {
+                          setIsOpen(false);
+                        });
+                      }
+                    }}
+                    key={index}
+                    className="pf-v5-u-mb-xs"
+                    component={(props) => <ChromeLink {...props} href={item.pathname} />}
+                  >
                     <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} />
                     <SearchDescription description={item.description} />
                   </MenuItem>
