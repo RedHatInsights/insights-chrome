@@ -25,6 +25,9 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import { createSupportCase } from '../../utils/createCase';
 import './Feedback.scss';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useSegment } from '../../analytics/useSegment';
+
+const FEEDBACK_OPEN_EVENT = 'chrome.feedback.open';
 
 export type FeedbackPages =
   | 'feedbackHome'
@@ -44,6 +47,7 @@ const FeedbackModal = memo(() => {
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const { getEnvironment } = useContext(InternalChromeContext);
   const chromeAuth = useContext(ChromeAuthContext);
+  const { analytics } = useSegment();
   const user = chromeAuth.user as DeepRequired<ChromeUser>;
   const env = getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
@@ -196,6 +200,7 @@ const FeedbackModal = memo(() => {
         className="chr-c-button-feedback"
         onClick={() => {
           if (!usePendoFeedback) {
+            analytics?.track(FEEDBACK_OPEN_EVENT);
             setIsModalOpen(true);
           }
         }}

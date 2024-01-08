@@ -27,6 +27,7 @@ export const bundleMapping: {
   iam: 'Identity & Access Management',
   internal: 'Internal',
   quay: 'Quay.io',
+  subscriptions: 'Subscription Services',
 };
 
 const useBundle = () => {
