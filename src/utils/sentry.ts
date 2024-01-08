@@ -3,6 +3,8 @@ import { BrowserTracing } from '@sentry/tracing';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isProd } from './common';
 
+let sentryInitialized = false;
+
 function getAppDetails() {
   const pathName = window.location.pathname.split('/');
   let appGroup;
@@ -32,6 +34,11 @@ function getAppDetails() {
 
 // Actually initialize sentry with the group's api key
 function initSentry() {
+  if (sentryInitialized) {
+    return;
+  }
+
+  sentryInitialized = true;
   const appDetails = getAppDetails();
 
   let API_KEY;
