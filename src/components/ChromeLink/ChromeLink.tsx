@@ -8,7 +8,7 @@ import NavContext, { OnLinkClick } from '../Navigation/navContext';
 import { ReduxState } from '../../redux/store';
 import { NavDOMEvent, RouteDefinition } from '../../@types/types';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;

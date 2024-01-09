@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl';
 import Messages from '../../locales/Messages';
 import { ThreeScaleError } from '../../utils/responseInterceptors';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 export type GatewayErrorComponentProps = {
   error: ThreeScaleError;
