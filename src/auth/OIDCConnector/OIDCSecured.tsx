@@ -22,6 +22,7 @@ import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { loadModulesSchema } from '../../redux/actions';
+import { setCookie } from '../setCookie';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -182,6 +183,7 @@ export function OIDCSecured({
 
   useEffect(() => {
     authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
 
   if (!auth.isAuthenticated || !state.ready) {
