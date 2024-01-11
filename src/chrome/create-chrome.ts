@@ -105,7 +105,7 @@ export const createChromeContext = ({
       getOfflineToken: chromeAuth.getOfflineToken,
       qe: {
         ...qe,
-        init: () => qe.init(store, chromeAuth.token),
+        init: () => qe.init(store, { current: { user: { access_token: chromeAuth.token } } as any }),
       },
     },
     initialized: true,

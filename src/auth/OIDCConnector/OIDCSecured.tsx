@@ -133,7 +133,7 @@ export function OIDCSecured({
   async function onUserAuthenticated(user: User) {
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
-    init(store, user.access_token);
+    init(store, authRef);
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);

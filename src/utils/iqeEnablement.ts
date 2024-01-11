@@ -4,6 +4,8 @@ import type { Store } from 'redux';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
+// eslint-disable-next-line no-restricted-imports
+import type { AuthContextProps } from 'react-oidc-context';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
@@ -39,7 +41,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-export function init(store: Store, token: string) {
+export function init(store: Store, authRef: React.MutableRefObject<AuthContextProps>) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -78,7 +80,7 @@ export function init(store: Store, token: string) {
     if (checkOrigin((this as XMLHttpRequest & { _url: string })._url)) {
       if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
-        this.setRequestHeader('Auth', `Bearer ${token}`);
+        this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
     }
     // eslint-disable-line func-names
@@ -109,7 +111,7 @@ export function init(store: Store, token: string) {
     const request: Request = new Request(input, init);
 
     if (checkOrigin(input) && !request.headers.has('Authorization')) {
-      request.headers.append('Authorization', `Bearer ${token}`);
+      request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
     }
 
     const prom = oldFetch.apply(this, [request, ...rest]);
