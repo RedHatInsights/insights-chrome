@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
 import { AppMetadata, removeScalprum } from '@scalprum/core';
+import type { AuthContextProps } from 'react-oidc-context';
 
 import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
 import chromeReducer from '../../src/redux';
@@ -46,7 +47,7 @@ function createEnv(code?: string) {
   // initialize user object for feature flags
   reduxStore.dispatch(userLogIn(testUser));
   // initializes request interceptors
-  qe.init(reduxStore, 'foo');
+  qe.init(reduxStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
   reduxStore.dispatch(
     loadModulesSchema({
       [code]: {
