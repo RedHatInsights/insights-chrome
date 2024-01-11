@@ -6,7 +6,6 @@ import { useDispatch, useStore } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
 import { generateRoutesList } from '../../utils/common';
-import { loadModulesSchema } from '../../redux/actions';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
@@ -20,6 +19,10 @@ import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { useSetAtom } from 'jotai';
+import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
+import { loadModulesSchema } from '../../redux/actions';
+import { setCookie } from '../setCookie';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -80,6 +83,7 @@ export function OIDCSecured({
   const authRef = useRef(auth);
   const store = useStore();
   const dispatch = useDispatch();
+  const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const [state, setState] = useState<ChromeAuthContextValue>({
     ready: false,
     logoutAllTabs: (bounce = true) => {
@@ -113,6 +117,8 @@ export function OIDCSecured({
   const startChrome = async () => {
     const routes = generateRoutesList(microFrontendConfig);
     dispatch(loadModulesSchema(microFrontendConfig));
+    // eventually all attributes will be stored in jotai atom
+    setScalprumConfigAtom(microFrontendConfig);
 
     const initialModuleScope = getInitialScope(routes, window.location.pathname);
 
@@ -127,7 +133,7 @@ export function OIDCSecured({
   async function onUserAuthenticated(user: User) {
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
-    init(store, user.access_token);
+    init(store, authRef);
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
@@ -177,6 +183,7 @@ export function OIDCSecured({
 
   useEffect(() => {
     authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
 
   if (!auth.isAuthenticated || !state.ready) {

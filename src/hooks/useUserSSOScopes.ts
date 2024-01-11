@@ -4,7 +4,7 @@ import { ReduxState } from '../redux/store';
 import { LOGIN_SCOPES_STORAGE_KEY } from '../utils/common';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../state/atoms';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 
 /**
  * If required, attempt to reauthenticate current user with full profile login.

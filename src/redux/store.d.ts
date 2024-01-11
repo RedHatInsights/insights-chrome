@@ -45,13 +45,6 @@ export type ChromeState = {
   pageObjectId?: string;
   modules?: { [key: string]: ChromeModule };
   navigation: InternalNavigation;
-  scalprumConfig?: {
-    [key: string]: {
-      name: string;
-      manifestLocation: string;
-      module?: string;
-    };
-  };
   moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
