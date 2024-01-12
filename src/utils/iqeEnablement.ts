@@ -13,14 +13,24 @@ let fetchResults: Record<string, unknown> = {};
 
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 const AUTH_ALLOWED_ORIGINS = [location.origin, 'https://api.openshift.com', 'https://api.stage.openshift.com'];
+const AUTH_EXCLUDED_URLS = ['https://api.openshift.com/api/upgrades_info/', 'https://api.stage.openshift.com/api/upgrades_info/'];
 
-const checkOrigin = (path: URL | Request | string = '') => {
+const isExcluded = (target: string) => {
+  return AUTH_EXCLUDED_URLS.some((url) => target.includes(url));
+};
+
+const verifyTarget = (originMatch: string, urlMatch: string) => {
+  return AUTH_ALLOWED_ORIGINS.some((origin) => originMatch.includes(origin)) && !isExcluded(urlMatch);
+};
+
+const shouldInjectAuthHeaders = (path: URL | Request | string = '') => {
   if (path instanceof URL) {
-    return AUTH_ALLOWED_ORIGINS.includes(path.origin);
+    // the type URL has a different match function than the cases above
+    return AUTH_ALLOWED_ORIGINS.includes(path.origin) && !isExcluded(path.href);
   } else if (path instanceof Request) {
-    return AUTH_ALLOWED_ORIGINS.some((origin) => path.url.includes(origin));
+    return verifyTarget(path.url, path.url);
   } else if (typeof path === 'string') {
-    return AUTH_ALLOWED_ORIGINS.some((origin) => path.includes(origin)) || !path.startsWith('http');
+    return verifyTarget(path, path) || !path.startsWith('http');
   }
 
   return true;
@@ -77,7 +87,7 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url)) {
+    if (shouldInjectAuthHeaders((this as XMLHttpRequest & { _url: string })._url)) {
       if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
         this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
@@ -110,7 +120,7 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
     const tid = Math.random().toString(36);
     const request: Request = new Request(input, init);
 
-    if (checkOrigin(input) && !request.headers.has('Authorization')) {
+    if (shouldInjectAuthHeaders(input) && !request.headers.has('Authorization')) {
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
     }
 
