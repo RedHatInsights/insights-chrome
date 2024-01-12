@@ -64,8 +64,7 @@ export function login(auth: AuthContextProps, requiredScopes: string[] = [], red
   log('Logging in');
   // Redirect to login
   Cookies.set('cs_loggedOut', 'false');
-  // TODO: Remove once ephemeral environment supports full and thin profile
-  let scope = ['openid', ...requiredScopes];
+  let scope = ['openid', 'api.console', ...requiredScopes];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
