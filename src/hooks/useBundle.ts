@@ -28,6 +28,8 @@ export const bundleMapping: {
   internal: 'Internal',
   quay: 'Quay.io',
   subscriptions: 'Subscription Services',
+  docs: 'Documentation',
+  'user-preferences': 'User Preferences',
 };
 
 const useBundle = () => {
