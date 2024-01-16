@@ -94,28 +94,48 @@ const Tools = () => {
     messages.betaRelease
   )}`;
 
-  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+  // const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor'); // TODO: should this affect what is shown in new drop-down?
   const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownItems = [
     {
-      url: settingsPath,
-      title: 'Settings',
+      url: '/settings/integrations',
+      title: 'Integrations',
       target: '_self',
       appId: 'sources',
     },
-    ...(enableAuthDropdownOption
-      ? [
-          {
-            url: identityAndAccessManagmentPath,
-            title: 'Identity & Access Management',
-            target: '_self',
-            appId: 'iam',
-          },
-        ]
-      : []),
+    {
+      url: '/settings/notifications',
+      title: 'Notifications',
+      target: '_self',
+      appId: 'sources',
+    },
+    {
+      url: identityAndAccessManagmentPath,
+      title: 'User Access',
+      target: '_self',
+      appId: 'iam',
+    },
+    {
+      url: '/iam/my-user-access',
+      title: 'My User Access',
+      target: '_self',
+      appId: 'iam',
+    },
+    {
+      url: '/iam/authentication-policy',
+      title: 'Authentication Policy',
+      target: '_self',
+      appId: 'iam',
+    },
+    {
+      url: '/application-services/service-accounts',
+      title: 'Service Accounts',
+      target: '_self',
+      appId: 'iam',
+    },
   ];
 
   useEffect(() => {
