@@ -1,6 +1,7 @@
 import React, { memo, useContext, useState } from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Grid, GridItem } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
@@ -61,40 +62,39 @@ const FeedbackModal = memo(() => {
       case 'feedbackHome':
         return (
           <div className="chr-c-feedback-content">
-            <TextContent>
-              <Text component={TextVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Text>
-              <Text>{intl.formatMessage(messages.helpUsImproveHCC)}</Text>
-            </TextContent>
-            <div className="chr-c-feedback-cards">
-              <Card isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
-                <CardTitle className="chr-c-feedback-card-title">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
+            <FlexItem className="pf-v5-u-flex-grow-1">
+              <TextContent className="pf-v5-u-mb-md">
+                <Text component={TextVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Text>
+                <Text>{intl.formatMessage(messages.helpUsImproveHCC)}</Text>
+              </TextContent>
+              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
+                <CardTitle className="pf-v5-u-primary-color-100">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.howIsConsoleExperience)}</CardBody>
               </Card>
-              <br />
-              <Card isSelectableRaised isCompact onClick={() => setModalPage('reportBugOne')}>
-                <CardTitle className="chr-c-feedback-card-title">{intl.formatMessage(messages.reportABug)}</CardTitle>
+              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('reportBugOne')}>
+                <CardTitle className="pf-v5-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
-              <br />
-              <Card isSelectableRaised isCompact onClick={() => createSupportCase(user.identity, chromeAuth.token)}>
-                <CardTitle className="chr-c-feedback-card-title">
+              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => createSupportCase(user.identity, chromeAuth.token)}>
+                <CardTitle className="pf-v5-u-primary-color-100">
                   <Text>
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
                   </Text>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.getSupport)}</CardBody>
               </Card>
-              <br />
-              <Card isSelectableRaised isCompact onClick={() => setModalPage('informDirection')}>
-                <CardTitle className="chr-c-feedback-card-title">
+              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('informDirection')}>
+                <CardTitle className="pf-v5-u-primary-color-100">
                   <Text>{intl.formatMessage(messages.informRedhatDirection)}</Text>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.learnAboutResearchOpportunities)}</CardBody>
               </Card>
-            </div>
-            <Button className="chr-c-feedback-button" ouiaId="cancel-feedback" key="cancel" variant="link" onClick={handleCloseModal}>
-              {intl.formatMessage(messages.cancel)}
-            </Button>
+            </FlexItem>
+            <FlexItem>
+              <Button className="chr-c-feedback-button" ouiaId="cancel-feedback" key="cancel" variant="link" onClick={handleCloseModal}>
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </FlexItem>
           </div>
         );
       case 'feedbackOne':
