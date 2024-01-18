@@ -13,7 +13,8 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/quest
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
-import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
+import ToolbarToggle from './ToolbarToggle';
+import SettingsToggle, { SettingsToggleDropdownGroups } from './SettingsToggle';
 import HeaderAlert from './HeaderAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
@@ -55,12 +56,12 @@ const InternalButton = () => (
 );
 
 type SettingsButtonProps = {
-  settingsMenuDropdownItems: ToolbarToggleDropdownItem[];
+  settingsMenuDropdownGroups: SettingsToggleDropdownGroups;
 };
 
-const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
+const SettingsButton = ({ settingsMenuDropdownGroups }: SettingsButtonProps) => (
   <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
-    <ToolbarToggle
+    <SettingsToggle
       key="Settings menu"
       icon={() => <CogIcon />}
       id="SettingsMenu"
@@ -68,7 +69,7 @@ const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
       ouiaId="chrome-settings"
       hasToggleIndicator={null}
       widget-type="SettingsMenu"
-      dropdownItems={settingsMenuDropdownItems}
+      dropdownItems={settingsMenuDropdownGroups}
       className="tooltip-button-settings-cy"
     />
   </Tooltip>
@@ -99,42 +100,52 @@ const Tools = () => {
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
-  const settingsMenuDropdownItems = [
+  const settingsMenuDropdownGroups = [
     {
-      url: '/settings/integrations',
-      title: 'Integrations',
-      target: '_self',
-      appId: 'sources',
+      title: 'Settings',
+      items: [
+        {
+          url: '/settings/integrations',
+          title: 'Integrations',
+          target: '_self',
+          appId: 'sources',
+        },
+        {
+          url: '/settings/notifications',
+          title: 'Notifications',
+          target: '_self',
+          appId: 'sources',
+        },
+      ],
     },
     {
-      url: '/settings/notifications',
-      title: 'Notifications',
-      target: '_self',
-      appId: 'sources',
-    },
-    {
-      url: identityAndAccessManagmentPath,
-      title: 'User Access',
-      target: '_self',
-      appId: 'iam',
-    },
-    {
-      url: '/iam/my-user-access',
-      title: 'My User Access',
-      target: '_self',
-      appId: 'iam',
-    },
-    {
-      url: '/iam/authentication-policy',
-      title: 'Authentication Policy',
-      target: '_self',
-      appId: 'iam',
-    },
-    {
-      url: '/application-services/service-accounts',
-      title: 'Service Accounts',
-      target: '_self',
-      appId: 'iam',
+      title: 'Identity and Access Management',
+      items: [
+        {
+          url: identityAndAccessManagmentPath,
+          title: 'User Access',
+          target: '_self',
+          appId: 'iam',
+        },
+        {
+          url: '/iam/my-user-access',
+          title: 'My User Access',
+          target: '_self',
+          appId: 'iam',
+        },
+        {
+          url: '/iam/authentication-policy',
+          title: 'Authentication Policy',
+          target: '_self',
+          appId: 'iam',
+        },
+        {
+          url: '/application-services/service-accounts',
+          title: 'Service Accounts',
+          target: '_self',
+          appId: 'iam',
+        },
+      ],
     },
   ];
 
@@ -291,7 +302,7 @@ const Tools = () => {
         </ToolbarItem>
       )}
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
+        {<SettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />}
       </ToolbarItem>
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
