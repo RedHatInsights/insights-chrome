@@ -122,14 +122,14 @@ const Tools = () => {
       title: 'Identity and Access Management',
       items: [
         {
-          url: identityAndAccessManagmentPath,
-          title: 'User Access',
+          url: '/iam/my-user-access',
+          title: 'My User Access',
           target: '_self',
           appId: 'iam',
         },
         {
-          url: '/iam/my-user-access',
-          title: 'My User Access',
+          url: identityAndAccessManagmentPath,
+          title: 'User Access',
           target: '_self',
           appId: 'iam',
         },
