@@ -15,7 +15,7 @@ COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-fronten
 # Build and Publish to Quay
 # ---------------------------
 
-set -x
+set -e
 
 docker run -t \
   -v $PWD:/e2e:ro,Z \
@@ -51,7 +51,7 @@ SHORT_SHA=$(git rev-parse --short HEAD)
 IMAGE_TAG="pr-${ghprbPullId}-${SHORT_SHA}"
 echo "Expecting image tag ${IMAGE_TAG}"
 
-set -x
+set -e
 # Deploy to an ephemeral namespace for testing
 # We deploy rbac and override the image tag for insights-frontend-chrome
 export IMAGE="quay.io/cloudservices/insights-chrome-frontend"
