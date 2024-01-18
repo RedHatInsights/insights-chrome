@@ -59,7 +59,10 @@ export GIT_COMMIT=master
 export DEPLOY_FRONTENDS=true
 source $CICD_ROOT/deploy_ephemeral_env.sh
 
+echo "Taking a short nap to let the deployment stabilize"
+sleep 60
 
+echo "Running tests with CJI"
 # Run some tests with ClowdJobInvocation
 export IQE_IMAGE_TAG="platform-ui"
 IQE_PLUGINS="platform_ui"
