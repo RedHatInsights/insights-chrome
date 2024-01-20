@@ -134,7 +134,7 @@ const Tools = () => {
           appId: 'iam',
         },
         {
-          url: '/iam/authentication-policy',
+          url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
           target: '_self',
           appId: 'iam',
