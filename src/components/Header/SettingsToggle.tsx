@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownItem, DropdownList, DropdownGroup } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { isBeta } from '../../utils/common';
-
-export type SettingsToggleDropdownGroups = SettingsToggleDropdownGroup[];
 
 export type SettingsToggleDropdownGroup = {
   title: string;
@@ -27,7 +25,7 @@ export type SettingsToggleDropdownItem = {
 
 export type SettingsToggleProps = {
   icon?: React.ElementType;
-  dropdownItems: SettingsToggleDropdownGroups;
+  dropdownItems: SettingsToggleDropdownGroup[];
   widgetType?: string | number;
   className?: string;
   id?: string | number;

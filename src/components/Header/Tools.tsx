@@ -13,8 +13,8 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/quest
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
-import ToolbarToggle from './ToolbarToggle';
-import SettingsToggle, { SettingsToggleDropdownGroups } from './SettingsToggle';
+import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
+import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import HeaderAlert from './HeaderAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
@@ -56,10 +56,30 @@ const InternalButton = () => (
 );
 
 type SettingsButtonProps = {
-  settingsMenuDropdownGroups: SettingsToggleDropdownGroups;
+  settingsMenuDropdownItems: ToolbarToggleDropdownItem[];
 };
 
-const SettingsButton = ({ settingsMenuDropdownGroups }: SettingsButtonProps) => (
+const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
+  <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
+    <ToolbarToggle
+      key="Settings menu"
+      icon={() => <CogIcon />}
+      id="SettingsMenu"
+      ariaLabel="Settings menu"
+      ouiaId="chrome-settings"
+      hasToggleIndicator={null}
+      widget-type="SettingsMenu"
+      dropdownItems={settingsMenuDropdownItems}
+      className="tooltip-button-settings-cy"
+    />
+  </Tooltip>
+);
+
+type NewSettingsButtonProps = {
+  settingsMenuDropdownGroups: SettingsToggleDropdownGroup[];
+};
+
+const NewSettingsButton = ({ settingsMenuDropdownGroups }: NewSettingsButtonProps) => (
   <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
     <SettingsToggle
       key="Settings menu"
@@ -95,7 +115,8 @@ const Tools = () => {
     messages.betaRelease
   )}`;
 
-  // const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor'); // TODO: should this affect what is shown in new drop-down?
+  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
   const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
@@ -147,6 +168,26 @@ const Tools = () => {
         },
       ],
     },
+  ];
+
+  // Old settings menu
+  const settingsMenuDropdownItems = [
+    {
+      url: settingsPath,
+      title: 'Settings',
+      target: '_self',
+      appId: 'sources',
+    },
+    ...(enableAuthDropdownOption
+      ? [
+          {
+            url: identityAndAccessManagmentPath,
+            title: 'Identity & Access Management',
+            target: '_self',
+            appId: 'iam',
+          },
+        ]
+      : []),
   ];
 
   useEffect(() => {
@@ -302,7 +343,11 @@ const Tools = () => {
         </ToolbarItem>
       )}
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {<SettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />}
+        {enableExpandedSettings ? (
+          <NewSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
+        ) : (
+          <SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />
+        )}
       </ToolbarItem>
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
