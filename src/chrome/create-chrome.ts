@@ -107,6 +107,7 @@ export const createChromeContext = ({
         ...qe,
         init: () => qe.init(store, { current: { user: { access_token: chromeAuth.token } } as any }),
       },
+      reAuthWithScopes: chromeAuth.reAuthWithScopes,
     },
     initialized: true,
     isProd,
