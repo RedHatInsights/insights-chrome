@@ -2,7 +2,7 @@ import * as actionTypes from './action-types';
 import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
-import type { ChromeModule, FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
+import type { FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
 import type { AccessRequest, NotificationData, NotificationsPayload } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 import type { ThreeScaleError } from '../utils/responseInterceptors';
@@ -80,19 +80,6 @@ export function removeGlobalFilter(isHidden = true) {
   };
 }
 
-export function registerModule(module?: string, manifest?: string) {
-  if (!module) {
-    throw new Error(`unknown module identifier: ${module}`);
-  }
-  return {
-    type: actionTypes.REGISTER_MODULE,
-    payload: {
-      module,
-      manifest,
-    },
-  };
-}
-
 export const loadNavigationLandingPage = (schema: NavItem[]) => ({
   type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
   payload: schema,
@@ -105,13 +92,6 @@ export const loadLeftNavSegment = (schema: Navigation, segment: string, pathName
     schema,
     pathName,
     shouldMerge,
-  },
-});
-
-export const loadModulesSchema = (schema: { [key: string]: ChromeModule }) => ({
-  type: actionTypes.LOAD_MODULES_SCHEMA,
-  payload: {
-    schema,
   },
 });
 

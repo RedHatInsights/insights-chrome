@@ -115,6 +115,7 @@ describe('create chrome', () => {
     },
     setPageMetadata: jest.fn(),
     useGlobalFilter: jest.fn(),
+    registerModule: jest.fn(),
   };
   beforeAll(() => {
     const mockAuthMethods = {

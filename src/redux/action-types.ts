@@ -13,11 +13,8 @@ export const GLOBAL_FILTER_UPDATE = '@@chrome/global-filter-update';
 export const GLOBAL_FILTER_TOGGLE = '@@chrome/global-filter-toggle';
 export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 
-export const REGISTER_MODULE = '@@chrome/register-async-module';
-
 export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
 export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
-export const LOAD_MODULES_SCHEMA = '@@chrome/load-modules-schema';
 
 export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
 export const TOGGLE_FEEDBACK_MODAL = '@@chrome/toggle-feedback-modal';

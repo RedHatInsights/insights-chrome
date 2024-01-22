@@ -8,11 +8,13 @@ import useBundle from './useBundle';
 import { NavItem } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
 import { extractNavItemGroups, isNavItems } from '../utils/fetchNavigationFiles';
+import { useAtomValue } from 'jotai';
+import { moduleRoutesAtom } from '../state/atoms/chromeModuleAtom';
 
 const useBreadcrumbsLinks = () => {
   const { bundleId, bundleTitle } = useBundle();
+  const routes = useAtomValue(moduleRoutesAtom);
   const navigation = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
-  const routes = useSelector(({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes);
   const { pathname } = useLocation();
   const [segments, setSegments] = useState<Required<NavItem, 'href'>[]>([]);
   const wildCardRoutes = useMemo(() => routes.map((item) => ({ ...item, path: `${item.path}/*` })), [routes]);
