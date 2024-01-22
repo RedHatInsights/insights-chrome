@@ -36,14 +36,6 @@ button.pf-v5-c-button.chr-c-button-feedback {
   }
 }
 
-.chr-c-feedback-cards {
-  margin: var(--pf-v5-global--spacer--sm);
-}
-
-.chr-c-feedback-card-title {
-  color: var(--pf-v5-global--link--Color);
-}
-
 .chr-c-feedback {
   width: 100%;
   display: flex;
@@ -61,8 +53,6 @@ button.pf-v5-c-button.chr-c-button-feedback {
 .chr-c-feedback-button {
   margin: var(--pf-v5-global--spacer--sm);
   text-align: left;
-  position: absolute;
-  bottom: var(--pf-v5-global--spacer--md);
 }
 
 .chr-c-feedback-footer-button {
@@ -87,10 +77,6 @@ button.pf-v5-c-button.chr-c-button-feedback {
 .chr-c-feedback-email {
   margin-top: var(--pf-v5-global--spacer--lg);
   overflow: hidden;
-}
-
-.chr-c-feedback-image {
-  background-color: var(--pf-v5-global--palette--black-150);
 }
 
 .chr-c-feedback-panel {
