@@ -168,7 +168,7 @@ const ScalprumRoot = memo(
         pluginSDKOptions: {
           pluginLoaderOptions: {
             // sharedScope: scope,
-            postProcessManifest: (manifest) => {
+            transformPluginManifest: (manifest) => {
               if (manifest.name === 'chrome') {
                 return {
                   ...manifest,
