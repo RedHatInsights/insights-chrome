@@ -7,14 +7,11 @@ import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/component
 import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core/deprecated';
 
 import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client';
-
-import { onToggleContextSwitcher } from '../../redux/actions';
 
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
@@ -28,7 +25,8 @@ import {
   REQUESTS_DATA,
 } from '../../utils/consts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { ReduxState } from '../../redux/store';
+import { useAtom } from 'jotai';
+import { contextSwitcherOpenAtom } from '../../state/atoms/contextSwitcher';
 
 export type ContextSwitcherProps = {
   user: ChromeUser;
@@ -44,14 +42,13 @@ type CrossAccountRequestInternal = CrossAccountRequest & {
 };
 
 const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
-  const dispatch = useDispatch();
   const intl = useIntl();
-  const isOpen = useSelector(({ chrome }: ReduxState) => chrome?.contextSwitcherOpen);
+  const [isOpen, setIsOpen] = useAtom(contextSwitcherOpenAtom);
   const [data, setData] = useState<CrossAccountRequestInternal[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
   const onSelect = () => {
-    dispatch(onToggleContextSwitcher());
+    setIsOpen((prev) => !prev);
   };
 
   const handleItemClick = (target_account?: string, request_id?: string, end_date?: Date, target_org?: string) => {

@@ -93,10 +93,6 @@ export function registerModule(module?: string, manifest?: string) {
   };
 }
 
-export const onToggleContextSwitcher = () => ({
-  type: actionTypes.TOGGLECONTEXTSWITCHER,
-});
-
 export const loadNavigationLandingPage = (schema: NavItem[]) => ({
   type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
   payload: schema,

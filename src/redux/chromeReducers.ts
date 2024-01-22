@@ -6,13 +6,6 @@ import { ITLess, generateRoutesList, highlightItems, levelArray } from '../utils
 import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState, NotificationData, NotificationsPayload } from './store';
 
-export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
-  return {
-    ...state,
-    contextSwitcherOpen: !state.contextSwitcherOpen,
-  };
-}
-
 export function appNavClick(state: ChromeState, { payload }: { payload: { id: string } }): ChromeState {
   return {
     ...state,

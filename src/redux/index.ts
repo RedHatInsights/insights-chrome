@@ -5,7 +5,6 @@ import {
   addQuickstartstoApp,
   appNavClick,
   clearQuickstartsReducer,
-  contextSwitcherBannerReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
   loadModulesSchemaReducer,
@@ -72,7 +71,6 @@ import {
   REGISTER_MODULE,
   SET_GATEWAY_ERROR,
   SET_PENDO_FEEDBACK_FLAG,
-  TOGGLECONTEXTSWITCHER,
   TOGGLE_DEBUGGER_BUTTON,
   TOGGLE_DEBUGGER_MODAL,
   TOGGLE_FEEDBACK_MODAL,
@@ -91,7 +89,6 @@ const reducers = {
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [REGISTER_MODULE]: onRegisterModule,
-  [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
@@ -132,7 +129,6 @@ const globalFilter = {
 
 export const chromeInitialState: ReduxState = {
   chrome: {
-    contextSwitcherOpen: false,
     navigation: {},
     accessRequests: {
       hasUnseen: false,
@@ -168,7 +164,6 @@ export default function (): {
         quickstarts: {
           quickstarts: {},
         },
-        contextSwitcherOpen: false,
         modules: {},
         moduleRoutes: [],
         notifications: {

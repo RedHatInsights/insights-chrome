@@ -37,7 +37,6 @@ export type NotificationsPayload = {
 };
 
 export type ChromeState = {
-  contextSwitcherOpen: boolean;
   activeApp?: string;
   activeProduct?: string;
   missingIDP?: boolean;

@@ -1,6 +1,6 @@
 import { createStore } from 'jotai';
-import { contextSwitcherOpenAtom } from './atoms';
 import { activeModuleAtom } from './atoms/activeModuleAtom';
+import { contextSwitcherOpenAtom } from './atoms/contextSwitcher';
 
 const chromeStore = createStore();
 
