@@ -1,101 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
-import { AppMetadata, removeScalprum } from '@scalprum/core';
+import { removeScalprum } from '@scalprum/core';
 import type { AuthContextProps } from 'react-oidc-context';
+import { ChromeUser } from '@redhat-cloud-services/types';
+import { useSetAtom } from 'jotai';
 
-import ScalprumRoot from '../../src/components/RootApp/ScalprumRoot';
 import chromeReducer from '../../src/redux';
-import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
-import { loadModulesSchema, userLogIn } from '../../src/redux/actions';
+import { userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import testUserJson from '../fixtures/testUser.json';
-import { ChromeUser } from '@redhat-cloud-services/types';
-import { RemoteModule } from '../../src/@types/types';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
 import { initializeVisibilityFunctions } from '../../src/utils/VisibilitySingleton';
-import ChromeAuthContext, { ChromeAuthContextValue } from '../../src/auth/ChromeAuthContext';
+import { ReduxState } from '../../src/redux/store';
+import GatewayErrorComponent from '../../src/components/ErrorComponents/GatewayErrorComponent';
+import { activeModuleAtom } from '../../src/state/atoms/activeModuleAtom';
 
 const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
 
-const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
+const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
+  const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
 
-const chromeAuthContextValue: ChromeAuthContextValue = {
-  doOffline: () => Promise.resolve(),
-  getOfflineToken: () => Promise.resolve({} as any),
-  getToken: () => Promise.resolve(''),
-  getUser: () => Promise.resolve(chromeUser),
-  login: () => Promise.resolve(),
-  loginAllTabs: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
-  logoutAllTabs: () => Promise.resolve(),
-  ready: true,
-  token: '',
-  tokenExpires: 0,
-  user: chromeUser,
+  if (gatewayError) {
+    return <GatewayErrorComponent error={gatewayError} />;
+  }
+
+  return <>{children}</>;
 };
 
-function createEnv(code?: string) {
-  if (!code) {
-    throw 'Enviroment must have identifier';
-  }
+function createEnv(code: string, childNode: React.ReactNode) {
   const reduxStore = createStore(combineReducers(chromeReducer()), applyMiddleware(logger));
   // initialize user object for feature flags
   reduxStore.dispatch(userLogIn(testUser));
   // initializes request interceptors
   qe.init(reduxStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
-  reduxStore.dispatch(
-    loadModulesSchema({
-      [code]: {
-        manifestLocation: `/apps/${code}/fed-mods.json`,
-        modules: [
-          {
-            id: code,
-            module: './RootApp',
-            routes: [`/${code}`],
-          } as RemoteModule,
-        ],
-      },
-    })
-  );
 
-  const Component = () => (
-    <MemoryRouter initialEntries={[`/${code}`]}>
+  const Component = () => {
+    const setActiveModule = useSetAtom(activeModuleAtom);
+    useEffect(() => {
+      setActiveModule(code);
+    }, []);
+    return (
       <Provider store={reduxStore}>
-        <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+        <MemoryRouter initialEntries={['/']}>
           <IntlProvider locale="en">
-            <FeatureFlagsProvider>
-              <ScalprumRoot
-                helpTopicsAPI={{
-                  addHelpTopics: () => undefined,
-                  disableTopics: () => undefined,
-                  enableTopics: () => Promise.resolve([]),
-                }}
-                quickstartsAPI={{
-                  Catalog: () => null,
-                  set: () => undefined,
-                  toggle: () => undefined,
-                  updateQuickStarts: () => undefined,
-                  version: 1,
-                }}
-                config={{
-                  [code]: {
-                    manifestLocation: `/apps/${code}/fed-mods.json`,
-                    name: code,
-                    module: `${code}#./RootApp`,
-                  } as AppMetadata,
-                }}
-              />
-            </FeatureFlagsProvider>
+            <ErrorCatcher>{childNode}</ErrorCatcher>
           </IntlProvider>
-        </ChromeAuthContext.Provider>
+        </MemoryRouter>
       </Provider>
-    </MemoryRouter>
-  );
+    );
+  };
   return Component;
 }
 
@@ -126,15 +84,13 @@ describe('Gateway errors', () => {
 
   it('handles 403 3scale gateway error', () => {
     const code = 'gateway-403';
-    const Component = createEnv(code);
-    cy.window().then((win) => {
-      win[code] = {
-        init: () => undefined,
-        get: () => () => ({
-          default: () => <div>{code}</div>,
-        }),
-      };
-    });
+    const TestComponent = () => {
+      useEffect(() => {
+        fetch(`/apps/${code}/fed-mods.json`);
+      });
+      return null;
+    };
+    const Component = createEnv(code, <TestComponent />);
     // throw 403 gateway error
     cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
       statusCode: 403,
@@ -161,30 +117,13 @@ describe('Gateway errors', () => {
   COMPLIACE_ERROR_CODES.forEach((code, index) => {
     it(`handles compliance ${code} gateway error`, () => {
       const moduleName = `module${index}`;
-      removeScalprum();
-      window[moduleName] = {
-        init: () => undefined,
-        get: () => () => ({
-          // eslint-disable-next-line react/display-name
-          default: () => {
-            return (
-              <div>
-                <button onClick={() => fetch(`/${code}/bar`)}>Force API call</button>
-              </div>
-            );
-          },
-        }),
+      const TestComponent = () => {
+        useEffect(() => {
+          fetch(`/${code}/bar`);
+        }, []);
+        return null;
       };
-      const Component = createEnv(moduleName);
-      cy.intercept(`/apps/${code}/bar.js*`, {});
-      cy.intercept('GET', `/apps/${moduleName}/fed-mods.json`, {
-        statusCode: 200,
-        body: {
-          [moduleName]: {
-            entry: [`/apps/${code}/bar.js`],
-          },
-        },
-      }).as(`${code}-string`);
+      const Component = createEnv(moduleName, <TestComponent />);
 
       cy.intercept('GET', `/${code}/bar`, {
         statusCode: 403,
@@ -205,9 +144,6 @@ describe('Gateway errors', () => {
       }).as(`${code}-call`);
 
       cy.mount(<Component />);
-
-      cy.wait(`@${code}-string`);
-      cy.contains('Force API call').click();
       cy.wait(`@${code}-call`);
       cy.contains(code).should('exist');
       cy.contains(`Gateway has thrown ${code} compliance error`).should('exist');
@@ -217,34 +153,13 @@ describe('Gateway errors', () => {
   COMPLIACE_ERROR_CODES.forEach((code, index) => {
     it(`handles compliance ${code} string error`, () => {
       const moduleName = `module${index}`;
-      removeScalprum();
-      window[moduleName] = {
-        init: () => undefined,
-        get: () => () => ({
-          // eslint-disable-next-line react/display-name
-          default: () => {
-            return (
-              <div>
-                <button onClick={() => fetch(`/${code}/bar`)}>Force API call</button>
-              </div>
-            );
-          },
-        }),
+      const TestComponent = () => {
+        useEffect(() => {
+          fetch(`/${code}/bar`);
+        }, []);
+        return null;
       };
-      cy.on('uncaught:exception', () => {
-        // runtime exception is expected
-        return false;
-      });
-      const Component = createEnv(moduleName);
-      cy.intercept(`/apps/${code}/bar.js*`, {});
-      cy.intercept('GET', `/apps/${moduleName}/fed-mods.json`, {
-        statusCode: 200,
-        body: {
-          [moduleName]: {
-            entry: [`/apps/${code}/bar.js`],
-          },
-        },
-      }).as(`${code}-string`);
+      const Component = createEnv(moduleName, <TestComponent />);
 
       cy.intercept('GET', `/${code}/bar`, {
         statusCode: 403,
@@ -256,8 +171,6 @@ describe('Gateway errors', () => {
 
       cy.mount(<Component />);
 
-      cy.wait(`@${code}-string`);
-      cy.contains('Force API call').click();
       cy.wait(`@${code}-call`);
       cy.contains(code).should('exist');
       cy.contains(`Gateway has thrown ${code} compliance error`).should('exist');
@@ -266,34 +179,20 @@ describe('Gateway errors', () => {
 
   it('should render component if a 403 error does not originate from gateway', () => {
     const code = 'not-gateway-403';
-    // make sure to mock the JS modle asset
-    cy.intercept('/apps/foo/bar.js*', {});
-    const Component = createEnv(code);
-    // mock the module
-    window[code] = {
-      init: () => undefined,
-      get: () => () => ({
-        // eslint-disable-next-line react/display-name
-        default: () => {
-          const [err, setErr] = useState(false);
 
-          return (
-            <div>
-              {err ? <h1>Component error handler</h1> : <h1>Normal render</h1>}
-              <button onClick={() => fetch('/foo/bar').then(() => setErr(true))}>Force API call</button>
-            </div>
-          );
-        },
-      }),
+    const TestComponent = () => {
+      const [err, setErr] = useState(false);
+
+      return (
+        <div>
+          {err ? <h1>Component error handler</h1> : <h1>Normal render</h1>}
+          <button onClick={() => fetch('/foo/bar').then(() => setErr(true))}>Force API call</button>
+        </div>
+      );
     };
-    cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
-      statusCode: 200,
-      body: {
-        [code]: {
-          entry: ['/apps/foo/bar.js'],
-        },
-      },
-    }).as(code);
+
+    const Component = createEnv(code, <TestComponent />);
+
     // throw 403 gateway error
     cy.intercept('GET', `/foo/bar`, {
       statusCode: 403,
@@ -301,7 +200,7 @@ describe('Gateway errors', () => {
         errors: [
           {
             status: 403,
-            detail: 'Aome API error',
+            detail: 'Some API error',
           },
         ],
       },
@@ -319,41 +218,22 @@ describe('Gateway errors', () => {
 
   it('does not handle 404 3scale gateway error', () => {
     const code = 'gateway-404';
-    cy.intercept('/apps/foo/bar.js*', {});
-    const Component = createEnv(code);
+    const TestComponent = () => {
+      const [err, setErr] = useState(false);
 
-    // mock the module
-    window[code] = {
-      init: () => undefined,
-      get: () => () => ({
-        // eslint-disable-next-line react/display-name
-        default: () => {
-          const [err, setErr] = useState(false);
-
-          return (
-            <div>
-              {err ? <h1>Component error handler</h1> : <h1>Normal render</h1>}
-              <button onClick={() => fetch('/foo/bar').then(() => setErr(true))}>Force API call</button>
-            </div>
-          );
-        },
-      }),
+      return (
+        <div>
+          {err ? <h1>Component error handler</h1> : <h1>Normal render</h1>}
+          <button onClick={() => fetch('/foo/bar').then(() => setErr(true))}>Force API call</button>
+        </div>
+      );
     };
-    // throw 403 gateway error
-    cy.intercept('GET', `/apps/${code}/fed-mods.json`, {
-      statusCode: 200,
-      body: {
-        [code]: {
-          entry: ['/apps/foo/bar.js'],
-        },
-      },
-    }).as(code);
+    const Component = createEnv(code, <TestComponent />);
     cy.mount(<Component />);
     cy.contains(`Normal render`).should('exist');
     cy.contains(`Component error handler`).should('not.exist');
 
     cy.contains('Force API call').click();
-    cy.wait(`@${code}`);
 
     cy.contains(`Normal render`).should('not.exist');
     cy.contains(`Component error handler`).should('exist');
