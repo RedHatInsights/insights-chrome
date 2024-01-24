@@ -75,11 +75,11 @@ const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
   </Tooltip>
 );
 
-type NewSettingsButtonProps = {
+type ExpandedSettingsButtonProps = {
   settingsMenuDropdownGroups: SettingsToggleDropdownGroup[];
 };
 
-const NewSettingsButton = ({ settingsMenuDropdownGroups }: NewSettingsButtonProps) => (
+const ExpandedSettingsButton = ({ settingsMenuDropdownGroups }: ExpandedSettingsButtonProps) => (
   <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
     <SettingsToggle
       key="Settings menu"
@@ -344,7 +344,7 @@ const Tools = () => {
       )}
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         {enableExpandedSettings ? (
-          <NewSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
+          <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
         ) : (
           <SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />
         )}
