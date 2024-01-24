@@ -1,5 +1,7 @@
 #!/bin/bash
 
+env 
+
 export COMPONENT="insights-chrome-frontend"
 export IMAGE="quay.io/cloudservices/$COMPONENT"
 export WORKSPACE=${WORKSPACE:-$APP_ROOT}  # if running in jenkins, use the build's workspace
@@ -13,7 +15,7 @@ COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-fronten
 # Build and Publish to Quay
 # ---------------------------
 
-set -ex
+set -e
 
 docker run -t \
   -v $PWD:/e2e:ro,Z \
@@ -24,8 +26,6 @@ docker run -t \
   --add-host prod.foo.redhat.com:127.0.0.1 \
   --entrypoint bash \
   quay.io/cloudservices/cypress-e2e-image:06b70f3 /e2e/run-e2e.sh
-
-echo "After docker run"
 
 # source is preferred to | bash -s in this case to avoid a subshell
 source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
@@ -47,22 +47,29 @@ source .cicd_bootstrap.sh
 echo "Taking a short nap"
 sleep 60
 
+SHORT_SHA=$(git rev-parse --short HEAD)
+IMAGE_TAG="pr-${ghprbPullId}-${SHORT_SHA}"
+echo "Expecting image tag ${IMAGE_TAG}"
 
-set -x
+set -e
 # Deploy to an ephemeral namespace for testing
-export IMAGE="quay.io/cloudservices/rbac"
+# We deploy rbac and override the image tag for insights-frontend-chrome
+export IMAGE="quay.io/cloudservices/insights-chrome-frontend"
 export GIT_COMMIT=master
-export IMAGE_TAG=latest
 export DEPLOY_FRONTENDS=true
 source $CICD_ROOT/deploy_ephemeral_env.sh
 
+echo "Taking a short nap to let the deployment stabilize"
+sleep 60
+
+echo "Running tests with CJI"
 # Run some tests with ClowdJobInvocation
 export IQE_IMAGE_TAG="platform-ui"
 IQE_PLUGINS="platform_ui"
 IQE_MARKER_EXPRESSION="smoke"
 # Exclude progressive profile tests
 # Exclude APIdocs tests
-IQE_FILTER_EXPRESSION="not (test_progressive or test_apidocs)"
+IQE_FILTER_EXPRESSION="not (test_progressive)"
 IQE_ENV="ephemeral"
 IQE_SELENIUM="true"
 IQE_CJI_TIMEOUT="30m"
