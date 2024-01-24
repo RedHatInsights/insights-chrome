@@ -116,7 +116,7 @@ const Tools = () => {
   )}`;
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const enableExpandedSettings = true || useFlag('platform.chrome.expanded-settings');
+  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
   const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
