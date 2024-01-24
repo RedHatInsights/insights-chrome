@@ -13,9 +13,7 @@ export type SettingsToggleDropdownGroup = {
 };
 
 export type SettingsToggleDropdownItem = {
-  url?: string;
-  appId?: string;
-  target?: string;
+  url: string;
   title: string;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
   isHidden?: boolean;
@@ -38,59 +36,19 @@ export type SettingsToggleProps = {
 const SettingsToggle = (props: SettingsToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const onSelect = () => {
-    setIsOpen((prev) => !prev);
-  };
-
-  const onToggle = () => setIsOpen((prev) => !prev);
-
-  const onClickInternal = (
-    ev: MouseEvent | React.KeyboardEvent<Element> | React.MouseEvent<any, MouseEvent>,
-    url?: string,
-    onClick?: SettingsToggleDropdownItem['onClick']
-  ) => {
-    ev.preventDefault();
-    if (url) {
-      window.location.href = `${url}`;
-    }
-
-    if (onClick) {
-      onClick(ev);
-    }
-  };
-
-  // Render the question mark icon items
   const dropdownItems = props.dropdownItems.map(({ title, items }, groupIndex) => (
     <DropdownGroup key={title} label={title}>
-      {items.map(({ url, appId, title, onClick, isHidden, isDisabled, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
+      {items.map(({ url, title, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }) =>
         !isHidden ? (
           <DropdownItem
             key={title}
             ouiaId={title}
             isDisabled={isDisabled}
-            component={
-              appId && url
-                ? ({ className: itemClassName }) => (
-                    <ChromeLink {...rest} className={itemClassName} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
-                      {title}
-                    </ChromeLink>
-                  )
-                : url
-                ? 'a'
-                : 'button'
-            }
-            // Because the urls are using 'a', don't use onClick for accessibility
-            // If it is a button, use the onClick prop
-            {...(appId
-              ? {}
-              : url
-              ? {
-                  href: url,
-                  target,
-                  rel,
-                  ...rest,
-                }
-              : { onClick: (ev) => onClickInternal(ev, url, onClick) })}
+            component={({ className: itemClassName }) => (
+              <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isBeta()}>
+                {title}
+              </ChromeLink>
+            )}
           >
             {title}
           </DropdownItem>
@@ -114,7 +72,9 @@ const SettingsToggle = (props: SettingsToggleProps) => {
           variant={props.icon ? 'plain' : 'default'}
           className={props.className}
           id={props.id?.toString()}
-          onClick={onToggle}
+          onClick={() => {
+            setIsOpen((prev) => !prev);
+          }}
           aria-label={props.ariaLabel}
           isExpanded={isOpen}
         >
@@ -122,7 +82,9 @@ const SettingsToggle = (props: SettingsToggleProps) => {
         </MenuToggle>
       )}
       isOpen={isOpen}
-      onSelect={onSelect}
+      onSelect={() => {
+        setIsOpen((prev) => !prev);
+      }}
       ouiaId={props.ouiaId}
     >
       <DropdownList>{dropdownItems}</DropdownList>

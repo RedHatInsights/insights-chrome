@@ -116,7 +116,7 @@ const Tools = () => {
   )}`;
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
+  const enableExpandedSettings = true || useFlag('platform.chrome.expanded-settings');
   const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
@@ -128,14 +128,10 @@ const Tools = () => {
         {
           url: '/settings/integrations',
           title: 'Integrations',
-          target: '_self',
-          appId: 'sources',
         },
         {
           url: '/settings/notifications',
           title: 'Notifications',
-          target: '_self',
-          appId: 'sources',
         },
       ],
     },
@@ -145,26 +141,18 @@ const Tools = () => {
         {
           url: '/iam/my-user-access',
           title: 'My User Access',
-          target: '_self',
-          appId: 'iam',
         },
         {
           url: identityAndAccessManagmentPath,
           title: 'User Access',
-          target: '_self',
-          appId: 'iam',
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
-          target: '_self',
-          appId: 'iam',
         },
         {
           url: '/application-services/service-accounts',
           title: 'Service Accounts',
-          target: '_self',
-          appId: 'iam',
         },
       ],
     },
@@ -175,16 +163,12 @@ const Tools = () => {
     {
       url: settingsPath,
       title: 'Settings',
-      target: '_self',
-      appId: 'sources',
     },
     ...(enableAuthDropdownOption
       ? [
           {
             url: identityAndAccessManagmentPath,
             title: 'Identity & Access Management',
-            target: '_self',
-            appId: 'iam',
           },
         ]
       : []),
