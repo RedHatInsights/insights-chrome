@@ -15,8 +15,10 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { ScalprumConfig, scalprumConfigAtom } from '../../../src/state/atoms/scalprumConfigAtom';
+import { moduleRoutesAtom } from '../../../src/state/atoms/chromeModuleAtom';
+import { RouteDefinition } from '../../../src/@types/types';
 
 const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
 
@@ -43,9 +45,29 @@ const initialScalprumConfig = {
   },
 };
 
-const Wrapper = ({ store, config = initialScalprumConfig }: { store: Store; config?: ScalprumConfig }) => {
+const initialModuleRoutes = [
+  {
+    absolute: true,
+    path: '*',
+    module: './TestApp',
+    scope: 'TestApp',
+    manifestLocation: '/foo/bar.json',
+  },
+];
+
+const Wrapper = ({
+  store,
+  config = initialScalprumConfig,
+  moduleRoutes = initialModuleRoutes,
+}: {
+  store: Store;
+  config?: ScalprumConfig;
+  moduleRoutes?: RouteDefinition[];
+}) => {
   const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
+  const setModuleRoutes = useSetAtom(moduleRoutesAtom);
   useEffect(() => {
+    setModuleRoutes(moduleRoutes);
     setScalprumConfig(config);
   }, []);
   if (Object.keys(scalprumConfig).length === 0) {
@@ -97,15 +119,6 @@ describe('HelpTopicManager', () => {
       chrome: {
         modules: {},
         ...chromeInitialState.chrome,
-        moduleRoutes: [
-          {
-            absolute: true,
-            path: '*',
-            module: './TestApp',
-            scope: 'TestApp',
-            manifestLocation: '/foo/bar.json',
-          },
-        ],
         user: testUser,
       },
     });

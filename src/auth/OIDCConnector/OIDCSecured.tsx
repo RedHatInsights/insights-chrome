@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
 import { generateRoutesList } from '../../utils/common';
@@ -21,12 +21,11 @@ import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
-import { loadModulesSchema } from '../../redux/actions';
 import { setCookie } from '../setCookie';
 import { useAtomValue } from 'jotai';
-import { ReduxState } from '../../redux/store';
 import shouldReAuthScopes from '../shouldReAuthScopes';
-import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
+import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -85,12 +84,11 @@ export function OIDCSecured({
   const auth = useAuth();
   const authRef = useRef(auth);
   const store = useStore();
-  const dispatch = useDispatch();
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
+  const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
-  const activeModuleId = useAtomValue(activeModuleAtom);
   // get scope module definition
-  const activeModule = useSelector(({ chrome: { modules } }: ReduxState) => (activeModuleId ? (modules || {})[activeModuleId] : undefined));
+  const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   const requiredScopes = activeModule?.config?.ssoScopes || [];
   const [state, setState] = useState<ChromeAuthContextValue>({
     ready: false,
@@ -130,7 +128,7 @@ export function OIDCSecured({
 
   const startChrome = async () => {
     const routes = generateRoutesList(microFrontendConfig);
-    dispatch(loadModulesSchema(microFrontendConfig));
+    loadModulesSchema(microFrontendConfig);
     // eventually all attributes will be stored in jotai atom
     setScalprumConfigAtom(microFrontendConfig);
 
