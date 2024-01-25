@@ -12,8 +12,9 @@ import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -31,7 +32,8 @@ const ChromeRoute = memo(
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
-    const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => modules?.[scope]?.defaultDocumentTitle || scope);
+    const chromeModules = useAtomValue(chromeModulesAtom);
+    const defaultTitle = chromeModules?.[scope]?.defaultDocumentTitle || scope;
 
     const [activeModule, setActiveModule] = useAtom(activeModuleAtom);
 

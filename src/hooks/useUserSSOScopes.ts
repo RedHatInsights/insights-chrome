@@ -1,9 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { ReduxState } from '../redux/store';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
+import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import shouldReAuthScopes from '../auth/shouldReAuthScopes';
 
 /**
@@ -11,10 +9,8 @@ import shouldReAuthScopes from '../auth/shouldReAuthScopes';
  */
 const useUserSSOScopes = () => {
   const { login } = useContext(ChromeAuthContext);
-
-  const activeModuleId = useAtomValue(activeModuleAtom);
+  const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   // get scope module definition
-  const activeModule = useSelector(({ chrome: { modules } }: ReduxState) => (activeModuleId ? (modules || {})[activeModuleId] : undefined));
   const requiredScopes = activeModule?.config?.ssoScopes || [];
 
   useEffect(() => {

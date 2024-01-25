@@ -1,6 +1,6 @@
 import { QuickStart } from '@patternfly/quickstarts';
 
-import { ChromeModule, FlagTagsFilter, NavItem, Navigation, RouteDefinition } from '../@types/types';
+import { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type InternalNavigation = {
@@ -37,15 +37,12 @@ export type NotificationsPayload = {
 };
 
 export type ChromeState = {
-  contextSwitcherOpen: boolean;
   activeApp?: string;
   activeProduct?: string;
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
-  modules?: { [key: string]: ChromeModule };
   navigation: InternalNavigation;
-  moduleRoutes: RouteDefinition[];
   usePendoFeedback?: boolean;
   isFeedbackModalOpen?: boolean;
   isDebuggerModalOpen?: boolean;

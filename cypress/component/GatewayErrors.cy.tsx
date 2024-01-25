@@ -40,10 +40,16 @@ function createEnv(code: string, childNode: React.ReactNode) {
   qe.init(reduxStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
 
   const Component = () => {
+    const [mounted, setMounted] = useState(false);
     const setActiveModule = useSetAtom(activeModuleAtom);
     useEffect(() => {
+      setMounted(true);
       setActiveModule(code);
     }, []);
+
+    if (!mounted) {
+      return null;
+    }
     return (
       <Provider store={reduxStore}>
         <MemoryRouter initialEntries={['/']}>
