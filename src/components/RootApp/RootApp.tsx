@@ -112,7 +112,7 @@ const RootApp = memo((props: RootAppProps) => {
   };
   return (
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={getRouterBasename()}>
-      <SegmentProvider activeModule={activeModule}>
+      <SegmentProvider>
         <FeatureFlagsProvider>
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>

@@ -11,7 +11,6 @@ import {
   appNavClick,
   appObjectId,
   globalFilterScope,
-  registerModule,
   removeGlobalFilter,
   toggleDebuggerButton,
   toggleDebuggerModal,
@@ -35,6 +34,7 @@ import { warnDuplicatePkg } from './warnDuplicatePackages';
 import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import qe from '../utils/iqeEnablement';
+import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -44,6 +44,7 @@ export type CreateChromeContextConfig = {
   quickstartsAPI: ChromeAPI['quickStarts'];
   helpTopics: ChromeAPI['helpTopics'];
   chromeAuth: ChromeAuthContextValue;
+  registerModule: (payload: RegisterModulePayload) => void;
 };
 
 export const createChromeContext = ({
@@ -53,6 +54,7 @@ export const createChromeContext = ({
   analytics,
   quickstartsAPI,
   helpTopics,
+  registerModule,
   chromeAuth,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
@@ -63,7 +65,7 @@ export const createChromeContext = ({
     appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
     appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
-    registerModule: (module?: string, manifest?: string) => dispatch(registerModule(module, manifest)),
+    registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
       return dispatch(removeGlobalFilter(isHidden));

@@ -1,11 +1,11 @@
 import React, { Suspense, lazy, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ChromeRoute from '../ChromeRoute';
 import NotFoundRoute from '../NotFoundRoute';
 import LoadingFallback from '../../utils/loading-fallback';
-import { ReduxState } from '../../redux/store';
 import { useFlag } from '@unleash/proxy-client-react';
+import { useAtomValue } from 'jotai';
+import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 
 const INTEGRATION_SOURCES = 'platform.sources.integrations';
 
@@ -69,7 +69,7 @@ export type RoutesProps = {
 const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const enableIntegrations = useFlag(INTEGRATION_SOURCES);
   const featureFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
-  const moduleRoutes = useSelector(({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes);
+  const moduleRoutes = useAtomValue(moduleRoutesAtom);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
 
   return (

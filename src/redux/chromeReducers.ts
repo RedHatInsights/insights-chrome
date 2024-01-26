@@ -1,17 +1,10 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
-import { ChromeModule, NavItem, Navigation } from '../@types/types';
-import { ITLess, generateRoutesList, highlightItems, levelArray } from '../utils/common';
+import { NavItem, Navigation } from '../@types/types';
+import { ITLess, highlightItems, levelArray } from '../utils/common';
 import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState, NotificationData, NotificationsPayload } from './store';
-
-export function contextSwitcherBannerReducer(state: ChromeState): ChromeState {
-  return {
-    ...state,
-    contextSwitcherOpen: !state.contextSwitcherOpen,
-  };
-}
 
 export function appNavClick(state: ChromeState, { payload }: { payload: { id: string } }): ChromeState {
   return {
@@ -40,35 +33,6 @@ export function onPageObjectId(state: ChromeState, { payload }: { payload: strin
     ...state,
     pageObjectId: payload,
   };
-}
-
-export function onRegisterModule(
-  state: ChromeState,
-  {
-    payload,
-  }: {
-    payload: {
-      module: string;
-      manifestLocation?: string;
-      manifest?: string;
-    };
-  }
-): ChromeState {
-  const isModuleLoaded = state.modules?.[payload.module];
-  const manifestLocation = payload.manifestLocation || payload.manifest;
-  if (!isModuleLoaded && typeof manifestLocation === 'string') {
-    return {
-      ...state,
-      modules: {
-        ...state.modules,
-        [payload.module]: {
-          manifestLocation,
-        },
-      },
-    };
-  }
-
-  return state;
 }
 
 export function loadNavigationLandingPageReducer(state: ChromeState, { payload }: { payload: NavItem[] }): ChromeState {
@@ -115,26 +79,6 @@ export function loadNavigationSegmentReducer(
     };
   }
   return state;
-}
-
-export function loadModulesSchemaReducer(
-  state: ChromeState,
-  {
-    payload: { schema },
-  }: {
-    payload: {
-      schema: {
-        [key: string]: ChromeModule;
-      };
-    };
-  }
-): ChromeState {
-  const moduleRoutes = generateRoutesList(schema);
-  return {
-    ...state,
-    modules: schema,
-    moduleRoutes,
-  };
 }
 
 export function setPendoFeedbackFlag(

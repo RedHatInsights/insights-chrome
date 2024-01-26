@@ -2,15 +2,15 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
 import { ITLess, isBeta, isProd } from '../utils/common';
-import { useSelector } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { ChromeState } from '../redux/store';
 import SegmentContext from './SegmentContext';
 import { resetIntegrations } from './resetIntegrations';
 import { getUrl } from '../hooks/useBundle';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { useAtomValue } from 'jotai';
+import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -150,11 +150,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
   };
 };
 
-export type SegmentProviderProps = {
-  activeModule?: string;
-};
-
-const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> = ({ activeModule, children }) => {
+const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const initialized = useRef(false);
   const isITLessEnv = ITLess();
   const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;
@@ -162,7 +158,10 @@ const SegmentProvider: React.FC<React.PropsWithChildren<SegmentProviderProps>> =
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const { user } = useContext(ChromeAuthContext);
-  const moduleAPIKey = useSelector(({ chrome: { modules } }: { chrome: ChromeState }) => activeModule && modules?.[activeModule]?.analytics?.APIKey);
+
+  const activeModule = useAtomValue(activeModuleAtom);
+  const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
+  const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
   const { pathname } = useLocation();
 
   const fetchIntercomHash = async () => {

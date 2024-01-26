@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 
@@ -10,18 +10,18 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/exte
 
 import ChromeLink from '../ChromeLink';
 import type { AllServicesLink as AllServicesLinkType } from './allServicesLinks';
-import { shallowEqual, useSelector } from 'react-redux';
-import { ReduxState } from '../../redux/store';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import { useAtomValue } from 'jotai';
+import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 
 export type AllServicesLinkProps = AllServicesLinkType;
 
 const AllServicesLink = ({ href, title, isExternal }: AllServicesLinkProps) => {
+  const moduleRoutes = useAtomValue(moduleRoutesAtom);
   // Find service appId
-  const appId = useSelector(
-    ({ chrome: { moduleRoutes } }: ReduxState) => moduleRoutes.find(({ path }) => matchPath(path, href) || matchPath(`${path}/*`, href))?.scope,
-    shallowEqual
-  );
+  const appId = useMemo(() => {
+    return moduleRoutes.find(({ path }) => matchPath(path, href) || matchPath(`${path}/*`, href))?.scope;
+  }, [moduleRoutes, href]);
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
 
   const handleFavouriteToggle = (pathname: string, favorite?: boolean) => {
