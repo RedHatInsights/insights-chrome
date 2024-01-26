@@ -14,6 +14,7 @@ import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
+import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import HeaderAlert from './HeaderAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
@@ -74,6 +75,26 @@ const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
   </Tooltip>
 );
 
+type ExpandedSettingsButtonProps = {
+  settingsMenuDropdownGroups: SettingsToggleDropdownGroup[];
+};
+
+const ExpandedSettingsButton = ({ settingsMenuDropdownGroups }: ExpandedSettingsButtonProps) => (
+  <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
+    <SettingsToggle
+      key="Settings menu"
+      icon={() => <CogIcon />}
+      id="SettingsMenu"
+      ariaLabel="Settings menu"
+      ouiaId="chrome-settings"
+      hasToggleIndicator={null}
+      widget-type="SettingsMenu"
+      dropdownItems={settingsMenuDropdownGroups}
+      className="tooltip-button-settings-cy"
+    />
+  </Tooltip>
+);
+
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
@@ -95,24 +116,59 @@ const Tools = () => {
   )}`;
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
+  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
   const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
+  const settingsMenuDropdownGroups = [
+    {
+      title: 'Settings',
+      items: [
+        {
+          url: '/settings/integrations',
+          title: 'Integrations',
+        },
+        {
+          url: '/settings/notifications',
+          title: 'Notifications',
+        },
+      ],
+    },
+    {
+      title: 'Identity and Access Management',
+      items: [
+        {
+          url: '/iam/my-user-access',
+          title: 'My User Access',
+        },
+        {
+          url: identityAndAccessManagmentPath,
+          title: 'User Access',
+        },
+        {
+          url: '/iam/authentication-policy/authentication-factors',
+          title: 'Authentication Policy',
+        },
+        {
+          url: '/application-services/service-accounts',
+          title: 'Service Accounts',
+        },
+      ],
+    },
+  ];
+
+  // Old settings menu
   const settingsMenuDropdownItems = [
     {
       url: settingsPath,
       title: 'Settings',
-      target: '_self',
-      appId: 'sources',
     },
     ...(enableAuthDropdownOption
       ? [
           {
             url: identityAndAccessManagmentPath,
             title: 'Identity & Access Management',
-            target: '_self',
-            appId: 'iam',
           },
         ]
       : []),
@@ -271,7 +327,11 @@ const Tools = () => {
         </ToolbarItem>
       )}
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {<SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />}
+        {enableExpandedSettings ? (
+          <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
+        ) : (
+          <SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />
+        )}
       </ToolbarItem>
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
