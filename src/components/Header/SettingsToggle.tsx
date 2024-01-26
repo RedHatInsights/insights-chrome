@@ -72,9 +72,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
           variant={props.icon ? 'plain' : 'default'}
           className={props.className}
           id={props.id?.toString()}
-          onClick={() => {
-            setIsOpen((prev) => !prev);
-          }}
+          onClick={() => setIsOpen((prev) => !prev)}
           aria-label={props.ariaLabel}
           isExpanded={isOpen}
         >
@@ -82,9 +80,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
         </MenuToggle>
       )}
       isOpen={isOpen}
-      onSelect={() => {
-        setIsOpen((prev) => !prev);
-      }}
+      onSelect={() => setIsOpen((prev) => !prev)}
       ouiaId={props.ouiaId}
     >
       <DropdownList>{dropdownItems}</DropdownList>
