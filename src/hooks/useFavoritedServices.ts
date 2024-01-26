@@ -36,13 +36,14 @@ const useFavoritedServices = () => {
   }, []);
 
   const linksWithFragments = useMemo(() => {
+    const internalLinks = [...allLinks];
     // push items with unique hrefs from our fake bundle for leaf creation
     fakeBundle.forEach((item) => {
-      if (!allLinks.some((link) => link.href === item.href)) {
-        allLinks.push(item);
+      if (!internalLinks.some((link) => link.href === item.href)) {
+        internalLinks.push(item);
       }
     });
-    return allLinks.map((link) => {
+    return internalLinks.map((link) => {
       let linkLeaf: ReturnType<typeof findNavLeafPath> | undefined;
       // use every to exit early if match was found
       [...bundles, fakeBundle || []].every((bundle) => {
@@ -62,7 +63,7 @@ const useFavoritedServices = () => {
 
   // extract human friendly data from the all services data set
   const favoriteServices = favoritePages.reduce<ServiceTileProps[]>((acc, curr) => {
-    const service = linksWithFragments.find((service) => !service.isExternal && service.href?.includes(curr.pathname));
+    const service = linksWithFragments.find((service) => !service.isExternal && service.href?.startsWith(curr.pathname));
     // only pick favorite link if it is favorite and application exists in our all services registry
 
     if (curr.favorite && service) {
