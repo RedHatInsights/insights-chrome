@@ -163,12 +163,14 @@ const Tools = () => {
     {
       url: settingsPath,
       title: 'Settings',
+      appId: 'sources',
     },
     ...(enableAuthDropdownOption
       ? [
           {
             url: identityAndAccessManagmentPath,
             title: 'Identity & Access Management',
+            appId: 'iam',
           },
         ]
       : []),
