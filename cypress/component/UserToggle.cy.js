@@ -5,6 +5,7 @@ import { ScalprumProvider } from '@scalprum/react-core';
 import chromeReducer, { chromeInitialState } from '../../src/redux';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { IntlProvider } from 'react-intl';
+import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import UserToggle from '../../src/components/Header/UserToggle';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
 
@@ -50,7 +51,9 @@ const Wrapper = ({ children, store }) => (
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
       <ScalprumProvider config={{}}>
         <Provider store={store}>
-          <BrowserRouter>{children}</BrowserRouter>
+          <FeatureFlagsProvider>
+            <BrowserRouter>{children}</BrowserRouter>
+          </FeatureFlagsProvider>
         </Provider>
       </ScalprumProvider>
     </ChromeAuthContext.Provider>
@@ -70,6 +73,16 @@ describe('<UserToggle />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('GET', '/api/featureflags/*', {
+      toggles: [
+        {
+          // until the bredcrumbs are enabled by default
+          name: 'platform.chrome.my-user-access-landing-page',
+          enabled: true,
+          variant: { name: 'disabled', enabled: false },
+        },
+      ],
+    });
   });
 
   it('render correctly', () => {
