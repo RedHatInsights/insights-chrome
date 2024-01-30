@@ -9,6 +9,17 @@ import ChromeAuthContext from '../../../auth/ChromeAuthContext';
 
 jest.mock('../UserIcon', () => () => '<UserIcon />');
 
+jest.mock('@unleash/proxy-client-react', () => {
+  const actual = jest.requireActual('@unleash/proxy-client-react');
+  return {
+    __esModule: true,
+    ...actual,
+
+    useFlag: () => false,
+    useFlagsStatus: () => ({ flagsReady: true }),
+  };
+});
+
 describe('UserToggle', () => {
   const contextValueMock = {
     user: {
