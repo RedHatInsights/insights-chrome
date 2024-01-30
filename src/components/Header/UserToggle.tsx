@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const DropdownItems = ({
   username = '',
@@ -37,6 +38,9 @@ const DropdownItems = ({
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
+  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
+  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
+
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -84,7 +88,7 @@ const DropdownItems = ({
     <React.Fragment key="My user access wrapper">
       <DropdownItem
         component={({ className }) => (
-          <ChromeLink className={className} href="/iam/my-user-access" appId="rbac">
+          <ChromeLink className={className} href={myUserAccessPath} appId="rbac">
             {intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         )}
