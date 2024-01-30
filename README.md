@@ -56,13 +56,21 @@ To run a script you have to install dependencies `npm install`. Then you are fre
 
 3. Open browser at `https://stage.foo.redhat.com:1337/` or Open browser at `https://stage.foo.redhat.com:1337/preview`.
 
-### Running chrome as a host application.
+### Running chrome with other applications locally
 
-As with any application, chrome can be a host application for others. You can configure the `routes` object in the `webpack.config.js` file as described in the proxy config [docs](https://github.com/RedHatInsights/frontend-components/tree/master/packages/config#routes).
+You can spin chrome locally together with other applications. Use `LOCAL_APPS` to list the locally deployed applications.
 
-#### Example
+#### Example 1 (using LOCAL_APPS)
 
-For illustration, to locally deploy Advisor for OpenShift together with Insights Chrome, you would require to 
+For illustration, to deploy Advisor together with Insights Chrome, you would require to
+
+1. Run Advisor on any available port with `npm run start -- --port=8004` or `npm run start:beta -- --port=8004`,
+2. Run Chrome and list the Advisor's port: `LOCAL_APPS=advisor:8004:http npm run dev` or `LOCAL_APPS=advisor:8004:http npm run dev:beta`.
+
+#### Example 2 (using devServer route)
+
+You can also specify deployed applications through devServer.routes field:
+
 1. Run Advisor with `--port=8004` (or any other available port number),
 2. Update the webpack config in the following way:
 ```
