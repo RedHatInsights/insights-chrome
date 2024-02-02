@@ -16,7 +16,7 @@ export function getUrl(type?: string) {
 export const bundleMapping: {
   [bundleId: string]: string;
 } = {
-  'application-services': 'Application and Data Services',
+  'application-services': 'Application Services',
   openshift: 'OpenShift',
   ansible: 'Ansible Automation Platform',
   insights: 'Red Hat Insights',
