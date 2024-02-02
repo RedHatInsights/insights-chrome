@@ -344,6 +344,11 @@ export default defineMessages({
     description: 'Account number:',
     defaultMessage: 'Account number:',
   },
+  orgId: {
+    id: 'orgId',
+    description: 'Org ID:',
+    defaultMessage: 'Org ID:',
+  },
   orgAdministrator: {
     id: 'orgAdministrator',
     description: 'Org. Administrator',

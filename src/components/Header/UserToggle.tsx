@@ -21,12 +21,14 @@ const DropdownItems = ({
   username = '',
   isOrgAdmin,
   accountNumber,
+  orgId,
   isInternal,
   extraItems = [],
 }: {
   username?: string;
   isOrgAdmin?: boolean;
   accountNumber?: string;
+  orgId?: string;
   isInternal?: boolean;
   extraItems?: React.ReactNode[];
 }) => {
@@ -69,6 +71,14 @@ const DropdownItems = ({
             </dl>
           </DropdownItem>
         </Tooltip>
+      )}
+      {orgId && (
+        <DropdownItem key="Org ID" isDisabled>
+          <dl className="chr-c-dropdown-item__stack">
+            <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.orgId)}</dt>
+            <dd className="chr-c-dropdown-item__stack--value">{orgId}</dd>
+          </dl>
+        </DropdownItem>
       )}
     </React.Fragment>,
     <Divider component="li" key="separator" />,
@@ -133,7 +143,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     user: {
-      identity: { user, account_number },
+      identity: { user, account_number, internal },
     },
   } = useContext(ChromeAuthContext);
   const name = user?.first_name + ' ' + user?.last_name;
@@ -187,6 +197,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
           username={user?.username}
           isOrgAdmin={user?.is_org_admin}
           accountNumber={account_number}
+          orgId={internal?.org_id}
           isInternal={user?.is_internal}
           extraItems={extraItems}
         />
