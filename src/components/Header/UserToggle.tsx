@@ -73,7 +73,7 @@ const DropdownItems = ({
         </Tooltip>
       )}
       {orgId && (
-        <DropdownItem key="Org ID" isDisabled>
+        <DropdownItem key="Org ID" isDisabled ouiaId="chrome-user-org-id">
           <dl className="chr-c-dropdown-item__stack">
             <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.orgId)}</dt>
             <dd className="chr-c-dropdown-item__stack--value">{orgId}</dd>
