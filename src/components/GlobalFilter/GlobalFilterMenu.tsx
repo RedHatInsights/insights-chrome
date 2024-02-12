@@ -175,7 +175,14 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
                   </ChipGroup>
                 ))}
                 {!isDisabled && (
-                  <Button variant="link" ouiaId="global-filter-clear" onClick={() => setValue(() => ({}))}>
+                  <Button
+                    variant="link"
+                    ouiaId="global-filter-clear"
+                    onClick={() => {
+                      setValue(() => ({}));
+                      filter?.onFilter?.('');
+                    }}
+                  >
                     {intl.formatMessage(messages.clearFilters)}
                   </Button>
                 )}
