@@ -47,7 +47,7 @@ source .cicd_bootstrap.sh
 
 echo "Taking a short nap"
 sleep 60
-
+#
 SHORT_SHA=$(git rev-parse --short HEAD)
 IMAGE_TAG="pr-${ghprbPullId}-${SHORT_SHA}"
 echo "Expecting image tag ${IMAGE_TAG}"
