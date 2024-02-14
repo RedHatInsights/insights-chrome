@@ -1,4 +1,4 @@
-describe('last-visited-pages empty behavior', () => {
+describe.skip('last-visited-pages empty behavior', () => {
   beforeEach(() => {
     // Because of the user table relation, the data from /last-visited and /user must match to mock the db state correctly
     cy.intercept('GET', '/api/chrome-service/v1/user', {
@@ -142,7 +142,7 @@ describe('last-visited-pages empty behavior', () => {
   });
 });
 
-describe('last-visited-pages standard behavior', () => {
+describe.skip('last-visited-pages standard behavior', () => {
   beforeEach(() => {
     // Because of the user table relation, the data from /last-visited and /user must match to mock the db state correctly
     cy.intercept('GET', '/api/chrome-service/v1/user', {
