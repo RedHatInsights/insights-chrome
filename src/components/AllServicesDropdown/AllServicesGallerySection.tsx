@@ -5,14 +5,14 @@ import React from 'react';
 import { AllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 
-export type AllServicesGallerySectionProps = AllServicesGroup;
+export type AllServicesGallerySectionProps = AllServicesGroup & { sanitizeTitle: (title: string) => string };
 
-const AllServicesGallerySection = ({ title, links }: AllServicesGallerySectionProps) => {
+const AllServicesGallerySection = ({ title, links, sanitizeTitle }: AllServicesGallerySectionProps) => {
   if (links.length === 0) {
     return null;
   }
   return (
-    <div className="pf-v5-u-mb-lg">
+    <div className="pf-v5-u-mb-lg" id={sanitizeTitle(title)}>
       <Label className="pf-v5-u-mb-md">{title}</Label>
       <div>
         <Gallery hasGutter>
