@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { loadLeftNavSegment, setGatewayError } from '../redux/actions';
+import { loadLeftNavSegment } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname, isBeta } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
@@ -9,6 +10,7 @@ import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { ReduxState } from '../redux/store';
+import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -44,6 +46,7 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 
 const useNavigation = () => {
   const { flagsReady, flagsError } = useFlagsStatus();
+  const clearGatewayError = useSetAtom(clearGatewayErrorAtom);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,7 +80,7 @@ const useNavigation = () => {
              * Clean gateway error on URL change
              */
             if (localStorage.getItem(BLOCK_CLEAR_GATEWAY_ERROR) !== 'true') {
-              dispatch(setGatewayError());
+              clearGatewayError();
             }
           });
         }

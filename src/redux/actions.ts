@@ -5,7 +5,6 @@ import type { ChromeUser } from '@redhat-cloud-services/types';
 import type { FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
 import type { AccessRequest, NotificationData, NotificationsPayload } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
-import type { ThreeScaleError } from '../utils/responseInterceptors';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -167,11 +166,6 @@ export const updateDocumentTitle = (title: string) => ({
 export const markActiveProduct = (product?: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
-});
-
-export const setGatewayError = (error?: ThreeScaleError) => ({
-  type: actionTypes.SET_GATEWAY_ERROR,
-  payload: error,
 });
 
 export const toggleNotificationsDrawer = () => ({
