@@ -1,19 +1,19 @@
 import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
-import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -30,7 +30,7 @@ const ChromeRoute = memo(
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
-    const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
+    const gatewayError = useAtomValue(gatewayErrorAtom);
 
     const setActiveModule = useSetAtom(activeModuleAtom);
 

@@ -35,6 +35,7 @@ import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
+import chromeStore from '../state/chromeStore';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -107,7 +108,7 @@ export const createChromeContext = ({
       getOfflineToken: chromeAuth.getOfflineToken,
       qe: {
         ...qe,
-        init: () => qe.init(store, { current: { user: { access_token: chromeAuth.token } } as any }),
+        init: () => qe.init(chromeStore, { current: { user: { access_token: chromeAuth.token } } as any }),
       },
       reAuthWithScopes: chromeAuth.reAuthWithScopes,
     },

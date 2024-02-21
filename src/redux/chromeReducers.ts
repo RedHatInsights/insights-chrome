@@ -3,7 +3,6 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { NavItem, Navigation } from '../@types/types';
 import { ITLess, highlightItems, levelArray } from '../utils/common';
-import { ThreeScaleError } from '../utils/responseInterceptors';
 import { AccessRequest, ChromeState, NotificationData, NotificationsPayload } from './store';
 
 export function appNavClick(state: ChromeState, { payload }: { payload: { id: string } }): ChromeState {
@@ -241,13 +240,6 @@ export function markActiveProduct(state: ChromeState, { payload }: { payload?: s
   return {
     ...state,
     activeProduct: payload,
-  };
-}
-
-export function setGatewayError(state: ChromeState, { payload }: { payload?: ThreeScaleError }): ChromeState {
-  return {
-    ...state,
-    gatewayError: payload,
   };
 }
 
