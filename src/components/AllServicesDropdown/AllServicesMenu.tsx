@@ -49,6 +49,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const onTabClick = (section: AllServicesSection, index: number) => {
     setSelectedService(section);
     setActiveTabKey(index);
+    setIsExpanded(false);
   };
 
   const onToggle = (_e: React.MouseEvent<any>, isExpanded: boolean) => {
