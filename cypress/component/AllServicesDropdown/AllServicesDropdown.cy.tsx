@@ -147,12 +147,12 @@ describe('<AllServicesDropdown />', () => {
     // open the Services dropdown
     cy.get('.pf-v5-c-menu-toggle__text').click();
     // check that the services tabs are not expanded
-    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('not.have.class', 'pf-m-expanded');
-    // click to expand the services tabs
-    cy.get('[data-ouia-component-id="OUIA-Generated-Button-plain-4"]').click();
-    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('have.class', 'pf-m-expanded');
+    cy.get('[data-ouia-component-id="all-services-tabs"]').should('not.have.class', 'pf-m-expanded');
+    // expand the services tabs
+    cy.contains('Favorites').click();
+    cy.get('[data-ouia-component-id="all-services-tabs"]').should('have.class', 'pf-m-expanded');
     // check that the services tabs are not expanded after clicking on a section
     cy.contains('Test section').click();
-    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('not.have.class', 'pf-m-expanded');
+    cy.get('[data-ouia-component-id="all-services-tabs"]').should('not.have.class', 'pf-m-expanded');
   });
 });

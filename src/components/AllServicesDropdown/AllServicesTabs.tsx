@@ -75,6 +75,7 @@ const AllServicesTabs = ({
       toggleText={activeTabTitle}
       role="region"
       className="pf-v5-u-p-md pf-v5-u-pr-0"
+      ouiaId={'all-services-tabs'}
     >
       <TabWrapper
         onClick={(e) => {
