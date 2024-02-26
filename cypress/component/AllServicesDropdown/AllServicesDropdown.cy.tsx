@@ -88,4 +88,71 @@ describe('<AllServicesDropdown />', () => {
     // Run the procedure again and check if the menu closed
     checkMenuClosed();
   });
+
+  it('should automatically minimize tabs after clicking on small screen', () => {
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services.json', [
+      {
+        id: 'testSection',
+        description: 'Test section description',
+        title: 'Test section',
+        icon: 'CloudUploadAltIcon',
+        links: [
+          {
+            title: 'Test Link',
+            href: '/test/link',
+            description: 'Test link description',
+          },
+        ],
+      },
+    ]);
+    cy.window().then((win) => {
+      (win as any).foo = {
+        init: () => undefined,
+        get: () => () => ({
+          default: () => <div>Foo</div>,
+        }),
+      };
+    });
+    const store = createStore(() => ({
+      chrome: {
+        moduleRoutes: [
+          {
+            path: '/test/link',
+            scope: 'foo',
+            module: 'bar',
+          },
+        ],
+      },
+    }));
+    cy.viewport(320, 568);
+    cy.mount(
+      <ScalprumProvider
+        config={{
+          foo: {
+            name: 'foo',
+            manifestLocation: '/foo/bar.json',
+          },
+        }}
+      >
+        <Provider store={store}>
+          <BrowserRouter>
+            <IntlProvider locale="en">
+              <AllServicesDropdown />
+            </IntlProvider>
+          </BrowserRouter>
+        </Provider>
+      </ScalprumProvider>
+    );
+
+    // open the Services dropdown
+    cy.get('.pf-v5-c-menu-toggle__text').click();
+    // check that the services tabs are not expanded
+    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('not.have.class', 'pf-m-expanded');
+    // click to expand the services tabs
+    cy.get('[data-ouia-component-id="OUIA-Generated-Button-plain-4"]').click();
+    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('have.class', 'pf-m-expanded');
+    // check that the services tabs are not expanded after clicking on a section
+    cy.contains('Test section').click();
+    cy.get('[data-ouia-component-id="OUIA-Generated-Tabs-2"]').should('not.have.class', 'pf-m-expanded');
+  });
 });
