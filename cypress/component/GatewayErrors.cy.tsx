@@ -87,7 +87,7 @@ describe('Gateway errors', () => {
     removeScalprum();
   });
 
-  it.only('handles 403 3scale gateway error', () => {
+  it('handles 403 3scale gateway error', () => {
     const code = 'gateway-403';
     const TestComponent = () => {
       useEffect(() => {
