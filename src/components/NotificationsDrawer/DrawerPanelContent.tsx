@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
-import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
@@ -20,7 +19,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
 import ExternalLinkSquareAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-square-alt-icon';
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import orderBy from 'lodash/orderBy';
 import { useNavigate } from 'react-router-dom';
@@ -103,6 +101,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   };
 
   const dropdownItems = [
+    <DropdownItem key="actions" description="Actions" />,
     <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
       Mark visible as read
     </DropdownItem>,
@@ -110,36 +109,22 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
       Mark visible as unread
     </DropdownItem>,
     <Divider key="divider" />,
+    <DropdownItem key="quick links" description="Quick links" />,
     <DropdownItem key="event log" onClick={() => onNavigateTo('/settings/notifications/eventlog')}>
       <Flex>
         <FlexItem>View event log</FlexItem>
-        <FlexItem align={{ default: 'alignRight' }}>
-          <Icon className="pf-v5-u-ml-auto">
-            <ExternalLinkAltIcon />
-          </Icon>
-        </FlexItem>
       </Flex>
     </DropdownItem>,
     isOrgAdmin && (
       <DropdownItem key="notification settings" onClick={() => onNavigateTo('/settings/notifications/configure-events')}>
         <Flex>
           <FlexItem>Configure notification settings</FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
-            <Icon className="pf-v5-u-ml-auto">
-              <ExternalLinkAltIcon />
-            </Icon>
-          </FlexItem>
         </Flex>
       </DropdownItem>
     ),
     <DropdownItem key="notification preferences" onClick={() => onNavigateTo('/settings/notifications/user-preferences')}>
       <Flex>
         <FlexItem>Manage my notification preferences</FlexItem>
-        <FlexItem align={{ default: 'alignRight' }}>
-          <Icon className="pf-v5-u-ml-auto">
-            <ExternalLinkAltIcon />
-          </Icon>
-        </FlexItem>
       </Flex>
     </DropdownItem>,
   ];
