@@ -32,7 +32,6 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import { populateNotifications } from '../../redux/actions';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
-import useDisablePendoOnLanding from '../../hooks/useDisablePendoOnLanding';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 
@@ -65,8 +64,6 @@ const ScalprumRoot = memo(
     useChromeServiceEvents();
     // track pendo usage
     useTrackPendoUsage();
-    // disable guides on landing page
-    useDisablePendoOnLanding();
 
     async function getNotifications() {
       try {
