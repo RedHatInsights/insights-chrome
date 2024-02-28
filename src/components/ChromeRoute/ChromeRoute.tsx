@@ -32,21 +32,13 @@ const ChromeRoute = memo(
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
-    const chromeModules = useAtomValue(chromeModulesAtom);
-    const defaultTitle = chromeModules?.[scope]?.defaultDocumentTitle || scope;
 
-    const [activeModule, setActiveModule] = useAtom(activeModuleAtom);
+    const [, setActiveModule] = useAtom(activeModuleAtom);
 
     useEffect(() => {
       batch(() => {
         // Only trigger update on a first application render before any active module has been selected
         // should be triggered only once per session
-        if (!activeModule) {
-          /**
-           * Default document title update. If application won't update its title chrome sets a title using module config
-           */
-          dispatch(updateDocumentTitle(defaultTitle || 'Hybrid Cloud Console'));
-        }
         setActiveModule(scope);
       });
       /**
