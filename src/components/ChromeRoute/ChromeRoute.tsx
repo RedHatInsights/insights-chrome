@@ -2,7 +2,7 @@ import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
+import { toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
@@ -12,9 +12,8 @@ import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
-import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 
 export type ChromeRouteProps = {
   scope: string;
