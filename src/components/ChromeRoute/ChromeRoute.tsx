@@ -12,7 +12,7 @@ import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 export type ChromeRouteProps = {
@@ -32,7 +32,7 @@ const ChromeRoute = memo(
     const { user } = useContext(ChromeAuthContext);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
 
-    const [, setActiveModule] = useAtom(activeModuleAtom);
+    const setActiveModule = useSetAtom(activeModuleAtom);
 
     useEffect(() => {
       batch(() => {
