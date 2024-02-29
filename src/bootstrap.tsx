@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider, useSelector } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
@@ -36,7 +36,7 @@ const App = () => {
 
   useInitializeAnalytics();
 
-  useEffect(() => {
+  useMemo(() => {
     const title = typeof documentTitle === 'string' ? `${documentTitle} | Hybrid Cloud Console` : 'Hybrid Cloud Console';
     document.title = title;
   }, [documentTitle]);
