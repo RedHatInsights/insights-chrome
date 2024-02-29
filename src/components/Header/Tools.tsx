@@ -154,7 +154,7 @@ const Tools = () => {
           title: 'Authentication Policy',
         },
         {
-          url: '/application-services/service-accounts',
+          url: '/iam/service-accounts',
           title: 'Service Accounts',
         },
       ],

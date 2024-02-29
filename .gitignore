@@ -24,6 +24,8 @@ Session.vim
 coverage/
 .nyc_output
 cypress-coverage
+.yalc
+yalc.lock
 
 # cypress diff snapshots
 cypress/**/*.diff.png

@@ -40,9 +40,16 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     setActiveTabKey(tabIndex);
   };
 
+  const handleClickOutside = (event: React.MouseEvent<any>) => {
+    if (isOpen && panelRef.current && !panelRef.current?.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
   const onTabClick = (section: AllServicesSection, index: number) => {
     setSelectedService(section);
     setActiveTabKey(index);
+    setIsExpanded(false);
   };
 
   const onToggle = (_e: React.MouseEvent<any>, isExpanded: boolean) => {
@@ -50,6 +57,8 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   };
 
   const tabContentRef = React.createRef<HTMLElement>();
+
+  const panelRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <AllServicesDropdownContext.Provider
@@ -60,9 +69,14 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
         },
       }}
     >
-      <div ref={menuRef} className="pf-v5-u-w-100 chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+      <div
+        ref={menuRef}
+        className="pf-v5-u-w-100 chr-c-page__services-nav-dropdown-menu"
+        data-testid="chr-c__find-app-service"
+        onClick={handleClickOutside}
+      >
         <Backdrop>
-          <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav">
+          <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
             <PanelMain>
               <Sidebar>
                 <SidebarPanel>
