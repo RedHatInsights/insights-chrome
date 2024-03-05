@@ -334,7 +334,7 @@ export const trustarcScriptSetup = () => {
     trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
   } else {
     trustarcScript.src = '//static.dev.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
-    trustarcScript.setAttribute("data-domain", "redhat_test.com");
+    trustarcScript.setAttribute('data-domain', 'redhat_test.com');
   }
 
   document.body.appendChild(trustarcScript);
