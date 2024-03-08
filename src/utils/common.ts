@@ -387,7 +387,7 @@ export const loadFedModules = async () =>
       .catch(loadCSCFedModules),
     axios.get(getChromeDynamicPaths()).catch(() => ({ data: {} })),
   ]).then(([staticConfig, feoConfig]) => {
-    if (feoConfig?.data?.chrome) {
+    if (feoConfig?.data?.chrome && getEnv() !== 'dev') {
       staticConfig.data.chrome = feoConfig?.data?.chrome;
     }
     return staticConfig;
