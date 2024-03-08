@@ -116,7 +116,7 @@ describe('Drawer panel functionality', () => {
     const actionDropdownItems = await renderedResult.getAllByRole('menuitem');
 
     await act(async () => {
-      fireEvent.click(actionDropdownItems[0]);
+      fireEvent.click(actionDropdownItems[1]);
     });
 
     const actions = store.getActions();
@@ -140,7 +140,7 @@ describe('Drawer panel functionality', () => {
     const actionDropdownItems = await renderedResult.getAllByRole('menuitem');
 
     act(() => {
-      fireEvent.click(actionDropdownItems[1]);
+      fireEvent.click(actionDropdownItems[2]);
     });
 
     const actions = store.getActions();
