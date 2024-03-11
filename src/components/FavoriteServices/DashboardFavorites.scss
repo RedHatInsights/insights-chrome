@@ -1,0 +1,15 @@
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@import '~@patternfly/patternfly/patternfly-addons.scss';
+
+.chr-c-pagination-landing-favorites {
+  .pf-v5-c-options-menu__toggle {
+    display: none !important;
+  }
+}
+
+svg {
+  max-width: 30px;
+  width: 30px !important;
+  height: 30px;
+}
+
