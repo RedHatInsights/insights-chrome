@@ -1,9 +1,8 @@
-import AllServicesIcons from './AllServicesIcons';
-import AllServicesDropdownIcons from '../AllServicesDropdown/AllServicesDropdownIcons';
+import { FavorableIcons } from '../FavoriteServices/ServiceIcon';
 
 export type AllServicesLink = {
   href: string;
-  icon?: keyof typeof AllServicesDropdownIcons;
+  icon?: FavorableIcons;
   title: string;
   subtitle?: string;
   description?: string;
@@ -20,7 +19,7 @@ export type AllServicesGroup = {
 };
 export type AllServicesSection = {
   id?: string;
-  icon?: keyof typeof AllServicesIcons;
+  icon?: FavorableIcons;
   ITLess?: boolean;
   title: string;
   description?: string;
