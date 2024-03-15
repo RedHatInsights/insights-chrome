@@ -27,6 +27,7 @@ import NotificationItem from './NotificationItem';
 import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
 import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -64,6 +65,26 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
+  const { getUserPermissions } = useContext(InternalChromeContext);
+  const [hasWritePermission, setHasWritePermission] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchPermissions = async () => {
+      const permissions = await getUserPermissions?.('integrations');
+      if (mounted) {
+        setHasWritePermission(
+          permissions?.some((item) =>
+            ['integrations:*:*', 'integrations:endpoints:write'].includes((typeof item === 'string' && item) || item?.permission)
+          )
+        );
+      }
+    };
+    fetchPermissions();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const modifiedNotifications = (activeFilters || []).reduce(
@@ -115,7 +136,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         <FlexItem>View event log</FlexItem>
       </Flex>
     </DropdownItem>,
-    isOrgAdmin && (
+    (isOrgAdmin || hasWritePermission) && (
       <DropdownItem key="notification settings" onClick={() => onNavigateTo('/settings/notifications/configure-events')}>
         <Flex>
           <FlexItem>Configure notification settings</FlexItem>
