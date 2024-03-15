@@ -55,9 +55,16 @@ const AllServicesDropdown = () => {
     };
   }, [isOpen, menuRef]);
 
-  const onToggleClick = (ev: React.MouseEvent) => {
-    ev.stopPropagation();
-    setIsOpen(!isOpen);
+  const onToggleClick = () => {
+    /**
+     * Why timeout?
+     * We need to wait for the click event to propagate to the document and close any other open dropdowns.
+     * The set state must be pushed to the end of the que. Otherwise the handleClickOutside will be called after the dropdown
+     * was opened and it will close it again.
+     */
+    setTimeout(() => {
+      setIsOpen(!isOpen);
+    });
   };
 
   const toggle = (
