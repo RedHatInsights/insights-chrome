@@ -66,16 +66,18 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const { getUserPermissions } = useContext(InternalChromeContext);
-  const [hasWritePermission, setHasWritePermission] = useState(false);
+  const [hasNotificationsPermissions, setHasNotificationsPermissions] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     const fetchPermissions = async () => {
-      const permissions = await getUserPermissions?.('integrations');
+      const permissions = await getUserPermissions?.('notifications');
       if (mounted) {
-        setHasWritePermission(
+        setHasNotificationsPermissions(
           permissions?.some((item) =>
-            ['integrations:*:*', 'integrations:endpoints:write'].includes((typeof item === 'string' && item) || item?.permission)
+            ['notifications:*:*', 'notifications:notifications:read', 'notifications:notifications:write'].includes(
+              (typeof item === 'string' && item) || item?.permission
+            )
           )
         );
       }
@@ -136,7 +138,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         <FlexItem>View event log</FlexItem>
       </Flex>
     </DropdownItem>,
-    (isOrgAdmin || hasWritePermission) && (
+    (isOrgAdmin || hasNotificationsPermissions) && (
       <DropdownItem key="notification settings" onClick={() => onNavigateTo('/settings/notifications/configure-events')}>
         <Flex>
           <FlexItem>Configure notification settings</FlexItem>
