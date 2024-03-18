@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { OIDCSecured } from '../../../src/auth/OIDCConnector/OIDCSecured';
 import { Provider } from 'react-redux';
 import { Store, createStore } from 'redux';
-import { AuthContext, AuthContextProps, AuthProvider, AuthProviderProps } from 'react-oidc-context';
+import { AuthContext, AuthContextProps, AuthProviderProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
 
@@ -68,6 +68,7 @@ describe('ODIC Secured', () => {
     automaticSilentRenew: false,
     loadUserInfo: true,
     prompt: 'none',
+    metadataUrl: '/realms/redhat-external/protocol/openid-connect/auth',
     metadata: {
       authorization_endpoint: 'http://foo.bar/auth/realms/redhat-external/protocol/openid-connect/auth',
       token_endpoint: 'http://foo.bar/auth/realms/redhat-external/protocol/openid-connect/token',
@@ -102,13 +103,13 @@ describe('ODIC Secured', () => {
 
   it('should block rendering children if OIDC auth did not finish', () => {
     cy.mount(
-      <AuthProvider>
+      <AuthContext.Provider value={authContextValue}>
         <Wrapper store={store}>
           <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>
-      </AuthProvider>
+      </AuthContext.Provider>
     );
 
     cy.contains(CHILD_TEXT).should('not.exist');
