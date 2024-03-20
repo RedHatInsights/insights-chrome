@@ -40,6 +40,7 @@ const mockUser: ChromeUser = {
 
 describe('create chrome', () => {
   const chromeAuthMock: ChromeAuthContextValue = {
+    ssoUrl: '',
     doOffline() {
       return Promise.resolve();
     },

@@ -80,7 +80,8 @@ export function OIDCSecured({
   microFrontendConfig,
   cookieElement,
   setCookieElement,
-}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any> } & FooterProps>) {
+  ssoUrl,
+}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string } & FooterProps>) {
   const auth = useAuth();
   const authRef = useRef(auth);
   const store = useStore();
@@ -91,6 +92,7 @@ export function OIDCSecured({
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   const requiredScopes = activeModule?.config?.ssoScopes || [];
   const [state, setState] = useState<ChromeAuthContextValue>({
+    ssoUrl,
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });

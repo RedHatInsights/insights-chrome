@@ -118,7 +118,19 @@ export const createChromeContext = ({
     getBundleData: useBundle,
     getApp: () => getUrl('app'),
     getEnvironment: () => getEnv(),
-    getEnvironmentDetails: () => getEnvDetails(),
+    getEnvironmentDetails: () => {
+      let environment = getEnvDetails();
+      if (environment && chromeAuth.ssoUrl) {
+        environment.sso = chromeAuth.ssoUrl;
+      } else {
+        environment = {
+          url: [],
+          portal: 'undefined',
+          sso: chromeAuth.ssoUrl,
+        };
+      }
+      return environment;
+    },
     createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
       const token = await chromeAuth.getToken();
