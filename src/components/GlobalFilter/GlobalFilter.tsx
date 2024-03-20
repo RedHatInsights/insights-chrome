@@ -142,9 +142,9 @@ const GlobalFilterWrapper = () => {
   const isLanding = pathname === '/';
   const isAllowed = isGlobalFilterAllowed();
   const isGlobalFilterEnabled = useMemo(() => {
-    const globalFilterAllowed = isAllowed || globalFilterRemoved;
+    const globalFilterAllowed = isAllowed && !globalFilterRemoved;
     return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  }, [isLanding, isAllowed]);
+  }, [isLanding, isAllowed, globalFilterRemoved]);
 
   useEffect(() => {
     let mounted = true;
