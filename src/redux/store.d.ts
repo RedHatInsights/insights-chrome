@@ -1,7 +1,6 @@
 import { QuickStart } from '@patternfly/quickstarts';
 
 import { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
-import { ThreeScaleError } from '../utils/responseInterceptors';
 
 export type InternalNavigation = {
   [key: string]: Navigation | NavItem[] | undefined;
@@ -60,7 +59,6 @@ export type ChromeState = {
     };
   };
   documentTitle?: string;
-  gatewayError?: ThreeScaleError;
   notifications: Notifications;
 };
 
