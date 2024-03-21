@@ -5,10 +5,8 @@ import {
   addQuickstartstoApp,
   appNavClick,
   clearQuickstartsReducer,
-  contextSwitcherBannerReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
-  loadModulesSchemaReducer,
   loadNavigationLandingPageReducer,
   loadNavigationSegmentReducer,
   loginReducer,
@@ -20,7 +18,6 @@ import {
   markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
-  onRegisterModule,
   populateNotificationsReducer,
   populateQuickstartsReducer,
   setGatewayError,
@@ -59,7 +56,6 @@ import {
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
   LOAD_LEFT_NAVIGATION_SEGMENT,
-  LOAD_MODULES_SCHEMA,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
   MARK_ALL_NOTIFICATION_AS_READ,
@@ -69,10 +65,8 @@ import {
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_NOTIFICATIONS,
   POPULATE_QUICKSTARTS_CATALOG,
-  REGISTER_MODULE,
   SET_GATEWAY_ERROR,
   SET_PENDO_FEEDBACK_FLAG,
-  TOGGLECONTEXTSWITCHER,
   TOGGLE_DEBUGGER_BUTTON,
   TOGGLE_DEBUGGER_MODAL,
   TOGGLE_FEEDBACK_MODAL,
@@ -90,11 +84,8 @@ const reducers = {
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
-  [REGISTER_MODULE]: onRegisterModule,
-  [TOGGLECONTEXTSWITCHER]: contextSwitcherBannerReducer,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
-  [LOAD_MODULES_SCHEMA]: loadModulesSchemaReducer,
   [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
   [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [TOGGLE_DEBUGGER_MODAL]: toggleDebuggerModal,
@@ -132,7 +123,6 @@ const globalFilter = {
 
 export const chromeInitialState: ReduxState = {
   chrome: {
-    contextSwitcherOpen: false,
     navigation: {},
     accessRequests: {
       hasUnseen: false,
@@ -142,7 +132,6 @@ export const chromeInitialState: ReduxState = {
     quickstarts: {
       quickstarts: {},
     },
-    moduleRoutes: [],
     notifications: {
       data: [],
       isExpanded: false,
@@ -156,8 +145,6 @@ export default function (): {
   chrome: (state: ChromeState, action: AnyAction) => ChromeState;
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
-  // const chromeInitialState = JSON.parse(localStorage.getItem('chrome')) || {};
-
   return {
     chrome: (
       state = {
@@ -170,10 +157,6 @@ export default function (): {
         quickstarts: {
           quickstarts: {},
         },
-        contextSwitcherOpen: false,
-        modules: {},
-        scalprumConfig: {},
-        moduleRoutes: [],
         notifications: {
           data: [],
           isExpanded: false,

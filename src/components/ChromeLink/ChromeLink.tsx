@@ -1,14 +1,14 @@
 import React, { memo, useContext, useMemo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { preloadModule } from '@scalprum/core';
 
 import { appNavClick } from '../../redux/actions';
 import NavContext, { OnLinkClick } from '../Navigation/navContext';
-import { ReduxState } from '../../redux/store';
-import { NavDOMEvent, RouteDefinition } from '../../@types/types';
+import { NavDOMEvent } from '../../@types/types';
 import { useAtomValue } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
@@ -30,7 +30,7 @@ export interface LinkWrapperProps extends RefreshLinkProps {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex }) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
-  const moduleRoutes = useSelector<ReduxState, RouteDefinition[]>(({ chrome: { moduleRoutes } }) => moduleRoutes);
+  const moduleRoutes = useAtomValue(moduleRoutesAtom);
   const moduleEntry = useMemo(() => moduleRoutes?.find((route) => href?.includes(route.path)), [href, appId]);
   const preloadTimeout = useRef<NodeJS.Timeout>();
   let actionId = href.split('/').slice(2).join('/');

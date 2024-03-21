@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider, useSelector } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
@@ -36,9 +36,9 @@ const App = () => {
 
   useInitializeAnalytics();
 
-  useEffect(() => {
-    const title = typeof documentTitle === 'string' ? `${documentTitle} | ` : '';
-    document.title = `${title}console.redhat.com`;
+  useMemo(() => {
+    const title = typeof documentTitle === 'string' ? `${documentTitle} | Hybrid Cloud Console` : 'Hybrid Cloud Console';
+    document.title = title;
   }, [documentTitle]);
 
   return <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} />;
@@ -50,25 +50,25 @@ if (entry) {
   reactRoot.render(
     <JotaiProvider store={chromeStore}>
       <Provider store={spinUpStore()?.store}>
-        <AuthProvider>
-          <IntlProvider
-            locale={language}
-            messages={messages[language]}
-            onError={(error) => {
-              if (
-                (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-                localStorage.getItem('chrome:intl:debug') === 'true' ||
-                !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-              ) {
-                console.error(error);
-              }
-            }}
-          >
-            <ErrorBoundary>
+        <IntlProvider
+          locale={language}
+          messages={messages[language]}
+          onError={(error) => {
+            if (
+              (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+              localStorage.getItem('chrome:intl:debug') === 'true' ||
+              !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+            ) {
+              console.error(error);
+            }
+          }}
+        >
+          <ErrorBoundary>
+            <AuthProvider>
               <App />
-            </ErrorBoundary>
-          </IntlProvider>
-        </AuthProvider>
+            </AuthProvider>
+          </ErrorBoundary>
+        </IntlProvider>
       </Provider>
     </JotaiProvider>
   );

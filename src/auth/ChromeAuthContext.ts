@@ -4,6 +4,7 @@ import { createContext } from 'react';
 import { OfflineTokenResponse } from './offline';
 
 export type ChromeAuthContextValue<LoginResponse = void> = {
+  ssoUrl: string;
   ready: boolean;
   user: ChromeUser;
   getUser: () => Promise<ChromeUser>;
@@ -18,10 +19,10 @@ export type ChromeAuthContextValue<LoginResponse = void> = {
   postbackUrl?: string;
   getOfflineToken: () => Promise<AxiosResponse<OfflineTokenResponse>>;
   doOffline: () => Promise<void>;
+  reAuthWithScopes: (...scopes: string[]) => Promise<void>;
 };
 
 const blankUser: ChromeUser = {
-  scope: [],
   entitlements: {},
   identity: {
     org_id: '',
@@ -30,6 +31,7 @@ const blankUser: ChromeUser = {
 };
 
 const ChromeAuthContext = createContext<ChromeAuthContextValue>({
+  ssoUrl: '',
   ready: false,
   logoutAllTabs: () => undefined,
   loginAllTabs: () => undefined,
@@ -46,6 +48,7 @@ const ChromeAuthContext = createContext<ChromeAuthContextValue>({
   token: '',
   tokenExpires: 0,
   user: blankUser,
+  reAuthWithScopes: () => Promise.resolve(),
 });
 
 export default ChromeAuthContext;

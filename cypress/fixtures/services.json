@@ -7,7 +7,7 @@
       "links": [
         {
           "isGroup": true,
-          "title": "Application and Data Services",
+          "title": "Application Services",
           "links": [
             "application-services.dataScience"
           ]
@@ -82,7 +82,7 @@
         },      
         {
           "isGroup": true,
-          "title": "Application and Data Services",
+          "title": "Application Services",
           "links": [
             "application-services.trustedContentOverview",
             "application-services.apiManagement"
@@ -141,7 +141,7 @@
         },
         {
           "isGroup": true,
-          "title": "Application and Data Services",
+          "title": "Application Services",
           "links": [
             {
               "title": "Service Accounts",
@@ -371,7 +371,7 @@
         },     
         {
           "isGroup": true,
-          "title": "Application and Data Services",
+          "title": "Application Services",
           "links": [
             "application-services.trustedContentOverview",
            {

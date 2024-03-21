@@ -5,6 +5,8 @@ import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
 import { ReduxState } from '../../redux/store';
 import { getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
+import { useAtomValue } from 'jotai';
+import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 
 export type AppFilterBucket = {
   id: string;
@@ -123,7 +125,7 @@ const useAppFilter = () => {
     },
   });
   const existingSchemas = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
-  const modules = useSelector(({ chrome: { modules } }: ReduxState) => modules);
+  const modules = useAtomValue(chromeModulesAtom);
 
   const handleBundleData = async ({ data: { id, navItems, title } }: { data: BundleNavigation }) => {
     const links: (NavItem & {

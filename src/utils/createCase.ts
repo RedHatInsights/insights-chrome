@@ -8,7 +8,7 @@ import { HYDRA_ENDPOINT } from './consts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { getUrl } from '../hooks/useBundle';
 import chromeStore from '../state/chromeStore';
-import { activeModuleAtom } from '../state/atoms';
+import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [

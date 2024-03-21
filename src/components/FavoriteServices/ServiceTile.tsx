@@ -11,12 +11,14 @@ import { bundleMapping } from '../../hooks/useBundle';
 
 import './ServiceTile.scss';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import { FavorableIcons } from './ServiceIcon';
 
 export type ServiceTileProps = {
   name: React.ReactNode;
   pathname: string;
   description?: string;
   isExternal?: boolean;
+  icon?: FavorableIcons;
 };
 
 const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTileProps) => {

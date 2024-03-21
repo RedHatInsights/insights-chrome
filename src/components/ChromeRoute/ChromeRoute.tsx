@@ -2,7 +2,7 @@ import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { toggleGlobalFilter, updateDocumentTitle } from '../../redux/actions';
+import { toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
@@ -12,8 +12,8 @@ import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useAtom } from 'jotai';
-import { activeModuleAtom } from '../../state/atoms';
+import { useSetAtom } from 'jotai';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -31,20 +31,13 @@ const ChromeRoute = memo(
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
     const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
-    const defaultTitle = useSelector(({ chrome: { modules } }: ReduxState) => modules?.[scope]?.defaultDocumentTitle || scope);
 
-    const [activeModule, setActiveModule] = useAtom(activeModuleAtom);
+    const setActiveModule = useSetAtom(activeModuleAtom);
 
     useEffect(() => {
       batch(() => {
         // Only trigger update on a first application render before any active module has been selected
         // should be triggered only once per session
-        if (!activeModule) {
-          /**
-           * Default document title update. If application won't update its title chrome sets a title using module config
-           */
-          dispatch(updateDocumentTitle(defaultTitle || 'Hybrid Cloud Console'));
-        }
         setActiveModule(scope);
       });
       /**

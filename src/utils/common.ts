@@ -333,7 +333,8 @@ export const trustarcScriptSetup = () => {
   if (location.host === 'console.redhat.com') {
     trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
   } else {
-    trustarcScript.src = '//static.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.stage.js';
+    trustarcScript.src = '//static.dev.redhat.com/libs/redhat/marketing/latest/trustarc/trustarc.js';
+    trustarcScript.setAttribute('data-domain', 'redhat_test.com');
   }
 
   document.body.appendChild(trustarcScript);

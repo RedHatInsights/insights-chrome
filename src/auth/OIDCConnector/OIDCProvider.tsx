@@ -74,7 +74,12 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   return (
     <AuthProvider {...authProviderProps}>
-      <OIDCSecured cookieElement={cookieElement} setCookieElement={setCookieElement} microFrontendConfig={state.microFrontendConfig}>
+      <OIDCSecured
+        ssoUrl={state.ssoUrl}
+        cookieElement={cookieElement}
+        setCookieElement={setCookieElement}
+        microFrontendConfig={state.microFrontendConfig}
+      >
         {children}
       </OIDCSecured>
     </AuthProvider>

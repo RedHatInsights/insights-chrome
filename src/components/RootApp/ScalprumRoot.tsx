@@ -8,6 +8,7 @@ import isEqual from 'lodash/isEqual';
 import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
+import { useSetAtom } from 'jotai';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
@@ -19,7 +20,6 @@ import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
 import { ReduxState } from '../../redux/store';
 import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
-// import { createGetUser } from '../../auth';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
@@ -32,8 +32,8 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import { populateNotifications } from '../../redux/actions';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
-import useDisablePendoOnLanding from '../../hooks/useDisablePendoOnLanding';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -55,6 +55,7 @@ const ScalprumRoot = memo(
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
     const chromeAuth = useContext(ChromeAuthContext);
+    const registerModule = useSetAtom(onRegisterModuleWriteAtom);
 
     const store = useStore<ReduxState>();
     const mutableChromeApi = useRef<ChromeAPI>();
@@ -63,8 +64,6 @@ const ScalprumRoot = memo(
     useChromeServiceEvents();
     // track pendo usage
     useTrackPendoUsage();
-    // disable guides on landing page
-    useDisablePendoOnLanding();
 
     async function getNotifications() {
       try {
@@ -149,6 +148,7 @@ const ScalprumRoot = memo(
         store,
         setPageMetadata,
         chromeAuth,
+        registerModule,
       });
       // reset chrome object after token (user) updates/changes
     }, [chromeAuth.token]);
@@ -168,7 +168,7 @@ const ScalprumRoot = memo(
         pluginSDKOptions: {
           pluginLoaderOptions: {
             // sharedScope: scope,
-            postProcessManifest: (manifest) => {
+            transformPluginManifest: (manifest) => {
               if (manifest.name === 'chrome') {
                 return {
                   ...manifest,

@@ -56,7 +56,6 @@ Cypress.Commands.add('login', () => {
       cy.get('#login-show-step2').click();
       cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
       cy.get('#rh-password-verification-submit-button').click();
-      // cy.url().should('eq', `${Cypress.config().baseUrl}/`);
     },
     { cacheAcrossSpecs: true }
   );

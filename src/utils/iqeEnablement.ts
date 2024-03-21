@@ -4,21 +4,40 @@ import type { Store } from 'redux';
 import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
+// eslint-disable-next-line no-restricted-imports
+import type { AuthContextProps } from 'react-oidc-context';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
-const AUTH_ALLOWED_ORIGINS = [location.origin, 'https://api.openshift.com', 'https://api.stage.openshift.com'];
+const AUTH_ALLOWED_ORIGINS = [location.origin, /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/];
+const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
 
-const checkOrigin = (path: URL | Request | string = '') => {
+const isExcluded = (target: string) => {
+  return AUTH_EXCLUDED_URLS.some((regex) => regex.test(target));
+};
+
+const verifyTarget = (originMatch: string, urlMatch: string) => {
+  const isOriginAllowed = AUTH_ALLOWED_ORIGINS.some((origin) => {
+    if (typeof origin === 'string') {
+      return originMatch.includes(origin);
+    } else if (origin instanceof RegExp) {
+      return origin.test(originMatch);
+    }
+  });
+  return isOriginAllowed && !isExcluded(urlMatch);
+};
+
+const shouldInjectAuthHeaders = (path: URL | Request | string = '') => {
   if (path instanceof URL) {
-    return AUTH_ALLOWED_ORIGINS.includes(path.origin);
+    // the type URL has a different match function than the cases above
+    return AUTH_ALLOWED_ORIGINS.includes(path.origin) && !isExcluded(path.href);
   } else if (path instanceof Request) {
-    return AUTH_ALLOWED_ORIGINS.some((origin) => path.url.includes(origin));
+    return verifyTarget(path.url, path.url);
   } else if (typeof path === 'string') {
-    return AUTH_ALLOWED_ORIGINS.some((origin) => path.includes(origin)) || !path.startsWith('http');
+    return verifyTarget(path, path) || !path.startsWith('http');
   }
 
   return true;
@@ -39,7 +58,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-export function init(store: Store, token: string) {
+export function init(store: Store, authRef: React.MutableRefObject<AuthContextProps>) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -75,10 +94,10 @@ export function init(store: Store, token: string) {
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.send = function sendReplacement() {
-    if (checkOrigin((this as XMLHttpRequest & { _url: string })._url)) {
+    if (shouldInjectAuthHeaders((this as XMLHttpRequest & { _url: string })._url)) {
       if (!authRequests.has((this as XMLHttpRequest & { _url: string })._url)) {
         // Send Auth header, it will be changed to Authorization later down the line
-        this.setRequestHeader('Auth', `Bearer ${token}`);
+        this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
     }
     // eslint-disable-line func-names
@@ -108,8 +127,8 @@ export function init(store: Store, token: string) {
     const tid = Math.random().toString(36);
     const request: Request = new Request(input, init);
 
-    if (checkOrigin(input) && !request.headers.has('Authorization')) {
-      request.headers.append('Authorization', `Bearer ${token}`);
+    if (shouldInjectAuthHeaders(input) && !request.headers.has('Authorization')) {
+      request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
     }
 
     const prom = oldFetch.apply(this, [request, ...rest]);

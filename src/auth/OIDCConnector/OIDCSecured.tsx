@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
 import { generateRoutesList } from '../../utils/common';
-import { loadModulesSchema } from '../../redux/actions';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
@@ -20,6 +19,13 @@ import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { useSetAtom } from 'jotai';
+import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
+import { setCookie } from '../setCookie';
+import { useAtomValue } from 'jotai';
+import shouldReAuthScopes from '../shouldReAuthScopes';
+import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
+import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -29,7 +35,6 @@ const log = logger('OIDCSecured.tsx');
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
   return {
-    scope: [],
     entitlements,
     identity: {
       org_id: user.profile?.org_id as any,
@@ -75,12 +80,19 @@ export function OIDCSecured({
   microFrontendConfig,
   cookieElement,
   setCookieElement,
-}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any> } & FooterProps>) {
+  ssoUrl,
+}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string } & FooterProps>) {
   const auth = useAuth();
   const authRef = useRef(auth);
   const store = useStore();
-  const dispatch = useDispatch();
+  const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
+  const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
+
+  // get scope module definition
+  const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
+  const requiredScopes = activeModule?.config?.ssoScopes || [];
   const [state, setState] = useState<ChromeAuthContextValue>({
+    ssoUrl,
     ready: false,
     logoutAllTabs: (bounce = true) => {
       authChannel.postMessage({ type: 'logout' });
@@ -108,11 +120,19 @@ export function OIDCSecured({
     token: authRef.current.user?.access_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
+    reAuthWithScopes: async (...additionalScopes) => {
+      const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
+      if (shouldReAuth) {
+        login(authRef.current, reAuthScopes);
+      }
+    },
   });
 
   const startChrome = async () => {
     const routes = generateRoutesList(microFrontendConfig);
-    dispatch(loadModulesSchema(microFrontendConfig));
+    loadModulesSchema(microFrontendConfig);
+    // eventually all attributes will be stored in jotai atom
+    setScalprumConfigAtom(microFrontendConfig);
 
     const initialModuleScope = getInitialScope(routes, window.location.pathname);
 
@@ -127,7 +147,7 @@ export function OIDCSecured({
   async function onUserAuthenticated(user: User) {
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
-    init(store, user.access_token);
+    init(store, authRef);
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
@@ -177,7 +197,13 @@ export function OIDCSecured({
 
   useEffect(() => {
     authRef.current = auth;
+    setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
+
+  if (auth.error) {
+    // leave the auth error handling on the global ErrorBoundary
+    throw auth.error;
+  }
 
   if (!auth.isAuthenticated || !state.ready) {
     return <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />;

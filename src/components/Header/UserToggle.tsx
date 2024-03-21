@@ -15,17 +15,20 @@ import classNames from 'classnames';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const DropdownItems = ({
   username = '',
   isOrgAdmin,
   accountNumber,
+  orgId,
   isInternal,
   extraItems = [],
 }: {
   username?: string;
   isOrgAdmin?: boolean;
   accountNumber?: string;
+  orgId?: string;
   isInternal?: boolean;
   extraItems?: React.ReactNode[];
 }) => {
@@ -37,6 +40,9 @@ const DropdownItems = ({
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
+  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
+  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
+
   return [
     <DropdownItem key="Username" isDisabled>
       <dl className="chr-c-dropdown-item__stack">
@@ -66,6 +72,14 @@ const DropdownItems = ({
           </DropdownItem>
         </Tooltip>
       )}
+      {orgId && (
+        <DropdownItem key="Org ID" isDisabled ouiaId="chrome-user-org-id">
+          <dl className="chr-c-dropdown-item__stack">
+            <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.orgId)}</dt>
+            <dd className="chr-c-dropdown-item__stack--value">{orgId}</dd>
+          </dl>
+        </DropdownItem>
+      )}
     </React.Fragment>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
@@ -84,7 +98,7 @@ const DropdownItems = ({
     <React.Fragment key="My user access wrapper">
       <DropdownItem
         component={({ className }) => (
-          <ChromeLink className={className} href="/iam/my-user-access" appId="rbac">
+          <ChromeLink className={className} href={myUserAccessPath} appId="rbac">
             {intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         )}
@@ -129,7 +143,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     user: {
-      identity: { user, account_number },
+      identity: { user, account_number, internal },
     },
   } = useContext(ChromeAuthContext);
   const name = user?.first_name + ' ' + user?.last_name;
@@ -183,6 +197,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
           username={user?.username}
           isOrgAdmin={user?.is_org_admin}
           accountNumber={account_number}
+          orgId={internal?.org_id}
           isInternal={user?.is_internal}
           extraItems={extraItems}
         />

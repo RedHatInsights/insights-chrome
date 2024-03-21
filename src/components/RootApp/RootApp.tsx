@@ -19,7 +19,8 @@ import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
 import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { activeModuleAtom } from '../../state/atoms';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -27,7 +28,7 @@ const Debugger = lazy(() => import('../Debugger'));
 export type RootAppProps = FooterProps;
 
 const RootApp = memo((props: RootAppProps) => {
-  const config = useSelector(({ chrome }: DeepRequired<ReduxState>) => chrome.scalprumConfig);
+  const config = useAtomValue(scalprumConfigAtom);
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
@@ -111,7 +112,7 @@ const RootApp = memo((props: RootAppProps) => {
   };
   return (
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={getRouterBasename()}>
-      <SegmentProvider activeModule={activeModule}>
+      <SegmentProvider>
         <FeatureFlagsProvider>
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>
