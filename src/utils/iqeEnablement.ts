@@ -58,6 +58,15 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
+const encodePath = (uri: string) => {
+  // in case the URI is already encoded, we need to decode it first to prevent malformed URIs
+  return encodeURI(decodeURI(uri));
+};
+
+const encodeSearch = (search: string) => {
+  return encodeURIComponent(decodeURIComponent(search));
+};
+
 export function init(store: Store, authRef: React.MutableRefObject<AuthContextProps>) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
@@ -74,8 +83,18 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
 
   // must use function here because arrows dont "this" like functions
   window.XMLHttpRequest.prototype.open = function openReplacement(_method, url) {
+    let parsedUrl: URL | string = url;
+    if (typeof url === 'string' && url.includes('?')) {
+      parsedUrl = encodePath(url);
+    } else if (url instanceof URL && url.search.length > 0) {
+      parsedUrl = url;
+      parsedUrl.search = encodeSearch(url.search);
+    }
     // @ts-ignore
-    this._url = url;
+    this._url = parsedUrl;
+    // @ts-ignore
+    this.url = parsedUrl;
+    arguments[1] = parsedUrl;
     // @ts-ignore
     const req = open.apply(this, arguments);
 
@@ -121,11 +140,20 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
 
   /**
    * Check response errors for cross_account requests.
-   * If we get error response with specific cross account error message, we kick the user out of the corss account session.
+   * If we get error response with specific cross account error message, we kick the user out of the cross account session.
    */
   window.fetch = function fetchReplacement(input: URL | RequestInfo = '', init?: RequestInit | undefined, ...rest) {
     const tid = Math.random().toString(36);
-    const request: Request = new Request(input, init);
+    let parsedInput: URL | RequestInfo = input;
+    if (typeof parsedInput === 'string' && parsedInput.includes('?')) {
+      parsedInput = encodePath(parsedInput);
+    } else if (parsedInput instanceof Request && parsedInput.url.includes('?')) {
+      parsedInput = new Request(encodePath(parsedInput.url), parsedInput);
+    } else if (parsedInput instanceof URL && parsedInput.search.length > 0) {
+      parsedInput.search = encodeSearch(parsedInput.search);
+    }
+
+    const request: Request = new Request(parsedInput, init);
 
     if (shouldInjectAuthHeaders(input) && !request.headers.has('Authorization')) {
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
