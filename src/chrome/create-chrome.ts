@@ -35,6 +35,7 @@ import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
+import requestPdf from '../pdf/requestPdf';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -194,6 +195,7 @@ export const createChromeContext = ({
       store,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
+    requestPdf,
   };
   return api;
 };
