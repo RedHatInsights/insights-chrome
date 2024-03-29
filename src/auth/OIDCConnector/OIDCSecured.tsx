@@ -26,6 +26,8 @@ import { useAtomValue } from 'jotai';
 import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
+import { ChromeState } from '../../redux/store';
+import { chromeInitialState } from '../../redux';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -87,7 +89,6 @@ export function OIDCSecured({
   const store = useStore();
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
-
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   const requiredScopes = activeModule?.config?.ssoScopes || [];
@@ -144,7 +145,7 @@ export function OIDCSecured({
     }
   };
 
-  async function onUserAuthenticated(user: User) {
+  async function onUserAuthenticated(user: User, chromeState: ChromeState) {
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
     init(store, authRef);
@@ -164,13 +165,13 @@ export function OIDCSecured({
       token: user.access_token,
       tokenExpires: user.expires_at!,
     }));
-    sentry(chromeUser);
+    sentry(chromeUser, chromeState);
   }
 
   useEffect(() => {
     const user = auth.user;
     if (auth.isAuthenticated && user) {
-      onUserAuthenticated(user);
+      onUserAuthenticated(user, chromeInitialState.chrome);
       authChannel.onmessage = (e) => {
         if (e && e.data && e.data.type) {
           log(`BroadcastChannel, Received event : ${e.data.type}`);

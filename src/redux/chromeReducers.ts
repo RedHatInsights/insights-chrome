@@ -329,3 +329,10 @@ export function updateNotificationsReducer(state: ChromeState, { payload }: { pa
     },
   };
 }
+
+export function updateSentryProject(state: ChromeState, { payload }: { payload: string }): ChromeState {
+  return {
+    ...state,
+    sentryApp: payload,
+  };
+}

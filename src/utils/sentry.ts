@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { isProd } from './common';
+import { ChromeState } from '../redux/store';
 
 let sentryInitialized = false;
 
@@ -33,42 +34,24 @@ function getAppDetails() {
 }
 
 // Actually initialize sentry with the group's api key
-function initSentry() {
+function initSentry(state: ChromeState) {
   if (sentryInitialized) {
     return;
   }
 
   sentryInitialized = true;
   const appDetails = getAppDetails();
-
+  console.log(appDetails, 'appDetails here');
   let API_KEY;
-  switch (appDetails.app.group) {
+  switch (state.sentryApp) {
     case 'insights':
       API_KEY = 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024';
       break;
-    case 'landing':
-      API_KEY = 'https://d12a17c4a80b43888b30c306d7eb38b4@o271843.ingest.sentry.io/1484026';
-      break;
-    case 'ansible':
-      API_KEY = 'https://03f062e075954433a296e71f243239fd@o271843.ingest.sentry.io/1769648';
-      break;
-    case 'settings':
-      API_KEY = 'https://1002f82b7a444d48bc4c98d0b52f2155@o271843.ingest.sentry.io/5216681';
-      break;
-    case 'cost-management':
-      API_KEY = 'https://61d5da651248485fb89216773932666b@o271843.ingest.sentry.io/5216676';
-      break;
-    case 'migrations':
-      API_KEY = 'https://9dd048c85e524290b67ad98ff96c53ae@o271843.ingest.sentry.io/5216677';
-      break;
-    case 'subscriptions':
-      API_KEY = 'https://4bbe4ac7e9fa4507803de69f9453ce5d@o271843.ingest.sentry.io/5216678';
-      break;
-    case 'user-preferences':
-      API_KEY = 'https://eb32b0236ce045c9b0b9dcc7351c36bb@o271843.ingest.sentry.io/5216687';
+    case 'advisor':
+      API_KEY = 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424';
       break;
   }
-
+  console.log(state.sentryApp, 'state here');
   // dsn: key
   // environment: logs Prod or Prod Beta for filtering
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
@@ -117,12 +100,14 @@ function sentryTags(user: ChromeUser) {
 }
 
 /* eslint-enable camelcase */
-export default (user: ChromeUser) => {
+export default (user: ChromeUser, state: ChromeState) => {
   // this should only be enabled for prod and prod beta
   if (isProd()) {
-    initSentry();
+    initSentry(state);
     sentryTags(user);
   } else {
     console.log('Not initalizing sentry, on a pre-prod environment');
+    initSentry(state);
+    sentryTags(user);
   }
 };

@@ -27,6 +27,7 @@ import {
   toggleFeedbackModal,
   toggleNotificationsReducer,
   updateNotificationsReducer,
+  updateSentryProject,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -74,6 +75,7 @@ import {
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   UPDATE_NOTIFICATIONS,
+  UPDATE_SENTRY_PROJECT,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
@@ -106,6 +108,7 @@ const reducers = {
   [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
   [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
   [UPDATE_NOTIFICATIONS]: updateNotificationsReducer,
+  [UPDATE_SENTRY_PROJECT]: updateSentryProject,
 };
 
 const globalFilter = {
@@ -137,6 +140,7 @@ export const chromeInitialState: ReduxState = {
       isExpanded: false,
       count: 0,
     },
+    sentryApp: 'insights',
   },
   globalFilter: globalFilterDefaultState,
 };
@@ -162,6 +166,7 @@ export default function (): {
           isExpanded: false,
           count: 0,
         },
+        sentryApp: 'insights',
       },
       action
     ) => applyReducerHash(reducers)(state, action),

@@ -181,6 +181,9 @@ const commonConfig = ({ dev }) => {
               host: `http://localhost:${process.env.NAV_CONFIG}`,
             },
           }),
+          '/apps/advisor': {
+            host: 'http://localhost:8003/',
+          },
         },
       }),
     },

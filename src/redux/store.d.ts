@@ -62,6 +62,7 @@ export type ChromeState = {
   documentTitle?: string;
   gatewayError?: ThreeScaleError;
   notifications: Notifications;
+  sentryApp: string;
 };
 
 export type GlobalFilterWorkloads = {

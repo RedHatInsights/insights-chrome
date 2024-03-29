@@ -42,3 +42,5 @@ export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread
 export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
 export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';
 export const UPDATE_NOTIFICATIONS = '@@chrome/update-notifications';
+
+export const UPDATE_SENTRY_PROJECT = '@@chrome/update-sentry-project';

@@ -202,3 +202,9 @@ export const updateNotifications = (payload: NotificationsPayload) => ({
   type: actionTypes.UPDATE_NOTIFICATIONS,
   payload,
 });
+export function updateSentryProject(sentryProject: string) {
+  return {
+    type: actionTypes.UPDATE_SENTRY_PROJECT,
+    payload: sentryProject,
+  };
+}

@@ -16,6 +16,7 @@ import {
   toggleDebuggerModal,
   toggleFeedbackModal,
   toggleGlobalFilter,
+  updateSentryProject,
 } from '../redux/actions';
 import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
@@ -70,6 +71,7 @@ export const createChromeContext = ({
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
       return dispatch(removeGlobalFilter(isHidden));
     },
+    updateSentryProject: (sentryProject: string) => dispatch(updateSentryProject(sentryProject)),
   };
 
   const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
