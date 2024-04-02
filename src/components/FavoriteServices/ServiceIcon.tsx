@@ -1,5 +1,6 @@
 import React from 'react';
 import PlaceholderIcon from '../AllServicesDropdown/icon-placeholder';
+import AITechnologyIcon from '../AllServicesDropdown/icon-ai-technology';
 import ACSIcon from '../AllServicesDropdown/icon-acs';
 import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
 import AppServicesIcon from '../AllServicesDropdown/icon-app-services';
@@ -29,6 +30,7 @@ import AutomationIcon from '@patternfly/react-icons/dist/dynamic/icons/automatio
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 
 export enum FavorableIcons {
+  AITechnologyIcon = 'AITechnologyIcon',
   ACSIcon = 'ACSIcon',
   AnsibleIcon = 'AnsibleIcon',
   AppServicesIcon = 'AppServicesIcon',
@@ -60,6 +62,7 @@ export enum FavorableIcons {
 }
 
 const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
+  AITechnologyIcon,
   ACSIcon,
   AnsibleIcon,
   AppServicesIcon,
