@@ -50,10 +50,11 @@ const requestPdf = async (options: { service: string; template: string; filename
     } = await axios.post<{ statusID: string }>(`/api/crc-pdf-generator/v2/create`, rest);
     const { status } = await pollStatus(statusID);
     if (status === 'Generated') {
-      downloadPDF(`/api/crc-pdf-generator/v2/download/${statusID}`, filename);
+      return downloadPDF(`/api/crc-pdf-generator/v2/download/${statusID}`, filename);
     }
   } catch (error) {
     console.log(error);
+    throw new Error('Failed to generate PDF. Check console for more details.');
   }
 };
 
