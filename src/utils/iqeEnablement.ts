@@ -12,7 +12,11 @@ let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
-const AUTH_ALLOWED_ORIGINS = [location.origin, /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/];
+const AUTH_ALLOWED_ORIGINS = [
+  location.origin,
+  /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/,
+  /https:\/\/api?\.demo-experience(?:\.[a-z]+)?\.demo?\.redhat?\.com/,
+];
 const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
 
 const isExcluded = (target: string) => {
