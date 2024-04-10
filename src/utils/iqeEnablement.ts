@@ -16,6 +16,7 @@ const AUTH_ALLOWED_ORIGINS = [
   location.origin,
   /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/,
   /https:\/\/api?\.demo-experience(?:\.[a-z]+)?\.demo?\.redhat?\.com/,
+  /https:\/\/api?\.aws?\.ap-southeast-1(?:\.[a-z]+)?\.openshift?\.com/,
 ];
 const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
 
