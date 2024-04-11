@@ -469,6 +469,37 @@ export default defineMessages({
     description: 'Placeholder to indicate ',
     defaultMessage: 'Filter by tags',
   },
+  filterByTagsPopoverHeader: {
+    id: 'filterByTagsPopoverHeader',
+    description: 'Popover Header',
+    defaultMessage: 'Tags',
+  },
+  filterByTagsPopoverCCGLink: {
+    id: 'filterByTagsPopoverCCGLink',
+    description: 'Client Configuration Guide link',
+    defaultMessage: 'Client Configuration Guide',
+  },
+  filterByTagsPopoverSatelliteLink: {
+    id: 'filterByTagsPopoverSatelliteLink',
+    description: 'Installing the Satellite inventory upload plugin link',
+    defaultMessage: 'imported',
+  },
+  filterByTagsPopoverContent1: {
+    id: 'filterByTagsPopoverContent1',
+    description: 'Popover Help Content',
+    defaultMessage:
+      'Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be',
+  },
+  filterByTagsPopoverContent2: {
+    id: 'filterByTagsPopoverContent2',
+    description: 'Popover Help Content',
+    defaultMessage: '. Additionally, you can define your own tags via the Insights-Client configuration. Please see our',
+  },
+  filterByTagsPopoverContent3: {
+    id: 'filterByTagsPopoverContent3',
+    description: 'Popover Help Content',
+    defaultMessage: 'for more details. Please note that Workload tags are automatically added by the Insights service.',
+  },
   reportABug: {
     id: 'reportABug',
     description: 'Report a bug',
