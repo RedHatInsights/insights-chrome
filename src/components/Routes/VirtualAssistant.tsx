@@ -4,7 +4,7 @@ import { ScalprumComponent } from '@scalprum/react-core';
 
 import './virtual-assistant.scss';
 
-const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
+const viableRoutes = ['/', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
 
 const VirtualAssistant = () => {
   return (
