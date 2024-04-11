@@ -5,6 +5,7 @@ import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-com
 import type Intercom from '@types/intercom-web';
 
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
+import { FavorableIcons } from '../components/FavoriteServices/ServiceIcon';
 
 // TODO: Update once navigation is mgrated to TS
 export type Navigation = {
@@ -55,6 +56,7 @@ export type NavItem = {
   permissions?: NavItemPermission[] | NavItemPermission;
   dynamicNav?: string;
   description?: string;
+  icon?: FavorableIcons;
 };
 
 export type BundleNavigation = {

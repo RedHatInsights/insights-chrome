@@ -335,9 +335,9 @@ export default defineMessages({
   useAccountNumber: {
     id: 'useAccountNumber',
     description:
-      "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number.",
+      "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here.",
     defaultMessage:
-      "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number.",
+      "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here.",
   },
   accountNumber: {
     id: 'accountNumber',

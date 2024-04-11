@@ -26,7 +26,7 @@ const FeedbackRoute = () => {
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
-      : ['insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*'];
+      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*', 'subscriptions/*'];
   return (
     <Routes>
       {paths.map((path) => (
@@ -64,7 +64,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         </Toolbar>
       </MastheadMain>
       <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
-        {user?.identity?.account_number && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
+        {user?.identity?.org_id && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
           <ToolbarContent>

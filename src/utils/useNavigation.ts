@@ -87,7 +87,7 @@ const useNavigation = () => {
             navigate(
               {
                 ...activeLocation.current,
-                pathname: newPathname.replace(/^\/(beta|preview)\//, '/'),
+                pathname: window.location.pathname.replace(/^\/(beta|preview)\//, '/'),
                 search: appendQSSearch(window.location.search, activeQSId.current),
               },
               {

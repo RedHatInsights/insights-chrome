@@ -12,15 +12,27 @@ let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
-const AUTH_ALLOWED_ORIGINS = [location.origin, 'https://api.openshift.com', 'https://api.stage.openshift.com'];
-const AUTH_EXCLUDED_URLS = ['https://api.openshift.com/api/upgrades_info/', 'https://api.stage.openshift.com/api/upgrades_info/'];
+const AUTH_ALLOWED_ORIGINS = [
+  location.origin,
+  /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/,
+  /https:\/\/api?\.demo-experience(?:\.[a-z]+)?\.demo?\.redhat?\.com/,
+  /https:\/\/api?\.aws?\.ap-southeast-1(?:\.[a-z]+)?\.openshift?\.com/,
+];
+const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
 
 const isExcluded = (target: string) => {
-  return AUTH_EXCLUDED_URLS.some((url) => target.includes(url));
+  return AUTH_EXCLUDED_URLS.some((regex) => regex.test(target));
 };
 
 const verifyTarget = (originMatch: string, urlMatch: string) => {
-  return AUTH_ALLOWED_ORIGINS.some((origin) => originMatch.includes(origin)) && !isExcluded(urlMatch);
+  const isOriginAllowed = AUTH_ALLOWED_ORIGINS.some((origin) => {
+    if (typeof origin === 'string') {
+      return originMatch.includes(origin);
+    } else if (origin instanceof RegExp) {
+      return origin.test(originMatch);
+    }
+  });
+  return isOriginAllowed && !isExcluded(urlMatch);
 };
 
 const shouldInjectAuthHeaders = (path: URL | Request | string = '') => {

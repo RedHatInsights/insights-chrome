@@ -75,6 +75,7 @@ const useFavoritedServices = () => {
           name: title,
           pathname: curr.pathname,
           description: service.description,
+          icon: service.icon,
         },
       ];
     }
