@@ -4,6 +4,7 @@ import { DeepRequired } from 'utility-types';
 import { captureException } from '@sentry/react';
 import * as Sentry from '@sentry/react';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
+import { isBeta } from '../../utils/common';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -67,6 +68,11 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
       new UnleashClient({
         ...config,
         context: {
+          // TODO: instead of the isBeta, use the internal chrome state
+          // the unleash context is not generic, look for issue/PR in the unleash repo or create one
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          'platform.chrome.ui.preview': isBeta(),
           userId: user?.identity.internal?.account_id,
           ...(user
             ? {
