@@ -34,6 +34,7 @@ import { populateNotifications } from '../../redux/actions';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
+import useTabName from '../../hooks/useTabName';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -64,6 +65,8 @@ const ScalprumRoot = memo(
     useChromeServiceEvents();
     // track pendo usage
     useTrackPendoUsage();
+    // setting default tab title
+    useTabName();
 
     async function getNotifications() {
       try {
