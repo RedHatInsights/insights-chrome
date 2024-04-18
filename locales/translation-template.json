@@ -382,8 +382,8 @@
     "description": "Use"
   },
   "useAccountNumber": {
-    "defaultMessage": "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number.",
-    "description": "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number."
+    "defaultMessage": "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here.",
+    "description": "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here."
   },
   "useFeatureInBeta": {
     "defaultMessage": "Use feature in preview",

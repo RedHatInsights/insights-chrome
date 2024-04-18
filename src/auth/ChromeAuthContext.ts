@@ -4,6 +4,7 @@ import { createContext } from 'react';
 import { OfflineTokenResponse } from './offline';
 
 export type ChromeAuthContextValue<LoginResponse = void> = {
+  ssoUrl: string;
   ready: boolean;
   user: ChromeUser;
   getUser: () => Promise<ChromeUser>;
@@ -30,6 +31,7 @@ const blankUser: ChromeUser = {
 };
 
 const ChromeAuthContext = createContext<ChromeAuthContextValue>({
+  ssoUrl: '',
   ready: false,
   logoutAllTabs: () => undefined,
   loginAllTabs: () => undefined,

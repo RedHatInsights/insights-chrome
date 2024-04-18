@@ -35,6 +35,7 @@ import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
+import requestPdf from '../pdf/requestPdf';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -118,7 +119,19 @@ export const createChromeContext = ({
     getBundleData: useBundle,
     getApp: () => getUrl('app'),
     getEnvironment: () => getEnv(),
-    getEnvironmentDetails: () => getEnvDetails(),
+    getEnvironmentDetails: () => {
+      let environment = getEnvDetails();
+      if (environment && chromeAuth.ssoUrl) {
+        environment.sso = chromeAuth.ssoUrl;
+      } else {
+        environment = {
+          url: [],
+          portal: 'undefined',
+          sso: chromeAuth.ssoUrl,
+        };
+      }
+      return environment;
+    },
     createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
       const token = await chromeAuth.getToken();
@@ -182,6 +195,7 @@ export const createChromeContext = ({
       store,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
+    requestPdf,
   };
   return api;
 };

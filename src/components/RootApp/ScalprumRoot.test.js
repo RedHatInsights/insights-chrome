@@ -123,6 +123,10 @@ describe('ScalprumRoot', () => {
         manifestLocation: '/bar',
         appName: 'foo',
       },
+      virtualAssistant: {
+        manifestLocation: '/virtual-assistant',
+        appName: 'baz',
+      },
     };
     mockStore = configureStore();
     initialState = {
