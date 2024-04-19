@@ -74,6 +74,7 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
           // @ts-ignore
           'platform.chrome.ui.preview': isBeta(),
           userId: user?.identity.internal?.account_id,
+          orgId: user?.identity.internal?.org_id,
           ...(user
             ? {
                 properties: {
