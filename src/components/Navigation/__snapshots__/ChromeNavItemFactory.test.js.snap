@@ -57,6 +57,7 @@ exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
             data-quickstart-id="foo"
             data-testid="router-link"
             href="/foo"
+            itemid="/foo"
           >
             Foo
              
@@ -110,6 +111,7 @@ exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
+      itemid="/foo"
     >
       Foo
        

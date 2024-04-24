@@ -15,6 +15,7 @@ exports[`ChromeNavItem should render nav item 1`] = `
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
+      itemid="/foo"
     >
       Foo
        
@@ -36,6 +37,7 @@ exports[`ChromeNavItem should render nav item with a node title 1`] = `
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
+      itemid="/foo"
     >
       <span
         data-testid="test-span"
@@ -106,6 +108,7 @@ exports[`ChromeNavItem should render nav item with beta badge 1`] = `
       data-quickstart-id="foo"
       data-testid="router-link"
       href="/foo"
+      itemid="/foo"
     >
       Foo
        
