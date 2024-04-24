@@ -4,13 +4,19 @@ import { DeepRequired } from 'utility-types';
 import { captureException } from '@sentry/react';
 import * as Sentry from '@sentry/react';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { isBeta } from '../../utils/common';
+import { getEnv, isBeta } from '../../utils/common';
+
+const env = getEnv();
+
+const unleashUrl =
+  env === 'stage' ? `https://insights-stage.unleash-edge.devshift.net/api/frontend` : `${document.location.origin}/api/featureflags/v0`;
 
 const config: IFlagProvider['config'] = {
-  url: `${document.location.origin}/api/featureflags/v0`,
-  clientKey: 'proxy-123',
+  url: unleashUrl,
   appName: 'web',
-  headerName: 'X-Unleash-Auth',
+  // TODO: replace with the actual token once the storage is figured out
+  clientKey: '<token>',
+  headerName: 'Authorization',
   refreshInterval: 60000,
   metricsInterval: 120000,
   fetch: (url: URL, headers: RequestInit) => {
