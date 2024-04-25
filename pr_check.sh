@@ -59,6 +59,7 @@ export IMAGE="quay.io/cloudservices/insights-chrome-frontend"
 export GIT_COMMIT=master
 export DEPLOY_FRONTENDS=true
 source $CICD_ROOT/deploy_ephemeral_env.sh
+echo "Deployment complete"
 
 echo "Taking a short nap to let the deployment stabilize"
 sleep 60
