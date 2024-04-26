@@ -56,7 +56,7 @@ export type SelectedTags = {
 
 export type GlobalFilterDropdownProps = {
   allowed: boolean;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   filter: {
     filterBy?: string | number;
     onFilter?: (value: string) => void;
@@ -74,7 +74,7 @@ export type GlobalFilterDropdownProps = {
 
 export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownProps> = ({
   allowed,
-  isDisabled,
+  isDisabled = false,
   filter,
   chips,
   setValue,
