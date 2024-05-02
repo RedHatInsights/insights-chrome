@@ -14,9 +14,8 @@ import './DashboardFavorites.scss';
 
 const DashboardFavorites = () => {
   const favoritedServices = useFavoritedServices();
-
   const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
-
+  console.log(favoritedServices);
   return (
     <React.Fragment>
       {favoritedServices.length === 0 ? (
@@ -26,21 +25,21 @@ const DashboardFavorites = () => {
           <Gallery hasGutter className="widget-favorites pf-v5-u-m-md">
             {favoritedServices.map((favorite, index) => (
               <GalleryItem key={index}>
-                <Link to={favorite.pathname}>
-                  <Split>
-                    <SplitItem className="pf-v5-u-mr-sm">
-                      <ServiceIcon icon={favorite.icon} />
-                    </SplitItem>
-                    <SplitItem>
-                      <TextContent>
+                <Split>
+                  <SplitItem className="pf-v5-u-mr-sm">
+                    <ServiceIcon icon={favorite.icon} />
+                  </SplitItem>
+                  <SplitItem>
+                    <TextContent>
+                      <Link to={favorite.pathname}>
                         <Text component="a" className="pf-v5-u-mb-0">
                           {favorite.name}
                         </Text>
-                        <Text component="small">{getBundle(favorite.pathname)}</Text>
-                      </TextContent>
-                    </SplitItem>
-                  </Split>
-                </Link>
+                      </Link>
+                      <Text component="small">{getBundle(favorite.pathname)}</Text>
+                    </TextContent>
+                  </SplitItem>
+                </Split>
               </GalleryItem>
             ))}
           </Gallery>
