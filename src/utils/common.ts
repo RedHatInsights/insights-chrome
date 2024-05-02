@@ -458,3 +458,6 @@ export function findNavLeafPath(
 
   return { activeItem: leaf, navItems: leafPath };
 }
+
+// converts text to an identifier in title case
+export const titleToId = (title: string) => title?.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase()).replace(/\s+/g, '');

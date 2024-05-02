@@ -7,7 +7,7 @@ import { HostsApi, SystemProfileApi, TagsApi } from '@redhat-cloud-services/host
 import { FlagTagsFilter } from '../../@types/types';
 import { TagRegisteredWith } from '../../redux/store';
 
-export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance);
+export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance as any);
 export const sap = new SystemProfileApi(undefined, INVENTORY_API_BASE, instance as any);
 export const system = new HostsApi(undefined, INVENTORY_API_BASE, instance as any);
 

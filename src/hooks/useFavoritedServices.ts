@@ -6,10 +6,12 @@ import { NavItem, Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
+import useAllLinks from './useAllLinks';
 
 const useFavoritedServices = () => {
   const { favoritePages } = useFavoritePagesWrapper();
-  const { allLinks, availableSections } = useAllServices();
+  const { availableSections } = useAllServices();
+  const allLinks = useAllLinks();
   const [bundles, setBundles] = useState<Navigation[]>([]);
 
   const fakeBundle: NavItem[] = useMemo(() => {

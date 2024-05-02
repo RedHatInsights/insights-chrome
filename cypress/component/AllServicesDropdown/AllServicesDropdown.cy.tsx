@@ -29,7 +29,7 @@ describe('<AllServicesDropdown />', () => {
       cy.contains('Test link').click();
       cy.contains('All services').should('not.exist');
     }
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services.json', [
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
       {
         id: 'testSection',
         description: 'Test section description',
@@ -90,7 +90,7 @@ describe('<AllServicesDropdown />', () => {
   });
 
   it('should automatically minimize tabs after clicking on small screen', () => {
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services.json', [
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
       {
         id: 'testSection',
         description: 'Test section description',
