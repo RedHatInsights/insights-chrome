@@ -15,7 +15,7 @@ import './DashboardFavorites.scss';
 const DashboardFavorites = () => {
   const favoritedServices = useFavoritedServices();
   const getBundle = (href: string) => bundleMapping[href.split('/')[1]];
-  console.log(favoritedServices);
+
   return (
     <React.Fragment>
       {favoritedServices.length === 0 ? (
