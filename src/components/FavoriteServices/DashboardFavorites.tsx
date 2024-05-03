@@ -32,9 +32,7 @@ const DashboardFavorites = () => {
                   <SplitItem>
                     <TextContent>
                       <Link to={favorite.pathname}>
-                        <Text component="a" className="pf-v5-u-mb-0">
-                          {favorite.name}
-                        </Text>
+                        <Text className="pf-v5-u-mb-0">{favorite.name}</Text>
                       </Link>
                       <Text component="small">{getBundle(favorite.pathname)}</Text>
                     </TextContent>
