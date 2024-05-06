@@ -53,7 +53,7 @@ IMAGE_TAG="pr-${ghprbPullId}-${SHORT_SHA}"
 echo "Expecting image tag ${IMAGE_TAG}"
 
 set -e
-# Try 453
+# Try 4536
 # Deploy to an ephemeral namespace for testing
 # We deploy rbac and override the image tag for insights-frontend-chrome
 export IMAGE="quay.io/cloudservices/insights-chrome-frontend"
