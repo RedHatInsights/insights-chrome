@@ -66,9 +66,6 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     }),
     shallowEqual
   );
-  const globalFilterHidden = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden);
-  const activeModule = useAtomValue(activeModuleAtom);
-  const isDisabled = globalFilterHidden || !activeModule;
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (
     useTagsFilter as unknown as (
@@ -110,16 +107,15 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   }, []);
 
   useEffect(() => {
-    if (hasAccess && !isDisabled) {
+    if (hasAccess) {
       loadTags(selectedTags, filterTagsBy);
       selectTags(selectedTags);
     }
-  }, [selectedTags, filterTagsBy, hasAccess, isDisabled]);
+  }, [selectedTags, filterTagsBy, hasAccess]);
 
   return (
     <GlobalFilterDropdown
       allowed={hasAccess}
-      isDisabled={isDisabled}
       filter={filter}
       chips={[...chips.filter(({ key }) => key === 'Workloads'), ...chips.filter(({ key }) => key !== 'Workloads')]}
       setValue={setValue}
@@ -141,10 +137,16 @@ const GlobalFilterWrapper = () => {
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
   const isAllowed = isGlobalFilterAllowed();
+  const globalFilterHidden = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden);
+  const activeModule = useAtomValue(activeModuleAtom);
+  const isDisabled = globalFilterHidden || !activeModule;
   const isGlobalFilterEnabled = useMemo(() => {
+    if (isDisabled) {
+      return false;
+    }
     const globalFilterAllowed = isAllowed || globalFilterRemoved;
     return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  }, [isLanding, isAllowed]);
+  }, [isLanding, isAllowed, isDisabled]);
 
   useEffect(() => {
     let mounted = true;
