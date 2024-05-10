@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Header } from '../components/Header/Header';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
@@ -8,11 +8,14 @@ import { List, ListComponent, ListItem, OrderType } from '@patternfly/react-core
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
+import IPWhitelistTable from '../components/Satellite/IPWhitelistTable';
 import { getEnv } from '../utils/common';
+import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 const SatelliteToken: React.FC = () => {
   const [token, setToken] = useState('');
   const [error, setError] = useState(null);
+  const { user } = useContext(ChromeAuthContext);
 
   const generateToken = () => {
     axios
@@ -87,6 +90,16 @@ const SatelliteToken: React.FC = () => {
             </CardBody>
           </Card>
         </PageSection>
+        {user.identity.user?.is_org_admin ? (
+          <PageSection>
+            <Card>
+              <CardTitle>IP Address Allow List</CardTitle>
+              <CardBody>
+                <IPWhitelistTable />
+              </CardBody>
+            </Card>
+          </PageSection>
+        ) : null}
       </Page>
     </div>
   );
