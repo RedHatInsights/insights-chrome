@@ -3,18 +3,19 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
 import { ReduxState } from '../../redux/store';
-import { getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
+import { getChromeStaticPathname } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { useAtomValue } from 'jotai';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
 export type AppFilterBucket = {
   id: string;
   title: string;
   links: NavItem[];
 };
-
-const previewBundles = [''];
 
 export const requiredBundles = [
   'application-services',
@@ -26,8 +27,7 @@ export const requiredBundles = [
   'iam',
   'quay',
   'subscriptions',
-  ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
-].filter(Boolean);
+];
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 
@@ -92,7 +92,7 @@ type AppFilterState = {
 };
 
 const useAppFilter = () => {
-  const isBetaEnv = isBeta();
+  const isPreview = useAtomValue(isPreviewAtom);
   const [state, setState] = useState<AppFilterState>({
     isLoaded: false,
     isLoading: false,
@@ -193,7 +193,12 @@ const useAppFilter = () => {
         axios
           .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
           // fallback static CSC for EE env
-          .catch(() => axios.get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
+          .catch(() => {
+            // FIXME: Remove this once local preview is enabled by default
+            // No /beta will be needed in the future
+            const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
+            return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+          })
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))
           .catch((err) => {

@@ -5,6 +5,14 @@ import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 
+jest.mock('../state/atoms/releaseAtom', () => {
+  const util = jest.requireActual('../state/atoms/utils');
+  return {
+    __esModule: true,
+    isPreviewAtom: util.atomWithToggle(false),
+  };
+});
+
 describe('DefaultLayout', () => {
   let initialState;
   let mockStore;

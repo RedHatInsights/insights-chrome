@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AlertActionLink, AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { useAtom, useAtomValue } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
@@ -15,9 +15,8 @@ import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
-import HeaderAlert from './HeaderAlert';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
+import { ITLess, getRouterBasename, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -26,22 +25,27 @@ import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
-import chromeStore from '../../state/chromeStore';
-import { useAtom, useAtomValue } from 'jotai';
 import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
+import PreviewAlert from './PreviewAlert';
+
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
 const isITLessEnv = ITLess();
 
+/**
+ * @deprecated Switch release will be replaces by the internal chrome state variable
+ */
 export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
   cookie.set('cs_toggledRelease', 'true');
   const previewFragment = getRouterBasename(pathname);
-  chromeStore.set(isPreviewAtom, !isBeta);
 
+  let href = '';
   if (isBeta) {
-    return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
+    href = pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
   } else {
-    return previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
+    href = previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
   }
+  window.location.href = href;
 };
 
 const InternalButton = () => (
@@ -103,6 +107,7 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+  const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
   const { xs } = useWindowWidth();
   const { user, token } = useContext(ChromeAuthContext);
@@ -112,7 +117,7 @@ const Tools = () => {
   const location = useLocation();
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
   const identityAndAccessManagmentPath = '/iam/user-access/users';
-  const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
+  const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
 
@@ -203,7 +208,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token),
+      onClick: () => createSupportCase(user.identity, token, isPreview),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },
@@ -239,7 +244,12 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled)),
+      onClick: () => {
+        if (!LOCAL_PREVIEW) {
+          switchRelease(isPreview, location.pathname, previewEnabled);
+        }
+        setIsPreview();
+      },
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -268,8 +278,13 @@ const Tools = () => {
         label="Preview on"
         labelOff="Preview off"
         aria-label="Preview switcher"
-        isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled))}
+        isChecked={isPreview}
+        onChange={() => {
+          if (!LOCAL_PREVIEW) {
+            switchRelease(isPreview, location.pathname, previewEnabled);
+          }
+          setIsPreview();
+        }}
         isReversed
         className="chr-c-beta-switcher"
       />
@@ -377,34 +392,7 @@ const Tools = () => {
           />
         </Tooltip>
       </ToolbarItem>
-      {cookie.get('cs_toggledRelease') === 'true' ? (
-        <HeaderAlert
-          className="chr-c-alert-preview"
-          title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
-          variant={AlertVariant.info}
-          actionLinks={
-            <React.Fragment>
-              <AlertActionLink
-                component="a"
-                href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
-                target="_blank"
-                rel="noreferrer"
-                title="Learn more link"
-              >
-                Learn more
-              </AlertActionLink>
-              <AlertActionLink
-                onClick={() => {
-                  window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled);
-                }}
-              >
-                {`${isBeta() ? 'Disable' : 'Enable'} preview`}
-              </AlertActionLink>
-            </React.Fragment>
-          }
-          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
-        />
-      ) : null}
+      <PreviewAlert switchRelease={switchRelease} />
     </>
   );
 };

@@ -104,6 +104,7 @@ describe('create chrome', () => {
       enableTopics: jest.fn(),
       setActiveTopic: jest.fn(),
     },
+    isPreview: false,
     quickstartsAPI: {
       Catalog: QuickStartCatalog,
       set() {
@@ -126,6 +127,7 @@ describe('create chrome', () => {
       getUser: () => Promise.resolve(mockUser),
       getToken: () => Promise.resolve('mocked-token'),
       getUserPermissions: () => Promise.resolve([]),
+      isPreview: false,
     };
     initializeVisibilityFunctions(mockAuthMethods);
   });

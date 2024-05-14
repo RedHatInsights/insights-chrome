@@ -1,4 +1,5 @@
 import React, { memo, useContext, useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
@@ -26,6 +27,7 @@ import { createSupportCase } from '../../utils/createCase';
 import './Feedback.scss';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useSegment } from '../../analytics/useSegment';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 const FEEDBACK_OPEN_EVENT = 'chrome.feedback.open';
 
@@ -54,6 +56,7 @@ const FeedbackModal = memo(() => {
     setIsModalOpen(false);
     setModalPage('feedbackHome');
   };
+  const isPreview = useAtomValue(isPreviewAtom);
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
     switch (modalPage) {
@@ -73,7 +76,12 @@ const FeedbackModal = memo(() => {
                 <CardTitle className="pf-v5-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
-              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => createSupportCase(user.identity, chromeAuth.token)}>
+              <Card
+                className="pf-v5-u-mb-lg"
+                isSelectableRaised
+                isCompact
+                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview)}
+              >
                 <CardTitle className="pf-v5-u-primary-color-100">
                   <Text>
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />

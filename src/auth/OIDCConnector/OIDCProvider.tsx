@@ -8,7 +8,9 @@ import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
 import OIDCStateReloader from './OIDCStateReloader';
 
-const betaPartial = isBeta() ? '/beta' : '';
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
+// TODO: remove this once the local preview is enabled by default
+const betaPartial = LOCAL_PREVIEW ? '' : isBeta() ? '/beta' : '';
 
 const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
