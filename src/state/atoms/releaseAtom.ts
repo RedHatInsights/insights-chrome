@@ -1,5 +1,11 @@
+import axios from 'axios';
+import { updateVisibilityFunctionsBeta, visibilityFunctionsExist } from '../../utils/VisibilitySingleton';
 import { atomWithToggle } from './utils';
 
-import { isBeta } from '../../utils/common';
-
-export const isPreviewAtom = atomWithToggle(isBeta());
+export const isPreviewAtom = atomWithToggle(undefined, (isPreview) => {
+  // Required to change the `isBeta` function return value in the visibility functions
+  if (visibilityFunctionsExist()) {
+    updateVisibilityFunctionsBeta(isPreview);
+    axios.post('/api/chrome-service/v1/user/update-ui-preview', { uiPreview: isPreview });
+  }
+});

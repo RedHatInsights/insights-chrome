@@ -14,6 +14,8 @@ chromeStore.set(activeModuleAtom, undefined);
 chromeStore.set(isPreviewAtom, isBeta());
 chromeStore.set(gatewayErrorAtom, undefined);
 chromeStore.set(isFeedbackModalOpenAtom, false);
+// is set in bootstrap
+chromeStore.set(isPreviewAtom, false);
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
