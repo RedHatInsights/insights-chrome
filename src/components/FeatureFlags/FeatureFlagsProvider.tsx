@@ -3,8 +3,9 @@ import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-clien
 import { DeepRequired } from 'utility-types';
 import { captureException } from '@sentry/react';
 import * as Sentry from '@sentry/react';
+import { useAtomValue } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { isBeta } from '../../utils/common';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -63,16 +64,16 @@ export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY
 
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
+  const isPreview = useAtomValue(isPreviewAtom);
   unleashClient = useMemo(
     () =>
       new UnleashClient({
         ...config,
         context: {
-          // TODO: instead of the isBeta, use the internal chrome state
           // the unleash context is not generic, look for issue/PR in the unleash repo or create one
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          'platform.chrome.ui.preview': isBeta(),
+          'platform.chrome.ui.preview': isPreview,
           userId: user?.identity.internal?.account_id,
           orgId: user?.identity.internal?.org_id,
           ...(user
