@@ -4,8 +4,8 @@ import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
-import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
+import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
 const matcherMapper = {
   isEmpty,
@@ -132,7 +132,7 @@ const initialize = ({
       }
     },
     featureFlag: (flagName: string, expectedValue: boolean) =>
-      getFeatureFlagsError() !== true && unleashClient?.isEnabled(flagName) === expectedValue,
+      getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
