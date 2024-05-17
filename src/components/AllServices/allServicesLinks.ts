@@ -27,9 +27,9 @@ export type AllServicesSection = {
 };
 
 export const isAllServicesGroup = (item: unknown): item is AllServicesGroup => {
-  return (item as AllServicesGroup).isGroup === true;
+  return (item as AllServicesGroup)?.isGroup === true;
 };
 
 export function isAllServicesLink(item: unknown): item is AllServicesLink {
-  return !!(item as AllServicesLink).href;
+  return !!(item as AllServicesLink)?.href;
 }

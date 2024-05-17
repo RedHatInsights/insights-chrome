@@ -12,7 +12,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 describe('<AllServices />', () => {
   beforeEach(() => {
     // mock chrome and scalprum generic requests
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services.json', {
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', {
       status: 200,
       fixture: 'services.json',
     });

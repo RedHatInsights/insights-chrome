@@ -108,7 +108,7 @@ const DropdownItems = ({
     <React.Fragment key="user prefs wrapper">
       <DropdownItem
         component={({ className }) => (
-          <ChromeLink className={className} href="/user-preferences/notifications" appId="userPreferences">
+          <ChromeLink className={className} href="/settings/notifications/user-preferences" appId="userPreferences">
             {intl.formatMessage(messages.userPreferences)}
           </ChromeLink>
         )}

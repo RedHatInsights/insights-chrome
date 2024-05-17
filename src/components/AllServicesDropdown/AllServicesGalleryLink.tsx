@@ -14,10 +14,11 @@ import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 import { AllServicesDropdownContext } from './common';
 import ServiceIcon from '../FavoriteServices/ServiceIcon';
+import { titleToId } from '../../utils/common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, icon, description, isExternal }: AllServicesGalleryLinkProps) => {
+const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, category, group }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
   const { onLinkClick } = useContext(AllServicesDropdownContext);
   const TitleIcon = icon ? <ServiceIcon icon={icon} /> : null;
@@ -32,7 +33,12 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal }: 
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
-    <ChromeLink isExternal={isExternal} href={href} className="chr-c-favorite-service__tile">
+    <ChromeLink
+      isExternal={isExternal}
+      href={href}
+      className="chr-c-favorite-service__tile"
+      data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-Link`}
+    >
       <Card
         className={classNames('chr-c-link-service-card chr-c-favorite-trigger', {
           'chr-c-icon-favorited': isFavorite,
@@ -57,6 +63,7 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal }: 
                 <Button
                   variant="plain"
                   className="pf-v5-u-p-0"
+                  ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();

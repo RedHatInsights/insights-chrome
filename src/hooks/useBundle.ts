@@ -19,7 +19,7 @@ export const bundleMapping: {
   'application-services': 'Application Services',
   openshift: 'OpenShift',
   ansible: 'Ansible Automation Platform',
-  insights: 'Red Hat Insights',
+  insights: 'RHEL',
   edge: 'Edge management',
   settings: 'Settings',
   landing: 'Home',

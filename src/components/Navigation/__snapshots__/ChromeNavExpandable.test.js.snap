@@ -59,6 +59,7 @@ exports[`ChromeNavExpandable should render nav item expandable 1`] = `
             data-quickstart-id="foo_bar"
             data-testid="router-link"
             href="/foo/bar"
+            itemid="/foo/bar"
           >
             Title
              
@@ -127,6 +128,7 @@ exports[`ChromeNavExpandable should render nav item expandable with items 1`] = 
             data-quickstart-id="foo"
             data-testid="router-link"
             href="/foo"
+            itemid="/foo"
           >
             Sub Item
              

@@ -28,12 +28,15 @@ import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import chromeStore from '../../state/chromeStore';
 
 const isITLessEnv = ITLess();
 
 export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
   cookie.set('cs_toggledRelease', 'true');
   const previewFragment = getRouterBasename(pathname);
+  chromeStore.set(isPreviewAtom, !isBeta);
 
   if (isBeta) {
     return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
