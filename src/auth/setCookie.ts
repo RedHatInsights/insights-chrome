@@ -28,7 +28,7 @@ export async function setCookie(token: string, expiresAt: number) {
       setCookieWrapper(`${cookieName}=${token};` + `path=/api/remediations/v1;` + `secure=true;` + `expires=${getCookieExpires(expiresAt)}`);
       setCookieWrapper(`${cookieName}=${token};` + `path=/api/edge/v1;` + `secure=true;` + `expires=${getCookieExpires(expiresAt)}`);
       setCookieWrapper(
-        `${cookieName}=${token};` + `path=/api/crc-pdf-generator/v2/download;` + `secure=true;` + `expires=${getCookieExpires(expiresAt)}`
+        `${cookieName}=${token};` + `path=/api/crc-pdf-generator/v2/create;` + `secure=true;` + `expires=${getCookieExpires(expiresAt)}`
       );
     }
   }
