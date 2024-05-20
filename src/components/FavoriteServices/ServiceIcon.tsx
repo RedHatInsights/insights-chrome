@@ -4,7 +4,6 @@ import AITechnologyIcon from '../AllServicesDropdown/icon-ai-technology';
 import ACSIcon from '../AllServicesDropdown/icon-acs';
 import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
 import AppServicesIcon from '../AllServicesDropdown/icon-app-services';
-import BrainIcon from '../AllServicesDropdown/icon-brain';
 import DataScienceIcon from '../AllServicesDropdown/icon-data-science';
 import EdgeIcon from '../AllServicesDropdown/icon-edge';
 import InsightsIcon from '../AllServicesDropdown/icon-insights';
@@ -29,6 +28,7 @@ import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
 import MonitoringIcon from '@patternfly/react-icons/dist/dynamic/icons/monitoring-icon';
 import AutomationIcon from '@patternfly/react-icons/dist/dynamic/icons/automation-icon';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
+import BrainIcon from '@patternfly/react-icons/dist/dynamic/icons/brain-icon';
 
 export enum FavorableIcons {
   AITechnologyIcon = 'AITechnologyIcon',
@@ -68,7 +68,6 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   ACSIcon,
   AnsibleIcon,
   AppServicesIcon,
-  BrainIcon,
   DataScienceIcon,
   EdgeIcon,
   InsightsIcon,
@@ -93,6 +92,7 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   ShoppingCartIcon,
   CubeIcon,
   BoxesIcon,
+  BrainIcon,
   MonitoringIcon,
 };
 
