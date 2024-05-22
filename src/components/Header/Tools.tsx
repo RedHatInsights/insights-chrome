@@ -33,7 +33,7 @@ const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 const isITLessEnv = ITLess();
 
 /**
- * @deprecated Switch release will be replaces by the internal chrome state variable
+ * @deprecated Switch release will be replaced by the internal chrome state variable
  */
 export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
   cookie.set('cs_toggledRelease', 'true');
@@ -185,6 +185,13 @@ const Tools = () => {
       : []),
   ];
 
+  const handleToggle = () => {
+    if (!LOCAL_PREVIEW) {
+      switchRelease(isPreview, location.pathname, previewEnabled);
+    }
+    setIsPreview();
+  };
+
   useEffect(() => {
     if (user) {
       setState({
@@ -244,12 +251,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => {
-        if (!LOCAL_PREVIEW) {
-          switchRelease(isPreview, location.pathname, previewEnabled);
-        }
-        setIsPreview();
-      },
+      onClick: handleToggle,
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -279,12 +281,7 @@ const Tools = () => {
         labelOff="Preview off"
         aria-label="Preview switcher"
         isChecked={isPreview}
-        onChange={() => {
-          if (!LOCAL_PREVIEW) {
-            switchRelease(isPreview, location.pathname, previewEnabled);
-          }
-          setIsPreview();
-        }}
+        onChange={handleToggle}
         isReversed
         className="chr-c-beta-switcher"
       />

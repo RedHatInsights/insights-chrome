@@ -17,17 +17,7 @@ export type AppFilterBucket = {
   links: NavItem[];
 };
 
-export const requiredBundles = [
-  'application-services',
-  'openshift',
-  'insights',
-  'edge',
-  'ansible',
-  'settings',
-  'iam',
-  'quay',
-  'subscriptions',
-];
+export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings', 'iam', 'quay', 'subscriptions'];
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 

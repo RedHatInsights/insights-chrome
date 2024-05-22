@@ -13,6 +13,7 @@ export type ChromeUserConfig = {
 export const initChromeUserConfig = async ({ getUser, token }: { getUser: () => Promise<ChromeUser>; token: string }) => {
   const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
   let config: ChromeUserConfig;
+  // FIXME: remove this once fully switched to internal preview
   if (!LOCAL_PREVIEW) {
     config = {
       data: {

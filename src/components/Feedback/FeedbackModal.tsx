@@ -1,5 +1,5 @@
 import React, { memo, useContext, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
@@ -13,7 +13,6 @@ import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/out
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
-import { useAtom, useAtomValue } from 'jotai';
 import { isFeedbackModalOpenAtom, usePendoFeedbackAtom } from '../../state/atoms/feedbackModalAtom';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';

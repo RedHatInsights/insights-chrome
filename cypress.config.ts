@@ -34,7 +34,7 @@ export default defineConfig({
   },
   e2e: {
     blockHosts: ['consent.trustarc.com'],
-    baseUrl: 'https://stage.foo.redhat.com:1337/beta',
+    baseUrl: 'https://stage.foo.redhat.com:1337/',
     env: {
       E2E_USER: process.env.E2E_USER,
       E2E_PASSWORD: process.env.E2E_PASSWORD,
