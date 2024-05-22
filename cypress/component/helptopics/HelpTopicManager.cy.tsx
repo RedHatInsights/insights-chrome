@@ -166,6 +166,7 @@ describe('HelpTopicManager', () => {
       navItems: [],
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
   });
 
   it.only('should switch help topics drawer content', () => {
