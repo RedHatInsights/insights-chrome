@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, Suspense, useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
@@ -82,7 +82,9 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               )}
             </ToolbarGroup>
             <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-md-on-2xl" variant="filter-group">
-              <SearchInput onStateChange={hideAllServices} />
+              <Suspense fallback={null}>
+                <SearchInput onStateChange={hideAllServices} />
+              </Suspense>
             </ToolbarGroup>
             <ToolbarGroup
               className="pf-v5-m-icon-button-group pf-v5-u-ml-auto"
