@@ -25,7 +25,6 @@ export const requiredBundles = [
   'settings',
   'iam',
   'quay',
-  'business-services',
   'subscriptions',
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ].filter(Boolean);
