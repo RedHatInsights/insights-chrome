@@ -4,6 +4,7 @@ import ScalprumRoot from './ScalprumRoot';
 import { act, render, waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
+import { Provider as JotaiProvider } from 'jotai';
 
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
@@ -47,6 +48,19 @@ window.ResizeObserver =
 import * as routerDom from 'react-router-dom';
 import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useHydrateAtoms } from 'jotai/utils';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const JotaiTestProvider = ({ initialValues, children }) => (
+  <JotaiProvider>
+    <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+  </JotaiProvider>
+);
 
 describe('ScalprumRoot', () => {
   let initialState;
@@ -122,6 +136,10 @@ describe('ScalprumRoot', () => {
       foo: {
         manifestLocation: '/bar',
         appName: 'foo',
+      },
+      virtualAssistant: {
+        manifestLocation: '/virtual-assistant',
+        appName: 'baz',
       },
     };
     mockStore = configureStore();
@@ -216,15 +234,60 @@ describe('ScalprumRoot', () => {
     });
 
     const { container } = render(
-      <Provider store={store}>
-        <ChromeAuthContext.Provider value={chromeContextMockValue}>
-          <MemoryRouter initialEntries={['/insights']}>
-            <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
-          </MemoryRouter>
-        </ChromeAuthContext.Provider>
-      </Provider>
+      <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
+        <Provider store={store}>
+          <ChromeAuthContext.Provider value={chromeContextMockValue}>
+            <MemoryRouter initialEntries={['/insights']}>
+              <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
+            </MemoryRouter>
+          </ChromeAuthContext.Provider>
+        </Provider>
+      </JotaiTestProvider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeTruthy());
+
+    useLocationSpy.mockRestore();
+    fetchSpy.mockRestore();
+  });
+
+  it('should not render GlobalFilter', async () => {
+    const fetchSpy = jest.spyOn(window, 'fetch').mockImplementationOnce(() => Promise.resolve({ ok: true, json: () => ({}) }));
+    const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
+    useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
+    Object.defineProperty(window, 'location', {
+      value: {
+        pathname: '/insights',
+        href: '/insights',
+        host: 'foo.bar.baz',
+      },
+    });
+    Object.defineProperty(window, 'insights', {
+      value: {
+        chrome: {
+          getEnvironment: () => '',
+        },
+      },
+    });
+    const store = mockStore({
+      ...initialState,
+      chrome: {
+        ...initialState.chrome,
+        activeLocation: 'insights',
+      },
+    });
+
+    const { container } = render(
+      <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
+        <Provider store={store}>
+          <ChromeAuthContext.Provider value={chromeContextMockValue}>
+            <MemoryRouter initialEntries={['/insights']}>
+              <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
+            </MemoryRouter>
+          </ChromeAuthContext.Provider>
+        </Provider>
+      </JotaiTestProvider>
+    );
+    await waitFor(() => expect(container.querySelector('#global-filter')).toBeFalsy());
 
     useLocationSpy.mockRestore();
     fetchSpy.mockRestore();

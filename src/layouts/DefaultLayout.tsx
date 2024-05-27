@@ -28,6 +28,7 @@ import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import VirtualAssistant from '../components/Routes/VirtualAssistant';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -99,6 +100,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           </div>
         )}
         <RedirectBanner />
+        <VirtualAssistant />
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         {Footer}
       </div>

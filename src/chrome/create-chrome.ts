@@ -29,12 +29,13 @@ import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
 import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { FlagTagsFilter } from '../@types/types';
-import useBundle, { getUrl } from '../hooks/useBundle';
+import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
 import { getVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
+import requestPdf from '../pdf/requestPdf';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -131,6 +132,7 @@ export const createChromeContext = ({
       }
       return environment;
     },
+    getAvailableBundles: () => Object.entries(bundleMapping).map(([key, value]) => ({ id: key, title: value })),
     createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
       const token = await chromeAuth.getToken();
@@ -167,9 +169,9 @@ export const createChromeContext = ({
     segment: {
       setPageMetadata,
     },
-    toggleFeedbackModal: (...args) => dispatch(toggleFeedbackModal(...args)),
+    toggleFeedbackModal: (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen)),
     enableDebugging: () => dispatch(toggleDebuggerButton(true)),
-    toggleDebuggerModal: (...args) => dispatch(toggleDebuggerModal(...args)),
+    toggleDebuggerModal: (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen)),
     // FIXME: Update types once merged
     quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
     helpTopics,
@@ -194,6 +196,7 @@ export const createChromeContext = ({
       store,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
+    requestPdf,
   };
   return api;
 };

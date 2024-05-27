@@ -245,9 +245,9 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
         >
           <a
             class="pf-v5-c-menu__item"
-            data-quickstart-id="user-preferences_notifications"
+            data-quickstart-id="settings_notifications_user-preferences"
             data-testid="router-link"
-            href="/user-preferences/notifications"
+            href="/settings/notifications/user-preferences"
           >
             User Preferences
           </a>

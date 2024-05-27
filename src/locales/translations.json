@@ -95,7 +95,7 @@
   "tryUsingDifferentAccount": "Try using different account",
   "unableToLoadQuickstartsContent": "Unable to load the quickstarts content.",
   "use": "Use",
-  "useAccountNumber": "Use this number when contacting Red Hat for support. If you don't have any active subscriptions, you will not have an account number.",
+  "useAccountNumber": "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here.",
   "useFeatureInBeta": "Use feature in preview",
   "userPreferences": "User Preferences",
   "userResearchTeam": "User Research Team",

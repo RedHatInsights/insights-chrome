@@ -1,0 +1,10 @@
+.astro__virtual-assistant {
+  position: fixed;
+  bottom: var(--pf-global--spacer--lg);
+  right: var(--pf-global--spacer--lg);
+  z-index: 1000;
+  @media screen and (max-width: 768px) {
+    bottom: 0;
+    right: 0;
+  }
+}

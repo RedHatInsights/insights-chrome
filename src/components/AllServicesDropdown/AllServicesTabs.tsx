@@ -78,6 +78,7 @@ const AllServicesTabs = ({
       ouiaId={'all-services-tabs'}
     >
       <TabWrapper
+        ouiaId="AllServices-favorites-Tab"
         onClick={(e) => {
           handleTabClick?.(e, FAVORITE_TAB_ID);
         }}
@@ -95,6 +96,7 @@ const AllServicesTabs = ({
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
         {linkSections.map((section, index) => (
           <TabWrapper
+            ouiaId={`AllServices-${section.id}-Tab`}
             key={index}
             eventKey={index}
             title={<TabTitleText>{section.title}</TabTitleText>}

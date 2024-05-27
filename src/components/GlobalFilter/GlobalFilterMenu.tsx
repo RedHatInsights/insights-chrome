@@ -1,5 +1,5 @@
-import React, { FormEvent, Fragment, MouseEventHandler, useContext, useMemo } from 'react';
-import { Group, GroupFilter, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import React, { Fragment, useContext, useMemo } from 'react';
+import { Group, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 
 import messages from '../../locales/Messages';
@@ -19,6 +19,7 @@ import { updateSelected } from './globalFilterApi';
 import { fetchAllTags } from '../../redux/actions';
 import { FlagTagsFilter } from '../../@types/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import GroupFilterInputGroup from './GroupFilterInputGroup';
 
 export type GlobalFilterMenuGroupKeys = GroupType;
 
@@ -41,9 +42,6 @@ export type FilterMenuGroup = {
   items: FilterMenuItem[];
 };
 
-/** Create unique hotjar event for selected tags */
-const generateGlobalFilterEvent = (isChecked: boolean, value?: string) => `global_filter_tag_${isChecked ? 'uncheck' : 'check'}_${value}`;
-
 export type SelectedTags = {
   [key: string]: {
     [key: string]:
@@ -58,7 +56,7 @@ export type SelectedTags = {
 
 export type GlobalFilterDropdownProps = {
   allowed: boolean;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   filter: {
     filterBy?: string | number;
     onFilter?: (value: string) => void;
@@ -76,7 +74,7 @@ export type GlobalFilterDropdownProps = {
 
 export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownProps> = ({
   allowed,
-  isDisabled,
+  isDisabled = false,
   filter,
   chips,
   setValue,
@@ -99,6 +97,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
     () => (!allowed || isDisabled ? Tooltip : ({ children }: { children: any }) => <Fragment>{children}</Fragment>),
     [allowed, isDisabled]
   );
+
   return (
     <Fragment>
       <Split id="global-filter" hasGutter className="chr-c-global-filter">
@@ -114,43 +113,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
               }
               position="right"
             >
-              <GroupFilter
-                className="chr-c-menu-global-filter__select"
-                selected={selectedTags}
-                isDisabled={isDisabled}
-                groups={
-                  filter.groups?.map((group) => ({
-                    ...group,
-                    items: group.items?.map((item) => ({
-                      ...item,
-                      onClick: (
-                        e: FormEvent | MouseEventHandler<HTMLInputElement> | undefined,
-                        selected: any,
-                        group: number | undefined,
-                        currItem: boolean | undefined,
-                        groupName: string | undefined,
-                        itemName: string
-                      ) => {
-                        generateGlobalFilterEvent(
-                          (selected?.[groupName as string]?.[itemName as string] as Group)?.isSelected as boolean,
-                          item.value
-                        );
-                        // item.onClick?.(e, selected, group, currItem, groupName, itemName);
-                      },
-                    })),
-                  })) || ([] as unknown as any)
-                }
-                onChange={filter.onChange}
-                placeholder={intl.formatMessage(messages.filterByTags)}
-                isFilterable
-                onFilter={filter.onFilter || (() => undefined)}
-                filterBy={filter.filterBy as string}
-                showMoreTitle={intl.formatMessage(messages.showMore)}
-                onShowMore={() => setIsOpen(true)}
-                showMoreOptions={{
-                  isLoadButton: true,
-                }}
-              />
+              <GroupFilterInputGroup filter={filter} isDisabled={isDisabled} selectedTags={selectedTags} setIsOpen={setIsOpen} />
             </GroupFilterWrapper>
           ) : (
             <Skeleton fontSize={'xl'} />
