@@ -11,6 +11,8 @@ import type { AuthContextProps } from 'react-oidc-context';
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
+// this extra header helps with API metrics
+const FE_ORIGIN_HEADER_NAME = 'x-rh-frontend-origin';
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 const AUTH_ALLOWED_ORIGINS = [
   location.origin,
@@ -104,6 +106,8 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
         // Send Auth header, it will be changed to Authorization later down the line
         this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
+
+      this.setRequestHeader(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
     // eslint-disable-line func-names
     if (iqeEnabled) {
@@ -134,6 +138,10 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
 
     if (shouldInjectAuthHeaders(input) && !request.headers.has('Authorization')) {
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
+    }
+
+    if (!request.headers.has(FE_ORIGIN_HEADER_NAME)) {
+      request.headers.append(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
 
     const prom = oldFetch.apply(this, [request, ...rest]);
