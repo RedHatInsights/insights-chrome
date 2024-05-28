@@ -106,6 +106,7 @@ describe('<Default layout />', () => {
       navItems: [],
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
   });
 
   it('render correctly with few nav items', () => {
