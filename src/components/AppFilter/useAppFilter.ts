@@ -25,26 +25,13 @@ export const requiredBundles = [
   'settings',
   'iam',
   'quay',
-  'business-services',
   'subscriptions',
   ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
 ].filter(Boolean);
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 
-const bundlesOrder = [
-  'application-services',
-  'openshift',
-  'rhel',
-  'edge',
-  'ansible',
-  'settings',
-  'cost-management',
-  'subscriptions',
-  'iam',
-  'quay',
-  'business-services',
-];
+const bundlesOrder = ['application-services', 'openshift', 'rhel', 'edge', 'ansible', 'settings', 'cost-management', 'subscriptions', 'iam', 'quay'];
 
 function findModuleByLink(href: string, { modules }: Pick<ChromeModule, 'modules'> = { modules: [] }) {
   const routes = (modules || [])
