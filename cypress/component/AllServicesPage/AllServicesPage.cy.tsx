@@ -26,9 +26,7 @@ describe('<AllServices />', () => {
       status: 200,
       fixture: 'settings-navigation.json',
     });
-    // cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/navigation/*-navigation.json?ts=*', {
-    //   data: [],
-    // });
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
   });
 
   it('should filter by service category title', () => {
