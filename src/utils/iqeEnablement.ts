@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
-import type { Store } from 'redux';
-import { setGatewayError } from '../redux/actions';
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
+import { createStore } from 'jotai';
 // eslint-disable-next-line no-restricted-imports
 import type { AuthContextProps } from 'react-oidc-context';
+import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 // TODO: Refactor this file to use modern JS
 
 let xhrResults: XMLHttpRequest[] = [];
@@ -65,7 +65,7 @@ const spreadAdditionalHeaders = (options: RequestInit | undefined) => {
   return additionalHeaders;
 };
 
-export function init(store: Store, authRef: React.MutableRefObject<AuthContextProps>) {
+export function init(chromeStore: ReturnType<typeof createStore>, authRef: React.MutableRefObject<AuthContextProps>) {
   const open = window.XMLHttpRequest.prototype.open;
   const send = window.XMLHttpRequest.prototype.send;
   const setRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -120,7 +120,7 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
           crossAccountBouncer();
           // check for 3scale error
         } else if (gatewayError) {
-          store.dispatch(setGatewayError(gatewayError));
+          chromeStore.set(gatewayErrorAtom, gatewayError);
         }
       }
     };
@@ -165,7 +165,7 @@ export function init(store: Store, authRef: React.MutableRefObject<AuthContextPr
             const data = isJson ? await resCloned.json() : await resCloned.text();
             const gatewayError = get3scaleError(data);
             if (gatewayError) {
-              store.dispatch(setGatewayError(gatewayError));
+              chromeStore.set(gatewayErrorAtom, gatewayError);
             }
 
             return res;
