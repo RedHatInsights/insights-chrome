@@ -129,7 +129,7 @@ describe('ODIC Secured', () => {
     cy.contains(CHILD_TEXT).should('exist');
   });
 
-  it.only('Chrome auth context methods should be initialized and called on click', () => {
+  it('Chrome auth context methods should be initialized and called on click', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
         <Wrapper store={store}>

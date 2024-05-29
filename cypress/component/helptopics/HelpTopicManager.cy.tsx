@@ -169,7 +169,7 @@ describe('HelpTopicManager', () => {
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
   });
 
-  it.only('should switch help topics drawer content', () => {
+  it('should switch help topics drawer content', () => {
     // change screen size
     cy.viewport(1280, 720);
     cy.window().then((win) => {
