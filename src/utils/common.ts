@@ -354,7 +354,7 @@ export const chromeServiceStaticPathname = {
   },
 };
 
-export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services') {
+export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services' | 'search') {
   const stableEnv = isBeta() ? 'beta' : 'stable';
   const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;

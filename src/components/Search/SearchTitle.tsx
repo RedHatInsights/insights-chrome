@@ -5,7 +5,7 @@ const SearchTitle = ({ title, bundleTitle }: { title: string; bundleTitle: strin
   const showBundleTitle = bundleTitle.replace(/\s/g, '').length > 0;
   return (
     <TextContent>
-      <Text component="small" className="pf-v5-u-link-color" dangerouslySetInnerHTML={{ __html: title }}></Text>
+      <Text component="small" className="pf-v5-u-link-color chr-c-search-title" dangerouslySetInnerHTML={{ __html: title }}></Text>
       {showBundleTitle && (
         <Text component="small" className="pf-v5-u-link-color">
           <span className="pf-v5-u-px-sm">|</span>

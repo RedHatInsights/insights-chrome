@@ -6,6 +6,10 @@ import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { Provider as JotaiProvider } from 'jotai';
 
+jest.mock('../Search/SearchInput', () => {
+  return jest.fn().mockImplementation(() => <div />);
+});
+
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
   return {

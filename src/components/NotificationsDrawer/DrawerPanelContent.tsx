@@ -140,9 +140,9 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     </DropdownItem>,
     <Divider key="divider" />,
     <DropdownItem key="quick links" description="Quick links" />,
-    <DropdownItem key="event log" onClick={() => onNavigateTo('/settings/notifications/eventlog')}>
+    <DropdownItem key="notifications log" onClick={() => onNavigateTo('/settings/notifications/notificationslog')}>
       <Flex>
-        <FlexItem>View event log</FlexItem>
+        <FlexItem>View notifications log</FlexItem>
       </Flex>
     </DropdownItem>,
     (isOrgAdmin || hasNotificationsPermissions) && (
