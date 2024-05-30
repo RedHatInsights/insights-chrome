@@ -9,6 +9,8 @@ import RedHatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 
 import './Footer.scss';
 
+const currentYear = new Date().getFullYear();
+
 export type FooterProps = {
   setCookieElement: Dispatch<SetStateAction<HTMLAnchorElement | null>>;
   cookieElement: Element | null;
@@ -39,7 +41,7 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
           <Flex className="pf-m-column pf-v5-u-align-self-flex-start">
             <TextContent className="pf-v5-l-flex pf-v5-u-mb-sm">
               <Text component="p" className="pf-v5-u-color-400 pf-v5-u-font-size-xs">
-                ©2023 Red Hat, Inc.
+                ©{currentYear} Red Hat, Inc.
               </Text>
             </TextContent>
             <TextContent className="pf-v5-l-flex pf-m-column pf-v5-u-flex-direction-row-on-md pf-v5-u-font-size-xs">
