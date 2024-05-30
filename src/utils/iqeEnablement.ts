@@ -26,6 +26,20 @@ const isExcluded = (target: string) => {
   return AUTH_EXCLUDED_URLS.some((regex) => regex.test(target));
 };
 
+const shouldInjectUIHeader = (path: URL | Request | string = '') => {
+  if (path instanceof URL) {
+    // the type URL has a different match function than the cases above
+    return location.origin === path.origin && !isExcluded(path.href);
+  } else if (path instanceof Request) {
+    const isOriginAllowed = location.origin === path.url;
+    return isOriginAllowed && !isExcluded(path.url);
+  } else if (typeof path === 'string') {
+    return location.origin === path || !path.startsWith('http');
+  }
+
+  return true;
+};
+
 const verifyTarget = (originMatch: string, urlMatch: string) => {
   const isOriginAllowed = AUTH_ALLOWED_ORIGINS.some((origin) => {
     if (typeof origin === 'string') {
@@ -106,7 +120,8 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
         // Send Auth header, it will be changed to Authorization later down the line
         this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
-
+    }
+    if (shouldInjectUIHeader((this as XMLHttpRequest & { _url: string })._url)) {
       this.setRequestHeader(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
     // eslint-disable-line func-names
@@ -140,7 +155,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
     }
 
-    if (!request.headers.has(FE_ORIGIN_HEADER_NAME)) {
+    if (shouldInjectUIHeader(request) && !request.headers.has(FE_ORIGIN_HEADER_NAME)) {
       request.headers.append(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
 
