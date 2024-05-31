@@ -37,6 +37,10 @@ export const POPULATE_NOTIFICATIONS = '@@chrome/populate-notifications';
 
 export const MARK_NOTIFICATION_AS_READ = '@@chrome/mark-notification-as-read';
 export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread';
-export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
-export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';
+export const MARK_NOTIFICATION_AS_SELECTED = '@@chrome/mark-notification-as-selected';
+export const MARK_NOTIFICATION_AS_DESELECTED = '@@chrome/mark-notification-as-deselected';
+export const SELECT_ALL_NOTIFICATIONS = '@@chrome/select-all-notifications';
+export const DESELECT_ALL_NOTIFICATIONS = '@@chrome/deselect-all-notifications';
+export const MARK_SELECTED_NOTIFICATIONS_AS_READ = '@@chrome/mark-selected-notifications-as-read';
+export const MARK_SELECTED_NOTIFICATIONS_AS_UNREAD = '@@chrome/mark-selected-notifications-as-unread';
 export const UPDATE_NOTIFICATIONS = '@@chrome/update-notifications';

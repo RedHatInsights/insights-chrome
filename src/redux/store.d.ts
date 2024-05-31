@@ -15,7 +15,9 @@ export type NotificationData = {
   description: string;
   read: boolean;
   source: string;
+  bundle: string;
   created: string;
+  selected?: boolean;
 };
 
 export type Notifications = {

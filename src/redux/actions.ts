@@ -184,12 +184,30 @@ export const markNotificationAsUnread = (id: string) => ({
   payload: id,
 });
 
-export const markAllNotificationsAsRead = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_READ,
+export const markNotificationsAsSelected = (ids: string[]) => ({
+  type: actionTypes.MARK_NOTIFICATION_AS_SELECTED,
+  payload: ids,
 });
 
-export const markAllNotificationsAsUnread = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
+export const markNotificationsAsDeselected = (ids: string[]) => ({
+  type: actionTypes.MARK_NOTIFICATION_AS_DESELECTED,
+  payload: ids,
+});
+
+export const selectAllNotifications = () => ({
+  type: actionTypes.SELECT_ALL_NOTIFICATIONS,
+});
+
+export const deselectAllNotifications = () => ({
+  type: actionTypes.DESELECT_ALL_NOTIFICATIONS,
+});
+
+export const markSelectedNotificationsAsRead = () => ({
+  type: actionTypes.MARK_SELECTED_NOTIFICATIONS_AS_READ,
+});
+
+export const markSelectedNotificationsAsUnread = () => ({
+  type: actionTypes.MARK_SELECTED_NOTIFICATIONS_AS_UNREAD,
 });
 
 export const updateNotifications = (payload: NotificationsPayload) => ({

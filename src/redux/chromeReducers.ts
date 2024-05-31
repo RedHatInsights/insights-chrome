@@ -290,24 +290,76 @@ export function markNotificationAsUnread(state: ChromeState, { payload }: { payl
   };
 }
 
-export function markAllNotificationsAsRead(state: ChromeState): ChromeState {
-  return {
-    ...state,
-    notifications: {
-      isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.count || 0,
-      data: (state.notifications?.data || []).map((notification) => ({ ...notification, read: true })),
-    },
-  };
-}
-
-export function markAllNotificationsAsUnread(state: ChromeState): ChromeState {
+export function markNotificationsAsSelected(state: ChromeState, { payload }: { payload: string[] }): ChromeState {
   return {
     ...state,
     notifications: {
       isExpanded: state.notifications?.isExpanded || false,
       count: state.notifications?.data?.length || 0,
-      data: (state.notifications?.data || []).map((notification) => ({ ...notification, read: false })),
+      data: (state.notifications?.data || []).map((notification: NotificationData) =>
+        payload.includes(notification.id) ? { ...notification, selected: true } : notification
+      ),
+    },
+  };
+}
+
+export function markNotificationsAsDeselected(state: ChromeState, { payload }: { payload: string[] }): ChromeState {
+  return {
+    ...state,
+    notifications: {
+      isExpanded: state.notifications?.isExpanded || false,
+      count: state.notifications?.data?.length || 0,
+      data: (state.notifications?.data || []).map((notification: NotificationData) =>
+        payload.includes(notification.id) ? { ...notification, selected: false } : notification
+      ),
+    },
+  };
+}
+
+export function markSelectedNotificationsAsRead(state: ChromeState): ChromeState {
+  return {
+    ...state,
+    notifications: {
+      isExpanded: state.notifications?.isExpanded || false,
+      count: state.notifications?.data?.length || 0,
+      data: (state.notifications?.data || []).map((notification: NotificationData) =>
+        notification.selected ? { ...notification, read: true } : notification
+      ),
+    },
+  };
+}
+
+export function markSelectedNotificationsAsUnread(state: ChromeState): ChromeState {
+  return {
+    ...state,
+    notifications: {
+      isExpanded: state.notifications?.isExpanded || false,
+      count: state.notifications?.data?.length || 0,
+      data: (state.notifications?.data || []).map((notification: NotificationData) =>
+        notification.selected ? { ...notification, read: false } : notification
+      ),
+    },
+  };
+}
+
+export function selectAllNotifications(state: ChromeState): ChromeState {
+  return {
+    ...state,
+    notifications: {
+      isExpanded: state.notifications?.isExpanded || false,
+      count: state.notifications?.data?.length || 0,
+      data: (state.notifications?.data || []).map((notification: NotificationData) => ({ ...notification, selected: true })),
+    },
+  };
+}
+
+export function deselectAllNotifications(state: ChromeState): ChromeState {
+  return {
+    ...state,
+    notifications: {
+      isExpanded: state.notifications?.isExpanded || false,
+      count: state.notifications?.data?.length || 0,
+      data: (state.notifications?.data || []).map((notification: NotificationData) => ({ ...notification, selected: false })),
     },
   };
 }

@@ -22,10 +22,19 @@ import orderBy from 'lodash/orderBy';
 import { Link, useNavigate } from 'react-router-dom';
 import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
+import {
+  deselectAllNotifications,
+  markNotificationsAsSelected,
+  markSelectedNotificationsAsRead,
+  markSelectedNotificationsAsUnread,
+  selectAllNotifications,
+  toggleNotificationsDrawer,
+} from '../../redux/actions';
 import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import axios from 'axios';
+import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -96,8 +105,9 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   }, []);
 
   useEffect(() => {
+    console.log('activeFilters', activeFilters);
     const modifiedNotifications = (activeFilters || []).reduce(
-      (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
+      (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ bundle }) => bundle.includes(chosenFilter))],
       []
     );
 
@@ -109,14 +119,53 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     dispatch(toggleNotificationsDrawer());
   };
 
-  const onMarkAllAsRead = () => {
-    dispatch(markAllNotificationsAsRead());
+  const onMarkSelectedAsRead = () => {
     setIsDropdownOpen(false);
+    dispatch(markSelectedNotificationsAsRead());
+
+    axios
+      .put('/api/notifications/v1/notifications/drawer/read', {
+        notification_ids: notifications.filter(({ selected }) => selected).map(({ id }) => id),
+        read_status: true,
+      })
+      .then(() => {
+        dispatch(deselectAllNotifications());
+      })
+      .catch((error) => {
+        dispatch(markSelectedNotificationsAsUnread());
+        console.error('Failed to update notification read status', error);
+      });
   };
 
-  const onMarkAllAsUnread = () => {
-    dispatch(markAllNotificationsAsUnread());
+  const onMarkSelectedAsUnread = () => {
     setIsDropdownOpen(false);
+    dispatch(markSelectedNotificationsAsUnread());
+
+    axios
+      .put('/api/notifications/v1/notifications/drawer/read', {
+        notification_ids: notifications.filter(({ selected }) => selected).map(({ id }) => id),
+        read_status: false,
+      })
+      .then(() => {
+        dispatch(deselectAllNotifications());
+      })
+      .catch((error) => {
+        dispatch(markSelectedNotificationsAsRead());
+        console.error('Failed to update notification read status', error);
+      });
+  };
+
+  const selectAll = () => {
+    dispatch(selectAllNotifications());
+  };
+
+  const selectNone = () => {
+    dispatch(deselectAllNotifications());
+  };
+
+  const selectCurrentlyVisible = () => {
+    const visibleNotifications = activeFilters.length > 0 ? filteredNotifications : notifications;
+    dispatch(markNotificationsAsSelected(visibleNotifications.map(({ id }) => id)));
   };
 
   const onFilterSelect = (chosenFilter: string) => {
@@ -132,11 +181,11 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
 
   const dropdownItems = [
     <DropdownItem key="actions" description="Actions" />,
-    <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
-      Mark visible as read
+    <DropdownItem key="read all" onClick={onMarkSelectedAsRead} isDisabled={notifications.length === 0}>
+      Mark selected as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={onMarkAllAsUnread} isDisabled={notifications.length === 0}>
-      Mark visible as unread
+    <DropdownItem key="unread all" onClick={onMarkSelectedAsUnread} isDisabled={notifications.length === 0}>
+      Mark selected as unread
     </DropdownItem>,
     <Divider key="divider" />,
     <DropdownItem key="quick links" description="Quick links" />,
@@ -220,6 +269,20 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         >
           {filterDropdownItems()}
         </Dropdown>
+        <BulkSelect
+          id="notifications-bulk-select"
+          items={[
+            { title: 'Select none (0)', key: 'select-none', onClick: selectNone },
+            {
+              title: `Select visible (${activeFilters.length > 0 ? filteredNotifications.length : notifications.length})`,
+              key: 'select-visible',
+              onClick: selectCurrentlyVisible,
+            },
+            { title: `Select all (${notifications.length})`, key: 'select-all', onClick: selectAll },
+          ]}
+          count={notifications.filter(({ selected }) => selected).length}
+          checked={notifications.length > 0 && notifications.every(({ selected }) => selected)}
+        />
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle
