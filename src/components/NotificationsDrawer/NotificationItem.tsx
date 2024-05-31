@@ -15,6 +15,7 @@ import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { useDispatch } from 'react-redux';
 import { NotificationData } from '../../redux/store';
 import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
+import axios from 'axios';
 
 interface NotificationItemProps {
   notification: NotificationData;
@@ -25,8 +26,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
   const dispatch = useDispatch();
 
   const onCheckboxToggle = () => {
-    dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
+    const updatedReadStatus = !notification.read;
+    dispatch(updatedReadStatus ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
     setIsDropdownOpen(false);
+
+    axios
+      .put('/api/notifications/v1/notifications/drawer/read', {
+        notification_ids: [notification.id],
+        read_status: updatedReadStatus,
+      })
+      .catch((error) => {
+        console.error('Failed to update notification read status', error);
+        // Revert the read status if the API call fails
+        dispatch(updatedReadStatus ? markNotificationAsUnread(notification.id) : markNotificationAsRead(notification.id));
+      });
   };
 
   const notificationDropdownItems = [
