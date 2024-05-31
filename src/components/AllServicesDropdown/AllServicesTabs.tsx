@@ -7,6 +7,9 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
 import { isBeta } from '../../utils/common';
+import { Text, TextVariants } from '@patternfly/react-core/dist/esm/components/Text';
+import ChromeLink from '../ChromeLink';
+import { Button } from '@patternfly/react-core';
 
 export type AllServicesTabsProps = {
   activeTabKey: string | number;
@@ -77,6 +80,24 @@ const AllServicesTabs = ({
       className="pf-v5-u-p-md pf-v5-u-pr-0"
       ouiaId={'all-services-tabs'}
     >
+      <Text className="pf-v5-u-p-md pf-v5-u-pr-0" component={TextVariants.small}>
+        Platform
+      </Text>
+      <ChromeLink href="/ansible/ansible-dashboard">
+        <Button variant="link" component="a">
+          Red Hat Ansible Platform
+        </Button>
+      </ChromeLink>
+      <ChromeLink href="/insights/dashboard#SIDs=&tags=">
+        <Button variant="link" component="a">
+          Red Hat Enterprise Linux
+        </Button>
+      </ChromeLink>
+      <ChromeLink href="/openshift/overview">
+        <Button variant="link" component="a">
+          Red Hat OpenShift
+        </Button>
+      </ChromeLink>
       <TabWrapper
         ouiaId="AllServices-favorites-Tab"
         onClick={(e) => {
@@ -93,6 +114,14 @@ const AllServicesTabs = ({
         }
       />
       <>
+        <Text className="pf-v5-u-p-md pf-v5-u-pr-0" component={TextVariants.small}>
+          Solutions{' '}
+          <ChromeLink href="/allservices">
+            <Button variant="link" component="a">
+              View all
+            </Button>
+          </ChromeLink>
+        </Text>
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
         {linkSections.map((section, index) => (
           <TabWrapper

@@ -81,15 +81,6 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
               <Sidebar>
                 <SidebarPanel>
                   <Stack>
-                    <StackItem className="chr-l-stack__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md">
-                      <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
-                        <Text component={TextVariants.p}>
-                          <ChromeLink href="/allservices">
-                            <Button isBlock>All services</Button>
-                          </ChromeLink>
-                        </Text>
-                      </TextContent>
-                    </StackItem>
                     <StackItem className="pf-v5-u-w-100">
                       <AllServicesTabs
                         activeTabKey={activeTabKey}
