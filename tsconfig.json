@@ -7,7 +7,7 @@
     "target": "esnext",
     "jsx": "react",
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "removeComments": false,
     "strict": true,
     "allowSyntheticDefaultImports": true,

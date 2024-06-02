@@ -1,0 +1,17 @@
+diff --git a/node_modules/@patternfly/icons/package.json b/node_modules/@patternfly/icons/package.json
+index 13518c9..6a1176e 100644
+--- a/node_modules/@patternfly/icons/package.json
++++ b/node_modules/@patternfly/icons/package.json
+@@ -10,12 +10,6 @@
+   "scripts": {
+     "build": "ts-node --esm ./scripts/build.ts"
+   },
+-  "exports": {
+-    "./patternfly/*": "./patternfly/*",
+-    "./fab/*": "./fab/*",
+-    "./far/*": "./far/*",
+-    "./fas/*": "./fas/*"
+-  },
+   "files": [
+     "./**/*.js",
+     "./**/*.svg",

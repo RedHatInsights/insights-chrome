@@ -1,0 +1,32 @@
+diff --git a/node_modules/@patternfly/elements/pf-icon/BaseIcon.js b/node_modules/@patternfly/elements/pf-icon/BaseIcon.js
+index c916b1e..45a6160 100644
+--- a/node_modules/@patternfly/elements/pf-icon/BaseIcon.js
++++ b/node_modules/@patternfly/elements/pf-icon/BaseIcon.js
+@@ -77,24 +77,16 @@ export class BaseIcon extends LitElement {
+     }
+     async load() {
+         const { set, icon } = this;
+-        const getter = __classPrivateFieldGet(this, _BaseIcon_instances, "a", _BaseIcon_class_get).getters.get(set) ?? __classPrivateFieldGet(this, _BaseIcon_instances, "a", _BaseIcon_class_get).getIconUrl;
+-        let spec = 'UNKNOWN ICON';
+         if (set && icon) {
+             try {
+-                const gotten = getter(set, icon);
+-                if (gotten instanceof URL) {
+-                    spec = gotten.pathname;
+-                }
+-                else {
+-                    spec = gotten;
+-                }
+-                const mod = await import(spec);
++                console.log(`@patternfly/icons/${set}/${icon}.js`)
++                const mod = await import(/* webpackInclude: /(far|fab|fas|patternfly)\/.*\.js/ */`@patternfly/icons/${set}/${icon}.js`);
+                 this.content = mod.default instanceof Node ? mod.default.cloneNode(true) : mod.default;
+                 await this.updateComplete;
+                 this.dispatchEvent(new Event('load', { bubbles: true }));
+             }
+             catch (error) {
+-                const event = new IconLoadError(spec, error);
++                const event = new IconLoadError(`@patternfly/icons/${set}/${icon}.js`, error);
+                 __classPrivateFieldGet(this, _BaseIcon_logger, "f").error(error.message);
+                 this.dispatchEvent(event);
+             }
