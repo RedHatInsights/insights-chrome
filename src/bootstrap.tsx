@@ -1,4 +1,4 @@
-import React, { Suspense, useContext, useEffect, useState } from 'react';
+import React, { Suspense, useContext, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
@@ -47,11 +47,10 @@ const App = ({ initApp }: { initApp: (...args: Parameters<typeof initChromeUserC
     getUser,
     token,
   });
-  const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
 
   useInitializeAnalytics();
 
-  return <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} />;
+  return <RootApp />;
 };
 
 const ConfigLoader = () => {
@@ -65,9 +64,8 @@ const ConfigLoader = () => {
     initPreview(false);
   }
   const { loader } = useSuspenseLoader(initChromeUserConfig, initSuccess, initFail);
-  const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
   return (
-    <Suspense fallback={<AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />}>
+    <Suspense fallback={<AppPlaceholder />}>
       <App initApp={loader} />
     </Suspense>
   );

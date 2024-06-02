@@ -4,13 +4,13 @@ import { Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core/dist/
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from '../ChromeLink';
-import Footer, { FooterProps } from '../Footer/Footer';
+import ChromeFooter from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
 import { getUrl } from '../../hooks/useBundle';
 
 // Component that is displayed as a placeholder before auth init is finished
-const AppPlaceholder = (props: FooterProps) => {
+const AppPlaceholder = () => {
   const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices'].includes(getUrl('bundle'));
   return (
     <MemoryRouter>
@@ -36,7 +36,7 @@ const AppPlaceholder = (props: FooterProps) => {
         }
       >
         <div className="chr-render">
-          <Footer {...props} />
+          <ChromeFooter />
         </div>
       </Page>
     </MemoryRouter>

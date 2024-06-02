@@ -8,7 +8,6 @@ import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
 
 const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
   const [state, setState] = useState<
     | {
         ssoUrl: string;
@@ -70,15 +69,13 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 
   if (!state?.ssoUrl || !state?.microFrontendConfig) {
-    return <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />;
+    return <AppPlaceholder />;
   }
 
   return (
     <AuthProvider {...authProviderProps}>
       <OIDCSecured
         ssoUrl={state.ssoUrl}
-        cookieElement={cookieElement}
-        setCookieElement={setCookieElement}
         microFrontendConfig={state.microFrontendConfig}
       >
         {children}
