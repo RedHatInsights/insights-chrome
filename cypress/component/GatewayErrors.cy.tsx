@@ -1,29 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider, useSelector } from 'react-redux';
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import logger from 'redux-logger';
+import { Provider } from 'react-redux';
+import { createStore as reduxCreateStore } from 'redux';
 import { removeScalprum } from '@scalprum/core';
 import type { AuthContextProps } from 'react-oidc-context';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { useSetAtom } from 'jotai';
+import { Provider as JotaiProvider, createStore, useAtomValue } from 'jotai';
 
-import chromeReducer from '../../src/redux';
-import { userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import testUserJson from '../fixtures/testUser.json';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
 import { initializeVisibilityFunctions } from '../../src/utils/VisibilitySingleton';
-import { ReduxState } from '../../src/redux/store';
 import GatewayErrorComponent from '../../src/components/ErrorComponents/GatewayErrorComponent';
 import { activeModuleAtom } from '../../src/state/atoms/activeModuleAtom';
+import { gatewayErrorAtom } from '../../src/state/atoms/gatewayErrorAtom';
 
 const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
 
 const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
-  const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
+  const gatewayError = useAtomValue(gatewayErrorAtom);
 
   if (gatewayError) {
     return <GatewayErrorComponent error={gatewayError} />;
@@ -33,31 +30,33 @@ const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
 };
 
 function createEnv(code: string, childNode: React.ReactNode) {
-  const reduxStore = createStore(combineReducers(chromeReducer()), applyMiddleware(logger));
-  // initialize user object for feature flags
-  reduxStore.dispatch(userLogIn(testUser));
+  const reduxStore = reduxCreateStore(() => ({ chrome: {} }));
+  const chromeStore = createStore();
+  chromeStore.set(activeModuleAtom, undefined);
+  chromeStore.set(gatewayErrorAtom, undefined);
   // initializes request interceptors
-  qe.init(reduxStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
+  qe.init(chromeStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
 
   const Component = () => {
     const [mounted, setMounted] = useState(false);
-    const setActiveModule = useSetAtom(activeModuleAtom);
     useEffect(() => {
       setMounted(true);
-      setActiveModule(code);
+      chromeStore.set(activeModuleAtom, code);
     }, []);
 
     if (!mounted) {
       return null;
     }
     return (
-      <Provider store={reduxStore}>
-        <MemoryRouter initialEntries={['/']}>
-          <IntlProvider locale="en">
-            <ErrorCatcher>{childNode}</ErrorCatcher>
-          </IntlProvider>
-        </MemoryRouter>
-      </Provider>
+      <JotaiProvider store={chromeStore}>
+        <Provider store={reduxStore}>
+          <MemoryRouter initialEntries={['/']}>
+            <IntlProvider locale="en">
+              <ErrorCatcher>{childNode}</ErrorCatcher>
+            </IntlProvider>
+          </MemoryRouter>
+        </Provider>
+      </JotaiProvider>
     );
   };
   return Component;
