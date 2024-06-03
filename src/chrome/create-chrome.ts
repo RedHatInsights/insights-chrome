@@ -195,6 +195,8 @@ export const createChromeContext = ({
     },
     $internal: {
       store,
+      // Not supposed to be used by tenants
+      forceAuthRefresh: chromeAuth.forceRefresh,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,

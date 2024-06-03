@@ -114,6 +114,7 @@ export function OIDCSecured({
         encodeURIComponent(redirectUri.toString().split('#')[0])
       );
     },
+    forceRefresh: () => Promise.resolve(),
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
@@ -162,6 +163,7 @@ export function OIDCSecured({
       user: chromeUser,
       token: user.access_token,
       tokenExpires: user.expires_at!,
+      forceRefresh: authRef.current.signinSilent,
     }));
     sentry(chromeUser);
   }
