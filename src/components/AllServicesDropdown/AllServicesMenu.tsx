@@ -6,10 +6,8 @@ import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/St
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
-import ChromeLink from '../ChromeLink';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
