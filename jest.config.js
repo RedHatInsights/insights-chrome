@@ -10,7 +10,16 @@ module.exports = {
   testEnvironmentOptions: {
     url: 'https://test.com',
   },
-  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@patternfly/react-tokens/dist/esm|@patternfly/react-icons/dist/esm).+(js|jsx)$'],
+  transformIgnorePatterns: [
+    `<rootDir>/node_modules/(?!${[
+      '@patternfly/react-tokens/dist/esm',
+      '@patternfly/react-icons/dist/esm',
+      '@patternfly/(elements|pfe-core)/.*',
+      '@rhds/elements/.*',
+      '@rhds/tokens/.*',
+      '@?lit(/.*)?',
+    ].join('|')}).+(js|jsx)$`,
+  ],
   transform: {
     '^.+\\.(ts|js)x?$': [
       '@swc/jest',
