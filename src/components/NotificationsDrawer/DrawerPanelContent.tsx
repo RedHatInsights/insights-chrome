@@ -105,7 +105,6 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('activeFilters', activeFilters);
     const modifiedNotifications = (activeFilters || []).reduce(
       (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ bundle }) => bundle.includes(chosenFilter))],
       []
