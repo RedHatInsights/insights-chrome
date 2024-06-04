@@ -16,20 +16,19 @@ import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import HeaderAlert from './HeaderAlert';
-import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
-import { ReduxState } from '../../redux/store';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
-import { toggleNotificationsDrawer } from '../../redux/actions';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import chromeStore from '../../state/chromeStore';
+import { useAtom, useAtomValue } from 'jotai';
+import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
 
 const isITLessEnv = ITLess();
 
@@ -107,9 +106,8 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const { xs } = useWindowWidth();
   const { user, token } = useContext(ChromeAuthContext);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
-  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
-  const dispatch = useDispatch();
+  const unreadNotifications = useAtomValue(unreadNotificationsAtom);
+  const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
   const location = useLocation();
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
@@ -313,9 +311,9 @@ const Tools = () => {
             <NotificationBadge
               className="chr-c-notification-badge"
               variant={unreadNotifications ? 'unread' : 'read'}
-              onClick={() => dispatch(toggleNotificationsDrawer())}
+              onClick={() => toggleNotifications((prev) => !prev)}
               aria-label="Notifications"
-              isExpanded={isDrawerExpanded}
+              isExpanded={isNotificationDrawerExpanded}
             >
               <BellIcon />
             </NotificationBadge>

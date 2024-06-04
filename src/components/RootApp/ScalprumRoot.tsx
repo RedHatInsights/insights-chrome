@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
-import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux';
+import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import isEqual from 'lodash/isEqual';
@@ -30,11 +30,11 @@ import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess, isBeta } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
-import { populateNotifications } from '../../redux/actions';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import useTabName from '../../hooks/useTabName';
+import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -52,11 +52,11 @@ export type ScalprumRootProps = FooterProps & {
 const ScalprumRoot = memo(
   ({ config, helpTopicsAPI, quickstartsAPI, cookieElement, setCookieElement, ...props }: ScalprumRootProps) => {
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
-    const dispatch = useDispatch();
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
     const chromeAuth = useContext(ChromeAuthContext);
     const registerModule = useSetAtom(onRegisterModuleWriteAtom);
+    const populateNotifications = useSetAtom(notificationDrawerDataAtom);
 
     const store = useStore<ReduxState>();
     const mutableChromeApi = useRef<ChromeAPI>();
@@ -70,8 +70,8 @@ const ScalprumRoot = memo(
 
     async function getNotifications() {
       try {
-        const notifications = await axios.get('/api/notifications/v1/notifications/drawer');
-        dispatch(populateNotifications(notifications.data?.data || []));
+        const { data } = await axios.get<{ data: NotificationData[] }>('/api/notifications/v1/notifications/drawer');
+        populateNotifications(data?.data || []);
       } catch (error) {
         console.error('Unable to get Notifications ', error);
       }

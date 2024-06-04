@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSetAtom } from 'jotai';
 import {
   NotificationDrawerList,
   NotificationDrawerListItem,
@@ -12,9 +13,7 @@ import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynam
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
-import { useDispatch } from 'react-redux';
-import { NotificationData } from '../../redux/store';
-import { markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
+import { NotificationData, updateNotificationReadAtom } from '../../state/atoms/notificationDrawerAtom';
 
 interface NotificationItemProps {
   notification: NotificationData;
@@ -22,10 +21,10 @@ interface NotificationItemProps {
 }
 const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNavigateTo }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dispatch = useDispatch();
+  const updateNotificationRead = useSetAtom(updateNotificationReadAtom);
 
   const onCheckboxToggle = () => {
-    dispatch(!notification.read ? markNotificationAsRead(notification.id) : markNotificationAsUnread(notification.id));
+    updateNotificationRead(notification.id, !notification.read);
     setIsDropdownOpen(false);
   };
 
