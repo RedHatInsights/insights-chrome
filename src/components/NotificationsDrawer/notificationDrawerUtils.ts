@@ -50,3 +50,24 @@ export const readTestData = [
     created: '25 mins ago',
   },
 ];
+
+export const selectedTestData = [
+  {
+    id: '1',
+    title: 'Selected test notification 1',
+    description: 'Notification testing with selected',
+    read: false,
+    source: 'NEPTUNO',
+    created: '20 mins ago',
+    selected: true,
+  },
+  {
+    id: '2',
+    title: 'Selected test notification 2',
+    description: 'Notification testing with selected',
+    read: false,
+    source: 'MARS',
+    created: '25 mins ago',
+    selected: true,
+  },
+];
