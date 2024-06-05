@@ -8,11 +8,10 @@ import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
 import { isBeta } from '../../utils/common';
 import { Divider } from '@patternfly/react-core/dist/esm/components/Divider';
-import { Text, TextVariants } from '@patternfly/react-core/dist/esm/components/Text';
+import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import ChromeLink from '../ChromeLink';
-import { Button } from '@patternfly/react-core';
-
 import './AllServicesTabs.scss';
+import PlatformServiceslinks from './PlatformServicesLinks';
 
 export type AllServicesTabsProps = {
   activeTabKey: string | number;
@@ -87,28 +86,12 @@ const AllServicesTabs = ({
         Platform
       </Text>
       <Divider className="pf-v5-u-pb-md" />
-      <ChromeLink href="/ansible/ansible-dashboard">
-        <Button variant="link" component="a" className="pf-v5-u-pl-lg">
-          Red Hat Ansible Platform
-        </Button>
-      </ChromeLink>
-      <ChromeLink href="/insights/dashboard#SIDs=&tags=">
-        <Button variant="link" component="a" className="pf-v5-u-pl-lg">
-          Red Hat Enterprise Linux
-        </Button>
-      </ChromeLink>
-      <ChromeLink href="/openshift/overview">
-        <Button variant="link" component="a" className="pf-v5-u-pl-lg">
-          Red Hat OpenShift
-        </Button>
-      </ChromeLink>
+      <PlatformServiceslinks />
       <>
         <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-lg pf-v5-u-pb-sm" component={TextVariants.p}>
           Solutions{' '}
-          <ChromeLink href="/allservices">
-            <Button variant="link" component="a" className="pf-v5-u-font-size-sm">
-              View all
-            </Button>
+          <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md">
+            View all
           </ChromeLink>
         </Text>
         <Divider className="pf-v5-u-pb-sm" />
