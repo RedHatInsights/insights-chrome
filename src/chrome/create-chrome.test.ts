@@ -87,6 +87,9 @@ describe('create chrome', () => {
     token: 'string',
     tokenExpires: 0,
     user: mockUser,
+    forceRefresh() {
+      return Promise.resolve();
+    },
   };
 
   const chromeContextOptionsMock = {

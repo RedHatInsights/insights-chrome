@@ -31,13 +31,13 @@ const shouldInjectUIHeader = (path: URL | Request | string = '') => {
     // the type URL has a different match function than the cases above
     return location.origin === path.origin && !isExcluded(path.href);
   } else if (path instanceof Request) {
-    const isOriginAllowed = location.origin === path.url;
+    const isOriginAllowed = path.url.startsWith(location.origin);
     return isOriginAllowed && !isExcluded(path.url);
   } else if (typeof path === 'string') {
-    return location.origin === path || !path.startsWith('http');
+    return path.startsWith(location.origin) || path.startsWith('/api');
   }
 
-  return true;
+  return false;
 };
 
 const verifyTarget = (originMatch: string, urlMatch: string) => {
