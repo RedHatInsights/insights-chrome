@@ -7,7 +7,7 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
 import { isBeta } from '../../utils/common';
-import { Divider } from '@patternfly/react-core/dist/esm/components/Divider';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import ChromeLink from '../ChromeLink';
 import './AllServicesTabs.scss';
