@@ -90,7 +90,7 @@ const AllServicesTabs = ({
       <>
         <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-lg pf-v5-u-pb-sm" component={TextVariants.p}>
           Solutions{' '}
-          <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md">
+          <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md" data-ouia-component-id="View all link">
             View all
           </ChromeLink>
         </Text>

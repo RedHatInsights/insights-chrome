@@ -17,7 +17,7 @@ describe('Navigation', () => {
     cy.contains('.pf-v5-c-tabs__link', 'Favorites');
 
     // click on all services
-    cy.get('.chr-l-stack__item-browse-all-services a').click();
+    cy.get('[data-ouia-component-id="View all link"]').first().click();
 
     // get users link
     cy.get('p:contains("Users")').click();
