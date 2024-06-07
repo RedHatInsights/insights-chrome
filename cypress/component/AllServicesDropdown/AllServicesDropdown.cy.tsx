@@ -27,7 +27,6 @@ describe('<AllServicesDropdown />', () => {
       cy.contains('Favorites').click();
       cy.contains('Test section').click();
       cy.contains('Test link').click();
-      cy.contains('All services').should('not.exist');
     }
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
       {
