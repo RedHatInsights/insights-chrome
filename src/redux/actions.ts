@@ -101,16 +101,6 @@ export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
 
-export const setPendoFeedbackFlag = (payload: boolean) => ({
-  type: actionTypes.SET_PENDO_FEEDBACK_FLAG,
-  payload,
-});
-
-export const toggleFeedbackModal = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_FEEDBACK_MODAL,
-  payload,
-});
-
 export const toggleDebuggerModal = (payload: boolean) => ({
   type: actionTypes.TOGGLE_DEBUGGER_MODAL,
   payload,

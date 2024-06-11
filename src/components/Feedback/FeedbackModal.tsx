@@ -11,13 +11,12 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/exte
 import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-comments-icon';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
+import { useAtom } from 'jotai';
+import { isFeedbackModalOpenAtom, usePendoFeedbackAtom } from '../../state/atoms/feedbackModalAtom';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';
 import FeedbackForm from './FeedbackForm';
-import { toggleFeedbackModal } from '../../redux/actions';
-import { ReduxState } from '../../redux/store';
 import FeedbackSuccess from './FeedbackSuccess';
 import messages from '../../locales/Messages';
 import FeedbackError from './FeedbackError';
@@ -42,9 +41,8 @@ export type FeedbackPages =
 
 const FeedbackModal = memo(() => {
   const intl = useIntl();
-  const usePendoFeedback = useSelector<ReduxState, boolean | undefined>(({ chrome: { usePendoFeedback } }) => usePendoFeedback);
-  const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isFeedbackModalOpen } }) => isFeedbackModalOpen);
-  const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useAtom(isFeedbackModalOpenAtom);
+  const [usePendoFeedback] = useAtom(usePendoFeedbackAtom);
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const { getEnvironment } = useContext(InternalChromeContext);
   const chromeAuth = useContext(ChromeAuthContext);
@@ -52,9 +50,9 @@ const FeedbackModal = memo(() => {
   const user = chromeAuth.user as DeepRequired<ChromeUser>;
   const env = getEnvironment();
   const isAvailable = env === 'prod' || env === 'stage';
-  const setIsModalOpen = (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen));
   const handleCloseModal = () => {
-    setIsModalOpen(false), setModalPage('feedbackHome');
+    setIsModalOpen(false);
+    setModalPage('feedbackHome');
   };
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
@@ -208,7 +206,13 @@ const FeedbackModal = memo(() => {
         <OutlinedCommentsIcon />
         {intl.formatMessage(messages.feedback)}
       </Button>
-      <Modal aria-label="Feedback modal" isOpen={isOpen} className="chr-c-feedback-modal" variant={ModalVariant.large} onClose={handleCloseModal}>
+      <Modal
+        aria-label="Feedback modal"
+        isOpen={isModalOpen}
+        className="chr-c-feedback-modal"
+        variant={ModalVariant.large}
+        onClose={handleCloseModal}
+      >
         <Grid>
           <GridItem span={8} rowSpan={12}>
             <ModalDescription modalPage={modalPage} />
