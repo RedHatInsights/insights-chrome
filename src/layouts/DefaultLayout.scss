@@ -31,3 +31,10 @@
   display: inherit;
   flex-direction: inherit;
 }
+
+.pf-v5-c-page__drawer {
+  .pf-v5-c-drawer__content {
+    background-color: transparent;
+  }
+}
+
