@@ -12,7 +12,7 @@ import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/out
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useIntl } from 'react-intl';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { isFeedbackModalOpenAtom, usePendoFeedbackAtom } from '../../state/atoms/feedbackModalAtom';
 
 import feedbackIllo from '../../../static/images/feedback_illo.svg';
@@ -42,7 +42,7 @@ export type FeedbackPages =
 const FeedbackModal = memo(() => {
   const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useAtom(isFeedbackModalOpenAtom);
-  const [usePendoFeedback] = useAtom(usePendoFeedbackAtom);
+  const usePendoFeedback = useAtomValue(usePendoFeedbackAtom);
   const [modalPage, setModalPage] = useState<FeedbackPages>('feedbackHome');
   const { getEnvironment } = useContext(InternalChromeContext);
   const chromeAuth = useContext(ChromeAuthContext);
