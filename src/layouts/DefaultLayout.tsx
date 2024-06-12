@@ -1,6 +1,6 @@
 import React, { memo, useContext, useEffect, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai';
 import classnames from 'classnames';
-import { useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
@@ -22,13 +22,13 @@ import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
-import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import VirtualAssistant from '../components/Routes/VirtualAssistant';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -50,7 +50,7 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
-  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
+  const isNotificationsDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
   const drawerPanelRef = useRef<HTMLDivElement>();
   const focusDrawer = () => {
     const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
@@ -78,7 +78,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       {...(isNotificationsEnabled && {
         onNotificationDrawerExpand: focusDrawer,
         notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
-        isNotificationDrawerExpanded: isDrawerExpanded,
+        isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
       })}
       sidebar={
         (noNav || hideNav) && Sidebar
