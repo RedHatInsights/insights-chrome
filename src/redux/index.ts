@@ -12,18 +12,11 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
-  markAllNotificationsAsRead,
-  markAllNotificationsAsUnread,
-  markNotificationAsRead,
-  markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
-  populateNotificationsReducer,
   populateQuickstartsReducer,
   toggleDebuggerButton,
   toggleDebuggerModal,
-  toggleNotificationsReducer,
-  updateNotificationsReducer,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -55,19 +48,12 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
-  MARK_ALL_NOTIFICATION_AS_READ,
-  MARK_ALL_NOTIFICATION_AS_UNREAD,
-  MARK_NOTIFICATION_AS_READ,
-  MARK_NOTIFICATION_AS_UNREAD,
   MARK_REQUEST_NOTIFICATION_SEEN,
-  POPULATE_NOTIFICATIONS,
   POPULATE_QUICKSTARTS_CATALOG,
   TOGGLE_DEBUGGER_BUTTON,
   TOGGLE_DEBUGGER_MODAL,
-  TOGGLE_NOTIFICATIONS_DRAWER,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
-  UPDATE_NOTIFICATIONS,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
@@ -90,13 +76,6 @@ const reducers = {
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
-  [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
-  [POPULATE_NOTIFICATIONS]: populateNotificationsReducer,
-  [MARK_NOTIFICATION_AS_READ]: markNotificationAsRead,
-  [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
-  [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
-  [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
-  [UPDATE_NOTIFICATIONS]: updateNotificationsReducer,
 };
 
 const globalFilter = {
@@ -123,11 +102,6 @@ export const chromeInitialState: ReduxState = {
     quickstarts: {
       quickstarts: {},
     },
-    notifications: {
-      data: [],
-      isExpanded: false,
-      count: 0,
-    },
   },
   globalFilter: globalFilterDefaultState,
 };
@@ -147,11 +121,6 @@ export default function (): {
         },
         quickstarts: {
           quickstarts: {},
-        },
-        notifications: {
-          data: [],
-          isExpanded: false,
-          count: 0,
         },
       },
       action

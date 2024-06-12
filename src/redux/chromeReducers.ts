@@ -3,7 +3,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { NavItem, Navigation } from '../@types/types';
 import { ITLess, highlightItems, levelArray } from '../utils/common';
-import { AccessRequest, ChromeState, NotificationData, NotificationsPayload } from './store';
+import { AccessRequest, ChromeState } from './store';
 
 export function appNavClick(state: ChromeState, { payload }: { payload: { id: string } }): ChromeState {
   return {
@@ -226,84 +226,5 @@ export function markActiveProduct(state: ChromeState, { payload }: { payload?: s
   return {
     ...state,
     activeProduct: payload,
-  };
-}
-
-export function toggleNotificationsReducer(state: ChromeState) {
-  return {
-    ...state,
-    notifications: {
-      ...state.notifications,
-      data: state.notifications?.data || [],
-      isExpanded: !state.notifications?.isExpanded,
-    },
-  };
-}
-
-export function populateNotificationsReducer(state: ChromeState, { payload: { data } }: { payload: { data: NotificationData[] } }) {
-  return {
-    ...state,
-    notifications: {
-      ...state.notifications,
-      data,
-    },
-  };
-}
-
-export function markNotificationAsRead(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  return {
-    ...state,
-    notifications: {
-      isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.data?.length || 0,
-      data: (state.notifications?.data || []).map((notification: NotificationData) =>
-        notification.id === payload ? { ...notification, read: true } : notification
-      ),
-    },
-  };
-}
-
-export function markNotificationAsUnread(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  return {
-    ...state,
-    notifications: {
-      isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.data?.length || 0,
-      data: (state.notifications?.data || []).map((notification: NotificationData) =>
-        notification.id === payload ? { ...notification, read: false } : notification
-      ),
-    },
-  };
-}
-
-export function markAllNotificationsAsRead(state: ChromeState): ChromeState {
-  return {
-    ...state,
-    notifications: {
-      isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.count || 0,
-      data: (state.notifications?.data || []).map((notification) => ({ ...notification, read: true })),
-    },
-  };
-}
-
-export function markAllNotificationsAsUnread(state: ChromeState): ChromeState {
-  return {
-    ...state,
-    notifications: {
-      isExpanded: state.notifications?.isExpanded || false,
-      count: state.notifications?.data?.length || 0,
-      data: (state.notifications?.data || []).map((notification) => ({ ...notification, read: false })),
-    },
-  };
-}
-
-export function updateNotificationsReducer(state: ChromeState, { payload }: { payload: NotificationsPayload }) {
-  return {
-    ...state,
-    notifications: {
-      ...state.notifications,
-      data: [...state.notifications.data, payload.data],
-    },
   };
 }

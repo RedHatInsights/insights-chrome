@@ -1,10 +1,9 @@
 import { useContext, useEffect, useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { useFlag } from '@unleash/proxy-client-react';
-import { UPDATE_NOTIFICATIONS } from '../redux/action-types';
-import { NotificationsPayload } from '../redux/store';
 import { setCookie } from '../auth/setCookie';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { useSetAtom } from 'jotai';
+import { NotificationData, NotificationsPayload, addNotificationAtom } from '../state/atoms/notificationDrawerAtom';
 
 const NOTIFICATION_DRAWER = 'com.redhat.console.notifications.drawer';
 const SAMPLE_EVENT = 'sample.type';
@@ -28,14 +27,14 @@ function isGenericEvent(event: unknown): event is GenericEvent {
 
 const useChromeServiceEvents = () => {
   const connection = useRef<WebSocket | undefined>();
-  const dispatch = useDispatch();
+  const addNotification = useSetAtom(addNotificationAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { token, tokenExpires } = useContext(ChromeAuthContext);
 
   const handlerMap: { [key in EventTypes]: (payload: GenericEvent<Payload>) => void } = useMemo(
     () => ({
       [NOTIFICATION_DRAWER]: (data: GenericEvent<Payload>) => {
-        dispatch({ type: UPDATE_NOTIFICATIONS, payload: data });
+        addNotification(data.data as unknown as NotificationData);
       },
       [SAMPLE_EVENT]: (data: GenericEvent<Payload>) => console.log('Received sample payload', data),
     }),

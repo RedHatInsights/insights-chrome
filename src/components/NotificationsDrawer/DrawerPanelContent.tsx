@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
@@ -14,18 +15,22 @@ import {
 } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
 import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
-import { useDispatch, useSelector } from 'react-redux';
 import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import orderBy from 'lodash/orderBy';
 import { Link, useNavigate } from 'react-router-dom';
-import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
 import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import {
+  NotificationData,
+  notificationDrawerDataAtom,
+  notificationDrawerExpandedAtom,
+  notificationDrawerFilterAtom,
+  updateNotificationsStatusAtom,
+} from '../../state/atoms/notificationDrawerAtom';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -65,11 +70,11 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
 const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>([]);
+  const [activeFilters, setActiveFilters] = useAtom(notificationDrawerFilterAtom);
+  const toggleDrawer = useSetAtom(notificationDrawerExpandedAtom);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
+  const notifications = useAtomValue(notificationDrawerDataAtom);
+  const updateNotificationsStatus = useSetAtom(updateNotificationsStatusAtom);
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const { getUserPermissions } = useContext(InternalChromeContext);
@@ -95,27 +100,27 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     };
   }, []);
 
-  useEffect(() => {
-    const modifiedNotifications = (activeFilters || []).reduce(
-      (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
-      []
-    );
-
-    setFilteredNotifications(modifiedNotifications);
-  }, [activeFilters]);
+  const filteredNotifications = useMemo(
+    () =>
+      (activeFilters || []).reduce(
+        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
+        []
+      ),
+    [activeFilters]
+  );
 
   const onNotificationsDrawerClose = () => {
     setActiveFilters([]);
-    dispatch(toggleNotificationsDrawer());
+    toggleDrawer(false);
   };
 
   const onMarkAllAsRead = () => {
-    dispatch(markAllNotificationsAsRead());
+    updateNotificationsStatus(true);
     setIsDropdownOpen(false);
   };
 
   const onMarkAllAsUnread = () => {
-    dispatch(markAllNotificationsAsUnread());
+    updateNotificationsStatus(false);
     setIsDropdownOpen(false);
   };
 

@@ -29,12 +29,3 @@ export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catal
 export const ADD_QUICKSTARTS_TO_APP = '@@chrome/add-quickstart';
 export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';
 export const CLEAR_QUICKSTARTS = '@@chrome/clear-quickstarts';
-
-export const TOGGLE_NOTIFICATIONS_DRAWER = '@@chrome/toggle-notifications-drawer';
-export const POPULATE_NOTIFICATIONS = '@@chrome/populate-notifications';
-
-export const MARK_NOTIFICATION_AS_READ = '@@chrome/mark-notification-as-read';
-export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread';
-export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
-export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';
-export const UPDATE_NOTIFICATIONS = '@@chrome/update-notifications';

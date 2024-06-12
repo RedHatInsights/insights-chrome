@@ -3,7 +3,7 @@ import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFil
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
 import type { FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
-import type { AccessRequest, NotificationData, NotificationsPayload } from './store';
+import type { AccessRequest } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 
 export function userLogIn(user: ChromeUser | boolean) {
@@ -156,33 +156,4 @@ export const updateDocumentTitle = (title: string) => ({
 export const markActiveProduct = (product?: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
-});
-
-export const toggleNotificationsDrawer = () => ({
-  type: actionTypes.TOGGLE_NOTIFICATIONS_DRAWER,
-});
-
-export const populateNotifications = (data: NotificationData[]) => ({ type: actionTypes.POPULATE_NOTIFICATIONS, payload: { data } });
-
-export const markNotificationAsRead = (id: string) => ({
-  type: actionTypes.MARK_NOTIFICATION_AS_READ,
-  payload: id,
-});
-
-export const markNotificationAsUnread = (id: string) => ({
-  type: actionTypes.MARK_NOTIFICATION_AS_UNREAD,
-  payload: id,
-});
-
-export const markAllNotificationsAsRead = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_READ,
-});
-
-export const markAllNotificationsAsUnread = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
-});
-
-export const updateNotifications = (payload: NotificationsPayload) => ({
-  type: actionTypes.UPDATE_NOTIFICATIONS,
-  payload,
 });
