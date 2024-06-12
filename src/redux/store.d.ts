@@ -43,7 +43,6 @@ export type ChromeState = {
   pageObjectId?: string;
   navigation: InternalNavigation;
   isFeedbackModalOpen?: boolean;
-  usePendoFeedback?: boolean;
   isDebuggerModalOpen?: boolean;
   isDebuggerEnabled?: boolean;
   accessRequests: {

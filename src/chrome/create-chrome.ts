@@ -35,7 +35,8 @@ import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
-import { isFeedbackModalOpenAtom, usePendoFeedbackAtom } from '../state/atoms/feedbackModalAtom';
+import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
+import { usePendoFeedback } from '../components/Feedback';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -165,7 +166,7 @@ export const createChromeContext = ({
     on,
     experimentalApi: true,
     isFedramp: isITLessEnv,
-    usePendoFeedback: () => chromeStore.set(usePendoFeedbackAtom, false),
+    usePendoFeedback,
     segment: {
       setPageMetadata,
     },

@@ -80,20 +80,6 @@ export function loadNavigationSegmentReducer(
   return state;
 }
 
-export function setPendoFeedbackFlag(
-  state: ChromeState,
-  {
-    payload,
-  }: {
-    payload: boolean;
-  }
-): ChromeState {
-  return {
-    ...state,
-    usePendoFeedback: payload,
-  };
-}
-
 export function toggleFeedbackModal(
   state: ChromeState,
   {
