@@ -16,8 +16,6 @@ export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
 export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
 
-export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
-export const TOGGLE_FEEDBACK_MODAL = '@@chrome/toggle-feedback-modal';
 export const TOGGLE_DEBUGGER_MODAL = '@@chrome/toggle-debugger-modal';
 export const TOGGLE_DEBUGGER_BUTTON = '@@chrome/toggle-debugger-button';
 export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requests-notifications';

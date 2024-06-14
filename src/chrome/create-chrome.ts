@@ -14,7 +14,6 @@ import {
   removeGlobalFilter,
   toggleDebuggerButton,
   toggleDebuggerModal,
-  toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
 import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
@@ -22,7 +21,6 @@ import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
 import { PUBLIC_EVENTS } from '../utils/consts';
-import { usePendoFeedback } from '../components/Feedback';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
@@ -37,6 +35,8 @@ import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
+import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
+import { usePendoFeedback } from '../components/Feedback';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -170,7 +170,9 @@ export const createChromeContext = ({
     segment: {
       setPageMetadata,
     },
-    toggleFeedbackModal: (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen)),
+    toggleFeedbackModal: (isOpen: boolean) => {
+      chromeStore.set(isFeedbackModalOpenAtom, isOpen);
+    },
     enableDebugging: () => dispatch(toggleDebuggerButton(true)),
     toggleDebuggerModal: (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen)),
     // FIXME: Update types once merged
