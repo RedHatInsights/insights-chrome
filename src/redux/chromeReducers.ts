@@ -80,20 +80,6 @@ export function loadNavigationSegmentReducer(
   return state;
 }
 
-export function toggleFeedbackModal(
-  state: ChromeState,
-  {
-    payload,
-  }: {
-    payload: boolean;
-  }
-): ChromeState {
-  return {
-    ...state,
-    isFeedbackModalOpen: payload,
-  };
-}
-
 export function toggleDebuggerModal(
   state: ChromeState,
   {
