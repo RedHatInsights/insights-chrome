@@ -6,6 +6,7 @@ import platformUrl from '../platformUrl';
 import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
+import OIDCStateReloader from './OIDCStateReloader';
 
 const betaPartial = isBeta() ? '/beta' : '';
 
@@ -73,16 +74,18 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   }
 
   return (
-    <AuthProvider {...authProviderProps}>
-      <OIDCSecured
-        ssoUrl={state.ssoUrl}
-        cookieElement={cookieElement}
-        setCookieElement={setCookieElement}
-        microFrontendConfig={state.microFrontendConfig}
-      >
-        {children}
-      </OIDCSecured>
-    </AuthProvider>
+    <OIDCStateReloader>
+      <AuthProvider {...authProviderProps}>
+        <OIDCSecured
+          ssoUrl={state.ssoUrl}
+          cookieElement={cookieElement}
+          setCookieElement={setCookieElement}
+          microFrontendConfig={state.microFrontendConfig}
+        >
+          {children}
+        </OIDCSecured>
+      </AuthProvider>
+    </OIDCStateReloader>
   );
 };
 
