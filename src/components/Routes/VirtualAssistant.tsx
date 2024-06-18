@@ -1,20 +1,22 @@
 import React, { Fragment } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ScalprumComponent } from '@scalprum/react-core';
+import { useFlags } from '@unleash/proxy-client-react';
 
 import './virtual-assistant.scss';
 
-const viableRoutes = [
-  '/',
-  '/insights/*',
-  '/settings/*',
-  '/subscriptions/overview/*',
-  '/subscriptions/inventory/*',
-  '/subscriptions/usage/*',
-  '/openshift/insights/*',
-];
+const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.insights': '/openshift/insights/*' };
 
 const VirtualAssistant = () => {
+  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
+
+  const allFlags = useFlags();
+  allFlags.forEach((flag) => {
+    if (flaggedRoutes[flag.name] && flag.enabled) {
+      viableRoutes.push(flaggedRoutes[flag.name]);
+    }
+  });
+
   return (
     <Routes>
       {viableRoutes.map((route) => (
