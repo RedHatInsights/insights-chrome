@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
-import { isBeta } from '../../utils/common';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type SettingsToggleDropdownGroup = {
   title: string;
@@ -35,6 +36,7 @@ export type SettingsToggleProps = {
 
 const SettingsToggle = (props: SettingsToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isPreview = useAtomValue(isPreviewAtom);
 
   const dropdownItems = props.dropdownItems.map(({ title, items }, groupIndex) => (
     <DropdownGroup key={title} label={title}>
@@ -45,7 +47,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
             ouiaId={title}
             isDisabled={isDisabled}
             component={({ className: itemClassName }) => (
-              <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isBeta()}>
+              <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
                 {title}
               </ChromeLink>
             )}

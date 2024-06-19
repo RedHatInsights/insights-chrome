@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useAtomValue } from 'jotai';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 
@@ -6,12 +7,12 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
-import { isBeta } from '../../utils/common';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import ChromeLink from '../ChromeLink';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type AllServicesTabsProps = {
   activeTabKey: string | number;
@@ -27,6 +28,7 @@ export type AllServicesTabsProps = {
 type TabWrapper = Omit<TabProps, 'onMouseLeave' | 'onMouseEnter' | 'ref'>;
 
 const TabWrapper = (props: TabWrapper) => {
+  const isPreview = useAtomValue(isPreviewAtom);
   const tabRef = useRef<HTMLButtonElement>(null);
   const hoverTimer = useRef<NodeJS.Timeout | undefined>(undefined);
   const stopHoverEffect = () => {
@@ -40,7 +42,7 @@ const TabWrapper = (props: TabWrapper) => {
     const timeout = setTimeout(() => {
       // should be available only in preview
       // use refs to supply the required tab events
-      isBeta() && tabRef.current?.click();
+      isPreview && tabRef.current?.click();
     }, 300);
     hoverTimer.current = timeout;
   };
