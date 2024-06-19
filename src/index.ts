@@ -12,7 +12,12 @@ Object.keys(localStorage).map((key) => {
 // we can't use build to set base to /beta or /preview as they both share the same build
 // base tag has to be adjusted once at start up
 function adjustBase() {
+  const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
   const baseTag = document.getElementsByTagName('base')?.[0];
+  if (LOCAL_PREVIEW) {
+    baseTag.href = '/';
+    return;
+  }
   const previewFragment = window.location.pathname.split('/')?.[1];
   if (isBeta() && baseTag && previewFragment) {
     baseTag.href = `/${previewFragment}/`;

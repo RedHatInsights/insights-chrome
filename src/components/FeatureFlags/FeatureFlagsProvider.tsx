@@ -3,8 +3,10 @@ import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-clien
 import { DeepRequired } from 'utility-types';
 import { captureException } from '@sentry/react';
 import * as Sentry from '@sentry/react';
+import { useAtomValue } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
-import { isBeta } from '../../utils/common';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { UNLEASH_ERROR_KEY, getUnleashClient, setUnleashClient } from './unleashClient';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -51,43 +53,33 @@ const config: IFlagProvider['config'] = {
   },
 };
 
-export const UNLEASH_ERROR_KEY = 'chrome:feature-flags:error';
-
-/**
- * Clear error localstorage flag before initialization
- */
-localStorage.setItem(UNLEASH_ERROR_KEY, 'false');
-
-export let unleashClient: UnleashClient;
-export const getFeatureFlagsError = () => localStorage.getItem(UNLEASH_ERROR_KEY) === 'true';
-
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
-  unleashClient = useMemo(
-    () =>
-      new UnleashClient({
-        ...config,
-        context: {
-          // TODO: instead of the isBeta, use the internal chrome state
-          // the unleash context is not generic, look for issue/PR in the unleash repo or create one
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          'platform.chrome.ui.preview': isBeta(),
-          userId: user?.identity.internal?.account_id,
-          orgId: user?.identity.internal?.org_id,
-          ...(user
-            ? {
-                properties: {
-                  account_number: user?.identity.account_number,
-                  email: user?.identity.user.email,
-                },
-              }
-            : {}),
-        },
-      }),
-    []
-  );
-  return <FlagProvider unleashClient={unleashClient}>{children}</FlagProvider>;
+  const isPreview = useAtomValue(isPreviewAtom);
+  useMemo(() => {
+    const client = new UnleashClient({
+      ...config,
+      context: {
+        // the unleash context is not generic, look for issue/PR in the unleash repo or create one
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        'platform.chrome.ui.preview': isPreview,
+        userId: user?.identity.internal?.account_id,
+        orgId: user?.identity.internal?.org_id,
+        ...(user
+          ? {
+              properties: {
+                account_number: user?.identity.account_number,
+                email: user?.identity.user.email,
+              },
+            }
+          : {}),
+      },
+    });
+    setUnleashClient(client);
+    return client;
+  }, []);
+  return <FlagProvider unleashClient={getUnleashClient()}>{children}</FlagProvider>;
 };
 
 export default FeatureFlagsProvider;

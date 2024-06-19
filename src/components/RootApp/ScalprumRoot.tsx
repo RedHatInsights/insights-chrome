@@ -8,7 +8,7 @@ import isEqual from 'lodash/isEqual';
 import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
@@ -27,7 +27,7 @@ import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess, isBeta } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
@@ -35,6 +35,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import useTabName from '../../hooks/useTabName';
 import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -57,6 +58,7 @@ const ScalprumRoot = memo(
     const chromeAuth = useContext(ChromeAuthContext);
     const registerModule = useSetAtom(onRegisterModuleWriteAtom);
     const populateNotifications = useSetAtom(notificationDrawerDataAtom);
+    const isPreview = useAtomValue(isPreviewAtom);
 
     const store = useStore<ReduxState>();
     const mutableChromeApi = useRef<ChromeAPI>();
@@ -152,9 +154,10 @@ const ScalprumRoot = memo(
         setPageMetadata,
         chromeAuth,
         registerModule,
+        isPreview,
       });
       // reset chrome object after token (user) updates/changes
-    }, [chromeAuth.token]);
+    }, [chromeAuth.token, isPreview]);
 
     const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
       if (!mutableChromeApi.current) {
@@ -183,7 +186,7 @@ const ScalprumRoot = memo(
               const newManifest = {
                 ...manifest,
                 // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
-                baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isBeta() ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
+                baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isPreview ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
                 loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
                   `${manifest.baseURL ?? ''}plugin-entry.js`,
                 ],
@@ -194,7 +197,7 @@ const ScalprumRoot = memo(
           },
         },
       };
-    }, [chromeAuth.token]);
+    }, [chromeAuth.token, isPreview]);
 
     if (!mutableChromeApi.current) {
       return null;

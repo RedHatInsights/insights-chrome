@@ -22,20 +22,23 @@ export const writeInitialScalprumConfigAtom = atom(
       [key: string]: ChromeModule;
     }
   ) => {
-    const isBetaEnv = isBeta();
+    const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
+    // TODO: Remove this once the local preview is enabled by default
+    // Assets will be loaded always from root '/' in local preview mode
+    const previewFragment = LOCAL_PREVIEW ? '' : isBeta() ? '/beta' : '';
     const scalprumConfig = Object.entries(schema).reduce(
       (acc, [name, config]) => ({
         ...acc,
         [name]: {
           name,
           module: `${name}#./RootApp`,
-          manifestLocation: `${window.location.origin}${isBetaEnv ? '/beta' : ''}${config.manifestLocation}?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}${previewFragment}${config.manifestLocation}?ts=${Date.now()}`,
         },
       }),
       {
         chrome: {
           name: 'chrome',
-          manifestLocation: `${window.location.origin}${isBetaEnv ? '/beta' : ''}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}${previewFragment}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
         },
       }
     );
