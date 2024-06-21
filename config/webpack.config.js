@@ -29,17 +29,18 @@ const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/app
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
   return {
-    entry: dev
-      ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
-        {
-          main: path.resolve(__dirname, '../src/index.ts'),
-          vendors: ['react', 'react-dom', 'react-refresh/runtime'],
-        }
-      : path.resolve(__dirname, '../src/index.ts'),
+    entry: {
+      main: path.resolve(__dirname, '../src/index.ts'),
+      'outdated-browser-rework': path.resolve(__dirname, '../src/outdated-browser-rework.js'),
+      ...(dev ? { vendors: ['react', 'react-dom', 'react-refresh/runtime'] } : {}),
+    },
     output: {
       path: path.resolve(__dirname, '../build/js'),
-      // the HMR needs dynamic entry filename to remove name conflicts
-      filename: dev ? '[name].js' : 'chrome-root.[contenthash].js',
+      // The HMR needs dynamic entry filename to remove name conflicts.
+      //
+      // Always include name so that the HtmlWebpackPlugin config can sort
+      // based on it.
+      filename: dev ? '[name].js' : 'chrome-root.[name].[contenthash].js',
       hashFunction: 'xxhash64',
       publicPath,
       chunkFilename: dev ? '[name].js' : '[name].[contenthash].js',
@@ -84,12 +85,8 @@ const commonConfig = ({ dev }) => {
     optimization: {
       minimizer: [new TerserPlugin()],
       concatenateModules: false,
-      ...(dev
-        ? {
-            // for HMR all runtime chunks must be in a single file
-            runtimeChunk: 'single',
-          }
-        : {}),
+      // Necessary because files will include multiple entry points.
+      runtimeChunk: 'single',
     },
     module: {
       rules: [
