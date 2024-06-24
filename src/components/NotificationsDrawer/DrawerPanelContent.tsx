@@ -111,7 +111,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const filteredNotifications = useMemo(
     () =>
       (activeFilters || []).reduce(
-        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
+        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ bundle }) => bundle === chosenFilter)],
         []
       ),
     [activeFilters]
@@ -298,6 +298,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
           <DropdownList>{dropdownItems}</DropdownList>
         </Dropdown>
       </NotificationDrawerHeader>
+      {...activeFilters}
       <NotificationDrawerBody>
         <NotificationDrawerList>{renderNotifications()}</NotificationDrawerList>
       </NotificationDrawerBody>

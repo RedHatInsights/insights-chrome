@@ -1,8 +1,8 @@
 export const filterConfig = [
+  // TODO: Grab this from /api/notifications/v1/notifications/facets/bundles
   { title: 'Console', value: 'console' },
   { title: 'OpenShift', value: 'openshift' },
   { title: 'Red Hat Enterprise Linux', value: 'rhel' },
-  { title: 'Ansible Automation Platform', value: 'ansible' },
 ];
 
 export const testData = [
