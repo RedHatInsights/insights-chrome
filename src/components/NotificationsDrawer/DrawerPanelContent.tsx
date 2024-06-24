@@ -21,7 +21,6 @@ import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v
 import orderBy from 'lodash/orderBy';
 import { Link, useNavigate } from 'react-router-dom';
 import NotificationItem from './NotificationItem';
-import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import {
@@ -36,6 +35,18 @@ import {
 } from '../../state/atoms/notificationDrawerAtom';
 import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
 import axios from 'axios';
+
+interface Bundle {
+  id: string;
+  name: string;
+  displayName: string;
+  children: null | Bundle[];
+}
+
+interface FilterConfigItem {
+  title: string;
+  value: string;
+}
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -87,6 +98,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [hasNotificationsPermissions, setHasNotificationsPermissions] = useState(false);
   const updateNotificationRead = useSetAtom(updateNotificationReadAtom);
   const updateAllNotificationsSelected = useSetAtom(updateNotificationsSelectedAtom);
+  const [filterConfig, setFilterConfig] = useState<FilterConfigItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -102,7 +114,23 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         );
       }
     };
+    const fetchFilterConfig = async () => {
+      try {
+        const response = await axios.get<Bundle[]>('/api/notifications/v1/notifications/facets/bundles');
+        if (mounted) {
+          setFilterConfig(
+            response.data.map((bundle: Bundle) => ({
+              title: bundle.displayName,
+              value: bundle.name,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch filter configuration:', error);
+      }
+    };
     fetchPermissions();
+    fetchFilterConfig();
     return () => {
       mounted = false;
     };
@@ -298,7 +326,6 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
           <DropdownList>{dropdownItems}</DropdownList>
         </Dropdown>
       </NotificationDrawerHeader>
-      {...activeFilters}
       <NotificationDrawerBody>
         <NotificationDrawerList>{renderNotifications()}</NotificationDrawerList>
       </NotificationDrawerBody>
