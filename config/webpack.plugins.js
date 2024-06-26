@@ -16,9 +16,8 @@ const isOutdatedBrowserChunk = (chunk) => {
   return chunk.includes('outdated-browser');
 };
 
-// outdated-browser-rework should appear first so that it has a chance to
-// display an error before any potentially-broken code runs on an older
-// browser.
+// outdated-browser should appear first so that it has a chance to display an
+// error before any potentially-broken code runs on an older browser.
 const compareHtmlChunks = (chunkA, chunkB) => {
   const isOutdatedA = isOutdatedBrowserChunk(chunkA);
   const isOutdatedB = isOutdatedBrowserChunk(chunkB);

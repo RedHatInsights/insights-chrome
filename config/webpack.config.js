@@ -31,7 +31,7 @@ const commonConfig = ({ dev }) => {
   return {
     entry: {
       main: path.resolve(__dirname, '../src/index.ts'),
-      'outdated-browser-rework': path.resolve(__dirname, '../src/outdated-browser-rework.js'),
+      'outdated-browser': path.resolve(__dirname, '../src/outdated-browser.js'),
       ...(dev ? { vendors: ['react', 'react-dom', 'react-refresh/runtime'] } : {}),
     },
     output: {
