@@ -57,7 +57,6 @@ const commonConfig = ({ dev }) => {
         }
       : {}),
     devtool: false,
-    target: ['web', 'es4'],
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
