@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import ChromeLink from '../../components/ChromeLink';
 import { activeNavListenersAtom, addNavListenerAtom, deleteNavListenerAtom, triggerNavListenersAtom } from './activeAppAtom';

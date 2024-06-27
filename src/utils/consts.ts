@@ -1,5 +1,5 @@
 import { ITLess } from './common';
-import { AppNavigationCB, ChromeAuthOptions, GenericCB, NavDOMEvent } from '../@types/types';
+import { ChromeAuthOptions, GenericCB } from '../@types/types';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
 import { GLOBAL_FILTER_UPDATE } from '../redux/action-types';
 
