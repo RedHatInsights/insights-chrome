@@ -12,9 +12,13 @@ export const isPreviewAtom = atomWithToggle(undefined, async (isPreview) => {
     }
     if (unleashClientExists()) {
       // Required to change the `platform.chrome.ui.preview` context in the feature flags, TS is bugged
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      getUnleashClient().updateContext({ 'platform.chrome.ui.preview': isPreview });
+      getUnleashClient().updateContext({
+        // make sure to re-use the prev context
+        ...getUnleashClient().getContext(),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        'platform.chrome.ui.preview': isPreview,
+      });
     }
   } catch (error) {
     console.error('Failed to update the visibility functions or feature flags context', error);
