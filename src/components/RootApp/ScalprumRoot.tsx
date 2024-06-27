@@ -35,7 +35,11 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import useTabName from '../../hooks/useTabName';
 import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
+<<<<<<< HEAD
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+=======
+import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
+>>>>>>> febf850c (Update activeApp atoms and tests)
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -58,7 +62,12 @@ const ScalprumRoot = memo(
     const chromeAuth = useContext(ChromeAuthContext);
     const registerModule = useSetAtom(onRegisterModuleWriteAtom);
     const populateNotifications = useSetAtom(notificationDrawerDataAtom);
+<<<<<<< HEAD
     const isPreview = useAtomValue(isPreviewAtom);
+=======
+    const addNavListener = useSetAtom(addNavListenerAtom);
+    const deleteNavListener = useSetAtom(deleteNavListenerAtom);
+>>>>>>> febf850c (Update activeApp atoms and tests)
 
     const store = useStore<ReduxState>();
     const mutableChromeApi = useRef<ChromeAPI>();
@@ -155,6 +164,8 @@ const ScalprumRoot = memo(
         chromeAuth,
         registerModule,
         isPreview,
+        addNavListener,
+        deleteNavListener,
       });
       // reset chrome object after token (user) updates/changes
     }, [chromeAuth.token, isPreview]);
