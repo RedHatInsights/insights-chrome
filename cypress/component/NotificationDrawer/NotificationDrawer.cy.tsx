@@ -13,6 +13,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'openshift',
+    bundle: 'rhel',
   },
   {
     id: '2',
@@ -21,6 +22,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
   {
     id: '3',
@@ -29,6 +31,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
 ];
 
