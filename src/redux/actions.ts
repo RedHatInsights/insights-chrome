@@ -2,7 +2,7 @@ import * as actionTypes from './action-types';
 import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
-import type { FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
+import type { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
 import type { AccessRequest } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 
@@ -18,9 +18,6 @@ export type AppNavClickItem = { id?: string; custom?: boolean };
 /*
  *TODO: The event type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
  */
-export function appNavClick(item: AppNavClickItem, event?: NavDOMEvent) {
-  return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item?.id, event } };
-}
 
 export function appAction(action: string) {
   return { type: actionTypes.CHROME_PAGE_ACTION, payload: action };
