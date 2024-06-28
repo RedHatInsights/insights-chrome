@@ -43,7 +43,6 @@ const transport = makeMultiplexedTransport(makeFetchTransport, (args) => {
   return [];
 });
 
-// TODO:  WE NEED TO RUN THIS AGAINTS PRODUCTION WITH ADVISOR BE IN PROD AFTER MIGRATION ->
 function initSentry() {
   if (sentryInitialized) {
     return;
@@ -97,6 +96,13 @@ function initSentry() {
         }
       }
 
+      return event;
+    },
+    //These two apps will not be set up as of now. This helps limit transacations
+    beforeSendTransaction: (event) => {
+      if (event?.contexts?.app?.app_name === 'subscriptions' || event.contexts?.app?.app_name === 'image-builder') {
+        return null;
+      }
       return event;
     },
   });
