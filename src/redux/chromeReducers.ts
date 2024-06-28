@@ -5,13 +5,6 @@ import { NavItem, Navigation } from '../@types/types';
 import { ITLess, highlightItems, levelArray } from '../utils/common';
 import { AccessRequest, ChromeState } from './store';
 
-export function appNavClick(state: ChromeState, { payload }: { payload: { id: string } }): ChromeState {
-  return {
-    ...state,
-    activeApp: payload.id,
-  };
-}
-
 export function loginReducer(state: ChromeState, { payload }: { payload: ChromeUser }): ChromeState {
   const missingIDP = ITLess() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
   return {
