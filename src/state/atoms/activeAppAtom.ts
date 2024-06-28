@@ -25,17 +25,3 @@ export const triggerNavListenersAtom = atom(null, (get, _set, event: NavEvent) =
     el?.(event);
   });
 });
-
-// APP_NAVIGATION: [
-//     (callback: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
-//       const appNavListener: Listener<{ event: NavDOMEvent; id?: string }> = {
-//         on: 'APP_NAV_CLICK',
-//         callback: ({ data }) => {
-//           if (data.id !== undefined || data.event) {
-//             callback({ navId: data.id, domEvent: data.event });
-//           }
-//         },
-//       };
-//       return appNavListener;
-//     },
-//   ],

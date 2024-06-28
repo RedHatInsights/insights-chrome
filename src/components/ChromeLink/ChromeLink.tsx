@@ -71,7 +71,6 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
        * Add reference to the DOM link element
        */
       domEvent.target = linkRef.current;
-      // dispatch(appNavClick({ id: actionId }, domEvent));
       triggerNavListener({ navId: actionId, domEvent });
     };
 
