@@ -92,6 +92,12 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: 'red-hat-it',
       project: 'cpin-001-insights',
+      _experiments: {
+        moduleMetadata: ({ release }) => ({
+          dsn: process.env.SENTRY_DSN,
+          release,
+        }),
+      },
     }),
   ];
 };

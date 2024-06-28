@@ -43,8 +43,6 @@ const transport = makeMultiplexedTransport(makeFetchTransport, (args) => {
   return [];
 });
 
-// Actually initialize sentry with the group's api key
-
 // TODO:  WE NEED TO RUN THIS AGAINTS PRODUCTION WITH ADVISOR BE IN PROD AFTER MIGRATION ->
 function initSentry() {
   if (sentryInitialized) {
@@ -72,7 +70,11 @@ function initSentry() {
     environment: `Prod${appDetails.beta}`,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
-    integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration({ maskAllText: false, maskAllInputs: true })],
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({ maskAllText: false, maskAllInputs: true }),
+      SentryBrowser.moduleMetadataIntegration(),
+    ],
     tracesSampleRate: 0.2,
     debug: !!window.localStorage.getItem('chrome:sentry:debug'),
     replaysOnErrorSampleRate: 1.0,
