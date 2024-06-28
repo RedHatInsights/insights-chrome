@@ -18,6 +18,8 @@ let store: LocalForage;
  * This issue may occur when the user switches between envs without logging out and in.
  */
 const envSwap = () => {
+  // TODO: Remove this once the local preview is enabled by default
+  // Only non-beta env will exist in the future
   const currentEnv = isBeta() ? 'beta' : 'non-beta';
   const prevEnv = localStorage.getItem('chrome:prevEnv');
   if (prevEnv && currentEnv !== prevEnv) {

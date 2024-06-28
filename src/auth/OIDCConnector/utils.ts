@@ -44,6 +44,7 @@ export async function logout(auth: AuthContextProps, bounce?: boolean) {
       key.startsWith(GLOBAL_FILTER_KEY)
   );
   deleteLocalStorageItems([...keys, OFFLINE_REDIRECT_STORAGE_KEY, LOGIN_SCOPES_STORAGE_KEY]);
+  // FIXME: Remove this one local preview is enabled by default
   const pathname = isBeta() ? getRouterBasename() : '';
   if (bounce) {
     const eightSeconds = new Date(new Date().getTime() + 8 * 1000);

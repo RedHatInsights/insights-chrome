@@ -8,13 +8,11 @@ import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
-import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { FooterProps } from '../../components/Footer/Footer';
 import logger from '../logger';
 import { login, logout } from './utils';
-import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
@@ -151,11 +149,6 @@ export function OIDCSecured({
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
-    initializeVisibilityFunctions({
-      getUser,
-      getToken: () => Promise.resolve(user.access_token),
-      getUserPermissions: createGetUserPermissions(getUser, () => Promise.resolve(user.access_token)),
-    });
     setState((prev) => ({
       ...prev,
       ready: true,

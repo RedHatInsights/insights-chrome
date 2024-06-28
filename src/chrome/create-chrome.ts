@@ -16,7 +16,7 @@ import {
   toggleDebuggerModal,
   toggleGlobalFilter,
 } from '../redux/actions';
-import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
+import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
@@ -47,6 +47,7 @@ export type CreateChromeContextConfig = {
   helpTopics: ChromeAPI['helpTopics'];
   chromeAuth: ChromeAuthContextValue;
   registerModule: (payload: RegisterModulePayload) => void;
+  isPreview: boolean;
 };
 
 export const createChromeContext = ({
@@ -58,6 +59,7 @@ export const createChromeContext = ({
   helpTopics,
   registerModule,
   chromeAuth,
+  isPreview,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
@@ -154,7 +156,7 @@ export const createChromeContext = ({
       }
       dispatch(toggleGlobalFilter(isHidden));
     },
-    isBeta,
+    isBeta: () => isPreview,
     isChrome2: true,
     enable: debugFunctions,
     isDemo: () => Boolean(Cookies.get('cs_demo')),

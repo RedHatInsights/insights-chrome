@@ -8,6 +8,8 @@ import { ScalprumProvider } from '@scalprum/react-core';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import userFixture from '../../fixtures/testUser.json';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
+import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 describe('<AllServices />', () => {
   beforeEach(() => {
@@ -31,6 +33,7 @@ describe('<AllServices />', () => {
 
   it('should filter by service category title', () => {
     initializeVisibilityFunctions({
+      isPreview: false,
       getToken: () => Promise.resolve(''),
       getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
       getUserPermissions: () => Promise.resolve([]),
@@ -48,22 +51,28 @@ describe('<AllServices />', () => {
       },
     }));
     cy.mount(
-      <ScalprumProvider
-        config={{}}
-        api={{
-          chrome: {
-            visibilityFunctions,
-          },
-        }}
-      >
-        <BrowserRouter>
-          <Provider store={store}>
-            <IntlProvider locale="en">
-              <AllServices />
-            </IntlProvider>
-          </Provider>
-        </BrowserRouter>
-      </ScalprumProvider>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      <ChromeAuthContext.Provider value={{}}>
+        <ScalprumProvider
+          config={{}}
+          api={{
+            chrome: {
+              visibilityFunctions,
+            },
+          }}
+        >
+          <BrowserRouter>
+            <FeatureFlagsProvider>
+              <Provider store={store}>
+                <IntlProvider locale="en">
+                  <AllServices />
+                </IntlProvider>
+              </Provider>
+            </FeatureFlagsProvider>
+          </BrowserRouter>
+        </ScalprumProvider>
+      </ChromeAuthContext.Provider>
     );
 
     cy.get('.pf-v5-c-text-input-group__text-input').type('consoleset');

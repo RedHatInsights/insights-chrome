@@ -42,6 +42,14 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
+jest.mock('../../state/atoms/releaseAtom', () => {
+  const util = jest.requireActual('../../state/atoms/utils');
+  return {
+    __esModule: true,
+    isPreviewAtom: util.atomWithToggle(false),
+  };
+});
+
 window.ResizeObserver =
   window.ResizeObserver ||
   jest.fn().mockImplementation(() => ({
@@ -238,7 +246,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>
@@ -281,7 +289,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>

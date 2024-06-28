@@ -29,8 +29,13 @@ import {
   notificationDrawerDataAtom,
   notificationDrawerExpandedAtom,
   notificationDrawerFilterAtom,
-  updateNotificationsStatusAtom,
+  notificationDrawerSelectedAtom,
+  updateNotificationReadAtom,
+  updateNotificationSelectedAtom,
+  updateNotificationsSelectedAtom,
 } from '../../state/atoms/notificationDrawerAtom';
+import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
+import axios from 'axios';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -74,11 +79,14 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const toggleDrawer = useSetAtom(notificationDrawerExpandedAtom);
   const navigate = useNavigate();
   const notifications = useAtomValue(notificationDrawerDataAtom);
-  const updateNotificationsStatus = useSetAtom(updateNotificationsStatusAtom);
+  const selectedNotifications = useAtomValue(notificationDrawerSelectedAtom);
+  const updateSelectedNotification = useSetAtom(updateNotificationSelectedAtom);
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const { getUserPermissions } = useContext(InternalChromeContext);
   const [hasNotificationsPermissions, setHasNotificationsPermissions] = useState(false);
+  const updateNotificationRead = useSetAtom(updateNotificationReadAtom);
+  const updateAllNotificationsSelected = useSetAtom(updateNotificationsSelectedAtom);
 
   useEffect(() => {
     let mounted = true;
@@ -114,14 +122,29 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
     toggleDrawer(false);
   };
 
-  const onMarkAllAsRead = () => {
-    updateNotificationsStatus(true);
-    setIsDropdownOpen(false);
+  const onUpdateSelectedStatus = (read: boolean) => {
+    axios
+      .put('/api/notifications/v1/notifications/drawer/read', {
+        notification_ids: selectedNotifications.map((notification) => notification.id),
+        read_status: read,
+      })
+      .then(() => {
+        selectedNotifications.forEach((notification) => updateNotificationRead(notification.id, read));
+        setIsDropdownOpen(false);
+        updateAllNotificationsSelected(false);
+      })
+      .catch((e) => {
+        console.error('failed to update notification read status', e);
+      });
   };
 
-  const onMarkAllAsUnread = () => {
-    updateNotificationsStatus(false);
-    setIsDropdownOpen(false);
+  const selectAllNotifications = (selected: boolean) => {
+    updateAllNotificationsSelected(selected);
+  };
+
+  const selectVisibleNotifications = () => {
+    const visibleNotifications = activeFilters.length > 0 ? filteredNotifications : notifications;
+    visibleNotifications.forEach((notification) => updateSelectedNotification(notification.id, true));
   };
 
   const onFilterSelect = (chosenFilter: string) => {
@@ -137,11 +160,23 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
 
   const dropdownItems = [
     <DropdownItem key="actions" description="Actions" />,
-    <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
-      Mark visible as read
+    <DropdownItem
+      key="read selected"
+      onClick={() => {
+        onUpdateSelectedStatus(true);
+      }}
+      isDisabled={notifications.length === 0}
+    >
+      Mark selected as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={onMarkAllAsUnread} isDisabled={notifications.length === 0}>
-      Mark visible as unread
+    <DropdownItem
+      key="unread selected"
+      onClick={() => {
+        onUpdateSelectedStatus(false);
+      }}
+      isDisabled={notifications.length === 0}
+    >
+      Mark selected as unread
     </DropdownItem>,
     <Divider key="divider" />,
     <DropdownItem key="quick links" description="Quick links" />,
@@ -225,6 +260,21 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         >
           {filterDropdownItems()}
         </Dropdown>
+        <BulkSelect
+          id="notifications-bulk-select"
+          items={[
+            { title: 'Select none (0)', key: 'select-none', onClick: () => selectAllNotifications(false) },
+            {
+              title: `Select visible (${activeFilters.length > 0 ? filteredNotifications.length : notifications.length})`,
+              key: 'select-visible',
+              onClick: selectVisibleNotifications,
+            },
+            { title: `Select all (${notifications.length})`, key: 'select-all', onClick: () => selectAllNotifications(true) },
+          ]}
+          count={notifications.filter(({ selected }) => selected).length}
+          checked={notifications.length > 0 && notifications.every(({ selected }) => selected)}
+          ouiaId="notifications-bulk-select"
+        />
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle

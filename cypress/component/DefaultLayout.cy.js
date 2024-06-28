@@ -91,6 +91,9 @@ describe('<Default layout />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {

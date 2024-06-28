@@ -14,6 +14,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -27,6 +28,7 @@ export type ChromeRouteProps = {
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props }: ChromeRouteProps) => {
+    const isPreview = useAtomValue(isPreviewAtom);
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
@@ -45,7 +47,7 @@ const ChromeRoute = memo(
        */
       if (window.pendo) {
         try {
-          window.pendo.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>));
+          window.pendo.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>, isPreview));
         } catch (error) {
           console.error('Unable to update pendo options');
           console.error(error);
@@ -73,7 +75,7 @@ const ChromeRoute = memo(
       <div className={classNames(scopeClass, scope)}>
         <ScalprumComponent
           // TODO: fix in scalprum. The async loader is no triggered when module/scope changes. We had to abuse the key
-          key={path}
+          key={`${path}-${isPreview}`}
           ErrorComponent={<ErrorComponent />}
           fallback={LoadingFallback}
           // LoadingFallback={() => LoadingFallback}
