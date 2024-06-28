@@ -87,6 +87,10 @@ devServer: {
 ```
 3. Run insights-chrome with `npm run dev` or `npm run dev:beta`.
 
+## Local search development
+
+See [local search development documentation](./docs/localSearchDevelopment.md).
+
 ## LocalStorage Debugging
 
 There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.

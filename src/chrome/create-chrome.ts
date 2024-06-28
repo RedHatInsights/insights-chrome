@@ -1,14 +1,12 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { AppNavigationCB, ChromeAPI, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
+import { AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
 import {
-  AppNavClickItem,
   appAction,
-  appNavClick,
   appObjectId,
   globalFilterScope,
   removeGlobalFilter,
@@ -37,6 +35,7 @@ import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
 import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
 import { usePendoFeedback } from '../components/Feedback';
+import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -48,6 +47,8 @@ export type CreateChromeContextConfig = {
   chromeAuth: ChromeAuthContextValue;
   registerModule: (payload: RegisterModulePayload) => void;
   isPreview: boolean;
+  addNavListener: (cb: NavListener) => number;
+  deleteNavListener: (id: number) => void;
 };
 
 export const createChromeContext = ({
@@ -60,6 +61,8 @@ export const createChromeContext = ({
   registerModule,
   chromeAuth,
   isPreview,
+  addNavListener,
+  deleteNavListener,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
@@ -67,7 +70,7 @@ export const createChromeContext = ({
   const actions = {
     appAction: (action: string) => dispatch(appAction(action)),
     appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
-    appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
+    appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
@@ -76,13 +79,17 @@ export const createChromeContext = ({
     },
   };
 
-  const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
+  const on = (type: keyof typeof PUBLIC_EVENTS | 'APP_NAVIGATION', callback: AppNavigationCB | GenericCB) => {
+    if (type === 'APP_NAVIGATION') {
+      const listenerId = addNavListener(callback);
+      return () => deleteNavListener(listenerId);
+    }
     if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
       throw new Error(`Unknown event type: ${type}`);
     }
 
     const [listener, selector] = PUBLIC_EVENTS[type];
-    if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+    if (typeof selector === 'string') {
       (callback as GenericCB)({
         data: get(store.getState(), selector) || {},
       });

@@ -13,6 +13,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'openshift',
+    bundle: 'rhel',
   },
   {
     id: '2',
@@ -21,6 +22,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
   {
     id: '3',
@@ -29,6 +31,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
 ];
 
@@ -75,41 +78,62 @@ describe('Notification Drawer', () => {
     });
   });
 
-  it('should mark single notification as read', () => {
+  it('should mark a single notification as read', () => {
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.mount(<DrawerLayout />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 0);
-    cy.contains('Notification 1').get('input[type="checkbox"]').first().click();
+    cy.get('[aria-label="Notification actions dropdown"]').first().click();
+    cy.get('[role="menuitem"]').contains('Mark as read').first().click();
     cy.get('.pf-m-read').should('have.length', 1);
   });
 
-  it('should mark one notification as unread', () => {
+  it('should mark a single notification as unread', () => {
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.mount(<DrawerLayout markAll />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 3);
-    cy.contains('Notification 1').get('input[type="checkbox"]').first().click();
-    cy.get('.pf-m-read').should('have.length', 2);
+    cy.get('[aria-label="Notification actions dropdown"]').first().click();
+    cy.get('[role="menuitem"]').contains('Mark as unread').first().click();
   });
 
   it('should mark all notifications as read', () => {
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.mount(<DrawerLayout />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 0);
+    // select all notifications
+    cy.get('[aria-label="notifications-bulk-select"]').click();
+    cy.get('[data-ouia-component-id="notifications-bulk-select-select-all"]').click();
+    // mark selected as read
     cy.get('#notifications-actions-toggle').click();
-    cy.contains('Mark visible as read').click();
+    cy.contains('Mark selected as read').click();
     cy.get('.pf-m-read').should('have.length', 3);
   });
 
-  it('should mark all notifications as not read', () => {
+  it('should mark all notifications as unread', () => {
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.mount(<DrawerLayout markAll />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 3);
+    // select all notifications
+    cy.get('[aria-label="notifications-bulk-select"]').click();
+    cy.get('[data-ouia-component-id="notifications-bulk-select-select-all"]').click();
+    // mark selected as unread
     cy.get('#notifications-actions-toggle').click();
-    cy.contains('Mark visible as unread').click();
+    cy.contains('Mark selected as unread').click();
     cy.get('.pf-m-read').should('have.length', 0);
   });
 

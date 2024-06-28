@@ -5,6 +5,7 @@ export type NotificationData = {
   title: string;
   description: string;
   read: boolean;
+  selected?: boolean;
   source: string;
   created: string;
 };
@@ -34,4 +35,11 @@ export const unreadNotificationsAtom = atom((get) => get(notificationDrawerDataA
 export const addNotificationAtom = atom(null, (_get, set, ...notifications: NotificationData[]) => {
   set(notificationDrawerDataAtom, (prev) => [...notifications, ...prev]);
   set(notificationDrawerCountAtom, (prev) => prev + notifications.length);
+});
+export const notificationDrawerSelectedAtom = atom((get) => get(notificationDrawerDataAtom).filter((notification) => notification.selected));
+export const updateNotificationSelectedAtom = atom(null, (_get, set, id: string, selected: boolean) => {
+  set(notificationDrawerDataAtom, (prev) => prev.map((notification) => (notification.id === id ? { ...notification, selected } : notification)));
+});
+export const updateNotificationsSelectedAtom = atom(null, (_get, set, selected: boolean) => {
+  set(notificationDrawerDataAtom, (prev) => prev.map((notification) => ({ ...notification, selected })));
 });

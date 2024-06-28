@@ -4,6 +4,20 @@ import DefaultLayout from './DefaultLayout';
 import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
+import { Provider as ProviderJotai } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
+import { activeAppAtom } from '../state/atoms/activeAppAtom';
+
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const TestProvider = ({ initialValues, children }) => (
+  <ProviderJotai>
+    <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+  </ProviderJotai>
+);
 
 jest.mock('../state/atoms/releaseAtom', () => {
   const util = jest.requireActual('../state/atoms/utils');
@@ -28,7 +42,6 @@ describe('DefaultLayout', () => {
     mockStore = configureStore();
     initialState = {
       chrome: {
-        activeApp: 'some-app',
         activeLocation: 'some-location',
         appId: 'app-id',
         navigation: {
@@ -51,11 +64,13 @@ describe('DefaultLayout', () => {
   it('should render correctly - no data', async () => {
     const store = mockStore({ chrome: {} });
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <DefaultLayout config={config} />
-        </MemoryRouter>
-      </Provider>
+      <TestProvider initialValues={[[activeAppAtom, 'some-app']]}>
+        <Provider store={store}>
+          <MemoryRouter>
+            <DefaultLayout config={config} />
+          </MemoryRouter>
+        </Provider>
+      </TestProvider>
     );
     expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
@@ -63,11 +78,13 @@ describe('DefaultLayout', () => {
   it('should render correctly', () => {
     const store = mockStore(initialState);
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <DefaultLayout config={config} />
-        </MemoryRouter>
-      </Provider>
+      <TestProvider initialValues={[[activeAppAtom, 'some-app']]}>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/some-location/app-id']}>
+            <DefaultLayout config={config} />
+          </MemoryRouter>
+        </Provider>
+      </TestProvider>
     );
     expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
@@ -81,11 +98,13 @@ describe('DefaultLayout', () => {
       globalFilter: {},
     });
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <DefaultLayout config={config} />
-        </MemoryRouter>
-      </Provider>
+      <TestProvider initialValues={[[activeAppAtom, 'some-app']]}>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/some-location/app-id']}>
+            <DefaultLayout config={config} />
+          </MemoryRouter>
+        </Provider>
+      </TestProvider>
     );
     expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
@@ -98,11 +117,13 @@ describe('DefaultLayout', () => {
       },
     });
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <DefaultLayout config={config} />
-        </MemoryRouter>
-      </Provider>
+      <TestProvider initialValues={[[activeAppAtom, 'some-app']]}>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/some-location/app-id']}>
+            <DefaultLayout config={config} />
+          </MemoryRouter>
+        </Provider>
+      </TestProvider>
     );
     expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
@@ -116,11 +137,13 @@ describe('DefaultLayout', () => {
       },
     });
     const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/some-location/app-id']}>
-          <DefaultLayout config={config} />
-        </MemoryRouter>
-      </Provider>
+      <TestProvider initialValues={[[activeAppAtom, 'some-app']]}>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/some-location/app-id']}>
+            <DefaultLayout config={config} />
+          </MemoryRouter>
+        </Provider>
+      </TestProvider>
     );
     expect(container.querySelector('#chrome-app-render-root')).toMatchSnapshot();
   });
