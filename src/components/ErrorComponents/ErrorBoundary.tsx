@@ -11,6 +11,7 @@ type ErrorBoundaryState = {
 class ErrorBoundary extends React.Component<
   {
     children: React.ReactNode;
+    singIn?: () => Promise<void>;
   },
   ErrorBoundaryState
 > {
@@ -33,7 +34,7 @@ class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} />;
+      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} signIn={this.props.singIn} />;
     }
 
     return this.props.children;
