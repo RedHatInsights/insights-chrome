@@ -138,6 +138,19 @@ describe('Notification Drawer', () => {
   });
 
   it('should select console filter', () => {
+    cy.intercept('GET', 'http://localhost:8080/api/notifications/v1/notifications/facets/bundles', {
+      statusCode: 200,
+      body: [
+        {
+          name: 'console',
+          displayName: 'Console',
+        },
+        {
+          name: 'openshift',
+          displayName: 'OpenShift',
+        },
+      ],
+    });
     cy.mount(<DrawerLayout />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
