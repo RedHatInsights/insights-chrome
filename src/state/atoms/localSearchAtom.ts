@@ -3,6 +3,7 @@ import { Orama, create, insert } from '@orama/orama';
 
 import { getChromeStaticPathname } from '../../utils/common';
 import axios from 'axios';
+import { NavItemPermission } from '../../@types/types';
 
 type IndexEntry = {
   icon?: string;
@@ -14,6 +15,7 @@ type IndexEntry = {
   relative_uri: string;
   poc_description_t: string;
   alt_title: string[];
+  permissions?: NavItemPermission[];
 };
 
 type SearchEntry = {
@@ -26,6 +28,9 @@ type SearchEntry = {
   bundleTitle: string;
   altTitle?: string[];
 };
+
+export const SearchPermissions = new Map<string, NavItemPermission[]>();
+export const SearchPermissionsCache = new Map<string, boolean>();
 
 const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
@@ -43,6 +48,7 @@ const asyncSearchIndexAtom = atom(async () => {
       return;
     }
     idSet.add(entry.id);
+    SearchPermissions.set(entry.id, entry.permissions ?? []);
     searchIndex.push({
       title: entry.title[0],
       uri: entry.uri,
