@@ -44,7 +44,7 @@ export default defineConfig({
     defaultCommandTimeout: 60000,
     requestTimeout: 60000,
     // required for the redirects to work correctly due to a chromium issue
-    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
     screenshotOnRunFailure: false,
     // required for the SSO redirect
     chromeWebSecurity: false,
