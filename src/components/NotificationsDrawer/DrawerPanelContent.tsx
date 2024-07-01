@@ -36,6 +36,7 @@ import {
 } from '../../state/atoms/notificationDrawerAtom';
 import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
 import axios from 'axios';
+import { Stack, StackItem } from '@patternfly/react-core';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -49,23 +50,44 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
     </Title>
     <EmptyStateBody>
       {isOrgAdmin ? (
-        <Text>
-          Try&nbsp;
-          <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
-            checking your notification preferences
-          </Link>
-          &nbsp;and managing the&nbsp;
-          <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
-            notification configuration
-          </Link>
-          &nbsp;for your organization.
-        </Text>
+        <Stack>
+          <StackItem>
+            <Text>There are currently no notifications for you.</Text>
+          </StackItem>
+          <StackItem>
+            <Text>
+              Try&nbsp;
+              <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
+                checking your notification preferences
+              </Link>
+              &nbsp;and managing the&nbsp;
+              <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
+                notification configuration
+              </Link>
+              &nbsp;for your organization.
+            </Text>
+          </StackItem>
+        </Stack>
       ) : (
         <>
-          <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
-            Configure notification settings
-          </Link>
-          .<Text>Contact your organization administrator.</Text>
+          <Stack>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Text>There are currently no notifications for you.</Text>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
+                Check your Notification Preferences
+              </Link>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Link onClick={onLinkClick} to="/settings/notifications/notificationslog">
+                View the Event log to see all fired events
+              </Link>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Text>Contact your organization administrator</Text>
+            </StackItem>
+          </Stack>
         </>
       )}
     </EmptyStateBody>

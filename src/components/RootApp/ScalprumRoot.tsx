@@ -70,9 +70,18 @@ const ScalprumRoot = memo(
     // setting default tab title
     useTabName();
 
+    function getSevenDaysAgo(): string {
+      const today = new Date();
+      const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
+      return sevenDaysAgo.toISOString().split('.')[0];
+    }
+
     async function getNotifications() {
       try {
-        const { data } = await axios.get<{ data: NotificationData[] }>('/api/notifications/v1/notifications/drawer');
+        console.log(getSevenDaysAgo());
+        const { data } = await axios.get<{ data: NotificationData[] }>(
+          `/api/notifications/v1/notifications/drawer?limit=50&sort_by=read%3Aasc&startDate=${getSevenDaysAgo()}`
+        );
         populateNotifications(data?.data || []);
       } catch (error) {
         console.error('Unable to get Notifications ', error);
