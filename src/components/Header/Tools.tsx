@@ -116,7 +116,7 @@ const Tools = () => {
   const intl = useIntl();
   const location = useLocation();
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = '/iam/user-access/users';
+  const identityAndAccessManagmentPath = '/iam/user-access/overview';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
