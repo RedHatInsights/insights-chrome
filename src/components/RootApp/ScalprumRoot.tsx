@@ -27,7 +27,7 @@ import Footer, { FooterProps } from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess } from '../../utils/common';
+import { ITLess, getSevenDaysAgo } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
@@ -70,15 +70,8 @@ const ScalprumRoot = memo(
     // setting default tab title
     useTabName();
 
-    function getSevenDaysAgo(): string {
-      const today = new Date();
-      const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
-      return sevenDaysAgo.toISOString().split('.')[0];
-    }
-
     async function getNotifications() {
       try {
-        console.log(getSevenDaysAgo());
         const { data } = await axios.get<{ data: NotificationData[] }>(
           `/api/notifications/v1/notifications/drawer?limit=50&sort_by=read%3Aasc&startDate=${getSevenDaysAgo()}`
         );

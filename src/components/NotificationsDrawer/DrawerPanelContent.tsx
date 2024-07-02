@@ -36,7 +36,7 @@ import {
 } from '../../state/atoms/notificationDrawerAtom';
 import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
 import axios from 'axios';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
