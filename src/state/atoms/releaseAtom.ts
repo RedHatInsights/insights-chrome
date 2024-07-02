@@ -2,9 +2,11 @@ import axios from 'axios';
 import { updateVisibilityFunctionsBeta, visibilityFunctionsExist } from '../../utils/VisibilitySingleton';
 import { atomWithToggle } from './utils';
 import { getUnleashClient, unleashClientExists } from '../../components/FeatureFlags/unleashClient';
+import { SearchPermissionsCache } from './localSearchAtom';
 
 export const isPreviewAtom = atomWithToggle(undefined, async (isPreview) => {
   try {
+    SearchPermissionsCache.clear();
     // Required to change the `isBeta` function return value in the visibility functions
     if (visibilityFunctionsExist()) {
       updateVisibilityFunctionsBeta(isPreview);

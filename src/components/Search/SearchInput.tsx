@@ -17,6 +17,8 @@ import SearchDescription from './SearchDescription';
 import { useAtomValue } from 'jotai';
 import { asyncLocalOrama } from '../../state/atoms/localSearchAtom';
 import { localQuery } from '../../utils/localSearch';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { ReleaseEnv } from '../../@types/types.d';
 
 export type SearchInputprops = {
   isExpanded?: boolean;
@@ -49,6 +51,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [searchItems, setSearchItems] = useState<SearchItem[]>([]);
+  const isPreview = useAtomValue(isPreviewAtom);
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
   const asyncLocalOramaData = useAtomValue(asyncLocalOrama);
@@ -146,7 +149,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
     setSearchValue(value);
     setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value);
+    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE);
     setSearchItems(results ?? []);
     isMounted.current && setIsFetching(false);
     if (ready && analytics) {
