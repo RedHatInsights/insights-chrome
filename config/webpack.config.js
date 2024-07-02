@@ -44,6 +44,7 @@ const commonConfig = ({ dev }) => {
       publicPath,
       chunkFilename: dev ? '[name].js' : '[name].[contenthash].js',
     },
+    devtool: process.env.SENTRY_AUTH_TOKEN ? 'source-map' : false,
     ...(dev
       ? {
           cache: {
@@ -55,7 +56,6 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: false,
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
