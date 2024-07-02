@@ -1,7 +1,7 @@
 import { ITLess } from './common';
-import { AppNavigationCB, ChromeAuthOptions, GenericCB, NavDOMEvent } from '../@types/types';
+import { ChromeAuthOptions, GenericCB } from '../@types/types';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
-import { APP_NAV_CLICK, GLOBAL_FILTER_UPDATE } from '../redux/action-types';
+import { GLOBAL_FILTER_UPDATE } from '../redux/action-types';
 
 export const noAuthParam = 'noauth';
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
@@ -72,23 +72,9 @@ export const defaultAuthOptions: ChromeAuthOptions = {
 export const OFFLINE_REDIRECT_STORAGE_KEY = 'chrome.offline.redirectUri';
 
 export const PUBLIC_EVENTS: {
-  APP_NAVIGATION: [(callback: AppNavigationCB) => Listener];
   NAVIGATION_TOGGLE: [(callback: GenericCB) => Listener];
   GLOBAL_FILTER_UPDATE: [(callback: GenericCB) => Listener, string];
 } = {
-  APP_NAVIGATION: [
-    (callback: (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void) => {
-      const appNavListener: Listener<{ event: NavDOMEvent; id?: string }> = {
-        on: APP_NAV_CLICK,
-        callback: ({ data }) => {
-          if (data.id !== undefined || data.event) {
-            callback({ navId: data.id, domEvent: data.event });
-          }
-        },
-      };
-      return appNavListener;
-    },
-  ],
   NAVIGATION_TOGGLE: [
     (callback: (...args: unknown[]) => void) => {
       console.error('NAVIGATION_TOGGLE event is deprecated and will be removed in future versions of chrome.');

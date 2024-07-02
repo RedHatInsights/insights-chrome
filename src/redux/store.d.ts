@@ -10,7 +10,6 @@ export type InternalNavigation = {
 export type AccessRequest = { request_id: string; created: string; seen: boolean };
 
 export type ChromeState = {
-  activeApp?: string;
   activeProduct?: string;
   missingIDP?: boolean;
   pageAction?: string;

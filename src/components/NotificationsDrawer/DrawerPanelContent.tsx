@@ -295,7 +295,6 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
           ]}
           count={notifications.filter(({ selected }) => selected).length}
           checked={notifications.length > 0 && notifications.every(({ selected }) => selected)}
-          ouiaId="notifications-bulk-select"
         />
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
