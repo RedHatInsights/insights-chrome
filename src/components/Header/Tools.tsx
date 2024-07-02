@@ -109,6 +109,7 @@ const Tools = () => {
   });
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
+  const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const { xs } = useWindowWidth();
   const { user, token } = useContext(ChromeAuthContext);
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
@@ -233,12 +234,19 @@ const Tools = () => {
       onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
-
     {
       title: intl.formatMessage(messages.demoMode),
       onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
       isHidden: !isDemoAcc,
     },
+    ...(enableGlobalLearningResourcesPage
+      ? [
+          {
+            title: intl.formatMessage(messages.globalLearningResourcesPage),
+            onClick: () => window.open('/staging/global-learning-resources-page', '_blank'),
+          },
+        ]
+      : []),
   ];
 
   /* Combine aboutMenuItems with a settings link on mobile */
