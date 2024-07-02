@@ -1,28 +1,24 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { AppNavigationCB, ChromeAPI, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
+import { AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
 import {
-  AppNavClickItem,
   appAction,
-  appNavClick,
   appObjectId,
   globalFilterScope,
   removeGlobalFilter,
   toggleDebuggerButton,
   toggleDebuggerModal,
-  toggleFeedbackModal,
   toggleGlobalFilter,
 } from '../redux/actions';
-import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
+import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
 import { PUBLIC_EVENTS } from '../utils/consts';
-import { usePendoFeedback } from '../components/Feedback';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
@@ -37,6 +33,9 @@ import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
+import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
+import { usePendoFeedback } from '../components/Feedback';
+import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -47,6 +46,9 @@ export type CreateChromeContextConfig = {
   helpTopics: ChromeAPI['helpTopics'];
   chromeAuth: ChromeAuthContextValue;
   registerModule: (payload: RegisterModulePayload) => void;
+  isPreview: boolean;
+  addNavListener: (cb: NavListener) => number;
+  deleteNavListener: (id: number) => void;
 };
 
 export const createChromeContext = ({
@@ -58,6 +60,9 @@ export const createChromeContext = ({
   helpTopics,
   registerModule,
   chromeAuth,
+  isPreview,
+  addNavListener,
+  deleteNavListener,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
@@ -65,7 +70,7 @@ export const createChromeContext = ({
   const actions = {
     appAction: (action: string) => dispatch(appAction(action)),
     appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
-    appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
+    appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
@@ -74,13 +79,17 @@ export const createChromeContext = ({
     },
   };
 
-  const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
+  const on = (type: keyof typeof PUBLIC_EVENTS | 'APP_NAVIGATION', callback: AppNavigationCB | GenericCB) => {
+    if (type === 'APP_NAVIGATION') {
+      const listenerId = addNavListener(callback);
+      return () => deleteNavListener(listenerId);
+    }
     if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
       throw new Error(`Unknown event type: ${type}`);
     }
 
     const [listener, selector] = PUBLIC_EVENTS[type];
-    if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+    if (typeof selector === 'string') {
       (callback as GenericCB)({
         data: get(store.getState(), selector) || {},
       });
@@ -154,7 +163,7 @@ export const createChromeContext = ({
       }
       dispatch(toggleGlobalFilter(isHidden));
     },
-    isBeta,
+    isBeta: () => isPreview,
     isChrome2: true,
     enable: debugFunctions,
     isDemo: () => Boolean(Cookies.get('cs_demo')),
@@ -170,7 +179,9 @@ export const createChromeContext = ({
     segment: {
       setPageMetadata,
     },
-    toggleFeedbackModal: (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen)),
+    toggleFeedbackModal: (isOpen: boolean) => {
+      chromeStore.set(isFeedbackModalOpenAtom, isOpen);
+    },
     enableDebugging: () => dispatch(toggleDebuggerButton(true)),
     toggleDebuggerModal: (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen)),
     // FIXME: Update types once merged
@@ -195,6 +206,8 @@ export const createChromeContext = ({
     },
     $internal: {
       store,
+      // Not supposed to be used by tenants
+      forceAuthRefresh: chromeAuth.forceRefresh,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,

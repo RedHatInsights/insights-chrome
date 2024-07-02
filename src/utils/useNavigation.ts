@@ -1,16 +1,17 @@
 import axios from 'axios';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { loadLeftNavSegment } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname, isBeta } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { ReduxState } from '../redux/store';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
+import { isPreviewAtom } from '../state/atoms/releaseAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -55,6 +56,7 @@ const useNavigation = () => {
   const currentNamespace = pathname.split('/')[1];
   const schema = useSelector(({ chrome: { navigation } }: ReduxState) => navigation[currentNamespace] as Navigation);
   const [noNav, setNoNav] = useState(false);
+  const isPreview = useAtomValue(isPreviewAtom);
 
   /**
    * We need a side effect to get the value into the mutation observer closure
@@ -111,7 +113,11 @@ const useNavigation = () => {
       axios
         .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json`)
         // fallback static CSC for EE env
-        .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`))
+        .catch(() => {
+          const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
+          const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
+          return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`);
+        })
         .then(async (response) => {
           if (observer && typeof observer.disconnect === 'function') {
             observer.disconnect();

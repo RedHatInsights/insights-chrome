@@ -3,7 +3,6 @@ import { applyReducerHash } from '@redhat-cloud-services/frontend-components-uti
 import {
   accessRequestsNotificationsReducer,
   addQuickstartstoApp,
-  appNavClick,
   clearQuickstartsReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
@@ -12,20 +11,11 @@ import {
   loginReducer,
   markAccessRequestRequestReducer,
   markActiveProduct,
-  markAllNotificationsAsRead,
-  markAllNotificationsAsUnread,
-  markNotificationAsRead,
-  markNotificationAsUnread,
   onPageAction,
   onPageObjectId,
-  populateNotificationsReducer,
   populateQuickstartsReducer,
-  setPendoFeedbackFlag,
   toggleDebuggerButton,
   toggleDebuggerModal,
-  toggleFeedbackModal,
-  toggleNotificationsReducer,
-  updateNotificationsReducer,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -42,7 +32,6 @@ import {
 } from './globalFilterReducers';
 import {
   ADD_QUICKSTARTS_TO_APP,
-  APP_NAV_CLICK,
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
@@ -57,35 +46,23 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
-  MARK_ALL_NOTIFICATION_AS_READ,
-  MARK_ALL_NOTIFICATION_AS_UNREAD,
-  MARK_NOTIFICATION_AS_READ,
-  MARK_NOTIFICATION_AS_UNREAD,
   MARK_REQUEST_NOTIFICATION_SEEN,
-  POPULATE_NOTIFICATIONS,
   POPULATE_QUICKSTARTS_CATALOG,
-  SET_PENDO_FEEDBACK_FLAG,
   TOGGLE_DEBUGGER_BUTTON,
   TOGGLE_DEBUGGER_MODAL,
-  TOGGLE_FEEDBACK_MODAL,
-  TOGGLE_NOTIFICATIONS_DRAWER,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
-  UPDATE_NOTIFICATIONS,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
 
 const reducers = {
-  [APP_NAV_CLICK]: appNavClick,
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
-  [SET_PENDO_FEEDBACK_FLAG]: setPendoFeedbackFlag,
-  [TOGGLE_FEEDBACK_MODAL]: toggleFeedbackModal,
   [TOGGLE_DEBUGGER_MODAL]: toggleDebuggerModal,
   [TOGGLE_DEBUGGER_BUTTON]: toggleDebuggerButton,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
@@ -96,13 +73,6 @@ const reducers = {
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
   [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
-  [TOGGLE_NOTIFICATIONS_DRAWER]: toggleNotificationsReducer,
-  [POPULATE_NOTIFICATIONS]: populateNotificationsReducer,
-  [MARK_NOTIFICATION_AS_READ]: markNotificationAsRead,
-  [MARK_NOTIFICATION_AS_UNREAD]: markNotificationAsUnread,
-  [MARK_ALL_NOTIFICATION_AS_READ]: markAllNotificationsAsRead,
-  [MARK_ALL_NOTIFICATION_AS_UNREAD]: markAllNotificationsAsUnread,
-  [UPDATE_NOTIFICATIONS]: updateNotificationsReducer,
 };
 
 const globalFilter = {
@@ -129,11 +99,6 @@ export const chromeInitialState: ReduxState = {
     quickstarts: {
       quickstarts: {},
     },
-    notifications: {
-      data: [],
-      isExpanded: false,
-      count: 0,
-    },
   },
   globalFilter: globalFilterDefaultState,
 };
@@ -153,11 +118,6 @@ export default function (): {
         },
         quickstarts: {
           quickstarts: {},
-        },
-        notifications: {
-          data: [],
-          isExpanded: false,
-          count: 0,
         },
       },
       action

@@ -38,6 +38,15 @@ jest.mock('@unleash/proxy-client-react', () => {
     ...unleash,
     useFlag: () => false,
     useFlagsStatus: () => ({ flagsReady: true }),
+    useFlags: () => [],
+  };
+});
+
+jest.mock('../../state/atoms/releaseAtom', () => {
+  const util = jest.requireActual('../../state/atoms/utils');
+  return {
+    __esModule: true,
+    isPreviewAtom: util.atomWithToggle(false),
   };
 });
 
@@ -237,7 +246,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>
@@ -280,7 +289,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>

@@ -2,8 +2,8 @@ import * as actionTypes from './action-types';
 import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
-import type { FlagTagsFilter, NavDOMEvent, NavItem, Navigation } from '../@types/types';
-import type { AccessRequest, NotificationData, NotificationsPayload } from './store';
+import type { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
+import type { AccessRequest } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 
 export function userLogIn(user: ChromeUser | boolean) {
@@ -18,9 +18,6 @@ export type AppNavClickItem = { id?: string; custom?: boolean };
 /*
  *TODO: The event type is deliberately nonse. It will start failing once we mirate rest of the app and we will figure out the correct type
  */
-export function appNavClick(item: AppNavClickItem, event?: NavDOMEvent) {
-  return { type: actionTypes.APP_NAV_CLICK, payload: { ...(item || {}), id: item?.id, event } };
-}
 
 export function appAction(action: string) {
   return { type: actionTypes.CHROME_PAGE_ACTION, payload: action };
@@ -101,16 +98,6 @@ export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
 
-export const setPendoFeedbackFlag = (payload: boolean) => ({
-  type: actionTypes.SET_PENDO_FEEDBACK_FLAG,
-  payload,
-});
-
-export const toggleFeedbackModal = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_FEEDBACK_MODAL,
-  payload,
-});
-
 export const toggleDebuggerModal = (payload: boolean) => ({
   type: actionTypes.TOGGLE_DEBUGGER_MODAL,
   payload,
@@ -166,33 +153,4 @@ export const updateDocumentTitle = (title: string) => ({
 export const markActiveProduct = (product?: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
-});
-
-export const toggleNotificationsDrawer = () => ({
-  type: actionTypes.TOGGLE_NOTIFICATIONS_DRAWER,
-});
-
-export const populateNotifications = (data: NotificationData[]) => ({ type: actionTypes.POPULATE_NOTIFICATIONS, payload: { data } });
-
-export const markNotificationAsRead = (id: string) => ({
-  type: actionTypes.MARK_NOTIFICATION_AS_READ,
-  payload: id,
-});
-
-export const markNotificationAsUnread = (id: string) => ({
-  type: actionTypes.MARK_NOTIFICATION_AS_UNREAD,
-  payload: id,
-});
-
-export const markAllNotificationsAsRead = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_READ,
-});
-
-export const markAllNotificationsAsUnread = () => ({
-  type: actionTypes.MARK_ALL_NOTIFICATION_AS_UNREAD,
-});
-
-export const updateNotifications = (payload: NotificationsPayload) => ({
-  type: actionTypes.UPDATE_NOTIFICATIONS,
-  payload,
 });

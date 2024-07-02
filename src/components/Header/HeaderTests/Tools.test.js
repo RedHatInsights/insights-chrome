@@ -7,6 +7,13 @@ import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
 jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');
+jest.mock('../../../state/atoms/releaseAtom', () => {
+  const util = jest.requireActual('../../../state/atoms/utils');
+  return {
+    __esModule: true,
+    isPreviewAtom: util.atomWithToggle(false),
+  };
+});
 
 jest.mock('@unleash/proxy-client-react', () => {
   const proxyClient = jest.requireActual('@unleash/proxy-client-react');
@@ -20,6 +27,13 @@ jest.mock('@unleash/proxy-client-react', () => {
 });
 
 describe('Tools', () => {
+  let assignMock = jest.fn();
+
+  delete window.location;
+  window.location = { assign: assignMock, href: '', pathname: '' };
+  afterEach(() => {
+    assignMock.mockClear();
+  });
   it('should render correctly', async () => {
     const mockClick = jest.fn();
     let container;
@@ -36,8 +50,16 @@ describe('Tools', () => {
   });
 
   it('should switch release correctly', () => {
-    expect(switchRelease(true, '/beta/settings/rbac')).toEqual(`/settings/rbac`);
-    expect(switchRelease(true, '/preview/settings/rbac')).toEqual(`/settings/rbac`);
-    expect(switchRelease(false, '/settings/rbac')).toEqual(`/beta/settings/rbac`);
+    const cases = [
+      ['/beta/settings/rbac', '/settings/rbac'],
+      ['/preview/settings/rbac', '/settings/rbac'],
+      ['/settings/rbac', '/settings/rbac'],
+    ];
+
+    cases.forEach(([input, expected]) => {
+      window.location.href = '';
+      switchRelease(true, input);
+      expect(window.location.href).toEqual(expected);
+    });
   });
 });

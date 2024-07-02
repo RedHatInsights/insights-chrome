@@ -6,6 +6,8 @@ import axios from 'axios';
 import { Required } from 'utility-types';
 import useBundle, { getUrl } from '../hooks/useBundle';
 
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
+
 export const DEFAULT_SSO_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],
@@ -200,11 +202,17 @@ export function isProd() {
   return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
 }
 
+/**
+ * @deprecated preview flag is now determined via chrome internal state variable
+ */
 export function isBeta(pathname?: string) {
   const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
   return ['beta', 'preview'].includes(previewFragment);
 }
 
+/**
+ * @deprecated router basename will always be `/`
+ */
 export function getRouterBasename(pathname?: string) {
   const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
   return isBeta(pathname) ? `/${previewFragment}` : '/';
@@ -355,7 +363,10 @@ export const chromeServiceStaticPathname = {
 };
 
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services' | 'search') {
-  const stableEnv = isBeta() ? 'beta' : 'stable';
+  // TODO: Remove once local preview is enabled by default
+  // Only non-beta env will exist in the future
+  // Feature flags should be used to enable/disable features
+  const stableEnv = LOCAL_PREVIEW ? 'stable' : isBeta() ? 'beta' : 'stable';
   const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }

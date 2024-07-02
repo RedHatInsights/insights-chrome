@@ -1,7 +1,5 @@
 export const USER_LOGIN = '@@chrome/user-login';
 
-export const APP_NAV_CLICK = '@@chrome/app-nav-click';
-
 export const CHROME_PAGE_ACTION = '@@chrome/app-page-action';
 export const CHROME_PAGE_OBJECT = '@@chrome/app-object-id';
 
@@ -16,8 +14,6 @@ export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
 export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
 
-export const SET_PENDO_FEEDBACK_FLAG = '@@chrome/set-pendo-feedback-flag';
-export const TOGGLE_FEEDBACK_MODAL = '@@chrome/toggle-feedback-modal';
 export const TOGGLE_DEBUGGER_MODAL = '@@chrome/toggle-debugger-modal';
 export const TOGGLE_DEBUGGER_BUTTON = '@@chrome/toggle-debugger-button';
 export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requests-notifications';
@@ -31,12 +27,3 @@ export const POPULATE_QUICKSTARTS_CATALOG = '@@chrome/populate-quickstarts-catal
 export const ADD_QUICKSTARTS_TO_APP = '@@chrome/add-quickstart';
 export const DISABLE_QUICKSTARTS = '@@chrome/disable-quickstarts';
 export const CLEAR_QUICKSTARTS = '@@chrome/clear-quickstarts';
-
-export const TOGGLE_NOTIFICATIONS_DRAWER = '@@chrome/toggle-notifications-drawer';
-export const POPULATE_NOTIFICATIONS = '@@chrome/populate-notifications';
-
-export const MARK_NOTIFICATION_AS_READ = '@@chrome/mark-notification-as-read';
-export const MARK_NOTIFICATION_AS_UNREAD = '@@chrome/mark-notification-as-unread';
-export const MARK_ALL_NOTIFICATION_AS_READ = '@@chrome/mark-all-notification-as-read';
-export const MARK_ALL_NOTIFICATION_AS_UNREAD = '@@chrome/mark-all-notification-as-unread';
-export const UPDATE_NOTIFICATIONS = '@@chrome/update-notifications';

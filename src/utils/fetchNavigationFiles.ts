@@ -2,13 +2,13 @@ import axios from 'axios';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
-import { ITLess, getChromeStaticPathname, isBeta } from './common';
+import { ITLess, getChromeStaticPathname } from './common';
+
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
-
-const bundles = ITLess() ? itLessBundles : requiredBundles;
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
   return Array.isArray((navigation as Navigation).navItems);
@@ -39,7 +39,8 @@ const filesCache: {
   existingRequest: undefined,
 };
 
-const fetchNavigationFiles = async () => {
+const fetchNavigationFiles = async (isPreview: boolean) => {
+  const bundles = ITLess() ? itLessBundles : requiredBundles;
   if (filesCache.ready && filesCache.expires > Date.now()) {
     return filesCache.data;
   }
@@ -53,7 +54,12 @@ const fetchNavigationFiles = async () => {
     bundles.map((fragment) =>
       axios
         .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
-        .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
+        .catch(() => {
+          // FIXME: Remove this once local preview is enabled by default
+          // No /beta will be needed in the future
+          const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
+          return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+        })
         .then((response) => response.data)
         .catch((err) => {
           console.error('Unable to load bundle navigation', err, fragment);

@@ -3,12 +3,14 @@ import logger from '../auth/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getEnvDetails, isBeta, isProd } from './common';
+import { getEnvDetails, isProd } from './common';
 import { HYDRA_ENDPOINT } from './consts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { getUrl } from '../hooks/useBundle';
 import chromeStore from '../state/chromeStore';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
+
+const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -43,8 +45,9 @@ function registerProduct() {
   return product?.name;
 }
 
-async function getAppInfo(activeModule: string) {
-  let path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule}/app.info.json`;
+async function getAppInfo(activeModule: string, isPreview: boolean) {
+  const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
+  let path = `${window.location.origin}${previewFragment}apps/${activeModule}/app.info.json`;
   try {
     return activeModule && (await (await fetch(path)).json());
   } catch (error) {
@@ -53,7 +56,7 @@ async function getAppInfo(activeModule: string) {
      * Transformation co camel case is requried by webpack remote moduled name requirements.
      * If we don't find the app info with camel case app id we try using kebab-case
      */
-    path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule.replace(/[A-Z]/g, '-$&').toLowerCase()}/app.info.json`;
+    path = `${window.location.origin}${previewFragment}apps/${activeModule.replace(/[A-Z]/g, '-$&').toLowerCase()}/app.info.json`;
     try {
       return activeModule && (await (await fetch(path)).json());
     } catch (error) {
@@ -62,21 +65,22 @@ async function getAppInfo(activeModule: string) {
   }
 }
 
-async function getProductData() {
+async function getProductData(isPreview: boolean) {
   const activeModule = chromeStore.get(activeModuleAtom);
-  const appData = await getAppInfo(activeModule ?? '');
+  const appData = await getAppInfo(activeModule ?? '', isPreview);
   return appData;
 }
 
 export async function createSupportCase(
   userInfo: ChromeUser['identity'],
   token: string,
+  isPreview: boolean,
   fields?: {
     caseFields: Record<string, unknown>;
   }
 ) {
   const currentProduct = registerProduct() || 'Other';
-  const productData = await getProductData();
+  const productData = await getProductData(isPreview);
   // a temporary fallback to getUrl() until all apps are redeployed, which will fix getProductData() - remove after some time
   const { src_hash, app_name } = { src_hash: productData?.src_hash, app_name: productData?.app_name ?? getUrl('app') };
   const portalUrl = `${getEnvDetails()?.portal}`;
@@ -98,7 +102,7 @@ export async function createSupportCase(
       },
       sessionDetails: {
         createdBy: `${userInfo.user?.username}`,
-        environment: `Production${isBeta() ? ' Beta' : ''}, ${
+        environment: `Production${isPreview ? ' Beta' : ''}, ${
           src_hash
             ? `Current app: ${app_name}, Current app hash: ${src_hash}, Current URL: ${window.location.href}`
             : `Unknown app, filed on ${window.location.href}`
