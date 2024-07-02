@@ -7,6 +7,7 @@ export type NotificationData = {
   read: boolean;
   selected?: boolean;
   source: string;
+  bundle: string;
   created: string;
 };
 
