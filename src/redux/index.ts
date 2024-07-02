@@ -3,7 +3,6 @@ import { applyReducerHash } from '@redhat-cloud-services/frontend-components-uti
 import {
   accessRequestsNotificationsReducer,
   addQuickstartstoApp,
-  appNavClick,
   clearQuickstartsReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
@@ -33,7 +32,6 @@ import {
 } from './globalFilterReducers';
 import {
   ADD_QUICKSTARTS_TO_APP,
-  APP_NAV_CLICK,
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
@@ -60,7 +58,6 @@ import { ChromeState, GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
 
 const reducers = {
-  [APP_NAV_CLICK]: appNavClick,
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,

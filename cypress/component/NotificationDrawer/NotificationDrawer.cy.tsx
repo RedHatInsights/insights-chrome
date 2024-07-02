@@ -13,6 +13,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'openshift',
+    bundle: 'rhel',
   },
   {
     id: '2',
@@ -21,6 +22,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
   {
     id: '3',
@@ -29,6 +31,7 @@ const notificationDrawerData: NotificationData[] = [
     created: new Date().toString(),
     description: 'This is a test notification',
     source: 'console',
+    bundle: 'rhel',
   },
 ];
 
@@ -109,8 +112,8 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 0);
     // select all notifications
-    cy.get('[aria-label="notifications-bulk-select"]').click();
-    cy.get('[data-ouia-component-id="notifications-bulk-select-select-all"]').click();
+    cy.get('[data-ouia-component-id="BulkSelect"]').click();
+    cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as read
     cy.get('#notifications-actions-toggle').click();
     cy.contains('Mark selected as read').click();
@@ -126,8 +129,8 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 3);
     // select all notifications
-    cy.get('[aria-label="notifications-bulk-select"]').click();
-    cy.get('[data-ouia-component-id="notifications-bulk-select-select-all"]').click();
+    cy.get('[data-ouia-component-id="BulkSelect"]').click();
+    cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as unread
     cy.get('#notifications-actions-toggle').click();
     cy.contains('Mark selected as unread').click();
