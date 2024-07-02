@@ -121,6 +121,8 @@ describe('create chrome', () => {
     setPageMetadata: jest.fn(),
     useGlobalFilter: jest.fn(),
     registerModule: jest.fn(),
+    addNavListener: jest.fn(),
+    deleteNavListener: jest.fn(),
   };
   beforeAll(() => {
     const mockAuthMethods = {
