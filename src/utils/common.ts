@@ -472,3 +472,9 @@ export function findNavLeafPath(
 
 // converts text to an identifier in title case
 export const titleToId = (title: string) => title?.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase()).replace(/\s+/g, '');
+
+export function getSevenDaysAgo(): string {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
+  return sevenDaysAgo.toISOString().split('.')[0];
+}
