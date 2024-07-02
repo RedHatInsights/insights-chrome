@@ -34,6 +34,7 @@
     "getSupport": "Get help from Red Hat support.",
     "globalFilterNotApplicable": "Global filter is not applicable for this page",
     "globalRuntimeErrorId": "Sentry error ID: {errorId}",
+    "globalLearningResourcesPage": "Global learning resources page",
     "helpUsImproveHCC": "Help us improve the Red Hat Hybrid Cloud Console.",
     "home": "Home",
     "howIsConsoleExperience": "What has your console experience been like so far?",
