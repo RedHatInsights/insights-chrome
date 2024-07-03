@@ -48,7 +48,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
 
   const notificationDropdownItems = [
     <DropdownItem key="read" onClick={onMarkAsRead}>{`Mark as ${!notification.read ? 'read' : 'unread'}`}</DropdownItem>,
-    <DropdownItem key="manage-event" onClick={() => onNavigateTo('settings/notifications/configure-events')}>
+    <DropdownItem
+      key="manage-event"
+      onClick={() => onNavigateTo(`/settings/notifications/configure-events?bundle=${notification.bundle}&tab=configuration`)}
+    >
       Manage this event
     </DropdownItem>,
   ];
