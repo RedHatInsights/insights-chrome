@@ -41,7 +41,7 @@ interface Bundle {
   id: string;
   name: string;
   displayName: string;
-  children: null | Bundle[];
+  children: Bundle[];
 }
 
 interface FilterConfigItem {
