@@ -15,6 +15,8 @@ import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { NotificationData, updateNotificationReadAtom, updateNotificationSelectedAtom } from '../../state/atoms/notificationDrawerAtom';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface NotificationItemProps {
   notification: NotificationData;
@@ -83,7 +85,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
             <Label variant="outline" isCompact className="pf-u-mb-md">
               {notification.source}
             </Label>
-            <span className="pf-u-display-block">{notification.description}</span>
+            <span className="pf-u-display-block">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{notification.description}</ReactMarkdown>
+            </span>
           </NotificationDrawerListItemBody>
         </NotificationDrawerListItem>
       </NotificationDrawerList>
