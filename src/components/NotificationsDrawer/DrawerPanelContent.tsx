@@ -21,7 +21,6 @@ import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v
 import orderBy from 'lodash/orderBy';
 import { Link, useNavigate } from 'react-router-dom';
 import NotificationItem from './NotificationItem';
-import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import {
@@ -37,6 +36,18 @@ import {
 import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
 import axios from 'axios';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+
+interface Bundle {
+  id: string;
+  name: string;
+  displayName: string;
+  children: Bundle[];
+}
+
+interface FilterConfigItem {
+  title: string;
+  value: string;
+}
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -109,6 +120,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [hasNotificationsPermissions, setHasNotificationsPermissions] = useState(false);
   const updateNotificationRead = useSetAtom(updateNotificationReadAtom);
   const updateAllNotificationsSelected = useSetAtom(updateNotificationsSelectedAtom);
+  const [filterConfig, setFilterConfig] = useState<FilterConfigItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -124,7 +136,23 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         );
       }
     };
+    const fetchFilterConfig = async () => {
+      try {
+        const response = await axios.get<Bundle[]>('/api/notifications/v1/notifications/facets/bundles');
+        if (mounted) {
+          setFilterConfig(
+            response.data.map((bundle: Bundle) => ({
+              title: bundle.displayName,
+              value: bundle.name,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch filter configuration:', error);
+      }
+    };
     fetchPermissions();
+    fetchFilterConfig();
     return () => {
       mounted = false;
     };
@@ -133,7 +161,7 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const filteredNotifications = useMemo(
     () =>
       (activeFilters || []).reduce(
-        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
+        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ bundle }) => bundle === chosenFilter)],
         []
       ),
     [activeFilters]
