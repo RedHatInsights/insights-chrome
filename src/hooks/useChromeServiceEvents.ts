@@ -3,45 +3,59 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { setCookie } from '../auth/setCookie';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useSetAtom } from 'jotai';
-import { NotificationData, NotificationsPayload, addNotificationAtom } from '../state/atoms/notificationDrawerAtom';
+import { NotificationData, addNotificationAtom } from '../state/atoms/notificationDrawerAtom';
+import { AddChromeWsEventListener, ChromeWsEventListener, ChromeWsEventTypes, ChromeWsPayload } from '@redhat-cloud-services/types';
 
-const NOTIFICATION_DRAWER = 'com.redhat.console.notifications.drawer';
-const SAMPLE_EVENT = 'sample.type';
+const NOTIFICATION_DRAWER: ChromeWsEventTypes = 'com.redhat.console.notifications.drawer';
+const ALL_TYPES: ChromeWsEventTypes[] = [NOTIFICATION_DRAWER];
+type Payload = NotificationData;
 
-const ALL_TYPES = [NOTIFICATION_DRAWER, SAMPLE_EVENT] as const;
-type EventTypes = (typeof ALL_TYPES)[number];
-
-type SamplePayload = {
-  foo: string;
-};
-
-type Payload = NotificationsPayload | SamplePayload;
-interface GenericEvent<T extends Payload = Payload> {
-  type: EventTypes;
-  data: T;
-}
-
-function isGenericEvent(event: unknown): event is GenericEvent {
+function isGenericEvent(event: unknown): event is ChromeWsPayload<Payload> {
   return typeof event === 'object' && event !== null && ALL_TYPES.includes((event as Record<string, never>).type);
 }
 
-const useChromeServiceEvents = () => {
+type WsEventListenersRegistry = {
+  [type in ChromeWsEventTypes]: Map<symbol, ChromeWsEventListener<Payload>>;
+};
+
+// needs to be outside rendring cycle to preserver clients when chrome API changes
+const wsEventListenersRegistry: WsEventListenersRegistry = {
+  [NOTIFICATION_DRAWER]: new Map(),
+};
+
+const useChromeServiceEvents = (): AddChromeWsEventListener => {
   const connection = useRef<WebSocket | undefined>();
   const addNotification = useSetAtom(addNotificationAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { token, tokenExpires } = useContext(ChromeAuthContext);
 
-  const handlerMap: { [key in EventTypes]: (payload: GenericEvent<Payload>) => void } = useMemo(
+  const removeEventListener = (id: symbol) => {
+    const type = id.description as ChromeWsEventTypes;
+    wsEventListenersRegistry[type].delete(id);
+  };
+
+  const addEventListener: AddChromeWsEventListener = (type: ChromeWsEventTypes, listener: ChromeWsEventListener<any>) => {
+    const id = Symbol(type);
+    wsEventListenersRegistry[type].set(id, listener);
+    return () => removeEventListener(id);
+  };
+
+  const triggerListeners = (type: ChromeWsEventTypes, data: ChromeWsPayload<Payload>) => {
+    wsEventListenersRegistry[type].forEach((cb) => cb(data));
+  };
+
+  const handlerMap: { [key in ChromeWsEventTypes]: (payload: ChromeWsPayload<Payload>) => void } = useMemo(
     () => ({
-      [NOTIFICATION_DRAWER]: (data: GenericEvent<Payload>) => {
+      [NOTIFICATION_DRAWER]: (data: ChromeWsPayload<Payload>) => {
+        triggerListeners(NOTIFICATION_DRAWER, data);
+        // TODO: Move away from chrome once the portal content is moved to notifications
         addNotification(data.data as unknown as NotificationData);
       },
-      [SAMPLE_EVENT]: (data: GenericEvent<Payload>) => console.log('Received sample payload', data),
     }),
     []
   );
 
-  function handleEvent(type: EventTypes, data: GenericEvent<Payload>): void {
+  function handleEvent(type: ChromeWsEventTypes, data: ChromeWsPayload<Payload>): void {
     handlerMap[type](data);
   }
 
@@ -69,6 +83,23 @@ const useChromeServiceEvents = () => {
           console.error('Handler failed when processing WS payload: ', data, error);
         }
       };
+
+      socket.onclose = () => {
+        // renew connection on close
+        // pod was restarted or network issue
+        setTimeout(() => {
+          createConnection();
+        }, 2000);
+      };
+
+      socket.onerror = (error) => {
+        console.error('WS connection error: ', error);
+        // renew connection on error
+        // data was unable to be sent
+        setTimeout(() => {
+          createConnection();
+        }, 2000);
+      };
     }
   };
 
@@ -82,6 +113,8 @@ const useChromeServiceEvents = () => {
       console.error('Unable to establish WS connection');
     }
   }, [isNotificationsEnabled]);
+
+  return addEventListener;
 };
 
 export default useChromeServiceEvents;
