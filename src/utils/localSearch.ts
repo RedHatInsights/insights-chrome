@@ -1,5 +1,8 @@
 import { search } from '@orama/orama';
 import { fuzzySearch } from './levenshtein-search';
+import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
+import { evaluateVisibility } from './isNavItemVisible';
+import { ReleaseEnv } from '../@types/types.d';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -17,6 +20,7 @@ type ResultItem = {
   description: string;
   bundleTitle: string;
   pathname: string;
+  id: string;
 };
 
 const resultCache: {
@@ -67,19 +71,32 @@ function highlightText(term: string, text: string, category: HighlightCategories
   return internalText;
 }
 
-export const localQuery = async (db: any, term: string) => {
+async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE) {
+  const cacheKey = `${env}-${id}`;
+  const cacheHit = SearchPermissionsCache.get(cacheKey);
+  if (cacheHit) {
+    return cacheHit;
+  }
+  const permissions = SearchPermissions.get(id);
+  const result = !!(await evaluateVisibility({ id, permissions }))?.isHidden;
+  SearchPermissionsCache.set(cacheKey, result);
+  return result;
+}
+
+export const localQuery = async (db: any, term: string, env: ReleaseEnv = ReleaseEnv.STABLE) => {
   try {
-    let results: ResultItem[] | undefined = resultCache[term];
+    const cacheKey = `${env}-${term}`;
+    let results: ResultItem[] | undefined = resultCache[cacheKey];
     if (results) {
       return results;
     }
 
+    results = [];
     const r = await search(db, {
       term,
       threshold: 0.5,
       tolerance: 1.5,
       properties: ['title', 'description', 'altTitle'],
-      limit: 10,
       boost: {
         title: 10,
         altTitle: 5,
@@ -87,20 +104,33 @@ export const localQuery = async (db: any, term: string) => {
       },
     });
 
-    results = r.hits.map(({ document: { title, description, bundleTitle, pathname } }) => {
-      let matchedTitle = title;
-      let matchedDescription = description;
-      matchedTitle = highlightText(term, matchedTitle, 'title');
-      matchedDescription = highlightText(term, matchedDescription, 'description');
-
-      return {
-        title: matchedTitle,
-        description: matchedDescription,
+    const searches: Promise<ResultItem>[] = [];
+    for (const hit of r.hits) {
+      if (searches.length === 10) {
+        break;
+      }
+      const {
+        document: { id },
+      } = hit;
+      const res = await checkResultPermissions(id);
+      // skip hidden items
+      if (!res) {
+        searches.push(hit.document);
+      }
+    }
+    const validResults = await Promise.all(searches);
+    for (let i = 0; i < Math.min(10, validResults.length); i += 1) {
+      const { title, description, bundleTitle, pathname, id } = validResults[i];
+      results.push({
+        title: highlightText(term, title, 'title'),
+        description: highlightText(term, description, 'description'),
         bundleTitle,
         pathname,
-      };
-    });
-    resultCache[term] = results;
+        id,
+      });
+    }
+
+    resultCache[cacheKey] = results;
     return results;
   } catch (error) {
     console.log(error);
