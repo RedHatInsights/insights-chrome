@@ -8,6 +8,8 @@ type ErrorBoundaryState = {
   errorInfo?: any;
 };
 
+const INVALID_AUTH_STATE_ERROR = 'No matching state found in storage';
+
 class ErrorBoundary extends React.Component<
   {
     children: React.ReactNode;
@@ -23,6 +25,16 @@ class ErrorBoundary extends React.Component<
     return { hasError: true };
   }
 
+  handleInvalidAuthState(): void {
+    const repairedUrl = new URL(window.location.href);
+    // remove invalid SSO state and force re authentication
+    repairedUrl.hash = '';
+    // remove possibly broken local storage state from client
+    localStorage.clear();
+    // hard page reload
+    window.location.href = repairedUrl.toString();
+  }
+
   componentDidCatch(error: any, errorInfo: any) {
     console.error('Chrome encountered an error!', error);
     this.setState((prev) => ({
@@ -30,6 +42,10 @@ class ErrorBoundary extends React.Component<
       error,
       errorInfo,
     }));
+
+    if (typeof error.message === 'string' && error.message === INVALID_AUTH_STATE_ERROR) {
+      this.handleInvalidAuthState();
+    }
   }
 
   render() {
