@@ -1,5 +1,5 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
+import { AddChromeWsEventListener, AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
@@ -49,6 +49,7 @@ export type CreateChromeContextConfig = {
   isPreview: boolean;
   addNavListener: (cb: NavListener) => number;
   deleteNavListener: (id: number) => void;
+  addWsEventListener: AddChromeWsEventListener;
 };
 
 export const createChromeContext = ({
@@ -63,6 +64,7 @@ export const createChromeContext = ({
   isPreview,
   addNavListener,
   deleteNavListener,
+  addWsEventListener,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
@@ -108,6 +110,7 @@ export const createChromeContext = ({
 
   const api: ChromeAPI = {
     ...actions,
+    addWsEventListener,
     auth: {
       getRefreshToken: chromeAuth.getRefreshToken,
       getToken: chromeAuth.getToken,

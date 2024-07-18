@@ -93,6 +93,7 @@ describe('create chrome', () => {
   };
 
   const chromeContextOptionsMock = {
+    addWsEventListener: jest.fn(),
     store: createStore(() => ({})) as Store<ReduxState>,
     // getUser: () => Promise.resolve(mockUser),
     chromeAuth: chromeAuthMock,

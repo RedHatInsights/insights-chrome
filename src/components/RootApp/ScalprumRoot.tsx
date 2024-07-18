@@ -67,7 +67,7 @@ const ScalprumRoot = memo(
     const mutableChromeApi = useRef<ChromeAPI>();
 
     // initialize WS event handling
-    useChromeServiceEvents();
+    const addWsEventListener = useChromeServiceEvents();
     // track pendo usage
     useTrackPendoUsage();
     // setting default tab title
@@ -166,6 +166,7 @@ const ScalprumRoot = memo(
         isPreview,
         addNavListener,
         deleteNavListener,
+        addWsEventListener,
       });
       // reset chrome object after token (user) updates/changes
     }, [chromeAuth.token, isPreview]);
