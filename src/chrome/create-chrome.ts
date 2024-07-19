@@ -106,7 +106,7 @@ export const createChromeContext = ({
     return Promise.resolve();
   };
 
-  const isITLessEnv = ITLess();
+  const isITLess = ITLess();
 
   const api: ChromeAPI = {
     ...actions,
@@ -177,7 +177,9 @@ export const createChromeContext = ({
     visibilityFunctions,
     on,
     experimentalApi: true,
-    isFedramp: isITLessEnv,
+    // TODO: remove once all references removed in other repos
+    isFedramp: isITLess,
+    isITLess,
     usePendoFeedback,
     segment: {
       setPageMetadata,
