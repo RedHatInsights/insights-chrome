@@ -6,6 +6,7 @@ import { useSetAtom } from 'jotai';
 import { NotificationData, addNotificationAtom } from '../state/atoms/notificationDrawerAtom';
 import { AddChromeWsEventListener, ChromeWsEventListener, ChromeWsEventTypes, ChromeWsPayload } from '@redhat-cloud-services/types';
 
+const RETRY_LIMIT = 5;
 const NOTIFICATION_DRAWER: ChromeWsEventTypes = 'com.redhat.console.notifications.drawer';
 const ALL_TYPES: ChromeWsEventTypes[] = [NOTIFICATION_DRAWER];
 type Payload = NotificationData;
@@ -28,6 +29,7 @@ const useChromeServiceEvents = (): AddChromeWsEventListener => {
   const addNotification = useSetAtom(addNotificationAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { token, tokenExpires } = useContext(ChromeAuthContext);
+  const retries = useRef(0);
 
   const removeEventListener = (id: symbol) => {
     const type = id.description as ChromeWsEventTypes;
@@ -71,6 +73,7 @@ const useChromeServiceEvents = (): AddChromeWsEventListener => {
       connection.current = socket;
 
       socket.onmessage = (event) => {
+        retries.current = 0;
         const { data } = event;
         try {
           const payload = JSON.parse(data);
@@ -97,7 +100,11 @@ const useChromeServiceEvents = (): AddChromeWsEventListener => {
         // renew connection on error
         // data was unable to be sent
         setTimeout(() => {
-          createConnection();
+          if (retries.current < RETRY_LIMIT) {
+            createConnection();
+          }
+
+          retries.current += 1;
         }, 2000);
       };
     }
