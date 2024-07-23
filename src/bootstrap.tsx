@@ -16,9 +16,9 @@ import chromeStore from './state/chromeStore';
 import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/GenerateId/GenerateId';
 import { isPreviewAtom } from './state/atoms/releaseAtom';
 import AppPlaceholder from './components/AppPlaceholder';
-import useAsyncLoader from './hooks/useAsyncLoader';
 import { ChromeUserConfig, initChromeUserConfig } from './utils/initUserConfig';
 import ChromeAuthContext from './auth/ChromeAuthContext';
+import useSuspenseLoader from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader/useSuspenseLoader';
 
 const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
@@ -68,7 +68,7 @@ const ConfigLoader = () => {
   function initFail() {
     initPreview(false);
   }
-  const { loader } = useAsyncLoader(initChromeUserConfig, initSuccess, initFail);
+  const { loader } = useSuspenseLoader(initChromeUserConfig, initSuccess, initFail);
   const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
   return (
     <Suspense fallback={<AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />}>
