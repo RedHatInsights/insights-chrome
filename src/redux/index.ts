@@ -1,7 +1,6 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 import {
-  accessRequestsNotificationsReducer,
   addQuickstartstoApp,
   clearQuickstartsReducer,
   disableQuickstartsReducer,
@@ -9,7 +8,6 @@ import {
   loadNavigationLandingPageReducer,
   loadNavigationSegmentReducer,
   loginReducer,
-  markAccessRequestRequestReducer,
   markActiveProduct,
   onPageAction,
   onPageObjectId,
@@ -44,9 +42,7 @@ import {
   LOAD_LEFT_NAVIGATION_SEGMENT,
   LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
-  MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
-  UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
 } from './action-types';
@@ -59,8 +55,6 @@ const reducers = {
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
-  [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
-  [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [ADD_QUICKSTARTS_TO_APP]: addQuickstartstoApp,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
@@ -85,11 +79,6 @@ const globalFilter = {
 export const chromeInitialState: ReduxState = {
   chrome: {
     navigation: {},
-    accessRequests: {
-      hasUnseen: false,
-      count: 0,
-      data: [],
-    },
     quickstarts: {
       quickstarts: {},
     },
@@ -105,11 +94,6 @@ export default function (): {
     chrome: (
       state = {
         navigation: {},
-        accessRequests: {
-          count: 0,
-          data: [],
-          hasUnseen: false,
-        },
         quickstarts: {
           quickstarts: {},
         },
