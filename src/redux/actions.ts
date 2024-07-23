@@ -98,16 +98,6 @@ export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
 
-export const toggleDebuggerModal = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_DEBUGGER_MODAL,
-  payload,
-});
-
-export const toggleDebuggerButton = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_DEBUGGER_BUTTON,
-  payload,
-});
-
 export const updateAccessRequestsNotifications = (payload: { count: number; data: AccessRequest[] }) => ({
   type: actionTypes.UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   payload,

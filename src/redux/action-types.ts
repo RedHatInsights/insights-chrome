@@ -14,8 +14,6 @@ export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
 export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
 
-export const TOGGLE_DEBUGGER_MODAL = '@@chrome/toggle-debugger-modal';
-export const TOGGLE_DEBUGGER_BUTTON = '@@chrome/toggle-debugger-button';
 export const UPDATE_ACCESS_REQUESTS_NOTIFICATIONS = '@@chrome/update-access-requests-notifications';
 export const MARK_REQUEST_NOTIFICATION_SEEN = '@@chrome/mark-request-notification-seen';
 export const UPDATE_DOCUMENT_TITLE_REDUCER = '@@chrome/update-document-title';

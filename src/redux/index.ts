@@ -14,8 +14,6 @@ import {
   onPageAction,
   onPageObjectId,
   populateQuickstartsReducer,
-  toggleDebuggerButton,
-  toggleDebuggerModal,
 } from './chromeReducers';
 import {
   globalFilterDefaultState,
@@ -48,8 +46,6 @@ import {
   MARK_ACTIVE_PRODUCT,
   MARK_REQUEST_NOTIFICATION_SEEN,
   POPULATE_QUICKSTARTS_CATALOG,
-  TOGGLE_DEBUGGER_BUTTON,
-  TOGGLE_DEBUGGER_MODAL,
   UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
@@ -63,8 +59,6 @@ const reducers = {
   [CHROME_PAGE_OBJECT]: onPageObjectId,
   [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
   [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
-  [TOGGLE_DEBUGGER_MODAL]: toggleDebuggerModal,
-  [TOGGLE_DEBUGGER_BUTTON]: toggleDebuggerButton,
   [UPDATE_ACCESS_REQUESTS_NOTIFICATIONS]: accessRequestsNotificationsReducer,
   [MARK_REQUEST_NOTIFICATION_SEEN]: markAccessRequestRequestReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,

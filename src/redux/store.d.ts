@@ -15,8 +15,6 @@ export type ChromeState = {
   pageAction?: string;
   pageObjectId?: string;
   navigation: InternalNavigation;
-  isDebuggerModalOpen?: boolean;
-  isDebuggerEnabled?: boolean;
   accessRequests: {
     count: number;
     data: AccessRequest[];

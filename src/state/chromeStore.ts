@@ -6,6 +6,7 @@ import { isBeta } from '../utils/common';
 import { gatewayErrorAtom } from './atoms/gatewayErrorAtom';
 import { isFeedbackModalOpenAtom } from './atoms/feedbackModalAtom';
 import { activeAppAtom } from './atoms/activeAppAtom';
+import { isDebuggerEnabledAtom } from './atoms/debuggerModalatom';
 
 const chromeStore = createStore();
 
@@ -18,6 +19,7 @@ chromeStore.set(isFeedbackModalOpenAtom, false);
 // is set in bootstrap
 chromeStore.set(isPreviewAtom, false);
 chromeStore.set(activeAppAtom, undefined);
+chromeStore.set(isDebuggerEnabledAtom, false);
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
