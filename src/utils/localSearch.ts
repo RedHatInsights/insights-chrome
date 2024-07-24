@@ -63,6 +63,27 @@ function applyMarks(text: string, marks: { start: number; end: number }[]) {
   return out;
 }
 
+const LOWERCASE_A = 'a'.charCodeAt(0) as number;
+const UPPERCASE_A = 'A'.charCodeAt(0) as number;
+const UPPERCASE_Z = 'Z'.charCodeAt(0) as number;
+
+// ASCII lowercase, which preserves length (unlink toLowerCase).
+function asciiLowercase(value: string) {
+  const out = [];
+
+  for (let i = 0; i < value.length; ++i) {
+    const codeUnit = value.charCodeAt(i) as number;
+    const adjusted = codeUnit >= UPPERCASE_A && codeUnit <= UPPERCASE_Z ? codeUnit - UPPERCASE_A + LOWERCASE_A : codeUnit;
+
+    out.push(adjusted);
+  }
+
+  const str = String.fromCharCode(...out);
+  console.log('lowercase', 'in', value, 'out', str);
+
+  return str;
+}
+
 function highlightText(term: string, text: string, category: HighlightCategories) {
   const key = `${term}-${text}`;
 
@@ -71,7 +92,7 @@ function highlightText(term: string, text: string, category: HighlightCategories
     return matchCache[category][key];
   }
 
-  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(term, text, 2)]));
+  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(text), 2)]));
   const markedText = applyMarks(text, mergedMarks);
 
   // cache result
