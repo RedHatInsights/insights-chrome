@@ -48,10 +48,16 @@ function joinMatchPositions(marks: FuzzySearchMatch[]) {
 }
 
 function applyMarks(text: string, marks: { start: number; end: number }[]) {
+  const sortedMarks = marks.toSorted((a, b) => a.start - b.start);
+
   let out = '';
   let prevEnd = 0;
 
-  for (const mark of marks) {
+  for (const mark of sortedMarks) {
+    if (mark.end < prevEnd) {
+      throw new Error(`Invalid mark overlap: { start: ${mark.start}, end: ${mark.end} } overlaps with mark ending at ${prevEnd}`);
+    }
+
     out += text.substring(prevEnd, mark.start);
     out += `<mark>${text.substring(mark.start, mark.end)}</mark>`;
 
