@@ -2,7 +2,7 @@ import { search } from '@orama/orama';
 import { ReleaseEnv } from '../@types/types.d';
 import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
-import { fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
+import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -29,18 +29,10 @@ const resultCache: {
 
 // merge overlapping marks into smaller sets
 // example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
-function joinMatchPositions(
-  marks: {
-    dist: number | undefined;
-    end: number;
-    start: number | undefined;
-  }[]
-) {
+function joinMatchPositions(marks: FuzzySearchMatch[]) {
   return marks
     .toSorted((a, b) => a.start! - b.start!)
     .reduce<{ start: number; end: number }[]>((acc, { start, end }) => {
-      if (!start || !end) return acc;
-
       const bounded = acc.findIndex((o) => {
         return (o.start >= start && o.start <= end) || (start >= o.start && start <= o.end);
       });

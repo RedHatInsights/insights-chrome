@@ -32,7 +32,7 @@ function makeChar2needleIdx(needle: string, maxDist: number) {
 
 const debugFlag = false;
 
-type Match = {
+export type Match = {
   start: number;
   end: number;
   dist: number;
