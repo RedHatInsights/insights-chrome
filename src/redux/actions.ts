@@ -3,7 +3,6 @@ import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFil
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
 import type { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
-import type { AccessRequest } from './store';
 import type { QuickStart } from '@patternfly/quickstarts';
 
 export function userLogIn(user: ChromeUser | boolean) {
@@ -96,26 +95,6 @@ export const loadLeftNavSegment = (schema: Navigation, segment: string, pathName
  */
 export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
-});
-
-export const toggleDebuggerModal = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_DEBUGGER_MODAL,
-  payload,
-});
-
-export const toggleDebuggerButton = (payload: boolean) => ({
-  type: actionTypes.TOGGLE_DEBUGGER_BUTTON,
-  payload,
-});
-
-export const updateAccessRequestsNotifications = (payload: { count: number; data: AccessRequest[] }) => ({
-  type: actionTypes.UPDATE_ACCESS_REQUESTS_NOTIFICATIONS,
-  payload,
-});
-
-export const markAccessRequestNotification = (payload: string | number) => ({
-  type: actionTypes.MARK_REQUEST_NOTIFICATION_SEEN,
-  payload,
 });
 
 export const populateQuickstartsCatalog = (app: string, quickstarts: QuickStart[]) => ({
