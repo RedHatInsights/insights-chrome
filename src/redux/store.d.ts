@@ -1,23 +1,13 @@
 import { QuickStart } from '@patternfly/quickstarts';
 
-import { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
-
-export type InternalNavigation = {
-  [key: string]: Navigation | NavItem[] | undefined;
-  landingPage?: NavItem[];
-};
+import { FlagTagsFilter } from '../@types/types';
 
 export type ChromeState = {
   activeProduct?: string;
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
-  navigation: InternalNavigation;
-  // accessRequests: {
-  //   count: number;
-  //   data: AccessRequest[];
-  //   hasUnseen: boolean;
-  // };
+  // navigation: InternalNavigation;
   initialHash?: string;
   quickstarts: {
     disabled?: boolean;

@@ -5,8 +5,6 @@ import {
   clearQuickstartsReducer,
   disableQuickstartsReducer,
   documentTitleReducer,
-  loadNavigationLandingPageReducer,
-  loadNavigationSegmentReducer,
   loginReducer,
   markActiveProduct,
   onPageAction,
@@ -39,8 +37,6 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-  LOAD_LEFT_NAVIGATION_SEGMENT,
-  LOAD_NAVIGATION_LANDING_PAGE,
   MARK_ACTIVE_PRODUCT,
   POPULATE_QUICKSTARTS_CATALOG,
   UPDATE_DOCUMENT_TITLE_REDUCER,
@@ -53,8 +49,6 @@ const reducers = {
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
-  [LOAD_NAVIGATION_LANDING_PAGE]: loadNavigationLandingPageReducer,
-  [LOAD_LEFT_NAVIGATION_SEGMENT]: loadNavigationSegmentReducer,
   [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
   [ADD_QUICKSTARTS_TO_APP]: addQuickstartstoApp,
   [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
@@ -78,7 +72,6 @@ const globalFilter = {
 
 export const chromeInitialState: ReduxState = {
   chrome: {
-    navigation: {},
     quickstarts: {
       quickstarts: {},
     },
@@ -93,7 +86,6 @@ export default function (): {
   return {
     chrome: (
       state = {
-        navigation: {},
         quickstarts: {
           quickstarts: {},
         },
