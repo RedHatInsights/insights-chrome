@@ -2,7 +2,7 @@ import { search } from '@orama/orama';
 import { ReleaseEnv } from '../@types/types.d';
 import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
-import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
+import { fuzzySearch, Match as FuzzySearchMatch, minimumDistanceMatches } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -84,10 +84,7 @@ function asciiLowercase(value: string) {
     out.push(adjusted);
   }
 
-  const str = String.fromCharCode(...out);
-  console.log('lowercase', 'in', value, 'out', str);
-
-  return str;
+  return String.fromCharCode(...out);
 }
 
 function highlightText(term: string, text: string, category: HighlightCategories) {
