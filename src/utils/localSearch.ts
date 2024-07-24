@@ -2,7 +2,7 @@ import { search } from '@orama/orama';
 import { ReleaseEnv } from '../@types/types.d';
 import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
-import { fuzzySearch } from './levenshtein-search';
+import { fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -79,7 +79,7 @@ function highlightText(term: string, text: string, category: HighlightCategories
     return matchCache[category][key];
   }
 
-  const mergedMarks = joinMatchPositions([...fuzzySearch(term, text, 2)]);
+  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(term, text, 2)]));
   const markedText = applyMarks(text, mergedMarks);
 
   // cache result

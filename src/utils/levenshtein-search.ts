@@ -32,6 +32,12 @@ function makeChar2needleIdx(needle: string, maxDist: number) {
 
 const debugFlag = false;
 
+type Match = {
+  start: number;
+  end: number;
+  dist: number;
+};
+
 export function* fuzzySearch(needle: string, haystack: string, maxDist: number) {
   if (needle.length > haystack.length + maxDist) return;
 
@@ -59,6 +65,22 @@ export function* fuzzySearch(needle: string, haystack: string, maxDist: number) 
       yield* generator;
     }
   }
+}
+
+export function minimumDistanceMatches(matches: Match[]): Match[] {
+  let minDist: number | null = null;
+  let out: Match[] = [];
+
+  for (const match of matches) {
+    if (minDist === null || match.dist < minDist) {
+      minDist = match.dist;
+      out = [match];
+    } else if (match.dist === minDist) {
+      out.push(match);
+    }
+  }
+
+  return out;
 }
 
 function _expand(needle: string, haystack: string, maxDist: number) {
