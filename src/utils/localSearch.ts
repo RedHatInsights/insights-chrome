@@ -1,8 +1,8 @@
 import { search } from '@orama/orama';
-import { fuzzySearch } from './levenshtein-search';
+import { ReleaseEnv } from '../@types/types.d';
 import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
-import { ReleaseEnv } from '../@types/types.d';
+import { fuzzySearch } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -27,48 +27,64 @@ const resultCache: {
   [term: string]: ResultItem[];
 } = {};
 
-const START_MARK_LENGTH = 6;
-const END_MARK_LENGTH = START_MARK_LENGTH + 1;
-const OFFSET_BASE = START_MARK_LENGTH + END_MARK_LENGTH;
+// merge overlapping marks into smaller sets
+// example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
+function joinMatchPositions(
+  marks: {
+    dist: number | undefined;
+    end: number;
+    start: number | undefined;
+  }[]
+) {
+  return marks
+    .toSorted((a, b) => a.start! - b.start!)
+    .reduce<{ start: number; end: number }[]>((acc, { start, end }) => {
+      if (!start || !end) return acc;
 
-function markText(text: string, start: number, end: number, offset: number) {
-  const markStart = OFFSET_BASE * offset + start + offset * 2 - 1;
-  const markEnd = OFFSET_BASE * offset + end + offset * 2;
-  return `${text.substring(0, markStart)}<mark>${text.substring(markStart, markEnd)}</mark>${text.substring(markEnd)}`;
+      const bounded = acc.findIndex((o) => {
+        return (o.start >= start && o.start <= end) || (start >= o.start && start <= o.end);
+      });
+
+      if (bounded >= 0) {
+        acc[bounded] = { start: Math.min(start, acc[bounded].start), end: Math.max(end, acc[bounded].end) };
+      } else {
+        acc.push({ start, end });
+      }
+
+      return acc;
+    }, []);
+}
+
+function applyMarks(text: string, marks: { start: number; end: number }[]) {
+  let out = '';
+  let prevEnd = 0;
+
+  for (const mark of marks) {
+    out += text.substring(prevEnd, mark.start);
+    out += `<mark>${text.substring(mark.start, mark.end)}</mark>`;
+
+    prevEnd = mark.end;
+  }
+
+  out += text.substring(prevEnd, text.length);
+
+  return out;
 }
 
 function highlightText(term: string, text: string, category: HighlightCategories) {
   const key = `${term}-${text}`;
+
   // check cache
   if (matchCache[category]?.[key]) {
     return matchCache[category][key];
   }
-  let internalText = text;
-  // generate fuzzy matches
-  const res = fuzzySearch(term, internalText, 2);
-  const marks = [...res].sort((a, b) => a.start! - b.start!);
-  // merge overlapping marks into smaller sets
-  // example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
-  const merged = marks.reduce<{ start: number; end: number }[]>((acc, { start, end }) => {
-    if (!start || !end) return acc;
-    const bounded = acc.findIndex((o) => {
-      return (o.start >= start && o.start <= end) || (start >= o.start && start <= o.end);
-    });
-    if (bounded >= 0) {
-      acc[bounded] = { start: Math.min(start, acc[bounded].start), end: Math.max(end, acc[bounded].end) };
-    } else {
-      acc.push({ start, end });
-    }
-    return acc;
-  }, []);
-  // mark text from reduced match set
-  merged.forEach(({ start, end }, index) => {
-    internalText = markText(internalText, start!, end, index);
-  });
+
+  const mergedMarks = joinMatchPositions([...fuzzySearch(term, text, 2)]);
+  const markedText = applyMarks(text, mergedMarks);
 
   // cache result
-  matchCache[category][key] = internalText;
-  return internalText;
+  matchCache[category][key] = markedText;
+  return markedText;
 }
 
 async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE) {
