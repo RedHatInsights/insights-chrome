@@ -2,7 +2,7 @@ import { search } from '@orama/orama';
 import { ReleaseEnv } from '../@types/types.d';
 import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
-import { fuzzySearch, Match as FuzzySearchMatch, minimumDistanceMatches } from './levenshtein-search';
+import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
