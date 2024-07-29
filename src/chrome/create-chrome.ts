@@ -5,7 +5,7 @@ import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
-import { appAction, appObjectId, globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
 import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
@@ -28,6 +28,7 @@ import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
 import { usePendoFeedback } from '../components/Feedback';
 import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
+import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -62,8 +63,8 @@ export const createChromeContext = ({
   const visibilityFunctions = getVisibilityFunctions();
   const dispatch = store.dispatch;
   const actions = {
-    appAction: (action: string) => dispatch(appAction(action)),
-    appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
+    appAction: (action: string) => chromeStore.set(appActionAtom, action),
+    appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
     appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),

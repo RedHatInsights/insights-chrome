@@ -2,7 +2,6 @@ import { FlagTagsFilter } from '../@types/types';
 
 export type ChromeState = {
   pageAction?: string;
-  pageObjectId?: string;
 };
 
 export type GlobalFilterWorkloads = {

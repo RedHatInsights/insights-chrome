@@ -5,14 +5,6 @@ import type { FlagTagsFilter } from '../@types/types';
 
 export type AppNavClickItem = { id?: string; custom?: boolean };
 
-export function appAction(action: string) {
-  return { type: actionTypes.CHROME_PAGE_ACTION, payload: action };
-}
-
-export function appObjectId(objectId: string) {
-  return { type: actionTypes.CHROME_PAGE_OBJECT, payload: objectId };
-}
-
 export function fetchAllTags(filters?: TagFilterOptions, pagination?: TagPagination) {
   return {
     type: actionTypes.CHROME_GET_ALL_TAGS,

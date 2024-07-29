@@ -1,6 +1,3 @@
-export const CHROME_PAGE_ACTION = '@@chrome/app-page-action';
-export const CHROME_PAGE_OBJECT = '@@chrome/app-object-id';
-
 export const CHROME_GET_ALL_TAGS = '@@chrome/get-all-tags';
 export const CHROME_GET_ALL_SIDS = '@@chrome/get-all-sids';
 export const CHROME_GET_ALL_WORKLOADS = '@@chrome/get-all-workloads';

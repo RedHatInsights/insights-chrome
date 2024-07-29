@@ -1,6 +1,5 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
-import { onPageAction, onPageObjectId } from './chromeReducers';
 import {
   globalFilterDefaultState,
   onGetAllSIDs,
@@ -18,8 +17,6 @@ import {
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
-  CHROME_PAGE_ACTION,
-  CHROME_PAGE_OBJECT,
   GLOBAL_FILTER_REMOVE,
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
@@ -27,11 +24,6 @@ import {
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
-
-const reducers = {
-  [CHROME_PAGE_ACTION]: onPageAction,
-  [CHROME_PAGE_OBJECT]: onPageObjectId,
-};
 
 const globalFilter = {
   [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
@@ -56,7 +48,7 @@ export default function (): {
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
   return {
-    chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
+    chrome: (state = {}, action) => applyReducerHash({})(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }
