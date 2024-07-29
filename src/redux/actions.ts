@@ -3,7 +3,6 @@ import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFil
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
 import type { FlagTagsFilter } from '../@types/types';
-import type { QuickStart } from '@patternfly/quickstarts';
 
 export function userLogIn(user: ChromeUser | boolean) {
   return {
@@ -80,33 +79,6 @@ export function removeGlobalFilter(isHidden = true) {
  */
 export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
-});
-
-export const populateQuickstartsCatalog = (app: string, quickstarts: QuickStart[]) => ({
-  type: actionTypes.POPULATE_QUICKSTARTS_CATALOG,
-  payload: {
-    app,
-    quickstarts,
-  },
-});
-
-export const addQuickstart = (app: string, quickstart: QuickStart) => ({
-  type: actionTypes.ADD_QUICKSTARTS_TO_APP,
-  payload: {
-    app,
-    quickstart,
-  },
-});
-
-export const clearQuickstarts = (activeQuickstart?: string) => ({
-  type: actionTypes.CLEAR_QUICKSTARTS,
-  payload: {
-    activeQuickstart,
-  },
-});
-
-export const disableQuickstarts = () => ({
-  type: actionTypes.DISABLE_QUICKSTARTS,
 });
 
 export const updateDocumentTitle = (title: string) => ({
