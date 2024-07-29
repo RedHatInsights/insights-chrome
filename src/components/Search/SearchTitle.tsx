@@ -1,7 +1,7 @@
 import React from 'react';
 import './SearchTitle.scss';
 
-const SearchTitle = ({ title, bundleTitle, className = '' }: { title: string; bundleTitle: string; className: string }) => {
+const SearchTitle = ({ title, bundleTitle, className = '' }: { title: string; bundleTitle: string; className?: string }) => {
   const showBundleTitle = bundleTitle.replace(/\s/g, '').length > 0;
   return (
     <div className={`chr-search-title-content pf-v5-u-link-color ${className}`}>
