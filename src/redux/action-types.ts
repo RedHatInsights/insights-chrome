@@ -1,5 +1,3 @@
-export const USER_LOGIN = '@@chrome/user-login';
-
 export const CHROME_PAGE_ACTION = '@@chrome/app-page-action';
 export const CHROME_PAGE_OBJECT = '@@chrome/app-object-id';
 
