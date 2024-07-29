@@ -1,7 +1,6 @@
 import { FlagTagsFilter } from '../@types/types';
 
 export type ChromeState = {
-  activeProduct?: string;
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;

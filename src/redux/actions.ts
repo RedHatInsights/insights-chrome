@@ -80,8 +80,3 @@ export function removeGlobalFilter(isHidden = true) {
 export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
-
-export const markActiveProduct = (product?: string) => ({
-  type: actionTypes.MARK_ACTIVE_PRODUCT,
-  payload: product,
-});

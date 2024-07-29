@@ -23,10 +23,3 @@ export function onPageObjectId(state: ChromeState, { payload }: { payload: strin
     pageObjectId: payload,
   };
 }
-
-export function markActiveProduct(state: ChromeState, { payload }: { payload?: string }): ChromeState {
-  return {
-    ...state,
-    activeProduct: payload,
-  };
-}

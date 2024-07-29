@@ -1,6 +1,6 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
-import { loginReducer, markActiveProduct, onPageAction, onPageObjectId } from './chromeReducers';
+import { loginReducer, onPageAction, onPageObjectId } from './chromeReducers';
 import {
   globalFilterDefaultState,
   onGetAllSIDs,
@@ -24,7 +24,6 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-  MARK_ACTIVE_PRODUCT,
   USER_LOGIN,
 } from './action-types';
 import { ChromeState, GlobalFilterState, ReduxState } from './store';
@@ -34,7 +33,6 @@ const reducers = {
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
-  [MARK_ACTIVE_PRODUCT]: markActiveProduct,
 };
 
 const globalFilter = {
