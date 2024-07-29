@@ -1,16 +1,6 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
-import {
-  addQuickstartstoApp,
-  clearQuickstartsReducer,
-  disableQuickstartsReducer,
-  documentTitleReducer,
-  loginReducer,
-  markActiveProduct,
-  onPageAction,
-  onPageObjectId,
-  populateQuickstartsReducer,
-} from './chromeReducers';
+import { documentTitleReducer, loginReducer, markActiveProduct, onPageAction, onPageObjectId } from './chromeReducers';
 import {
   globalFilterDefaultState,
   onGetAllSIDs,
@@ -25,20 +15,16 @@ import {
   onTagSelect,
 } from './globalFilterReducers';
 import {
-  ADD_QUICKSTARTS_TO_APP,
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
   CHROME_PAGE_ACTION,
   CHROME_PAGE_OBJECT,
-  CLEAR_QUICKSTARTS,
-  DISABLE_QUICKSTARTS,
   GLOBAL_FILTER_REMOVE,
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
   MARK_ACTIVE_PRODUCT,
-  POPULATE_QUICKSTARTS_CATALOG,
   UPDATE_DOCUMENT_TITLE_REDUCER,
   USER_LOGIN,
 } from './action-types';
@@ -49,12 +35,8 @@ const reducers = {
   [USER_LOGIN]: loginReducer,
   [CHROME_PAGE_ACTION]: onPageAction,
   [CHROME_PAGE_OBJECT]: onPageObjectId,
-  [POPULATE_QUICKSTARTS_CATALOG]: populateQuickstartsReducer,
-  [ADD_QUICKSTARTS_TO_APP]: addQuickstartstoApp,
-  [DISABLE_QUICKSTARTS]: disableQuickstartsReducer,
   [UPDATE_DOCUMENT_TITLE_REDUCER]: documentTitleReducer,
   [MARK_ACTIVE_PRODUCT]: markActiveProduct,
-  [CLEAR_QUICKSTARTS]: clearQuickstartsReducer,
 };
 
 const globalFilter = {
@@ -71,11 +53,7 @@ const globalFilter = {
 };
 
 export const chromeInitialState: ReduxState = {
-  chrome: {
-    quickstarts: {
-      quickstarts: {},
-    },
-  },
+  chrome: {},
   globalFilter: globalFilterDefaultState,
 };
 
@@ -84,14 +62,7 @@ export default function (): {
   globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
 } {
   return {
-    chrome: (
-      state = {
-        quickstarts: {
-          quickstarts: {},
-        },
-      },
-      action
-    ) => applyReducerHash(reducers)(state, action),
+    chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }

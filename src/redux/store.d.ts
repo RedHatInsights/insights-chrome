@@ -1,5 +1,3 @@
-import { QuickStart } from '@patternfly/quickstarts';
-
 import { FlagTagsFilter } from '../@types/types';
 
 export type ChromeState = {
@@ -7,14 +5,7 @@ export type ChromeState = {
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
-  // navigation: InternalNavigation;
   initialHash?: string;
-  quickstarts: {
-    disabled?: boolean;
-    quickstarts: {
-      [key: string]: QuickStart[];
-    };
-  };
   documentTitle?: string;
 };
 
