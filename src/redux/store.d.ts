@@ -7,21 +7,17 @@ export type InternalNavigation = {
   landingPage?: NavItem[];
 };
 
-export type AccessRequest = { request_id: string; created: string; seen: boolean };
-
 export type ChromeState = {
   activeProduct?: string;
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
   navigation: InternalNavigation;
-  isDebuggerModalOpen?: boolean;
-  isDebuggerEnabled?: boolean;
-  accessRequests: {
-    count: number;
-    data: AccessRequest[];
-    hasUnseen: boolean;
-  };
+  // accessRequests: {
+  //   count: number;
+  //   data: AccessRequest[];
+  //   hasUnseen: boolean;
+  // };
   initialHash?: string;
   quickstarts: {
     disabled?: boolean;

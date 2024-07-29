@@ -21,6 +21,7 @@ import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
+import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -41,7 +42,7 @@ const RootApp = memo((props: RootAppProps) => {
     }: ReduxState) => Object.values(quickstarts).flat()
   );
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
-  const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
+  const isDebuggerEnabled = useAtomValue(isDebuggerEnabledAtom);
 
   // verify use loged in scopes
   useUserSSOScopes();

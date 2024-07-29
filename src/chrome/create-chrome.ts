@@ -5,15 +5,7 @@ import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
-import {
-  appAction,
-  appObjectId,
-  globalFilterScope,
-  removeGlobalFilter,
-  toggleDebuggerButton,
-  toggleDebuggerModal,
-  toggleGlobalFilter,
-} from '../redux/actions';
+import { appAction, appObjectId, globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
 import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
@@ -36,6 +28,7 @@ import chromeStore from '../state/chromeStore';
 import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
 import { usePendoFeedback } from '../components/Feedback';
 import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
+import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -185,8 +178,12 @@ export const createChromeContext = ({
     toggleFeedbackModal: (isOpen: boolean) => {
       chromeStore.set(isFeedbackModalOpenAtom, isOpen);
     },
-    enableDebugging: () => dispatch(toggleDebuggerButton(true)),
-    toggleDebuggerModal: (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen)),
+    enableDebugging: () => {
+      chromeStore.set(isDebuggerEnabledAtom, true);
+    },
+    toggleDebuggerModal: (isOpen: boolean) => {
+      chromeStore.set(isDebuggerEnabledAtom, isOpen);
+    },
     // FIXME: Update types once merged
     quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
     helpTopics,

@@ -1,9 +1,8 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { REQUESTS_COUNT, REQUESTS_DATA } from '../utils/consts';
 import { NavItem, Navigation } from '../@types/types';
 import { ITLess, highlightItems, levelArray } from '../utils/common';
-import { AccessRequest, ChromeState } from './store';
+import { ChromeState } from './store';
 
 export function loginReducer(state: ChromeState, { payload }: { payload: ChromeUser }): ChromeState {
   const missingIDP = ITLess() && !Object.prototype.hasOwnProperty.call(payload?.identity, 'idp');
@@ -71,69 +70,6 @@ export function loadNavigationSegmentReducer(
     };
   }
   return state;
-}
-
-export function toggleDebuggerModal(
-  state: ChromeState,
-  {
-    payload,
-  }: {
-    payload: boolean;
-  }
-): ChromeState {
-  return {
-    ...state,
-    isDebuggerModalOpen: payload,
-  };
-}
-
-export function toggleDebuggerButton(
-  state: ChromeState,
-  {
-    payload,
-  }: {
-    payload: boolean;
-  }
-): ChromeState {
-  return {
-    ...state,
-    isDebuggerEnabled: payload,
-  };
-}
-
-export function accessRequestsNotificationsReducer(
-  state: ChromeState,
-  { payload: { count, data } }: { payload: { count: number; data: AccessRequest[] } }
-): ChromeState {
-  const newData = data.map(({ request_id, created, seen }) => ({
-    request_id,
-    created,
-    seen: seen === true || !!state.accessRequests.data.find((item) => request_id === item.request_id)?.seen || false,
-  }));
-  localStorage.setItem(REQUESTS_COUNT, newData.length.toString());
-  localStorage.setItem(REQUESTS_DATA, JSON.stringify(newData));
-  return {
-    ...state,
-    accessRequests: {
-      ...state.accessRequests,
-      count,
-      hasUnseen: newData.length > 0,
-      data: newData,
-    },
-  };
-}
-
-export function markAccessRequestRequestReducer(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  const newData = state.accessRequests.data.map((item) => (item.request_id === payload ? { ...item, seen: true } : item));
-  localStorage.setItem(REQUESTS_DATA, JSON.stringify(newData));
-  return {
-    ...state,
-    accessRequests: {
-      ...state.accessRequests,
-      hasUnseen: newData.length > 0,
-      data: newData,
-    },
-  };
 }
 
 export function populateQuickstartsReducer(
