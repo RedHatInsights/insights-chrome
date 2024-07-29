@@ -22,7 +22,7 @@ import {
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
 } from './action-types';
-import { ChromeState, GlobalFilterState, ReduxState } from './store';
+import { GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
 
 const globalFilter = {
@@ -39,16 +39,13 @@ const globalFilter = {
 };
 
 export const chromeInitialState: ReduxState = {
-  chrome: {},
   globalFilter: globalFilterDefaultState,
 };
 
 export default function (): {
-  chrome: (state: ChromeState, action: AnyAction) => ChromeState;
-  globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
+  globalFilter: (state: GlobalFilterState, action: AnyAction) => GlobalFilterState;
 } {
   return {
-    chrome: (state = {}, action) => applyReducerHash({})(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }

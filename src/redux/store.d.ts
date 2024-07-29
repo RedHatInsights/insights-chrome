@@ -1,9 +1,5 @@
 import { FlagTagsFilter } from '../@types/types';
 
-export type ChromeState = {
-  pageAction?: string;
-};
-
 export type GlobalFilterWorkloads = {
   selected?: boolean;
   page?: number;
@@ -78,6 +74,5 @@ export type GlobalFilterState = {
 };
 
 export type ReduxState = {
-  chrome: ChromeState;
   globalFilter: GlobalFilterState;
 };
