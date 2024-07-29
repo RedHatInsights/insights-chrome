@@ -30,6 +30,14 @@ function makeChar2needleIdx(needle: string, maxDist: number) {
   return res;
 }
 
+const debugFlag = false;
+
+export type Match = {
+  start: number;
+  end: number;
+  dist: number;
+};
+
 export function* fuzzySearch(needle: string, haystack: string, maxDist: number) {
   if (needle.length > haystack.length + maxDist) return;
 
@@ -46,8 +54,33 @@ export function* fuzzySearch(needle: string, haystack: string, maxDist: number) 
   } else if (ngramLen >= 10) {
     yield* fuzzySearchNgrams(needle, haystack, maxDist);
   } else {
-    yield* fuzzySearchCandidates(needle, haystack, maxDist);
+    const generator = fuzzySearchCandidates(needle, haystack, maxDist);
+
+    if (debugFlag) {
+      for (const match of generator) {
+        console.log('search match', match);
+        yield match;
+      }
+    } else {
+      yield* generator;
+    }
   }
+}
+
+export function minimumDistanceMatches(matches: Match[]): Match[] {
+  let minDist: number | null = null;
+  let out: Match[] = [];
+
+  for (const match of matches) {
+    if (minDist === null || match.dist < minDist) {
+      minDist = match.dist;
+      out = [match];
+    } else if (match.dist === minDist) {
+      out.push(match);
+    }
+  }
+
+  return out;
 }
 
 function _expand(needle: string, haystack: string, maxDist: number) {
@@ -173,15 +206,12 @@ function* fuzzySearchNgrams(needle: string, haystack: string, maxDist: number) {
 }
 
 type BoundedMetadata = {
-  start: number;
-  end: number;
+  startIdx: number;
+  needleIdx: number;
   dist: number;
-  startIdx?: number;
-  needleIdx?: number;
 };
 
 function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: number) {
-  const debugFlag = false;
   if (debugFlag) console.log(`fuzzySearchCandidates(${needle}, ${haystack}, ${maxDist})`);
 
   // prepare some often used things in advance
@@ -190,8 +220,8 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
   if (needleLen > haystackLen + maxDist) return;
   const char2needleIdx = makeChar2needleIdx(needle, maxDist);
 
-  let prevCandidates: Partial<BoundedMetadata>[] = []; // candidates from the last iteration
-  let candidates: Partial<BoundedMetadata>[] = []; // new candidates from the current iteration
+  let prevCandidates: BoundedMetadata[] = []; // candidates from the last iteration
+  let candidates: BoundedMetadata[] = []; // new candidates from the current iteration
 
   // iterate over the chars in the haystack, updating the candidates for each
   for (let i = 0; i < haystack.length; i++) {
@@ -203,15 +233,6 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
     const needleIdx = char2needleIdx[haystackChar];
     if (needleIdx !== undefined) {
       if (needleIdx + 1 === needleLen) {
-        if (debugFlag) {
-          console.log(
-            `yield ${{
-              start: i,
-              end: i + 1,
-              dist: needleIdx,
-            }}`
-          );
-        }
         yield {
           start: i,
           end: i + 1,
@@ -231,15 +252,6 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
       if (candidate.needleIdx && needle[candidate.needleIdx] === haystackChar) {
         // if reached the end of the needle, return a match
         if (candidate.needleIdx + 1 === needleLen) {
-          if (debugFlag) {
-            console.log(
-              `yield ${{
-                start: candidate.startIdx,
-                end: i + 1,
-                dist: candidate.dist,
-              }}`
-            );
-          }
           yield {
             start: candidate.startIdx,
             end: i + 1,
@@ -264,15 +276,6 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
 
         for (let nSkipped = 1; nSkipped <= maxDist - (candidate.dist ?? 0); nSkipped++) {
           if ((candidate.needleIdx ?? 0) + nSkipped === needleLen) {
-            if (debugFlag) {
-              console.log(
-                `yield ${{
-                  start: candidate.startIdx,
-                  end: i + 1,
-                  dist: (candidate.dist ?? 0) + nSkipped,
-                }}`
-              );
-            }
             yield {
               start: candidate.startIdx,
               end: i + 1,
@@ -281,15 +284,6 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
             break;
           } else if (candidate.needleIdx && needle[candidate.needleIdx + nSkipped] === haystackChar) {
             if (candidate.needleIdx + nSkipped + 1 === needleLen) {
-              if (debugFlag) {
-                console.log(
-                  `yield ${{
-                    start: candidate.startIdx,
-                    end: i + 1,
-                    dist: (candidate.dist ?? 0) + nSkipped,
-                  }}`
-                );
-              }
               yield {
                 start: candidate.startIdx,
                 end: i + 1,
@@ -316,7 +310,7 @@ function* fuzzySearchCandidates(needle: string, haystack: string, maxDist: numbe
       }
     }
 
-    if (debugFlag) console.log(candidates);
+    if (debugFlag) console.log('Candidates: ', candidates);
   }
 
   for (const candidate of candidates) {
