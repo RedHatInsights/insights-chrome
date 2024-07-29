@@ -81,11 +81,6 @@ export const onToggle = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
 
-export const updateDocumentTitle = (title: string) => ({
-  type: actionTypes.UPDATE_DOCUMENT_TITLE_REDUCER,
-  payload: title,
-});
-
 export const markActiveProduct = (product?: string) => ({
   type: actionTypes.MARK_ACTIVE_PRODUCT,
   payload: product,
