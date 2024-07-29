@@ -6,7 +6,6 @@ export type ChromeState = {
   pageAction?: string;
   pageObjectId?: string;
   initialHash?: string;
-  documentTitle?: string;
 };
 
 export type GlobalFilterWorkloads = {

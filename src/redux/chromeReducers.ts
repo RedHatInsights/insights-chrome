@@ -24,13 +24,6 @@ export function onPageObjectId(state: ChromeState, { payload }: { payload: strin
   };
 }
 
-export function documentTitleReducer(state: ChromeState, { payload }: { payload: string }): ChromeState {
-  return {
-    ...state,
-    documentTitle: payload,
-  };
-}
-
 export function markActiveProduct(state: ChromeState, { payload }: { payload?: string }): ChromeState {
   return {
     ...state,

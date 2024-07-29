@@ -11,7 +11,6 @@ export const GLOBAL_FILTER_UPDATE = '@@chrome/global-filter-update';
 export const GLOBAL_FILTER_TOGGLE = '@@chrome/global-filter-toggle';
 export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 
-export const UPDATE_DOCUMENT_TITLE_REDUCER = '@@chrome/update-document-title';
 export const MARK_ACTIVE_PRODUCT = '@@chrome/mark-active-product';
 
 export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';

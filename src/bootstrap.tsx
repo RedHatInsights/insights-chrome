@@ -1,6 +1,6 @@
-import React, { Suspense, useContext, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider, useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider, useSetAtom } from 'jotai';
 
@@ -8,7 +8,6 @@ import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
 import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
-import { ReduxState } from './redux/store';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
@@ -47,15 +46,9 @@ const App = ({ initApp }: { initApp: (...args: Parameters<typeof initChromeUserC
     getUser,
     token,
   });
-  const documentTitle = useSelector(({ chrome }: ReduxState) => chrome?.documentTitle);
   const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
 
   useInitializeAnalytics();
-
-  useMemo(() => {
-    const title = typeof documentTitle === 'string' ? `${documentTitle} | Hybrid Cloud Console` : 'Hybrid Cloud Console';
-    document.title = title;
-  }, [documentTitle]);
 
   return <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} />;
 };
