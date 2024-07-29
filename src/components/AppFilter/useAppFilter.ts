@@ -1,13 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
-import { ReduxState } from '../../redux/store';
 import { getChromeStaticPathname } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { useAtomValue } from 'jotai';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { navigationAtom } from '../../state/atoms/navigationAtom';
 
 const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
@@ -101,7 +100,7 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
+  const existingSchemas = useAtomValue(navigationAtom);
   const modules = useAtomValue(chromeModulesAtom);
 
   const handleBundleData = async ({ data: { id, navItems, title } }: { data: BundleNavigation }) => {

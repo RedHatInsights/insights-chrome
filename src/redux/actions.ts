@@ -2,7 +2,7 @@ import * as actionTypes from './action-types';
 import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
 import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
 import type { ChromeUser } from '@redhat-cloud-services/types';
-import type { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
+import type { FlagTagsFilter } from '../@types/types';
 import type { QuickStart } from '@patternfly/quickstarts';
 
 export function userLogIn(user: ChromeUser | boolean) {
@@ -74,21 +74,6 @@ export function removeGlobalFilter(isHidden = true) {
     payload: { isHidden },
   };
 }
-
-export const loadNavigationLandingPage = (schema: NavItem[]) => ({
-  type: actionTypes.LOAD_NAVIGATION_LANDING_PAGE,
-  payload: schema,
-});
-
-export const loadLeftNavSegment = (schema: Navigation, segment: string, pathName: string, shouldMerge?: boolean) => ({
-  type: actionTypes.LOAD_LEFT_NAVIGATION_SEGMENT,
-  payload: {
-    segment,
-    schema,
-    pathName,
-    shouldMerge,
-  },
-});
 
 /**
  * @deprecated

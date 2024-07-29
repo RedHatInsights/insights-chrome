@@ -1,17 +1,15 @@
 import axios from 'axios';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { batch, useDispatch, useSelector } from 'react-redux';
-import { loadLeftNavSegment } from '../redux/actions';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
-import { ReduxState } from '../redux/store';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
+import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -48,13 +46,14 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 const useNavigation = () => {
   const { flagsReady, flagsError } = useFlagsStatus();
   const clearGatewayError = useSetAtom(clearGatewayErrorAtom);
-  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
   const { activeQuickStartID } = useContext(QuickStartContext);
   const currentNamespace = pathname.split('/')[1];
-  const schema = useSelector(({ chrome: { navigation } }: ReduxState) => navigation[currentNamespace] as Navigation);
+  const navigation = useAtomValue(navigationAtom);
+  const schema = navigation[currentNamespace];
+  const setNavigationSegment = useSetAtom(setNavigationSegmentAtom);
   const [noNav, setNoNav] = useState(false);
   const isPreview = useAtomValue(isPreviewAtom);
 
@@ -70,21 +69,19 @@ const useNavigation = () => {
 
   const registerLocationObserver = (initialPathname: string, schema: Navigation) => {
     let prevPathname = initialPathname;
-    dispatch(loadLeftNavSegment(schema, currentNamespace, initialPathname));
+    setNavigationSegment({ schema, segment: currentNamespace, pathname: initialPathname });
     return new MutationObserver((mutations) => {
       mutations.forEach(() => {
         const newPathname = window.location.pathname;
         if (newPathname !== prevPathname) {
           prevPathname = newPathname;
-          batch(() => {
-            dispatch(loadLeftNavSegment(schema, currentNamespace, prevPathname));
-            /**
-             * Clean gateway error on URL change
-             */
-            if (localStorage.getItem(BLOCK_CLEAR_GATEWAY_ERROR) !== 'true') {
-              clearGatewayError();
-            }
-          });
+          setNavigationSegment({ schema, segment: currentNamespace, pathname: prevPathname });
+          /**
+           * Clean gateway error on URL change
+           */
+          if (localStorage.getItem(BLOCK_CLEAR_GATEWAY_ERROR) !== 'true') {
+            clearGatewayError();
+          }
         }
 
         setTimeout(() => {

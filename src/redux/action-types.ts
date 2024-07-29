@@ -11,9 +11,6 @@ export const GLOBAL_FILTER_UPDATE = '@@chrome/global-filter-update';
 export const GLOBAL_FILTER_TOGGLE = '@@chrome/global-filter-toggle';
 export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 
-export const LOAD_NAVIGATION_LANDING_PAGE = '@@chrome/load-navigation-landing-page';
-export const LOAD_LEFT_NAVIGATION_SEGMENT = '@@chrome/load-navigation-segment';
-
 export const UPDATE_DOCUMENT_TITLE_REDUCER = '@@chrome/update-document-title';
 export const MARK_ACTIVE_PRODUCT = '@@chrome/mark-active-product';
 

@@ -1,7 +1,6 @@
 import { QuickStart } from '@patternfly/quickstarts';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { NavItem, Navigation } from '../@types/types';
-import { ITLess, highlightItems, levelArray } from '../utils/common';
+import { ITLess } from '../utils/common';
 import { ChromeState } from './store';
 
 export function loginReducer(state: ChromeState, { payload }: { payload: ChromeUser }): ChromeState {
@@ -24,52 +23,6 @@ export function onPageObjectId(state: ChromeState, { payload }: { payload: strin
     ...state,
     pageObjectId: payload,
   };
-}
-
-export function loadNavigationLandingPageReducer(state: ChromeState, { payload }: { payload: NavItem[] }): ChromeState {
-  return {
-    ...state,
-    navigation: {
-      ...state.navigation,
-      landingPage: payload,
-    },
-  };
-}
-
-function isNavigation(nav?: Navigation | NavItem[]): nav is Navigation {
-  return !Array.isArray(nav);
-}
-
-export function loadNavigationSegmentReducer(
-  state: ChromeState,
-  {
-    payload: { segment, schema, pathName, shouldMerge },
-  }: {
-    payload: {
-      segment: string;
-      schema: Navigation;
-      pathName: string;
-      shouldMerge?: boolean;
-    };
-  }
-): ChromeState {
-  const mergedSchema = shouldMerge || !state.navigation?.[segment] ? schema : state.navigation?.[segment];
-  if (isNavigation(mergedSchema)) {
-    // Landing page navgation has different siganture
-    const sortedLinks = levelArray(mergedSchema?.navItems).sort((a, b) => (a.length < b.length ? 1 : -1));
-    return {
-      ...state,
-      navigation: {
-        ...state.navigation,
-        [segment]: {
-          ...mergedSchema,
-          navItems: pathName ? highlightItems(pathName, mergedSchema.navItems, sortedLinks) : mergedSchema.navItems,
-          sortedLinks,
-        },
-      },
-    };
-  }
-  return state;
 }
 
 export function populateQuickstartsReducer(
