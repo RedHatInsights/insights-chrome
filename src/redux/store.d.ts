@@ -5,7 +5,6 @@ export type ChromeState = {
   missingIDP?: boolean;
   pageAction?: string;
   pageObjectId?: string;
-  initialHash?: string;
 };
 
 export type GlobalFilterWorkloads = {

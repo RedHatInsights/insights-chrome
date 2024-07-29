@@ -15,7 +15,6 @@ import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
-import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { FlagTagsFilter } from '../@types/types';
 import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -146,17 +145,6 @@ export const createChromeContext = ({
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
-      const initialHash = store.getState()?.chrome?.initialHash;
-      /**
-       * Restore app URL hash fragment after the global filter is disabled
-       */
-      if (initialHash) {
-        chromeHistory.replace({
-          ...chromeHistory.location,
-          hash: initialHash,
-        });
-        dispatch({ type: STORE_INITIAL_HASH });
-      }
       dispatch(toggleGlobalFilter(isHidden));
     },
     isBeta: () => isPreview,

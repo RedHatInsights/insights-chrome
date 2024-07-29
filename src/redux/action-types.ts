@@ -12,5 +12,3 @@ export const GLOBAL_FILTER_TOGGLE = '@@chrome/global-filter-toggle';
 export const GLOBAL_FILTER_REMOVE = '@@chrome/global-filter-remove';
 
 export const MARK_ACTIVE_PRODUCT = '@@chrome/mark-active-product';
-
-export const STORE_INITIAL_HASH = '@@chrome/store-initial-hash';
