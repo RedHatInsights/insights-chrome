@@ -5,7 +5,7 @@ import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
-import { appAction, appObjectId, globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
 import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
@@ -15,7 +15,6 @@ import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
-import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { FlagTagsFilter } from '../@types/types';
 import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -29,6 +28,7 @@ import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
 import { usePendoFeedback } from '../components/Feedback';
 import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
+import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -63,8 +63,8 @@ export const createChromeContext = ({
   const visibilityFunctions = getVisibilityFunctions();
   const dispatch = store.dispatch;
   const actions = {
-    appAction: (action: string) => dispatch(appAction(action)),
-    appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
+    appAction: (action: string) => chromeStore.set(appActionAtom, action),
+    appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
     appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
@@ -146,17 +146,6 @@ export const createChromeContext = ({
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
-      const initialHash = store.getState()?.chrome?.initialHash;
-      /**
-       * Restore app URL hash fragment after the global filter is disabled
-       */
-      if (initialHash) {
-        chromeHistory.replace({
-          ...chromeHistory.location,
-          hash: initialHash,
-        });
-        dispatch({ type: STORE_INITIAL_HASH });
-      }
       dispatch(toggleGlobalFilter(isHidden));
     },
     isBeta: () => isPreview,

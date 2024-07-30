@@ -1,6 +1,5 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
-import { loginReducer, markActiveProduct, onPageAction, onPageObjectId } from './chromeReducers';
 import {
   globalFilterDefaultState,
   onGetAllSIDs,
@@ -18,24 +17,13 @@ import {
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
   CHROME_GET_ALL_WORKLOADS,
-  CHROME_PAGE_ACTION,
-  CHROME_PAGE_OBJECT,
   GLOBAL_FILTER_REMOVE,
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-  MARK_ACTIVE_PRODUCT,
-  USER_LOGIN,
 } from './action-types';
-import { ChromeState, GlobalFilterState, ReduxState } from './store';
+import { GlobalFilterState, ReduxState } from './store';
 import { AnyAction } from 'redux';
-
-const reducers = {
-  [USER_LOGIN]: loginReducer,
-  [CHROME_PAGE_ACTION]: onPageAction,
-  [CHROME_PAGE_OBJECT]: onPageObjectId,
-  [MARK_ACTIVE_PRODUCT]: markActiveProduct,
-};
 
 const globalFilter = {
   [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
@@ -51,16 +39,13 @@ const globalFilter = {
 };
 
 export const chromeInitialState: ReduxState = {
-  chrome: {},
   globalFilter: globalFilterDefaultState,
 };
 
 export default function (): {
-  chrome: (state: ChromeState, action: AnyAction) => ChromeState;
-  globalFilter: (state: GlobalFilterState, action: AnyAction) => ChromeState;
+  globalFilter: (state: GlobalFilterState, action: AnyAction) => GlobalFilterState;
 } {
   return {
-    chrome: (state = {}, action) => applyReducerHash(reducers)(state, action),
     globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
   };
 }
