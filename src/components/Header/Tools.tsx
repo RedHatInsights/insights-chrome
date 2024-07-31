@@ -27,6 +27,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
 import PreviewAlert from './PreviewAlert';
+import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 
 const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
 
@@ -108,6 +109,7 @@ const Tools = () => {
     isDemoAcc: false,
   });
   const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
+  const segments = useBreadcrumbsLinks();
   const enableIntegrations = useFlag('platform.sources.integrations');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const { xs } = useWindowWidth();
@@ -216,7 +218,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token, isPreview),
+      onClick: () => createSupportCase(user.identity, token, isPreview, undefined, segments.pop()?.title),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },

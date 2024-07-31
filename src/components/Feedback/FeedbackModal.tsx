@@ -27,6 +27,7 @@ import './Feedback.scss';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useSegment } from '../../analytics/useSegment';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 
 const FEEDBACK_OPEN_EVENT = 'chrome.feedback.open';
 
@@ -58,6 +59,7 @@ const FeedbackModal = memo(() => {
   const isPreview = useAtomValue(isPreviewAtom);
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
+    const segments = useBreadcrumbsLinks();
     switch (modalPage) {
       case 'feedbackHome':
         return (
@@ -79,7 +81,7 @@ const FeedbackModal = memo(() => {
                 className="pf-v5-u-mb-lg"
                 isSelectableRaised
                 isCompact
-                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview)}
+                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, undefined, segments.pop()?.title)}
               >
                 <CardTitle className="pf-v5-u-primary-color-100">
                   <Text>

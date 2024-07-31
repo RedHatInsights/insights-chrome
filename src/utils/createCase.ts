@@ -77,7 +77,8 @@ export async function createSupportCase(
   isPreview: boolean,
   fields?: {
     caseFields: Record<string, unknown>;
-  }
+  },
+  appTitle?: string
 ) {
   const currentProduct = registerProduct() || 'Other';
   const productData = await getProductData(isPreview);
@@ -85,8 +86,6 @@ export async function createSupportCase(
   const { src_hash, app_name } = { src_hash: productData?.src_hash, app_name: productData?.app_name ?? getUrl('app') };
   const portalUrl = `${getEnvDetails()?.portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
-
-  log('Creating a support case');
 
   fetch(caseUrl, {
     method: 'POST',
@@ -115,8 +114,8 @@ export async function createSupportCase(
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        const query = URI(`?seSessionId=${data.session.id}&product=${data.sessionDetails.product}&version=${src_hash}`).normalize();
-        window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue${query.readable()}`);
+        const query = URI(`?caseCreate=true&product=${data.sessionDetails.product}&version=${appTitle}`).normalize();
+        window.open(`${portalUrl}/support/cases/#/case/new/get-support/summarize/summarize${query.readable()}`);
         return createSupportSentry(data.session.id, fields);
       }
     })
