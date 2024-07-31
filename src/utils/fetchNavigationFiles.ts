@@ -4,8 +4,6 @@ import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
 import { ITLess, getChromeStaticPathname } from './common';
 
-const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
-
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
@@ -39,7 +37,7 @@ const filesCache: {
   existingRequest: undefined,
 };
 
-const fetchNavigationFiles = async (isPreview: boolean) => {
+const fetchNavigationFiles = async () => {
   const bundles = ITLess() ? itLessBundles : requiredBundles;
   if (filesCache.ready && filesCache.expires > Date.now()) {
     return filesCache.data;
@@ -55,10 +53,7 @@ const fetchNavigationFiles = async (isPreview: boolean) => {
       axios
         .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
         .catch(() => {
-          // FIXME: Remove this once local preview is enabled by default
-          // No /beta will be needed in the future
-          const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
-          return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+          return axios.get<BundleNavigation>(`/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
         })
         .then((response) => response.data)
         .catch((err) => {

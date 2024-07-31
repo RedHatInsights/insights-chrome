@@ -1,5 +1,5 @@
 import React from 'react';
-import Tools, { switchRelease } from '../Tools';
+import Tools from '../Tools';
 import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -47,19 +47,5 @@ describe('Tools', () => {
       ).container;
     });
     expect(container.querySelector('div')).toMatchSnapshot();
-  });
-
-  it('should switch release correctly', () => {
-    const cases = [
-      ['/beta/settings/rbac', '/settings/rbac'],
-      ['/preview/settings/rbac', '/settings/rbac'],
-      ['/settings/rbac', '/settings/rbac'],
-    ];
-
-    cases.forEach(([input, expected]) => {
-      window.location.href = '';
-      switchRelease(true, input);
-      expect(window.location.href).toEqual(expected);
-    });
   });
 });

@@ -58,8 +58,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
-      // FIXME: Change to /preview on May
-      base: beta ? '/beta/' : '/',
+      base: '/',
       templateParameters: {
         pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
         pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,

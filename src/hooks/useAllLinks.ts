@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
 import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 import { isExpandableNav } from '../utils/common';
-import { isPreviewAtom } from '../state/atoms/releaseAtom';
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
@@ -83,8 +81,8 @@ const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   return links;
 };
 
-const fetchNavigation = async (isPreview: boolean) => {
-  const bundlesNavigation = await fetchNavigationFiles(isPreview).then((data) => data.map(handleBundleResponse));
+const fetchNavigation = async () => {
+  const bundlesNavigation = await fetchNavigationFiles().then((data) => data.map(handleBundleResponse));
   const parsedBundles = await Promise.all(
     bundlesNavigation.map(async (bundleNav) => ({
       ...bundleNav,
@@ -96,10 +94,9 @@ const fetchNavigation = async (isPreview: boolean) => {
 };
 
 const useAllLinks = () => {
-  const isPreview = useAtomValue(isPreviewAtom);
   const [allLinks, setAllLinks] = useState<NavItem[]>([]);
   useEffect(() => {
-    fetchNavigation(isPreview).then(setAllLinks);
+    fetchNavigation().then(setAllLinks);
   }, []);
   return allLinks;
 };

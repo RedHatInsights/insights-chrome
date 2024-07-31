@@ -10,7 +10,7 @@ import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
-import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
+import { ITLess, chunkLoadErrorRefreshKey } from '../../utils/common';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
@@ -111,7 +111,7 @@ const RootApp = memo((props: RootAppProps) => {
     updateQuickStarts,
   };
   return (
-    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={getRouterBasename()}>
+    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
       <SegmentProvider>
         <FeatureFlagsProvider>
           {/* <CrossRequestNotifier /> */}
