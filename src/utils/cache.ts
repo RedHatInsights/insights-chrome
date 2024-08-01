@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { deleteLocalStorageItems, isBeta, lastActive } from './common';
+import { deleteLocalStorageItems, lastActive } from './common';
 
 export const createCacheStore = (endpoint: string, cacheKey: string) => {
   const name = lastActive(endpoint, cacheKey);
@@ -12,22 +12,6 @@ export const createCacheStore = (endpoint: string, cacheKey: string) => {
 
 let store: LocalForage;
 
-/**
- * Check if the app has switched between beta/non-beta envs.
- * If it did, we clean the existing chrome cache to prevent stale cache entry.
- * This issue may occur when the user switches between envs without logging out and in.
- */
-const envSwap = () => {
-  // TODO: Remove this once the local preview is enabled by default
-  // Only non-beta env will exist in the future
-  const currentEnv = isBeta() ? 'beta' : 'non-beta';
-  const prevEnv = localStorage.getItem('chrome:prevEnv');
-  if (prevEnv && currentEnv !== prevEnv) {
-    deleteLocalStorageItems(Object.keys(localStorage).filter((item) => item.endsWith('/chrome-store')));
-  }
-  localStorage.setItem('chrome:prevEnv', currentEnv);
-};
-
 export class CacheAdapter {
   maxAge: number;
   expires: number;
@@ -37,7 +21,6 @@ export class CacheAdapter {
   constructor(endpoint: string, cacheKey: string, maxAge = 10 * 60 * 1000) {
     this.maxAge = maxAge;
     this.expires = new Date().getTime() + this.maxAge;
-    envSwap();
     if (!store) {
       const name = lastActive(endpoint, cacheKey);
       let cached;

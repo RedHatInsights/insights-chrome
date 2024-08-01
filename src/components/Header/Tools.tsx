@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -16,7 +15,7 @@ import UserToggle from './UserToggle';
 import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection } from '../../utils/common';
+import { ITLess, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
@@ -28,25 +27,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
 import PreviewAlert from './PreviewAlert';
 
-const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
-
 const isITLessEnv = ITLess();
-
-/**
- * @deprecated Switch release will be replaced by the internal chrome state variable
- */
-export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
-  cookie.set('cs_toggledRelease', 'true');
-  const previewFragment = getRouterBasename(pathname);
-
-  let href = '';
-  if (isBeta) {
-    href = pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
-  } else {
-    href = previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
-  }
-  window.location.href = href;
-};
 
 const InternalButton = () => (
   <Button
@@ -115,7 +96,6 @@ const Tools = () => {
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
   const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
-  const location = useLocation();
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
   const identityAndAccessManagmentPath = '/iam/user-access/overview';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
@@ -124,7 +104,6 @@ const Tools = () => {
 
   const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
   const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
-  const previewEnabled = useFlag('platform.chrome.preview');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
@@ -185,13 +164,6 @@ const Tools = () => {
         ]
       : []),
   ];
-
-  const handleToggle = () => {
-    if (!LOCAL_PREVIEW) {
-      switchRelease(isPreview, location.pathname, previewEnabled);
-    }
-    setIsPreview();
-  };
 
   useEffect(() => {
     if (user) {
@@ -259,7 +231,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: handleToggle,
+      onClick: () => setIsPreview(),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -289,7 +261,7 @@ const Tools = () => {
         labelOff="Preview off"
         aria-label="Preview switcher"
         isChecked={isPreview}
-        onChange={handleToggle}
+        onChange={() => setIsPreview()}
         isReversed
         className="chr-c-beta-switcher"
       />
@@ -397,7 +369,7 @@ const Tools = () => {
           />
         </Tooltip>
       </ToolbarItem>
-      <PreviewAlert switchRelease={switchRelease} />
+      <PreviewAlert />
     </>
   );
 };

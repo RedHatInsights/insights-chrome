@@ -1,17 +1,14 @@
 import { ServiceTileProps } from '../components/FavoriteServices/ServiceTile';
 import useAllServices from './useAllServices';
 import { useEffect, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import fetchNavigationFiles, { extractNavItemGroups } from '../utils/fetchNavigationFiles';
 import { NavItem, Navigation } from '../@types/types';
 import { findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import useAllLinks from './useAllLinks';
-import { isPreviewAtom } from '../state/atoms/releaseAtom';
 
 const useFavoritedServices = () => {
-  const isPreview = useAtomValue(isPreviewAtom);
   const { favoritePages } = useFavoritePagesWrapper();
   const { availableSections } = useAllServices();
   const allLinks = useAllLinks();
@@ -33,7 +30,7 @@ const useFavoritedServices = () => {
   }, [availableSections]);
 
   useEffect(() => {
-    fetchNavigationFiles(isPreview)
+    fetchNavigationFiles()
       .then((data) => setBundles(data as Navigation[]))
       .catch((error) => {
         console.error('Unable to fetch favorite services', error);

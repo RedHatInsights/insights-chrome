@@ -15,7 +15,7 @@ function isInternalFlag(email: string, isInternal = false) {
 }
 
 function getUrl(type?: string, isPreview = false) {
-  if (['/beta', '/preview', '/'].includes(window.location.pathname)) {
+  if (['/'].includes(window.location.pathname)) {
     return 'landing';
   }
 

@@ -8,7 +8,6 @@ import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
-import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
 
 function cleanNavItemsHref(navItem: NavItem) {
@@ -55,7 +54,6 @@ const useNavigation = () => {
   const schema = navigation[currentNamespace];
   const setNavigationSegment = useSetAtom(setNavigationSegmentAtom);
   const [noNav, setNoNav] = useState(false);
-  const isPreview = useAtomValue(isPreviewAtom);
 
   /**
    * We need a side effect to get the value into the mutation observer closure
@@ -111,9 +109,7 @@ const useNavigation = () => {
         .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json`)
         // fallback static CSC for EE env
         .catch(() => {
-          const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
-          const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
-          return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`);
+          return axios.get<BundleNavigation>(`/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`);
         })
         .then(async (response) => {
           if (observer && typeof observer.disconnect === 'function') {
