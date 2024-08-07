@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require('webpack');
 const resolve = require('path').resolve;
-const { ModuleFederationPlugin } = require('webpack').container;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { ProvidePlugin } = require('webpack');
@@ -9,6 +8,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
+
+const MFP = require('@module-federation/enhanced').ModuleFederationPlugin;
 
 const deps = require('../package.json').dependencies;
 
@@ -30,7 +31,11 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       filename: dev ? '[name].css' : '[name].[contenthash].css',
       ignoreOrder: true,
     }),
-    new ModuleFederationPlugin({
+    new MFP({
+      library: {
+        type: 'global',
+        name: 'chrome',
+      },
       name: 'chrome',
       filename: dev ? 'chrome.js' : 'chrome.[contenthash].js',
       exposes: {
@@ -86,7 +91,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new webpack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+    // ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
   ];
 };
 
