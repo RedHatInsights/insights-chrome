@@ -53,6 +53,7 @@
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
+    "@module-federation/enhanced": "^0.3.5",
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.3.0",
