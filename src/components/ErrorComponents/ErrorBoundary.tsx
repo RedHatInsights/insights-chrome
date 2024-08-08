@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ErrorComponent from './DefaultErrorComponent';
+import AccountOnHoldError, { checkAccountOnHold } from './AccountOnHoldError';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -50,6 +51,9 @@ class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
+      if (checkAccountOnHold(this.state.error)) {
+        return <AccountOnHoldError error={this.state.error} />;
+      }
       return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} signIn={this.props.singIn} />;
     }
 
