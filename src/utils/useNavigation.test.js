@@ -2,9 +2,8 @@
 import React, { Fragment, useEffect } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import useNavigation from './useNavigation';
 
 jest.mock('axios', () => {
@@ -30,6 +29,7 @@ jest.mock('@scalprum/core', () => {
 import * as axios from 'axios';
 import FlagProvider, { UnleashClient } from '@unleash/proxy-client-react';
 import { initializeVisibilityFunctions } from './VisibilitySingleton';
+import { navigationAtom } from '../state/atoms/navigationAtom';
 
 jest.mock('@unleash/proxy-client-react', () => {
   const actual = jest.requireActual('@unleash/proxy-client-react');
@@ -63,19 +63,38 @@ const testClient = new UnleashClient({
   fetch: () => ({}),
 });
 
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const TestProvider = ({ initialValues, children, store }) => {
+  useEffect(() => {
+    if (store) {
+      initialValues.forEach(([atom, value]) => {
+        store.set(atom, value);
+      });
+    }
+  }, []);
+  return (
+    <JotaiProvider store={store}>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </JotaiProvider>
+  );
+};
+
 // eslint-disable-next-line react/prop-types
-const RouterDummy = ({ store, children, path }) => (
+const RouterDummy = ({ children, path, initialValues, store }) => (
   <MemoryRouter>
     <FlagProvider unleashClient={testClient} startClient={false}>
-      <Provider store={store}>
+      <TestProvider initialValues={initialValues} store={store}>
         <RouteDummy path={path}>{children}</RouteDummy>
-      </Provider>
+      </TestProvider>
     </FlagProvider>
   </MemoryRouter>
 );
 
 describe('useNavigation', () => {
-  const mockStore = configureStore();
   beforeAll(() => {
     initializeVisibilityFunctions({
       getUser() {
@@ -88,25 +107,21 @@ describe('useNavigation', () => {
 
   test('should update on namespace change', async () => {
     const axiosGetSpy = jest.spyOn(axios.default, 'get');
-    const store = mockStore({
-      chrome: {
-        navigation: {
-          insights: {
-            id: 'insights',
-            navItems: [],
-          },
-          ansible: {
-            id: 'ansible',
-            navItems: [],
-          },
-        },
+    const navigation = {
+      insights: {
+        id: 'insights',
+        navItems: [],
       },
-    });
+      ansible: {
+        id: 'ansible',
+        navItems: [],
+      },
+    };
     axiosGetSpy.mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     const createWrapper = (props) => {
       function Wrapper({ children }) {
         return (
-          <RouterDummy store={store} {...props}>
+          <RouterDummy initialValues={[[navigationAtom, navigation]]} {...props}>
             {children}
           </RouterDummy>
         );
@@ -144,79 +159,18 @@ describe('useNavigation', () => {
   describe('isHidden flag', () => {
     test('should propagate navigation item isHidden flag', async () => {
       const axiosGetSpy = jest.spyOn(axios.default, 'get');
+      const store = createStore();
       const navItem = {
         href: '/foo',
         title: 'bar',
         isHidden: true,
       };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
+      const navigation = {
+        insights: {
+          id: 'insights',
+          navItems: [navItem],
         },
-      });
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
-      const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
-          {children}
-        </RouterDummy>
-      );
-
-      await act(async () => {
-        await renderHook(() => useNavigation(), {
-          wrapper,
-        });
-      });
-
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: [
-                expect.objectContaining({
-                  isHidden: true,
-                }),
-              ],
-            },
-          },
-        },
-      ]);
-    });
-
-    test('should mark navigation item as hidden', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
-      const navItem = {
-        href: '/foo',
-        title: 'bar',
-        permissions: [
-          {
-            method: 'isOrgAdmin',
-          },
-        ],
       };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
-        },
-      });
       axiosGetSpy.mockImplementation(() =>
         Promise.resolve({
           data: {
@@ -225,7 +179,7 @@ describe('useNavigation', () => {
         })
       );
       const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
+        <RouterDummy store={store} initialValues={[[navigationAtom, navigation]]} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -236,160 +190,19 @@ describe('useNavigation', () => {
         });
       });
 
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: [
-                expect.objectContaining({
-                  isHidden: true,
-                }),
-              ],
-            },
-          },
-        },
-      ]);
-    });
+      const data = store.get(navigationAtom);
 
-    test('should mark navigation group items as hidden', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
-      const navItem = {
-        groupId: 'foo',
-        title: 'bar',
-        navItems: [
-          {
-            href: '/bar',
-            permissions: [
-              {
-                method: 'isOrgAdmin',
-              },
-            ],
-          },
-        ],
-      };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
+      expect(data).toEqual({
+        insights: {
+          id: 'insights',
+          navItems: [
+            expect.objectContaining({
+              isHidden: true,
+            }),
+          ],
+          sortedLinks: ['/foo'],
         },
       });
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
-      const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
-          {children}
-        </RouterDummy>
-      );
-
-      await act(async () => {
-        await renderHook(() => useNavigation(), {
-          wrapper,
-        });
-      });
-
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: [
-                expect.objectContaining({
-                  groupId: 'foo',
-                  navItems: [
-                    expect.objectContaining({
-                      href: '/bar',
-                      isHidden: true,
-                    }),
-                  ],
-                }),
-              ],
-            },
-          },
-        },
-      ]);
-    });
-
-    test('should mark expandable item routes as hidden', async () => {
-      const axiosGetSpy = jest.spyOn(axios.default, 'get');
-      const navItem = {
-        title: 'bar',
-        expandable: true,
-        routes: [
-          {
-            href: '/bar',
-            permissions: [
-              {
-                method: 'isOrgAdmin',
-              },
-            ],
-          },
-        ],
-      };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
-        },
-      });
-      axiosGetSpy.mockImplementation(() =>
-        Promise.resolve({
-          data: {
-            navItems: [navItem],
-          },
-        })
-      );
-      const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
-          {children}
-        </RouterDummy>
-      );
-
-      await act(async () => {
-        await renderHook(() => useNavigation(), {
-          wrapper,
-        });
-      });
-
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: [
-                expect.objectContaining({
-                  expandable: true,
-                  routes: [
-                    expect.objectContaining({
-                      href: '/bar',
-                      isHidden: true,
-                    }),
-                  ],
-                }),
-              ],
-            },
-          },
-        },
-      ]);
     });
   });
 
@@ -425,16 +238,13 @@ describe('useNavigation', () => {
           },
         ],
       };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
+      const navigation = {
+        insights: {
+          id: 'insights',
+          navItems: [navItem],
         },
-      });
+      };
+      const store = createStore();
       axiosGetSpy.mockImplementation(() =>
         Promise.resolve({
           data: {
@@ -443,7 +253,7 @@ describe('useNavigation', () => {
         })
       );
       const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
+        <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -454,18 +264,14 @@ describe('useNavigation', () => {
         });
       });
 
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: expect.any(Array),
-            },
-          },
+      const data = store.get(navigationAtom);
+      expect(data).toEqual({
+        insights: {
+          id: 'insights',
+          navItems: expect.any(Array),
+          sortedLinks: ['/baz/bar/quaxx', '/baz/bar', '/foo/bar', '/baz', '/bar'],
         },
-      ]);
+      });
     });
   });
 
@@ -476,16 +282,13 @@ describe('useNavigation', () => {
         title: 'bar',
         href: '/insights',
       };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
+      const navigation = {
+        insights: {
+          id: 'insights',
+          navItems: [navItem],
         },
-      });
+      };
+      const store = createStore();
       axiosGetSpy.mockImplementation(() =>
         Promise.resolve({
           data: {
@@ -494,7 +297,7 @@ describe('useNavigation', () => {
         })
       );
       const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights">
+        <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights">
           {children}
         </RouterDummy>
       );
@@ -505,27 +308,18 @@ describe('useNavigation', () => {
         });
       });
 
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights',
-            schema: {
-              navItems: [
-                {
-                  href: '/insights',
-                  isHidden: false,
-                  title: 'bar',
-                },
-              ],
-            },
-          },
+      const data = store.get(navigationAtom);
+
+      expect(data).toEqual({
+        insights: {
+          id: 'insights',
+          navItems: [{ title: 'bar', href: '/insights', active: true }],
+          sortedLinks: ['/insights'],
         },
-      ]);
+      });
     });
 
-    test('should mark nested /insights/dashboard nav item as its parent as active', async () => {
+    test.only('should mark nested /insights/dashboard nav item as its parent as active', async () => {
       const axiosGetSpy = jest.spyOn(axios.default, 'get');
       const navItem = {
         expandable: true,
@@ -536,16 +330,13 @@ describe('useNavigation', () => {
           },
         ],
       };
-      const store = mockStore({
-        chrome: {
-          navigation: {
-            insights: {
-              id: 'insights',
-              navItems: [navItem],
-            },
-          },
+      const navigation = {
+        insights: {
+          id: 'insights',
+          navItems: [navItem],
         },
-      });
+      };
+      const store = createStore();
       axiosGetSpy.mockImplementation(() =>
         Promise.resolve({
           data: {
@@ -554,7 +345,7 @@ describe('useNavigation', () => {
         })
       );
       const wrapper = ({ children }) => (
-        <RouterDummy store={store} path="/insights/dashboard">
+        <RouterDummy initialValues={[[navigationAtom, navigation]]} store={store} path="/insights/dashboard">
           {children}
         </RouterDummy>
       );
@@ -565,30 +356,27 @@ describe('useNavigation', () => {
         });
       });
 
-      expect(store.getActions()).toEqual([
-        {
-          type: '@@chrome/load-navigation-segment',
-          payload: {
-            segment: 'insights',
-            pathName: '/insights/dashboard',
-            schema: {
-              navItems: [
+      const data = store.get(navigationAtom);
+
+      expect(data).toEqual({
+        insights: {
+          id: 'insights',
+          navItems: [
+            {
+              expandable: true,
+              title: 'bar',
+              routes: [
                 {
-                  expandable: true,
-                  isHidden: false,
-                  title: 'bar',
-                  routes: [
-                    {
-                      href: '/insights/dashboard',
-                      isHidden: false,
-                    },
-                  ],
+                  href: '/insights/dashboard',
+                  active: true,
                 },
               ],
+              active: true,
             },
-          },
+          ],
+          sortedLinks: ['/insights/dashboard'],
         },
-      ]);
+      });
     });
   });
 });

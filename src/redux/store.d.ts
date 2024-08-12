@@ -1,36 +1,4 @@
-import { QuickStart } from '@patternfly/quickstarts';
-
-import { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
-
-export type InternalNavigation = {
-  [key: string]: Navigation | NavItem[] | undefined;
-  landingPage?: NavItem[];
-};
-
-export type AccessRequest = { request_id: string; created: string; seen: boolean };
-
-export type ChromeState = {
-  activeProduct?: string;
-  missingIDP?: boolean;
-  pageAction?: string;
-  pageObjectId?: string;
-  navigation: InternalNavigation;
-  isDebuggerModalOpen?: boolean;
-  isDebuggerEnabled?: boolean;
-  accessRequests: {
-    count: number;
-    data: AccessRequest[];
-    hasUnseen: boolean;
-  };
-  initialHash?: string;
-  quickstarts: {
-    disabled?: boolean;
-    quickstarts: {
-      [key: string]: QuickStart[];
-    };
-  };
-  documentTitle?: string;
-};
+import { FlagTagsFilter } from '../@types/types';
 
 export type GlobalFilterWorkloads = {
   selected?: boolean;
@@ -106,6 +74,5 @@ export type GlobalFilterState = {
 };
 
 export type ReduxState = {
-  chrome: ChromeState;
   globalFilter: GlobalFilterState;
 };

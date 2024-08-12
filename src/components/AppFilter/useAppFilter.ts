@@ -1,15 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
-import { ReduxState } from '../../redux/store';
 import { getChromeStaticPathname } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { useAtomValue } from 'jotai';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
-import { isPreviewAtom } from '../../state/atoms/releaseAtom';
-
-const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
+import { navigationAtom } from '../../state/atoms/navigationAtom';
 
 export type AppFilterBucket = {
   id: string;
@@ -82,7 +78,6 @@ type AppFilterState = {
 };
 
 const useAppFilter = () => {
-  const isPreview = useAtomValue(isPreviewAtom);
   const [state, setState] = useState<AppFilterState>({
     isLoaded: false,
     isLoading: false,
@@ -101,7 +96,7 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
+  const existingSchemas = useAtomValue(navigationAtom);
   const modules = useAtomValue(chromeModulesAtom);
 
   const handleBundleData = async ({ data: { id, navItems, title } }: { data: BundleNavigation }) => {
@@ -184,10 +179,7 @@ const useAppFilter = () => {
           .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
           // fallback static CSC for EE env
           .catch(() => {
-            // FIXME: Remove this once local preview is enabled by default
-            // No /beta will be needed in the future
-            const previewFragment = LOCAL_PREVIEW ? '' : isPreview ? '/beta' : '';
-            return axios.get<BundleNavigation>(`${previewFragment}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+            return axios.get<BundleNavigation>(`$/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
           })
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))

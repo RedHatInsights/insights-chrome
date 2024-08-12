@@ -25,7 +25,7 @@ const PFGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
+const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
   return {
@@ -150,7 +150,7 @@ const commonConfig = ({ dev }) => {
       ...proxy({
         env: 'stage-beta',
         port: 1337,
-        appUrl: [/^\/*$/, /^\/beta\/*$/, /^\/preview\/*$/],
+        appUrl: [/^\/*$/],
         useProxy: true,
         publicPath,
         proxyVerbose: true,

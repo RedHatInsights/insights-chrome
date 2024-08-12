@@ -230,7 +230,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
                     className="pf-v5-u-mb-xs"
                     component={(props) => <ChromeLink {...props} href={item.pathname} />}
                   >
-                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} />
+                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v5-u-mb-xs" />
                     <SearchDescription description={item.description} />
                   </MenuItem>
                 ))}

@@ -6,8 +6,6 @@ import axios from 'axios';
 import { Required } from 'utility-types';
 import useBundle, { getUrl } from '../hooks/useBundle';
 
-const LOCAL_PREVIEW = localStorage.getItem('chrome:local-preview') === 'true';
-
 export const DEFAULT_SSO_ROUTES = {
   prod: {
     url: ['access.redhat.com', 'prod.foo.redhat.com', 'cloud.redhat.com', 'console.redhat.com', 'us.console.redhat.com'],
@@ -94,25 +92,16 @@ export function pageAllowsUnentitled() {
   const pathname = getWindow().location.pathname;
   if (
     pathname === '/' ||
-    pathname === '/beta' ||
-    pathname === '/beta/' ||
-    pathname === '/preview' ||
-    pathname === '/preview/' ||
     pathname.indexOf('/openshift') === 0 ||
     pathname.indexOf('/beta/openshift') === 0 ||
-    pathname.indexOf('/preview/openshift') === 0 ||
     pathname.indexOf('/security') === 0 ||
     pathname.indexOf('/beta/security') === 0 ||
-    pathname.indexOf('/preview/security') === 0 ||
     pathname.indexOf('/application-services') === 0 ||
     pathname.indexOf('/beta/application-services') === 0 ||
-    pathname.indexOf('/preview/application-services') === 0 ||
     pathname.indexOf('/hac') === 0 ||
     pathname.indexOf('/beta/hac') === 0 ||
-    pathname.indexOf('/preview/hac') === 0 ||
     pathname.indexOf('/ansible/ansible-dashboard/trial') === 0 ||
     pathname.indexOf('/beta/ansible/ansible-dashboard/trial') === 0 ||
-    pathname.indexOf('/preview/ansible/ansible-dashboard/trial') === 0 ||
     // allow tenants with no account numbers: RHCLOUD-21396
     pathname.match(/\/connect\//)
   ) {
@@ -200,22 +189,6 @@ export function getEnvDetails() {
 
 export function isProd() {
   return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
-}
-
-/**
- * @deprecated preview flag is now determined via chrome internal state variable
- */
-export function isBeta(pathname?: string) {
-  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
-  return ['beta', 'preview'].includes(previewFragment);
-}
-
-/**
- * @deprecated router basename will always be `/`
- */
-export function getRouterBasename(pathname?: string) {
-  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
-  return isBeta(pathname) ? `/${previewFragment}` : '/';
 }
 
 export function ITLess() {
@@ -349,12 +322,7 @@ export const trustarcScriptSetup = () => {
 };
 
 const CHROME_SERVICE_BASE = '/api/chrome-service/v1';
-export const chromeServiceStaticPathname = {
-  beta: {
-    stage: '/static/beta/stage',
-    prod: '/static/beta/prod',
-    itless: '/static/beta/itless',
-  },
+export const chromeServiceStaticPathname: { [key in CPN]: { stage: string; prod: string; itless: string } } = {
   stable: {
     stage: '/static/stable/stage',
     prod: '/static/stable/prod',
@@ -362,17 +330,16 @@ export const chromeServiceStaticPathname = {
   },
 };
 
+type CPN = 'stable';
+
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services' | 'search') {
-  // TODO: Remove once local preview is enabled by default
-  // Only non-beta env will exist in the future
-  // Feature flags should be used to enable/disable features
-  const stableEnv = LOCAL_PREVIEW ? 'stable' : isBeta() ? 'beta' : 'stable';
+  const stableEnv: CPN = 'stable';
   const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
 function getChromeDynamicPaths() {
-  return `${isBeta() ? '/beta' : ''}/apps/chrome/operator-generated/fed-modules.json`;
+  return '/apps/chrome/operator-generated/fed-modules.json';
 }
 
 const fedModulesheaders = {

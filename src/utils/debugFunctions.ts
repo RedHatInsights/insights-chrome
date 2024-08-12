@@ -23,7 +23,6 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
-  forceLocalPreview: () => functionBuilder('chrome:local-preview', true),
 };
 
 export default debugFunctions;
