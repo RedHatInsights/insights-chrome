@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const plugins = require('./webpack.plugins.js');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const rspack = require('@rspack/core');
+const plugins = require('./rspack.plugins.js');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
 const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
-const imageNullLoader = require('./image-null-loader');
+const imageNullLoader = require('./image-null-loader.js');
 
 // call default generator then pair different variations of uri with each base
 const PFGenerator = asGenerator((item, ...rest) => {
@@ -24,7 +22,7 @@ const PFGenerator = asGenerator((item, ...rest) => {
 
 const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
-  /** @type { import("webpack").Configuration } */
+  /** @type { import("rspack").Configuration } */
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
@@ -43,13 +41,7 @@ const commonConfig = ({ dev }) => {
     },
     ...(dev
       ? {
-          cache: {
-            type: 'filesystem',
-            buildDependencies: {
-              config: [__filename],
-            },
-            cacheDirectory: path.resolve(__dirname, '../.webpack-cache'),
-          },
+          cache: true,
         }
       : {}),
     devtool: dev ? false : 'hidden-source-map',
@@ -83,7 +75,6 @@ const commonConfig = ({ dev }) => {
       },
     },
     optimization: {
-      minimizer: [new TerserPlugin()],
       concatenateModules: false,
       ...(dev
         ? {
@@ -112,8 +103,8 @@ const commonConfig = ({ dev }) => {
         {
           test: /\.s?[ac]ss$/,
           use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader',
+            // rspack.CssExtractRspackPlugin.loader,
+            // 'css-loader',
             {
               loader: 'resolve-url-loader',
               options: {
@@ -127,6 +118,7 @@ const commonConfig = ({ dev }) => {
               },
             },
           ],
+          type: 'css/auto',
         },
         {
           test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
@@ -189,7 +181,7 @@ const commonConfig = ({ dev }) => {
 };
 
 // PF node module asset compilation config, no need to compile PF assets more than once during a run
-/** @type { import("webpack").Configuration } */
+/** @type { import("rspack").Configuration } */
 const pfConfig = {
   entry: {
     'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
@@ -200,24 +192,21 @@ const pfConfig = {
     filename: '[name].js',
     publicPath: `auto`,
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [new rspack.CssExtractRspackPlugin()],
   stats: {
     errorDetails: true,
   },
-  cache: {
-    type: 'filesystem',
-    buildDependencies: {
-      config: [__filename],
-    },
-    cacheDirectory: path.resolve(__dirname, '../.sass-cache'),
+  cache: true,
+  experiments: {
+    css: true,
   },
   module: {
     rules: [
       {
         test: /\.s?[ac]ss$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
+          // rspack.CssExtractRspackPlugin.loader,
+          // 'css-loader',
           {
             loader: 'resolve-url-loader',
             options: {
@@ -234,6 +223,7 @@ const pfConfig = {
             },
           },
         ],
+        type: 'css/auto',
       },
       {
         test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
@@ -246,9 +236,6 @@ const pfConfig = {
 module.exports = function (env) {
   const dev = process.env.DEV_SERVER;
   const config = commonConfig({ dev, publicPath: env.publicPath });
-  if (env.analyze === 'true') {
-    config.plugins.push(new BundleAnalyzerPlugin());
-  }
 
   // bridge between devServer 4 and 5
   // will be useful for RSpack
