@@ -18,6 +18,7 @@ import AppPlaceholder from './components/AppPlaceholder';
 import { ChromeUserConfig, initChromeUserConfig } from './utils/initUserConfig';
 import ChromeAuthContext from './auth/ChromeAuthContext';
 import useSuspenseLoader from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader/useSuspenseLoader';
+import { userConfigAtom } from './state/atoms/userConfigAtom';
 
 const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
@@ -55,8 +56,10 @@ const App = ({ initApp }: { initApp: (...args: Parameters<typeof initChromeUserC
 
 const ConfigLoader = () => {
   const initPreview = useSetAtom(isPreviewAtom);
+  const setUserConfig = useSetAtom(userConfigAtom);
   function initSuccess(userConfig: ChromeUserConfig) {
     initPreview(userConfig.data.uiPreview);
+    setUserConfig(userConfig);
   }
   function initFail() {
     initPreview(false);
