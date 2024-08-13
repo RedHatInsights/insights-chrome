@@ -27,6 +27,7 @@ import './Feedback.scss';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useSegment } from '../../analytics/useSegment';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import useSupportCaseData from '../../hooks/useSupportCaseData';
 
 const FEEDBACK_OPEN_EVENT = 'chrome.feedback.open';
 
@@ -56,6 +57,7 @@ const FeedbackModal = memo(() => {
     setModalPage('feedbackHome');
   };
   const isPreview = useAtomValue(isPreviewAtom);
+  const supportCaseData = useSupportCaseData();
 
   const ModalDescription = ({ modalPage }: { modalPage: FeedbackPages }) => {
     switch (modalPage) {
@@ -79,7 +81,7 @@ const FeedbackModal = memo(() => {
                 className="pf-v5-u-mb-lg"
                 isSelectableRaised
                 isCompact
-                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview)}
+                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}
               >
                 <CardTitle className="pf-v5-u-primary-color-100">
                   <Text>

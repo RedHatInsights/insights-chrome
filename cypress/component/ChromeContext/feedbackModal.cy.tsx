@@ -10,17 +10,20 @@ import { IntlProvider } from 'react-intl';
 import InternalChromeContext from '../../../src/utils/internalChromeContext';
 import { Provider as JotaiProvider } from 'jotai';
 import chromeStore from '../../../src/state/chromeStore';
+import { BrowserRouter } from 'react-router-dom';
 
 describe('Feedback Modal', () => {
   let chromeContext: Context<ChromeAPI>;
   let contextValue: ChromeAPI;
   const NestedComponen = () => {
     return (
-      <IntlProvider locale="en">
-        <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
-          <Feedback />
-        </InternalChromeContext.Provider>
-      </IntlProvider>
+      <BrowserRouter>
+        <IntlProvider locale="en">
+          <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
+            <Feedback />
+          </InternalChromeContext.Provider>
+        </IntlProvider>
+      </BrowserRouter>
     );
   };
   const InnerComponent = () => {
@@ -32,13 +35,15 @@ describe('Feedback Modal', () => {
   const Wrapper = () => {
     const [removeComponent, setRemoveComponent] = useState(false);
     return (
-      <IntlProvider locale="en">
-        <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
-          <Feedback />
-          {!removeComponent ? <InnerComponent /> : null}
-          <button onClick={() => setRemoveComponent(true)}>Remove component from dom</button>
-        </InternalChromeContext.Provider>
-      </IntlProvider>
+      <BrowserRouter>
+        <IntlProvider locale="en">
+          <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
+            <Feedback />
+            {!removeComponent ? <InnerComponent /> : null}
+            <button onClick={() => setRemoveComponent(true)}>Remove component from dom</button>
+          </InternalChromeContext.Provider>
+        </IntlProvider>
+      </BrowserRouter>
     );
   };
 
@@ -54,14 +59,16 @@ describe('Feedback Modal', () => {
 
   const CustomComponent = () => {
     return (
-      <IntlProvider locale="en">
-        <JotaiProvider store={chromeStore}>
-          <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
-            <CustomButton />
-            <Feedback />
-          </InternalChromeContext.Provider>
-        </JotaiProvider>
-      </IntlProvider>
+      <BrowserRouter>
+        <IntlProvider locale="en">
+          <JotaiProvider store={chromeStore}>
+            <InternalChromeContext.Provider value={{ getEnvironment: () => 'stage' } as any}>
+              <CustomButton />
+              <Feedback />
+            </InternalChromeContext.Provider>
+          </JotaiProvider>
+        </IntlProvider>
+      </BrowserRouter>
     );
   };
 
