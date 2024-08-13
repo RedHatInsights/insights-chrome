@@ -139,7 +139,7 @@ export const createChromeContext = ({
       return environment;
     },
     getAvailableBundles: () => Object.entries(bundleMapping).map(([key, value]) => ({ id: key, title: value })),
-    createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
+    createCase: (options?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, options)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
       const token = await chromeAuth.getToken();
       return fetchPermissions(token, app, bypassCache);

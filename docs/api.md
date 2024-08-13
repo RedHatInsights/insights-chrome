@@ -186,6 +186,21 @@ chrome.createCase({
 })
 ```
 
+You can also configure the version and product of the support cases:
+
+```js
+const chrome = useChrome()
+
+chrome.createCase({
+    supportCaseData: {
+        product: 'Red Hat Insights',
+        version: 'Advisor',
+    },
+    caseFields: {}
+    ...
+})
+```
+
 ## Deprecated functions
 
 * `chrome.navigation` this is a legacy function and is no longer supported. Invoking it has no effect.
