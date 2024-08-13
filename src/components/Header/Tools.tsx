@@ -26,6 +26,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
 import PreviewAlert from './PreviewAlert';
+import useSupportCaseData from '../../hooks/useSupportCaseData';
 
 const isITLessEnv = ITLess();
 
@@ -174,6 +175,7 @@ const Tools = () => {
       });
     }
   }, [user]);
+  const supportCaseData = useSupportCaseData();
 
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
@@ -188,7 +190,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token, isPreview),
+      onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },
