@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
 import { ChromeModule } from '../../@types/types';
-import { isBeta } from '../../utils/common';
 
 export type ScalprumConfig = {
   [key: string]: {
@@ -22,20 +21,19 @@ export const writeInitialScalprumConfigAtom = atom(
       [key: string]: ChromeModule;
     }
   ) => {
-    const isBetaEnv = isBeta();
     const scalprumConfig = Object.entries(schema).reduce(
       (acc, [name, config]) => ({
         ...acc,
         [name]: {
           name,
           module: `${name}#./RootApp`,
-          manifestLocation: `${window.location.origin}${isBetaEnv ? '/beta' : ''}${config.manifestLocation}?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}${config.manifestLocation}?ts=${Date.now()}`,
         },
       }),
       {
         chrome: {
           name: 'chrome',
-          manifestLocation: `${window.location.origin}${isBetaEnv ? '/beta' : ''}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
         },
       }
     );

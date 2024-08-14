@@ -87,9 +87,13 @@ describe('create chrome', () => {
     token: 'string',
     tokenExpires: 0,
     user: mockUser,
+    forceRefresh() {
+      return Promise.resolve();
+    },
   };
 
   const chromeContextOptionsMock = {
+    addWsEventListener: jest.fn(),
     store: createStore(() => ({})) as Store<ReduxState>,
     // getUser: () => Promise.resolve(mockUser),
     chromeAuth: chromeAuthMock,
@@ -101,6 +105,7 @@ describe('create chrome', () => {
       enableTopics: jest.fn(),
       setActiveTopic: jest.fn(),
     },
+    isPreview: false,
     quickstartsAPI: {
       Catalog: QuickStartCatalog,
       set() {
@@ -117,12 +122,15 @@ describe('create chrome', () => {
     setPageMetadata: jest.fn(),
     useGlobalFilter: jest.fn(),
     registerModule: jest.fn(),
+    addNavListener: jest.fn(),
+    deleteNavListener: jest.fn(),
   };
   beforeAll(() => {
     const mockAuthMethods = {
       getUser: () => Promise.resolve(mockUser),
       getToken: () => Promise.resolve('mocked-token'),
       getUserPermissions: () => Promise.resolve([]),
+      isPreview: false,
     };
     initializeVisibilityFunctions(mockAuthMethods);
   });

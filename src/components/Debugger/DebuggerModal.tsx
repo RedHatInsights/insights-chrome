@@ -4,26 +4,22 @@ import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/compone
 import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { BugIcon } from '@patternfly/react-icons/dist/dynamic/icons/bug-icon';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { useDispatch, useSelector } from 'react-redux';
 import { DeepRequired } from 'utility-types';
-
-import { toggleDebuggerModal } from '../../redux/actions';
-import { ReduxState } from '../../redux/store';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/dist/dynamic/components/Select';
 
 import DebuggerTable from './DebuggerTable';
 
 import './Debugger.scss';
+import { useAtom } from 'jotai';
+import { isDebuggerModalOpenAtom } from '../../state/atoms/debuggerModalatom';
 
 export type DebuggerModalProps = {
   user: DeepRequired<ChromeUser>;
 };
 
 const DebuggerModal = ({ user }: DebuggerModalProps) => {
-  const isOpen = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerModalOpen } }) => isDebuggerModalOpen);
-  const dispatch = useDispatch();
-  const setIsModalOpen = (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen));
+  const [isOpen, setIsModalOpen] = useAtom(isDebuggerModalOpenAtom);
   const [isDropdownOpen, setIsOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<string>('Entitlements');
   const menuRef = React.useRef<HTMLDivElement>(null);

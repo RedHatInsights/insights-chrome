@@ -1,3 +1,4 @@
+import { PDFRequestOptions } from '@redhat-cloud-services/types';
 import axios from 'axios';
 
 const downloadPDF = async (url: string, filename = 'report.pdf') => {
@@ -42,12 +43,12 @@ const pollStatus = async (statusID: string) => {
   });
 };
 
-const requestPdf = async (options: { service: string; template: string; filename?: string; [key: string]: any }) => {
-  const { filename, ...rest } = options;
+const requestPdf = async (options: PDFRequestOptions) => {
+  const { filename, payload } = options;
   try {
     const {
       data: { statusID },
-    } = await axios.post<{ statusID: string }>(`/api/crc-pdf-generator/v2/create`, rest);
+    } = await axios.post<{ statusID: string }>(`/api/crc-pdf-generator/v2/create`, { payload });
     const { status } = await pollStatus(statusID);
     if (status === 'Generated') {
       return downloadPDF(`/api/crc-pdf-generator/v2/download/${statusID}`, filename);

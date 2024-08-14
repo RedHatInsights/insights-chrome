@@ -91,6 +91,9 @@ describe('<Default layout />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {
@@ -106,6 +109,7 @@ describe('<Default layout />', () => {
       navItems: [],
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
+    cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
   });
 
   it('render correctly with few nav items', () => {

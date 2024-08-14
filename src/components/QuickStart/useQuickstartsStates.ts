@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { QuickStart, QuickStartState } from '@patternfly/quickstarts';
-import { populateQuickstartsCatalog } from '../../redux/actions';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useSetAtom } from 'jotai';
+import { populateQuickstartsAppAtom } from '../../state/atoms/quickstartsAtom';
 
 const useQuickstartsStates = () => {
-  const dispatch = useDispatch();
   const auth = useContext(ChromeAuthContext);
   const accountId = auth.user.identity?.internal?.account_id;
+  const populateQuickstarts = useSetAtom(populateQuickstartsAppAtom);
+
   const [allQuickStartStates, setAllQuickStartStatesInternal] = useState<{ [key: string | number]: QuickStartState }>({});
   const [activeQuickStartID, setActiveQuickStartIDInternal] = useState('');
 
@@ -68,12 +69,10 @@ const useQuickstartsStates = () => {
           name,
         },
       });
-      dispatch(
-        populateQuickstartsCatalog(
-          'default',
-          data.map(({ content }) => content)
-        )
-      );
+      populateQuickstarts({
+        app: 'default',
+        quickstarts: data.map(({ content }) => content),
+      });
 
       setActiveQuickStartID(name);
     } catch (error) {

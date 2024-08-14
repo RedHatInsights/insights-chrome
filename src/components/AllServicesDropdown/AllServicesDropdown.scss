@@ -63,14 +63,14 @@
       --pf-v5-c-sidebar__panel--md--FlexBasis: 20rem;
       --pf-v5-c-sidebar__panel--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
       &__main {
-        height: 630px;
+        height: 770px;
       }
       &__content {
-        height: 630px;  
+        height: 770px;  
         overflow: auto;
       }
       &__panel {
-        height: 630px;
+        height: 770px;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
         .pf-v5-c-tabs {
           --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;

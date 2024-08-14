@@ -18,9 +18,6 @@ module.exports = {
         $schema: 'http://json.schemastore.org/swcrc',
 
         jsc: {
-          experimental: {
-            plugins: [['jest_workaround', {}]],
-          },
           parser: {
             jsx: true,
             syntax: 'typescript',
@@ -43,5 +40,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
+    'react-markdown': '<rootDir>/src/__mocks__/empty-mock.js',
+    'remark-gfm': '<rootDir>/src/__mocks__/empty-mock.js',
   },
 };

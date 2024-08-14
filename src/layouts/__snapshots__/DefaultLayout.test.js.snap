@@ -4,6 +4,7 @@ exports[`DefaultLayout should render correctly - no data 1`] = `
 <div
   data-ouia-bundle=""
   data-ouia-safe="true"
+  data-ouia-subnav="some-app"
   id="chrome-app-render-root"
   landing="true"
 />

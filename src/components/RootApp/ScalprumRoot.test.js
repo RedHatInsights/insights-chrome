@@ -6,6 +6,10 @@ import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { Provider as JotaiProvider } from 'jotai';
 
+jest.mock('../Search/SearchInput', () => {
+  return jest.fn().mockImplementation(() => <div />);
+});
+
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
   return {
@@ -34,6 +38,15 @@ jest.mock('@unleash/proxy-client-react', () => {
     ...unleash,
     useFlag: () => false,
     useFlagsStatus: () => ({ flagsReady: true }),
+    useFlags: () => [],
+  };
+});
+
+jest.mock('../../state/atoms/releaseAtom', () => {
+  const util = jest.requireActual('../../state/atoms/utils');
+  return {
+    __esModule: true,
+    isPreviewAtom: util.atomWithToggle(false),
   };
 });
 
@@ -233,7 +246,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>
@@ -276,7 +289,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>

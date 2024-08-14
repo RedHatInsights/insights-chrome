@@ -2,11 +2,11 @@
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { LinkProps, NavLinkProps, NavigateOptions, NavigateProps, Path, To } from 'react-router-dom';
 
-const hacApps = ['/application-pipeline', '/stonesoup', '/app-studio'];
+export const hacApps = ['/application-pipeline', '/stonesoup', '/app-studio'];
 
 const updateSharedScope = () => {
   const calculateTo = (to: To) => {
-    if (window.location.pathname.includes('/hac')) {
+    if (window.location.pathname.match(/(\/hac\/|\/hac$)/)) {
       // FIXME: Create a global dynamic plugin solution to scope plugin nested routes
       if (typeof to === 'string' && !to.startsWith('/hac') && to.startsWith('/') && hacApps.some((item) => to.startsWith(item))) {
         return `/hac${to}`;

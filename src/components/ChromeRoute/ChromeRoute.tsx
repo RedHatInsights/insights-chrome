@@ -1,19 +1,20 @@
 import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
-import { ReduxState } from '../../redux/store';
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -27,10 +28,11 @@ export type ChromeRouteProps = {
 // eslint-disable-next-line react/display-name
 const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props }: ChromeRouteProps) => {
+    const isPreview = useAtomValue(isPreviewAtom);
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const { user } = useContext(ChromeAuthContext);
-    const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
+    const gatewayError = useAtomValue(gatewayErrorAtom);
 
     const setActiveModule = useSetAtom(activeModuleAtom);
 
@@ -45,7 +47,7 @@ const ChromeRoute = memo(
        */
       if (window.pendo) {
         try {
-          window.pendo.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>));
+          window.pendo.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>, isPreview));
         } catch (error) {
           console.error('Unable to update pendo options');
           console.error(error);
@@ -73,7 +75,7 @@ const ChromeRoute = memo(
       <div className={classNames(scopeClass, scope)}>
         <ScalprumComponent
           // TODO: fix in scalprum. The async loader is no triggered when module/scope changes. We had to abuse the key
-          key={path}
+          key={`${path}-${isPreview}`}
           ErrorComponent={<ErrorComponent />}
           fallback={LoadingFallback}
           // LoadingFallback={() => LoadingFallback}

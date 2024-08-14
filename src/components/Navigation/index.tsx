@@ -1,22 +1,24 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { Nav, NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { PageContextConsumer } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { useAtomValue } from 'jotai';
 
 import NavContext from './navContext';
 import componentMapper from './componentMapper';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import BetaInfoModal from '../../components/BetaInfoModal';
-import { isBeta } from '../../utils/common';
 
 import NavLoader from './Loader';
 import ChromeNavItem from './ChromeNavItem';
 import type { Navigation as NavigationSchema } from '../../@types/types';
 import { useFlag } from '@unleash/proxy-client-react';
 import { getUrl } from '../../hooks/useBundle';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type NavigationProps = { loaded: boolean; schema: NavigationSchema };
 
 const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
+  const isPreview = useAtomValue(isPreviewAtom);
   const [showBetaModal, setShowBetaModal] = useState(false);
   const deferedOnClickArgs = useRef<[React.MouseEvent<HTMLAnchorElement, MouseEvent> | undefined, string | undefined, string | undefined]>([
     undefined,
@@ -27,7 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
   const breadcrumbsDisabled = !useFlag('platform.chrome.bredcrumbs.enabled');
 
   const onLinkClick = (origEvent: React.MouseEvent<HTMLAnchorElement, MouseEvent>, href: string) => {
-    if (!showBetaModal && !isBeta()) {
+    if (!showBetaModal && !isPreview) {
       origEvent.preventDefault();
       deferedOnClickArgs.current = [origEvent, href, origEvent?.currentTarget?.text];
       setShowBetaModal(true);
@@ -68,7 +70,7 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
       <BetaInfoModal
         isOpen={showBetaModal}
         onClick={(event) => {
-          if (!isBeta()) {
+          if (!isPreview) {
             const [origEvent, href] = deferedOnClickArgs.current;
             const isMetaKey = event.ctrlKey || event.metaKey || origEvent?.ctrlKey || origEvent?.metaKey;
             const url = `${document.baseURI}beta${href}`;

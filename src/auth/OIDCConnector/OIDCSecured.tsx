@@ -2,20 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { BroadcastChannel } from 'broadcast-channel';
-import { useStore } from 'react-redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../ChromeAuthContext';
 import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
-import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { FooterProps } from '../../components/Footer/Footer';
 import logger from '../logger';
 import { login, logout } from './utils';
-import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
@@ -26,6 +23,7 @@ import { useAtomValue } from 'jotai';
 import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
+import chromeStore from '../../state/chromeStore';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -84,7 +82,6 @@ export function OIDCSecured({
 }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string } & FooterProps>) {
   const auth = useAuth();
   const authRef = useRef(auth);
-  const store = useStore();
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
 
@@ -115,6 +112,7 @@ export function OIDCSecured({
         encodeURIComponent(redirectUri.toString().split('#')[0])
       );
     },
+    forceRefresh: () => Promise.resolve(),
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
@@ -147,15 +145,10 @@ export function OIDCSecured({
   async function onUserAuthenticated(user: User) {
     // order of calls is important
     // init the IQE enablement first to add the necessary auth headers to the requests
-    init(store, authRef);
+    init(chromeStore, authRef);
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
-    initializeVisibilityFunctions({
-      getUser,
-      getToken: () => Promise.resolve(user.access_token),
-      getUserPermissions: createGetUserPermissions(getUser, () => Promise.resolve(user.access_token)),
-    });
     setState((prev) => ({
       ...prev,
       ready: true,
@@ -163,6 +156,7 @@ export function OIDCSecured({
       user: chromeUser,
       token: user.access_token,
       tokenExpires: user.expires_at!,
+      forceRefresh: authRef.current.signinSilent,
     }));
     sentry(chromeUser);
   }
