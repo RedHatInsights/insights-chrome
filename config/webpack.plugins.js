@@ -12,6 +12,24 @@ const getDynamicModules = require('./get-dynamic-modules');
 
 const deps = require('../package.json').dependencies;
 
+const isOutdatedBrowserChunk = (chunk) => {
+  return chunk.includes('outdated-browser');
+};
+
+// outdated-browser should appear first so that it has a chance to display an
+// error before any potentially-broken code runs on an older browser.
+const compareHtmlChunks = (chunkA, chunkB) => {
+  const isOutdatedA = isOutdatedBrowserChunk(chunkA);
+  const isOutdatedB = isOutdatedBrowserChunk(chunkB);
+
+  if (isOutdatedA !== isOutdatedB) {
+    // Descending ordering: the outdated-browser chunk comes first.
+    return isOutdatedA < isOutdatedB ? 1 : -1;
+  }
+
+  return chunkA.localeCompare(chunkB, 'en');
+};
+
 const plugins = (dev = false, beta = false, restricted = false) => {
   const ChunkMapper = new (require('./chunk-mapper'))({
     modules: 'chrome',
@@ -58,6 +76,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       template: restricted ? path.resolve(__dirname, '../src/indexRes.ejs') : path.resolve(__dirname, '../src/index.ejs'),
       inject: 'body',
       minify: false,
+      chunksSortMode: compareHtmlChunks,
       filename: dev ? 'index.html' : '../index.html',
       base: '/',
       templateParameters: {
@@ -70,6 +89,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
       inject: false,
       minify: false,
+      chunksSortMode: compareHtmlChunks,
       template: path.resolve(__dirname, '../src/silent-check-sso.html'),
     }),
     new ProvidePlugin({

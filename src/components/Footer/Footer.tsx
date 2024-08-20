@@ -80,7 +80,7 @@ const Footer = ({ setCookieElement, cookieElement }: FooterProps) => {
           </TextList>
           <Text component={TextVariants.h4}>Specific browser support </Text>
           <Text component="p">
-            We validate against and fully support our customers&#39; use of the past two major releases of the following browsers:
+            We validate against and fully support our customers&#39; use of the current major releases of the following browsers:
           </Text>
           <TextList>
             <TextListItem>Mozilla Firefox</TextListItem>
