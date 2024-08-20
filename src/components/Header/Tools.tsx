@@ -266,6 +266,7 @@ const Tools = () => {
         onChange={() => setIsPreview()}
         isReversed
         className="chr-c-beta-switcher"
+        ouiaId="PreviewSwitcher"
       />
     );
   };
