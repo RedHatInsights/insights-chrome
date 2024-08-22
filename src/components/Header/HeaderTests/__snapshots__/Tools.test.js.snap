@@ -6,7 +6,7 @@ exports[`Tools should render correctly 1`] = `
 >
   <label
     class="pf-v5-c-switch pf-m-reverse chr-c-beta-switcher"
-    data-ouia-component-id="OUIA-Generated-Switch-2"
+    data-ouia-component-id="PreviewSwitcher"
     data-ouia-component-type="PF5/Switch"
     data-ouia-safe="true"
     for="reversed-switch"
