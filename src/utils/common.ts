@@ -387,6 +387,7 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
               exact: typeof route === 'string' ? false : route.exact,
               props: typeof route === 'object' ? route.props : undefined,
+              permissions: typeof route === 'object' ? route.permissions : undefined,
             }))
           )
           .flat(),
