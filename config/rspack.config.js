@@ -149,6 +149,9 @@ const commonConfig = ({ dev }) => {
         proxyVerbose: true,
         isChrome: true,
         routes: {
+          '/apps/landing': {
+            host: 'http://localhost:8888',
+          },
           ...(process.env.CHROME_SERVICE && {
             // web sockets
             '/wss/chrome-service/': {
