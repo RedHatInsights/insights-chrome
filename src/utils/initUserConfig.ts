@@ -6,6 +6,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 export type ChromeUserConfig = {
   data: {
     uiPreview: boolean;
+    uiPreviewSeen: boolean;
   };
 };
 

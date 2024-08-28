@@ -9,7 +9,7 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type SettingsToggleDropdownGroup = {
-  title: string;
+  title?: string;
   items: SettingsToggleDropdownItem[];
 };
 
@@ -20,6 +20,7 @@ export type SettingsToggleDropdownItem = {
   isHidden?: boolean;
   isDisabled?: boolean;
   rel?: string;
+  ouiaId?: string;
 };
 
 export type SettingsToggleProps = {
@@ -43,14 +44,19 @@ const SettingsToggle = (props: SettingsToggleProps) => {
       {items.map(({ url, title, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }) =>
         !isHidden ? (
           <DropdownItem
+            onClick={onClick}
             key={title}
-            ouiaId={title}
+            ouiaId={rest.ouiaId ?? title}
             isDisabled={isDisabled}
-            component={({ className: itemClassName }) => (
-              <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
-                {title}
-              </ChromeLink>
-            )}
+            component={
+              onClick
+                ? undefined
+                : ({ className: itemClassName }) => (
+                    <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
+                      {title}
+                    </ChromeLink>
+                  )
+            }
           >
             {title}
           </DropdownItem>
