@@ -5,9 +5,7 @@ import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { spinUpStore } from './redux/redux-config';
-import RootApp from './components/RootApp';
-import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
+import { getEnv } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
@@ -16,9 +14,7 @@ import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/Generate
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 
-const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
-const AuthProvider = OIDCProvider;
 
 GenerateId.defaultProps.prefix = 'hc-console-';
 GenerateId.defaultProps.isRandom = true;

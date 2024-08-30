@@ -2,13 +2,15 @@
 // const webpack = require('webpack');
 const rspack = require('@rspack/core');
 const resolve = require('path').resolve;
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 // const { ProvidePlugin } = require('webpack');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
+const { pluginReact } = require('@rsbuild/plugin-react');
 
 // const MFP = require('@module-federation/enhanced').ModuleFederationPlugin;
 
@@ -20,6 +22,12 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     _unstableHotReload: dev,
   });
   return [
+    // pluginReact({
+    //   swcReactOptions: {
+    //     refresh: dev,
+    //     development: dev,
+    //   }
+    // }),
     new rspack.CssExtractRspackPlugin({
       filename: dev ? '[name].css' : '[name].[contenthash].css',
       ignoreOrder: true,
@@ -54,7 +62,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       ],
     }),
     ChunkMapper,
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       template: restricted ? path.resolve(__dirname, '../src/indexRes.ejs') : path.resolve(__dirname, '../src/index.ejs'),
       inject: 'body',
       minify: false,
@@ -65,7 +73,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
       },
     }),
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',
       filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
       inject: false,
@@ -85,7 +93,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new rspack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    // ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
     // Put the Sentry Webpack plugin after all other plugins
     ...(process.env.ENABLE_SENTRY
       ? [
@@ -106,6 +113,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
           }),
         ]
       : []),
+    ...(dev ? [new ReactRefreshPlugin()] : []),
   ];
 };
 
