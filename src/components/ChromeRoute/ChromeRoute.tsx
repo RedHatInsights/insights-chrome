@@ -76,6 +76,7 @@ const ChromeRoute = memo(
       };
     }, [scope]);
 
+    console.log('rendering ChromeRoute!!!', scope, module, path);
     if (gatewayError) {
       return <GatewayErrorComponent error={gatewayError} />;
     }
@@ -91,6 +92,7 @@ const ChromeRoute = memo(
 
     return (
       <div className={classNames(scopeClass, scope)}>
+        <h1>AAA</h1>
         <ScalprumComponent
           // TODO: fix in scalprum. The async loader is no triggered when module/scope changes. We had to abuse the key
           key={`${path}-${isPreview}`}

@@ -22,6 +22,55 @@ const PFGenerator = asGenerator((item, ...rest) => {
 
 const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
+  /** @type { import("@rspack/core").Configuration["devServer"] } */
+  const pc = proxy({
+    env: 'stage-beta',
+    port: 1337,
+    appUrl: [/^\/*$/],
+    useProxy: true,
+    publicPath,
+    proxyVerbose: true,
+    isChrome: true,
+    routes: {
+      // '/apps/landing': {
+      //   host: 'http://localhost:8888',
+      // },
+      ...(process.env.CHROME_SERVICE && {
+        // web sockets
+        '/wss/chrome-service/': {
+          target: `ws://localhost:${process.env.CHROME_SERVICE}`,
+          // To upgrade the connection
+          ws: true,
+        },
+        // REST API
+        '/api/chrome-service/v1/': {
+          host: `http://localhost:${process.env.CHROME_SERVICE}`,
+        },
+      }),
+      ...(process.env.CONFIG_PORT && {
+        '/beta/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+        '/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+      }),
+      ...(process.env.NAV_CONFIG && {
+        '/api/chrome-service/v1/static': {
+          host: `http://localhost:${process.env.NAV_CONFIG}`,
+        },
+      }),
+    },
+  });
+  // console.log(pc.onBeforeSetupMiddleware);
+  pc.setupMiddlewares = (middlewares, { app, compiler, options }) => {
+    app.enable('strict routing');
+
+    return middlewares;
+  };
+  // not in v1 release
+  delete pc.onBeforeSetupMiddleware;
+
   /** @type { import("rspack").Configuration } */
   return {
     entry: dev
@@ -47,6 +96,10 @@ const commonConfig = ({ dev }) => {
     devtool: false,
     experiments: {
       css: true,
+      // lazyCompilation: true,
+      // rspackFuture: {
+      //   disableTransformByDefault: true,
+      // },
     },
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
@@ -92,8 +145,15 @@ const commonConfig = ({ dev }) => {
           test: /\.(js|ts)x?$/,
           exclude: /node_modules/,
           use: {
-            loader: 'swc-loader',
+            loader: 'builtin:swc-loader',
             options: {
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                  development: dev,
+                  refresh: dev,
+                },
+              },
               jsc: {
                 parser: {
                   syntax: 'typescript',
@@ -106,8 +166,6 @@ const commonConfig = ({ dev }) => {
         {
           test: /\.s?[ac]ss$/,
           use: [
-            // rspack.CssExtractRspackPlugin.loader,
-            // 'css-loader',
             {
               loader: 'resolve-url-loader',
               options: {
@@ -118,6 +176,8 @@ const commonConfig = ({ dev }) => {
               loader: 'sass-loader',
               options: {
                 sourceMap: true,
+                api: 'modern-compiler',
+                implementation: require.resolve('sass-embedded'),
               },
             },
           ],
@@ -139,49 +199,11 @@ const commonConfig = ({ dev }) => {
       historyApiFallback: {
         index: `${publicPath}index.html`,
       },
-      https: true,
+      server: 'https',
       port: 1337,
       // HMR flag
+      ...pc,
       hot: true,
-      ...proxy({
-        env: 'stage-beta',
-        port: 1337,
-        appUrl: [/^\/*$/],
-        useProxy: true,
-        publicPath,
-        proxyVerbose: true,
-        isChrome: true,
-        routes: {
-          '/apps/landing': {
-            host: 'http://localhost:8888',
-          },
-          ...(process.env.CHROME_SERVICE && {
-            // web sockets
-            '/wss/chrome-service/': {
-              target: `ws://localhost:${process.env.CHROME_SERVICE}`,
-              // To upgrade the connection
-              ws: true,
-            },
-            // REST API
-            '/api/chrome-service/v1/': {
-              host: `http://localhost:${process.env.CHROME_SERVICE}`,
-            },
-          }),
-          ...(process.env.CONFIG_PORT && {
-            '/beta/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-            '/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-          }),
-          ...(process.env.NAV_CONFIG && {
-            '/api/chrome-service/v1/static': {
-              host: `http://localhost:${process.env.NAV_CONFIG}`,
-            },
-          }),
-        },
-      }),
     },
   };
 };
@@ -226,6 +248,8 @@ const pfConfig = {
                 outputStyle: 'compressed',
               },
               sourceMap: true,
+              api: 'modern-compiler',
+              implementation: require.resolve('sass-embedded'),
             },
           },
         ],
