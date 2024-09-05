@@ -19,8 +19,7 @@ const AUTH_ALLOWED_ORIGINS = [
   /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/,
   /https:\/\/api?\.demo-experience(?:\.[a-z]+)?\.demo?\.redhat?\.com/,
   /https:\/\/api?\.aws?\.ap-southeast-1(?:\.[a-z]+)?\.openshift?\.com/,
-  /https:\/\/console-service?\.[a-z]*-[a-z]*\.aws?\.ansiblecloud?\.com\/api/,
-  /https:\/\/console-service?\.[a-z]*-[a-z]*\.aws?\.ansiblecloud?\.redhat?\.com\/api/,
+  /https:\/\/console-service?\.[a-z]*-[a-z]*\.?(?:[a-z]*)\.aws?\.ansiblecloud?(?:\.redhat)?\.com\/api/,
 ];
 const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
 
