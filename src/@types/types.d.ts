@@ -150,6 +150,7 @@ export type ModuleRoute = {
   dynamic?: boolean;
   props?: Record<string, unknown>;
   supportCaseData?: SupportCaseConfig;
+  permissions?: NavItemPermission[];
 };
 
 export type RemoteModule = {

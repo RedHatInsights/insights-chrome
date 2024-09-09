@@ -47,6 +47,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
+        { '@scalprum/core': { singleton: true, requiredVersion: deps['@scalprum/core'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         getDynamicModules(process.cwd()),

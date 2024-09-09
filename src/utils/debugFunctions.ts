@@ -3,6 +3,8 @@ const functionBuilder = (key: string, value: boolean | number | string) => {
   return () => window.localStorage && window.localStorage.removeItem(key);
 };
 
+export const CHROME_PF4_DEBUG = 'chrome:pf4:disabled';
+
 const debugFunctions = {
   iqe: () => functionBuilder('iqe:chrome:init', true),
   remediationsDebug: () => functionBuilder('remediations:debug', true),
@@ -23,6 +25,7 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
+  disabledPf4: () => functionBuilder(CHROME_PF4_DEBUG, true),
 };
 
 export default debugFunctions;
