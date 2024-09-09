@@ -42,21 +42,19 @@ const IPWhitelistTable: React.FC = () => {
   const [isIPRemoveModalOpen, setIsIPRemoveModalOpen] = useState(false);
 
   const getIPAddresses = () => {
-    return axios.get('/api/v1/allowlist');
+    return axios.get('/api/mbop/v1/allowlist');
   };
 
   const removeIPAddresses = (ipBlock: string) => {
-    return axios.delete(`/api/v1/allowlist?block=${ipBlock}`);
+    return axios.delete(`/api/mbop/v1/allowlist?block=${ipBlock}`);
   };
 
   const addIPAddresses = (ipBlock: string) => {
-    return axios.post('/api/v1/allowlist', { ip_block: ipBlock });
+    return axios.post('/api/mbop/v1/allowlist', { ip_block: ipBlock });
   };
 
   useEffect(() => {
     if (!loaded && !actionPending) {
-      // If we fail to load the IP blocks, show the empty state by default after 10 seconds
-      setTimeout(() => setLoaded(true), 10000);
       getIPAddresses()
         .then((res) => {
           setAllAddresses(res.data);
@@ -172,7 +170,7 @@ const IPWhitelistTable: React.FC = () => {
           <TextInput isDisabled value={removeAddresses}></TextInput>
         </FormGroup>
         <ActionGroup>
-          <Button onClick={onRemoveAddresses} isDisabled={actionPending}>
+          <Button onClick={onRemoveAddresses} isDisabled={actionPending} variant="danger">
             Remove
           </Button>
         </ActionGroup>

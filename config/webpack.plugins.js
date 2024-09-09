@@ -37,6 +37,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
         './DashboardFavorites': resolve(__dirname, '../src/components/FavoriteServices/DashboardFavorites.tsx'),
+        './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
