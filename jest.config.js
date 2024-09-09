@@ -16,6 +16,7 @@ module.exports = {
       '@patternfly/react-icons/dist/esm',
       '@patternfly/(elements|pfe-core)/.*',
       '@rhds/elements/.*',
+      '@rhds/icons/.*',
       '@rhds/tokens/.*',
       '@?lit(/.*)?',
     ].join('|')}).+(js|jsx)$`,
