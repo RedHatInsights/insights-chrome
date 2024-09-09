@@ -133,8 +133,6 @@
     "@lit/react": "^1.0.5",
     "@openshift/dynamic-plugin-sdk": "^5.0.1",
     "@orama/orama": "^2.0.21",
-    "@patternfly/elements": "^4.0.1",
-    "@patternfly/icons": "^1.0.3",
     "@patternfly/patternfly": "^5.3.1",
     "@patternfly/quickstarts": "^5.4.0-prerelease.4",
     "@patternfly/react-charts": "^7.3.1",
