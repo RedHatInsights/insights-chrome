@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
@@ -12,7 +12,7 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/quest
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
-import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
+import ToolbarToggle from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
@@ -21,11 +21,10 @@ import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
-import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
-import PreviewAlert from './PreviewAlert';
+import useSupportCaseData from '../../hooks/useSupportCaseData';
 
 const isITLessEnv = ITLess();
 
@@ -40,26 +39,6 @@ const InternalButton = () => (
   >
     <RedhatIcon />
   </Button>
-);
-
-type SettingsButtonProps = {
-  settingsMenuDropdownItems: ToolbarToggleDropdownItem[];
-};
-
-const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
-  <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
-    <ToolbarToggle
-      key="Settings menu"
-      icon={() => <CogIcon />}
-      id="SettingsMenu"
-      ariaLabel="Settings menu"
-      ouiaId="chrome-settings"
-      hasToggleIndicator={null}
-      widget-type="SettingsMenu"
-      dropdownItems={settingsMenuDropdownItems}
-      className="tooltip-button-settings-cy"
-    />
-  </Tooltip>
 );
 
 type ExpandedSettingsButtonProps = {
@@ -88,10 +67,10 @@ const Tools = () => {
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
-  const [isPreview, setIsPreview] = useAtom(isPreviewAtom);
+  const isPreview = useAtomValue(isPreviewAtom);
+  const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
-  const { xs } = useWindowWidth();
   const { user, token } = useContext(ChromeAuthContext);
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
   const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
@@ -102,8 +81,6 @@ const Tools = () => {
     messages.betaRelease
   )}`;
 
-  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
@@ -111,6 +88,16 @@ const Tools = () => {
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
+    {
+      items: [
+        {
+          ouiaId: 'PreviewSwitcher',
+          title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
+          url: '#',
+          onClick: () => togglePreviewWithCheck(),
+        },
+      ],
+    },
     {
       title: 'Settings',
       items: [
@@ -147,24 +134,6 @@ const Tools = () => {
     },
   ];
 
-  // Old settings menu
-  const settingsMenuDropdownItems = [
-    {
-      url: settingsPath,
-      title: 'Settings',
-      appId: 'sources',
-    },
-    ...(enableAuthDropdownOption
-      ? [
-          {
-            url: identityAndAccessManagmentPath,
-            title: 'Identity & Access Management',
-            appId: 'iam',
-          },
-        ]
-      : []),
-  ];
-
   useEffect(() => {
     if (user) {
       setState({
@@ -174,6 +143,7 @@ const Tools = () => {
       });
     }
   }, [user]);
+  const supportCaseData = useSupportCaseData();
 
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
@@ -188,7 +158,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token, isPreview),
+      onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
       isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
       isHidden: isITLessEnv,
     },
@@ -231,7 +201,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => setIsPreview(),
+      onClick: () => togglePreviewWithCheck(),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -253,21 +223,6 @@ const Tools = () => {
     </Tooltip>
   );
 
-  const BetaSwitcher = () => {
-    return (
-      <Switch
-        id="reversed-switch"
-        label="Preview on"
-        labelOff="Preview off"
-        aria-label="Preview switcher"
-        isChecked={isPreview}
-        onChange={() => setIsPreview()}
-        isReversed
-        className="chr-c-beta-switcher"
-      />
-    );
-  };
-
   const ThemeToggle = () => {
     const [darkmode, setDarkmode] = useState(false);
     return (
@@ -287,16 +242,6 @@ const Tools = () => {
 
   return (
     <>
-      <ToolbarItem
-        className="pf-v5-u-mr-0"
-        {...(isNotificationsEnabled && {
-          spacer: {
-            default: 'spacerMd',
-          },
-        })}
-      >
-        {!xs && <BetaSwitcher />}
-      </ToolbarItem>
       {isNotificationsEnabled && (
         <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
           <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
@@ -325,11 +270,7 @@ const Tools = () => {
         </ToolbarItem>
       )}
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {enableExpandedSettings ? (
-          <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
-        ) : (
-          <SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />
-        )}
+        <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
       </ToolbarItem>
       <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
@@ -369,7 +310,6 @@ const Tools = () => {
           />
         </Tooltip>
       </ToolbarItem>
-      <PreviewAlert />
     </>
   );
 };

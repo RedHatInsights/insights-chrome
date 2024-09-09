@@ -9,6 +9,7 @@ import { ChromeUser } from '@redhat-cloud-services/types';
 import { getUrl } from '../hooks/useBundle';
 import chromeStore from '../state/chromeStore';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
+import { SupportCaseConfig } from '../@types/types';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -72,8 +73,9 @@ export async function createSupportCase(
   userInfo: ChromeUser['identity'],
   token: string,
   isPreview: boolean,
-  fields?: {
-    caseFields: Record<string, unknown>;
+  options?: {
+    supportCaseData?: SupportCaseConfig | undefined;
+    caseFields?: Record<string, unknown>;
   }
 ) {
   const currentProduct = registerProduct() || 'Other';
@@ -82,6 +84,7 @@ export async function createSupportCase(
   const { src_hash, app_name } = { src_hash: productData?.src_hash, app_name: productData?.app_name ?? getUrl('app') };
   const portalUrl = `${getEnvDetails()?.portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
+  const { supportCaseData, ...fields } = options ?? { caseFields: {} };
 
   log('Creating a support case');
 
@@ -112,7 +115,12 @@ export async function createSupportCase(
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        const query = URI(`?seSessionId=${data.session.id}&product=${data.sessionDetails.product}&version=${src_hash}`).normalize();
+        // FIXME: Use the URLSearchParams API instead of URI.js
+        const query = URI(
+          `?seSessionId=${data.session.id}&product=${supportCaseData?.product ?? data.sessionDetails.product}&version=${
+            supportCaseData?.version ?? src_hash
+          }`
+        ).normalize();
         window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue${query.readable()}`);
         return createSupportSentry(data.session.id, fields);
       }
