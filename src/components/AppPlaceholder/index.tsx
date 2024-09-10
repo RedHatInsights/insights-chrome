@@ -8,6 +8,7 @@ import ChromeFooter from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
 import { getUrl } from '../../hooks/useBundle';
+import LoadingFallback from '../../utils/loading-fallback';
 
 // Component that is displayed as a placeholder before auth init is finished
 const AppPlaceholder = () => {
@@ -36,6 +37,7 @@ const AppPlaceholder = () => {
         }
       >
         <div className="chr-render">
+          {LoadingFallback}
           <ChromeFooter />
         </div>
       </Page>
