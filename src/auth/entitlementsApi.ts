@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { ServicesApi } from '@redhat-cloud-services/entitlements-client';
+// Once we migrate to axios v1 we can remove this line
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { setupCache } from 'axios-cache-interceptor';
 import { deleteLocalStorageItems, lastActive } from '../utils/common';
 
