@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { Cta } from '@rhds/elements/react/rh-cta/rh-cta.js';
 import { Dialog } from '@rhds/elements/react/rh-dialog/rh-dialog.js';
@@ -11,6 +11,22 @@ import { FooterUniversal } from '@rhds/elements/react/rh-footer/rh-footer-univer
 import '@rhds/elements/rh-footer/rh-footer-lightdom.css';
 
 import './Footer.scss';
+
+const CookieConsentElement = () => {
+  // the consent element can be initialized only once, but we render multiple instance of the footer based on the UI state
+  // we have to carry the element around the DOM so it does not disappear when the footer is re-initialized
+  const consentRef = useRef<HTMLLIElement>(null);
+  const consentElement = useMemo(() => {
+    return document.getElementById('teconsent');
+  }, []);
+  useEffect(() => {
+    if (consentRef.current && consentElement) {
+      consentRef.current.appendChild(consentElement);
+    }
+  }, [consentElement]);
+
+  return <li ref={consentRef}></li>;
+};
 
 const ChromeFooter = () => {
   return (
@@ -198,6 +214,7 @@ const ChromeFooter = () => {
                 Browser support
               </a>
             </li>
+            <CookieConsentElement />
           </ul>
         </FooterUniversal>
       </Footer>
