@@ -42,14 +42,6 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
-jest.mock('../../state/atoms/releaseAtom', () => {
-  const util = jest.requireActual('../../state/atoms/utils');
-  return {
-    __esModule: true,
-    isPreviewAtom: util.atomWithToggle(false),
-  };
-});
-
 window.ResizeObserver =
   window.ResizeObserver ||
   jest.fn().mockImplementation(() => ({
@@ -63,6 +55,8 @@ import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useHydrateAtoms } from 'jotai/utils';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { hidePreviewBannerAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 
 const HydrateAtoms = ({ initialValues, children }) => {
   useHydrateAtoms(initialValues);
@@ -207,13 +201,21 @@ describe('ScalprumRoot', () => {
     let getByLabelText;
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
-        <Provider store={store}>
-          <ChromeAuthContext.Provider value={chromeContextMockValue}>
-            <MemoryRouter initialEntries={['/*']}>
-              <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
-            </MemoryRouter>
-          </ChromeAuthContext.Provider>
-        </Provider>
+        <JotaiTestProvider
+          initialValues={[
+            [hidePreviewBannerAtom, false],
+            [isPreviewAtom, false],
+            [userConfigAtom, { data: {} }],
+          ]}
+        >
+          <Provider store={store}>
+            <ChromeAuthContext.Provider value={chromeContextMockValue}>
+              <MemoryRouter initialEntries={['/*']}>
+                <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
+              </MemoryRouter>
+            </ChromeAuthContext.Provider>
+          </Provider>
+        </JotaiTestProvider>
       );
       getByLabelText = internalGetByLabelText;
     });

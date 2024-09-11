@@ -17,7 +17,10 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     | undefined
   >(undefined);
   async function setupSSO() {
-    const { data } = await loadFedModules();
+    const {
+      // ignore $schema from the data as it is an spec ref
+      data: { $schema: ignore, ...data },
+    } = await loadFedModules();
     try {
       const {
         chrome: {

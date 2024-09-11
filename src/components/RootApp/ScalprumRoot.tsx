@@ -37,6 +37,7 @@ import useTabName from '../../hooks/useTabName';
 import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
+import BetaSwitcher from '../BetaSwitcher';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -225,6 +226,7 @@ const ScalprumRoot = memo(
       <InternalChromeContext.Provider value={mutableChromeApi.current}>
         <ScalprumProvider {...scalprumProviderProps}>
           <ChromeProvider>
+            <BetaSwitcher />
             <Routes>
               <Route
                 index
