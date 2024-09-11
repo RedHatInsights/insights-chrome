@@ -137,6 +137,11 @@ aside {
       --pf-v5-c-backdrop--Position: absolute;
     }
   }
+
+// remove float from restart button so it's not obscured by pendo or the va badge
+.pfext-quick-start-footer__restartbtn {
+  float: none;
+}
   
 // fix quickstarts drawer overflow for long quickstart/helptopic content
 #chrome-entry {
