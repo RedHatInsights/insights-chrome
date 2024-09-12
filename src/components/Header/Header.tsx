@@ -1,5 +1,6 @@
 import React, { Fragment, Suspense, useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useFlag } from '@unleash/proxy-client-react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
@@ -15,7 +16,6 @@ import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
 import { activationRequestURLs } from '../../utils/consts';
-import { ITLess } from '../../utils/common';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
 import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
@@ -40,7 +40,6 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const search = new URLSearchParams(window.location.search).keys().next().value;
   const isActivationPath = activationRequestURLs.includes(search);
-  const isITLessEnv = ITLess();
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
   const { md, lg } = useWindowWidth();
@@ -48,6 +47,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   const hideAllServices = (isOpen: boolean) => {
     setSearchOpen(isOpen);
   };
+  const isITLess = useFlag('platform.chrome.itless');
 
   return (
     <Fragment>
@@ -64,7 +64,7 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
         </Toolbar>
       </MastheadMain>
       <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
-        {user?.identity?.org_id && !isITLessEnv && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
+        {user?.identity?.org_id && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
         {user && isActivationPath && <Activation user={user} request={search} />}
         <Toolbar isFullHeight>
           <ToolbarContent>
@@ -72,10 +72,10 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
               {user && (
                 <ToolbarItem>
                   {!(!md && searchOpen) && <AllServicesDropdown />}
-                  {isITLessEnv && user?.identity?.user?.is_org_admin && <SatelliteLink />}
+                  {isITLess && user?.identity?.user?.is_org_admin && <SatelliteLink />}
                 </ToolbarItem>
               )}
-              {user && !isITLessEnv && (
+              {user && !isITLess && (
                 <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
                   <ContextSwitcher user={user} className="data-hj-suppress sentry-mask" />
                 </ToolbarItem>
