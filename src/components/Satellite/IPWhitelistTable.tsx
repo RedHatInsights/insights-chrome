@@ -220,7 +220,7 @@ const IPWhitelistTable: React.FC = () => {
               <Tr key={ipBlock.ip_block}>
                 <Td dataLabel={columnNames.ip_block}>{ipBlock.ip_block}</Td>
                 <Td dataLabel={columnNames.org_id}>{ipBlock.org_id}</Td>
-                <Td dataLabel={columnNames.created_at}>{ipBlock.created_at}</Td>
+                <Td dataLabel={columnNames.created_at}>{new Date(ipBlock.created_at).toLocaleString()}</Td>
                 <Td dataLabel={columnNames.remove} modifier="fitContent">
                   <TableText>
                     <Button
