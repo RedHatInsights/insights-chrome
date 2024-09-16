@@ -14,10 +14,18 @@
   @media screen and (min-width: $pf-v5-global--breakpoint--2xl) {
     top: 70px;
     height: 100vh;
+    &.preview-offset {
+      // consider the preview banner
+      top: calc(70px + 32px);
+    }
   }
   @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
     top: 118px;
     height: 100vh;
+    &.preview-offset {
+      // consider the preview banner
+      top: calc(118px + 32px);
+    }
   }
 
   // pos has to be important to override PF styles that get lazy loaded!
