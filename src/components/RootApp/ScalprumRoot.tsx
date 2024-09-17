@@ -22,7 +22,7 @@ import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/type
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
-import Footer, { FooterProps } from '../Footer/Footer';
+import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
@@ -45,14 +45,14 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   return callback(selectedTags);
 };
 
-export type ScalprumRootProps = FooterProps & {
+export type ScalprumRootProps = {
   config: AppsConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
 
 const ScalprumRoot = memo(
-  ({ config, helpTopicsAPI, quickstartsAPI, cookieElement, setCookieElement, ...props }: ScalprumRootProps) => {
+  ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
     const { setFilteredHelpTopics } = useContext(HelpTopicContext);
     const internalFilteredTopics = useRef<HelpTopic[]>([]);
     const { analytics } = useContext(SegmentContext);
@@ -227,11 +227,7 @@ const ScalprumRoot = memo(
           <ChromeProvider>
             <BetaSwitcher />
             <Routes>
-              <Route
-                index
-                path="/"
-                element={<DefaultLayout Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} {...props} />}
-              />
+              <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} {...props} />} />
               <Route
                 path="/connect/products"
                 element={
@@ -244,7 +240,7 @@ const ScalprumRoot = memo(
                 path="/allservices"
                 element={
                   <Suspense fallback={LoadingFallback}>
-                    <AllServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                    <AllServices Footer={<ChromeFooter />} />
                   </Suspense>
                 }
               />
@@ -253,7 +249,7 @@ const ScalprumRoot = memo(
                   path="/favoritedservices"
                   element={
                     <Suspense fallback={LoadingFallback}>
-                      <FavoritedServices Footer={<Footer setCookieElement={setCookieElement} cookieElement={cookieElement} />} />
+                      <FavoritedServices Footer={<ChromeFooter />} />
                     </Suspense>
                   }
                 />

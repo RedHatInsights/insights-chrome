@@ -10,7 +10,6 @@ import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
-import { FooterProps } from '../../components/Footer/Footer';
 import logger from '../logger';
 import { login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
@@ -76,10 +75,8 @@ async function fetchEntitlements(user: User) {
 export function OIDCSecured({
   children,
   microFrontendConfig,
-  cookieElement,
-  setCookieElement,
   ssoUrl,
-}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string } & FooterProps>) {
+}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
@@ -200,7 +197,7 @@ export function OIDCSecured({
   }
 
   if (!auth.isAuthenticated || !state.ready) {
-    return <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />;
+    return <AppPlaceholder />;
   }
 
   return <ChromeAuthContext.Provider value={state}>{children}</ChromeAuthContext.Provider>;

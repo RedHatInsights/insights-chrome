@@ -70,6 +70,7 @@ const commonConfig = ({ dev }) => {
         unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
+        '@rhds/icons': path.resolve(__dirname, '../node_modules/@rhds/icons'),
       },
       fallback: {
         path: require.resolve('path-browserify'),
