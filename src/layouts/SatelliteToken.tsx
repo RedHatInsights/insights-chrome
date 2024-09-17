@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
@@ -9,18 +9,23 @@ import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/component
 import SatelliteTable from '../components/Satellite/SatelliteTable';
 import IPWhitelistTable from '../components/Satellite/IPWhitelistTable';
 import { getEnv } from '../utils/common';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import NotFoundRoute from '../components/NotFoundRoute';
 
 const SatelliteToken: React.FC = () => {
   const [token, setToken] = useState('');
   const [error, setError] = useState(null);
-  const { user } = useContext(ChromeAuthContext);
+  const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>(false);
+  const { auth } = useChrome();
   const isITLess = useFlag('platform.chrome.itless');
 
   if (!isITLess) {
     return <NotFoundRoute />;
   }
+
+  useEffect(() => {
+    auth.getUser().then((user) => user && setIsOrgAdmin(!!user?.identity?.user?.is_org_admin));
+  }, []);
 
   const generateToken = () => {
     axios
@@ -90,7 +95,7 @@ const SatelliteToken: React.FC = () => {
             </CardBody>
           </Card>
         </PageSection>
-        {user.identity.user?.is_org_admin ? (
+        {isOrgAdmin ? (
           <PageSection>
             <Card>
               <CardTitle>IP Address Allow List</CardTitle>
