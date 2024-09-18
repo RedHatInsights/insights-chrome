@@ -95,16 +95,6 @@ const DropdownItems = ({
         </DropdownItem>
       )}
     </React.Fragment>,
-    <React.Fragment key="My user access wrapper">
-      <DropdownItem
-        component={({ className }) => (
-          <ChromeLink className={className} href={myUserAccessPath} appId="rbac">
-            {intl.formatMessage(messages.myUserAccess)}
-          </ChromeLink>
-        )}
-        key="My user access"
-      />
-    </React.Fragment>,
     <React.Fragment key="user prefs wrapper">
       <DropdownItem
         component={({ className }) => (

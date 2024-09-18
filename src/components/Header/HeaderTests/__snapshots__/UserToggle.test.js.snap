@@ -229,22 +229,6 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
         >
           <a
             class="pf-v5-c-menu__item"
-            data-quickstart-id="iam_my-user-access"
-            data-testid="router-link"
-            href="/iam/my-user-access"
-          >
-            My User Access
-          </a>
-        </li>
-        <li
-          class="pf-v5-c-menu__list-item"
-          data-ouia-component-id="OUIA-Generated-DropdownItem-5"
-          data-ouia-component-type="PF5/DropdownItem"
-          data-ouia-safe="true"
-          role="none"
-        >
-          <a
-            class="pf-v5-c-menu__item"
             data-quickstart-id="settings_notifications_user-preferences"
             data-testid="router-link"
             href="/settings/notifications/user-preferences"
@@ -254,7 +238,7 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
         </li>
         <li
           class="pf-v5-c-menu__list-item"
-          data-ouia-component-id="OUIA-Generated-DropdownItem-6"
+          data-ouia-component-id="OUIA-Generated-DropdownItem-5"
           data-ouia-component-type="PF5/DropdownItem"
           data-ouia-safe="true"
           role="none"
