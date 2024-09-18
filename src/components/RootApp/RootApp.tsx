@@ -14,7 +14,6 @@ import { ITLess, chunkLoadErrorRefreshKey } from '../../utils/common';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
-import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
@@ -24,9 +23,7 @@ import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAto
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
-export type RootAppProps = FooterProps;
-
-const RootApp = memo((props: RootAppProps) => {
+const RootApp = memo(() => {
   const config = useAtomValue(scalprumConfigAtom);
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
@@ -123,7 +120,7 @@ const RootApp = memo((props: RootAppProps) => {
           </Suspense>
           <QuickStartContainer {...quickStartProps}>
             <HelpTopicContainer helpTopics={helpTopics}>
-              <ScalprumRoot {...props} config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+              <ScalprumRoot config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
             </HelpTopicContainer>
           </QuickStartContainer>
         </FeatureFlagsProvider>

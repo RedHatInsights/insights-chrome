@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Header } from '../components/Header/Header';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { List, ListComponent, ListItem, OrderType } from '@patternfly/react-core/dist/dynamic/components/List';
-import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import SatelliteTable from '../components/Satellite/SatelliteTable';
+import IPWhitelistTable from '../components/Satellite/IPWhitelistTable';
 import { getEnv } from '../utils/common';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import NotFoundRoute from '../components/NotFoundRoute';
 
 const SatelliteToken: React.FC = () => {
   const [token, setToken] = useState('');
   const [error, setError] = useState(null);
+  const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>(false);
+  const { auth } = useChrome();
+  const isITLess = useFlag('platform.chrome.itless');
+
+  if (!isITLess) {
+    return <NotFoundRoute />;
+  }
+
+  useEffect(() => {
+    auth.getUser().then((user) => user && setIsOrgAdmin(!!user?.identity?.user?.is_org_admin));
+  }, []);
 
   const generateToken = () => {
     axios
@@ -38,11 +51,6 @@ const SatelliteToken: React.FC = () => {
       <Page
         className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
-        header={
-          <Masthead className="chr-c-masthead">
-            <Header />
-          </Masthead>
-        }
       >
         <PageSection padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
           <Card>
@@ -87,6 +95,16 @@ const SatelliteToken: React.FC = () => {
             </CardBody>
           </Card>
         </PageSection>
+        {isOrgAdmin ? (
+          <PageSection>
+            <Card>
+              <CardTitle>IP Address Allow List</CardTitle>
+              <CardBody>
+                <IPWhitelistTable />
+              </CardBody>
+            </Card>
+          </PageSection>
+        ) : null}
       </Page>
     </div>
   );
