@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useFlag } from '@unleash/proxy-client-react';
 
 const DropdownItems = ({
   username = '',
