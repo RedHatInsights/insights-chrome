@@ -41,7 +41,6 @@ const DropdownItems = ({
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
   const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [
     <DropdownItem key="Username" isDisabled>
