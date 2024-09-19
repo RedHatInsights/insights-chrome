@@ -20,7 +20,7 @@ import { localQuery } from '../../utils/localSearch';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { ReleaseEnv } from '../../@types/types.d';
 import type { SearchItem } from './SearchTypes';
-import SearchFeedback from './SearchFeedback';
+import SearchFeedback, { SearchFeedbackType } from './SearchFeedback';
 
 export type SearchInputprops = {
   isExpanded?: boolean;
@@ -44,6 +44,7 @@ type SearchInputListener = {
 const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [currentFeedbackType, setcurrentFeedbackType] = useState<SearchFeedbackType>();
   const [isFetching, setIsFetching] = useState(false);
   const [searchItems, setSearchItems] = useState<SearchItem[]>([]);
   const isPreview = useAtomValue(isPreviewAtom);
@@ -60,6 +61,12 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const { md } = useWindowWidth();
 
   const resultCount = searchItems.length;
+
+  useEffect(() => {
+    if (currentFeedbackType) {
+      setcurrentFeedbackType(undefined);
+    }
+  }, [searchValue]);
 
   const handleMenuKeys = (event: KeyboardEvent) => {
     if (!isOpen) {
@@ -197,7 +204,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   if (searchItems.length > 0 && !isFetching) {
     menuFooter = (
       <MenuFooter className="pf-v5-u-px-md">
-        <SearchFeedback query={searchValue} results={searchItems} />
+        <SearchFeedback query={searchValue} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
       </MenuFooter>
     );
   }
