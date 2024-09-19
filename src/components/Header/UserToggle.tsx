@@ -40,7 +40,6 @@ const DropdownItems = ({
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
-  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
 
   return [
     <DropdownItem key="Username" isDisabled>
