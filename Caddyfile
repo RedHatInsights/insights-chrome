@@ -15,8 +15,8 @@
     handle @app_match {
         uri strip_prefix /apps/chrome
         file_server * {
-            root /opt/app-root/src/build/stable
-            index opt/app-root/src/build/stable/index.html
+            root /opt/app-root/src/build
+            index opt/app-root/src/build/index.html
             browse
         }
     }
@@ -27,8 +27,8 @@
     handle @beta_match {
         uri strip_prefix /beta/apps/chrome
         file_server * {
-            root /opt/app-root/src/build/preview
-            index opt/app-root/src/build/preview/index.html
+            root /opt/app-root/src/build
+            index opt/app-root/src/build/index.html
             browse
         }
     }
@@ -39,8 +39,8 @@
     handle @preview_match {
         uri strip_prefix /preview/apps/chrome
         file_server * {
-            root /opt/app-root/src/build/preview
-            index opt/app-root/src/build/preview/index.html
+            root /opt/app-root/src/build
+            index opt/app-root/src/build/index.html
             browse
         }
     }
@@ -60,7 +60,7 @@
     }
 
     handle /preview* {
-        root * /opt/app-root/src/build/preview
+        root * /opt/app-root/src/build
         file_server
         try_files {path} {path}/ /index.html
     }
@@ -70,7 +70,7 @@
         try_files {path} {path}/ /index.html
     }
     handle * {
-        root * /opt/app-root/src/build/stable
+        root * /opt/app-root/src/build
         file_server
         try_files {path} {path}/ /index.html
     }
