@@ -115,10 +115,6 @@ const Tools = () => {
       title: 'Identity and Access Management',
       items: [
         {
-          url: myUserAccessPath,
-          title: 'My User Access',
-        },
-        {
           url: identityAndAccessManagmentPath,
           title: 'User Access',
         },
