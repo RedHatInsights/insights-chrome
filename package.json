@@ -152,7 +152,7 @@
     "@rhds/icons": "^1.1.1",
     "@scalprum/core": "^0.8.1",
     "@scalprum/react-core": "^0.9.1",
-    "@segment/analytics-next": "^1.70.0",
+    "@segment/analytics-next": "^1.73.0",
     "@sentry/react": "^7.118.0",
     "@sentry/tracing": "^7.118.0",
     "@types/intercom-web": "^2.8.26",
