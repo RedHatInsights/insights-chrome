@@ -83,9 +83,6 @@ const Tools = () => {
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
-  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
-
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
     {
@@ -114,10 +111,6 @@ const Tools = () => {
     {
       title: 'Identity and Access Management',
       items: [
-        {
-          url: myUserAccessPath,
-          title: 'My User Access',
-        },
         {
           url: identityAndAccessManagmentPath,
           title: 'User Access',
