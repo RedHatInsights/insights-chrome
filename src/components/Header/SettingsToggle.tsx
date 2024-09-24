@@ -90,6 +90,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
       isOpen={isOpen}
       onSelect={() => setIsOpen((prev) => !prev)}
       ouiaId={props.ouiaId}
+      className="chr-c-menu-settings"
     >
       <DropdownList>{dropdownItems}</DropdownList>
     </Dropdown>

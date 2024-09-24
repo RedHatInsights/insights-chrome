@@ -70,4 +70,7 @@
       &:hover {--pf-v5-c-notification-badge--after--BackgroundColor: var(--pf-v5-global--palette--red-200)}
     }
   }
+  .chr-c-menu-settings .pf-v5-c-menu__group:first-of-type > .pf-v5-c-menu__group-title {
+    display: none;
+  }
 }
