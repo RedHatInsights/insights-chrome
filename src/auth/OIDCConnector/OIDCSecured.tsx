@@ -184,7 +184,18 @@ export function OIDCSecured({
     if (!auth.error) {
       startChrome();
     }
-  }, [auth]);
+    function onRenewError(error: Error) {
+      console.error('Silent renew error', error);
+      state.login();
+    }
+    auth.events.addSilentRenewError(onRenewError);
+
+    return () => {
+      auth.events.removeSilentRenewError(onRenewError);
+    };
+    // to ensure we are not re-initializing the chrome on every auth change
+    // only on the important events
+  }, [auth.error, auth.isLoading, auth.isAuthenticated, state.token, state.user?.identity?.account_number]);
 
   useEffect(() => {
     authRef.current = auth;

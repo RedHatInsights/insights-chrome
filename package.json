@@ -151,7 +151,7 @@
     "@rhds/elements": "^2.0.1",
     "@rhds/icons": "^1.1.1",
     "@scalprum/core": "^0.8.1",
-    "@scalprum/react-core": "^0.9.1",
+    "@scalprum/react-core": "^0.9.3",
     "@segment/analytics-next": "^1.73.0",
     "@sentry/react": "^7.118.0",
     "@sentry/tracing": "^7.118.0",

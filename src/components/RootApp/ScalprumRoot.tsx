@@ -4,7 +4,6 @@ import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
-import isEqual from 'lodash/isEqual';
 import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
@@ -37,6 +36,8 @@ import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
+import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -45,227 +46,234 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   return callback(selectedTags);
 };
 
-export type ScalprumRootProps = {
+const ScalprumRoot = memo(
+  () => {
+    return (
+      <ChromeProvider>
+        <BetaSwitcher />
+        <Routes>
+          <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
+          <Route
+            path="/connect/products"
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <ProductSelection />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/allservices"
+            element={
+              <Suspense fallback={LoadingFallback}>
+                <AllServices Footer={<ChromeFooter />} />
+              </Suspense>
+            }
+          />
+          {!ITLess() && (
+            <Route
+              path="/favoritedservices"
+              element={
+                <Suspense fallback={LoadingFallback}>
+                  <FavoritedServices Footer={<ChromeFooter />} />
+                </Suspense>
+              }
+            />
+          )}
+          <Route path="/security" element={<DefaultLayout />} />
+          <Route path="*" element={<DefaultLayout Sidebar={Navigation} />} />
+        </Routes>
+      </ChromeProvider>
+    );
+    // no props, no need to ever render based on parent changes
+  },
+  () => true
+);
+
+ScalprumRoot.displayName = 'MemoizedScalprumRoot';
+
+export type ChromeApiRootProps = {
   config: AppsConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
 
-const ScalprumRoot = memo(
-  ({ config, helpTopicsAPI, quickstartsAPI, ...props }: ScalprumRootProps) => {
-    const { setFilteredHelpTopics } = useContext(HelpTopicContext);
-    const internalFilteredTopics = useRef<HelpTopic[]>([]);
-    const { analytics } = useContext(SegmentContext);
-    const chromeAuth = useContext(ChromeAuthContext);
-    const registerModule = useSetAtom(onRegisterModuleWriteAtom);
-    const populateNotifications = useSetAtom(notificationDrawerDataAtom);
-    const isPreview = useAtomValue(isPreviewAtom);
-    const addNavListener = useSetAtom(addNavListenerAtom);
-    const deleteNavListener = useSetAtom(deleteNavListenerAtom);
+const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootProps) => {
+  const chromeAuth = useContext(ChromeAuthContext);
+  const mutableChromeApi = useRef<ChromeAPI>();
+  const isPreview = useAtomValue(isPreviewAtom);
+  const addNavListener = useSetAtom(addNavListenerAtom);
+  const deleteNavListener = useSetAtom(deleteNavListenerAtom);
+  const { setFilteredHelpTopics } = useContext(HelpTopicContext);
+  const internalFilteredTopics = useRef<HelpTopic[]>([]);
+  const { analytics } = useContext(SegmentContext);
+  const registerModule = useSetAtom(onRegisterModuleWriteAtom);
+  const store = useStore<ReduxState>();
+  const activeModule = useAtomValue(activeModuleAtom);
 
-    const store = useStore<ReduxState>();
-    const mutableChromeApi = useRef<ChromeAPI>();
+  // initialize WS event handling
+  const addWsEventListener = useChromeServiceEvents();
 
-    // initialize WS event handling
-    const addWsEventListener = useChromeServiceEvents();
-    // track pendo usage
-    useTrackPendoUsage();
-    // setting default tab title
-    useTabName();
+  // track bundle visits
+  useBundleVisitDetection(chromeAuth.user?.identity?.internal?.org_id);
 
-    async function getNotifications() {
-      try {
-        const { data } = await axios.get<{ data: NotificationData[] }>(`/api/notifications/v1/notifications/drawer`, {
-          params: {
-            limit: 50,
-            sort_by: 'read:asc',
-            startDate: getSevenDaysAgo(),
-          },
-        });
-        populateNotifications(data?.data || []);
-      } catch (error) {
-        console.error('Unable to get Notifications ', error);
-      }
-    }
+  // track pendo usage
+  useTrackPendoUsage();
+  // update pendo data on scope change
+  useHandlePendoScopeUpdate(chromeAuth.user, activeModule);
+  // setting default tab title
+  useTabName();
 
-    const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
+  const populateNotifications = useSetAtom(notificationDrawerDataAtom);
 
-    function isStringArray(arr: EnableTopicsArgs): arr is string[] {
-      return typeof arr[0] === 'string';
-    }
-    async function enableTopics(...names: EnableTopicsArgs) {
-      let internalNames: string[] = [];
-      let shouldAppend = false;
-      if (isStringArray(names)) {
-        internalNames = names;
-      } else {
-        internalNames = names[0].names;
-        shouldAppend = !!names[0].append;
-      }
-      return helpTopicsAPI.enableTopics(...internalNames).then((res) => {
-        internalFilteredTopics.current = shouldAppend
-          ? [...internalFilteredTopics.current, ...res.filter((topic) => !internalFilteredTopics.current.find(({ name }) => name === topic.name))]
-          : res;
-        setFilteredHelpTopics?.(internalFilteredTopics.current);
-        return res;
+  async function getNotifications() {
+    try {
+      const { data } = await axios.get<{ data: NotificationData[] }>(`/api/notifications/v1/notifications/drawer`, {
+        params: {
+          limit: 50,
+          sort_by: 'read:asc',
+          startDate: getSevenDaysAgo(),
+        },
       });
+      populateNotifications(data?.data || []);
+    } catch (error) {
+      console.error('Unable to get Notifications ', error);
     }
+  }
 
-    function disableTopics(...topicsNames: string[]) {
-      helpTopicsAPI.disableTopics(...topicsNames);
-      internalFilteredTopics.current = internalFilteredTopics.current.filter((topic) => !topicsNames.includes(topic.name));
+  useEffect(() => {
+    // prepare webpack module sharing scope overrides
+    updateSharedScope();
+    // get notifications drawer api
+    getNotifications();
+    const unregister = chromeHistory.listen(historyListener);
+    return () => {
+      if (typeof unregister === 'function') {
+        return unregister();
+      }
+    };
+  }, []);
+
+  const setPageMetadata = useCallback((pageOptions: any) => {
+    window._segment = {
+      ...window._segment,
+      pageOptions,
+    };
+  }, []);
+
+  const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
+
+  function isStringArray(arr: EnableTopicsArgs): arr is string[] {
+    return typeof arr[0] === 'string';
+  }
+  async function enableTopics(...names: EnableTopicsArgs) {
+    let internalNames: string[] = [];
+    let shouldAppend = false;
+    if (isStringArray(names)) {
+      internalNames = names;
+    } else {
+      internalNames = names[0].names;
+      shouldAppend = !!names[0].append;
+    }
+    return helpTopicsAPI.enableTopics(...internalNames).then((res) => {
+      internalFilteredTopics.current = shouldAppend
+        ? [...internalFilteredTopics.current, ...res.filter((topic) => !internalFilteredTopics.current.find(({ name }) => name === topic.name))]
+        : res;
       setFilteredHelpTopics?.(internalFilteredTopics.current);
+      return res;
+    });
+  }
+
+  function disableTopics(...topicsNames: string[]) {
+    helpTopicsAPI.disableTopics(...topicsNames);
+    internalFilteredTopics.current = internalFilteredTopics.current.filter((topic) => !topicsNames.includes(topic.name));
+    setFilteredHelpTopics?.(internalFilteredTopics.current);
+  }
+
+  const helpTopicsChromeApi = useMemo(
+    () => ({
+      ...helpTopicsAPI,
+      setActiveTopic,
+      enableTopics,
+      disableTopics,
+      closeHelpTopic: () => {
+        setActiveTopic('');
+      },
+    }),
+    []
+  );
+
+  useMemo(() => {
+    mutableChromeApi.current = createChromeContext({
+      analytics: analytics!,
+      helpTopics: helpTopicsChromeApi,
+      quickstartsAPI,
+      useGlobalFilter,
+      store,
+      setPageMetadata,
+      chromeAuth,
+      registerModule,
+      isPreview,
+      addNavListener,
+      deleteNavListener,
+      addWsEventListener,
+    });
+  }, [isPreview]);
+
+  if (!mutableChromeApi.current) {
+    return null;
+  }
+
+  const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
+    if (!mutableChromeApi.current) {
+      throw new Error('Chrome API failed to initialize.');
     }
-
-    // track bundle visits
-    useBundleVisitDetection();
-
-    useEffect(() => {
-      // prepare webpack module sharing scope overrides
-      updateSharedScope();
-      // get notifications drawer api
-      getNotifications();
-      const unregister = chromeHistory.listen(historyListener);
-      return () => {
-        if (typeof unregister === 'function') {
-          return unregister();
-        }
-      };
-    }, []);
-
-    const setPageMetadata = useCallback((pageOptions: any) => {
-      window._segment = {
-        ...window._segment,
-        pageOptions,
-      };
-    }, []);
-
-    const helpTopicsChromeApi = useMemo(
-      () => ({
-        ...helpTopicsAPI,
-        setActiveTopic,
-        enableTopics,
-        disableTopics,
-        closeHelpTopic: () => {
-          setActiveTopic('');
-        },
-      }),
-      []
-    );
-
-    useMemo(() => {
-      mutableChromeApi.current = createChromeContext({
-        analytics: analytics!,
-        helpTopics: helpTopicsChromeApi,
-        quickstartsAPI,
-        useGlobalFilter,
-        store,
-        setPageMetadata,
-        chromeAuth,
-        registerModule,
-        isPreview,
-        addNavListener,
-        deleteNavListener,
-        addWsEventListener,
-      });
-      // reset chrome object after token (user) updates/changes
-    }, [chromeAuth.token, isPreview]);
-
-    const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
-      if (!mutableChromeApi.current) {
-        throw new Error('Chrome API failed to initialize.');
-      }
-      // set the deprecated chrome API to window
-      // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
-      window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
-      return {
-        config,
-        api: {
-          chrome: mutableChromeApi.current,
-        },
-        pluginSDKOptions: {
-          pluginLoaderOptions: {
-            // sharedScope: scope,
-            transformPluginManifest: (manifest) => {
-              if (manifest.name === 'chrome') {
-                return {
-                  ...manifest,
-                  // Do not include chrome chunks in manifest for chrome. It will result in an infinite loading loop
-                  // window.chrome always exists because chrome container is always initialized
-                  loadScripts: [],
-                };
-              }
-              const newManifest = {
+    // set the deprecated chrome API to window
+    // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
+    window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
+    return {
+      config,
+      api: {
+        chrome: mutableChromeApi.current,
+      },
+      pluginSDKOptions: {
+        pluginLoaderOptions: {
+          // sharedScope: scope,
+          transformPluginManifest: (manifest) => {
+            if (manifest.name === 'chrome') {
+              return {
                 ...manifest,
-                // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
-                baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isPreview ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
-                loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
-                  `${manifest.baseURL ?? ''}plugin-entry.js`,
-                ],
-                registrationMethod: manifest.registrationMethod ?? 'callback',
+                // Do not include chrome chunks in manifest for chrome. It will result in an infinite loading loop
+                // window.chrome always exists because chrome container is always initialized
+                loadScripts: [],
               };
-              return newManifest;
-            },
+            }
+            const newManifest = {
+              ...manifest,
+              // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
+              baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isPreview ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
+              loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
+                `${manifest.baseURL ?? ''}plugin-entry.js`,
+              ],
+              registrationMethod: manifest.registrationMethod ?? 'callback',
+            };
+            return newManifest;
           },
         },
-      };
-    }, [chromeAuth.token, isPreview]);
+      },
+    };
+  }, [isPreview]);
 
-    if (!mutableChromeApi.current) {
-      return null;
-    }
+  return (
+    <InternalChromeContext.Provider value={mutableChromeApi.current}>
+      <ScalprumProvider
+        config={scalprumProviderProps.config}
+        api={scalprumProviderProps.api}
+        pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}
+      >
+        <ScalprumRoot />
+      </ScalprumProvider>
+    </InternalChromeContext.Provider>
+  );
+};
 
-    return (
-      /**
-       * Once all applications are migrated to chrome 2:
-       * - define chrome API in chrome root after it mounts
-       * - copy these functions to window
-       * - add deprecation warning to the window functions
-       */
-      <InternalChromeContext.Provider value={mutableChromeApi.current}>
-        <ScalprumProvider {...scalprumProviderProps}>
-          <ChromeProvider>
-            <BetaSwitcher />
-            <Routes>
-              <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} {...props} />} />
-              <Route
-                path="/connect/products"
-                element={
-                  <Suspense fallback={LoadingFallback}>
-                    <ProductSelection />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/allservices"
-                element={
-                  <Suspense fallback={LoadingFallback}>
-                    <AllServices Footer={<ChromeFooter />} />
-                  </Suspense>
-                }
-              />
-              {!ITLess() && (
-                <Route
-                  path="/favoritedservices"
-                  element={
-                    <Suspense fallback={LoadingFallback}>
-                      <FavoritedServices Footer={<ChromeFooter />} />
-                    </Suspense>
-                  }
-                />
-              )}
-              <Route path="/security" element={<DefaultLayout {...props} />} />
-              <Route path="*" element={<DefaultLayout Sidebar={Navigation} {...props} />} />
-            </Routes>
-          </ChromeProvider>
-        </ScalprumProvider>
-      </InternalChromeContext.Provider>
-    );
-  },
-  // config rarely changes
-  (prev, next) => isEqual(prev.config, next.config)
-);
-
-ScalprumRoot.displayName = 'MemoizedScalprumRoot';
-
-export default ScalprumRoot;
+export default ChromeApiRoot;
