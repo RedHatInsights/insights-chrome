@@ -4,13 +4,9 @@ import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch } from 'react-redux';
 import { toggleGlobalFilter } from '../../redux/actions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
-import { getPendoConf } from '../../analytics';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
 import GatewayErrorComponent from '../ErrorComponents/GatewayErrorComponent';
-import { DeepRequired } from 'utility-types';
-import { ChromeUser } from '@redhat-cloud-services/types';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { gatewayErrorAtom } from '../../state/atoms/gatewayErrorAtom';
@@ -35,7 +31,6 @@ const ChromeRoute = memo(
     const isPreview = useAtomValue(isPreviewAtom);
     const dispatch = useDispatch();
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
-    const { user } = useContext(ChromeAuthContext);
     const gatewayError = useAtomValue(gatewayErrorAtom);
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
 
@@ -65,18 +60,6 @@ const ChromeRoute = memo(
         // should be triggered only once per session
         setActiveModule(scope);
       });
-      /**
-       * update pendo metadata on application change
-       */
-      if (window.pendo) {
-        try {
-          window.pendo.updateOptions(getPendoConf(user as DeepRequired<ChromeUser>, isPreview));
-        } catch (error) {
-          console.error('Unable to update pendo options');
-          console.error(error);
-        }
-      }
-
       /**
        * TODO: Discuss default close feature of topics
        * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.

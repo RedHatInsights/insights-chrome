@@ -51,9 +51,13 @@ describe('<AllServices />', () => {
       },
     }));
     cy.mount(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      <ChromeAuthContext.Provider value={{}}>
+      <ChromeAuthContext.Provider
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        value={{
+          user: userFixture as unknown as ChromeUser,
+        }}
+      >
         <ScalprumProvider
           config={{}}
           api={{
