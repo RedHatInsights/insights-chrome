@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { ChromeModule } from '../../@types/types';
+import isEqual from 'lodash/isEqual';
 
 export type ScalprumConfig = {
   [key: string]: {
@@ -15,7 +16,7 @@ export const scalprumConfigAtom = atom<ScalprumConfig>({});
 export const writeInitialScalprumConfigAtom = atom(
   null,
   (
-    _get,
+    get,
     set,
     schema: {
       [key: string]: ChromeModule;
@@ -27,16 +28,20 @@ export const writeInitialScalprumConfigAtom = atom(
         [name]: {
           name,
           module: `${name}#./RootApp`,
-          manifestLocation: `${window.location.origin}${config.manifestLocation}?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}${config.manifestLocation}`,
         },
       }),
       {
         chrome: {
           name: 'chrome',
-          manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json?ts=${Date.now()}`,
+          manifestLocation: `${window.location.origin}/apps/chrome/js/fed-mods.json`,
         },
       }
     );
-    set(scalprumConfigAtom, scalprumConfig);
+    // need to compare the config to prevent unnecessary re-renders, on identity refresh
+    const prevConfig = get(scalprumConfigAtom);
+    if (!isEqual(prevConfig, scalprumConfig)) {
+      set(scalprumConfigAtom, scalprumConfig);
+    }
   }
 );

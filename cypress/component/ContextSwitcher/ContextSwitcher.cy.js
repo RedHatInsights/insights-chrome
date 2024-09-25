@@ -53,7 +53,7 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper store={store}>
-          <ContextSwitcher user={testUser} />
+          <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');
@@ -76,7 +76,7 @@ describe('<ContextSwithcer />', () => {
     const elem = cy
       .mount(
         <Wrapper store={store}>
-          <ContextSwitcher user={testUser} />
+          <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
       .get('html');

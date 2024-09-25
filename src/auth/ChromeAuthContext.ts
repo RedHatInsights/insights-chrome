@@ -3,6 +3,8 @@ import { AxiosResponse } from 'axios';
 import { createContext } from 'react';
 import { OfflineTokenResponse } from './offline';
 
+export type ChromeLogin<LoginResponse = void> = (requiredScopes?: string[]) => Promise<LoginResponse>;
+
 export type ChromeAuthContextValue<LoginResponse = void> = {
   ssoUrl: string;
   ready: boolean;
@@ -12,7 +14,7 @@ export type ChromeAuthContextValue<LoginResponse = void> = {
   logoutAllTabs: (bounce?: boolean) => void;
   loginAllTabs: () => void;
   logout: () => void;
-  login: (requiredScopes?: string[]) => Promise<LoginResponse>;
+  login: ChromeLogin<LoginResponse>;
   tokenExpires: number;
   getToken: () => Promise<string>;
   getRefreshToken: () => Promise<string>;

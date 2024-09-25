@@ -78,7 +78,6 @@ describe('ODIC Secured', () => {
   const authContextValue: AuthContextProps = {
     clearStaleState: () => Promise.resolve(),
     settings: authContextSettings,
-    events: {} as AuthContextProps['events'],
     removeUser: () => Promise.resolve(),
     signinRedirect: () => Promise.resolve(),
     isAuthenticated: true,
@@ -94,6 +93,10 @@ describe('ODIC Secured', () => {
     startSilentRenew: () => Promise.resolve(),
     stopSilentRenew: () => Promise.resolve(),
     user: testUser,
+    events: {
+      addSilentRenewError: () => {},
+      removeSilentRenewError: () => {},
+    } as unknown as AuthContextProps['events'],
   };
   beforeEach(() => {
     store = createStore((state = { chrome: {} }) => {
@@ -105,7 +108,7 @@ describe('ODIC Secured', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
         <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>
@@ -119,7 +122,7 @@ describe('ODIC Secured', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
         <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>
@@ -133,7 +136,7 @@ describe('ODIC Secured', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
         <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>

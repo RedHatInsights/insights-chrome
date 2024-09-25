@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ChromeUser } from '@redhat-cloud-services/types';
-import { DeepRequired } from 'utility-types';
 import { useNavigate } from 'react-router-dom';
 import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
@@ -9,7 +7,17 @@ import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import InternalChromeContext from '../../utils/internalChromeContext';
 
-const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request: string }) => {
+const Activation = ({
+  user,
+  request,
+}: {
+  user: {
+    username: string;
+    accountNumber: string;
+    email: string;
+  };
+  request: string;
+}) => {
   const intl = useIntl();
   const [isModalOpen, setIsModalOpen] = useState(true);
   const navigate = useNavigate();
@@ -29,7 +37,7 @@ const Activation = ({ user, request }: { user: DeepRequired<ChromeUser>; request
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Username: ${user.identity.user.username}, Account ID: ${user.identity.account_number}, Email: ${user.identity.user.email}`, //eslint-disable-line
+          description: `Username: ${user.username}, Account ID: ${user.accountNumber}, Email: ${user.email}`, //eslint-disable-line
           summary: `Activation Request - for cloud-marketplace-enablement team`,
           labels: [request],
         }),
