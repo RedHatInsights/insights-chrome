@@ -108,4 +108,3 @@ Available function:
 ## Futher reading
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
-
