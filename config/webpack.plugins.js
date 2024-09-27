@@ -79,7 +79,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     }),
     new ForkTsCheckerWebpackPlugin(),
     /**
-     * Removes error for a missing logger function
+     * Removes error for a missing logger function test
      * https://github.com/getsentry/sentry-javascript/issues/6596
      * https://docs.sentry.io/platforms/javascript/guides/react/configuration/tree-shaking/#tree-shaking-optional-code
      */
