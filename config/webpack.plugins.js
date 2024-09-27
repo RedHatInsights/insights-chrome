@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const deps = require('../package.json').dependencies;
 
@@ -87,6 +88,22 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       __SENTRY_DEBUG__: false,
     }),
     ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+     // Put the Sentry Webpack plugin after all other plugins
+     ...(process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT
+      ? [
+          sentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: process.env.SENTRY_ORG,
+            project: process.env.SENTRY_PROJECT,
+            _experiments: {
+              moduleMetadata: ({ release }) => ({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                release,
+              }),
+            },
+          }),
+        ]
+      : []),
   ];
 };
 

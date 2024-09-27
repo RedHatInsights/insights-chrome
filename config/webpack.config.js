@@ -55,7 +55,7 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: false,
+    devtool: 'hidden-source-map',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
