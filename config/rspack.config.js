@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const rspack = require('@rspack/core');
+const { defineConfig } = require('@rspack/cli');
 const plugins = require('./rspack.plugins.js');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
@@ -62,47 +63,33 @@ const commonConfig = ({ dev }) => {
       }),
     },
   });
-  // console.log(pc.onBeforeSetupMiddleware);
-  pc.setupMiddlewares = (middlewares, { app, compiler, options }) => {
-    app.enable('strict routing');
-
-    return middlewares;
-  };
   // not in v1 release
   delete pc.onBeforeSetupMiddleware;
 
   /** @type { import("rspack").Configuration } */
-  return {
-    entry: dev
-      ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
-        {
-          main: path.resolve(__dirname, '../src/index.ts'),
-          // vendors: ['react', 'react-dom', 'react-refresh/runtime'],
-        }
-      : path.resolve(__dirname, '../src/index.ts'),
-    output: {
-      path: path.resolve(__dirname, '../build/js'),
-      // the HMR needs dynamic entry filename to remove name conflicts
-      filename: dev ? '[name].js' : 'chrome-root.[contenthash].js',
-      hashFunction: 'xxhash64',
-      publicPath,
-      chunkFilename: dev ? '[name].js' : '[name].[contenthash].js',
+  return defineConfig({
+    entry: {
+      main: path.resolve(__dirname, '../src/index.ts'),
     },
-    ...(dev
-      ? {
-          cache: true,
-        }
-      : {}),
-    devtool: dev ? false : 'hidden-source-map',,
+    output: {
+      uniqueName: 'chrome-root',
+      path: path.resolve(__dirname, '../build/js'),
+      ...(!dev
+        ? {
+            filename: 'chrome-root.[contenthash].js',
+            hashFunction: 'xxhash64',
+            chunkFilename: '[name].[contenthash].js',
+          }
+        : {}),
+      publicPath,
+    },
+    // cache: true,
+    devtool: dev ? false : 'hidden-source-map',
     experiments: {
       css: true,
-      // lazyCompilation: true,
-      // rspackFuture: {
-      //   disableTransformByDefault: true,
-      // },
     },
     resolve: {
-      extensions: ['.js', '.ts', '.tsx'],
+      extensions: ['...', '.js', '.ts', '.tsx'],
       alias: {
         ...searchIgnoredStyles(path.resolve(__dirname, '../')),
         ...imageNullLoader(),
@@ -121,23 +108,16 @@ const commonConfig = ({ dev }) => {
         'react-dom': path.resolve(__dirname, '../node_modules/react-dom'),
       },
       fallback: {
-        path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
         zlib: require.resolve('browserify-zlib'),
-        assert: require.resolve('assert/'),
-        buffer: require.resolve('buffer/'),
-        url: require.resolve('url/'),
-        process: require.resolve('process'),
       },
     },
     optimization: {
       concatenateModules: false,
-      ...(dev
-        ? {
-            // for HMR all runtime chunks must be in a single file
-            // runtimeChunk: 'single',
-          }
-        : {}),
+      minimizer: [new rspack.SwcJsMinimizerRspackPlugin(), new rspack.LightningCssMinimizerRspackPlugin()],
+      ...(dev && {
+        runtimeChunk: 'single',
+      }),
     },
     module: {
       rules: [
@@ -147,17 +127,16 @@ const commonConfig = ({ dev }) => {
           use: {
             loader: 'builtin:swc-loader',
             options: {
-              transform: {
-                react: {
-                  runtime: 'automatic',
-                  development: dev,
-                  refresh: dev,
-                },
-              },
               jsc: {
                 parser: {
                   syntax: 'typescript',
                   tsx: true,
+                },
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                    development: !!dev,
+                  },
                 },
               },
             },
@@ -185,12 +164,17 @@ const commonConfig = ({ dev }) => {
         },
         {
           test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
-          type: 'asset/resource',
+          type: 'asset',
         },
       ],
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
+      // HMR flag
+      ...pc,
+      client: {
+        overlay: false,
+      },
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -199,84 +183,16 @@ const commonConfig = ({ dev }) => {
       historyApiFallback: {
         index: `${publicPath}index.html`,
       },
-      server: 'https',
+      server: 'spdy',
       port: 1337,
-      // HMR flag
-      ...pc,
-      hot: true,
+      liveReload: true,
     },
-  };
-};
-
-// PF node module asset compilation config, no need to compile PF assets more than once during a run
-/** @type { import("rspack").Configuration } */
-const pfConfig = {
-  entry: {
-    'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
-  },
-  output: {
-    path: path.resolve(__dirname, '../build/js/pf'),
-    // the HMR needs dynamic entry filename to remove name conflicts
-    filename: '[name].js',
-    publicPath: `auto`,
-  },
-  plugins: [new rspack.CssExtractRspackPlugin()],
-  stats: {
-    errorDetails: true,
-  },
-  cache: true,
-  experiments: {
-    css: true,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.s?[ac]ss$/,
-        use: [
-          // rspack.CssExtractRspackPlugin.loader,
-          // 'css-loader',
-          {
-            loader: 'resolve-url-loader',
-            options: {
-              join: createJoinFunction('myJoinFn', createJoinImplementation(PFGenerator)),
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                outputStyle: 'compressed',
-              },
-              sourceMap: true,
-              api: 'modern-compiler',
-              implementation: require.resolve('sass-embedded'),
-            },
-          },
-        ],
-        type: 'css/auto',
-      },
-      {
-        test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
-        type: 'asset/resource',
-      },
-    ],
-  },
+  });
 };
 
 module.exports = function (env) {
   const dev = process.env.DEV_SERVER;
   const config = commonConfig({ dev, publicPath: env.publicPath });
 
-  // bridge between devServer 4 and 5
-  // will be useful for RSpack
-  if (typeof config.devServer.onBeforeSetupMiddleware !== 'undefined') {
-    delete config.devServer.onBeforeSetupMiddleware;
-  }
-
-  if (config.devServer.https) {
-    delete config.devServer.https;
-    config.devServer.server = 'https';
-  }
-
-  return [pfConfig, config];
+  return config;
 };

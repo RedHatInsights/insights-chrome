@@ -1,8 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import SearchFeedback, { SEARCH_FEEDBACK_NEGATIVE, SEARCH_FEEDBACK_POSITIVE } from './SearchFeedback';
+import SearchFeedback from './SearchFeedback';
 import { SearchItem } from './SearchTypes';
 import { useSegment } from '../../analytics/useSegment';
+import { SEARCH_FEEDBACK_NEGATIVE, SEARCH_FEEDBACK_POSITIVE } from '../../utils/common';
 
 jest.mock('../../analytics/useSegment');
 

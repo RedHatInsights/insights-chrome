@@ -25,7 +25,7 @@ export type IDMapper = (tag: CommonTag) => string;
 export type CellsMapper = (tag: CommonTag) => (string | number | boolean | undefined)[];
 export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => Action;
 
-export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
+const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
   useSelector<ReduxState, [boolean | unknown, number, number, number]>(({ globalFilter }) => {
     const selected = globalFilter[key];
     return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];

@@ -11,7 +11,7 @@ import { bundleMapping } from '../../hooks/useBundle';
 
 import './ServiceTile.scss';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
-import { FavorableIcons } from './ServiceIcon';
+import { FavorableIcons } from '../../@types/types';
 
 export type ServiceTileProps = {
   name: React.ReactNode;

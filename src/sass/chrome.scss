@@ -2,7 +2,7 @@ $pf-v5-global--enable-reset: 'true';
 
 @import '~@patternfly/patternfly/sass-utilities/_all';
 @import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
-
+@import './pf-5-assets.scss';
 // TODO: Bring these quick starts overrides into the lib instead 
 .pfext-page-layout__title {
   margin-top: 0;

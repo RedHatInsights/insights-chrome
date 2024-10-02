@@ -453,3 +453,12 @@ export function getSevenDaysAgo(): string {
   const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
   return sevenDaysAgo.toISOString().split('.')[0];
 }
+
+const ON_HOLD_MARK = 'Insights authorization failed - ERROR_EXPORT_CONTROL:';
+
+export const checkAccountOnHold = (error: any) => {
+  return error?.response?.data?.errors?.[0]?.detail.includes(ON_HOLD_MARK);
+};
+
+export const SEARCH_FEEDBACK_POSITIVE = 'chrome.search-query-feedback-positive';
+export const SEARCH_FEEDBACK_NEGATIVE = 'chrome.search-query-feedback-negative';

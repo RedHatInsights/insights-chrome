@@ -1,7 +1,8 @@
 import React from 'react';
 
 import ErrorComponent from './DefaultErrorComponent';
-import AccountOnHoldError, { checkAccountOnHold } from './AccountOnHoldError';
+import AccountOnHoldError from './AccountOnHoldError';
+import { checkAccountOnHold } from '../../utils/common';
 
 type ErrorBoundaryState = {
   hasError: boolean;
