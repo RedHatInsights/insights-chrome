@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-// const webpack = require('webpack');
 const rspack = require('@rspack/core');
 const resolve = require('path').resolve;
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-// const { ProvidePlugin } = require('webpack');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
-const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
-const { pluginReact } = require('@rsbuild/plugin-react');
-
-// const MFP = require('@module-federation/enhanced').ModuleFederationPlugin;
 
 const deps = require('../package.json').dependencies;
 
@@ -21,16 +12,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     _unstableHotReload: dev,
   });
   return [
-    // pluginReact({
-    //   swcReactOptions: {
-    //     refresh: dev,
-    //     development: dev,
-    //   }
-    // }),
-    new rspack.CssExtractRspackPlugin({
-      filename: dev ? '[name].css' : '[name].[contenthash].css',
-      ignoreOrder: true,
-    }),
     new rspack.container.ModuleFederationPlugin({
       library: {
         type: 'global',
@@ -67,7 +48,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       filename: dev ? 'index.html' : '../index.html',
       base: '/',
       templateParameters: {
-        pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
+        dev,
         pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
       },
     }),
@@ -78,11 +59,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       minify: false,
       template: path.resolve(__dirname, '../src/silent-check-sso.html'),
     }),
-    // new ProvidePlugin({
-    //   process: 'process/browser.js',
-    //   Buffer: ['buffer', 'Buffer'],
-    // }),
-    new ForkTsCheckerWebpackPlugin(),
     /**
      * Removes error for a missing logger function
      * https://github.com/getsentry/sentry-javascript/issues/6596
@@ -91,7 +67,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new rspack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    ...(dev ? [new ReactRefreshPlugin()] : []),
   ];
 };
 

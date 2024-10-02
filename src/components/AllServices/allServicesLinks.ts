@@ -1,4 +1,4 @@
-import { FavorableIcons } from '../FavoriteServices/ServiceIcon';
+import { FavorableIcons } from '../../@types/types';
 
 export type AllServicesLink = {
   href: string;
