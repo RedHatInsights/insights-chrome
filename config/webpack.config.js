@@ -14,9 +14,6 @@ const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
-      if (base.includes('pf-4-styles')) {
-        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
-      }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
       }
@@ -192,7 +189,6 @@ const commonConfig = ({ dev }) => {
 /** @type { import("webpack").Configuration } */
 const pfConfig = {
   entry: {
-    'pf4-v4': path.resolve(__dirname, '../src/sass/pf-4-assets.scss'),
     'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
   },
   output: {
