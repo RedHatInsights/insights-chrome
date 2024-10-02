@@ -3,6 +3,7 @@ const rspack = require('@rspack/core');
 const resolve = require('path').resolve;
 const path = require('path');
 const getDynamicModules = require('./get-dynamic-modules');
+const RefreshPlugin = require('@rspack/plugin-react-refresh');
 
 const deps = require('../package.json').dependencies;
 
@@ -39,6 +40,10 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         getDynamicModules(process.cwd()),
       ],
+      ...(dev && {
+        // This is needed to enable hot reload, the runtime chunk of the federated modules must be linked to the main compilation runtime chunk
+        runtime: 'dependOn: "main"',
+      }),
     }),
     ChunkMapper,
     new rspack.HtmlRspackPlugin({
@@ -47,10 +52,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
       base: '/',
-      templateParameters: {
-        dev,
-        pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
-      },
     }),
     new rspack.HtmlRspackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',
@@ -67,6 +68,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new rspack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
+    ...(dev ? [new RefreshPlugin()] : []),
   ];
 };
 
