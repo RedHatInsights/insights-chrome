@@ -136,6 +136,7 @@ const commonConfig = ({ dev }) => {
                   react: {
                     runtime: 'automatic',
                     development: !!dev,
+                    refresh: !!dev,
                   },
                 },
               },
@@ -183,7 +184,7 @@ const commonConfig = ({ dev }) => {
       historyApiFallback: {
         index: `${publicPath}index.html`,
       },
-      server: 'spdy',
+      server: 'https',
       port: 1337,
       liveReload: true,
     },

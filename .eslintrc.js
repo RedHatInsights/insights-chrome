@@ -15,9 +15,10 @@ module.exports = {
     {
       files: ['**/*.ts', '**/*.tsx', '**/*.js'],
       parser: '@typescript-eslint/parser',
-      plugins: ['@typescript-eslint'],
+      plugins: ['@typescript-eslint', 'react-refresh'],
       extends: ['plugin:@typescript-eslint/recommended'],
       rules: {
+        'react-refresh/only-export-components': 'error',
         'react/react-in-jsx-scope': 'off',
         'react/prop-types': 'off',
         '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used' }],
