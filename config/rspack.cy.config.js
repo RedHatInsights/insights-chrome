@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { ModuleFederationPlugin } = require('webpack').container;
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
+const { defineConfig } = require('@rspack/cli');
+const rspack = require('@rspack/core');
 
 // call default generator then pair different variations of uri with each base
 const PFGenerator = asGenerator((item, ...rest) => {
@@ -19,29 +19,28 @@ const PFGenerator = asGenerator((item, ...rest) => {
 });
 
 /** @type { import("webpack").Configuration } */
-const JSConfig = {
+const JSConfig = defineConfig({
+  experiments: {
+    css: true,
+  },
   module: {
     rules: [
       {
         test: /\.(js|ts)x?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'swc-loader',
+          loader: 'builtin:swc-loader',
           options: {
             jsc: {
-              experimental: {
-                plugins: [
-                  [
-                    'swc-plugin-coverage-instrument',
-                    {
-                      compact: false,
-                    },
-                  ],
-                ],
-              },
               parser: {
                 syntax: 'typescript',
                 tsx: true,
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                  development: true,
+                },
               },
             },
           },
@@ -49,9 +48,8 @@ const JSConfig = {
       },
       {
         test: /\.s?[ac]ss$/,
+        type: 'css/auto',
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
           {
             loader: 'resolve-url-loader',
             options: {
@@ -62,6 +60,8 @@ const JSConfig = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
+              api: 'modern-compiler',
+              implementation: require.resolve('sass-embedded'),
             },
           },
         ],
@@ -73,9 +73,10 @@ const JSConfig = {
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['...', '.tsx', '.ts', '.js'],
     alias: {
       ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+      '@rhds/icons': path.resolve(__dirname, '../node_modules/@rhds/icons'),
     },
   },
   output: {
@@ -83,21 +84,12 @@ const JSConfig = {
     hashFunction: 'xxhash64',
     path: path.resolve(__dirname, 'dist'),
   },
-  cache: {
-    type: 'filesystem',
-    buildDependencies: {
-      config: [__filename],
-    },
-    cacheDirectory: path.resolve(__dirname, '../.cypress-cache'),
-  },
+  cache: true,
   stats: {
     errorDetails: true,
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-    }),
-    new ModuleFederationPlugin({
+    new rspack.container.ModuleFederationPlugin({
       name: 'chrome',
       filename: 'chrome.js',
       shared: [
@@ -114,6 +106,6 @@ const JSConfig = {
       ],
     }),
   ],
-};
+});
 
 module.exports = JSConfig;

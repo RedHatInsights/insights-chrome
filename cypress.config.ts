@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { defineConfig } from 'cypress';
 const { addMatchImageSnapshotPlugin } = require('@simonsmith/cypress-image-snapshot/plugin');
+import { devServer } from 'cypress-rspack-dev-server';
 
 export default defineConfig({
   component: {
@@ -41,11 +42,17 @@ export default defineConfig({
       return config;
     },
     video: false,
-    devServer: {
-      framework: 'react',
-      bundler: 'webpack',
-      webpackConfig: require('./config/webpack.cy.config.js'),
+    devServer(devServerConfig) {
+      return devServer({
+        ...devServerConfig,
+        framework: 'react',
+        rspackConfig: require('./config/rspack.cy.config.js'),
+      });
     },
+    // devServer: {
+    //   framework: 'react',
+    //   bundler: 'webpack',
+    // },
   },
   e2e: {
     blockHosts: ['consent.trustarc.com'],
