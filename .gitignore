@@ -41,3 +41,6 @@ cypress/screenshots
 #swc
 .swc
 .cypress_cache
+
+# Sentry Config File
+.env.sentry-build-plugin
