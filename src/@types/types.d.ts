@@ -5,7 +5,6 @@ import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-com
 import type Intercom from '@types/intercom-web';
 
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
-import { FavorableIcons } from '../components/FavoriteServices/ServiceIcon';
 
 // TODO: Update once navigation is mgrated to TS
 export type Navigation = {
@@ -239,4 +238,37 @@ export type BundleNav = {
 export enum ReleaseEnv {
   STABLE = 'STABLE',
   PREVIEW = 'PREVIEW',
+}
+
+export enum FavorableIcons {
+  AITechnologyIcon = 'AITechnologyIcon',
+  ACSIcon = 'ACSIcon',
+  AnsibleIcon = 'AnsibleIcon',
+  AppServicesIcon = 'AppServicesIcon',
+  BrainIcon = 'BrainIcon',
+  DataScienceIcon = 'DataScienceIcon',
+  EdgeIcon = 'EdgeIcon',
+  InsightsIcon = 'InsightsIcon',
+  OpenShiftIcon = 'OpenShiftIcon',
+  QuayIoIcon = 'QuayIoIcon',
+  RHIcon = 'RHIcon',
+  ServicesIcon = 'ServicesIcon',
+  SubscriptionsIcon = 'SubscriptionsIcon',
+  TrustedContentIcon = 'TrustedContentIcon',
+  PlaceholderIcon = 'PlaceholderIcon',
+  CloudUploadAltIcon = 'CloudUploadAltIcon',
+  AutomationIcon = 'AutomationIcon',
+  LightBulbIcon = 'LightBulbIcon',
+  RocketIcon = 'RocketIcon',
+  UsersIcon = 'UsersIcon',
+  InfrastructureIcon = 'InfrastructureIcon',
+  BellIcon = 'BellIcon',
+  ChartLineIcon = 'ChartLineIcon',
+  CloudSecurityIcon = 'CloudSecurityIcon',
+  CreditCardIcon = 'CreditCardIcon',
+  CogIcon = 'CogIcon',
+  ShoppingCartIcon = 'ShoppingCartIcon',
+  CubeIcon = 'CubeIcon',
+  BoxesIcon = 'BoxesIcon',
+  MonitoringIcon = 'MonitoringIcon',
 }

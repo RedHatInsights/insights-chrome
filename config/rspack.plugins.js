@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const webpack = require('webpack');
+const rspack = require('@rspack/core');
 const resolve = require('path').resolve;
-const { ModuleFederationPlugin } = require('webpack').container;
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-const { ProvidePlugin } = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
+const RefreshPlugin = require('@rspack/plugin-react-refresh');
 
 const deps = require('../package.json').dependencies;
 
@@ -18,19 +13,11 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     _unstableHotReload: dev,
   });
   return [
-    ...(process.env.SOURCEMAPS === 'true'
-      ? [
-          new webpack.SourceMapDevToolPlugin({
-            test: /\.js/i,
-            filename: `sourcemaps/[name].js.map`,
-          }),
-        ]
-      : []),
-    new MiniCssExtractPlugin({
-      filename: dev ? '[name].css' : '[name].[contenthash].css',
-      ignoreOrder: true,
-    }),
-    new ModuleFederationPlugin({
+    new rspack.container.ModuleFederationPlugin({
+      library: {
+        type: 'global',
+        name: 'chrome',
+      },
       name: 'chrome',
       filename: dev ? 'chrome.js' : 'chrome.[contenthash].js',
       exposes: {
@@ -53,40 +40,35 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         getDynamicModules(process.cwd()),
       ],
+      ...(dev && {
+        // This is needed to enable hot reload, the runtime chunk of the federated modules must be linked to the main compilation runtime chunk
+        runtime: 'dependOn: "main"',
+      }),
     }),
     ChunkMapper,
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       template: restricted ? path.resolve(__dirname, '../src/indexRes.ejs') : path.resolve(__dirname, '../src/index.ejs'),
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
       base: '/',
-      templateParameters: {
-        pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
-        pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
-      },
     }),
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',
       filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
       inject: false,
       minify: false,
       template: path.resolve(__dirname, '../src/silent-check-sso.html'),
     }),
-    new ProvidePlugin({
-      process: 'process/browser.js',
-      Buffer: ['buffer', 'Buffer'],
-    }),
-    new ForkTsCheckerWebpackPlugin(),
     /**
      * Removes error for a missing logger function
      * https://github.com/getsentry/sentry-javascript/issues/6596
      * https://docs.sentry.io/platforms/javascript/guides/react/configuration/tree-shaking/#tree-shaking-optional-code
      */
-    new webpack.DefinePlugin({
+    new rspack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(dev ? [new RefreshPlugin()] : []),
   ];
 };
 

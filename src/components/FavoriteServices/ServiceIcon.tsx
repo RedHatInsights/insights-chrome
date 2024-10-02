@@ -29,39 +29,7 @@ import MonitoringIcon from '@patternfly/react-icons/dist/dynamic/icons/monitorin
 import AutomationIcon from '@patternfly/react-icons/dist/dynamic/icons/automation-icon';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import BrainIcon from '@patternfly/react-icons/dist/dynamic/icons/brain-icon';
-
-export enum FavorableIcons {
-  AITechnologyIcon = 'AITechnologyIcon',
-  ACSIcon = 'ACSIcon',
-  AnsibleIcon = 'AnsibleIcon',
-  AppServicesIcon = 'AppServicesIcon',
-  BrainIcon = 'BrainIcon',
-  DataScienceIcon = 'DataScienceIcon',
-  EdgeIcon = 'EdgeIcon',
-  InsightsIcon = 'InsightsIcon',
-  OpenShiftIcon = 'OpenShiftIcon',
-  QuayIoIcon = 'QuayIoIcon',
-  RHIcon = 'RHIcon',
-  ServicesIcon = 'ServicesIcon',
-  SubscriptionsIcon = 'SubscriptionsIcon',
-  TrustedContentIcon = 'TrustedContentIcon',
-  PlaceholderIcon = 'PlaceholderIcon',
-  CloudUploadAltIcon = 'CloudUploadAltIcon',
-  AutomationIcon = 'AutomationIcon',
-  LightBulbIcon = 'LightBulbIcon',
-  RocketIcon = 'RocketIcon',
-  UsersIcon = 'UsersIcon',
-  InfrastructureIcon = 'InfrastructureIcon',
-  BellIcon = 'BellIcon',
-  ChartLineIcon = 'ChartLineIcon',
-  CloudSecurityIcon = 'CloudSecurityIcon',
-  CreditCardIcon = 'CreditCardIcon',
-  CogIcon = 'CogIcon',
-  ShoppingCartIcon = 'ShoppingCartIcon',
-  CubeIcon = 'CubeIcon',
-  BoxesIcon = 'BoxesIcon',
-  MonitoringIcon = 'MonitoringIcon',
-}
+import { FavorableIcons } from '../../@types/types';
 
 const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   AITechnologyIcon,
