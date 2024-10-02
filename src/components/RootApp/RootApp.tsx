@@ -19,7 +19,6 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
-import PF4Root from './PF4Root';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -109,8 +108,6 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
       <SegmentProvider>
         <FeatureFlagsProvider>
-          {/* until PF 4 is fully removed from build */}
-          <PF4Root />
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>
             <NotEntitledModal />
