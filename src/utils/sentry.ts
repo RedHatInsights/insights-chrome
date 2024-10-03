@@ -86,7 +86,7 @@ function initSentry() {
         const routeTo = frames
           .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
           .map((v) => v.module_metadata)
-          .slice(-1); // using top frame only - you may want to customize this according to your needs
+          .slice(-1); // using top frame only
 
         if (routeTo.length) {
           event.extra = {
