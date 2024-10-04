@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
-import { isBeta } from '../../utils/common';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type ToolbarToggleDropdownItem = {
   url?: string;
@@ -31,6 +32,7 @@ export type ToolbarToggleProps = {
 
 const ToolbarToggle = (props: ToolbarToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isPreview = useAtomValue(isPreviewAtom);
 
   const onSelect = () => {
     setIsOpen((prev) => !prev);
@@ -64,7 +66,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           component={
             appId && url
               ? ({ className: itemClassName }) => (
-                  <ChromeLink {...rest} className={itemClassName} href={url} target={target} rel={rel} isBeta={isBeta()} appId={appId}>
+                  <ChromeLink {...rest} className={itemClassName} href={url} target={target} rel={rel} isBeta={isPreview} appId={appId}>
                     {title}
                   </ChromeLink>
                 )

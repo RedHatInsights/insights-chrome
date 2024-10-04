@@ -14,10 +14,18 @@
   @media screen and (min-width: $pf-v5-global--breakpoint--2xl) {
     top: 70px;
     height: 100vh;
+    &.preview-offset {
+      // consider the preview banner
+      top: calc(70px + 32px);
+    }
   }
   @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
     top: 118px;
     height: 100vh;
+    &.preview-offset {
+      // consider the preview banner
+      top: calc(118px + 32px);
+    }
   }
 
   // pos has to be important to override PF styles that get lazy loaded!
@@ -63,14 +71,14 @@
       --pf-v5-c-sidebar__panel--md--FlexBasis: 20rem;
       --pf-v5-c-sidebar__panel--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
       &__main {
-        height: 630px;
+        height: 770px;
       }
       &__content {
-        height: 630px;  
+        height: 770px;  
         overflow: auto;
       }
       &__panel {
-        height: 630px;
+        height: 770px;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
         .pf-v5-c-tabs {
           --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;

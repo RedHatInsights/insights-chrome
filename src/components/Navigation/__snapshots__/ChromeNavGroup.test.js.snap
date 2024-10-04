@@ -13,13 +13,6 @@ exports[`ChromeNavGroup should render nav item group 1`] = `
       id="Foo"
     >
       <div>
-        <span
-          class="pf-v5-c-icon pf-m-inline pf-m-sm pf-v5-u-mr-sm"
-        >
-          <span
-            class="pf-v5-c-icon__content"
-          />
-        </span>
         Foo
       </div>
     </h2>
@@ -85,13 +78,6 @@ exports[`ChromeNavGroup should render nav item group with items 1`] = `
       id="Foo"
     >
       <div>
-        <span
-          class="pf-v5-c-icon pf-m-inline pf-m-sm pf-v5-u-mr-sm"
-        >
-          <span
-            class="pf-v5-c-icon__content"
-          />
-        </span>
         Foo
       </div>
     </h2>

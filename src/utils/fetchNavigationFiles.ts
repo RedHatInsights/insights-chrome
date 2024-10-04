@@ -2,13 +2,11 @@ import axios from 'axios';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
-import { ITLess, getChromeStaticPathname, isBeta } from './common';
+import { ITLess, getChromeStaticPathname } from './common';
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
 }
-
-const bundles = ITLess() ? itLessBundles : requiredBundles;
 
 export function isNavItems(navigation: Navigation | NavItem[]): navigation is Navigation {
   return Array.isArray((navigation as Navigation).navItems);
@@ -40,6 +38,7 @@ const filesCache: {
 };
 
 const fetchNavigationFiles = async () => {
+  const bundles = ITLess() ? itLessBundles : requiredBundles;
   if (filesCache.ready && filesCache.expires > Date.now()) {
     return filesCache.data;
   }
@@ -53,7 +52,9 @@ const fetchNavigationFiles = async () => {
     bundles.map((fragment) =>
       axios
         .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
-        .catch(() => axios.get<BundleNavigation>(`${isBeta() ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
+        .catch(() => {
+          return axios.get<BundleNavigation>(`/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+        })
         .then((response) => response.data)
         .catch((err) => {
           console.error('Unable to load bundle navigation', err, fragment);
