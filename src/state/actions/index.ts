@@ -1,7 +1,6 @@
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 import {
-  globalFilterDefaultState,
   onGetAllSIDs,
   onGetAllSIDsPending,
   onGetAllTags,
@@ -12,7 +11,7 @@ import {
   onGlobalFilterToggle,
   onSetGlobalFilterScope,
   onTagSelect,
-} from './globalFilterReducers';
+} from '../reducers/globalFilterReducers';
 import {
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
@@ -21,9 +20,7 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-} from './action-types';
-import { GlobalFilterState, ReduxState } from './store';
-import { AnyAction } from 'redux';
+} from './globalFilterActionTypes';
 
 const globalFilter = {
   [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
@@ -37,15 +34,3 @@ const globalFilter = {
   [GLOBAL_FILTER_REMOVE]: onGlobalFilterRemove,
   [GLOBAL_FILTER_UPDATE]: onTagSelect,
 };
-
-export const chromeInitialState: ReduxState = {
-  globalFilter: globalFilterDefaultState,
-};
-
-export default function (): {
-  globalFilter: (state: GlobalFilterState, action: AnyAction) => GlobalFilterState;
-} {
-  return {
-    globalFilter: (state = globalFilterDefaultState, action) => applyReducerHash(globalFilter)(state, action),
-  };
-}
