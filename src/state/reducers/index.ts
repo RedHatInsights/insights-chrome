@@ -1,5 +1,3 @@
-import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
-
 import {
   onGetAllSIDs,
   onGetAllSIDsPending,
@@ -11,7 +9,7 @@ import {
   onGlobalFilterToggle,
   onSetGlobalFilterScope,
   onTagSelect,
-} from '../reducers/globalFilterReducers';
+} from './globalFilterReducers';
 import {
   CHROME_GET_ALL_SIDS,
   CHROME_GET_ALL_TAGS,
@@ -20,9 +18,9 @@ import {
   GLOBAL_FILTER_SCOPE,
   GLOBAL_FILTER_TOGGLE,
   GLOBAL_FILTER_UPDATE,
-} from './globalFilterActionTypes';
+} from '../actions/globalFilterActionTypes';
 
-const globalFilter = {
+export const globalFilterDict = {
   [`${CHROME_GET_ALL_TAGS}_FULFILLED`]: onGetAllTags,
   [`${CHROME_GET_ALL_TAGS}_PENDING`]: onGetAllTagsPending,
   [`${CHROME_GET_ALL_SIDS}_FULFILLED`]: onGetAllSIDs,
