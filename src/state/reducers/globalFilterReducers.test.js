@@ -9,7 +9,7 @@ import {
   onSetGlobalFilterScope,
   onTagSelect,
 } from '../redux/globalFilterReducers';
-import { toggleGlobalFilter } from '../redux/actions';
+import { toggleGlobalFilter } from '../../redux/actions';
 
 describe('onGetAllTags', () => {
   it('should format tags from an API', () => {

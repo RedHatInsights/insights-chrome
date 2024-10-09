@@ -1,7 +1,7 @@
-import * as actionTypes from './action-types';
-import { getAllSIDs, getAllTags, getAllWorkloads } from '../components/GlobalFilter/tagsApi';
-import type { TagFilterOptions, TagPagination } from '../components/GlobalFilter/tagsApi';
-import type { FlagTagsFilter } from '../@types/types';
+import * as actionTypes from './globalFilterActionTypes';
+import { getAllSIDs, getAllTags, getAllWorkloads } from '../../components/GlobalFilter/tagsApi';
+import type { TagFilterOptions, TagPagination } from '../../components/GlobalFilter/tagsApi';
+import type { FlagTagsFilter } from '../../@types/types';
 
 export type AppNavClickItem = { id?: string; custom?: boolean };
 
