@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
-import { fetchAllSIDs, fetchAllTags } from '../../redux/actions';
+import { fetchAllSIDs, fetchAllTags } from '../../state/actions/globalFilterActions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
@@ -10,8 +9,10 @@ import { Action } from 'redux';
 import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-components/TagModal/TableWithFilter';
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 import messages from '../../locales/Messages';
-import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
+import { CommonSelectedTag, CommonTag, GlobalFilterTag, SID } from '../../@types/types';
 import { FlagTagsFilter } from '../../@types/types';
+import { useAtomValue } from 'jotai';
+import { globalFilterStateAtom } from '../../state/atoms/globalFilterAtom';
 
 export type TagsModalProps = {
   isOpen?: boolean;
@@ -25,11 +26,12 @@ export type IDMapper = (tag: CommonTag) => string;
 export type CellsMapper = (tag: CommonTag) => (string | number | boolean | undefined)[];
 export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => Action;
 
-export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
-  useSelector<ReduxState, [boolean | unknown, number, number, number]>(({ globalFilter }) => {
-    const selected = globalFilter[key];
-    return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];
-  }, shallowEqual);
+export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') => {
+  const globalFilterState = useAtomValue(globalFilterStateAtom);
+  const selected = globalFilterState[key];
+
+  return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];
+};
 
 const usePagination = (loaded: boolean | unknown, perPage?: number, page?: number, count?: number) => {
   return useMemo(() => {

@@ -8,8 +8,8 @@ import {
   onGlobalFilterToggle,
   onSetGlobalFilterScope,
   onTagSelect,
-} from '../redux/globalFilterReducers';
-import { toggleGlobalFilter } from '../../redux/actions';
+} from '../state/reducers/globalFilterReducers';
+import { toggleGlobalFilter } from '../../state/actions/globalFilterActions';
 
 describe('onGetAllTags', () => {
   it('should format tags from an API', () => {

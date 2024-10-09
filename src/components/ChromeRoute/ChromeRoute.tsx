@@ -2,7 +2,7 @@ import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect, useState } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import { batch, useDispatch } from 'react-redux';
-import { toggleGlobalFilter } from '../../redux/actions';
+import { toggleGlobalFilter } from '../../state/actions/globalFilterActions';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';

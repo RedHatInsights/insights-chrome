@@ -1,11 +1,10 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
 import { AddChromeWsEventListener, AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
-import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
-import { globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../state/actions/globalFilterActions';
 import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
@@ -14,7 +13,6 @@ import { PUBLIC_EVENTS } from '../utils/consts';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
-import { ReduxState } from '../redux/store';
 import { FlagTagsFilter } from '../@types/types';
 import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -32,7 +30,7 @@ import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
-  store: Store<ReduxState>;
+  store: typeof chromeStore;
   setPageMetadata: (pageOptions: any) => any;
   analytics: AnalyticsBrowser;
   quickstartsAPI: ChromeAPI['quickStarts'];
@@ -61,16 +59,15 @@ export const createChromeContext = ({
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
-  const dispatch = store.dispatch;
   const actions = {
     appAction: (action: string) => chromeStore.set(appActionAtom, action),
     appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
     appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
-    globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
+    globalFilterScope: (scope: string) => globalFilterScope(scope),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
-      return dispatch(removeGlobalFilter(isHidden));
+      return removeGlobalFilter(isHidden);
     },
   };
 
@@ -86,7 +83,7 @@ export const createChromeContext = ({
     const [listener, selector] = PUBLIC_EVENTS[type];
     if (typeof selector === 'string') {
       (callback as GenericCB)({
-        data: get(store.getState(), selector) || {},
+        data: get(store, selector) || {},
       });
     }
     if (typeof listener === 'function') {
@@ -146,7 +143,7 @@ export const createChromeContext = ({
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
-      dispatch(toggleGlobalFilter(isHidden));
+      toggleGlobalFilter(isHidden);
     },
     isBeta: () => isPreview,
     isChrome2: true,
