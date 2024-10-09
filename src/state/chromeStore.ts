@@ -7,6 +7,7 @@ import { isFeedbackModalOpenAtom } from './atoms/feedbackModalAtom';
 import { activeAppAtom } from './atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from './atoms/debuggerModalatom';
 import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
+import { globalFilterReducerAtom } from './atoms/globalFilterAtom';
 
 const chromeStore = createStore();
 
@@ -27,6 +28,10 @@ chromeStore.set(appActionAtom, undefined);
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
   // console.log('activeModule in store', chromeStore.get(activeModuleAtom));
+});
+
+chromeStore.sub(globalFilterReducerAtom, () => {
+  console.log('globalFilterReducer in store', chromeStore.get(globalFilterReducerAtom));
 });
 
 export default chromeStore;
