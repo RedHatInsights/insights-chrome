@@ -1,51 +1,46 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { batch, shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import debounce from 'lodash/debounce';
-import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../redux/actions';
+import { fetchAllSIDs, fetchAllTags, fetchAllWorkloads, globalFilterChange } from '../../state/actions/globalFilterActions';
 import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown, GlobalFilterDropdownProps } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
-import { GlobalFilterTag, GlobalFilterWorkloads, ReduxState, SID } from '../../redux/store';
+import { GlobalFilterTag, GlobalFilterWorkloads, SID } from '../../@types/types';
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { globalFilterReducerAtom } from '../../state/atoms/globalFilterAtom';
+import useGlobalFilterState from '../../hooks/useGlobalFilterState';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
-  const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
+  const globalFilterState = useAtomValue(globalFilterReducerAtom);
+  const registeredWith = globalFilterState.scope;
   const activeModule = useAtomValue(activeModuleAtom);
-  const isDisabled = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden || !activeModule);
-  const dispatch = useDispatch();
+  const isDisabled = globalFilterState.globalFilterHidden || !activeModule;
   return useCallback(
     debounce((activeTags: any, search: any) => {
       storeFilter(activeTags, hasAccess && !isDisabled, navigate);
-      batch(() => {
-        dispatch(
-          fetchAllTags({
-            registeredWith,
-            activeTags,
-            search,
-          })
-        );
-        dispatch(
-          fetchAllSIDs({
-            registeredWith,
-            activeTags,
-            search,
-          })
-        );
-        dispatch(
-          fetchAllWorkloads({
-            registeredWith,
-            activeTags,
-            search,
-          })
-        );
+      // will removing the batch here cause problems? they are all fetches
+      // https://github.com/pmndrs/jotai/discussions/2416
+      fetchAllTags({
+        registeredWith,
+        activeTags,
+        search,
+      });
+      fetchAllSIDs({
+        registeredWith,
+        activeTags,
+        search,
+      });
+      fetchAllWorkloads({
+        registeredWith,
+        activeTags,
+        search,
       });
     }, 600),
     [registeredWith, hasAccess]
@@ -54,18 +49,7 @@ const useLoadTags = (hasAccess = false) => {
 
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
-  const isLoaded = useSelector(({ globalFilter: { tags, sid, workloads } }: ReduxState) => tags.isLoaded && sid.isLoaded && workloads.isLoaded);
-  const { count, total, tags, sid, workloads } = useSelector(
-    ({ globalFilter: { tags, sid, workloads } }: ReduxState) => ({
-      count: (tags.count || 0) + (sid.count || 0) + (workloads.count || 0),
-      total: (tags.total || 0) + (sid.total || 0) + (workloads.total || 0),
-      tags: tags.items || [],
-      sid: sid.items || [],
-      workloads,
-    }),
-    shallowEqual
-  );
+  const { count, total, tags, sid, workloads, isLoaded } = useGlobalFilterState();
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (
     useTagsFilter as unknown as (
@@ -98,7 +82,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 
   const loadTags = useLoadTags(hasAccess);
   const selectTags = useCallback(
-    debounce((selectedTags: FlagTagsFilter) => dispatch(globalFilterChange(selectedTags)), 600),
+    debounce((selectedTags: FlagTagsFilter) => globalFilterChange(selectedTags), 600),
     [globalFilterChange]
   );
 
@@ -129,7 +113,8 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 
 const GlobalFilterWrapper = () => {
   const [hasAccess, setHasAccess] = useState(false);
-  const globalFilterRemoved = useSelector(({ globalFilter: { globalFilterRemoved } }: ReduxState) => globalFilterRemoved);
+  const globalFilterState = useAtomValue(globalFilterReducerAtom);
+  const globalFilterRemoved = globalFilterState.globalFilterRemoved;
   const chromeAuth = useContext(ChromeAuthContext);
   const { pathname } = useLocation();
   const { getUserPermissions } = useContext(InternalChromeContext);
@@ -137,7 +122,7 @@ const GlobalFilterWrapper = () => {
   // FIXME: Clean up the global filter display flag
   const isLanding = pathname === '/';
   const isAllowed = isGlobalFilterAllowed();
-  const globalFilterHidden = useSelector(({ globalFilter: { globalFilterHidden } }: ReduxState) => globalFilterHidden);
+  const globalFilterHidden = globalFilterState.globalFilterHidden;
   const activeModule = useAtomValue(activeModuleAtom);
   const isDisabled = globalFilterHidden || !activeModule;
   const isGlobalFilterEnabled = useMemo(() => {
