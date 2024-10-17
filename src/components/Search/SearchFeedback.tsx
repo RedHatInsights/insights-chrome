@@ -61,15 +61,15 @@ const SearchFeedback = ({ query, results, feedbackType, onFeedbackSubmitted }: S
   }
 
   return (
-    <MenuGroup className="chr-c-search-feedback pf-v5-u-px-md" label={label}>
-      <MenuItem className="pf-v5-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_POSITIVE)}>
+    <MenuGroup className="chr-c-search-feedback pf-v6-u-px-md" label={label}>
+      <MenuItem className="pf-v6-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_POSITIVE)}>
         <Icon isInline>
-          <OutlinedThumbsUpIcon className={currentFeedbackType === SEARCH_FEEDBACK_POSITIVE ? 'pf-v5-u-active-color-100' : 'pf-v5-u-color-200'} />
+          <OutlinedThumbsUpIcon className={currentFeedbackType === SEARCH_FEEDBACK_POSITIVE ? 'pf-v6-u-active-color-100' : 'pf-v6-u-color-200'} />
         </Icon>
       </MenuItem>
-      <MenuItem className="pf-v5-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_NEGATIVE)}>
+      <MenuItem className="pf-v6-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_NEGATIVE)}>
         <Icon isInline>
-          <OutlinedThumbsDownIcon className={currentFeedbackType === SEARCH_FEEDBACK_NEGATIVE ? 'pf-v5-u-active-color-100' : 'pf-v5-u-color-200'} />
+          <OutlinedThumbsDownIcon className={currentFeedbackType === SEARCH_FEEDBACK_NEGATIVE ? 'pf-v6-u-active-color-100' : 'pf-v6-u-color-200'} />
         </Icon>
       </MenuItem>
     </MenuGroup>

@@ -154,10 +154,10 @@ const ContextSwitcher = ({ accountNumber, className, isInternal }: ContextSwitch
       {accountNumber?.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
           <TextContent className="chr-c-content-account">
-            <Text className="account-label pf-v5-u-mb-0 sentry-mask data-hj-suppress">
+            <Text className="account-label pf-v6-u-mb-0 sentry-mask data-hj-suppress">
               <span>{accountNumber}</span>
               {accountNumber === `${selectedAccountNumber}` && (
-                <Icon size="sm" className="pf-v5-u-ml-auto">
+                <Icon size="sm" className="pf-v6-u-ml-auto">
                   <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
                 </Icon>
               )}
@@ -178,7 +178,7 @@ const ContextSwitcher = ({ accountNumber, className, isInternal }: ContextSwitch
               <Text className="account-label">
                 <span>{target_account}</span>
                 {target_account === selectedAccountNumber && (
-                  <Icon size="sm" className="pf-v5-u-ml-auto">
+                  <Icon size="sm" className="pf-v6-u-ml-auto">
                     <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
                   </Icon>
                 )}

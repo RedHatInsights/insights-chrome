@@ -70,7 +70,7 @@ const AllServicesDropdown = () => {
   const toggle = (
     <MenuToggle
       data-ouia-component-id="AllServices-DropdownToggle"
-      className="pf-v5-u-h-100 chr-c-link-service-toggle pf-v5-u-pl-lg pf-v5-u-pr-lg"
+      className="pf-v6-u-h-100 chr-c-link-service-toggle pf-v6-u-pl-lg pf-v6-u-pr-lg"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -95,9 +95,9 @@ const AllServicesDropdown = () => {
               isOpen={isOpen}
             />
           ) : (
-            <div ref={menuRef} className="pf-v5-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
+            <div ref={menuRef} className="pf-v6-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
               <Backdrop>
-                <Panel variant="raised" className="pf-v5-c-dropdown__menu pf-v5-u-p-0 pf-v5-u-w-100 chr-c-panel-services-nav ">
+                <Panel variant="raised" className="pf-v6-c-dropdown__menu pf-v6-u-p-0 pf-v6-u-w-100 chr-c-panel-services-nav ">
                   <PanelMain>
                     <Bullseye>
                       <Spinner />

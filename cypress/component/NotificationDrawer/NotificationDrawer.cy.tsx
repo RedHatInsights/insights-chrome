@@ -154,11 +154,11 @@ describe('Notification Drawer', () => {
     cy.mount(<DrawerLayout />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 3);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 3);
     cy.get('#notifications-filter-toggle').click();
     cy.contains('Console').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 2);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 2);
     cy.contains('Reset filter').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 3);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 3);
   });
 });

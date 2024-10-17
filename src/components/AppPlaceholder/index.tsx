@@ -19,7 +19,7 @@ const AppPlaceholder = () => {
         className="chr-c-page"
         header={
           <Masthead className="chr-c-masthead">
-            <MastheadMain className="pf-v5-u-pl-lg">
+            <MastheadMain className="pf-v6-u-pl-lg">
               <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
                 <Logo />
               </MastheadBrand>

@@ -64,7 +64,7 @@ const BreadcrumbsFavorites = ({
       variant="plain"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      className="pf-v5-u-pt-xs pf-v5-u-text-nowrap"
+      className="pf-v6-u-pt-xs pf-v6-u-text-nowrap"
     >
       <Icon
         className={classNames('chr-c-breadcrumbs__favorite', {
@@ -74,7 +74,7 @@ const BreadcrumbsFavorites = ({
       >
         <StarIcon />
       </Icon>
-      <CaretDownIcon className="pf-v5-u-ml-sm" />
+      <CaretDownIcon className="pf-v6-u-ml-sm" />
     </MenuToggle>
   );
 

@@ -9,12 +9,12 @@
   font-size: 17px;
 }
 
-.pf-v5-c-nav__list {
+.pf-v6-c-nav__list {
   padding-top: 0;
   section.chr-c-section-nav {
     margin-bottom: var(--pf-v5-global--spacer--md);
     margin-top: 0 !important;
-    h2.pf-v5-c-nav__section-title {
+    h2.pf-v6-c-nav__section-title {
       border: 0;
       border-top: var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BackgroundColor--dark-200) solid;
       color: var(--pf-v5-global--palette--black-500);
@@ -24,18 +24,18 @@
       padding: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
     }
     ul
-      > li.pf-v5-c-nav__item {
+      > li.pf-v6-c-nav__item {
         border-top: 0;
         --pf-v5-c-nav__item--MarginTop: 0;
         --pf-v5-c-nav__item--before--BorderWidth: 0;
         &:last-child {
           margin-bottom: var(--pf-v5-global--spacer--sm);
         }
-        .pf-v5-c-nav__subnav {
+        .pf-v6-c-nav__subnav {
           padding: 0 0 0 var(--pf-v5-global--spacer--lg);
-          .pf-v5-c-nav__list {
-            .pf-v5-c-nav__item {
-              .pf-v5-c-nav__link{
+          .pf-v6-c-nav__list {
+            .pf-v6-c-nav__item {
+              .pf-v6-c-nav__link{
                 padding-left: var(--pf-v5-global--spacer--lg);
               }
               &:last-child {
@@ -44,19 +44,19 @@
             }
           }
         }
-        section.pf-v5-c-nav__subnav {
-          li.pf-v5-c-nav__item {
+        section.pf-v6-c-nav__subnav {
+          li.pf-v6-c-nav__item {
             border: none !important;
           }
         }
       }
     }
-    .pf-v5-c-nav__item.chr-c-navigation__additional-links {
-      .pf-v5-c-nav__link {
+    .pf-v6-c-nav__item.chr-c-navigation__additional-links {
+      .pf-v6-c-nav__link {
         padding-left: var(--pf-v5-global--spacer--lg);
       }
     }
-  > .pf-v5-c-nav__item:not(:first-child) {
+  > .pf-v6-c-nav__item:not(:first-child) {
     border-top: var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BackgroundColor--dark-200) solid;
   }   
   svg {
@@ -65,7 +65,7 @@
   }
 }
 
-.pf-v5-c-nav__item {
+.pf-v6-c-nav__item {
   a.chr-c-navigation__with-notifier {
     align-items: center;
     .notifier-icon {
@@ -75,7 +75,7 @@
   }
 }
 
-.pf-v5-c-nav {
+.pf-v6-c-nav {
   .chr-c-navigation__beta-icon {
     --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--green-300);
   }

@@ -10,7 +10,7 @@ const SearchDescription = ({ description, highlight = [] }: { highlight?: string
     <TextContent>
       <Text
         component="small"
-        className="chr-c-search__item__description pf-v5-u-color-100 pf-v5-u-text-break-word"
+        className="chr-c-search__item__description pf-v6-u-color-100 pf-v6-u-text-break-word"
         dangerouslySetInnerHTML={{ __html: parsedDescription }}
       ></Text>
     </TextContent>

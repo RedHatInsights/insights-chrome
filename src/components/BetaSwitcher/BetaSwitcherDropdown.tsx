@@ -31,7 +31,7 @@ const BetaSwitcherDropdown = () => {
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
-          className="pf-v5-u-color-light-100 pf-v5-u-pt-0 pf-v5-u-pb-0"
+          className="pf-v6-u-color-light-100 pf-v6-u-pt-0 pf-v6-u-pb-0"
           ref={toggleRef}
           aria-label="hide preview banner"
           variant="plain"

@@ -2,14 +2,14 @@
   margin-top: var(--pf-v5-global--spacer--xs);
   // to be above the static favorite button toggle
   z-index: 10;
-  .pf-v5-c-alert__title {
+  .pf-v6-c-alert__title {
       padding: unset;
   }
-  .pf-v5-c-alert__icon {
+  .pf-v6-c-alert__icon {
       padding: unset;
       background-color: unset;
   }
-  .pf-v5-c-button.pf-m-plain {
+  .pf-v6-c-button.pf-m-plain {
     color: var(--pf-v5-global--Color--dark-200);
   }
 }

@@ -30,11 +30,11 @@
        }
        &.disabled {
         color: var(--pf-v5-global--palette--black-500);
-        .pf-v5-c-icon {
+        .pf-v6-c-icon {
           --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--black-500);
          }
        }
-     .pf-v5-c-icon {
+     .pf-v6-c-icon {
        --pf-v5-c-icon__content--Color: var(--pf-v5-global--Color--light-100);
        margin-right: var(--pf-v5-global--spacer--sm);
      }
@@ -64,13 +64,13 @@
     grid-row: 3;
   }
 
-  .pf-v5-c-toolbar__item .pf-v5-c-notification-badge {
+  .pf-v6-c-toolbar__item .pf-v6-c-notification-badge {
     &.pf-m-unread {
       --pf-v5-c-notification-badge--after--BackgroundColor: var(--pf-v5-global--palette--red-100);
       &:hover {--pf-v5-c-notification-badge--after--BackgroundColor: var(--pf-v5-global--palette--red-200)}
     }
   }
-  .chr-c-menu-settings .pf-v5-c-menu__group:first-of-type > .pf-v5-c-menu__group-title {
+  .chr-c-menu-settings .pf-v6-c-menu__group:first-of-type > .pf-v6-c-menu__group-title {
     display: none;
   }
 }

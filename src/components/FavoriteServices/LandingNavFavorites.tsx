@@ -33,10 +33,10 @@ const LandingNavFavorites = () => {
       <GalleryItem key={index}>
         <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card className="chr-c-card-landing-fav" isClickable>
-            <CardHeader selectableActions={{ selectableActionId: 'id', selectableActionAriaLabelledby: 'clickable-card' }} className="pf-v5-u-pb-0">
-              <CardTitle className="pf-v5-u-text-align-center pf-v5-u-active-color-100 pf-v5-u-font-size-sm">{favorite.name}</CardTitle>
+            <CardHeader selectableActions={{ selectableActionId: 'id', selectableActionAriaLabelledby: 'clickable-card' }} className="pf-v6-u-pb-0">
+              <CardTitle className="pf-v6-u-text-align-center pf-v6-u-active-color-100 pf-v6-u-font-size-sm">{favorite.name}</CardTitle>
             </CardHeader>
-            <CardBody className="pf-v5-u-text-align-center pf-v5-u-color-100 pf-v5-u-font-size-xs">{getBundle(favorite.pathname)}</CardBody>
+            <CardBody className="pf-v6-u-text-align-center pf-v6-u-color-100 pf-v6-u-font-size-xs">{getBundle(favorite.pathname)}</CardBody>
           </Card>
         </Link>
       </GalleryItem>
@@ -48,13 +48,13 @@ const LandingNavFavorites = () => {
       <Flex>
         <FlexItem>
           <TextContent>
-            <Text component={TextVariants.h2} className="pf-v5-u-display-inline pf-v5-u-pr-lg">
-              <Icon className="pf-v5-u-mr-sm" status="warning">
+            <Text component={TextVariants.h2} className="pf-v6-u-display-inline pf-v6-u-pr-lg">
+              <Icon className="pf-v6-u-mr-sm" status="warning">
                 <StarIcon />
               </Icon>
               My favorite services
             </Text>
-            <Text component={TextVariants.p} className="pf-v5-u-display-inline">
+            <Text component={TextVariants.p} className="pf-v6-u-display-inline">
               <Link to="/allservices">View all services</Link>
             </Text>
           </TextContent>
@@ -78,7 +78,7 @@ const LandingNavFavorites = () => {
         <EmptyState />
       ) : (
         <React.Fragment>
-          <Gallery className="pf-v5-u-pt-md" hasGutter>
+          <Gallery className="pf-v6-u-pt-md" hasGutter>
             {buildFavorites()}
           </Gallery>
         </React.Fragment>

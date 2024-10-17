@@ -82,20 +82,20 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
       ) : (
         <>
           <Stack>
-            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+            <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
               <Text>There are currently no notifications for you.</Text>
             </StackItem>
-            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+            <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
               <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
                 Check your Notification Preferences
               </Link>
             </StackItem>
-            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+            <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
               <Link onClick={onLinkClick} to="/settings/notifications/notificationslog">
                 View the Event log to see all fired events
               </Link>
             </StackItem>
-            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+            <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
               <Text>Contact your organization administrator</Text>
             </StackItem>
           </Stack>

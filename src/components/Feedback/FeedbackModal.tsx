@@ -64,34 +64,34 @@ const FeedbackModal = memo(() => {
       case 'feedbackHome':
         return (
           <div className="chr-c-feedback-content">
-            <FlexItem className="pf-v5-u-flex-grow-1">
-              <TextContent className="pf-v5-u-mb-md">
+            <FlexItem className="pf-v6-u-flex-grow-1">
+              <TextContent className="pf-v6-u-mb-md">
                 <Text component={TextVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Text>
                 <Text>{intl.formatMessage(messages.helpUsImproveHCC)}</Text>
               </TextContent>
-              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
-                <CardTitle className="pf-v5-u-primary-color-100">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
+              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
+                <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.howIsConsoleExperience)}</CardBody>
               </Card>
-              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('reportBugOne')}>
-                <CardTitle className="pf-v5-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
+              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('reportBugOne')}>
+                <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
               <Card
-                className="pf-v5-u-mb-lg"
+                className="pf-v6-u-mb-lg"
                 isSelectableRaised
                 isCompact
                 onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}
               >
-                <CardTitle className="pf-v5-u-primary-color-100">
+                <CardTitle className="pf-v6-u-primary-color-100">
                   <Text>
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
                   </Text>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.getSupport)}</CardBody>
               </Card>
-              <Card className="pf-v5-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('informDirection')}>
-                <CardTitle className="pf-v5-u-primary-color-100">
+              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('informDirection')}>
+                <CardTitle className="pf-v6-u-primary-color-100">
                   <Text>{intl.formatMessage(messages.informRedhatDirection)}</Text>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.learnAboutResearchOpportunities)}</CardBody>

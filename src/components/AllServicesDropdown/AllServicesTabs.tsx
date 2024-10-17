@@ -81,22 +81,22 @@ const AllServicesTabs = ({
       onToggle={onToggle}
       toggleText={activeTabTitle}
       role="region"
-      className="pf-v5-u-p-md pf-v5-u-pr-0 pf-v5-u-pl-0-on-md"
+      className="pf-v6-u-p-md pf-v6-u-pr-0 pf-v6-u-pl-0-on-md"
       ouiaId={'all-services-tabs'}
     >
-      <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-0 pf-v5-u-pb-sm" component={TextVariants.p}>
+      <Text className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-0 pf-v6-u-pb-sm" component={TextVariants.p}>
         Platform
       </Text>
-      <Divider className="pf-v5-u-pb-md" />
+      <Divider className="pf-v6-u-pb-md" />
       <PlatformServiceslinks />
       <>
-        <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-lg pf-v5-u-pb-sm" component={TextVariants.p}>
+        <Text className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-pb-sm" component={TextVariants.p}>
           Solutions{' '}
-          <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md" data-ouia-component-id="View all link">
+          <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-md" data-ouia-component-id="View all link">
             View all
           </ChromeLink>
         </Text>
-        <Divider className="pf-v5-u-pb-sm" />
+        <Divider className="pf-v6-u-pb-sm" />
         <TabWrapper
           ouiaId="AllServices-favorites-Tab"
           onClick={(e) => {
@@ -104,9 +104,9 @@ const AllServicesTabs = ({
           }}
           eventKey={FAVORITE_TAB_ID}
           title={
-            <TabTitleText className="pf-v5-u-pl-sm">
+            <TabTitleText className="pf-v6-u-pl-sm">
               Favorites
-              <Icon className="chr-c-icon-service-tab pf-v5-u-ml-sm" status="warning" isInline>
+              <Icon className="chr-c-icon-service-tab pf-v6-u-ml-sm" status="warning" isInline>
                 <StarIcon />
               </Icon>
             </TabTitleText>
@@ -122,7 +122,7 @@ const AllServicesTabs = ({
             tabContentId={TAB_CONTENT_ID}
             tabContentRef={tabContentRef}
             onClick={() => onTabClick(section, index)}
-            className="pf-v5-u-pl-sm"
+            className="pf-v6-u-pl-sm"
           />
         ))}
       </>

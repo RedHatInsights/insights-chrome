@@ -74,19 +74,19 @@ const MemoizedHeader = memo(
 
     return (
       <Fragment>
-        <MastheadMain className="pf-v5-u-pl-lg pf-v5-u-pt-0 pf-v5-u-pb-xs">
-          <MastheadBrand className="pf-v5-u-flex-shrink-0 pf-v5-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+        <MastheadMain className="pf-v6-u-pl-lg pf-v6-u-pt-0 pf-v6-u-pb-xs">
+          <MastheadBrand className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
             <Logo />
           </MastheadBrand>
           <Toolbar isFullHeight>
             <ToolbarContent>
-              <ToolbarGroup className="pf-v5-m-icon-button-group pf-v5-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>
+              <ToolbarGroup className="pf-v5-m-icon-button-group pf-v6-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>
                 {!lg && <HeaderTools />}
               </ToolbarGroup>
             </ToolbarContent>
           </Toolbar>
         </MastheadMain>
-        <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
+        <MastheadContent className="pf-v6-u-mx-md pf-v6-u-mx-0-on-2xl">
           {orgId && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
           {userReady && isActivationPath && (
             <Activation
@@ -113,13 +113,13 @@ const MemoizedHeader = memo(
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
-              <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-0-on-2xl" variant="filter-group">
+              <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-0 pf-v6-u-mr-md-on-2xl" variant="filter-group">
                 <Suspense fallback={null}>
                   <SearchInput onStateChange={hideAllServices} />
                 </Suspense>
               </ToolbarGroup>
               <ToolbarGroup
-                className="pf-v5-m-icon-button-group pf-v5-u-ml-auto pf-v5-u-mr-0"
+                className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0"
                 visibility={{ default: 'hidden', '2xl': 'visible' }}
                 widget-type="InsightsToolbar"
               >

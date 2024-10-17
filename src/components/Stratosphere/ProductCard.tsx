@@ -30,7 +30,7 @@ const ProductCard: VoidFunctionComponent<ProductCardProps> = ({ img, description
       <div className={`chr-c-product-card__footer footer-${order}`}>
         <ChromeLink className="chr-c-product-card__link" href={link.href} appId={link.appId}>
           {link.label}&nbsp;
-          <ArrowRightIcon className="pf-v5-u-ml-sm" />
+          <ArrowRightIcon className="pf-v6-u-ml-sm" />
         </ChromeLink>
       </div>
     </Fragment>

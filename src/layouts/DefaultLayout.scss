@@ -10,7 +10,7 @@
   grid-area: banner;
 }
 
-.pf-v5-c-page.chr-c-page__account-banner {
+.pf-v6-c-page.chr-c-page__account-banner {
   grid-template-areas:
     "header header"
     "banner banner"
@@ -19,7 +19,7 @@
 }
 
 @media screen and (max-width: 1200px) {
-  .pf-v5-c-page.chr-c-page__account-banner {
+  .pf-v6-c-page.chr-c-page__account-banner {
     grid-template-areas:
       "header header"
       "main main";
@@ -32,8 +32,8 @@
   flex-direction: inherit;
 }
 
-.pf-v5-c-page__drawer {
-  .pf-v5-c-drawer__content {
+.pf-v6-c-page__drawer {
+  .pf-v6-c-drawer__content {
     background-color: transparent;
   }
 }

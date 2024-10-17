@@ -2,10 +2,10 @@
 
 .chr-c-link-service-toggle {
   // override menu toggle extra bottom border
-  &.pf-v5-c-menu-toggle::after {
+  &.pf-v6-c-menu-toggle::after {
     border-bottom: none;
   }
-  &.pf-v5-c-menu-toggle:hover::after, &.pf-m-expanded::after {
+  &.pf-v6-c-menu-toggle:hover::after, &.pf-m-expanded::after {
     border-bottom: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--info-color--100);
   }
 }
@@ -31,15 +31,15 @@
   // pos has to be important to override PF styles that get lazy loaded!
   position: absolute !important;
   z-index: 1000;
-  .pf-v5-c-dropdown__menu::before {
+  .pf-v6-c-dropdown__menu::before {
     z-index: -1000;
   }
 
   // To not cover the entire screen including masthead
-  .pf-v5-c-backdrop {
+  .pf-v6-c-backdrop {
     position: relative;
   }
-  .pf-v5-c-dropdown__menu {
+  .pf-v6-c-dropdown__menu {
     position: relative; // make sure to enable scroll within backdrop
     top: 0;
   }
@@ -51,12 +51,12 @@
       background: var(--pf-v5-global--BackgroundColor--200);
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
     }
-    .pf-v5-c-tabs {
+    .pf-v6-c-tabs {
       background: var(--pf-v5-global--BackgroundColor--200);
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
       height: 100%;
     }
-    .pf-v5-c-sidebar__panel {
+    .pf-v6-c-sidebar__panel {
       --pf-v5-l-flex--RowGap: 0;
     }
   }
@@ -67,7 +67,7 @@
     .chr-l-stack__item-browse-all-services {
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);  
     }
-    .pf-v5-c-sidebar {
+    .pf-v6-c-sidebar {
       --pf-v5-c-sidebar__panel--md--FlexBasis: 20rem;
       --pf-v5-c-sidebar__panel--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
       &__main {
@@ -80,7 +80,7 @@
       &__panel {
         height: 770px;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
-        .pf-v5-c-tabs {
+        .pf-v6-c-tabs {
           --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-v5-c-tabs--m-vertical__link--PaddingTop: var(--pf-v5-global--spacer--sm);
           --pf-v5-c-tabs--m-vertical__link--PaddingBottom: var(--pf-v5-global--spacer--sm);
@@ -89,17 +89,17 @@
           --pf-v5-c-tabs__item--m-current__link--Color: var(--pf-v5-global--link--Color);
           --pf-v5-c-tabs--m-vertical--MaxWidth: 100%;
           --pf-v5-c-tabs--m-vertical__list--before--BorderColor: transparent;
-          .pf-v5-c-tabs__item:hover, .pf-v5-c-tabs__item:focus {
+          .pf-v6-c-tabs__item:hover, .pf-v6-c-tabs__item:focus {
             button {
               color: var(--pf-v5-global--primary-color--200)
             }
           } 
-          .pf-v5-c-tabs__item.pf-m-current {
+          .pf-v6-c-tabs__item.pf-m-current {
             --pf-v5-c-tabs__link--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
           }
         }
       }
-      .pf-v5-c-card {
+      .pf-v6-c-card {
         --pf-v5-c-card--first-child--PaddingTop: var(--pf-v5-global--spacer--md);
       }
     }

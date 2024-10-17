@@ -97,7 +97,7 @@ const BetaSwitcher = () => {
   return (
     <div ref={bannerRef}>
       <Split
-        className={classNames('chr-c-beta-switcher pf-v5-u-p-xs', {
+        className={classNames('chr-c-beta-switcher pf-v6-u-p-xs', {
           active: isPreview,
         })}
       >
@@ -108,15 +108,15 @@ const BetaSwitcher = () => {
                 ouiaId="PreviewSwitcher"
                 id="preview-toggle"
                 label={
-                  <Text className="pf-v5-u-color-100" component={TextVariants.small}>
+                  <Text className="pf-v6-u-color-100" component={TextVariants.small}>
                     You&apos;re in Hybrid Cloud Console Preview mode.{' '}
-                    <div className="pf-v5-u-display-none pf-v5-u-display-inline-on-md"> To return to production, turn off Preview mode</div>
+                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To return to production, turn off Preview mode</div>
                   </Text>
                 }
                 labelOff={
-                  <Text className="pf-v5-u-color-light-100" component={TextVariants.small}>
+                  <Text className="pf-v6-u-color-light-100" component={TextVariants.small}>
                     You&apos;re in Hybrid Cloud Console production.{' '}
-                    <div className="pf-v5-u-display-none pf-v5-u-display-inline-on-md"> To see new pre-production features, turn on Preview mode</div>
+                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To see new pre-production features, turn on Preview mode</div>
                   </Text>
                 }
                 aria-label="preview-toggle"

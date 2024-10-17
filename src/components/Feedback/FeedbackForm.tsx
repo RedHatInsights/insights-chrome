@@ -107,7 +107,7 @@ const FeedbackForm = ({
             />
           </FormGroup>
         )}
-        <FormGroup className="pf-v5-u-mt-20">
+        <FormGroup className="pf-v6-u-mt-20">
           <Checkbox
             id="feedback-checkbox"
             isChecked={checked}
@@ -119,7 +119,7 @@ const FeedbackForm = ({
       </Form>
       {checked ? (
         <>
-          <div className="pf-v5-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
+          <div className="pf-v6-u-font-family-heading-sans-serif chr-c-feedback-email">{intl.formatMessage(messages.email)}</div>
           <Panel variant="raised" className="chr-c-feedback-panel">
             <PanelMain>
               <PanelMainBody className="chr-c-feedback-panel__body">{user.identity.user.email}</PanelMainBody>

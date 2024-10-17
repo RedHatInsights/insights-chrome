@@ -240,7 +240,7 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && (
-        <ToolbarItem className="pf-v5-u-mx-0">
+        <ToolbarItem className="pf-v6-u-mx-0">
           <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
             <NotificationBadge
               className="chr-c-notification-badge"
@@ -260,19 +260,19 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && !ITLess() && (
-        <ToolbarItem className="pf-v5-u-mr-0">
+        <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}

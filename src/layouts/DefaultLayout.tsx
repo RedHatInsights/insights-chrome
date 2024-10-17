@@ -66,7 +66,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       }
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       header={
-        <Masthead className="chr-c-masthead pf-v5-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+        <Masthead className="chr-c-masthead pf-v6-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
             breadcrumbsProps={{
               isNavOpen,

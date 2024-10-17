@@ -1,9 +1,9 @@
 .chr-c-breadcrumbs__favorite {
-  .pf-v5-c-icon__content {
+  .pf-v6-c-icon__content {
     color: var(--pf-v5-global--palette--black-600);
   }
   &.isFavorited {
-    .pf-v5-c-icon__content {
+    .pf-v6-c-icon__content {
       color: var(--pf-v5-global--palette--gold-400);
     }
   }

@@ -203,23 +203,23 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   let menuFooter;
   if (searchItems.length > 0 && !isFetching) {
     menuFooter = (
-      <MenuFooter className="pf-v5-u-px-md">
+      <MenuFooter className="pf-v6-u-px-md">
         <SearchFeedback query={searchValue} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
       </MenuFooter>
     );
   }
 
   const menu = (
-    <Menu ref={menuRef} className="pf-v5-u-pt-sm chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-v6-u-pt-sm chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
-            <Bullseye className="pf-v5-u-p-md">
+            <Bullseye className="pf-v6-u-p-md">
               <Spinner size="xl" />
             </Bullseye>
           ) : (
             <>
-              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined} className="pf-v5-u-px-md">
+              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined} className="pf-v6-u-px-md">
                 {searchItems.map((item, index) => (
                   <MenuItem
                     onKeyDown={(e) => {
@@ -234,10 +234,10 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
                       }
                     }}
                     key={index}
-                    className="pf-v5-u-mb-xs"
+                    className="pf-v6-u-mb-xs"
                     component={(props) => <ChromeLink {...props} href={item.pathname} />}
                   >
-                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v5-u-mb-xs" />
+                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" />
                     <SearchDescription description={item.description} />
                   </MenuItem>
                 ))}
@@ -252,7 +252,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input pf-v5-c-search-input pf-v5-u-w-100">
+    <div ref={containerRef} className="chr-c-search__input pf-v6-c-search-input pf-v6-u-w-100">
       {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
       {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
     </div>

@@ -1,4 +1,4 @@
-button.pf-v5-c-button.chr-c-button-debugger {
+button.pf-v6-c-button.chr-c-button-debugger {
   svg {
     transform: rotate(90deg);
   }
@@ -22,18 +22,18 @@ button.pf-v5-c-button.chr-c-button-debugger {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
 
-  .pf-v5-c-content {
+  .pf-v6-c-content {
     margin-bottom: var(--pf-v5-v5-c-content--MarginBottom);
   }
 
-  .pf-v5-c-modal-box__body {
+  .pf-v6-c-modal-box__body {
     padding: 0;
     margin: 0;
   }
-  .pf-v5-c-modal-box > .pf-v5-c-button + *{
+  .pf-v6-c-modal-box > .pf-v6-c-button + *{
     margin-right: 0;
   }
-  & .pf-v5-c-modal-box__body {
+  & .pf-v6-c-modal-box__body {
     &:last-child {
       padding-bottom: 0;
     }
