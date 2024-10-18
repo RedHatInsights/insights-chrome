@@ -3,8 +3,14 @@ import { InfoCircleIcon } from '@patternfly/react-icons/dist/dynamic/icons/info-
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Button, ButtonProps } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
-import { Modal, ModalProps, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import {
+	ModalProps
+} from '@patternfly/react-core/dist/dynamic/components/Modal';
+import {
+	Modal,
+	ModalVariant
+} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -24,19 +30,19 @@ const BetaInfoModal = ({ isOpen, onClick, onCancel, menuItemClicked }: BetaInfoM
           <Icon size="xl" iconSize="xl" status="info" className="pf-v6-u-m-md">
             <InfoCircleIcon />
           </Icon>
-          <TextContent>
-            <Text component="h2">{`${menuItemClicked} is only available in our Preview Environment`}</Text>
-            <Text component="p">{intl.formatMessage(messages.tryThisFeatureInBeta)}</Text>
-            <Text component="p">{intl.formatMessage(messages.afterBetaUse)}</Text>
-          </TextContent>
+          <Content>
+            <Content component="h2">{`${menuItemClicked} is only available in our Preview Environment`}</Content>
+            <Content component="p">{intl.formatMessage(messages.tryThisFeatureInBeta)}</Content>
+            <Content component="p">{intl.formatMessage(messages.afterBetaUse)}</Content>
+          </Content>
           <Button key="confirm" variant="primary" onClick={onClick} className="pf-v6-u-mt-md">
             {intl.formatMessage(messages.useFeatureInBeta)}
           </Button>
-          <TextContent className="pf-v6-u-mt-md">
-            <Text component="a" href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">
+          <Content className="pf-v6-u-mt-md">
+            <Content component="a" href="https://access.redhat.com/support/policy/updates/cloud-redhat/lifecycle">
               {intl.formatMessage(messages.learnMoreABoutBeta)}
-            </Text>
-          </TextContent>
+            </Content>
+          </Content>
         </div>
       </Bullseye>
     </Modal>

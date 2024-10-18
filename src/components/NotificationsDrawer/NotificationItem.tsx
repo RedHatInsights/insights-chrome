@@ -70,9 +70,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNav
                   id="notification-item-toggle"
                   isExpanded={isDropdownOpen}
                   variant="plain"
-                >
-                  <EllipsisVIcon />
-                </MenuToggle>
+                  icon={<EllipsisVIcon />}
+                />
               )}
               isOpen={isDropdownOpen}
               onOpenChange={setIsDropdownOpen}

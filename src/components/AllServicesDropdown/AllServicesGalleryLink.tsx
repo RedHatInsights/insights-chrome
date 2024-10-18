@@ -3,7 +3,7 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
@@ -44,8 +44,8 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
           'chr-c-icon-favorited': isFavorite,
         })}
         isFullHeight
-        isFlat
-        isSelectableRaised
+        
+        
         onClick={onLinkClick}
       >
         <CardBody className="pf-v6-u-p-md">
@@ -82,9 +82,9 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
               )}
             </SplitItem>
           </Split>
-          <TextContent>
-            <Text className="pf-v6-u-font-size-xs pf-v6-u-color-100">{description ?? ''}</Text>
-          </TextContent>
+          <Content>
+            <Content component="p" className="pf-v6-u-font-size-xs pf-v6-u-color-100">{description ?? ''}</Content>
+          </Content>
         </CardBody>
       </Card>
     </ChromeLink>

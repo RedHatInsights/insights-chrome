@@ -1,6 +1,6 @@
 import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import React from 'react';
 import { ITLess, titleToId } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
@@ -22,10 +22,10 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
         {title}
       </CardTitle>
       <CardBody>
-        <TextContent className="pf-v6-u-font-size-sm">
-          <Text component={TextVariants.p} className="pf-v6-u-mb-md">
+        <Content className="pf-v6-u-font-size-sm">
+          <Content component={ContentVariants.p} className="pf-v6-u-mb-md">
             {description || null}
-          </Text>
+          </Content>
           {filteredLinks.map((link, index) =>
             isAllServicesGroup(link) ? (
               <AllServicesGroup key={index} category={titleToId(title)} {...link} />
@@ -33,7 +33,7 @@ const AllServicesSection = ({ icon, title, description, links }: AllServicesSect
               <AllServicesLink key={index} {...link} category={titleToId(title)} />
             )
           )}
-        </TextContent>
+        </Content>
       </CardBody>
     </Card>
   );

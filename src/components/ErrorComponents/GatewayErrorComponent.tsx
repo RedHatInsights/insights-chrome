@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import NotAuthorized from '@redhat-cloud-services/frontend-components/NotAuthorized';
 import sanitizeHtml from 'sanitize-html';
 import { useAtomValue } from 'jotai';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';
@@ -35,16 +35,16 @@ const Description = ({ detail, complianceError }: DescriptionProps) => {
     message: detail || '',
   });
   return (
-    <TextContent>
+    <Content>
       {detail && complianceError ? (
-        <Text dangerouslySetInnerHTML={{ __html: sanitizeHtml(detail) }}></Text>
+        <Content component="p" dangerouslySetInnerHTML={{ __html: sanitizeHtml(detail) }}></Content>
       ) : (
         <Fragment>
-          <Text>{description}</Text>
-          {detail && <Text>{errorDetail}</Text>}
+          <Content component="p">{description}</Content>
+          {detail && <Content component="p">{errorDetail}</Content>}
         </Fragment>
       )}
-    </TextContent>
+    </Content>
   );
 };
 

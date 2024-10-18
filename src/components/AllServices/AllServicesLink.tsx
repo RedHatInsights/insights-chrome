@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 
 import classNames from 'classnames';
@@ -35,8 +35,8 @@ const AllServicesLink = ({ href, title, isExternal, category, group }: AllServic
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
   return (
-    <Text
-      component={TextVariants.p}
+    <Content
+      component={ContentVariants.p}
       className={classNames('chr-c-favorite-trigger', {
         'chr-c-icon-favorited': isFavorite,
       })}
@@ -65,7 +65,7 @@ const AllServicesLink = ({ href, title, isExternal, category, group }: AllServic
           <StarIcon />
         </Icon>
       )}
-    </Text>
+    </Content>
   );
 };
 

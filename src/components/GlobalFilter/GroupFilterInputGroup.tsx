@@ -72,8 +72,8 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
           }
           appendTo={() => document.body}
         >
-          <Button variant="control" aria-label="Tags help">
-            <OutlinedQuestionCircleIcon />
+          <Button icon={<OutlinedQuestionCircleIcon />} variant="control" aria-label="Tags help">
+            
           </Button>
         </Popover>
       </InputGroupItem>

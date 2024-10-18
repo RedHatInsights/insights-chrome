@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import {
-  ActionGroup,
-  Bullseye,
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateHeader,
-  EmptyStateVariant,
-  Form,
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  Modal,
-  ModalVariant,
-  Text,
-  TextContent,
-  TextInput,
-  ValidatedOptions,
+	ActionGroup,
+	Bullseye,
+	Button,
+	EmptyState,
+	EmptyStateBody,
+	EmptyStateVariant,
+	Form,
+	FormGroup,
+	FormHelperText,
+	HelperText,
+	HelperTextItem,
+	Content,
+	TextInput,
+	ValidatedOptions
 } from '@patternfly/react-core';
+import {
+	Modal,
+	ModalVariant
+} from '@patternfly/react-core/deprecated';
 import { InnerScrollContainer, OuterScrollContainer, Table, TableText, TableVariant, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import axios from 'axios';
@@ -125,9 +125,9 @@ const IPWhitelistTable: React.FC = () => {
     >
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
         <FormGroup>
-          <TextContent>
-            <Text>Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allowlist.</Text>
-          </TextContent>
+          <Content>
+            <Content component="p">Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allowlist.</Content>
+          </Content>
           <TextInput
             validated={validationError ? ValidatedOptions.error : ValidatedOptions.default}
             placeholder="127.0.0.1/32"
@@ -164,9 +164,9 @@ const IPWhitelistTable: React.FC = () => {
     >
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
         <FormGroup>
-          <TextContent>
-            <Text>The following IP addresses will be removed from the allowlist</Text>
-          </TextContent>
+          <Content>
+            <Content component="p">The following IP addresses will be removed from the allowlist</Content>
+          </Content>
           <TextInput isDisabled value={removeAddresses}></TextInput>
         </FormGroup>
         <ActionGroup>
@@ -191,8 +191,7 @@ const IPWhitelistTable: React.FC = () => {
     <Tr style={{ border: 'none' }}>
       <Td colSpan={8}>
         <Bullseye>
-          <EmptyState variant={EmptyStateVariant.sm}>
-            <EmptyStateHeader titleText="No IP addresses allowed" headingLevel="h2" />
+          <EmptyState  headingLevel="h2"   titleText="No IP addresses allowed" variant={EmptyStateVariant.sm}>
             <EmptyStateBody>
               Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allow-list.
             </EmptyStateBody>

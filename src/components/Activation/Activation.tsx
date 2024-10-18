@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import {
+	Modal,
+	ModalVariant
+} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { getEnv } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -59,9 +62,9 @@ const Activation = ({
 
   return (
     <Modal isOpen={isModalOpen} onClose={onModalClose} title={intl.formatMessage(messages.activationTitle)} variant={ModalVariant.medium}>
-      <TextContent>
-        <Text>{intl.formatMessage(messages.activationDescription)}</Text>
-      </TextContent>
+      <Content>
+        <Content component="p">{intl.formatMessage(messages.activationDescription)}</Content>
+      </Content>
     </Modal>
   );
 };

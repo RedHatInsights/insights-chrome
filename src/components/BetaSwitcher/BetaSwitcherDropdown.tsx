@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
-import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { CogIcon } from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import { useSetAtom } from 'jotai';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
@@ -16,9 +16,9 @@ const BetaSwitcherDropdown = () => {
   };
 
   const description = (
-    <Text component="small">
+    <Content component="small">
       You can enable &quot;Preview&quot; from the Settings menu <CogIcon /> at any time.
-    </Text>
+    </Content>
   );
 
   return (
@@ -37,9 +37,8 @@ const BetaSwitcherDropdown = () => {
           variant="plain"
           onClick={onToggleClick}
           isExpanded={isOpen}
-        >
-          <EllipsisVIcon />
-        </MenuToggle>
+          icon={<EllipsisVIcon />}
+        />
       )}
       shouldFocusToggleOnSelect
     >

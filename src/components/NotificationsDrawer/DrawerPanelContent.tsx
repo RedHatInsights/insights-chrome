@@ -6,14 +6,14 @@ import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyState, EmptyStateBody,  } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import {
   NotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerHeader,
   NotificationDrawerList,
 } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
-import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
@@ -54,19 +54,17 @@ export type DrawerPanelProps = {
 };
 
 const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => void; isOrgAdmin?: boolean }) => (
-  <EmptyState>
-    <EmptyStateIcon icon={BellSlashIcon} />
-    <Title headingLevel="h4" size="lg">
+  <EmptyState titleText={<Title headingLevel="h4" size="lg">
       No notifications found
-    </Title>
+    </Title>} icon={BellSlashIcon}>
     <EmptyStateBody>
       {isOrgAdmin ? (
         <Stack>
           <StackItem>
-            <Text>There are currently no notifications for you.</Text>
+            <Content component="p">There are currently no notifications for you.</Content>
           </StackItem>
           <StackItem>
-            <Text>
+            <Content component="p">
               Try&nbsp;
               <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
                 checking your notification preferences
@@ -76,14 +74,14 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
                 notification configuration
               </Link>
               &nbsp;for your organization.
-            </Text>
+            </Content>
           </StackItem>
         </Stack>
       ) : (
         <>
           <Stack>
             <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
-              <Text>There are currently no notifications for you.</Text>
+              <Content component="p">There are currently no notifications for you.</Content>
             </StackItem>
             <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
               <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
@@ -96,7 +94,7 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
               </Link>
             </StackItem>
             <StackItem className="pf-v6-u-pl-lg pf-v6-u-pb-sm">
-              <Text>Contact your organization administrator</Text>
+              <Content component="p">Contact your organization administrator</Content>
             </StackItem>
           </Stack>
         </>
@@ -297,9 +295,8 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
               id="notifications-filter-toggle"
               variant="plain"
               aria-label="Notifications filter"
-            >
-              <FilterIcon />
-            </MenuToggle>
+              icon={<FilterIcon />}
+            />
           )}
           isOpen={isFilterDropdownOpen}
           onOpenChange={setIsFilterDropdownOpen}
@@ -333,9 +330,8 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
               id="notifications-actions-toggle"
               aria-label="Notifications actions dropdown"
               isFullWidth
-            >
-              <EllipsisVIcon />
-            </MenuToggle>
+              icon={<EllipsisVIcon />}
+            />
           )}
           isOpen={isDropdownOpen}
           onOpenChange={setIsDropdownOpen}

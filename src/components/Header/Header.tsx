@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { useFlag } from '@unleash/proxy-client-react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { MastheadBrand, MastheadContent, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { MastheadLogo, MastheadContent, MastheadMain, MastheadBrand } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
@@ -75,9 +75,9 @@ const MemoizedHeader = memo(
     return (
       <Fragment>
         <MastheadMain className="pf-v6-u-pl-lg pf-v6-u-pt-0 pf-v6-u-pb-xs">
-          <MastheadBrand className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+          <MastheadBrand data-codemods><MastheadLogo data-codemods className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
             <Logo />
-          </MastheadBrand>
+          </MastheadLogo></MastheadBrand>
           <Toolbar isFullHeight>
             <ToolbarContent>
               <ToolbarGroup className="pf-v5-m-icon-button-group pf-v6-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>

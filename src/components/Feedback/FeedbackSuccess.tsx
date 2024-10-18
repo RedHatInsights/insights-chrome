@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
 import { useIntl } from 'react-intl';
 
@@ -20,12 +20,12 @@ const FeedbackSuccess = ({ onCloseModal, successTitle, successDescription }: Fee
   return (
     <div className="chr-c-feedback-success-content">
       <Icon size="md">
-        <CheckIcon color="var(--pf-v5-global--success-color--100)" className="pf-v6-u-mx-auto" />
+        <CheckIcon color="var(--pf-t--temp--dev--tbd)"/* CODEMODS: original v5 color was --pf-v5-global--success-color--100 */ className="pf-v6-u-mx-auto" />
       </Icon>
-      <TextContent>
-        <Text component={TextVariants.h1}>{successTitle}</Text>
-        <Text>{successDescription}</Text>
-      </TextContent>
+      <Content>
+        <Content component={ContentVariants.h1}>{successTitle}</Content>
+        <Content component="p">{successDescription}</Content>
+      </Content>
       <Button variant="primary" onClick={onCloseModal}>
         {intl.formatMessage(messages.close)}
       </Button>

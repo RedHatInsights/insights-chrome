@@ -65,7 +65,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
         'pf-c-page') /** we have to add the legacy styling to allow v4 page layout sub components to be able to inherit legacy styling */
       }
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
-      header={
+      masthead={
         <Masthead className="chr-c-masthead pf-v6-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
             breadcrumbsProps={{

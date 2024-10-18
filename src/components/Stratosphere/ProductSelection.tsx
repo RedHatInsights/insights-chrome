@@ -5,7 +5,7 @@ import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import CheckCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/check-circle-icon';
 
@@ -23,7 +23,7 @@ const ProductSelection = () => {
   return (
     <div id="chrome-app-render-root">
       <Page
-        header={
+        masthead={
           <Masthead className="chr-c-masthead">
             <Header />
           </Masthead>
@@ -58,9 +58,9 @@ const ProductSelection = () => {
               <>
                 <StackItem>
                   <Bullseye>
-                    <TextContent>
-                      <Text>To get started using your Red Hat products, follow the links below</Text>
-                    </TextContent>
+                    <Content>
+                      <Content component="p">To get started using your Red Hat products, follow the links below</Content>
+                    </Content>
                   </Bullseye>
                 </StackItem>
                 <StackItem>
@@ -76,14 +76,14 @@ const ProductSelection = () => {
             )}
             <StackItem>
               <Bullseye>
-                <TextContent>
-                  <Text>
+                <Content>
+                  <Content component="p">
                     To manage or learn more about your Red Hat subscriptions, visit{' '}
                     <ChromeLink href="/insights/subscriptions/rhel" appId="subscriptions">
                       subscriptions.
                     </ChromeLink>
-                  </Text>
-                </TextContent>
+                  </Content>
+                </Content>
               </Bullseye>
             </StackItem>
           </Stack>

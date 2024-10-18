@@ -5,8 +5,11 @@ import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/c
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Grid, GridItem } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import {
+	Modal,
+	ModalVariant
+} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import OutlinedCommentsIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-comments-icon';
@@ -65,34 +68,34 @@ const FeedbackModal = memo(() => {
         return (
           <div className="chr-c-feedback-content">
             <FlexItem className="pf-v6-u-flex-grow-1">
-              <TextContent className="pf-v6-u-mb-md">
-                <Text component={TextVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Text>
-                <Text>{intl.formatMessage(messages.helpUsImproveHCC)}</Text>
-              </TextContent>
-              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('feedbackOne')}>
+              <Content className="pf-v6-u-mb-md">
+                <Content component={ContentVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Content>
+                <Content component="p">{intl.formatMessage(messages.helpUsImproveHCC)}</Content>
+              </Content>
+              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('feedbackOne')}>
                 <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.howIsConsoleExperience)}</CardBody>
               </Card>
-              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('reportBugOne')}>
+              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('reportBugOne')}>
                 <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
               <Card
                 className="pf-v6-u-mb-lg"
-                isSelectableRaised
+                
                 isCompact
                 onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}
               >
                 <CardTitle className="pf-v6-u-primary-color-100">
-                  <Text>
+                  <Content component="p">
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
-                  </Text>
+                  </Content>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.getSupport)}</CardBody>
               </Card>
-              <Card className="pf-v6-u-mb-lg" isSelectableRaised isCompact onClick={() => setModalPage('informDirection')}>
+              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('informDirection')}>
                 <CardTitle className="pf-v6-u-primary-color-100">
-                  <Text>{intl.formatMessage(messages.informRedhatDirection)}</Text>
+                  <Content component="p">{intl.formatMessage(messages.informRedhatDirection)}</Content>
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.learnAboutResearchOpportunities)}</CardBody>
               </Card>
@@ -129,16 +132,16 @@ const FeedbackModal = memo(() => {
             handleFeedbackError={() => setModalPage('feedbackError')}
             modalTitle={intl.formatMessage(messages.reportABug)}
             modalDescription={
-              <Text>
+              <Content component="p">
                 {intl.formatMessage(messages.describeReportBug)}{' '}
-                <Text
+                <Content
                   component="a"
                   href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console"
                   target="_blank"
                 >
                   {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
-                </Text>
-              </Text>
+                </Content>
+              </Content>
             }
             feedbackType="Bug"
             checkboxDescription={`${intl.formatMessage(messages.learnAboutResearchOpportunities)} ${intl.formatMessage(
@@ -157,13 +160,13 @@ const FeedbackModal = memo(() => {
             handleFeedbackError={() => setModalPage('feedbackError')}
             modalTitle={intl.formatMessage(messages.informRedhatDirection)}
             modalDescription={
-              <Text>
+              <Content component="p">
                 {intl.formatMessage(messages.informDirectionDescription)}&nbsp;
-                <Text component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
+                <Content component="a" href="https://www.redhat.com/en/about/user-research" target="_blank">
                   {intl.formatMessage(messages.userResearchTeam)}
-                </Text>
+                </Content>
                 {intl.formatMessage(messages.directInfluence)}
-              </Text>
+              </Content>
             }
             feedbackType="[Research Opportunities]"
             textAreaHidden={true}
@@ -202,7 +205,7 @@ const FeedbackModal = memo(() => {
 
   return (
     <React.Fragment>
-      <Button
+      <Button icon={<OutlinedCommentsIcon />}
         ouiaId="feedback-button"
         className="chr-c-button-feedback"
         onClick={() => {
@@ -212,7 +215,7 @@ const FeedbackModal = memo(() => {
           }
         }}
       >
-        <OutlinedCommentsIcon />
+        
         {intl.formatMessage(messages.feedback)}
       </Button>
       <Modal

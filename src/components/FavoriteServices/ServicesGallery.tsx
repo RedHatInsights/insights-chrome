@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ServiceTile, { ServiceTileProps } from './ServiceTile';
 import ChromeLink from '../ChromeLink';
@@ -21,12 +21,12 @@ const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: Ser
             ))}
             <Card isPlain className="chr-c-card-centered pf-v6-u-background-color-200">
               <CardBody className="pf-v6-u-pt-lg">
-                <TextContent>
-                  <Text component="p">Go to the All Services page to tag your favorites.</Text>
-                  <Text component="p">
+                <Content>
+                  <Content component="p">Go to the All Services page to tag your favorites.</Content>
+                  <Content component="p">
                     <ChromeLink href="/allservices">View all services</ChromeLink>
-                  </Text>
-                </TextContent>
+                  </Content>
+                </Content>
               </CardBody>
             </Card>
           </Gallery>

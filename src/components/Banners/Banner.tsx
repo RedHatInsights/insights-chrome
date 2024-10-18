@@ -2,7 +2,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 import './Banner.scss';
@@ -16,9 +16,9 @@ const Banner = () => {
   };
   return (
     <div className="chr-banner">
-      <Text component={TextVariants.h3}>{intl.formatMessage(messages.changesComing)}</Text>
-      <Button variant="link" component="a" href={bannerContent.link.href} target="_blank">
-        {intl.formatMessage(messages.learnMore)} <ArrowRightIcon />
+      <Content component={ContentVariants.h3}>{intl.formatMessage(messages.changesComing)}</Content>
+      <Button icon={<ArrowRightIcon />} variant="link" component="a" href={bannerContent.link.href} target="_blank">
+        {intl.formatMessage(messages.learnMore)} 
       </Button>
     </div>
   );

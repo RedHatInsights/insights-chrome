@@ -3,8 +3,8 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Form, FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
 import { Panel, PanelMain, PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
-import { TextArea } from '@patternfly/react-core/dist/dynamic/components/TextArea';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { TextArea } from '@patternfly/react-core/dist/dynamic/components/ContentArea';
 
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -89,10 +89,10 @@ const FeedbackForm = ({
 
   return (
     <div className="chr-c-feedback-content">
-      <TextContent>
-        <Text component={TextVariants.h1}>{modalTitle}</Text>
+      <Content>
+        <Content component={ContentVariants.h1}>{modalTitle}</Content>
         {modalDescription}
-      </TextContent>
+      </Content>
       <Form>
         {textAreaHidden ? (
           ''

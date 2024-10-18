@@ -1,8 +1,11 @@
 import React from 'react';
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import {
+	Modal,
+	ModalVariant
+} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
 import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 
@@ -30,15 +33,15 @@ const BetaInfoModal = ({ onAccept, isOpen, toggleOpen }: { toggleOpen: (isOpen: 
         </Button>,
       ]}
     >
-      <TextContent>
-        <Text>
+      <Content>
+        <Content component="p">
           You can enable Preview mode to try out upcoming features that are in technology preview.{' '}
           <a href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle" target="_blank" rel="noreferrer">
             Learn more
           </a>
           .
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
     </Modal>
   );
 };

@@ -1,21 +1,19 @@
 import React from 'react';
-import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { EmptyState, EmptyStateBody,  } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 const EmptySearchState = () => {
   return (
-    <EmptyState className="chr-c-search__empty-state" variant="xs">
-      <EmptyStateIcon className="pf-v6-u-mb-xl" icon={SearchIcon} />
-      <Title headingLevel="h2" size="lg">
+    <EmptyState titleText={<Title headingLevel="h2" size="lg">
         No results found
-      </Title>
+      </Title>} icon={SearchIcon} className="chr-c-search__empty-state" variant="xs">
       <EmptyStateBody>
-        <TextContent>
-          <Text>No results match your criteria. Clear the search field and try again.</Text>
-        </TextContent>
+        <Content>
+          <Content component="p">No results match your criteria. Clear the search field and try again.</Content>
+        </Content>
       </EmptyStateBody>
     </EmptyState>
   );

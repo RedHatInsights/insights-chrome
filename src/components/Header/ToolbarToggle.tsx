@@ -109,9 +109,8 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
           onClick={onToggle}
           aria-label={props.ariaLabel}
           isExpanded={isOpen}
-        >
-          {props.icon && <props.icon />}
-        </MenuToggle>
+          icon={props.icon && <props.icon />}
+        />
       )}
       isOpen={isOpen}
       onSelect={onSelect}

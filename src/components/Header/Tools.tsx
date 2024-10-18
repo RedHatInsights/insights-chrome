@@ -29,16 +29,14 @@ import useSupportCaseData from '../../hooks/useSupportCaseData';
 const isITLessEnv = ITLess();
 
 const InternalButton = () => (
-  <Button
+  <Button icon={<RedhatIcon />}
     variant="plain"
     aria-label="Go to internal tools"
     widget-type="InternalButton"
     className="chr-c-toolbar__button-internal"
     href={`${document.baseURI}internal`}
     component="a"
-  >
-    <RedhatIcon />
-  </Button>
+   />
 );
 
 type ExpandedSettingsButtonProps = {

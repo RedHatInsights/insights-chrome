@@ -104,9 +104,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     <CardHeader
                       actions={{
                         actions: [
-                          <Button key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                            <TimesIcon />
-                          </Button>,
+                          <Button icon={<TimesIcon />} key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)} />,
                         ],
                       }}
                       className="pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"

@@ -7,7 +7,10 @@ import messages from '../../locales/Messages';
 import './global-filter-menu.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import {
+	Chip,
+	ChipGroup
+} from '@patternfly/react-core/dist/dynamic/deprecated/components/Chip';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';

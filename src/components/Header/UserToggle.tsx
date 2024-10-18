@@ -180,10 +180,10 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
                 'widget-type': 'UserMenu',
               }
             : {
-                icon: <UserIcon />,
+                icon: <><UserIcon /><EllipsisVIcon /></>,
               })}
         >
-          {isSmall ? <EllipsisVIcon /> : name}
+          {!isSmall && name}
         </MenuToggle>
       )}
       className="chr-c-dropdown-user-toggle"

@@ -73,7 +73,7 @@ const ChromeNavItem = ({
       )}
       {isFavorited && (
         <Icon>
-          <StarIcon color="var(--pf-v5-global--palette--gold-400)" />
+          <StarIcon color="var(--pf-t--temp--dev--tbd)"/* CODEMODS: original v5 color was --pf-v5-global--palette--gold-400 */ />
         </Icon>
       )}
       {hasNotifier && (
