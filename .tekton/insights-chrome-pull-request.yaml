@@ -212,6 +212,239 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
+    - name: parse-build-deploy-script
+      params:
+        - name: path-context
+          value: $(params.path-context)
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+          - name: revision
+            value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
+          - name: pathInRepo
+            value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+      workspaces:
+      - name: source
+        workspace: workspace
+      runAfter:
+      - clone-repository
+    - name: create-frontend-dockerfile
+      taskSpec:
+        description: >-
+          Tekton task to create a dockerfile for the frontend builds
+        params:
+          - default: "source"
+            description: directory in the `output` Workspace to clone the repo into.
+            name: subdirectory
+            type: string
+          - name: path-context
+            description: path context directory inside the repo
+            type: string
+          - name: component
+            description: name of app-sre application folder this component lives in
+            type: string
+          - name: image
+            description: |
+              image should match the quay repo set by app.yaml in app-interface
+            type: string
+          - name: node-build-version
+            description: node version to build the app
+            type: string
+            default: 16
+          - name: quay-expire-time
+            description: time for the image to expire in Quay. Default is 3 days
+            type: string
+            default: 3d
+          - name: npm-build-script
+            type: string
+            description: npm script to run at build time
+            default: build
+          - name: yarn-build-script
+            type: string
+            description: yarn script to run at build time
+            default: build:prod
+          - name: route-path
+            type: string
+            description: path for the app to be stored
+            default: ""
+          - name: beta-route-path
+            type: string
+            description: path for the beta app to be stored
+            default: ""
+          - name: preview-route-path
+            type: string
+            description: path for the preview app to be stored
+            default: ""
+          - name: ci-root
+            type: string
+            description: root of the ci.sh script
+            default: ""
+          - name: server-name
+            type: string
+            description: name of the server. If empty, same as the app name
+            default: ""
+          - name: dist-folder
+            type: string
+            description: directory where the app.info.json will be written
+            default: "dist"
+        workspaces:
+          - name: source
+            description: workspace where the code is stored
+        steps:
+          - name: create-dockerfile
+            computeResources:
+              requests:
+                memory: 2Gi
+              limits:
+                memory: 5Gi
+            image: quay.io/cloudservices/frontend-build-container:latest
+            script: |
+              #!/usr/bin/env sh
+              set -xe
+
+              # handle empty string as dist-folder parameter
+              # which breaks the frontend-build-container scripts
+              if [ -z "$(params.dist-folder)" ]; then DIST_FOLDER="dist"; fi
+
+              source_path=$(workspaces.source.path)/$(params.subdirectory)/$(params.path-context)
+
+              cp -r  $source_path/. /workspace
+              cd /container_workspace
+              bash universal_build.sh
+
+              cp Dockerfile $source_path
+              cp Caddyfile $source_path
+              cp -r ${DIST_FOLDER}/ $source_path
+            env:
+              - name: COMPONENT
+                value: $(params.component)
+              - name: IMAGE
+                value: $(params.image)
+              - name: NODE_BUILD_VERSION
+                value: $(params.node-build-version)
+              - name: QUAY_EXPIRE_TIME
+                value: $(params.quay-expire-time)
+              - name: NPM_BUILD_SCRIPT
+                value: $(params.npm-build-script)
+              - name: YARN_BUILD_SCRIPT
+                value: $(params.yarn-build-script)
+              - name: ROUTE_PATH
+                value: $(params.route-path)
+              - name: BETA_ROUTE_PATH
+                value: $(params.beta-route-path)
+              - name: PREVIEW_ROUTE_PATH
+                value: $(params.preview-route-path)
+              - name: IS_PR
+                value: "false"
+              - name: CI_ROOT
+                value: $(params.ci-root)
+              - name: SERVER_NAME
+                value: $(params.server-name)
+              - name: DIST_FOLDER
+                value: $(params.dist-folder)
+      workspaces:
+      - name: source
+        workspace: workspace
+      params:
+        - name: path-context
+          value: $(params.path-context)
+        - name: component
+          value: $(tasks.parse-build-deploy-script.results.component)
+        - name: image
+          value: $(tasks.parse-build-deploy-script.results.image)
+        - name: node-build-version
+          value: $(tasks.parse-build-deploy-script.results.node-build-version)
+        - name: quay-expire-time
+          value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
+        - name: npm-build-script
+          value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+        - name: yarn-build-script
+          value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
+        - name: route-path
+          value: $(tasks.parse-build-deploy-script.results.route-path)
+        - name: beta-route-path
+          value: $(tasks.parse-build-deploy-script.results.beta-route-path)
+        - name: preview-route-path
+          value: $(tasks.parse-build-deploy-script.results.preview-route-path)
+        - name: ci-root
+          value: $(tasks.parse-build-deploy-script.results.ci-root)
+        - name: server-name
+          value: $(tasks.parse-build-deploy-script.results.server-name)
+        - name: dist-folder
+          value: $(tasks.parse-build-deploy-script.results.dist-folder)
+      runAfter:
+      - parse-build-deploy-script
+    - name: clone-repository-oci-ta
+      params:
+      - name: url
+        value: $(params.git-url)
+      - name: revision
+        value: $(params.revision)
+      - name: ociStorage
+        value: $(params.output-image).git
+      runAfter:
+      - init
+      taskRef:
+        params:
+        - name: name
+          value: git-clone-oci-ta
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta@sha256:0f4360ce144d46171ebd2e8f4d4575539a0600e02208ba5fc9beeb2c27ddfd4c
+        - name: kind
+          value: task
+        resolver: bundles
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - name: run-unit-tests
+      description: Validates frontend unit tests
+      params:
+        - name: SOURCE_ARTIFACT
+          value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+        - clone-repository-oci-ta
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+      taskSpec:
+        params:
+          - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+            name: SOURCE_ARTIFACT
+            type: string
+        volumes:
+          # New volume to store a copy of the source code accessible only to this Task.
+          - name: workdir
+            emptyDir: {}
+        stepTemplate:
+          volumeMounts:
+            - mountPath: /var/workdir
+              name: workdir
+              readOnly: false
+        sidecars:
+        steps:
+          - name: use-trusted-artifact
+            image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:8391272c4e5011120e9e7fee2c1f339e9405366110bf239dadcbc21e953ce099
+            args:
+              - use
+              - $(params.SOURCE_ARTIFACT)=/var/workdir
+          - image: registry.access.redhat.com/ubi8/nodejs-20
+            workingDir: /var/workdir
+            name: unit-tests
+            securityContext:
+              runAsUser: 0
+            script: |
+              #!/bin/bash
+              set -ex
+              
+              npm install
+              npm test
     - name: build-container
       params:
       - name: IMAGE
@@ -235,6 +468,7 @@ spec:
         value: $(params.build-args-file)
       runAfter:
       - prefetch-dependencies
+      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
