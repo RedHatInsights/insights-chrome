@@ -77,11 +77,13 @@ type EnhancedSection = AllServicesSection & { linksQue?: Promise<any>[] };
 
 const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<AllServicesSection[]> => {
   const que: EnhancedSection[] = [];
+  console.log('sections in evaluateLinksVisibility: ', sections);
   sections.forEach((section) => {
     const newLinksQue = section.links.map(async (link) => {
       if (isAllServicesGroup(link)) {
         const nestedLinksQue = await link.links.map(evaluateVisibility);
         const links = await Promise.all(nestedLinksQue);
+        console.log('links in evaluateLinksVisibility: ', links);
         return { ...link, links };
       } else if (isAllServicesLink(link)) {
         return evaluateVisibility(link);
@@ -95,17 +97,23 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
     const links = await Promise.all(section.linksQue ?? []);
     section.links = [];
     links.forEach((link) => {
+      console.log('link before checking isAllServicesGroup logic', link);
       if ((isAllServicesGroup(link) || isAllServicesLink(link)) && !(link as NavItem).isHidden) {
+        console.log('link not hidden:', link);
         if (isAllServicesGroup(link)) {
+          console.log('pushing links to section');
           section.links.push({ ...link, links: link.links.filter((item) => !(item as NavItem).isHidden) });
+          console.log('section after links pushed', section);
         } else {
+          console.log('pushing links that are not allServicesGroup links');
           section.links.push(link);
+          console.log(section);
         }
       }
     });
     delete section.linksQue;
   }
-
+  console.log('what gets returned from evaluateLinksVisibility', groupQue);
   return groupQue;
 };
 
@@ -136,6 +144,8 @@ const useAllServices = () => {
     const response = await request;
     // clear the cache
     delete allServicesFetchCache[query];
+
+    console.log('services-generated response data before evaluateLinksVisibility: ', response.data);
 
     return evaluateLinksVisibility(response.data);
   }, []);
