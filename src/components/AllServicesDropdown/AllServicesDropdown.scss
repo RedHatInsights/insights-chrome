@@ -1,4 +1,4 @@
-@import '~@patternfly/patternfly/sass-utilities/_all';
+@import '~@patternfly/patternfly/sass-utilities/_index';
 
 .chr-c-link-service-toggle {
   // override menu toggle extra bottom border
@@ -11,7 +11,7 @@
 }
 
 .chr-c-page__services-nav-dropdown-menu {
-  @media screen and (min-width: $pf-v5-global--breakpoint--2xl) {
+  @media screen and (min-width: var(--pf-t--global--breakpoint--2xl)) {
     top: 70px;
     height: 100vh;
     &.preview-offset {
@@ -19,7 +19,7 @@
       top: calc(70px + 32px);
     }
   }
-  @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
+  @media screen and (max-width: var(--pf-t--global--breakpoint--2xl)) {
     top: 118px;
     height: 100vh;
     &.preview-offset {
@@ -45,7 +45,7 @@
   }
 }
 
-@media (max-width: $pf-v5-global--breakpoint--md) {
+@media (max-width: var(--pf-t--global--breakpoint--md)) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
       background: var(--pf-v5-global--BackgroundColor--200);
@@ -62,7 +62,7 @@
   }
 }
 
-@media (min-width: $pf-v5-global--breakpoint--md) {
+@media (min-width: var(--pf-t--global--breakpoint--md)) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
       border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);  

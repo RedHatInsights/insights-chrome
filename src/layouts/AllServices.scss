@@ -26,7 +26,7 @@
     }
   }
 
-  @media screen and (max-width: $pf-v5-global--breakpoint--md) {
+  @media screen and (max-width: var(--pf-t--global--breakpoint--md)) {
     .chr-c-all-services-filter {
       max-width: 100%;
       width: 100%;

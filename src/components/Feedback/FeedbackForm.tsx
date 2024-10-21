@@ -4,7 +4,7 @@ import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbo
 import { Form, FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
 import { Panel, PanelMain, PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
-import { TextArea } from '@patternfly/react-core/dist/dynamic/components/ContentArea';
+import { TextArea } from '@patternfly/react-core/dist/dynamic/components/TextArea';
 
 import { DeepRequired } from 'utility-types';
 import { ChromeUser } from '@redhat-cloud-services/types';

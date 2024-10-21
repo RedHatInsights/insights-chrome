@@ -53,7 +53,7 @@ const GatewayErrorComponent = ({ error }: GatewayErrorComponentProps) => {
   const activeProduct = useAtomValue(activeProductAtom);
   // get active product, fallback to module name if product is not defined
   const serviceName = activeProduct || activeModule;
-  return <NotAuthorized description={<Description complianceError={error.complianceError} detail={error.detail} />} serviceName={serviceName} />;
+  return <NotAuthorized bodyText={<Description complianceError={error.complianceError} detail={error.detail} />} serviceName={serviceName} />;
 };
 
 export default GatewayErrorComponent;

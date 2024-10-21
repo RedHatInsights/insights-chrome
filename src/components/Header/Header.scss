@@ -53,7 +53,7 @@
   }
   .chr-c-dropdown-user-toggle {
     --pf-v5-c-dropdown__menu--Top: 100%;
-    @media only screen and (max-width: $pf-v5-global--breakpoint--lg) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--lg)) {
       --pf-v5-c-dropdown__toggle--before--BorderLeftColor: transparent;
     }
   }

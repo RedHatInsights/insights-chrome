@@ -16,10 +16,10 @@
     grid-template-columns: repeat(4, 300px);
     column-gap: 1em;
     grid-auto-rows: auto;
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {      
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--xl)) {      
       grid-template-columns: repeat(2, 300px);
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {      
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {      
       grid-template-columns: repeat(1, minmax(auto, 400px));
     }
   }

@@ -1,6 +1,6 @@
 $pf-v6-global--enable-reset: 'true';
 
-@import '~@patternfly/patternfly/sass-utilities/_all';
+@import '~@patternfly/patternfly/sass-utilities/_index';
 @import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 // TODO: Bring these quick starts overrides into the lib instead 
@@ -91,7 +91,7 @@ aside {
 * The footer is tall and during the module loading process, it create "rubber banding" effect as the loading
 * elements change during different stages. 
 */
-@media screen and (min-width : $pf-v5-global--breakpoint--2xl) {
+@media screen and (min-width : var(--pf-t--global--breakpoint--2xl)) {
   .chr-scope__default-layout {
     // we do not have PF variables for the header height unfortunately
     min-height: calc(100vh - 70px /** the size of the masthead on extra large screens */);
@@ -99,17 +99,17 @@ aside {
 }
 
 
-@media screen and (min-width : $pf-v5-global--breakpoint--xl) {
+@media screen and (min-width : var(--pf-t--global--breakpoint--xl)) {
   .chr-scope__default-layout {
     min-height: calc(100vh - 118px /** the size of the masthead on large screens */);
   };
 }
 
-@media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+@media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {
   .ins-m-hide-on-md {display: none;}
 }
 
-@media only screen and (max-width: $pf-v5-global--breakpoint--sm) {
+@media only screen and (max-width: var(--pf-t--global--breakpoint--sm)) {
   .ins-m-hide-on-sm {display: none;}
 
   .ins-c-table-empty-state.pf-m-grid-md.pf-v6-c-table,
@@ -139,7 +139,7 @@ aside {
   padding-right: var(--pf-global--spacer--xl);
   width: 100%;
 
-  @media only screen and (max-width: $pf-v5-global--breakpoint--lg) {
+  @media only screen and (max-width: var(--pf-t--global--breakpoint--lg)) {
     .truste-banner {
       display: flex;
       flex-direction: column;

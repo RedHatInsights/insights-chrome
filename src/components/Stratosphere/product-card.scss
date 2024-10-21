@@ -18,7 +18,7 @@ $cards: 0, 1, 2, 3;
         grid-row: 1;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--xl)) {
       @each $card in $cards {
         &.title-#{$card} {
           @if $card > 1 {
@@ -29,7 +29,7 @@ $cards: 0, 1, 2, 3;
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {
       @each $card in $cards {
         &.title-#{$card} {
             margin-top: var(--pf-v5-global--spacer--lg);
@@ -51,7 +51,7 @@ $cards: 0, 1, 2, 3;
         grid-row: 2;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--xl)) {
       @each $card in $cards {
         &.body-#{$card} {
           @if $card > 1 {
@@ -61,7 +61,7 @@ $cards: 0, 1, 2, 3;
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {
       @each $card in $cards {
         &.body-#{$card} {
             grid-column: 1;
@@ -81,7 +81,7 @@ $cards: 0, 1, 2, 3;
         grid-row: 3;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--xl)) {
       @each $card in $cards {
         &.footer-#{$card} {
           @if $card > 1 {
@@ -91,7 +91,7 @@ $cards: 0, 1, 2, 3;
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {
       @each $card in $cards {
         &.footer-#{$card} {
             grid-column: 1;
