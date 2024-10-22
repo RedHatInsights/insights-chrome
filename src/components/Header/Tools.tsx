@@ -75,8 +75,10 @@ const Tools = () => {
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
   const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
+  const auth = useContext(ChromeAuthContext);
+  const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = '/iam/user-access/overview';
+  const identityAndAccessManagmentPath = isOrgAdmin ? '/iam/user-access/overview' : '/iam/my-user-access';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
@@ -113,7 +115,7 @@ const Tools = () => {
       items: [
         {
           url: identityAndAccessManagmentPath,
-          title: 'User Access',
+          title: isOrgAdmin ? 'User Access' : 'My User Access',
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
