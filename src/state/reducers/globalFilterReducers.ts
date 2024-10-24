@@ -1,7 +1,6 @@
 import groupBy from 'lodash/groupBy';
-import { FlagTagsFilter } from '../@types/types';
-import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../components/GlobalFilter/globalFilterApi';
-import { CommonTag, GlobalFilterState } from './store';
+import { CommonTag, FlagTagsFilter, GlobalFilterState } from '../../@types/types';
+import { AAP_KEY, MSSQL_KEY, SID_KEY } from '../../components/GlobalFilter/globalFilterApi';
 
 export const globalFilterDefaultState: GlobalFilterState = {
   scope: 'insights',
