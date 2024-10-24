@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const deps = require('../package.json').dependencies;
 
@@ -37,6 +38,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
         './DashboardFavorites': resolve(__dirname, '../src/components/FavoriteServices/DashboardFavorites.tsx'),
+        './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
@@ -47,6 +49,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
+        { '@scalprum/core': { singleton: true, requiredVersion: deps['@scalprum/core'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         getDynamicModules(process.cwd()),
@@ -58,8 +61,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
-      // FIXME: Change to /preview on May
-      base: beta ? '/beta/' : '/',
+      base: '/',
       templateParameters: {
         pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
         pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
@@ -86,6 +88,22 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       __SENTRY_DEBUG__: false,
     }),
     ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+    // Put the Sentry Webpack plugin after all other plugins
+    ...(!dev && process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT
+      ? [
+          sentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: process.env.SENTRY_ORG,
+            project: process.env.SENTRY_PROJECT,
+            _experiments: {
+              moduleMetadata: ({ release }) => ({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                release,
+              }),
+            },
+          }),
+        ]
+      : []),
   ];
 };
 

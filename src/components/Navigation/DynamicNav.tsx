@@ -3,12 +3,11 @@ import { useLoadModule } from '@scalprum/react-core';
 import { Skeleton, SkeletonSize } from '@redhat-cloud-services/frontend-components/Skeleton';
 import { NavItem } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import ChromeNavItem from './ChromeNavItem';
-import { loadLeftNavSegment } from '../../redux/actions';
-import { ReduxState } from '../../redux/store';
 import { DynamicNavProps, NavItem as NavItemType, Navigation } from '../../@types/types';
+import { useSetAtom } from 'jotai';
+import { getDynamicSegmentItemsAtom, getNavigationSegmentAtom, setNavigationSegmentAtom } from '../../state/atoms/navigationAtom';
 
 const toArray = (value: NavItemType | NavItemType[]) => (Array.isArray(value) ? value : [value]);
 const mergeArrays = (orig: any[], index: number, value: any[]) => [...orig.slice(0, index), ...toArray(value), ...orig.slice(index)];
@@ -20,11 +19,11 @@ const isRootNavigation = (schema?: Navigation | NavItemType[]): schema is Naviga
 const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }: DynamicNavProps) => {
   const currentNamespace = pathname.split('/')[1];
   const [isLoaded, setIsLoaded] = useState(false);
-  const dispatch = useDispatch();
-  const schema = useSelector(({ chrome: { navigation } }: ReduxState) => navigation[currentNamespace]);
-  const currNav = useSelector(({ chrome: { navigation } }: ReduxState) =>
-    (navigation[currentNamespace] as Navigation | undefined)?.navItems?.filter((item) => item.dynamicNav === dynamicNav)
-  );
+  const getSchema = useSetAtom(getNavigationSegmentAtom);
+  const getCurrNav = useSetAtom(getDynamicSegmentItemsAtom);
+  const setnavigationSegment = useSetAtom(setNavigationSegmentAtom);
+  const schema = getSchema(currentNamespace);
+  const currNav = getCurrNav(currentNamespace, dynamicNav);
   const newNav = useNavigation({ schema, dynamicNav, currentNamespace, currNav });
   useEffect(() => {
     if (newNav) {
@@ -36,21 +35,19 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }: Dyn
       if (!isEqual(newValue, currNav) && isRootNavigation(schema)) {
         const currNavIndex = schema.navItems.findIndex((item) => item.dynamicNav === dynamicNav);
         if (currNavIndex !== -1) {
-          dispatch(
-            loadLeftNavSegment(
-              {
-                ...schema,
-                navItems: mergeArrays(
-                  schema.navItems.filter((item) => !(item.dynamicNav && item.dynamicNav === dynamicNav)),
-                  currNavIndex,
-                  newValue
-                ),
-              },
-              currentNamespace,
-              pathname,
-              true
-            )
-          );
+          setnavigationSegment({
+            schema: {
+              ...schema,
+              navItems: mergeArrays(
+                schema.navItems.filter((item) => !(item.dynamicNav && item.dynamicNav === dynamicNav)),
+                currNavIndex,
+                newValue
+              ),
+            },
+            segment: currentNamespace,
+            pathname,
+            shouldMerge: true,
+          });
         }
       }
       setIsLoaded(true);

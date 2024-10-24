@@ -82,10 +82,27 @@ aside {
 .chr-render {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
   > main {
       flex-grow: 1;
   }
+}
+
+/** We need some adjustments to the minimal height of the default layout with the new footer.
+* The footer is tall and during the module loading process, it create "rubber banding" effect as the loading
+* elements change during different stages. 
+*/
+@media screen and (min-width : $pf-v5-global--breakpoint--2xl) {
+  .chr-scope__default-layout {
+    // we do not have PF variables for the header height unfortunately
+    min-height: calc(100vh - 70px /** the size of the masthead on extra large screens */);
+  }
+}
+
+
+@media screen and (min-width : $pf-v5-global--breakpoint--xl) {
+  .chr-scope__default-layout {
+    min-height: calc(100vh - 118px /** the size of the masthead on large screens */);
+  };
 }
 
 @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
@@ -137,6 +154,11 @@ aside {
       --pf-v5-c-backdrop--Position: absolute;
     }
   }
+
+// remove float from restart button so it's not obscured by pendo or the va badge
+.pfext-quick-start-footer__restartbtn {
+  float: none;
+}
   
 // fix quickstarts drawer overflow for long quickstart/helptopic content
 #chrome-entry {

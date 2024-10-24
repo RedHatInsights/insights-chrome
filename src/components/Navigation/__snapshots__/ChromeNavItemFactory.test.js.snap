@@ -80,13 +80,6 @@ exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
       id="group"
     >
       <div>
-        <span
-          class="pf-v5-c-icon pf-m-inline pf-m-sm pf-v5-u-mr-sm"
-        >
-          <span
-            class="pf-v5-c-icon__content"
-          />
-        </span>
         group
       </div>
     </h2>
