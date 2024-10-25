@@ -228,119 +228,15 @@ spec:
       runAfter:
       - clone-repository
     - name: create-frontend-dockerfile
-      taskSpec:
-        description: >-
-          Tekton task to create a dockerfile for the frontend builds
+      taskRef:
+        resolver: git
         params:
-          - default: "source"
-            description: directory in the `output` Workspace to clone the repo into.
-            name: subdirectory
-            type: string
-          - name: path-context
-            description: path context directory inside the repo
-            type: string
-          - name: component
-            description: name of app-sre application folder this component lives in
-            type: string
-          - name: image
-            description: |
-              image should match the quay repo set by app.yaml in app-interface
-            type: string
-          - name: node-build-version
-            description: node version to build the app
-            type: string
-            default: 16
-          - name: quay-expire-time
-            description: time for the image to expire in Quay. Default is 3 days
-            type: string
-            default: 3d
-          - name: npm-build-script
-            type: string
-            description: npm script to run at build time
-            default: build
-          - name: yarn-build-script
-            type: string
-            description: yarn script to run at build time
-            default: build:prod
-          - name: route-path
-            type: string
-            description: path for the app to be stored
-            default: ""
-          - name: beta-route-path
-            type: string
-            description: path for the beta app to be stored
-            default: ""
-          - name: preview-route-path
-            type: string
-            description: path for the preview app to be stored
-            default: ""
-          - name: ci-root
-            type: string
-            description: root of the ci.sh script
-            default: ""
-          - name: server-name
-            type: string
-            description: name of the server. If empty, same as the app name
-            default: ""
-          - name: dist-folder
-            type: string
-            description: directory where the app.info.json will be written
-            default: "dist"
-        workspaces:
-          - name: source
-            description: workspace where the code is stored
-        steps:
-          - name: create-dockerfile
-            computeResources:
-              requests:
-                memory: 2Gi
-              limits:
-                memory: 5Gi
-            image: quay.io/cloudservices/frontend-build-container:latest
-            script: |
-              #!/usr/bin/env sh
-              set -xe
-
-              # handle empty string as dist-folder parameter
-              # which breaks the frontend-build-container scripts
-              if [ -z "$(params.dist-folder)" ]; then DIST_FOLDER="dist"; fi
-
-              source_path=$(workspaces.source.path)/$(params.subdirectory)/$(params.path-context)
-
-              cp -r  $source_path/. /workspace
-              cd /container_workspace
-              bash universal_build.sh
-
-              cp Dockerfile $source_path
-              cp Caddyfile $source_path
-              cp -r ${DIST_FOLDER}/ $source_path
-            env:
-              - name: COMPONENT
-                value: $(params.component)
-              - name: IMAGE
-                value: $(params.image)
-              - name: NODE_BUILD_VERSION
-                value: $(params.node-build-version)
-              - name: QUAY_EXPIRE_TIME
-                value: $(params.quay-expire-time)
-              - name: NPM_BUILD_SCRIPT
-                value: $(params.npm-build-script)
-              - name: YARN_BUILD_SCRIPT
-                value: $(params.yarn-build-script)
-              - name: ROUTE_PATH
-                value: $(params.route-path)
-              - name: BETA_ROUTE_PATH
-                value: $(params.beta-route-path)
-              - name: PREVIEW_ROUTE_PATH
-                value: $(params.preview-route-path)
-              - name: IS_PR
-                value: "false"
-              - name: CI_ROOT
-                value: $(params.ci-root)
-              - name: SERVER_NAME
-                value: $(params.server-name)
-              - name: DIST_FOLDER
-                value: $(params.dist-folder)
+          - name: url
+            value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+          - name: revision
+            value: e0b400ca6433f1ff05722c412ab837c4bd49a45a  # replace with the latest commit from https://github.com/RedHatInsights/konflux-consoledot-frontend-build/commits
+          - name: pathInRepo
+            value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
       workspaces:
       - name: source
         workspace: workspace
@@ -471,7 +367,7 @@ spec:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.2@sha256:67f0290a8ad9a147cd28bb06af182b3e4b2b3ef17070196d476d8e2ae4302ecf
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.2@sha256:ac898831120f2d461992227d494b6a67f07ed9ef7e3a3fc2de9a34d905b80f6a
         - name: kind
           value: task
         resolver: bundles
@@ -616,7 +512,7 @@ spec:
         - name: name
           value: sast-snyk-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.2@sha256:c1ea706405f9ae146e31baef4abfea49b1e855a75bfc44c33eb0eb29516831b3
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.3@sha256:afa2d6261c083a98665755ed19015010e222240d9db2ce9a84c8faa743273f31
         - name: kind
           value: task
         resolver: bundles

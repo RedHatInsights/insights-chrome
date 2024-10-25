@@ -170,7 +170,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.insightsRhelDocumentation),
-      onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
+      onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
     {
