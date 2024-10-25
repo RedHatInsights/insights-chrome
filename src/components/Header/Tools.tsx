@@ -70,6 +70,7 @@ const Tools = () => {
   const isPreview = useAtomValue(isPreviewAtom);
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
+  const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const { user, token } = useContext(ChromeAuthContext);
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
@@ -77,7 +78,9 @@ const Tools = () => {
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = isOrgAdmin ? '/iam/user-access/overview' : '/iam/my-user-access';
+  const identityAndAccessManagmentPath = isOrgAdmin
+    ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview`
+    : '/iam/my-user-access';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
@@ -114,7 +117,7 @@ const Tools = () => {
       items: [
         {
           url: identityAndAccessManagmentPath,
-          title: isOrgAdmin ? 'User Access' : 'My User Access',
+          title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
