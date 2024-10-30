@@ -31,6 +31,10 @@
     "defaultMessage": "API documentation",
     "description": "API documentation"
   },
+  "globalLearningResourcesPage": {
+    "defaultMessage": "All learning resources",
+    "description": "All learning resources"
+  },
   "authFailure": {
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
@@ -342,8 +346,8 @@
     "description": "Tags filter"
   },
   "teamWillReviewBug": {
-    "defaultMessage": "We appreciate your feedback and our team will review your report shorlty",
-    "description": "We appreciate your feedback and our team will review your report shorlty"
+    "defaultMessage": "We appreciate your feedback and our team will review your report shortly",
+    "description": "We appreciate your feedback and our team will review your report shortly"
   },
   "tellAboutExperience": {
     "defaultMessage": "Tell us about your experience",

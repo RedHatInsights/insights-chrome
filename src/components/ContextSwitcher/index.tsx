@@ -24,13 +24,13 @@ import {
   REQUESTS_COUNT,
   REQUESTS_DATA,
 } from '../../utils/consts';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { useAtom } from 'jotai';
 import { contextSwitcherOpenAtom } from '../../state/atoms/contextSwitcher';
 
 export type ContextSwitcherProps = {
-  user: ChromeUser;
   className?: string;
+  accountNumber?: string;
+  isInternal?: boolean;
 };
 
 // These attributes are present in the response based on the open API spec.
@@ -41,12 +41,12 @@ type CrossAccountRequestInternal = CrossAccountRequest & {
   email: string;
 };
 
-const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
+const ContextSwitcher = ({ accountNumber, className, isInternal }: ContextSwitcherProps) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useAtom(contextSwitcherOpenAtom);
   const [data, setData] = useState<CrossAccountRequestInternal[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
+  const [selectedAccountNumber, setSelectedAccountNumber] = useState(accountNumber);
   const onSelect = () => {
     setIsOpen((prev) => !prev);
   };
@@ -80,10 +80,10 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   };
 
   const resetAccountRequest = () => {
-    if (user?.identity?.account_number === selectedAccountNumber) {
+    if (accountNumber === selectedAccountNumber) {
       return;
     }
-    setSelectedAccountNumber(user?.identity?.account_number);
+    setSelectedAccountNumber(accountNumber);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
     Cookies.remove(CROSS_ACCESS_ORG_ID);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
@@ -93,7 +93,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   useEffect(() => {
     let mounted = true;
     // only inernal users have the TAM features enabled
-    if (user?.identity?.user?.is_internal) {
+    if (isInternal) {
       const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
       if (initialAccount) {
         try {
@@ -121,7 +121,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
                   }
                   return [...acc, curr];
                 }, [])
-                .filter(({ target_account }) => target_account !== user.identity.account_number)
+                .filter(({ target_account }) => target_account !== accountNumber)
             );
           }
         });
@@ -151,12 +151,12 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
       searchInputPlaceholder={intl.formatMessage(messages.searchAccount)}
       isFullHeight
     >
-      {user && user?.identity?.account_number?.includes(searchValue) ? (
+      {accountNumber?.includes(searchValue) ? (
         <ContextSelectorItem onClick={resetAccountRequest}>
           <TextContent className="chr-c-content-account">
             <Text className="account-label pf-v5-u-mb-0 sentry-mask data-hj-suppress">
-              <span>{user?.identity?.account_number}</span>
-              {user?.identity?.account_number === `${selectedAccountNumber}` && (
+              <span>{accountNumber}</span>
+              {accountNumber === `${selectedAccountNumber}` && (
                 <Icon size="sm" className="pf-v5-u-ml-auto">
                   <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
                 </Icon>

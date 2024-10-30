@@ -327,6 +327,11 @@ export default defineMessages({
     description: 'Demo mode',
     defaultMessage: 'Demo mode',
   },
+  globalLearningResourcesPage: {
+    id: 'globalLearningResourcesPage',
+    description: 'All learning resources',
+    defaultMessage: 'Global learning resources page',
+  },
   loggedOut: {
     id: 'loggedOut',
     description: 'You have successfully logged out.',
@@ -556,8 +561,8 @@ export default defineMessages({
   },
   teamWillReviewBug: {
     id: 'teamWillReviewBug',
-    description: 'We appreciate your feedback and our team will review your report shorlty',
-    defaultMessage: 'We appreciate your feedback and our team will review your report shorlty',
+    description: 'We appreciate your feedback and our team will review your report shortly',
+    defaultMessage: 'We appreciate your feedback and our team will review your report shortly',
   },
   responseSent: {
     id: 'responseSent',

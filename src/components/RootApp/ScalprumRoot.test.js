@@ -6,6 +6,10 @@ import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { Provider as JotaiProvider } from 'jotai';
 
+jest.mock('../Search/SearchInput', () => {
+  return jest.fn().mockImplementation(() => <div />);
+});
+
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
   return {
@@ -34,6 +38,7 @@ jest.mock('@unleash/proxy-client-react', () => {
     ...unleash,
     useFlag: () => false,
     useFlagsStatus: () => ({ flagsReady: true }),
+    useFlags: () => [],
   };
 });
 
@@ -50,6 +55,8 @@ import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useHydrateAtoms } from 'jotai/utils';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { hidePreviewBannerAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 
 const HydrateAtoms = ({ initialValues, children }) => {
   useHydrateAtoms(initialValues);
@@ -194,13 +201,21 @@ describe('ScalprumRoot', () => {
     let getByLabelText;
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
-        <Provider store={store}>
-          <ChromeAuthContext.Provider value={chromeContextMockValue}>
-            <MemoryRouter initialEntries={['/*']}>
-              <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
-            </MemoryRouter>
-          </ChromeAuthContext.Provider>
-        </Provider>
+        <JotaiTestProvider
+          initialValues={[
+            [hidePreviewBannerAtom, false],
+            [isPreviewAtom, false],
+            [userConfigAtom, { data: {} }],
+          ]}
+        >
+          <Provider store={store}>
+            <ChromeAuthContext.Provider value={chromeContextMockValue}>
+              <MemoryRouter initialEntries={['/*']}>
+                <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
+              </MemoryRouter>
+            </ChromeAuthContext.Provider>
+          </Provider>
+        </JotaiTestProvider>
       );
       getByLabelText = internalGetByLabelText;
     });
@@ -233,7 +248,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>
@@ -276,7 +291,7 @@ describe('ScalprumRoot', () => {
       },
     });
 
-    const { container } = render(
+    const { container } = await render(
       <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
         <Provider store={store}>
           <ChromeAuthContext.Provider value={chromeContextMockValue}>

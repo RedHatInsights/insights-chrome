@@ -14,9 +14,6 @@ const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
-      if (base.includes('pf-4-styles')) {
-        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
-      }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
       }
@@ -25,7 +22,7 @@ const PFGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
+const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
   return {
@@ -55,7 +52,7 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: false,
+    devtool: dev ? false : 'hidden-source-map',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
@@ -70,6 +67,7 @@ const commonConfig = ({ dev }) => {
         unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
+        '@rhds/icons': path.resolve(__dirname, '../node_modules/@rhds/icons'),
       },
       fallback: {
         path: require.resolve('path-browserify'),
@@ -150,7 +148,7 @@ const commonConfig = ({ dev }) => {
       ...proxy({
         env: 'stage-beta',
         port: 1337,
-        appUrl: [/^\/*$/, /^\/beta\/*$/, /^\/preview\/*$/],
+        appUrl: [/^\/*$/],
         useProxy: true,
         publicPath,
         proxyVerbose: true,
@@ -191,7 +189,6 @@ const commonConfig = ({ dev }) => {
 /** @type { import("webpack").Configuration } */
 const pfConfig = {
   entry: {
-    'pf4-v4': path.resolve(__dirname, '../src/sass/pf-4-assets.scss'),
     'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
   },
   output: {
@@ -248,6 +245,17 @@ module.exports = function (env) {
   const config = commonConfig({ dev, publicPath: env.publicPath });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
+  }
+
+  // bridge between devServer 4 and 5
+  // will be useful for RSpack
+  if (typeof config.devServer.onBeforeSetupMiddleware !== 'undefined') {
+    delete config.devServer.onBeforeSetupMiddleware;
+  }
+
+  if (config.devServer.https) {
+    delete config.devServer.https;
+    config.devServer.server = 'https';
   }
 
   return [pfConfig, config];

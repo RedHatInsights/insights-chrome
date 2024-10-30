@@ -138,15 +138,20 @@ export type RouteDefinition = {
   props?: any;
 };
 
-export type ModuleRoute =
-  | {
-      isFedramp?: boolean;
-      pathname: string;
-      exact?: boolean;
-      dynamic?: boolean;
-      props?: Record<string, unknown>;
-    }
-  | string;
+export type SupportCaseConfig = {
+  product: string;
+  version: string;
+};
+
+export type ModuleRoute = {
+  isFedramp?: boolean;
+  pathname: string;
+  exact?: boolean;
+  dynamic?: boolean;
+  props?: Record<string, unknown>;
+  supportCaseData?: SupportCaseConfig;
+  permissions?: NavItemPermission[];
+};
 
 export type RemoteModule = {
   module: string;
@@ -157,6 +162,7 @@ export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
   config?: {
+    supportCaseData?: SupportCaseConfig;
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
@@ -229,3 +235,8 @@ export type BundleNav = {
   title?: string;
   links: NavItem[];
 };
+
+export enum ReleaseEnv {
+  STABLE = 'STABLE',
+  PREVIEW = 'PREVIEW',
+}

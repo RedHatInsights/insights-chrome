@@ -3,12 +3,13 @@ import logger from '../auth/logger';
 import URI from 'urijs';
 const log = logger('createCase.js');
 
-import { getEnvDetails, isBeta, isProd } from './common';
+import { getEnvDetails, isProd } from './common';
 import { HYDRA_ENDPOINT } from './consts';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { getUrl } from '../hooks/useBundle';
 import chromeStore from '../state/chromeStore';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
+import { SupportCaseConfig } from '../@types/types';
 
 // Lit of products that are bundles
 const BUNDLE_PRODUCTS = [
@@ -44,7 +45,7 @@ function registerProduct() {
 }
 
 async function getAppInfo(activeModule: string) {
-  let path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule}/app.info.json`;
+  let path = `${window.location.origin}apps/${activeModule}/app.info.json`;
   try {
     return activeModule && (await (await fetch(path)).json());
   } catch (error) {
@@ -53,7 +54,7 @@ async function getAppInfo(activeModule: string) {
      * Transformation co camel case is requried by webpack remote moduled name requirements.
      * If we don't find the app info with camel case app id we try using kebab-case
      */
-    path = `${window.location.origin}${isBeta() ? '/beta/' : '/'}apps/${activeModule.replace(/[A-Z]/g, '-$&').toLowerCase()}/app.info.json`;
+    path = `${window.location.origin}apps/${activeModule.replace(/[A-Z]/g, '-$&').toLowerCase()}/app.info.json`;
     try {
       return activeModule && (await (await fetch(path)).json());
     } catch (error) {
@@ -71,8 +72,10 @@ async function getProductData() {
 export async function createSupportCase(
   userInfo: ChromeUser['identity'],
   token: string,
-  fields?: {
-    caseFields: Record<string, unknown>;
+  isPreview: boolean,
+  options?: {
+    supportCaseData?: SupportCaseConfig | undefined;
+    caseFields?: Record<string, unknown>;
   }
 ) {
   const currentProduct = registerProduct() || 'Other';
@@ -81,6 +84,7 @@ export async function createSupportCase(
   const { src_hash, app_name } = { src_hash: productData?.src_hash, app_name: productData?.app_name ?? getUrl('app') };
   const portalUrl = `${getEnvDetails()?.portal}`;
   const caseUrl = `${portalUrl}${HYDRA_ENDPOINT}`;
+  const { supportCaseData, ...fields } = options ?? { caseFields: {} };
 
   log('Creating a support case');
 
@@ -98,7 +102,7 @@ export async function createSupportCase(
       },
       sessionDetails: {
         createdBy: `${userInfo.user?.username}`,
-        environment: `Production${isBeta() ? ' Beta' : ''}, ${
+        environment: `Production${isPreview ? ' Preview' : ''}, ${
           src_hash
             ? `Current app: ${app_name}, Current app hash: ${src_hash}, Current URL: ${window.location.href}`
             : `Unknown app, filed on ${window.location.href}`
@@ -111,7 +115,12 @@ export async function createSupportCase(
     .then((response) => response.json())
     .then((data) => {
       if (data) {
-        const query = URI(`?seSessionId=${data.session.id}&product=${data.sessionDetails.product}&version=${src_hash}`).normalize();
+        // FIXME: Use the URLSearchParams API instead of URI.js
+        const query = URI(
+          `?seSessionId=${data.session.id}&product=${supportCaseData?.product ?? data.sessionDetails.product}&version=${
+            supportCaseData?.version ?? src_hash
+          }`
+        ).normalize();
         window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue${query.readable()}`);
         return createSupportSentry(data.session.id, fields);
       }

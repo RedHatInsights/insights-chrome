@@ -1,53 +1,42 @@
-import React, { Suspense, lazy, memo, useContext, useEffect } from 'react';
+import React, { Suspense, lazy, memo, useContext, useEffect, useMemo } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
 import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
-import { useDispatch, useSelector } from 'react-redux';
-import { addQuickstart as addQuickstartAction, clearQuickstarts, populateQuickstartsCatalog } from '../../redux/actions';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
-import { ReduxState } from '../../redux/store';
-import { ITLess, chunkLoadErrorRefreshKey, getRouterBasename } from '../../utils/common';
+import { ITLess, chunkLoadErrorRefreshKey } from '../../utils/common';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
 import { DeepRequired } from 'utility-types';
 import ReactDOM from 'react-dom';
-import { FooterProps } from '../Footer/Footer';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
+import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
+import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
-export type RootAppProps = FooterProps;
-
-const RootApp = memo((props: RootAppProps) => {
+const RootApp = memo(({ accountId }: { accountId?: string }) => {
   const config = useAtomValue(scalprumConfigAtom);
-  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates();
+  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } =
+    useQuickstartsStates(accountId);
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
-  const dispatch = useDispatch();
   const activeModule = useAtomValue(activeModuleAtom);
-  const quickStarts = useSelector(
-    ({
-      chrome: {
-        quickstarts: { quickstarts },
-      },
-    }: ReduxState) => Object.values(quickstarts).flat()
-  );
-  const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
-  const isDebuggerEnabled = useSelector<ReduxState, boolean | undefined>(({ chrome: { isDebuggerEnabled } }) => isDebuggerEnabled);
-
-  // verify use loged in scopes
-  useUserSSOScopes();
+  const quickstartsData = useAtomValue(quickstartsAtom);
+  const quickStarts = useMemo(() => Object.values(quickstartsData).flat(), [quickstartsData]);
+  const clearQuickstarts = useSetAtom(clearQuickstartsAtom);
+  const populateQuickstarts = useSetAtom(populateQuickstartsAppAtom);
+  const addQuickstartToApp = useSetAtom(addQuickstartToAppAtom);
 
   useEffect(() => {
-    dispatch(clearQuickstarts(activeQuickStartID));
+    clearQuickstarts(activeQuickStartID);
     if (activeModule) {
       let timeout: NodeJS.Timeout;
       const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
@@ -77,11 +66,15 @@ const RootApp = memo((props: RootAppProps) => {
    * @param {array} qs Array of quick starts
    */
   const updateQuickStarts = (key: string, qs: QuickStart[]) => {
-    dispatch(populateQuickstartsCatalog(key, qs));
+    populateQuickstarts({ app: key, quickstarts: qs });
   };
 
   const addQuickstart = (key: string, qs: QuickStart): boolean => {
-    return validateQuickstart(key, qs) ? !!dispatch(addQuickstartAction(key, qs)) : false;
+    if (validateQuickstart(key, qs)) {
+      addQuickstartToApp({ app: key, quickstart: qs });
+      return true;
+    }
+    return false;
   };
 
   const quickStartProps: QuickStartContainerProps = {
@@ -110,20 +103,19 @@ const RootApp = memo((props: RootAppProps) => {
     Catalog: LazyQuickStartCatalog,
     updateQuickStarts,
   };
+
   return (
-    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']} basename={getRouterBasename()}>
+    <HistoryRouter history={chromeHistory as unknown as HistoryRouterProps['history']}>
       <SegmentProvider>
         <FeatureFlagsProvider>
           {/* <CrossRequestNotifier /> */}
           <Suspense fallback={null}>
             <NotEntitledModal />
           </Suspense>
-          <Suspense fallback={null}>
-            {user?.identity?.account_number && !ITLess() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
-          </Suspense>
+          <Suspense fallback={null}></Suspense>
           <QuickStartContainer {...quickStartProps}>
             <HelpTopicContainer helpTopics={helpTopics}>
-              <ScalprumRoot {...props} config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
+              <ScalprumRoot config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
             </HelpTopicContainer>
           </QuickStartContainer>
         </FeatureFlagsProvider>
@@ -134,4 +126,20 @@ const RootApp = memo((props: RootAppProps) => {
 
 RootApp.displayName = 'MemoizedRootApp';
 
-export default RootApp;
+const AuthRoot = () => {
+  const { user, login } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
+  const isDebuggerEnabled = useAtomValue(isDebuggerEnabledAtom);
+
+  // verify use loged in scopes
+  useUserSSOScopes(login);
+  return (
+    <>
+      <Suspense fallback={null}>
+        {user?.identity?.account_number && !ITLess() && isDebuggerEnabled && ReactDOM.createPortal(<Debugger user={user} />, document.body)}
+      </Suspense>
+      <RootApp accountId={user?.identity?.internal?.account_id} />
+    </>
+  );
+};
+
+export default AuthRoot;

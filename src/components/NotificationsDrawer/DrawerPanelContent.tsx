@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
@@ -14,18 +15,39 @@ import {
 } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
 import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
-import { useDispatch, useSelector } from 'react-redux';
 import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-slash-icon';
 import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import orderBy from 'lodash/orderBy';
 import { Link, useNavigate } from 'react-router-dom';
-import { NotificationData, ReduxState } from '../../redux/store';
 import NotificationItem from './NotificationItem';
-import { markAllNotificationsAsRead, markAllNotificationsAsUnread, toggleNotificationsDrawer } from '../../redux/actions';
-import { filterConfig } from './notificationDrawerUtils';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import {
+  NotificationData,
+  notificationDrawerDataAtom,
+  notificationDrawerExpandedAtom,
+  notificationDrawerFilterAtom,
+  notificationDrawerSelectedAtom,
+  updateNotificationReadAtom,
+  updateNotificationSelectedAtom,
+  updateNotificationsSelectedAtom,
+} from '../../state/atoms/notificationDrawerAtom';
+import BulkSelect from '@redhat-cloud-services/frontend-components/BulkSelect';
+import axios from 'axios';
+import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+
+interface Bundle {
+  id: string;
+  name: string;
+  displayName: string;
+  children: Bundle[];
+}
+
+interface FilterConfigItem {
+  title: string;
+  value: string;
+}
 
 export type DrawerPanelProps = {
   innerRef: React.Ref<unknown>;
@@ -39,23 +61,44 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
     </Title>
     <EmptyStateBody>
       {isOrgAdmin ? (
-        <Text>
-          Try&nbsp;
-          <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
-            checking your notification preferences
-          </Link>
-          &nbsp;and managing the&nbsp;
-          <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
-            notification configuration
-          </Link>
-          &nbsp;for your organization.
-        </Text>
+        <Stack>
+          <StackItem>
+            <Text>There are currently no notifications for you.</Text>
+          </StackItem>
+          <StackItem>
+            <Text>
+              Try&nbsp;
+              <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
+                checking your notification preferences
+              </Link>
+              &nbsp;and managing the&nbsp;
+              <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
+                notification configuration
+              </Link>
+              &nbsp;for your organization.
+            </Text>
+          </StackItem>
+        </Stack>
       ) : (
         <>
-          <Link onClick={onLinkClick} to="/settings/notifications/configure-events">
-            Configure notification settings
-          </Link>
-          .<Text>Contact your organization administrator.</Text>
+          <Stack>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Text>There are currently no notifications for you.</Text>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Link onClick={onLinkClick} to="/settings/notifications/user-preferences">
+                Check your Notification Preferences
+              </Link>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Link onClick={onLinkClick} to="/settings/notifications/notificationslog">
+                View the Event log to see all fired events
+              </Link>
+            </StackItem>
+            <StackItem className="pf-v5-u-pl-lg pf-v5-u-pb-sm">
+              <Text>Contact your organization administrator</Text>
+            </StackItem>
+          </Stack>
         </>
       )}
     </EmptyStateBody>
@@ -65,15 +108,19 @@ const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => vo
 const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>([]);
+  const [activeFilters, setActiveFilters] = useAtom(notificationDrawerFilterAtom);
+  const toggleDrawer = useSetAtom(notificationDrawerExpandedAtom);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const notifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.data || []);
+  const notifications = useAtomValue(notificationDrawerDataAtom);
+  const selectedNotifications = useAtomValue(notificationDrawerSelectedAtom);
+  const updateSelectedNotification = useSetAtom(updateNotificationSelectedAtom);
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const { getUserPermissions } = useContext(InternalChromeContext);
   const [hasNotificationsPermissions, setHasNotificationsPermissions] = useState(false);
+  const updateNotificationRead = useSetAtom(updateNotificationReadAtom);
+  const updateAllNotificationsSelected = useSetAtom(updateNotificationsSelectedAtom);
+  const [filterConfig, setFilterConfig] = useState<FilterConfigItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -89,34 +136,65 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         );
       }
     };
+    const fetchFilterConfig = async () => {
+      try {
+        const response = await axios.get<Bundle[]>('/api/notifications/v1/notifications/facets/bundles');
+        if (mounted) {
+          setFilterConfig(
+            response.data.map((bundle: Bundle) => ({
+              title: bundle.displayName,
+              value: bundle.name,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch filter configuration:', error);
+      }
+    };
     fetchPermissions();
+    fetchFilterConfig();
     return () => {
       mounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    const modifiedNotifications = (activeFilters || []).reduce(
-      (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ source }) => source === chosenFilter)],
-      []
-    );
-
-    setFilteredNotifications(modifiedNotifications);
-  }, [activeFilters]);
+  const filteredNotifications = useMemo(
+    () =>
+      (activeFilters || []).reduce(
+        (acc: NotificationData[], chosenFilter: string) => [...acc, ...notifications.filter(({ bundle }) => bundle === chosenFilter)],
+        []
+      ),
+    [activeFilters]
+  );
 
   const onNotificationsDrawerClose = () => {
     setActiveFilters([]);
-    dispatch(toggleNotificationsDrawer());
+    toggleDrawer(false);
   };
 
-  const onMarkAllAsRead = () => {
-    dispatch(markAllNotificationsAsRead());
-    setIsDropdownOpen(false);
+  const onUpdateSelectedStatus = (read: boolean) => {
+    axios
+      .put('/api/notifications/v1/notifications/drawer/read', {
+        notification_ids: selectedNotifications.map((notification) => notification.id),
+        read_status: read,
+      })
+      .then(() => {
+        selectedNotifications.forEach((notification) => updateNotificationRead(notification.id, read));
+        setIsDropdownOpen(false);
+        updateAllNotificationsSelected(false);
+      })
+      .catch((e) => {
+        console.error('failed to update notification read status', e);
+      });
   };
 
-  const onMarkAllAsUnread = () => {
-    dispatch(markAllNotificationsAsUnread());
-    setIsDropdownOpen(false);
+  const selectAllNotifications = (selected: boolean) => {
+    updateAllNotificationsSelected(selected);
+  };
+
+  const selectVisibleNotifications = () => {
+    const visibleNotifications = activeFilters.length > 0 ? filteredNotifications : notifications;
+    visibleNotifications.forEach((notification) => updateSelectedNotification(notification.id, true));
   };
 
   const onFilterSelect = (chosenFilter: string) => {
@@ -132,17 +210,29 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
 
   const dropdownItems = [
     <DropdownItem key="actions" description="Actions" />,
-    <DropdownItem key="read all" onClick={onMarkAllAsRead} isDisabled={notifications.length === 0}>
-      Mark visible as read
+    <DropdownItem
+      key="read selected"
+      onClick={() => {
+        onUpdateSelectedStatus(true);
+      }}
+      isDisabled={notifications.length === 0}
+    >
+      Mark selected as read
     </DropdownItem>,
-    <DropdownItem key="unread all" onClick={onMarkAllAsUnread} isDisabled={notifications.length === 0}>
-      Mark visible as unread
+    <DropdownItem
+      key="unread selected"
+      onClick={() => {
+        onUpdateSelectedStatus(false);
+      }}
+      isDisabled={notifications.length === 0}
+    >
+      Mark selected as unread
     </DropdownItem>,
     <Divider key="divider" />,
     <DropdownItem key="quick links" description="Quick links" />,
-    <DropdownItem key="event log" onClick={() => onNavigateTo('/settings/notifications/eventlog')}>
+    <DropdownItem key="notifications log" onClick={() => onNavigateTo('/settings/notifications/notificationslog')}>
       <Flex>
-        <FlexItem>View event log</FlexItem>
+        <FlexItem>View notifications log</FlexItem>
       </Flex>
     </DropdownItem>,
     (isOrgAdmin || hasNotificationsPermissions) && (
@@ -220,6 +310,20 @@ const DrawerPanelBase = ({ innerRef }: DrawerPanelProps) => {
         >
           {filterDropdownItems()}
         </Dropdown>
+        <BulkSelect
+          id="notifications-bulk-select"
+          items={[
+            { title: 'Select none (0)', key: 'select-none', onClick: () => selectAllNotifications(false) },
+            {
+              title: `Select visible (${activeFilters.length > 0 ? filteredNotifications.length : notifications.length})`,
+              key: 'select-visible',
+              onClick: selectVisibleNotifications,
+            },
+            { title: `Select all (${notifications.length})`, key: 'select-all', onClick: () => selectAllNotifications(true) },
+          ]}
+          count={notifications.filter(({ selected }) => selected).length}
+          checked={notifications.length > 0 && notifications.every(({ selected }) => selected)}
+        />
         <Dropdown
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle

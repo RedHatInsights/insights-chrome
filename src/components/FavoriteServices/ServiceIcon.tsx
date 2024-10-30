@@ -28,12 +28,14 @@ import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
 import MonitoringIcon from '@patternfly/react-icons/dist/dynamic/icons/monitoring-icon';
 import AutomationIcon from '@patternfly/react-icons/dist/dynamic/icons/automation-icon';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
+import BrainIcon from '@patternfly/react-icons/dist/dynamic/icons/brain-icon';
 
 export enum FavorableIcons {
   AITechnologyIcon = 'AITechnologyIcon',
   ACSIcon = 'ACSIcon',
   AnsibleIcon = 'AnsibleIcon',
   AppServicesIcon = 'AppServicesIcon',
+  BrainIcon = 'BrainIcon',
   DataScienceIcon = 'DataScienceIcon',
   EdgeIcon = 'EdgeIcon',
   InsightsIcon = 'InsightsIcon',
@@ -90,6 +92,7 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   ShoppingCartIcon,
   CubeIcon,
   BoxesIcon,
+  BrainIcon,
   MonitoringIcon,
 };
 

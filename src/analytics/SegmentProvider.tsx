@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import Cookie from 'js-cookie';
-import { ITLess, isBeta, isProd } from '../utils/common';
+import { ITLess, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import { getUrl } from '../hooks/useBundle';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import { isPreviewAtom } from '../state/atoms/releaseAtom';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -31,7 +32,7 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-const getPageEventOptions = () => {
+const getPageEventOptions = (isPreview: boolean) => {
   const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
   const search = new URLSearchParams(window.location.search);
 
@@ -46,7 +47,7 @@ const getPageEventOptions = () => {
     {
       path,
       url: `${window.location.origin}${path}${window.location.search}`,
-      isBeta: isBeta(),
+      isBeta: isPreview,
       module: window._segment?.activeModule,
       // Marketing campaing tracking
       ...trackingContext,
@@ -77,7 +78,7 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
   KEY_FALLBACK[env];
 
 let observer: MutationObserver | undefined;
-const registerAnalyticsObserver = () => {
+const registerAnalyticsObserver = (isPreview: boolean) => {
   // never override the observer
   if (observer) {
     return;
@@ -96,7 +97,7 @@ const registerAnalyticsObserver = () => {
         oldHref = newLocation;
         window?.sendCustomEvent?.('pageBottom');
         setTimeout(() => {
-          window.segment?.page(...getPageEventOptions());
+          window.segment?.page(...getPageEventOptions(isPreview));
         });
       }
     });
@@ -113,7 +114,7 @@ const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLo
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '') => {
+const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '', isPreview: boolean) => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -132,7 +133,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
     isOrgAdmin: user.identity.user?.is_org_admin,
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
-    isBeta: isBeta(),
+    isBeta: isPreview,
     ...(user.identity.user
       ? {
           name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
@@ -158,6 +159,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const { user } = useContext(ChromeAuthContext);
+  const isPreview = useAtomValue(isPreviewAtom);
 
   const activeModule = useAtomValue(activeModuleAtom);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
@@ -198,7 +200,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         activeModule,
       };
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTraits(user, pathname, activeModule);
+      const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
@@ -226,7 +228,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           },
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page(...getPageEventOptions());
+        analytics.current.page(...getPageEventOptions(isPreview));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
@@ -259,12 +261,12 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   };
 
   useEffect(() => {
-    registerAnalyticsObserver();
+    registerAnalyticsObserver(isPreview);
     return () => {
       observer?.disconnect();
       observer = undefined;
     };
-  }, []);
+  }, [isPreview]);
 
   useEffect(() => {
     handleModuleUpdate();

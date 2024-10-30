@@ -1,68 +1,4 @@
-import { QuickStart } from '@patternfly/quickstarts';
-
-import { FlagTagsFilter, NavItem, Navigation } from '../@types/types';
-import { ThreeScaleError } from '../utils/responseInterceptors';
-
-export type InternalNavigation = {
-  [key: string]: Navigation | NavItem[] | undefined;
-  landingPage?: NavItem[];
-};
-
-export type AccessRequest = { request_id: string; created: string; seen: boolean };
-
-export type NotificationData = {
-  id: string;
-  title: string;
-  description: string;
-  read: boolean;
-  source: string;
-  created: string;
-};
-
-export type Notifications = {
-  isExpanded: boolean;
-  data: NotificationData[];
-  count: number;
-};
-
-export type NotificationsPayload = {
-  data: NotificationData;
-  source: string;
-  // cloud events sub protocol metadata
-  datacontenttype: string;
-  specversion: string;
-  // a type field used to identify message purpose
-  type: string;
-  time: string;
-};
-
-export type ChromeState = {
-  activeApp?: string;
-  activeProduct?: string;
-  missingIDP?: boolean;
-  pageAction?: string;
-  pageObjectId?: string;
-  navigation: InternalNavigation;
-  usePendoFeedback?: boolean;
-  isFeedbackModalOpen?: boolean;
-  isDebuggerModalOpen?: boolean;
-  isDebuggerEnabled?: boolean;
-  accessRequests: {
-    count: number;
-    data: AccessRequest[];
-    hasUnseen: boolean;
-  };
-  initialHash?: string;
-  quickstarts: {
-    disabled?: boolean;
-    quickstarts: {
-      [key: string]: QuickStart[];
-    };
-  };
-  documentTitle?: string;
-  gatewayError?: ThreeScaleError;
-  notifications: Notifications;
-};
+import { FlagTagsFilter } from '../@types/types';
 
 export type GlobalFilterWorkloads = {
   selected?: boolean;
@@ -138,6 +74,5 @@ export type GlobalFilterState = {
 };
 
 export type ReduxState = {
-  chrome: ChromeState;
   globalFilter: GlobalFilterState;
 };

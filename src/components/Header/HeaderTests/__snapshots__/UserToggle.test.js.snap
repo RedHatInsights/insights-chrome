@@ -5,6 +5,9 @@ exports[`UserToggle should render correctly as org admin 1`] = `
   <button
     aria-expanded="false"
     class="pf-v5-c-menu-toggle pf-m-full-height data-hj-suppress sentry-mask"
+    data-ouia-component-id="OUIA-Generated-MenuToggle-2"
+    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-safe="true"
     type="button"
   >
     <span
@@ -47,6 +50,9 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   <button
     aria-expanded="true"
     class="pf-v5-c-menu-toggle pf-m-expanded pf-m-full-height data-hj-suppress sentry-mask"
+    data-ouia-component-id="OUIA-Generated-MenuToggle-1"
+    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-safe="true"
     type="button"
   >
     <span
@@ -245,9 +251,9 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
         >
           <a
             class="pf-v5-c-menu__item"
-            data-quickstart-id="user-preferences_notifications"
+            data-quickstart-id="settings_notifications_user-preferences"
             data-testid="router-link"
-            href="/user-preferences/notifications"
+            href="/settings/notifications/user-preferences"
           >
             User Preferences
           </a>
@@ -287,6 +293,9 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
   <button
     aria-expanded="false"
     class="pf-v5-c-menu-toggle pf-m-plain pf-m-full-height data-hj-suppress sentry-mask pf-v5-u-pr-lg pf-v5-u-pl-lg"
+    data-ouia-component-id="OUIA-Generated-MenuToggle-plain-1"
+    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-safe="true"
     id="UserMenu"
     type="button"
     widget-type="UserMenu"

@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider, useSelector } from 'react-redux';
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import logger from 'redux-logger';
+import { Provider } from 'react-redux';
+import { createStore as reduxCreateStore } from 'redux';
 import { removeScalprum } from '@scalprum/core';
 import type { AuthContextProps } from 'react-oidc-context';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { useSetAtom } from 'jotai';
+import { Provider as JotaiProvider, createStore, useAtomValue } from 'jotai';
+import { AxiosError, AxiosResponse } from 'axios';
 
-import chromeReducer from '../../src/redux';
-import { userLogIn } from '../../src/redux/actions';
 import qe from '../../src/utils/iqeEnablement';
 import { COMPLIACE_ERROR_CODES } from '../../src/utils/responseInterceptors';
 import testUserJson from '../fixtures/testUser.json';
 import { BLOCK_CLEAR_GATEWAY_ERROR } from '../../src/utils/common';
 import { initializeVisibilityFunctions } from '../../src/utils/VisibilitySingleton';
-import { ReduxState } from '../../src/redux/store';
 import GatewayErrorComponent from '../../src/components/ErrorComponents/GatewayErrorComponent';
 import { activeModuleAtom } from '../../src/state/atoms/activeModuleAtom';
+import { gatewayErrorAtom } from '../../src/state/atoms/gatewayErrorAtom';
+import ErrorBoundary from '../../src/components/ErrorComponents/ErrorBoundary';
 
 const testUser: ChromeUser = testUserJson as unknown as ChromeUser;
 
 const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
-  const gatewayError = useSelector(({ chrome: { gatewayError } }: ReduxState) => gatewayError);
+  const gatewayError = useAtomValue(gatewayErrorAtom);
 
   if (gatewayError) {
     return <GatewayErrorComponent error={gatewayError} />;
@@ -33,31 +32,33 @@ const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
 };
 
 function createEnv(code: string, childNode: React.ReactNode) {
-  const reduxStore = createStore(combineReducers(chromeReducer()), applyMiddleware(logger));
-  // initialize user object for feature flags
-  reduxStore.dispatch(userLogIn(testUser));
+  const reduxStore = reduxCreateStore(() => ({ chrome: {} }));
+  const chromeStore = createStore();
+  chromeStore.set(activeModuleAtom, undefined);
+  chromeStore.set(gatewayErrorAtom, undefined);
   // initializes request interceptors
-  qe.init(reduxStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
+  qe.init(chromeStore, { current: { user: { access_token: 'foo' } } as unknown as AuthContextProps });
 
   const Component = () => {
     const [mounted, setMounted] = useState(false);
-    const setActiveModule = useSetAtom(activeModuleAtom);
     useEffect(() => {
       setMounted(true);
-      setActiveModule(code);
+      chromeStore.set(activeModuleAtom, code);
     }, []);
 
     if (!mounted) {
       return null;
     }
     return (
-      <Provider store={reduxStore}>
-        <MemoryRouter initialEntries={['/']}>
-          <IntlProvider locale="en">
-            <ErrorCatcher>{childNode}</ErrorCatcher>
-          </IntlProvider>
-        </MemoryRouter>
-      </Provider>
+      <JotaiProvider store={chromeStore}>
+        <Provider store={reduxStore}>
+          <MemoryRouter initialEntries={['/']}>
+            <IntlProvider locale="en">
+              <ErrorCatcher>{childNode}</ErrorCatcher>
+            </IntlProvider>
+          </MemoryRouter>
+        </Provider>
+      </JotaiProvider>
     );
   };
   return Component;
@@ -243,5 +244,47 @@ describe('Gateway errors', () => {
 
     cy.contains(`Normal render`).should('not.exist');
     cy.contains(`Component error handler`).should('exist');
+  });
+
+  describe('Global error boundary', () => {
+    const resp = {
+      errors: [
+        {
+          detail:
+            "Insights authorization failed - ERROR_EXPORT_CONTROL: Your account appears to be on Export Hold. Please review the information at the following link for more detail: <a href='https://access.redhat.com/articles/1340183'>https://access.redhat.com/articles/1340183</a>. (SS v3)",
+          meta: {
+            response_by: 'gateway',
+          },
+          status: 403,
+        },
+      ],
+    };
+    const axiosResp: AxiosResponse<typeof resp> = {
+      config: {},
+      data: resp,
+      status: 403,
+      statusText: 'Forbidden',
+      headers: {},
+    };
+    const onHoldError = new AxiosError<typeof resp>('Insights authorization failed', 'resp', {}, null, axiosResp);
+
+    const ThrowComponent = () => {
+      throw onHoldError;
+    };
+    it('handles account on hold error', () => {
+      cy.on('uncaught:exception', () => {
+        // ignore exception, they are expected in this test case
+        return false;
+      });
+      cy.mount(
+        <IntlProvider locale="en">
+          <ErrorBoundary>
+            <ThrowComponent />
+          </ErrorBoundary>
+        </IntlProvider>
+      );
+
+      cy.contains('Your account appears to be on Export Hold').should('exist');
+    });
   });
 });

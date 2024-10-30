@@ -1,16 +1,16 @@
 import React from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ReduxState } from '../../redux/store';
+import { useAtomValue } from 'jotai';
 import useMarketplacePartner from '../../hooks/useMarketplacePartner';
+import { activeProductAtom } from '../../state/atoms/activeProductAtom';
 
 const RedirectBanner = () => {
   const { pathname, hash, state } = useLocation();
   const { partnerId, partner, removePartnerParam } = useMarketplacePartner();
   const navigate = useNavigate();
-  const product = useSelector<ReduxState, string | undefined>((state) => state.chrome.activeProduct);
+  const product = useAtomValue(activeProductAtom);
 
   const handleClose = () => {
     // remove only the flag search param

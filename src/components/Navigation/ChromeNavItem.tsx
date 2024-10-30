@@ -9,13 +9,14 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { titleCase } from 'title-case';
 import classNames from 'classnames';
 import get from 'lodash/get';
+import { useAtomValue, useSetAtom } from 'jotai';
 
-import { isBeta } from '../../utils/common';
 import ChromeLink, { LinkWrapperProps } from '../ChromeLink/ChromeLink';
-import { useDispatch, useSelector } from 'react-redux';
-import { markActiveProduct } from '../../redux/actions';
+import { useSelector } from 'react-redux';
 import { ChromeNavItemProps } from '../../@types/types';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { activeProductAtom } from '../../state/atoms/activeProductAtom';
 
 const ChromeNavItem = ({
   appId,
@@ -30,14 +31,15 @@ const ChromeNavItem = ({
   product,
   notifier = '',
 }: ChromeNavItemProps) => {
+  const isPreview = useAtomValue(isPreviewAtom);
   const hasNotifier = useSelector((state) => get(state, notifier));
-  const dispatch = useDispatch();
+  const markActiveProduct = useSetAtom(activeProductAtom);
   const { favoritePages } = useFavoritePagesWrapper();
   const isFavorited = useMemo(() => favoritePages.find(({ favorite, pathname }) => favorite && pathname === href), [href, favoritePages]);
 
   useEffect(() => {
     if (active) {
-      dispatch(markActiveProduct(product));
+      markActiveProduct(product);
     }
   }, [active]);
 
@@ -62,7 +64,7 @@ const ChromeNavItem = ({
           <ExternalLinkAltIcon />
         </Icon>
       )}
-      {isBetaEnv && !isBeta() && !isExternal && (
+      {isBetaEnv && !isPreview && !isExternal && (
         <Tooltip position={'right'} content={<div>This service is a Preview.</div>}>
           <Icon className="chr-c-navigation__beta-icon" isInline>
             <FlaskIcon />
