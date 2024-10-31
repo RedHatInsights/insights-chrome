@@ -66,6 +66,7 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
         'platform.chrome.ui.preview': isPreview,
         userId: user?.identity.internal?.account_id,
         orgId: user?.identity.internal?.org_id,
+        accountNumber: user?.identity.account_number,
         ...(user
           ? {
               properties: {
