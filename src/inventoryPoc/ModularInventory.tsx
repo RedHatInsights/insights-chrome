@@ -5,10 +5,13 @@ import { DateFormat } from '@redhat-cloud-services/frontend-components/DateForma
 import SecurityIcon from '@patternfly/react-icons/dist/dynamic/icons/security-icon';
 import TagIcon from '@patternfly/react-icons/dist/dynamic/icons/tag-icon';
 
-import { Host, getHostCVEs, getHostTags, getHosts } from './api';
+import { AdvisorSystem, Host, getHostCVEs, getHostInsights, getHostPatch, getHostTags, getHosts } from './api';
 import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import ShieldIcon from '@patternfly/react-icons/dist/dynamic/icons/shield-alt-icon';
+import BugIcon from '@patternfly/react-icons/dist/dynamic/icons/bug-icon';
+import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import { Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 
 function createRows(
@@ -65,7 +68,6 @@ function useColumnData(columns: InventoryColumn[]) {
     );
   }
   const [data, setData] = React.useState<ReactNode[][]>(initLocalData);
-  console.log({ data });
 
   useEffect(() => {
     setReady(!hasRemoteColumns);
@@ -132,7 +134,21 @@ const ModularInventory = ({ columns }: { columns: Omit<InventoryColumn, 'isReady
   );
 };
 
-const columnIds = ['id', 'name', 'all-cves', 'cves', 'tags', 'os', 'lastCheckIn'];
+const columnIds = [
+  'id',
+  'name',
+  'all-cves',
+  'cves',
+  'tags',
+  'os',
+  'lastCheckIn',
+  'criticalCves',
+  'importantCves',
+  'moderateCves',
+  'lowCves',
+  'recommendations',
+  'installAbleAdvisories',
+];
 const ColumnEnabler = ({
   enabledColumns,
   handleCheckboxChange,
@@ -154,8 +170,107 @@ const ColumnEnabler = ({
 };
 
 const columnsRegistry: {
-  [key: string]: (hosts: Host[], cvePromises: ReturnType<typeof getHostCVEs>[]) => InventoryColumn | BaseInventoryColumn;
+  [key: string]: (
+    hosts: Host[],
+    cvePromises: ReturnType<typeof getHostCVEs>[],
+    systemPromises: Promise<AdvisorSystem | 'unknown'>[],
+    patchPromises: ReturnType<typeof getHostPatch>[]
+  ) => InventoryColumn | BaseInventoryColumn;
 } = {
+  criticalCves: (_h, _c, systemPromises) => {
+    return new InventoryColumn('criticalCves', 'Critical', {
+      columnData: async () => {
+        const res = await Promise.all(systemPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'Unknown';
+          }
+          return r.critical_hits;
+        });
+      },
+    });
+  },
+  importantCves: (_h, _c, systemPromises) => {
+    return new InventoryColumn('importantCves', 'Important', {
+      columnData: async () => {
+        const res = await Promise.all(systemPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'Unknown';
+          }
+          return r.important_hits;
+        });
+      },
+    });
+  },
+  moderateCves: (_h, _c, systemPromises) => {
+    return new InventoryColumn('moderateCves', 'Moderate', {
+      columnData: async () => {
+        const res = await Promise.all(systemPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'Unknown';
+          }
+          return r.moderate_hits;
+        });
+      },
+    });
+  },
+  lowCves: (_h, _c, systemPromises) => {
+    return new InventoryColumn('lowCves', 'Low', {
+      columnData: async () => {
+        const res = await Promise.all(systemPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'Unknown';
+          }
+          return r.low_hits;
+        });
+      },
+    });
+  },
+  recommendations: (_h, _c, systemPromises) => {
+    return new InventoryColumn('recommendations', 'Recommendations', {
+      columnData: async () => {
+        const res = await Promise.all(systemPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'Unknown';
+          }
+          return r.low_hits + r.moderate_hits + r.important_hits + r.critical_hits;
+        });
+      },
+    });
+  },
+  installAbleAdvisories: (_h, _c, _s, patchPromises) => {
+    return new InventoryColumn('installAbleAdvisories', 'Installable advisories', {
+      columnData: async () => {
+        const res = await Promise.all(patchPromises);
+        return res.map((r) => {
+          if (r === 'unknown') {
+            return 'unknown';
+          }
+          return (
+            <>
+              <span className="pf-v5-u-mr-sm">
+                <ShieldIcon className="pf-v5-u-mr-sm" />
+                {r.attributes.installable_rhsa_count}
+              </span>
+              <span className="pf-v5-u-mr-sm">
+                <BugIcon className="pf-v5-u-mr-sm" />
+                {r.attributes.installable_rhba_count}
+              </span>
+              <span className="pf-v5-u-mr-sm">
+                <CogIcon className="pf-v5-u-mr-sm" />
+                {r.attributes.installable_rhea_count}
+              </span>
+            </>
+          );
+        });
+      },
+    });
+  },
+
   id: (hosts: Host[]) => {
     return new BaseInventoryColumn('id', 'System ID', {
       columnData: hosts.map((host) => host.id),
@@ -281,11 +396,18 @@ const ModularInventoryRoute = () => {
       }
       return getHostCVEs(host.id);
     });
+    const systemPromises = hosts.map((host) => {
+      return getHostInsights(host.id);
+    });
+
+    const patchPromises = hosts.map((host) => {
+      return getHostPatch(host.id);
+    });
 
     const cols = columnIds
       .filter((columnId) => enabledColumns[columnId])
       .map((columnId) => {
-        return columnsRegistry[columnId](hosts, cvePromises as any);
+        return columnsRegistry[columnId](hosts, cvePromises as any, systemPromises, patchPromises);
       });
 
     return cols;

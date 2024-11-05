@@ -113,3 +113,36 @@ export const getHostCVEs = async (hostId: string): Promise<{ criticalCount: numb
 
   return cveCache[hostId];
 };
+
+export type AdvisorSystem = {
+  critical_hits: number;
+  important_hits: number;
+  moderate_hits: number;
+  low_hits: number;
+};
+
+export const getHostInsights = async (hostId: string) => {
+  try {
+    const { data } = await axios.get<AdvisorSystem>(`/api/insights/v1/system/${hostId}`);
+    return data;
+  } catch (error) {
+    return 'unknown';
+  }
+};
+
+export type PatchSystem = {
+  attributes: {
+    installable_rhba_count: number;
+    installable_rhea_count: number;
+    installable_rhsa_count: number;
+  };
+};
+
+export const getHostPatch = async (hostId: string) => {
+  try {
+    const { data } = await axios.get<{ data: PatchSystem }>(`/api/patch/v3/systems/${hostId}`);
+    return data.data;
+  } catch (error) {
+    return 'unknown';
+  }
+};
