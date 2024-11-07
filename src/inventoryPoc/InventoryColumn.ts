@@ -23,11 +23,13 @@ export class BaseInventoryColumn {
   private columnId: string;
   private title: ReactNode;
   private columnData: BaseColumnData;
+  private sortable?: boolean = false;
 
-  constructor(columnId: string, title: ReactNode, { columnData }: { columnData: BaseColumnData }) {
+  constructor(columnId: string, title: ReactNode, { columnData }: { columnData: BaseColumnData }, { sortable }: { sortable?: boolean } = {}) {
     this.columnId = columnId;
     this.title = title;
     this.columnData = columnData;
+    this.sortable = sortable;
   }
 
   getColumnId(): string {
@@ -40,6 +42,10 @@ export class BaseInventoryColumn {
 
   getColumnData(): BaseColumnData {
     return this.columnData;
+  }
+
+  getSortable(): boolean {
+    return !!this.sortable;
   }
 
   setColumnData(columnData: BaseColumnData): void {

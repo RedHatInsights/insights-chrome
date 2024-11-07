@@ -18,13 +18,15 @@ export type Host = {
   };
 };
 
-export const getHosts = async () => {
+export type HostApiOptions = { page?: number; perPage?: number; orderBy?: 'updated' | 'display_name' | 'id'; orderHow?: 'ASC' | 'DESC' };
+
+export const getHosts = async ({ orderBy = 'updated', orderHow = 'DESC', page = 1, perPage = 20 }: HostApiOptions) => {
   const response = await axios.get<{ results: Host[] }>('/api/inventory/v1/hosts', {
     params: {
-      page: 1,
-      per_page: 20,
-      order_by: 'updated',
-      order_how: 'DESC',
+      page,
+      per_page: perPage,
+      order_by: orderBy,
+      order_how: orderHow,
       'fields[system_profile]': ['operating_system'],
     },
   });
