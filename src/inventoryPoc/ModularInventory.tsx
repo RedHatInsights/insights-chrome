@@ -5,7 +5,7 @@ import { DateFormat } from '@redhat-cloud-services/frontend-components/DateForma
 import SecurityIcon from '@patternfly/react-icons/dist/dynamic/icons/security-icon';
 import TagIcon from '@patternfly/react-icons/dist/dynamic/icons/tag-icon';
 
-import { AdvisorSystem, Host, getHostCVEs, getHostInsights, getHostPatch, getHostTags, getHosts } from './api';
+import { AdvisorSystem, Host, HostApiOptions, getHostCVEs, getHostInsights, getHostPatch, getHostTags, getHosts } from './api';
 import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
@@ -13,6 +13,7 @@ import ShieldIcon from '@patternfly/react-icons/dist/dynamic/icons/shield-alt-ic
 import BugIcon from '@patternfly/react-icons/dist/dynamic/icons/bug-icon';
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import { Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import FilterToolbar from './FilterToolbar';
 
 function createRows(
   columns: {
@@ -110,14 +111,40 @@ function useColumnData(columns: InventoryColumn[]) {
   return res;
 }
 
-const ModularInventory = ({ columns }: { columns: Omit<InventoryColumn, 'isReady' | 'isAsync' | 'observeReady'>[] }) => {
+const ModularInventory = ({
+  columns,
+  onSort,
+  sortBy,
+  sortDirection,
+}: {
+  sortBy: number;
+  sortDirection: 'asc' | 'desc';
+  onSort: (index: number, direction: 'asc' | 'desc') => void;
+  columns: Omit<InventoryColumn, 'isReady' | 'isAsync' | 'observeReady'>[];
+}) => {
   const [allData] = useColumnData(columns as InventoryColumn[]);
   return (
     <Table>
       <Thead>
         <Tr>
-          {columns.map((column) => (
-            <Th key={column.getColumnId()}>{column.getTitle()}</Th>
+          {columns.map((column, idx) => (
+            <Th
+              sort={
+                column.getSortable()
+                  ? {
+                      columnIndex: idx,
+                      sortBy: {
+                        index: sortBy,
+                        direction: sortDirection,
+                      },
+                      onSort: (_e, index, direction) => onSort(index, direction),
+                    }
+                  : undefined
+              }
+              key={column.getColumnId()}
+            >
+              {column.getTitle()}
+            </Th>
           ))}
         </Tr>
       </Thead>
@@ -136,12 +163,12 @@ const ModularInventory = ({ columns }: { columns: Omit<InventoryColumn, 'isReady
 
 const columnIds = [
   'id',
-  'name',
+  'display_name',
   'all-cves',
   'cves',
   'tags',
   'os',
-  'lastCheckIn',
+  'updated',
   'criticalCves',
   'importantCves',
   'moderateCves',
@@ -149,6 +176,7 @@ const columnIds = [
   'recommendations',
   'installAbleAdvisories',
 ];
+
 const ColumnEnabler = ({
   enabledColumns,
   handleCheckboxChange,
@@ -272,19 +300,31 @@ const columnsRegistry: {
   },
 
   id: (hosts: Host[]) => {
-    return new BaseInventoryColumn('id', 'System ID', {
-      columnData: hosts.map((host) => host.id),
-    });
+    return new BaseInventoryColumn(
+      'id',
+      'System ID',
+      {
+        columnData: hosts.map((host) => host.id),
+      },
+      { sortable: true }
+    );
   },
 
-  name: (hosts: Host[]) => {
-    return new BaseInventoryColumn('name', 'System Name', {
-      columnData: hosts.map((host) => (
-        <a key={host.id} href="#">
-          {host.display_name}
-        </a>
-      )),
-    });
+  display_name: (hosts: Host[]) => {
+    return new BaseInventoryColumn(
+      'display_name',
+      'System Name',
+      {
+        columnData: hosts.map((host) => (
+          <a key={host.id} href="#">
+            {host.display_name}
+          </a>
+        )),
+      },
+      {
+        sortable: true,
+      }
+    );
   },
 
   'all-cves': (_e, cvePromises: ReturnType<typeof getHostCVEs>[]) => {
@@ -363,14 +403,21 @@ const columnsRegistry: {
     });
   },
 
-  lastCheckIn: (hosts: Host[]) => {
-    return new BaseInventoryColumn('lastCheckIn', 'Last check-in', {
-      columnData: hosts.map((host) =>
-        host.per_reporter_staleness.puptoo?.last_check_in ? (
-          <DateFormat key={host.id} date={host.per_reporter_staleness.puptoo?.last_check_in} />
-        ) : null
-      ),
-    });
+  updated: (hosts: Host[]) => {
+    return new BaseInventoryColumn(
+      'updated',
+      'Last check-in',
+      {
+        columnData: hosts.map((host) =>
+          host.per_reporter_staleness.puptoo?.last_check_in ? (
+            <DateFormat key={host.id} date={host.per_reporter_staleness.puptoo?.last_check_in} />
+          ) : null
+        ),
+      },
+      {
+        sortable: true,
+      }
+    );
   },
 };
 
@@ -414,19 +461,40 @@ const ModularInventoryRoute = () => {
   }, [hosts, enabledColumns]);
 
   async function initData() {
-    const response = await getHosts();
+    const response = await getHosts(filterState);
     setHosts(response.results);
     getHostTags(response.results[0].insights_id);
   }
+  const [filterState, setFilterState] = useState<HostApiOptions>({ page: 1, perPage: 20, orderBy: 'updated', orderHow: 'DESC' });
 
   useEffect(() => {
     initData();
-  }, []);
+  }, [JSON.stringify(filterState)]);
+
+  const onPerPageSelect = (perPage: number) => {
+    setFilterState((prev) => ({ ...prev, perPage }));
+  };
+  const onSetPage = (page: number) => {
+    setFilterState((prev) => ({ ...prev, page }));
+  };
 
   return (
     <div className="pf-v5-u-p-md">
       <ColumnEnabler enabledColumns={enabledColumns} handleCheckboxChange={handleCheckboxChange} />
-      <ModularInventory columns={cols} />
+      <FilterToolbar onPerPageSelect={onPerPageSelect} onSetPage={onSetPage} {...filterState} />
+      <ModularInventory
+        sortBy={filterState.orderBy ? columnIds.indexOf(filterState.orderBy) ?? 0 : 0}
+        sortDirection={filterState.orderHow?.toLocaleLowerCase() as 'asc' | 'desc'}
+        onSort={(index, direction) => {
+          console.log(index, direction);
+          setFilterState((prev) => ({
+            ...prev,
+            orderBy: (columnIds[index] as any) ?? 'updated',
+            orderHow: (direction.toUpperCase() as any) ?? 'DESC',
+          }));
+        }}
+        columns={cols}
+      />
     </div>
   );
 };
