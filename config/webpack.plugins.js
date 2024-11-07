@@ -39,6 +39,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
         './DashboardFavorites': resolve(__dirname, '../src/components/FavoriteServices/DashboardFavorites.tsx'),
         './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
+        './ModularInventory': resolve(__dirname, '../src/inventoryPoc/index.ts'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
