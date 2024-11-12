@@ -1,19 +1,19 @@
 import React from 'react';
 import {
   EmptyState,
-  EmptyStateActions,
+  // EmptyStateActions,
   EmptyStateBody,
-  EmptyStateFooter,
+  // EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
 } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
-import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+// import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+// import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-
+// import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-question-circle-icon';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
-import ChatbotIcon from './icon-chatbot-static';
+// import ChatbotIcon from './icon-chatbot-static';
 import './EmptySearchState.scss';
 
 const EmptySearchState = () => {
@@ -30,22 +30,22 @@ const EmptySearchState = () => {
           </Text>
         </TextContent>
       </EmptyStateBody>
-      <EmptyStateFooter className="pf-v5-u-mt-md">
+      {/*      <EmptyStateFooter className="pf-v5-u-mt-md">
         <EmptyStateActions>
-          {/*          <Button variant="link" className="pf-v5-u-pr-2xl">
+          <Button variant="link" className="pf-v5-u-pr-2xl">
             <Icon size="md" className="pf-v5-u-pr-md" isInline> 
               <OutlinedQuestionCircleIcon />
             </Icon>
             Open Hybrid Cloud Console help 
-          </Button>*/}
+          </Button>
           <Button variant="link">
             <Icon size="md" className="pf-v5-u-pr-md" isInline>
-              <ChatbotIcon className="test" />
+              <ChatbotIcon />
             </Icon>
             Launch Virtual Assistant
           </Button>
         </EmptyStateActions>
-      </EmptyStateFooter>
+      </EmptyStateFooter>*/}
     </EmptyState>
   );
 };
