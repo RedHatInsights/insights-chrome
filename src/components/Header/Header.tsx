@@ -112,13 +112,13 @@ const MemoizedHeader = memo(
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
-              <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-md-on-2xl" variant="filter-group">
+              <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-0-on-2xl" variant="filter-group">
                 <Suspense fallback={null}>
                   <SearchInput onStateChange={hideAllServices} />
                 </Suspense>
               </ToolbarGroup>
               <ToolbarGroup
-                className="pf-v5-m-icon-button-group pf-v5-u-ml-auto"
+                className="pf-v5-m-icon-button-group pf-v5-u-ml-auto pf-v5-u-mr-0"
                 visibility={{ default: 'hidden', '2xl': 'visible' }}
                 widget-type="InsightsToolbar"
               >

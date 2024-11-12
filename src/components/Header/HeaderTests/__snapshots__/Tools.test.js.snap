@@ -2,7 +2,7 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-v5-c-toolbar__item pf-v5-u-mr-0 pf-v5-u-ml-sm"
+  class="pf-v5-c-toolbar__item pf-v5-u-mx-0"
 >
   <div
     style="display: contents;"
