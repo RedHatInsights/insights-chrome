@@ -98,7 +98,7 @@ const SatelliteToken: React.FC = () => {
         {isOrgAdmin ? (
           <PageSection>
             <Card>
-              <CardTitle>IP Address Allow List</CardTitle>
+              <CardTitle>IP allowlist</CardTitle>
               <CardBody>
                 <IPWhitelistTable />
               </CardBody>

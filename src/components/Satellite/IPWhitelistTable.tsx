@@ -159,7 +159,7 @@ const IPWhitelistTable: React.FC = () => {
         setRemoveAddresses('');
         setIsIPRemoveModalOpen(false);
       }}
-      title={'Remove IP Addresses from allowlist'}
+      title={'Remove IP addresses from allowlist'}
       variant={ModalVariant.medium}
     >
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
