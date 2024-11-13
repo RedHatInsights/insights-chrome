@@ -10,17 +10,32 @@ export default defineConfig({
       addMatchImageSnapshotPlugin(on, config);
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {
-          launchOptions.args.push('--window-size=1280,720');
+          launchOptions.args = launchOptions.args.map((arg) => {
+            if (arg === '--headless=new') {
+              return '--headless';
+            }
 
+            return arg;
+          });
+          // Needs the extra 139 because of the cypress toolbar, this is the size of the window! not size of the viewport
+          launchOptions.args.push(`--window-size=1280,${720 + 139}`);
           // force screen to be non-retina
           launchOptions.args.push('--force-device-scale-factor=1');
+          // force screen to be retina (2800x2400 size)
+          // launchOptions.args.push('--force-device-scale-factor=2')
         }
 
         if (browser.name === 'electron' && browser.isHeadless) {
-          // fullPage screenshot size is 1280x720
           launchOptions.preferences.width = 1280;
           launchOptions.preferences.height = 720;
         }
+
+        if (browser.name === 'firefox' && browser.isHeadless) {
+          launchOptions.args.push('--width=1280');
+          launchOptions.args.push('--height=720');
+        }
+
+        return launchOptions;
       });
       require('@cypress/code-coverage/task')(on, config);
       return config;

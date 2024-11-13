@@ -186,13 +186,13 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
         setIsOpen(false);
         onStateChange(false);
       }}
-      {...(!md && {
+      {...{
         expandableInput: {
           isExpanded: willExpand(),
           onToggleExpand,
           toggleAriaLabel: 'Expandable search input toggle',
         },
-      })}
+      }}
       onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
