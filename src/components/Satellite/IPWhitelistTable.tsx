@@ -120,13 +120,13 @@ const IPWhitelistTable: React.FC = () => {
         setInputAddresses('');
         setIsIPModalOpen(false);
       }}
-      title={'Add IP Addresses to Allow List'}
+      title={'Add IP addresses to allowlist'}
       variant={ModalVariant.medium}
     >
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
         <FormGroup>
           <TextContent>
-            <Text>Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allow-list.</Text>
+            <Text>Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allowlist.</Text>
           </TextContent>
           <TextInput
             validated={validationError ? ValidatedOptions.error : ValidatedOptions.default}
@@ -159,13 +159,13 @@ const IPWhitelistTable: React.FC = () => {
         setRemoveAddresses('');
         setIsIPRemoveModalOpen(false);
       }}
-      title={'Remove IP Addresses from Allow List'}
+      title={'Remove IP addresses from allowlist'}
       variant={ModalVariant.medium}
     >
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
         <FormGroup>
           <TextContent>
-            <Text>The following IP addresses will be removed from the allow list</Text>
+            <Text>The following IP addresses will be removed from the allowlist</Text>
           </TextContent>
           <TextInput isDisabled value={removeAddresses}></TextInput>
         </FormGroup>
@@ -192,7 +192,7 @@ const IPWhitelistTable: React.FC = () => {
       <Td colSpan={8}>
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
-            <EmptyStateHeader titleText="No IP Addresses Allowed" headingLevel="h2" />
+            <EmptyStateHeader titleText="No IP addresses allowed" headingLevel="h2" />
             <EmptyStateBody>
               Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allow-list.
             </EmptyStateBody>
@@ -205,7 +205,7 @@ const IPWhitelistTable: React.FC = () => {
   const ipTable = (
     <OuterScrollContainer style={{ maxHeight: '25rem' }}>
       <InnerScrollContainer>
-        <Table aria-label="IP Address Allow List" variant={TableVariant.compact} isStickyHeader>
+        <Table aria-label="IP allowlist" variant={TableVariant.compact} isStickyHeader>
           <Thead>
             <Tr>
               <Th>{columnNames.ip_block}</Th>

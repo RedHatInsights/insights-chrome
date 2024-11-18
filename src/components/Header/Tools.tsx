@@ -70,13 +70,17 @@ const Tools = () => {
   const isPreview = useAtomValue(isPreviewAtom);
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
+  const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const { user, token } = useContext(ChromeAuthContext);
   const unreadNotifications = useAtomValue(unreadNotificationsAtom);
   const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
+  const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = '/iam/user-access/overview';
+  const identityAndAccessManagmentPath = isOrgAdmin
+    ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview`
+    : '/iam/my-user-access';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
@@ -113,7 +117,7 @@ const Tools = () => {
       items: [
         {
           url: identityAndAccessManagmentPath,
-          title: 'User Access',
+          title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
@@ -166,7 +170,7 @@ const Tools = () => {
     },
     {
       title: intl.formatMessage(messages.insightsRhelDocumentation),
-      onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
+      onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
       isHidden: getSection() !== 'insights' || isITLessEnv,
     },
     {
@@ -236,7 +240,7 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && (
-        <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
+        <ToolbarItem className="pf-v5-u-mx-0">
           <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
             <NotificationBadge
               className="chr-c-notification-badge"

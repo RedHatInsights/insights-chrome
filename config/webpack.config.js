@@ -247,5 +247,16 @@ module.exports = function (env) {
     config.plugins.push(new BundleAnalyzerPlugin());
   }
 
+  // bridge between devServer 4 and 5
+  // will be useful for RSpack
+  if (typeof config.devServer.onBeforeSetupMiddleware !== 'undefined') {
+    delete config.devServer.onBeforeSetupMiddleware;
+  }
+
+  if (config.devServer.https) {
+    delete config.devServer.https;
+    config.devServer.server = 'https';
+  }
+
   return [pfConfig, config];
 };

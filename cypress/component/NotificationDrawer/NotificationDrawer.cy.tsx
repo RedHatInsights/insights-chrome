@@ -112,7 +112,7 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 0);
     // select all notifications
-    cy.get('[data-ouia-component-id="BulkSelect"]').click();
+    cy.get('[data-ouia-component-id="BulkSelectCheckbox"]').click();
     cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as read
     cy.get('#notifications-actions-toggle').click();
@@ -129,7 +129,7 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 3);
     // select all notifications
-    cy.get('[data-ouia-component-id="BulkSelect"]').click();
+    cy.get('[data-ouia-component-id="BulkSelectCheckbox"]').click();
     cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as unread
     cy.get('#notifications-actions-toggle').click();

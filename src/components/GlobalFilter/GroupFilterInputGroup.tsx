@@ -53,7 +53,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
             <div>
               {intl.formatMessage(messages.filterByTagsPopoverContent1)}{' '}
               <a
-                href="https://access.redhat.com/documentation/en-us/subscription_central/1-latest/html/getting_started_with_the_subscriptions_service/proc-installing-satellite-inventory-upload-plugin_assembly-setting-up-subscriptionwatch-ctxt"
+                href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html/getting_started_with_the_subscriptions_service/proc-installing-satellite-inventory-upload-plugin_assembly-setting-up-subscriptionwatch-ctxt"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -61,7 +61,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
               </a>
               {intl.formatMessage(messages.filterByTagsPopoverContent2)}{' '}
               <a
-                href="https://access.redhat.com/documentation/en-us/red_hat_insights/1-latest/html/client_configuration_guide_for_red_hat_insights/assembly-client-data-adding-tags#con-insights-client-custom-system-tagging_insights-cg-adding-tags"
+                href="https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html-single/client_configuration_guide_for_red_hat_insights/index#proc-insights-creating-custom-group-tags-yaml-file_insights-cg-adding-tags"
                 target="_blank"
                 rel="noreferrer"
               >
