@@ -49,7 +49,7 @@ function initSentry() {
   sentryInitialized = true;
   const appDetails = getAppDetails();
   //These two apps will not be set up as of now. This helps limit transacations
-  const avoidedApps = ['subscriptions', 'image-builder'];
+  const avoidedApps = ['subscriptions'];
 
   // dsn: key
   // environment: logs Prod or Prod Beta for filtering
