@@ -1,5 +1,4 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import axios from 'axios';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
@@ -25,14 +24,13 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess, getSevenDaysAgo } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import useTabName from '../../hooks/useTabName';
-import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
@@ -123,28 +121,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   // setting default tab title
   useTabName();
 
-  const populateNotifications = useSetAtom(notificationDrawerDataAtom);
-
-  async function getNotifications() {
-    try {
-      const { data } = await axios.get<{ data: NotificationData[] }>(`/api/notifications/v1/notifications/drawer`, {
-        params: {
-          limit: 50,
-          sort_by: 'read:asc',
-          startDate: getSevenDaysAgo(),
-        },
-      });
-      populateNotifications(data?.data || []);
-    } catch (error) {
-      console.error('Unable to get Notifications ', error);
-    }
-  }
-
   useEffect(() => {
     // prepare webpack module sharing scope overrides
     updateSharedScope();
-    // get notifications drawer api
-    getNotifications();
     const unregister = chromeHistory.listen(historyListener);
     return () => {
       if (typeof unregister === 'function') {

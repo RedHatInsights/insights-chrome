@@ -182,6 +182,9 @@ const commonConfig = ({ dev }) => {
               host: `http://localhost:${process.env.NAV_CONFIG}`,
             },
           }),
+          '/apps/notifications': {
+            host: 'http://0.0.0.0:8003',
+          },
         },
       }),
     },
