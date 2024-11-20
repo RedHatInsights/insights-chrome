@@ -29,37 +29,74 @@ type SearchEntry = {
   altTitle?: string[];
 };
 
+const GENERATED_SEARCH_FLAG = '@chrome:generated-search-index';
+type GeneratedSearchIndexResponse = {
+  alt_title?: string[];
+  id: string;
+  href: string;
+  title: string;
+  description?: string;
+};
+
 export const SearchPermissions = new Map<string, NavItemPermission[]>();
 export const SearchPermissionsCache = new Map<string, boolean>();
 
 const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
-  const { data: rawIndex } = await axios.get<IndexEntry[]>(`${staticPath}/search-index.json`);
   const searchIndex: SearchEntry[] = [];
   const idSet = new Set<string>();
-  rawIndex.forEach((entry) => {
-    if (idSet.has(entry.id)) {
-      console.warn('Duplicate id found in index', entry.id);
-      return;
-    }
+  if (localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true') {
+    // parse data from generated search index
+    const { data: rawIndex } = await axios.get<GeneratedSearchIndexResponse[]>(`/api/chrome-service/v1/static/search-index-generated.json`);
+    rawIndex.forEach((entry) => {
+      if (idSet.has(entry.id)) {
+        console.warn('Duplicate id found in index', entry.id);
+        return;
+      }
 
-    if (!entry.relative_uri.startsWith('/')) {
-      console.warn('External ink found in the index. Ignoring: ', entry.relative_uri);
-      return;
-    }
-    idSet.add(entry.id);
-    SearchPermissions.set(entry.id, entry.permissions ?? []);
-    searchIndex.push({
-      title: entry.title[0],
-      uri: entry.uri,
-      pathname: entry.relative_uri,
-      description: entry.poc_description_t || entry.relative_uri,
-      icon: entry.icon,
-      id: entry.id,
-      bundleTitle: entry.bundleTitle[0],
-      altTitle: entry.alt_title,
+      if (!entry.href.startsWith('/')) {
+        console.warn('External ink found in the index. Ignoring: ', entry.href);
+        return;
+      }
+      idSet.add(entry.id);
+      SearchPermissions.set(entry.id, []);
+      searchIndex.push({
+        title: entry.title,
+        uri: entry.href,
+        pathname: entry.href,
+        description: entry.description ?? entry.href,
+        icon: undefined,
+        id: entry.id,
+        bundleTitle: entry.title,
+        altTitle: entry.alt_title,
+      });
     });
-  });
+  } else {
+    const { data: rawIndex } = await axios.get<IndexEntry[]>(`${staticPath}/search-index.json`);
+    rawIndex.forEach((entry) => {
+      if (idSet.has(entry.id)) {
+        console.warn('Duplicate id found in index', entry.id);
+        return;
+      }
+
+      if (!entry.relative_uri.startsWith('/')) {
+        console.warn('External ink found in the index. Ignoring: ', entry.relative_uri);
+        return;
+      }
+      idSet.add(entry.id);
+      SearchPermissions.set(entry.id, entry.permissions ?? []);
+      searchIndex.push({
+        title: entry.title[0],
+        uri: entry.uri,
+        pathname: entry.relative_uri,
+        description: entry.poc_description_t || entry.relative_uri,
+        icon: entry.icon,
+        id: entry.id,
+        bundleTitle: entry.bundleTitle[0],
+        altTitle: entry.alt_title,
+      });
+    });
+  }
 
   return searchIndex;
 });
