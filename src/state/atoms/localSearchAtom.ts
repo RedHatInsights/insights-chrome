@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { Orama, create, insert } from '@orama/orama';
 
-import { getChromeStaticPathname } from '../../utils/common';
+import { GENERATED_SEARCH_FLAG, getChromeStaticPathname } from '../../utils/common';
 import axios from 'axios';
 import { NavItemPermission } from '../../@types/types';
 
@@ -29,7 +29,6 @@ type SearchEntry = {
   altTitle?: string[];
 };
 
-const GENERATED_SEARCH_FLAG = '@chrome:generated-search-index';
 type GeneratedSearchIndexResponse = {
   alt_title?: string[];
   id: string;
