@@ -27,17 +27,7 @@ const FeedbackRoute = () => {
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
-      : [
-          '/',
-          'insights/*',
-          'settings/*',
-          'openshift/*',
-          'application-services/*',
-          'ansible/*',
-          'edge/*',
-          'subscriptions/*',
-          'iam/authentication-policy/identity-provider-integration',
-        ];
+      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*', 'subscriptions/*', 'iam/*'];
   return (
     <Routes>
       {paths.map((path) => (
