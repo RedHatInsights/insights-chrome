@@ -23,10 +23,21 @@ import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
 const FeedbackRoute = () => {
+  // controls feedback tab visibility
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
-      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*', 'subscriptions/*'];
+      : [
+          '/',
+          'insights/*',
+          'settings/*',
+          'openshift/*',
+          'application-services/*',
+          'ansible/*',
+          'edge/*',
+          'subscriptions/*',
+          'iam/authentication-policy/identity-provider-integration',
+        ];
   return (
     <Routes>
       {paths.map((path) => (
