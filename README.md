@@ -66,7 +66,7 @@ For illustration, to deploy Advisor together with Insights Chrome, you would req
 
 1. Ensure Advisor has the 'static: fec static' script
 2. Run Advisor with `npm run static`
-3. In Chrome, add advisor to the routes portion inside webpack.config.js `...(true && { '/apps/inventory': { host: 'http://localhost:8003', }, }),`
+3. In Chrome, add advisor to the routes portion inside webpack.config.js `...(true && { '/apps/advisor': { host: 'http://localhost:8003', }, }),`
 4. In Chrome then run `npm run dev`
    - If youd like to run against a different env, this can be altered with the env variable, ex. 'prod-stable'.
 
