@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
-import { Menu, MenuContent, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { Menu, MenuContent, MenuFooter, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { SearchInput as PFSearchInput, SearchInputProps } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
@@ -17,6 +17,10 @@ import SearchDescription from './SearchDescription';
 import { useAtomValue } from 'jotai';
 import { asyncLocalOrama } from '../../state/atoms/localSearchAtom';
 import { localQuery } from '../../utils/localSearch';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { ReleaseEnv } from '../../@types/types.d';
+import type { SearchItem } from './SearchTypes';
+import SearchFeedback, { SearchFeedbackType } from './SearchFeedback';
 
 export type SearchInputprops = {
   isExpanded?: boolean;
@@ -33,13 +37,6 @@ const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
   return bodyHeight - menuTopOffset - 4;
 };
 
-type SearchItem = {
-  title: string;
-  bundleTitle: string;
-  description: string;
-  pathname: string;
-};
-
 type SearchInputListener = {
   onStateChange: (isOpen: boolean) => void;
 };
@@ -47,8 +44,10 @@ type SearchInputListener = {
 const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [currentFeedbackType, setcurrentFeedbackType] = useState<SearchFeedbackType>();
   const [isFetching, setIsFetching] = useState(false);
   const [searchItems, setSearchItems] = useState<SearchItem[]>([]);
+  const isPreview = useAtomValue(isPreviewAtom);
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
   const asyncLocalOramaData = useAtomValue(asyncLocalOrama);
@@ -62,6 +61,12 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const { md } = useWindowWidth();
 
   const resultCount = searchItems.length;
+
+  useEffect(() => {
+    if (currentFeedbackType) {
+      setcurrentFeedbackType(undefined);
+    }
+  }, [searchValue]);
 
   const handleMenuKeys = (event: KeyboardEvent) => {
     if (!isOpen) {
@@ -146,7 +151,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
     setSearchValue(value);
     setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value);
+    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE);
     setSearchItems(results ?? []);
     isMounted.current && setIsFetching(false);
     if (ready && analytics) {
@@ -181,21 +186,31 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
         setIsOpen(false);
         onStateChange(false);
       }}
-      {...(!md && {
+      {...{
         expandableInput: {
           isExpanded: willExpand(),
           onToggleExpand,
           toggleAriaLabel: 'Expandable search input toggle',
         },
-      })}
+      }}
       onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
       className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
     />
   );
+
+  let menuFooter;
+  if (searchItems.length > 0 && !isFetching) {
+    menuFooter = (
+      <MenuFooter className="pf-v5-u-px-md">
+        <SearchFeedback query={searchValue} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
+      </MenuFooter>
+    );
+  }
+
   const menu = (
-    <Menu ref={menuRef} className="pf-v5-u-pt-sm pf-v5-u-px-md chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-v5-u-pt-sm chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
@@ -204,7 +219,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             </Bullseye>
           ) : (
             <>
-              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined}>
+              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined} className="pf-v5-u-px-md">
                 {searchItems.map((item, index) => (
                   <MenuItem
                     onKeyDown={(e) => {
@@ -222,7 +237,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
                     className="pf-v5-u-mb-xs"
                     component={(props) => <ChromeLink {...props} href={item.pathname} />}
                   >
-                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} />
+                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v5-u-mb-xs" />
                     <SearchDescription description={item.description} />
                   </MenuItem>
                 ))}
@@ -232,6 +247,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
           {searchItems.length === 0 && !isFetching && <EmptySearchState />}
         </MenuList>
       </MenuContent>
+      {menuFooter}
     </Menu>
   );
 

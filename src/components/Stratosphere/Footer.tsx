@@ -6,6 +6,8 @@ import React, { VoidFunctionComponent } from 'react';
 
 import './footer.scss';
 
+const currentYear = new Date().getFullYear();
+
 const FooterLink: VoidFunctionComponent<{ href: string; label: React.ReactNode }> = ({ href, label }) => (
   <TextContent>
     <Text component="small">
@@ -24,7 +26,7 @@ const Footer = () => (
       </LevelItem>
       <LevelItem className="pf-v5-u-mr-2xl">
         <TextContent>
-          <Text component="small">Copyright c 2023 Red Hat, Inc.</Text>
+          <Text component="small">Copyright c {currentYear} Red Hat, Inc.</Text>
         </TextContent>
       </LevelItem>
       <LevelItem className="pf-v5-u-mr-auto">
