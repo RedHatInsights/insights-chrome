@@ -1,18 +1,21 @@
 import React from 'react';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import './SearchTitle.scss';
 
-const SearchTitle = ({ title, bundleTitle }: { title: string; bundleTitle: string }) => {
+const SearchTitle = ({ title, bundleTitle, className = '' }: { title: string; bundleTitle: string; className?: string }) => {
   const showBundleTitle = bundleTitle.replace(/\s/g, '').length > 0;
   return (
-    <TextContent>
-      <Text component="small" className="pf-v5-u-link-color chr-c-search-title" dangerouslySetInnerHTML={{ __html: title }}></Text>
-      {showBundleTitle && (
-        <Text component="small" className="pf-v5-u-link-color">
-          <span className="pf-v5-u-px-sm">|</span>
-        </Text>
-      )}
-      {showBundleTitle && <Text component="small" className="pf-v5-u-link-color" dangerouslySetInnerHTML={{ __html: bundleTitle }}></Text>}
-    </TextContent>
+    <div className={`chr-search-title-content pf-v5-u-link-color ${className}`}>
+      <small className="pf-v5-u-link-color chr-c-search-title">
+        <span className="chr-c-search-title" dangerouslySetInnerHTML={{ __html: title }} />
+
+        {showBundleTitle && (
+          <>
+            <span className="pf-v5-u-px-sm">|</span>
+            <span dangerouslySetInnerHTML={{ __html: bundleTitle }} />
+          </>
+        )}
+      </small>
+    </div>
   );
 };
 

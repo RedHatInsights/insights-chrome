@@ -146,7 +146,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
                       filter?.onFilter?.('');
                     }}
                   >
-                    {intl.formatMessage(messages.clearFilters)}
+                    {intl.formatMessage(messages.resetFilters)}
                   </Button>
                 )}
               </Fragment>

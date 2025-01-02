@@ -1,4 +1,4 @@
-# Insights Chrome
+# Insights Chrome 
 
 The "wrapper" around your application!
 
@@ -54,18 +54,23 @@ To run a script you have to install dependencies `npm install`. Then you are fre
     > npm run dev
     ```
 
-3. Open browser at `https://stage.foo.redhat.com:1337/` or Open browser at `https://stage.foo.redhat.com:1337/preview`.
+3. Open browser at `https://stage.foo.redhat.com:1337/`.
 
 ### Running chrome with other applications locally
 
 You can spin chrome locally together with other applications. Use `LOCAL_APPS` to list the locally deployed applications.
 
-#### Example 1 (using LOCAL_APPS)
+#### Example 1 (using fec static)
 
 For illustration, to deploy Advisor together with Insights Chrome, you would require to
 
-1. Run Advisor on any available port with `npm run start -- --port=8004` or `npm run start:beta -- --port=8004`,
-2. Run Chrome and list the Advisor's port: `LOCAL_APPS=advisor:8004:http npm run dev` or `LOCAL_APPS=advisor:8004:http npm run dev:beta`.
+1. Ensure Advisor has the 'static: fec static' script
+2. Run Advisor with `npm run static`
+3. In Chrome, add advisor to the routes portion inside webpack.config.js `'/apps/advisor': {
+    host: 'http://0.0.0.0:8003',
+},`
+4. In Chrome then run `npm run dev`
+   - If youd like to run against a different env, this can be altered with the env variable, ex. 'prod-stable'.
 
 #### Example 2 (using devServer route)
 
@@ -85,7 +90,11 @@ devServer: {
 }
 ...
 ```
-3. Run insights-chrome with `npm run dev` or `npm run dev:beta`.
+3. Run insights-chrome with `npm run dev`.
+
+## Local search development
+
+See [local search development documentation](./docs/localSearchDevelopment.md).
 
 ## LocalStorage Debugging
 
