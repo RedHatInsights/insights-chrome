@@ -197,10 +197,10 @@ export default defineMessages({
     description: 'Show more',
     defaultMessage: 'Show more',
   },
-  clearFilters: {
-    id: 'clearFilters',
-    description: 'Clear filters',
-    defaultMessage: 'Clear filters',
+  resetFilters: {
+    id: 'resetFilters',
+    description: 'Reset filters',
+    defaultMessage: 'Reset filters',
   },
   noInventoryPermissions: {
     id: 'noInventoryPermissions',
