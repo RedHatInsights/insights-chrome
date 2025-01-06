@@ -6,6 +6,7 @@ import LoadingFallback from '../../utils/loading-fallback';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useAtomValue } from 'jotai';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import useTrialRedirect from '../../hooks/useTrialRedirect';
 
 const INTEGRATION_SOURCES = 'platform.sources.integrations';
 
@@ -69,6 +70,7 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const featureFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
   const moduleRoutes = useAtomValue(moduleRoutesAtom);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
+  useTrialRedirect();
 
   return (
     <Routes>
