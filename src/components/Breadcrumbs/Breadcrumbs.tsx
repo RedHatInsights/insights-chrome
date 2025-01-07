@@ -6,7 +6,6 @@ import React, { useMemo } from 'react';
 
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
-import './Breadcrumbs.scss';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';

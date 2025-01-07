@@ -110,7 +110,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
     >
       {noBreadcrumb && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
-          <Breadcrumbs {...breadcrumbsProps} />
+          <Breadcrumbs />
         </ToolbarGroup>
       )}
       <div className={classnames('chr-render')}>
