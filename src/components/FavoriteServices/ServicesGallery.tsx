@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ServiceTile, { ServiceTileProps } from './ServiceTile';
 import ChromeLink from '../ChromeLink';

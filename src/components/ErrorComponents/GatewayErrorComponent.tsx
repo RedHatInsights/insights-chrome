@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import NotAuthorized from '@redhat-cloud-services/frontend-components/NotAuthorized';
 import sanitizeHtml from 'sanitize-html';
 import { useAtomValue } from 'jotai';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ChromeLink from '../ChromeLink/ChromeLink';
 import { useIntl } from 'react-intl';

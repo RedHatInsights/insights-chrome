@@ -4,10 +4,10 @@ import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
-import { Page, PageGroup, PageSection,  } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Page, PageGroup, PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
@@ -55,7 +55,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         ) : (
           <Fragment>
             <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
-              <PageSection hasBodyWrapper={false}  className="pf-v6-u-px-xl-on-md">
+              <PageSection hasBodyWrapper={false} className="pf-v6-u-px-xl-on-md">
                 <Title headingLevel="h2">All Services</Title>
                 <Content className="pf-v6-u-mt-sm">
                   <Content component="p">

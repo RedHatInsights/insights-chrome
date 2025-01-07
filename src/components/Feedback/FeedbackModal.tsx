@@ -5,10 +5,7 @@ import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/c
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Grid, GridItem } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
@@ -72,17 +69,16 @@ const FeedbackModal = memo(() => {
                 <Content component={ContentVariants.h1}>{intl.formatMessage(messages.tellAboutExperience)}</Content>
                 <Content component="p">{intl.formatMessage(messages.helpUsImproveHCC)}</Content>
               </Content>
-              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('feedbackOne')}>
+              <Card className="pf-v6-u-mb-lg" isCompact onClick={() => setModalPage('feedbackOne')}>
                 <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.shareFeedback)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.howIsConsoleExperience)}</CardBody>
               </Card>
-              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('reportBugOne')}>
+              <Card className="pf-v6-u-mb-lg" isCompact onClick={() => setModalPage('reportBugOne')}>
                 <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
               <Card
                 className="pf-v6-u-mb-lg"
-                
                 isCompact
                 onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}
               >
@@ -93,7 +89,7 @@ const FeedbackModal = memo(() => {
                 </CardTitle>
                 <CardBody>{intl.formatMessage(messages.getSupport)}</CardBody>
               </Card>
-              <Card className="pf-v6-u-mb-lg"  isCompact onClick={() => setModalPage('informDirection')}>
+              <Card className="pf-v6-u-mb-lg" isCompact onClick={() => setModalPage('informDirection')}>
                 <CardTitle className="pf-v6-u-primary-color-100">
                   <Content component="p">{intl.formatMessage(messages.informRedhatDirection)}</Content>
                 </CardTitle>
@@ -205,7 +201,8 @@ const FeedbackModal = memo(() => {
 
   return (
     <React.Fragment>
-      <Button icon={<OutlinedCommentsIcon />}
+      <Button
+        icon={<OutlinedCommentsIcon />}
         ouiaId="feedback-button"
         className="chr-c-button-feedback"
         onClick={() => {
@@ -215,7 +212,6 @@ const FeedbackModal = memo(() => {
           }
         }}
       >
-        
         {intl.formatMessage(messages.feedback)}
       </Button>
       <Modal

@@ -6,7 +6,7 @@ import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { EmptyState, EmptyStateBody,  } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyState, EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import {
   NotificationDrawer,
   NotificationDrawerBody,
@@ -54,9 +54,14 @@ export type DrawerPanelProps = {
 };
 
 const EmptyNotifications = ({ isOrgAdmin, onLinkClick }: { onLinkClick: () => void; isOrgAdmin?: boolean }) => (
-  <EmptyState titleText={<Title headingLevel="h4" size="lg">
-      No notifications found
-    </Title>} icon={BellSlashIcon}>
+  <EmptyState
+    titleText={
+      <Title headingLevel="h4" size="lg">
+        No notifications found
+      </Title>
+    }
+    icon={BellSlashIcon}
+  >
     <EmptyStateBody>
       {isOrgAdmin ? (
         <Stack>

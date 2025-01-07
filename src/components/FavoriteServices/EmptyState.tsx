@@ -1,7 +1,7 @@
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import React from 'react';
 import ChromeLink from '../ChromeLink';

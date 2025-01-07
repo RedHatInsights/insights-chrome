@@ -1,6 +1,6 @@
 import { Gallery, GalleryItem } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import React from 'react';
 
 import useFavoritedServices from '../../hooks/useFavoritedServices';
@@ -32,7 +32,9 @@ const DashboardFavorites = () => {
                   <SplitItem>
                     <Content>
                       <Link to={favorite.pathname}>
-                        <Content component="p" className="pf-v6-u-mb-0">{favorite.name}</Content>
+                        <Content component="p" className="pf-v6-u-mb-0">
+                          {favorite.name}
+                        </Content>
                       </Link>
                       <Content component="small">{getBundle(favorite.pathname)}</Content>
                     </Content>

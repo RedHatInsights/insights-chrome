@@ -3,14 +3,9 @@ import { InfoCircleIcon } from '@patternfly/react-icons/dist/dynamic/icons/info-
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Button, ButtonProps } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
-import {
-	ModalProps
-} from '@patternfly/react-core/dist/dynamic/components/Modal';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { ModalProps } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';

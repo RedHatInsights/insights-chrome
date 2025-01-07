@@ -1,5 +1,5 @@
 import React from 'react';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import './SearchDescription.scss';
 import parseHighlights from './parseHighlight';

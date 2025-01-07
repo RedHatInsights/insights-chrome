@@ -1,9 +1,6 @@
 import React from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { BugIcon } from '@patternfly/react-icons/dist/dynamic/icons/bug-icon';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -41,15 +38,14 @@ const DebuggerModal = ({ user }: DebuggerModalProps) => {
 
   return (
     <React.Fragment>
-      <Button icon={<BugIcon />}
+      <Button
+        icon={<BugIcon />}
         ouiaId="debugger-button"
         className="chr-c-button-debugger"
         onClick={() => {
           setIsModalOpen(true);
         }}
-      >
-        
-      </Button>
+      ></Button>
       <Modal
         aria-label="Debugger modal"
         isOpen={isOpen}

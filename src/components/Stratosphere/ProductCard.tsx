@@ -1,5 +1,5 @@
 import React, { Fragment, VoidFunctionComponent } from 'react';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 import ChromeLink from '../ChromeLink/ChromeLink';
 

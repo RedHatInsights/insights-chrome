@@ -17,7 +17,7 @@ export type Breadcrumbsprops = {
   setIsNavOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
+const Breadcrumbs = () => {
   const segments = useBreadcrumbsLinks();
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePagesWrapper();
 

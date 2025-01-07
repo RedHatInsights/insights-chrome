@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core/dist/dynamic/components/Alert';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 import useMarketplacePartner from '../../hooks/useMarketplacePartner';

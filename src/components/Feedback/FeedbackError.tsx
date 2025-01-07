@@ -18,7 +18,7 @@ const FeedbackError = ({ onCloseModal }: FeedbackErrorProps) => {
   return (
     <div className="chr-c-feedback-success-content">
       <Icon size="md">
-        <CheckIcon color="var(--pf-t--temp--dev--tbd)"/* CODEMODS: original v5 color was --pf-v5-global--success-color--100 */ className="pf-v6-u-mx-auto" />
+        <CheckIcon color="var(--pf-t--global--icon--color--status--success--default)" className="pf-v6-u-mx-auto" />
       </Icon>
       <Content>
         <Content component={ContentVariants.h1}>{intl.formatMessage(messages.somethingWentWrong)}</Content>

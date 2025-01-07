@@ -1,11 +1,8 @@
 import React from 'react';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
 import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 

@@ -4,8 +4,12 @@ import messages from '../../locales/Messages';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 import { Group } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
-import { Button, InputGroup, InputGroupItem, Popover, PopoverPosition } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { InputGroup } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { InputGroupItem } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-question-circle-icon';
 import { FlagTagsFilter } from '../../@types/types';
 
 export type GroupFilterInputGroupProps = {
@@ -72,9 +76,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
           }
           appendTo={() => document.body}
         >
-          <Button icon={<OutlinedQuestionCircleIcon />} variant="control" aria-label="Tags help">
-            
-          </Button>
+          <Button icon={<OutlinedQuestionCircleIcon />} variant="control" aria-label="Tags help" />
         </Popover>
       </InputGroupItem>
     </InputGroup>
