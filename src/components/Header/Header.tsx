@@ -73,6 +73,9 @@ const MemoizedHeader = memo(
 
     const { hideNav, isNavOpen, setIsNavOpen } = breadcrumbsProps as Breadcrumbsprops;
 
+    const rootElementClasses = Array.from(document.documentElement.classList);
+    const theme = rootElementClasses.includes('pf-v6-theme-dark') ? 'dark' : 'light';
+
     return (
       <Fragment>
         <MastheadMain>
@@ -83,7 +86,7 @@ const MemoizedHeader = memo(
               className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg"
               component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
             >
-              <Logo />
+              <Logo theme={theme} />
             </MastheadLogo>
           </MastheadBrand>
         </MastheadMain>

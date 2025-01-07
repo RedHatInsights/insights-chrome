@@ -1,4 +1,4 @@
-import { Masthead, MastheadLogo, MastheadMain, MastheadBrand } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Masthead, MastheadBrand, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
 
 import React from 'react';
@@ -20,9 +20,11 @@ const AppPlaceholder = () => {
         masthead={
           <Masthead className="chr-c-masthead">
             <MastheadMain className="pf-v6-u-pl-lg">
-              <MastheadBrand data-codemods><MastheadLogo data-codemods component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
-                <Logo />
-              </MastheadLogo></MastheadBrand>
+              <MastheadBrand data-codemods>
+                <MastheadLogo data-codemods component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+                  <Logo />
+                </MastheadLogo>
+              </MastheadBrand>
             </MastheadMain>
           </Masthead>
         }
