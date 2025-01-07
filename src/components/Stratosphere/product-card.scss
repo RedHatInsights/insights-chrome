@@ -11,7 +11,7 @@ $cards: 0, 1, 2, 3;
     border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
     border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
     border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    padding: var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--lg);
+    padding: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.title-#{$card} {
         grid-column: $card + 1;
@@ -22,7 +22,7 @@ $cards: 0, 1, 2, 3;
       @each $card in $cards {
         &.title-#{$card} {
           @if $card > 1 {
-            margin-top: var(--pf-v5-global--spacer--lg);
+            margin-top: var(--pf-t--global--spacer--lg);
             grid-column: $card - 1;
             grid-row: 4;
           }
@@ -32,7 +32,7 @@ $cards: 0, 1, 2, 3;
     @media only screen and (max-width: var(--pf-t--global--breakpoint--md)) {
       @each $card in $cards {
         &.title-#{$card} {
-            margin-top: var(--pf-v5-global--spacer--lg);
+            margin-top: var(--pf-t--global--spacer--lg);
             grid-column: 1;
             grid-row: ($card * 3) + 1;
         }
@@ -44,7 +44,7 @@ $cards: 0, 1, 2, 3;
     background-color: var(--pf-v5-global--BackgroundColor--100);
     border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
     border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    padding: 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
+    padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.body-#{$card} {
         grid-column: $card + 1;
@@ -74,7 +74,7 @@ $cards: 0, 1, 2, 3;
     background-color: var(--pf-v5-global--BackgroundColor--100);
     border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
     border-top: none;
-    padding: 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
+    padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.footer-#{$card} {
         grid-column: $card + 1;

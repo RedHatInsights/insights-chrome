@@ -1,6 +1,6 @@
 button.pf-v6-c-button.chr-c-button-feedback {
   svg {
-    margin-right: var(--pf-v5-global--spacer--sm);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
   position: fixed;
   z-index: 100;
@@ -45,24 +45,24 @@ button.pf-v6-c-button.chr-c-button-feedback {
 .chr-c-feedback-content {
   display: flex;
   flex-direction: column;
-  padding-right: var(--pf-v5-global--spacer--lg);
-  padding-top: var(--pf-v5-global--spacer--lg);
-  margin: var(--pf-v5-global--spacer--md);
+  padding-right: var(--pf-t--global--spacer--lg);
+  padding-top: var(--pf-t--global--spacer--lg);
+  margin: var(--pf-t--global--spacer--md);
 }
 
 .chr-c-feedback-button {
-  margin: var(--pf-v5-global--spacer--sm);
+  margin: var(--pf-t--global--spacer--sm);
   text-align: left;
 }
 
 .chr-c-feedback-footer-button {
-  margin: var(--pf-v5-global--spacer--md);
+  margin: var(--pf-t--global--spacer--md);
 }
 
 .chr-c-feedback-buttons {
-  margin: var(--pf-v5-global--spacer--sm);
+  margin: var(--pf-t--global--spacer--sm);
   position: absolute;
-  bottom: var(--pf-v5-global--spacer--md);
+  bottom: var(--pf-t--global--spacer--md);
 }
 
 .chr-c-feedback-success-content {
@@ -75,12 +75,12 @@ button.pf-v6-c-button.chr-c-button-feedback {
 }
 
 .chr-c-feedback-email {
-  margin-top: var(--pf-v5-global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--lg);
   overflow: hidden;
 }
 
 .chr-c-feedback-panel {
-  margin-bottom: var(--pf-v5-global--spacer--lg);
+  margin-bottom: var(--pf-t--global--spacer--lg);
   &__body {
     padding-bottom: 4px;
     padding-top: 4px;

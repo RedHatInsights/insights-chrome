@@ -9,7 +9,6 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import './Breadcrumbs.scss';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
-import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type Breadcrumbsprops = {
@@ -26,9 +25,8 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
 
   return (
-    <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0">
+    <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0 pf-v6-u-w-100">
       <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-md">
-        <FlexItem>{!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}</FlexItem>
         <FlexItem className="pf-v6-u-flex-grow-1">
           <Breadcrumb className="pf-v6-u-pt-sm">
             {segments.map(({ title, href }, index) => (
@@ -47,7 +45,7 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
           </Breadcrumb>
         </FlexItem>
         {leafHref && (
-          <FlexItem>
+          <FlexItem alignSelf={{ default: 'alignSelfFlexEnd' }}>
             <BreadcrumbsFavorites
               favoritePage={() => favoritePage(leafHref)}
               unfavoritePage={() => unfavoritePage(leafHref)}

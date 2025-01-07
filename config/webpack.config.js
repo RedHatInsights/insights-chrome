@@ -37,7 +37,7 @@ const commonConfig = ({ dev }) => {
         }
       : path.resolve(__dirname, '../src/index.ts'),
     output: {
-      path: path.resolve(__dirname, '../build/js'),
+      path: path.resolve(__dirname, '../build/stable/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
       filename: dev ? '[name].js' : 'chrome-root.[contenthash].js',
       hashFunction: 'xxhash64',
@@ -182,6 +182,9 @@ const commonConfig = ({ dev }) => {
               host: `http://localhost:${process.env.NAV_CONFIG}`,
             },
           }),
+          // '/apps/widget-layout/': {
+          //     host: 'http://localhost:8003',
+          // }
         },
       }),
     },
@@ -196,7 +199,7 @@ const pfConfig = {
     'pf-v6': path.resolve(__dirname, '../src/sass/pf-6-assets.scss'),
   },
   output: {
-    path: path.resolve(__dirname, '../build/js/pf'),
+    path: path.resolve(__dirname, '../build/stable/js/pf'),
     // the HMR needs dynamic entry filename to remove name conflicts
     filename: '[name].js',
     publicPath: `auto`,

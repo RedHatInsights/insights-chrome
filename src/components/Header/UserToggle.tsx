@@ -170,7 +170,6 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
         <MenuToggle
           ref={toggleRef}
           isExpanded={isOpen}
-          isFullHeight
           onClick={onToggle}
           variant={isSmall ? 'plain' : undefined}
           className={classNames('data-hj-suppress', 'sentry-mask', { 'pf-v6-u-pr-lg pf-v6-u-pl-lg': isSmall })}
@@ -180,10 +179,10 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
                 'widget-type': 'UserMenu',
               }
             : {
-                icon: <><UserIcon /><EllipsisVIcon /></>,
+                icon: <UserIcon />,
               })}
         >
-          {!isSmall && name}
+          {isSmall ? <EllipsisVIcon /> : name}
         </MenuToggle>
       )}
       className="chr-c-dropdown-user-toggle"

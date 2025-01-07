@@ -43,9 +43,9 @@ button.pf-v6-c-button.chr-c-button-debugger {
 .chr-c-debugger-content {
   display: flex;
   flex-direction: column;
-  padding-right: var(--pf-v5-global--spacer--lg);
-  padding-top: var(--pf-v5-global--spacer--lg);
-  margin: var(--pf-v5-global--spacer--md);
+  padding-right: var(--pf-t--global--spacer--lg);
+  padding-top: var(--pf-t--global--spacer--lg);
+  margin: var(--pf-t--global--spacer--md);
 }
 
 .chr-c-debugger-dropdown {

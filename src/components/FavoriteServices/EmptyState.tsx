@@ -17,7 +17,7 @@ const EmptyState = () => (
         </StackItem>
         <StackItem className="pf-v6-u-text-align-center">
           <Content>
-            <Content component="h3" className="pf-v5-m-center">
+            <Content component="h3" className="pf-v6-m-center">
               No favorited services
             </Content>
             <Content component="small" className="pf-v6-u-mt-sm">

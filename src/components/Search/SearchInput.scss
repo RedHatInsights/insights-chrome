@@ -41,7 +41,7 @@
   &__menu {
     overflow-y: auto;
     .pf-v6-c-menu__group-title {
-      padding-bottom: var(--pf-v5-global--spacer--md);
+      padding-bottom: var(--pf-t--global--spacer--md);
       &:empty {
         display: none;
       }

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
@@ -32,6 +32,7 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
   };
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
+
   return (
     <ChromeLink
       isExternal={isExternal}
@@ -44,25 +45,23 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
           'chr-c-icon-favorited': isFavorite,
         })}
         isFullHeight
-        
-        
         onClick={onLinkClick}
       >
-        <CardBody className="pf-v6-u-p-md">
+        <CardTitle>
           <Split>
             <SplitItem className="pf-v6-u-mr-sm">{TitleIcon}</SplitItem>
-            <SplitItem className="pf-v5-m-fill">
-              <div className="pf-v6-u-mb-sm">{title}</div>
+            <SplitItem className="pf-v6-m-fill">
+              <div className="pf-v6-u-mb-sm pf-v6-u-text-color-link">{title}</div>
             </SplitItem>
-            <SplitItem>
+            <SplitItem className="pf-v6-u-pl-sm">
               {isExternal ? (
-                <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>
+                <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
                   <ExternalLinkAltIcon />
                 </Icon>
               ) : (
                 <Button
                   variant="plain"
-                  className="pf-v6-u-p-0"
+                  className="pf-v6-u-p-0 chr-c-favorite-button"
                   ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -71,9 +70,10 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
                   }}
                   icon={
                     <Icon
-                      className={classNames('pf-v6-u-ml-sm chr-c-icon-star', {
+                      className={classNames('chr-c-icon-star', {
                         favorite: isFavorite,
                       })}
+                      size="lg"
                     >
                       <StarIcon />
                     </Icon>
@@ -82,8 +82,12 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
               )}
             </SplitItem>
           </Split>
+        </CardTitle>
+        <CardBody className="pf-v6-u-p-md" style={{ marginTop: '-30px' }}>
           <Content>
-            <Content component="p" className="pf-v6-u-font-size-xs pf-v6-u-color-100">{description ?? ''}</Content>
+            <Content component="p" className="pf-v6-u-font-size-xs pf-v6-u-color-100">
+              {description ?? ''}
+            </Content>
           </Content>
         </CardBody>
       </Card>

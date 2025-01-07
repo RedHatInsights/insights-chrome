@@ -70,7 +70,7 @@ const AllServicesDropdown = () => {
   const toggle = (
     <MenuToggle
       data-ouia-component-id="AllServices-DropdownToggle"
-      className="pf-v6-u-h-100 chr-c-link-service-toggle pf-v6-u-pl-lg pf-v6-u-pr-lg"
+      className="chr-c-link-service-toggle"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}

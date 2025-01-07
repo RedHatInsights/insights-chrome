@@ -108,12 +108,11 @@ const BetaSwitcher = () => {
                 ouiaId="PreviewSwitcher"
                 id="preview-toggle"
                 label={
-                  <Content className="pf-v6-u-color-100" component={ContentVariants.small}>
+                  <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
                     You&apos;re in Hybrid Cloud Console Preview mode.{' '}
                     <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To return to production, turn off Preview mode</div>
                   </Content>
                 }
-                
                 aria-label="preview-toggle"
                 isChecked={isPreview}
                 onChange={(_e, checked) => togglePreviewWithCheck(checked)}

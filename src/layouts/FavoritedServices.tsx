@@ -34,7 +34,7 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
         }
       >
         <RedirectBanner />
-        <PageSection hasBodyWrapper={false}  className="pf-v6-u-px-2xl-on-md pf-v5-m-fill">
+        <PageSection hasBodyWrapper={false}  className="pf-v6-u-px-2xl-on-md pf-v6-m-fill">
           <Stack className="pf-v6-u-background-color-100">
             <StackItem className="pf-v6-u-pb-md">
               <Title headingLevel="h2">Favorited Services</Title>

@@ -7,6 +7,9 @@ import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthea
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebar } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { useLocation } from 'react-router-dom';
+import Breadcrumbs, { Breadcrumbsprops } from '../components/Breadcrumbs/Breadcrumbs';
 import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
@@ -46,9 +49,19 @@ type DefaultLayoutProps = {
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
   Sidebar?: React.FC<NavigationProps>;
   Footer?: React.ReactNode;
+  breadcrumbsProps?: Breadcrumbsprops;
 };
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
+const DefaultLayout: React.FC<DefaultLayoutProps> = ({
+  breadcrumbsProps,
+  hasBanner,
+  selectedAccountNumber,
+  hideNav,
+  isNavOpen,
+  setIsNavOpen,
+  Sidebar,
+  Footer,
+}) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
   const isNotificationsDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
@@ -58,6 +71,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     tabbableElement.focus();
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const { pathname } = useLocation();
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
   return (
     <Page
       className={
@@ -66,7 +81,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       }
       onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
       masthead={
-        <Masthead className="chr-c-masthead pf-v6-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+        <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
             breadcrumbsProps={{
               isNavOpen,
@@ -93,6 +108,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
             )
       }
     >
+      {noBreadcrumb && (
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs {...breadcrumbsProps} />
+        </ToolbarGroup>
+      )}
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
         {selectedAccountNumber && (

@@ -29,7 +29,7 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
       <Card className="chr-c-link-favorite-card"  isFullHeight >
         <CardBody className="pf-v6-u-p-md">
           <Split>
-            <SplitItem className="pf-v5-m-fill">{name}</SplitItem>
+            <SplitItem className="pf-v6-m-fill">{name}</SplitItem>
             <SplitItem>
               <Button icon={<Icon className="pf-v6-u-ml-sm chr-c-icon-star">
                   <StarIcon />

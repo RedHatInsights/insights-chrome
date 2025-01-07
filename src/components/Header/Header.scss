@@ -36,7 +36,7 @@
        }
      .pf-v6-c-icon {
        --pf-v5-c-icon__content--Color: var(--pf-v5-global--Color--light-100);
-       margin-right: var(--pf-v5-global--spacer--sm);
+       margin-right: var(--pf-t--global--spacer--sm);
      }
    }
 
@@ -49,7 +49,7 @@
     font-size: var(--pf-v5-global--FontSize--xs);
   }
   .chr-c-dropdown-item__stack--subValue { 
-    padding-top: var(--pf-v5-global--spacer--xs);
+    padding-top: var(--pf-t--global--spacer--xs);
   }
   .chr-c-dropdown-user-toggle {
     --pf-v5-c-dropdown__menu--Top: 100%;

@@ -5,13 +5,14 @@ import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadLogo, MastheadContent, MastheadMain, MastheadBrand } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
@@ -61,8 +62,6 @@ const MemoizedHeader = memo(
   }) => {
     const search = new URLSearchParams(window.location.search).keys().next().value;
     const isActivationPath = activationRequestURLs.includes(search);
-    const { pathname } = useLocation();
-    const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
     const { md, lg } = useWindowWidth();
     const [searchOpen, setSearchOpen] = useState(false);
     const hideAllServices = (isOpen: boolean) => {
@@ -72,19 +71,21 @@ const MemoizedHeader = memo(
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
+    const { hideNav, isNavOpen, setIsNavOpen } = breadcrumbsProps as Breadcrumbsprops;
+
     return (
       <Fragment>
-        <MastheadMain className="pf-v6-u-pl-lg pf-v6-u-pt-0 pf-v6-u-pb-xs">
-          <MastheadBrand data-codemods><MastheadLogo data-codemods className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
-            <Logo />
-          </MastheadLogo></MastheadBrand>
-          <Toolbar isFullHeight>
-            <ToolbarContent>
-              <ToolbarGroup className="pf-v5-m-icon-button-group pf-v6-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>
-                {!lg && <HeaderTools />}
-              </ToolbarGroup>
-            </ToolbarContent>
-          </Toolbar>
+        <MastheadMain>
+          {!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}
+          <MastheadBrand data-codemods>
+            <MastheadLogo
+              data-codemods
+              className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg"
+              component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
+            >
+              <Logo />
+            </MastheadLogo>
+          </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-md pf-v6-u-mx-0-on-2xl">
           {orgId && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
@@ -108,7 +109,7 @@ const MemoizedHeader = memo(
                   </ToolbarItem>
                 )}
                 {userReady && !isITLess && (
-                  <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
+                  <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
@@ -120,19 +121,14 @@ const MemoizedHeader = memo(
               </ToolbarGroup>
               <ToolbarGroup
                 className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0"
-                visibility={{ default: 'hidden', '2xl': 'visible' }}
                 widget-type="InsightsToolbar"
+                gap={{ default: 'gapNone' }}
               >
-                {lg && <HeaderTools />}
+                <HeaderTools />
               </ToolbarGroup>
             </ToolbarContent>
           </Toolbar>
         </MastheadContent>
-        {noBreadcrumb && (
-          <ToolbarGroup className="chr-c-breadcrumbs__group">
-            <Breadcrumbs {...breadcrumbsProps} />
-          </ToolbarGroup>
-        )}
       </Fragment>
     );
   }
