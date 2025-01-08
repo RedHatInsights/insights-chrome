@@ -98,6 +98,7 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
     <Dropdown
       popperProps={{
         position: PopoverPosition.right,
+        appendTo: 'inline',
       }}
       onOpenChange={setIsOpen}
       toggle={(toggleRef) => (
