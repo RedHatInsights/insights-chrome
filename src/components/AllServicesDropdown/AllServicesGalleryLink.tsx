@@ -50,40 +50,43 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
         <CardTitle>
           <Split>
             <SplitItem className="pf-v6-u-mr-sm">{TitleIcon}</SplitItem>
-            <SplitItem className="pf-v6-m-fill">
+            <SplitItem isFilled>
               <div className="pf-v6-u-mb-sm pf-v6-u-text-color-link">{title}</div>
             </SplitItem>
-            <SplitItem className="pf-v6-u-pl-sm">
+            <SplitItem>
               {isExternal ? (
                 <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
                   <ExternalLinkAltIcon />
                 </Icon>
               ) : (
                 <Button
-                  variant="plain"
-                  className="pf-v6-u-p-0 chr-c-favorite-button"
-                  ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    handleFavoriteToggle(href, isFavorite);
-                  }}
-                  icon={
-                    <Icon
-                      className={classNames('chr-c-icon-star', {
-                        favorite: isFavorite,
-                      })}
-                      size="lg"
-                    >
+                variant="plain"
+                className="chr-c-favorite-button"
+                ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleFavoriteToggle(href, isFavorite);
+                }}
+                icon={
+                  <Icon
+                  className={classNames('chr-c-icon-star', {
+                    favorite: isFavorite,
+                  })}
+                  size="lg"
+                  >
                       <StarIcon />
                     </Icon>
                   }
-                />
-              )}
+                  style={{ marginTop: '-8px', marginRight: '-8px' }}
+                  />
+                )}
+                {/* custom styling above aligns the favorite icon better with the title text */}
             </SplitItem>
           </Split>
         </CardTitle>
-        <CardBody className="pf-v6-u-p-md" style={{ marginTop: '-30px' }}>
+
+        <CardBody>
           <Content>
             <Content component="p" className="pf-v6-u-font-size-xs pf-v6-u-color-100">
               {description ?? ''}

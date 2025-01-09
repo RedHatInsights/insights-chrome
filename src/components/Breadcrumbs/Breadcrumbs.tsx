@@ -25,7 +25,7 @@ const Breadcrumbs = () => {
 
   return (
     <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0 pf-v6-u-w-100">
-      <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-md">
+      <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-lg">
         <FlexItem className="pf-v6-u-flex-grow-1">
           <Breadcrumb className="pf-v6-u-pt-sm">
             {segments.map(({ title, href }, index) => (

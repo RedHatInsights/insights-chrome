@@ -84,19 +84,17 @@ const AllServicesTabs = ({
       className="pf-v6-u-p-md pf-v6-u-pr-0 pf-v6-u-pl-0-on-md"
       ouiaId={'all-services-tabs'}
     >
-      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-0 pf-v6-u-pb-sm" component={ContentVariants.p}>
+      <Content className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-0 pf-v6-u-font-weight-bold pf-v6-u-pb-sm" component={ContentVariants.p}>
         Platform
       </Content>
-      <Divider className="pf-v6-u-pb-md" />
       <PlatformServiceslinks />
       <>
-        <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-pb-sm" component={ContentVariants.p}>
+        <Content className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-xl pf-v6-u-font-weight-bold pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.p}>
           Solutions{' '}
-          <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-md" data-ouia-component-id="View all link">
+          <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-sm pf-v6-u-font-weight-normal" data-ouia-component-id="View all link">
             View all
           </ChromeLink>
         </Content>
-        <Divider className="pf-v6-u-pb-sm" />
         <TabWrapper
           ouiaId="AllServices-favorites-Tab"
           onClick={(e) => {
@@ -104,13 +102,14 @@ const AllServicesTabs = ({
           }}
           eventKey={FAVORITE_TAB_ID}
           title={
-            <TabTitleText className="pf-v6-u-pl-sm">
+            <TabTitleText>
               Favorites
               <Icon className="chr-c-icon-service-tab pf-v6-u-ml-sm" status="warning" isInline>
                 <StarIcon />
               </Icon>
             </TabTitleText>
           }
+          className="pf-v6-u-pl-sm"
         />
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
         {linkSections.map((section, index) => (

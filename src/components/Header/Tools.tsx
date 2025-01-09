@@ -271,7 +271,7 @@ const Tools = () => {
       <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0 pf-v6-u-pl-md" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
@@ -279,7 +279,6 @@ const Tools = () => {
       <ToolbarItem visibility={{ lg: 'hidden' }}>
         <Tooltip aria="none" aria-live="polite" content={'More options'} flipBehavior={['bottom']}>
           <UserToggle
-            isSmall
             extraItems={mobileDropdownItems.map((action, key) => (
               <React.Fragment key={key}>
                 {action.title === 'separator' ? (

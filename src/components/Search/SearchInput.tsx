@@ -219,7 +219,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
             </Bullseye>
           ) : (
             <>
-              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined} className="pf-v6-u-px-md">
+              <MenuGroup label={searchItems.length > 0 ? `Top ${searchItems.length} results` : undefined}>
                 {searchItems.map((item, index) => (
                   <MenuItem
                     onKeyDown={(e) => {
