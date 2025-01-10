@@ -18,7 +18,7 @@
   }
 }
 
-.chr-c-icon__active { fill: var(--pf-v5-global--active-color--100); }
+.chr-c-icon__active { fill: var(--pf-t--global--icon--color--brand--default); }
 
 img.chr-c-application-info__logo {
   @include rem('height', 76px);

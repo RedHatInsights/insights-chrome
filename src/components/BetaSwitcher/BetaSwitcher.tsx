@@ -94,6 +94,9 @@ const BetaSwitcher = () => {
     return null;
   }
 
+  const currentMode = isPreview ? 'Preview' : 'production';
+  const changeModeContent = isPreview ? 'return to production, turn off' : 'see new pre-production features, turn on';
+
   return (
     <div ref={bannerRef}>
       <Split
@@ -109,8 +112,8 @@ const BetaSwitcher = () => {
                 id="preview-toggle"
                 label={
                   <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
-                    You&apos;re in Hybrid Cloud Console Preview mode.{' '}
-                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To return to production, turn off Preview mode</div>
+                    You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
+                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
                   </Content>
                 }
                 aria-label="preview-toggle"

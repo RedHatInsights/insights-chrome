@@ -1,16 +1,16 @@
 .chr-c-footer {
-  background-color: var(--pf-v5-global--BackgroundColor--dark-100);
+  background-color: var(--pf-t--global--background--color--inverse--default);
   padding: var(--pf-t--global--spacer--md);
   padding-left: var(--pf-t--global--spacer--xl);
   &__logo {
-    height: var(--pf-v5-global--FontSize--4xl);
+    height: var(--pf-t--global--font--size--4xl);
   }
 
   &__link {
-    color: var(--pf-v5-v5-c-content--small--Color) !important;
+    color: var(--pf-v6-c-content--small--Color) !important;
   }
 
   &__divider::after {
-    background-color: var(--pf-v5-global--Color--200);
+    background-color: var(--pf-t--global--background--color--secondary--default);
   }
 }

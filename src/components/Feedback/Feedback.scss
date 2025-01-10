@@ -7,10 +7,10 @@ button.pf-v6-c-button.chr-c-button-feedback {
   right: -45px;
   bottom: 150px;
   transform: rotate(270deg);
-  color: var(--pf-v5-global--Color--dark-100);
-  background: var(--pf-v5-global--palette--purple-100);
+  color: var(--pf-t--global--icon--color--status--on-info--default);
+  background: var(--pf-t--global--color--status--info--default);
   &:hover {
-    background: var(--pf-v5-global--palette--purple-200);
+    background: var(--pf-t--global--color--status--info--hover);
   }
 }
 
@@ -19,7 +19,7 @@ button.pf-v6-c-button.chr-c-button-feedback {
   padding: 0;
 
   .pf-v6-c-content {
-    margin-bottom: var(--pf-v5-v5-c-content--MarginBottom);
+    margin-bottom: var(--pf-v6-c-content--MarginBottom);
   }
 
   .pf-v6-c-modal-box__body {
@@ -84,7 +84,7 @@ button.pf-v6-c-button.chr-c-button-feedback {
   &__body {
     padding-bottom: 4px;
     padding-top: 4px;
-    border-bottom: 1px solid var(--pf-v5-global--palette--black-500);
+    border-bottom: 1px solid var(--pf-t--global--border--color--default);
   }
 }
 

@@ -32,7 +32,7 @@ aside {
   .pf-v6-c-page__sidebar {
     border-top-style: solid;
     border-top-width: 1px;
-    border-top-color: var(--pf-v5-global--palette--black-800);
+    border-top-color: var(--pf-t--global--border--color--on-secondary);
   }
   &__hasBanner {
     grid-template-areas: "banner banner"
@@ -47,13 +47,13 @@ aside {
 
 // Page temp styles
 .pf-v6-c-page {
-  --pf-m-emphasis--FontSize: var(--pf-v5-global--FontSize--xl);
+  --pf-m-emphasis--FontSize: var(--pf-t--global--font--size--xl);
 }
 
 // Page root background color
 .pf-v6-c-page__main {
   &#root, &#no-access {
-    background: var(--pf-v5-v5-c-page__main-section--BackgroundColor);
+    background: var(--pf-v6-c-page__main-section--BackgroundColor);
   }
 }
 
@@ -70,8 +70,8 @@ aside {
 // Landing page logout alert
 .pf-v6-c-alert.chr-c-alert {
   position: absolute;
-  top: var(--pf-v5-v5-c-page__header--MinHeight);
-  right: var(--pf-v5-v5-c-page__header-tools--MarginRight);
+  top: var(--pf-v6-c-page__header--MinHeight);
+  right: var(--pf-v6-c-page__header-tools--MarginRight);
 }
 
 // Page sidebar
@@ -115,7 +115,7 @@ aside {
   .ins-c-table-empty-state.pf-m-grid-md.pf-v6-c-table,
   .ins-c-table-empty-state.pf-m-grid-lg.pf-v6-c-table {
       [data-label] {
-          --pf-v5-c-table--cell--hidden-visible--Display: 0;
+          --pf-v6-c-table--cell--hidden-visible--Display: 0;
       }
       tr:first-of-type {
           > td::before { 
@@ -135,8 +135,8 @@ aside {
   z-index: 19001;
   position: fixed;
   bottom: 0;
-  padding-left: var(--pf-global--spacer--xl);
-  padding-right: var(--pf-global--spacer--xl);
+  padding-left: var(--pf-t--global--spacer--xl);
+  padding-right: var(--pf-t--global--spacer--xl);
   width: 100%;
 
   @media only screen and (max-width: $pf-v6-global--breakpoint--lg) {
@@ -151,7 +151,7 @@ aside {
 // centers modals when a quick start drawer is open
 .pfext-quick-start-drawer__body {
     .pf-v6-c-backdrop {
-      --pf-v5-c-backdrop--Position: absolute;
+      --pf-v6-c-backdrop--Position: absolute;
     }
   }
 
@@ -168,27 +168,27 @@ aside {
 .chr-c-favorite-trigger {
   cursor: pointer;
   .chr-c-icon-star {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--Color--light-100);
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
   }
   &:hover {
     .pf-v6-c-icon {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--icon--Color--light);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
       &:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--icon--Color--dark);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--regular);
       }
     }
     .pf-v6-c-icon-external-link, .pf-v6-c-icon-external-link:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
     }
   }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
   .pf-v6-c-icon {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-400);
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-500);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
       .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
   }
@@ -196,13 +196,17 @@ aside {
 
 .chr-c-link-favorite-card { //trigger not needed here
   .pf-v6-c-icon {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-400);
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-500);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
       .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
+  }
+
+  .pf-v6-c-icon.chr-c-icon-star {
+    visibility: visible;
   }
 }
 

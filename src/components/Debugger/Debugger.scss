@@ -3,16 +3,16 @@ button.pf-v6-c-button.chr-c-button-debugger {
     transform: rotate(90deg);
   }
   position: fixed;
-  z-index: var(--pf-v5-global--ZIndex--xs);
-  padding: var(--pf-v5-global--BorderWidth--xl);
-  padding-top: var(--pf-v5-global--BorderWidth--lg);
-  padding-bottom: var(--pf-v5-global--BorderWidth--lg);
-  right: var(--pf-v5-global--height-breakpoint--sm);
+  z-index: var(--pf-t--global--z-index--xs);
+  padding: var(--pf-t--global--border--width--extra-strong);
+  padding-top: var(--pf-t--global--border--width--extra-strong);
+  padding-bottom: var(--pf-t--global--border--width--extra-strong);
+  right: var(--pf-t--global--breakpoint--height--sm);
   bottom: 250px;
   transform: rotate(270deg);
-  background: var(--pf-v5-global--danger-color--100);
+  background: var(--pf-t--global--icon--color--status--danger--default);
   &:hover {
-    background: var(--pf-v5-global--palette--red-200);
+    background: var(--pf-t--global--icon--color--status--danger--hover);
   }
 }
 
@@ -23,7 +23,7 @@ button.pf-v6-c-button.chr-c-button-debugger {
   overflow-y: auto;
 
   .pf-v6-c-content {
-    margin-bottom: var(--pf-v5-v5-c-content--MarginBottom);
+    margin-bottom: var(--pf-v6-c-content--MarginBottom);
   }
 
   .pf-v6-c-modal-box__body {

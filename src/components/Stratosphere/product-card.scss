@@ -9,10 +9,10 @@ $cards: 0, 1, 2, 3;
   }
 
   &__title {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    background-color: var(--pf-t--global--background--color--100);
+    border-top: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-left: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-right: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
     padding: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.title-#{$card} {
@@ -43,9 +43,9 @@ $cards: 0, 1, 2, 3;
   }
 
   &__body {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    background-color: var(--pf-t--global--background--color--100);
+    border-left: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-right: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
     padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.body-#{$card} {
@@ -73,8 +73,8 @@ $cards: 0, 1, 2, 3;
     }
   }
   &__footer {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    background-color: var(--pf-t--global--background--color--100);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
     border-top: none;
     padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {

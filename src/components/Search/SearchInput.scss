@@ -4,7 +4,7 @@
 
 .chr-c-search-title {
   mark {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
     background-color: transparent;
   }
 }
@@ -18,22 +18,22 @@
       background-color: transparent !important;
     }
     .pf-v6-c-text-input-group {
-      --pf-v5-c-text-input-group--BackgroundColor: var(--pf-v5-global--palette--black-700);
-      --pf-v5-c-text-input-group__icon--Color: var(--pf-v5-global--primary-color--light-100);
-      --pf-v5-c-text-input-group__text--after--BorderBottomColor: var(--pf-v5-global--palette--black-500);
-      --pf-v5-c-text-input-group__text--before--BorderColor: var(--pf-v5-global--palette--black-800);
-      --pf-v5-c-text-input-group__text--hover__icon--Color: var(--pf-v5-global--primary-color--light-100);
+      --pf-v6-c-text-input-group--BackgroundColor: var(--pf-t--global--background--color--inverse--default);
+      --pf-v6-c-text-input-group__icon--Color: var(--pf-t--global--icon--color--brand--default);
+      --pf-v6-c-text-input-group__text--after--BorderBottomColor: var(--pf-t--global--border--color--default);
+      --pf-v6-c-text-input-group__text--before--BorderColor: var(--pf-t--global--border--color--on-secondary);
+      --pf-v6-c-text-input-group__text--hover__icon--Color: var(--pf-t--global--icon--color--brand--default);
       input::placeholder {
-        color: var(--pf-v5-global--Color--light-300);
+        color: var(--pf-t--global--text--color--placeholder);
       }
       input, input:hover::placeholder {
-        color: var(--pf-v5-global--Color--light-100) !important;
+        color: var(--pf-t--global--text--color--subtle) !important;
       }
       &:hover {
-        --pf-v5-c-text-input-group__text--after--BorderBottomColor: var(--pf-v5-global--active-color--300);
+        --pf-v6-c-text-input-group__text--after--BorderBottomColor: var(--pf-t--global--border--color--hover);
       }
       input:focus-visible {
-        outline: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BackgroundColor--dark-100);
+        outline: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--clicked);
       }
     }
 

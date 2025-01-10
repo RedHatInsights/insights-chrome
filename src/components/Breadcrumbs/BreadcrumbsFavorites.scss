@@ -1,10 +1,10 @@
 .chr-c-breadcrumbs__favorite {
   .pf-v6-c-icon__content {
-    color: var(--pf-v5-global--palette--black-600);
+    color: var(--pf-t--global--color--nonstatus--gray--300);
   }
   &.isFavorited {
     .pf-v6-c-icon__content {
-      color: var(--pf-v5-global--palette--gold-400);
+      color: var(--pf-t--global--icon--color--favorite--default);
     }
   }
 }
