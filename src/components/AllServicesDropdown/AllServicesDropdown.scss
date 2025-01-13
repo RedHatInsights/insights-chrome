@@ -16,7 +16,7 @@
 .chr-c-page__services-nav-dropdown-menu {
   @media screen and (min-width: $pf-v6-global--breakpoint--2xl) {
     top: 65px;
-
+    height: 100vh;
     &.preview-offset {
       // consider the preview banner
       top: calc(65px + 32px);
@@ -25,6 +25,7 @@
 
   @media screen and (max-width: $pf-v6-global--breakpoint--2xl) {
     top: 118px;
+    height: 100vh;
 
     &.preview-offset {
       // consider the preview banner
