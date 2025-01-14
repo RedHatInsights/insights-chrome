@@ -1,27 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
-import {
-	ActionGroup,
-	Bullseye,
-	Button,
-	EmptyState,
-	EmptyStateBody,
-	EmptyStateVariant,
-	Form,
-	FormGroup,
-	FormHelperText,
-	HelperText,
-	HelperTextItem,
-	Content,
-	TextInput,
-	ValidatedOptions
-} from '@patternfly/react-core';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/deprecated';
+import { ActionGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateVariant } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormHelperText } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
+import { ValidatedOptions } from '@patternfly/react-core/dist/dynamic/helpers/constants';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { InnerScrollContainer, OuterScrollContainer, Table, TableText, TableVariant, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import axios from 'axios';
 import SkeletonTable from '@redhat-cloud-services/frontend-components/SkeletonTable';
 
@@ -126,7 +121,9 @@ const IPWhitelistTable: React.FC = () => {
       <Form onSubmit={(event: React.FormEvent<HTMLFormElement>) => event.preventDefault()}>
         <FormGroup>
           <Content>
-            <Content component="p">Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allowlist.</Content>
+            <Content component="p">
+              Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allowlist.
+            </Content>
           </Content>
           <TextInput
             validated={validationError ? ValidatedOptions.error : ValidatedOptions.default}
@@ -191,7 +188,7 @@ const IPWhitelistTable: React.FC = () => {
     <Tr style={{ border: 'none' }}>
       <Td colSpan={8}>
         <Bullseye>
-          <EmptyState  headingLevel="h2"   titleText="No IP addresses allowed" variant={EmptyStateVariant.sm}>
+          <EmptyState headingLevel="h2" titleText="No IP addresses allowed" variant={EmptyStateVariant.sm}>
             <EmptyStateBody>
               Before connecting to your satellite servers, Red Hat needs to add your IP address or range of IP addresses to an allow-list.
             </EmptyStateBody>

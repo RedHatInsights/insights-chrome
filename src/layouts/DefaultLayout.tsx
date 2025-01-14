@@ -52,16 +52,7 @@ type DefaultLayoutProps = {
   breadcrumbsProps?: Breadcrumbsprops;
 };
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = ({
-  breadcrumbsProps,
-  hasBanner,
-  selectedAccountNumber,
-  hideNav,
-  isNavOpen,
-  setIsNavOpen,
-  Sidebar,
-  Footer,
-}) => {
+const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
   const isNotificationsDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
@@ -60,28 +60,28 @@ const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, ca
                 </Icon>
               ) : (
                 <Button
-                variant="plain"
-                className="chr-c-favorite-button"
-                ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleFavoriteToggle(href, isFavorite);
-                }}
-                icon={
-                  <Icon
-                  className={classNames('chr-c-icon-star', {
-                    favorite: isFavorite,
-                  })}
-                  size="lg"
-                  >
+                  variant="plain"
+                  className="chr-c-favorite-button"
+                  ouiaId={`${category}-${group ? `${group}-` : ''}${titleToId(title)}-FavoriteToggle`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleFavoriteToggle(href, isFavorite);
+                  }}
+                  icon={
+                    <Icon
+                      className={classNames('chr-c-icon-star', {
+                        favorite: isFavorite,
+                      })}
+                      size="lg"
+                    >
                       <StarIcon />
                     </Icon>
                   }
                   style={{ marginTop: '-8px', marginRight: '-8px' }}
-                  />
-                )}
-                {/* custom styling above aligns the favorite icon better with the title text */}
+                />
+              )}
+              {/* custom styling above aligns the favorite icon better with the title text */}
             </SplitItem>
           </Split>
         </CardTitle>

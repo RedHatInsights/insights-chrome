@@ -67,15 +67,15 @@ const BreadcrumbsFavorites = ({
       className="pf-v6-u-pt-xs pf-v6-u-text-nowrap"
       icon={
         <>
-        <Icon
-          className={classNames('chr-c-breadcrumbs__favorite', {
-            isFavorited,
-          })}
-          isInline
-        >
-          <StarIcon />
-        </Icon>
-        <CaretDownIcon className="pf-v6-u-ml-sm" />
+          <Icon
+            className={classNames('chr-c-breadcrumbs__favorite', {
+              isFavorited,
+            })}
+            isInline
+          >
+            <StarIcon />
+          </Icon>
+          <CaretDownIcon className="pf-v6-u-ml-sm" />
         </>
       }
     />

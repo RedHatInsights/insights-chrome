@@ -18,7 +18,7 @@ const Banner = () => {
     <div className="chr-banner">
       <Content component={ContentVariants.h3}>{intl.formatMessage(messages.changesComing)}</Content>
       <Button icon={<ArrowRightIcon />} variant="link" component="a" href={bannerContent.link.href} target="_blank">
-        {intl.formatMessage(messages.learnMore)} 
+        {intl.formatMessage(messages.learnMore)}
       </Button>
     </div>
   );

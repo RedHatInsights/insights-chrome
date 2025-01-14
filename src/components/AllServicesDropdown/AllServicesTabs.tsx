@@ -7,7 +7,6 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
-import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import ChromeLink from '../ChromeLink';
 import './AllServicesTabs.scss';
@@ -89,9 +88,16 @@ const AllServicesTabs = ({
       </Content>
       <PlatformServiceslinks />
       <>
-        <Content className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-xl pf-v6-u-font-weight-bold pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.p}>
+        <Content
+          className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-xl pf-v6-u-font-weight-bold pf-v6-u-mb-sm pf-v6-u-pb-xs"
+          component={ContentVariants.p}
+        >
           Solutions{' '}
-          <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-sm pf-v6-u-font-weight-normal" data-ouia-component-id="View all link">
+          <ChromeLink
+            href="/allservices"
+            className="pf-v6-u-font-size-sm pf-v6-u-p-sm pf-v6-u-font-weight-normal"
+            data-ouia-component-id="View all link"
+          >
             View all
           </ChromeLink>
         </Content>

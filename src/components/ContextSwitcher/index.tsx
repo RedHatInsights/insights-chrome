@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
-import { Content  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Dropdown, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuSearch, MenuSearchInput } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';

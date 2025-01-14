@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { useFlag } from '@unleash/proxy-client-react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { MastheadLogo, MastheadContent, MastheadMain, MastheadBrand } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { MastheadBrand, MastheadContent, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import SatelliteLink from './SatelliteLink';
@@ -19,7 +19,7 @@ import './Header.scss';
 import { activationRequestURLs } from '../../utils/consts';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
-import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
@@ -62,7 +62,7 @@ const MemoizedHeader = memo(
   }) => {
     const search = new URLSearchParams(window.location.search).keys().next().value;
     const isActivationPath = activationRequestURLs.includes(search);
-    const { md, lg } = useWindowWidth();
+    const { md } = useWindowWidth();
     const [searchOpen, setSearchOpen] = useState(false);
     const hideAllServices = (isOpen: boolean) => {
       setSearchOpen(isOpen);

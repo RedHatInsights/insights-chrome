@@ -33,7 +33,7 @@ const LandingNavFavorites = () => {
       <GalleryItem key={index}>
         <Link to={favorite.pathname} className="chr-c-favorite-service__tile">
           <Card className="chr-c-card-landing-fav" isClickable isSelectable>
-            <CardHeader selectableActions={{selectableActionAriaLabelledby: 'clickable-card'}} className="pf-v6-u-pb-0">
+            <CardHeader selectableActions={{ selectableActionAriaLabelledby: 'clickable-card' }} className="pf-v6-u-pb-0">
               <CardTitle className="pf-v6-u-text-align-center pf-v6-u-active-color-100 pf-v6-u-font-size-sm">{favorite.name}</CardTitle>
             </CardHeader>
             <CardBody className="pf-v6-u-text-align-center pf-v6-u-color-100 pf-v6-u-font-size-xs">{getBundle(favorite.pathname)}</CardBody>

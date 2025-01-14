@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import DrawerPanel from '../../../src/components/NotificationsDrawer/DrawerPanelContent';
-import { Page } from '@patternfly/react-core';
+import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { NotificationData, notificationDrawerDataAtom, notificationDrawerExpandedAtom } from '../../../src/state/atoms/notificationDrawerAtom';
 import { useAtom, useSetAtom } from 'jotai';
 

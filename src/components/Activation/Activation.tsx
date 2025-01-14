@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
-import { Content,  } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/dynamic/deprecated/components/Modal';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { getEnv } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
