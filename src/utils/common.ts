@@ -348,6 +348,8 @@ const fedModulesheaders = {
   Expires: '0',
 };
 
+export const GENERATED_SEARCH_FLAG = '@chrome:generated-search-index';
+
 // FIXME: Remove once qaprodauth is dealt with
 // can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
 // Always use stable
@@ -356,10 +358,14 @@ const loadCSCFedModules = () =>
     headers: fedModulesheaders,
   });
 
-export const loadFedModules = async () =>
-  Promise.all([
+export const loadFedModules = async () => {
+  const fedModulesPath =
+    localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true'
+      ? '/api/chrome-service/v1/static/fed-modules-generated.json'
+      : `${getChromeStaticPathname('modules')}/fed-modules.json`;
+  return Promise.all([
     axios
-      .get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+      .get(fedModulesPath, {
         headers: fedModulesheaders,
       })
       .catch(loadCSCFedModules),
@@ -370,6 +376,7 @@ export const loadFedModules = async () =>
     }
     return staticConfig;
   });
+};
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
   Object.entries(modules)
