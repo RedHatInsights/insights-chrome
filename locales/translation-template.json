@@ -63,9 +63,9 @@
     "defaultMessage": "or check our",
     "description": "or check our"
   },
-  "clearFilters": {
-    "defaultMessage": "Clear filters",
-    "description": "Clear filters"
+  "resetFilters": {
+    "defaultMessage": "Reset filters",
+    "description": "Reset filters"
   },
   "close": {
     "defaultMessage": "Close",
