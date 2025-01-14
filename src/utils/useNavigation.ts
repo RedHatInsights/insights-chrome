@@ -2,13 +2,14 @@ import axios from 'axios';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, GENERATED_SEARCH_FLAG, getChromeStaticPathname } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
+import fetchNavigationFiles from './fetchNavigationFiles';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -100,11 +101,48 @@ const useNavigation = () => {
     });
   };
 
+  async function handleNavigationResponse(data: BundleNavigation) {
+    let observer: MutationObserver | undefined;
+    if (observer && typeof observer.disconnect === 'function') {
+      observer.disconnect();
+    }
+
+    try {
+      const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
+      const schema: any = {
+        ...data,
+        navItems,
+      };
+      observer = registerLocationObserver(pathname, schema);
+      observer.observe(document.querySelector('body')!, {
+        childList: true,
+        subtree: true,
+      });
+    } catch (error) {
+      // Hide nav if an error was encountered. Can happen for non-existing navigation files.
+      setNoNav(true);
+    }
+  }
+
   useEffect(() => {
     let observer: MutationObserver | undefined;
     // reset no nav flag
     setNoNav(false);
-    if (currentNamespace && (flagsReady || flagsError)) {
+    if (localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true' && currentNamespace && (flagsReady || flagsError)) {
+      fetchNavigationFiles()
+        .then((bundles) => {
+          const bundle = bundles.find((b) => b.id === currentNamespace);
+          if (!bundle) {
+            setNoNav(true);
+            return;
+          }
+
+          return handleNavigationResponse(bundle);
+        })
+        .catch(() => {
+          setNoNav(true);
+        });
+    } else if (currentNamespace && (flagsReady || flagsError)) {
       axios
         .get(`${getChromeStaticPathname('navigation')}/${currentNamespace}-navigation.json`)
         // fallback static CSC for EE env
@@ -112,26 +150,7 @@ const useNavigation = () => {
           return axios.get<BundleNavigation>(`/config/chrome/${currentNamespace}-navigation.json?ts=${Date.now()}`);
         })
         .then(async (response) => {
-          if (observer && typeof observer.disconnect === 'function') {
-            observer.disconnect();
-          }
-
-          const data = response.data;
-          try {
-            const navItems = await Promise.all(data.navItems.map(cleanNavItemsHref).map(evaluateVisibility));
-            const schema = {
-              ...data,
-              navItems,
-            };
-            observer = registerLocationObserver(pathname, schema);
-            observer.observe(document.querySelector('body')!, {
-              childList: true,
-              subtree: true,
-            });
-          } catch (error) {
-            // Hide nav if an error was encountered. Can happen for non-existing navigation files.
-            setNoNav(true);
-          }
+          return handleNavigationResponse(response.data);
         })
         .catch(() => {
           setNoNav(true);
