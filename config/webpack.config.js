@@ -149,7 +149,7 @@ const commonConfig = ({ dev }) => {
       // HMR flag
       hot: true,
       ...proxy({
-        env: 'prod-stable',
+        env: 'stage-beta',
         port: 1337,
         appUrl: [/^\/*$/],
         useProxy: true,
