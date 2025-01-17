@@ -191,7 +191,7 @@ describe('HelpTopicManager', () => {
     cy.get(`h1.pf-v6-c-title`).should('be.visible').contains('Create a new environment');
 
     // open help topics context menu
-    cy.get('.pfext-quick-start-panel-content__title>button').click();
+    cy.get('.pf-v6-c-drawer__head>div>button').click();
     cy.get('button.pf-v6-c-menu__item').contains('Automatic Deployment').click();
     cy.get(`h1.pf-v6-c-title`).should('be.visible').contains('Automatic Deployment');
 
@@ -200,7 +200,7 @@ describe('HelpTopicManager', () => {
     cy.get(`h1.pf-v6-c-title`).should('be.visible').contains('Configure components');
 
     // close drawer
-    cy.get('div.pfext-quick-start-panel-content__close-button').click();
+    cy.get('div.pf-v6-c-drawer__close>button').click();
     cy.get(`h1.pf-v6-c-title`).contains('Configure components').should('not.exist');
 
     // open second help topic
