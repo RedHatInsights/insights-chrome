@@ -73,7 +73,7 @@ const MemoizedHeader = memo(
 
     const { hideNav, isNavOpen, setIsNavOpen } = breadcrumbsProps || {};
 
-    const rootElementClasses = Array.from(document.documentElement.classList);
+    const rootElementClasses = Array.from(document?.documentElement?.classList);
     const theme = rootElementClasses.includes('pf-v6-theme-dark') ? 'dark' : 'light';
 
     return (
