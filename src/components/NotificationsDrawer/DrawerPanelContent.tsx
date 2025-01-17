@@ -9,12 +9,10 @@ import { ScalprumComponent } from '@scalprum/react-core';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;
-  // toggle: () => void;
+  toggleDrawer: () => void;
 };
 
-const DrawerPanelBase = ({ panelRef }: DrawerPanelProps) => {
-  // toggle drawer will be an api or prop
-
+const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer }) => {
   const auth = useContext(ChromeAuthContext);
   const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
   const { getUserPermissions } = useContext(InternalChromeContext);
@@ -23,9 +21,9 @@ const DrawerPanelBase = ({ panelRef }: DrawerPanelProps) => {
     isOrgAdmin: isOrgAdmin,
     getUserPermissions: getUserPermissions,
     panelRef: panelRef,
-    expanded: true,
-    // toggle: toggle,
+    toggleDrawer: toggleDrawer,
   };
+
   const PanelContent = () => {
     return (
       <ScalprumComponent scope="notifications" module="./NotificationsDrawer" fallback={null} ErrorComponent={<Fragment />} {...notificationProps} />
@@ -39,6 +37,8 @@ const DrawerPanelBase = ({ panelRef }: DrawerPanelProps) => {
   );
 };
 
-const DrawerPanel = React.forwardRef((props, innerRef) => <DrawerPanelBase panelRef={innerRef} {...props} />);
+const DrawerPanel = React.forwardRef<unknown, Omit<DrawerPanelProps, 'panelRef'>>((props, innerRef) => (
+  <DrawerPanelBase panelRef={innerRef} {...props} />
+));
 
 export default DrawerPanel;
