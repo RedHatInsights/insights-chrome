@@ -118,7 +118,7 @@ const MemoizedHeader = memo(
                 )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
-                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-0" variant="filter-group">
+                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm" variant="filter-group">
                   <Suspense fallback={null}>
                     <SearchInput onStateChange={hideAllServices} />
                   </Suspense>
@@ -126,7 +126,7 @@ const MemoizedHeader = memo(
                 <ToolbarGroup
                   className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0"
                   widget-type="InsightsToolbar"
-                  gap={{ default: 'gapNone' }}
+                  gap={{ default: 'gapSm' }}
                 >
                   <HeaderTools />
                 </ToolbarGroup>

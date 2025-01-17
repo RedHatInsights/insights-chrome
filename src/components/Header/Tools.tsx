@@ -31,7 +31,7 @@ const isITLessEnv = ITLess();
 const InternalButton = () => (
   <Button
     icon={<RedhatIcon />}
-    variant="plain"
+    variant="control"
     aria-label="Go to internal tools"
     widget-type="InternalButton"
     className="chr-c-toolbar__button-internal pf-v6-u-align-items-center"
@@ -271,7 +271,7 @@ const Tools = () => {
       <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem className="pf-v6-u-mr-0 pf-v6-u-pl-md" visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
