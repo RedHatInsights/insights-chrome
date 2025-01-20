@@ -1,12 +1,15 @@
-name: sentryConfig
+name: sentryInit
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       commit_hash:
         description: 'The commit hash (or branch/tag) to build'
-        required: true
-        default: 'master'
+        required: false
+        default: ''
 
 jobs:
   createSentryRelease:
@@ -15,29 +18,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.commit_hash }}
+          ref: ${{ github.event.inputs.commit_hash || 'refs/heads/master' }}
 
       - name: Install dependencies
-        env:
-          SENTRY_RELEASE: insights-chrome-${{ github.event.inputs.commit_hash }}
         run: npm ci
 
       - name: Build
         env:
-          SENTRY_RELEASE: insights-chrome-${{ github.event.inputs.commit_hash }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          ENABLE_SENTRY:  ${{ secrets.ENABLE_SENTRY }}
+          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash && github.event.inputs.commit_hash }}
+          SENTRY_AUTH_TOKEN: ${{ github.event.inputs.commit_hash && secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: npm run build --if-present
-
-      - name: Create a Sentry.io release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          tagName: ${{ github.event.inputs.commit_hash }}
-          releaseNamePrefix: insights-chrome
-          environment: master
-          sourcemaps: 'dist/sourcemaps'
