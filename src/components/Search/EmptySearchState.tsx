@@ -30,22 +30,6 @@ const EmptySearchState = () => {
           </Text>
         </TextContent>
       </EmptyStateBody>
-      {/*      <EmptyStateFooter className="pf-v5-u-mt-md">
-        <EmptyStateActions>
-          <Button variant="link" className="pf-v5-u-pr-2xl">
-            <Icon size="md" className="pf-v5-u-pr-md" isInline> 
-              <OutlinedQuestionCircleIcon />
-            </Icon>
-            Open Hybrid Cloud Console help 
-          </Button>
-          <Button variant="link">
-            <Icon size="md" className="pf-v5-u-pr-md" isInline>
-              <ChatbotIcon />
-            </Icon>
-            Launch Virtual Assistant
-          </Button>
-        </EmptyStateActions>
-      </EmptyStateFooter>*/}
     </EmptyState>
   );
 };
