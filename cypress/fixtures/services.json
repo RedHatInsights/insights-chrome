@@ -22,6 +22,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Red Hat Enterprise Linux",
           "links": [
             "rhel.remediations",
@@ -132,6 +133,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "IAM",
           "links": [
             "iam.users",
@@ -177,6 +179,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Red Hat Enterprise Linux",
           "links": [
             "rhel.imageBuilder",
@@ -220,6 +223,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Red Hat Enterprise Linux",
           "links": [
             "rhel.advisories",
@@ -248,6 +252,7 @@
         },
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "OpenShift",
           "links": [
             {
@@ -268,6 +273,7 @@
         },
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Ansible",
           "links": [
             {
@@ -309,6 +315,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Red Hat Enterprise Linux",
           "links": [
             "rhel.advisories",
@@ -345,6 +352,7 @@
         },
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "OpenShift",
           "links": [
             {
@@ -392,6 +400,7 @@
       "links": [
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Red Hat Enterprise Linux",
           "links": [
             {
@@ -461,6 +470,7 @@
         },
         {
           "isGroup": true,
+          "ITLess": true,
           "title": "Ansible",
           "links": [
             {
