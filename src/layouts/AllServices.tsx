@@ -59,11 +59,10 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                 <Title headingLevel="h2">All Services</Title>
                 <TextContent className="pf-v5-u-mt-sm">
                   <Text component="p">
-                    Every service available on Hybrid Cloud Console appears below. Hover over a service and click the star to add it to your
-                    favorites.
-                    <Icon status="warning" size="md" className="pf-v5-u-pl-sm" isInline>
+                    Every service available on Hybrid Cloud Console appears below. Hover over a service and click the star ( <Icon status="warning" size="md" isInline>
                       <StarIcon />
-                    </Icon>
+                    </Icon>  ) to add it to your
+                    favorites.
                   </Text>
                 </TextContent>
                 <Icon className="chr-c-icon-filter">
