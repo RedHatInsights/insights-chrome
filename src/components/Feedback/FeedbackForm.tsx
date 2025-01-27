@@ -97,13 +97,13 @@ const FeedbackForm = ({
         {textAreaHidden ? (
           ''
         ) : (
-          <FormGroup label={textareaLabel} fieldId="horizontal-form-exp">
+          <FormGroup label={textareaLabel} className="pf-v5-u-pt-md" fieldId="horizontal-form-exp">
             <TextArea
               value={textAreaValue}
               onChange={(_event, value) => setTextAreaValue(value)}
-              className="chr-c-feedback-text-area"
               name="feedback-description-text"
               id="feedback-description-text"
+              autoResize
             />
           </FormGroup>
         )}
