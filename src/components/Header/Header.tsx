@@ -5,7 +5,6 @@ import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
-import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -104,7 +103,6 @@ const MemoizedHeader = memo(
                 {userReady && (
                   <ToolbarItem>
                     {!(!md && searchOpen) && <AllServicesDropdown />}
-                    {isITLess && isOrgAdmin && <SatelliteLink />}
                   </ToolbarItem>
                 )}
                 {userReady && !isITLess && (
