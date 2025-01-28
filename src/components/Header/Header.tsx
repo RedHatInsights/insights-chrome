@@ -98,9 +98,7 @@ const MemoizedHeader = memo(
           <Toolbar isFullHeight>
             <ToolbarContent>
               <ToolbarGroup variant="filter-group">
-                {userReady && (
-                  <ToolbarItem>·{!(!md && searchOpen) && <AllServicesDropdown/>}·</ToolbarItem>
-                )}
+                {userReady && <ToolbarItem> {!(!md && searchOpen) && <AllServicesDropdown />} </ToolbarItem>}
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
