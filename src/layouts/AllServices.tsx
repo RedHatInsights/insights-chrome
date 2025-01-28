@@ -42,8 +42,8 @@ const AllServices = ({ Footer }: AllServicesProps) => {
         className="chr-c-all-services"
         onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
         masthead={
-          <Masthead className="chr-c-masthead pf-v6-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
-            <Header />
+          <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
+            <Header breadcrumbsProps={{ hideNav: true }} />
           </Masthead>
         }
       >
@@ -57,7 +57,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             <PageGroup stickyOnBreakpoint={{ default: 'top' }}>
               <PageSection hasBodyWrapper={false} className="pf-v6-u-px-xl-on-md">
                 <Title headingLevel="h2">All Services</Title>
-                <Content className="pf-v6-u-mt-sm">
+                <Content>
                   <Content component="p">
                     Every service available on Hybrid Cloud Console appears below. Hover over a service and click the star ({' '}
                     <Icon status="warning" size="md" isInline>
@@ -66,23 +66,25 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                     ) to add it to your favorites.
                   </Content>
                 </Content>
-                <Icon className="chr-c-icon-filter">
-                  <FilterIcon />
-                </Icon>
-                <SearchInput
-                  className="chr-c-all-services-filter pf-v6-u-mt-md pf-v6-u-mb-sm"
-                  data-ouia-component-id="app-filter-search"
-                  placeholder={intl.formatMessage(Messages.findAppOrService)}
-                  value={filterValue}
-                  onChange={(_e, val) => setFilterValue(val)}
-                  onClear={(e) => {
-                    setFilterValue('');
-                    e.stopPropagation();
-                  }}
-                />
+                <span className="pf-v6-u-display-inline-flex pf-v6-u-pl-sm pf-v6-u-ml-xs">
+                  <Icon className="chr-c-icon-filter">
+                    <FilterIcon />
+                  </Icon>
+                  <SearchInput
+                    className="chr-c-all-services-filter"
+                    data-ouia-component-id="app-filter-search"
+                    placeholder={intl.formatMessage(Messages.findAppOrService)}
+                    value={filterValue}
+                    onChange={(_e, val) => setFilterValue(val)}
+                    onClear={(e) => {
+                      setFilterValue('');
+                      e.stopPropagation();
+                    }}
+                  />
+                </span>
               </PageSection>
             </PageGroup>
-            <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }}>
+            <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
                 {sections.map((section, index) => (
                   <AllServicesSection key={index} {...section} />

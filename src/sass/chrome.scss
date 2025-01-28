@@ -169,8 +169,15 @@ aside {
   cursor: pointer;
   .chr-c-icon-star {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
+    visibility: hidden;
+    .favorite {
+      visibility: visible;
+    }
   }
   &:hover {
+    .chr-c-icon-star {
+      visibility: visible;
+    }
     .pf-v6-c-icon {
       --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
       &:hover {
@@ -183,6 +190,9 @@ aside {
   }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
+  .chr-c-icon-star {
+    visibility: visible;
+  }
   .pf-v6-c-icon {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
