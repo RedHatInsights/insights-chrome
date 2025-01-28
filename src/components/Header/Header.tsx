@@ -47,7 +47,6 @@ const MemoizedHeader = memo(
     username,
     accountNumber,
     email,
-    isOrgAdmin = false,
     isInternal = false,
   }: {
     breadcrumbsProps?: Breadcrumbsprops;
@@ -55,7 +54,6 @@ const MemoizedHeader = memo(
     username: string;
     accountNumber: string;
     email: string;
-    isOrgAdmin?: boolean;
     isInternal?: boolean;
   }) => {
     const search = new URLSearchParams(window.location.search).keys().next().value;
@@ -101,9 +99,7 @@ const MemoizedHeader = memo(
             <ToolbarContent>
               <ToolbarGroup variant="filter-group">
                 {userReady && (
-                  <ToolbarItem>
-                    {!(!md && searchOpen) && <AllServicesDropdown />}
-                  </ToolbarItem>
+                  <ToolbarItem>·{!(!md && searchOpen) && <AllServicesDropdown/>}·</ToolbarItem>
                 )}
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
@@ -145,7 +141,6 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   return (
     <MemoizedHeader
       username={user.identity.user.username}
-      isOrgAdmin={user.identity.user.is_org_admin}
       accountNumber={user.identity.account_number}
       email={user.identity.user.email}
       orgId={user.identity.org_id}
