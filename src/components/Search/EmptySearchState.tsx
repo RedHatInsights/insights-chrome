@@ -1,19 +1,8 @@
 import React from 'react';
-import {
-  EmptyState,
-  // EmptyStateActions,
-  EmptyStateBody,
-  // EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
-} from '@patternfly/react-core/dist/dynamic/components/EmptyState';
-// import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-// import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { EmptyState, EmptyStateBody, EmptyStateHeader, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-// import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-question-circle-icon';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
-// import ChatbotIcon from './icon-chatbot-static';
 import './EmptySearchState.scss';
 
 const EmptySearchState = () => {
