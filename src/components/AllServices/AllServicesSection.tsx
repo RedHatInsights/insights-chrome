@@ -12,7 +12,7 @@ export type AllServicesSectionProps = AllServicesSection;
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = icon ? <ServiceIcon icon={icon} /> : null;
-  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
+  const filteredLinks = links;
   return (
     <Card className="pf-v5-u-display-block pf-v5-u-mb-md pf-v5-u-background-color-100">
       <CardTitle>

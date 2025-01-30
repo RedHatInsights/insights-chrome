@@ -34,7 +34,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     return <div>Error</div>;
   }
 
-  const sections = ITLess() ? linkSections.filter((section) => section.ITLess) : linkSections;
+  const sections = linkSections;
 
   return (
     <div id="chrome-app-render-root">

@@ -9,7 +9,7 @@ export type AllServicesGroupProps = AllServicesGroup & {
   category: string;
 };
 const AllServicesGroup = ({ title, links, category }: AllServicesGroupProps) => {
-  const filteredLinks = ITLess() ? links.filter((link) => isAllServicesLink(link) && link.ITLess) : links;
+  const filteredLinks = links;
   if (filteredLinks.length === 0) {
     return null;
   }
