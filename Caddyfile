@@ -1,8 +1,8 @@
 {
     {$CADDY_TLS_MODE}
     auto_https disable_redirects
-    header -Vary
 }
+
 :9000 {
     metrics /metrics
 }
@@ -10,6 +10,7 @@
 :8000 {
     {$CADDY_TLS_CERT}
     log
+    header -Vary
     @app_match {
         path /apps/chrome*
     }
