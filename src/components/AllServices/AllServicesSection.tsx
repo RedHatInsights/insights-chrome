@@ -2,7 +2,6 @@ import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/c
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React from 'react';
-import { ITLess, titleToId } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesLink from './AllServicesLink';
 import { AllServicesSection, isAllServicesGroup } from './allServicesLinks';
