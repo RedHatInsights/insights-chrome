@@ -1,6 +1,7 @@
 {
     {$CADDY_TLS_MODE}
     auto_https disable_redirects
+    header -Vary
 }
 :9000 {
     metrics /metrics
