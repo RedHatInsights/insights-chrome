@@ -18,6 +18,7 @@ import AllServicesSection from '../components/AllServices/AllServicesSection';
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
+import { updateDocumentTitle } from '../utils/common';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
