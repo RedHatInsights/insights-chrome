@@ -17,13 +17,13 @@
     handle @app_match {
         uri strip_prefix /apps/chrome
         file_server * {
-            root /opt/app-root/src/dist
-            index opt/app-root/src/dist/index.html
+            root /srv/dist
+            index srv/dist/index.html
             browse
         }
     }
     handle * {
-        root * /opt/app-root/src/dist
+        root * /srv/dist
         file_server
         try_files {path} {path}/ /index.html
     }
