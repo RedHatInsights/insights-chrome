@@ -90,18 +90,20 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     }),
     ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
     // Put the Sentry Webpack plugin after all other plugins
-    ...(!dev && process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT
+    ...(process.env.ENABLE_SENTRY
       ? [
           sentryWebpackPlugin({
-            authToken: process.env.SENTRY_AUTH_TOKEN,
+            ...(process.env.SENTRY_AUTH_TOKEN && {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
             org: process.env.SENTRY_ORG,
             project: process.env.SENTRY_PROJECT,
-            _experiments: {
-              moduleMetadata: ({ release }) => ({
+            moduleMetadata: ({ release }) => ({
+              ...(process.env.SENTRY_AUTH_TOKEN && {
                 authToken: process.env.SENTRY_AUTH_TOKEN,
-                release,
               }),
-            },
+              release,
+            }),
           }),
         ]
       : []),
