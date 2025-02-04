@@ -49,8 +49,22 @@ function initSentry() {
   sentryInitialized = true;
   const appDetails = getAppDetails();
   //These two apps will not be set up as of now. This helps limit transacations
-  const avoidedApps = ['subscriptions'];
-
+  const allowedUrlPatterns = [
+    /inventory/,
+    /patch/,
+    /advisor/,
+    /dashboard/,
+    /image-builder/,
+    /policies/,
+    /vulnerability/,
+    /compliance/,
+    /malware/,
+    /remediations/,
+    /tasks/,
+    /registration/,
+    /chrome/,
+    /connector/,
+  ];
   // dsn: key
   // environment: logs Prod or Prod Beta for filtering
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
@@ -73,15 +87,24 @@ function initSentry() {
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({ maskAllText: false, maskAllInputs: true }),
       Sentry.moduleMetadataIntegration(),
+      Sentry.inboundFiltersIntegration(),
     ],
     tracesSampleRate: 0.1,
     debug: !!window.localStorage.getItem('chrome:sentry:debug'),
     replaysOnErrorSampleRate: 1.0,
     replaysSessionSampleRate: 0.3,
     transport,
+    allowUrls: allowedUrlPatterns,
     beforeSend: (event) => {
       if (event?.exception?.values?.[0]?.stacktrace?.frames) {
         const frames = event.exception.values[0].stacktrace.frames;
+        // Check if any frame contains 'module_metadata' with 'org'
+        const hasOrgMetadata = frames.some((frame) => frame.module_metadata?.org);
+
+        if (!hasOrgMetadata) {
+          return null;
+        }
+
         // Find the last frame with module metadata containing a DSN
         const routeTo = frames
           .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
@@ -96,14 +119,6 @@ function initSentry() {
         }
       }
 
-      return event;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    beforeSendTransaction: (event: any) => {
-      const appName = event?.contexts?.app?.app_name;
-      if (avoidedApps.includes(appName)) {
-        return null;
-      }
       return event;
     },
   });
