@@ -48,23 +48,74 @@ function initSentry() {
 
   sentryInitialized = true;
   const appDetails = getAppDetails();
-  //These two apps will not be set up as of now. This helps limit transacations
-  const allowedUrlPatterns = [
-    /inventory/,
-    /patch/,
-    /advisor/,
-    /dashboard/,
-    /image-builder/,
-    /policies/,
-    /vulnerability/,
-    /compliance/,
-    /malware/,
-    /remediations/,
-    /tasks/,
-    /registration/,
-    /chrome/,
-    /connector/,
+  const configuredApps = [
+    {
+      appName: 'inventory',
+      dsn: 'https://f6f21a635c05b0f91875de6a557f8c34@o490301.ingest.us.sentry.io/4507454722211840',
+      project: 'inventory-rhel',
+    },
+    {
+      appName: 'patch',
+      dsn: 'https://7308344e3a96d7a5c31a2d3899328f10@o490301.ingest.us.sentry.io/4508683262951424',
+      project: 'patchman-rhel',
+    },
+    {
+      appName: 'advisor',
+      dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
+      project: 'advisor-rhel',
+    },
+    {
+      appName: 'dashboard',
+      dsn: 'https://cf3d9690738f2e4beb92e5c32b92aeb4@o490301.ingest.us.sentry.io/4508683243028485',
+      project: 'dashboard-rhel',
+    },
+    {
+      appName: 'policies',
+      dsn: 'https://a9410934c7cf8b0a63576ded76dd6707@o490301.ingest.us.sentry.io/4508683264262144',
+      project: 'policies-rhel',
+    },
+    {
+      appName: 'vulnerability',
+      dsn: 'https://cb035c73625db2cf00141494a95bdedb@o490301.ingest.us.sentry.io/4508683271077888',
+      project: 'vulnerability-rhel',
+    },
+    {
+      appName: 'compliance',
+      dsn: 'https://6410c806f0ac7b638105bb4e15eb3399@o490301.ingest.us.sentry.io/4508083145408512',
+      project: 'compliance-rhel',
+    },
+    {
+      appName: 'malware',
+      dsn: 'https://1422e636c948549d1dea1c8e87387aa3@o490301.ingest.us.sentry.io/4508683260002304',
+      project: 'malware-rhel',
+    },
+    {
+      appName: 'remediations',
+      dsn: 'https://5d7d7a7fb9032c5316f131dc8323137c@o490301.ingest.us.sentry.io/4508683233787904',
+      project: 'remediations-rhel',
+    },
+    {
+      appName: 'tasks',
+      dsn: 'https://5b8c5a580090ff977052ac622b242057@o490301.ingest.us.sentry.io/4508683269570560',
+      project: 'tasks-rhel',
+    },
+    {
+      appName: 'registration',
+      dsn: 'https://95df6c65ea4016243ee2bcc2d45fcba8@o490301.ingest.us.sentry.io/4508683266686976',
+      project: 'registration-assistant-rhel',
+    },
+    {
+      appName: 'connector',
+      dsn: 'https://08c275222a74229dda763dec7c7c2fa8@o490301.ingest.us.sentry.io/4508683268128768',
+      project: 'sed-frontend-rhc',
+    },
+    {
+      appName: 'image-builder',
+      dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
+      project: 'image-builder-rhel',
+    },
   ];
+
   // dsn: key
   // environment: logs Prod or Prod Beta for filtering
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
@@ -87,34 +138,30 @@ function initSentry() {
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({ maskAllText: false, maskAllInputs: true }),
       Sentry.moduleMetadataIntegration(),
-      Sentry.inboundFiltersIntegration(),
     ],
     tracesSampleRate: 0.1,
     debug: !!window.localStorage.getItem('chrome:sentry:debug'),
     replaysOnErrorSampleRate: 1.0,
     replaysSessionSampleRate: 0.3,
     transport,
-    allowUrls: allowedUrlPatterns,
     beforeSend: (event) => {
       if (event?.exception?.values?.[0]?.stacktrace?.frames) {
         const frames = event.exception.values[0].stacktrace.frames;
-        // Check if any frame contains 'module_metadata' with 'org'
-        const hasOrgMetadata = frames.some((frame) => frame.module_metadata?.org);
-
-        if (!hasOrgMetadata) {
-          return null;
-        }
-
         // Find the last frame with module metadata containing a DSN
         const routeTo = frames
           .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
           .map((v) => v.module_metadata)
           .slice(-1); // using top frame only
-
+        const configuredApp = configuredApps.filter((app) => app.appName === event.tags?.app_name);
         if (routeTo.length) {
           event.extra = {
             ...event.extra,
             [EXTRA_KEY]: routeTo,
+          };
+        } else if (configuredApp) {
+          event.extra = {
+            ...event.extra,
+            [EXTRA_KEY]: [{ ...configuredApp[0], org: 'red-hat-it', configuredApp: true }],
           };
         }
       }
