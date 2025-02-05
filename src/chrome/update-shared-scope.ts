@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { LinkProps, NavLinkProps, NavigateOptions, NavigateProps, Path, To } from 'react-router-dom';
+import preloadModule from './preload-ui-module';
 
 export const hacApps = ['/application-pipeline', '/stonesoup', '/app-studio'];
 
@@ -42,7 +43,17 @@ const updateSharedScope = () => {
         Link: (props: LinkProps) => {
           const Cmp = reactRouter.Link;
           const react = require('react');
-          return react.createElement(Cmp, { ...props, to: calculateTo(props.to) });
+          return react.createElement(Cmp, {
+            ...props,
+            // monkey patch the mouse enter event to preload module if it exists
+            onMouseEnter: (e: any) => {
+              props.onMouseEnter?.(e);
+              setTimeout(() => {
+                preloadModule(props.to);
+              }, 250);
+            },
+            to: calculateTo(props.to),
+          });
         },
         Navigate: (props: NavigateProps) => {
           const react = require('react');
@@ -52,7 +63,17 @@ const updateSharedScope = () => {
         NavLink: (props: NavLinkProps) => {
           const react = require('react');
           const Cmp = reactRouter.NavLink;
-          return react.createElement(Cmp, { ...props, to: calculateTo(props.to) });
+          return react.createElement(Cmp, {
+            ...props,
+            // monkey patch the mouse enter event to preload module if it exists
+            onMouseEnter: (e: any) => {
+              props.onMouseEnter?.(e);
+              setTimeout(() => {
+                preloadModule(props.to);
+              }, 250);
+            },
+            to: calculateTo(props.to),
+          });
         },
       };
     },
