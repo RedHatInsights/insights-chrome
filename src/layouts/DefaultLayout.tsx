@@ -2,6 +2,7 @@ import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
+import { getModule } from '@scalprum/core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebar } from '@patternfly/react-core/dist/dynamic/components/Page';
@@ -15,7 +16,7 @@ import isEqual from 'lodash/isEqual';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
@@ -28,9 +29,9 @@ import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
-import VirtualAssistant from '../components/Routes/VirtualAssistant';
-import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { ITLess } from '../utils/common';
+// import VirtualAssistant from '../components/Routes/VirtualAssistant';
+import { notificationDrawerExpandedAtom, notificationDrawerReadyAtom } from '../state/atoms/notificationDrawerAtom';
+// import { ITLess } from '../utils/common';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 type ShieldedRootProps = {
@@ -54,6 +55,7 @@ type DefaultLayoutProps = {
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    getNotificationsDrawer();
     if (drawerPanelRef.current !== null) {
       focusDrawer();
     }
@@ -73,6 +75,18 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   };
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
+  const setIsNotificationDrawerReady = useSetAtom(notificationDrawerReadyAtom);
+  const [RegisterDrawerModule, setRegisterDrawerModule] = useState<React.FC | null>(null);
+  const getNotificationsDrawer = async () => {
+    try {
+      const RegisterDrawerModule = await getModule('notifications', './RegisterDrawerModule');
+      setRegisterDrawerModule(RegisterDrawerModule);
+      setIsNotificationDrawerReady(true);
+    } catch (error) {
+      console.error('Failed to register notifications drawer module', error);
+    }
+  };
+
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { pathname } = useLocation();
@@ -97,7 +111,12 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       }
       {...(isNotificationsEnabled && {
         onNotificationDrawerExpand: focusDrawer,
-        notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
+        notificationDrawer: (
+          <>
+            {RegisterDrawerModule && <RegisterDrawerModule />}
+            <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />
+          </>
+        ),
         isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
       })}
       sidebar={
@@ -125,7 +144,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           </div>
         )}
         <RedirectBanner />
-        {ITLess() ? null : <VirtualAssistant />}
+        {/* {ITLess() ? null : <VirtualAssistant />} */}
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         {Footer}
       </div>
