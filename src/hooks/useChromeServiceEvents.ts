@@ -19,7 +19,7 @@ type WsEventListenersRegistry = {
   [type in ChromeWsEventTypes]: Map<symbol, ChromeWsEventListener<Payload>>;
 };
 
-// needs to be outside rendring cycle to preserver clients when chrome API changes
+// needs to be outside rendering cycle to preserver clients when chrome API changes
 const wsEventListenersRegistry: WsEventListenersRegistry = {
   [NOTIFICATION_DRAWER]: new Map(),
 };

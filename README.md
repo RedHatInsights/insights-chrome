@@ -12,7 +12,7 @@ For more detailed information about chrome and what it provides, [look through t
 
 ## JavaScript API
 
-Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
+Insights Chrome comes with a Javascript API that allows applications to control navigation, global filters, etc.
 
 Check out the [useChrome hook docs](http://front-end-docs-insights.apps.ocp4.prod.psi.redhat.com/chrome/chrome-api#Chrome)
 
@@ -98,7 +98,7 @@ See [local search development documentation](./docs/localSearchDevelopment.md).
 
 ## LocalStorage Debugging
 
-There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
+There are some localStorage values for you to enable debugging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
 
 Available function:
 
@@ -107,9 +107,9 @@ Available function:
 - `jwtDebug` - to enable debugging of JWT
 - `remediationsDebug` - to enable debug buttons in remediations app
 - `shortSession` - to enable short session in order to test automatic logouts
-- `forcePendo` - to force Pendo initializtion
+- `forcePendo` - to force Pendo initialization
 - `appFilter` - to enable new application filter in any environment
 
-## Futher reading
+## Further reading
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
