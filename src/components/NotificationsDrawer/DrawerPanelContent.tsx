@@ -5,9 +5,9 @@ import { NotificationDrawer } from '@patternfly/react-core/dist/dynamic/componen
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import InternalChromeContext from '../../utils/internalChromeContext';
 
-import { getModule, getSharedScope } from '@scalprum/core';
-import { useAtom, useAtomValue } from 'jotai';
-import { notificationDrawerReadyAtom } from '../../state/atoms/notificationDrawerAtom';
+import { getSharedScope } from '@scalprum/core';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { notificationDrawerReadyAtom, notificationDrawerUnreadAtom } from '../../state/atoms/notificationDrawerAtom';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;
@@ -26,21 +26,30 @@ const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer })
     toggleDrawer: toggleDrawer,
   };
 
+  const [initialized, setInitialized] = useState(false);
+  const { DrawerPanel, useNotificationsDrawer } = getSharedScope()[NOTIF_DRAWER_MODULE]['1.0.0'].get();
   const isNotificationsDrawerReady = useAtomValue(notificationDrawerReadyAtom);
+  const { state, initialize, hasUnreadNotifications } = useNotificationsDrawer();
+  const setUnreadNotifiations = useSetAtom(notificationDrawerUnreadAtom);
 
   useEffect(() => {
-    if (!isNotificationsDrawerReady) return;
-    console.log('DrawerPanelBase useEffect');
-    console.log('getSharedScope', getSharedScope()[NOTIF_DRAWER_MODULE]);
-    const { useNotificationsDrawer } = getSharedScope()[NOTIF_DRAWER_MODULE]['1.0.0'].get();
-    const { state, initialize } = useNotificationsDrawer();
-    // get the users permissions
-    const perms = getUserPermissions('notifications');
-    initialize(true, perms);
-    console.log('state', state);
+    if (!isNotificationsDrawerReady || initialized) return;
+    getUserPermissions('notifications')
+      .then((perms) => {
+        initialize(true, perms);
+        setUnreadNotifiations(hasUnreadNotifications());
+      })
+      .catch((err) => {
+        console.error('Error fetching user notifications permissions while rendering drawer content', err);
+      });
+    setInitialized(true);
   }, [isNotificationsDrawerReady]);
 
-  const { DrawerPanel } = getSharedScope()[NOTIF_DRAWER_MODULE]['1.0.0'].get();
+  useEffect(() => {
+    console.log(state, 'state');
+    setUnreadNotifiations(hasUnreadNotifications());
+  }, [state]);
+
   return (
     <NotificationDrawer ref={panelRef} {...notificationProps}>
       <DrawerPanel {...notificationProps} />
@@ -49,39 +58,17 @@ const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer })
 };
 
 const DrawerPanel = React.forwardRef<unknown, Omit<DrawerPanelProps, 'panelRef'>>((props, innerRef) => {
-  const [RegisterDrawerModule, setRegisterDrawerModule] = useState<React.FC | null>(null);
-  const getNotificationsDrawer = async () => {
-    try {
-      const RegisterDrawerModule = await getModule('notifications', './RegisterDrawerModule');
-      setRegisterDrawerModule(RegisterDrawerModule);
-      setIsNotificationDrawerReady(true);
-    } catch (error) {
-      console.error('Failed to register notifications drawer module', error);
-    }
-  };
-  useEffect(() => {
-    getNotificationsDrawer();
-  }, []);
-  const [isNotificationsDrawerReady, setIsNotificationDrawerReady] = useAtom(notificationDrawerReadyAtom);
-
   const DrawerPanelProvider = () => {
     const { DrawerContextProvider } = getSharedScope()[NOTIF_DRAWER_MODULE]['1.0.0'].get();
 
     return (
-      <>
-        <DrawerContextProvider>
-          <DrawerPanelBase panelRef={innerRef} {...props} />
-        </DrawerContextProvider>
-      </>
+      <DrawerContextProvider>
+        <DrawerPanelBase panelRef={innerRef} {...props} />
+      </DrawerContextProvider>
     );
   };
 
-  return (
-    <>
-      {RegisterDrawerModule && <RegisterDrawerModule />}
-      {isNotificationsDrawerReady && <DrawerPanelProvider />}
-    </>
-  );
+  return <DrawerPanelProvider />;
 });
 DrawerPanel.displayName = 'DrawerPanel';
 
