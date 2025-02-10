@@ -23,7 +23,7 @@ import { createSupportCase } from '../../utils/createCase';
 import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
-import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
+import { notificationDrawerExpandedAtom, notificationDrawerUnreadAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 
 const isITLessEnv = ITLess();
@@ -72,7 +72,7 @@ const Tools = () => {
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const { user, token } = useContext(ChromeAuthContext);
-  const unreadNotifications = useAtomValue(unreadNotificationsAtom);
+  const unreadNotifications = useAtomValue(notificationDrawerUnreadAtom);
   const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
