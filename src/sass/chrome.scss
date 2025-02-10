@@ -94,12 +94,12 @@ aside {
 @media screen and (min-width : $pf-v5-global--breakpoint--2xl) {
   .chr-scope__default-layout {
     // we do not have PF variables for the header height unfortunately
-    min-height: calc(100vh - 70px /** the size of the masthead on extra large screens */);
+    min-height: calc(100vh - 152px /** the size of the masthead on extra large screens */);
   }
 }
 
 
-@media screen and (min-width : $pf-v5-global--breakpoint--xl) {
+@media screen and (min-width : $pf-v5-global--breakpoint--xl) and (max-width : $pf-v5-global--breakpoint--2xl)  {
   .chr-scope__default-layout {
     min-height: calc(100vh - 118px /** the size of the masthead on large screens */);
   };

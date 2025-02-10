@@ -1,20 +1,22 @@
 import React from 'react';
-import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyState, EmptyStateBody, EmptyStateHeader, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
-
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
+
+import './EmptySearchState.scss';
 
 const EmptySearchState = () => {
   return (
-    <EmptyState className="chr-c-search__empty-state" variant="xs">
-      <EmptyStateIcon className="pf-v5-u-mb-xl" icon={SearchIcon} />
-      <Title headingLevel="h2" size="lg">
-        No results found
-      </Title>
+    <EmptyState className="chr-c-search__empty-state pf-v5-u-pt-md">
+      <EmptyStateHeader titleText="No results found" className="pf-v5-u-mb-sm" icon={<EmptyStateIcon icon={SearchIcon} />} />
       <EmptyStateBody>
         <TextContent>
-          <Text>No results match your criteria. Clear the search field and try again.</Text>
+          <Text component="p" className="pf-v5-u-color-200 pf-v5-u-mb-0">
+            No results match your criteria.
+          </Text>
+          <Text component="p" className="pf-v5-u-color-200">
+            Try searching Hybrid Cloud help or start a conversation with our Virtual Assistant.
+          </Text>
         </TextContent>
       </EmptyStateBody>
     </EmptyState>
