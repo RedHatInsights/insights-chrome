@@ -102,6 +102,8 @@ const plugins = (dev = false, beta = false, restricted = false) => {
               ...(process.env.SENTRY_AUTH_TOKEN && {
                 authToken: process.env.SENTRY_AUTH_TOKEN,
               }),
+              org: process.env.SENTRY_ORG,
+              project: process.env.SENTRY_PROJECT,
               release,
             }),
           }),

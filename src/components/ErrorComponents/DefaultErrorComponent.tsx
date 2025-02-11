@@ -32,7 +32,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   const [sentryId, setSentryId] = useState<string | undefined>();
 
   const activeModule = useAtomValue(activeModuleAtom);
-  const exceptionMessage = (props.error as Error)?.message ? (props.error as Error).message : 'Unhandled UI runtime error';
+  const exceptionMessage = `Something Went Wrong: ${(props.error as Error)?.message || 'Unhandled UI runtime error'}`;
   useEffect(() => {
     const sentryId =
       props.error &&
