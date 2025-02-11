@@ -53,7 +53,6 @@ const ScalprumRoot = memo(
         <BetaSwitcher />
         <Routes>
           <Route index path="/" element={<DefaultLayout Footer={<ChromeFooter />} />} />
-          <Route path="/learning-resources" element={<DefaultLayout Footer={<ChromeFooter />} />} />
           <Route
             path="/connect/products"
             element={

@@ -62,7 +62,7 @@ const MemoizedHeader = memo(
     const search = new URLSearchParams(window.location.search).keys().next().value;
     const isActivationPath = activationRequestURLs.includes(search);
     const { pathname } = useLocation();
-    const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
+    const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
     const { md, lg } = useWindowWidth();
     const [searchOpen, setSearchOpen] = useState(false);
     const hideAllServices = (isOpen: boolean) => {
