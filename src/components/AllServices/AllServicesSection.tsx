@@ -2,7 +2,7 @@ import { Card, CardBody, CardTitle } from '@patternfly/react-core/dist/dynamic/c
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import React from 'react';
-import { ITLess, titleToId } from '../../utils/common';
+import { titleToId } from '../../utils/common';
 import AllServicesGroup from './AllServicesGroup';
 import AllServicesLink from './AllServicesLink';
 import { AllServicesSection, isAllServicesGroup } from './allServicesLinks';
@@ -12,7 +12,7 @@ export type AllServicesSectionProps = AllServicesSection;
 
 const AllServicesSection = ({ icon, title, description, links }: AllServicesSectionProps) => {
   const TitleIcon = icon ? <ServiceIcon icon={icon} /> : null;
-  const filteredLinks = ITLess() ? links.filter((link) => link.ITLess) : links;
+  const filteredLinks = links;
   return (
     <Card className="pf-v5-u-display-block pf-v5-u-mb-md pf-v5-u-background-color-100">
       <CardTitle>
