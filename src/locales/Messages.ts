@@ -330,7 +330,7 @@ export default defineMessages({
   globalLearningResourcesPage: {
     id: 'globalLearningResourcesPage',
     description: 'All learning resources',
-    defaultMessage: 'Global learning resources page',
+    defaultMessage: 'All learning resources',
   },
   loggedOut: {
     id: 'loggedOut',
