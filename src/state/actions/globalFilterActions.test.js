@@ -1,4 +1,4 @@
-import { toggleGlobalFilter } from './actions';
+import { toggleGlobalFilter } from '../../state/actions/globalFilterActions';
 
 describe('toggleGlobalFilter', () => {
   it('should return correct action with isHidden = true', () => {
