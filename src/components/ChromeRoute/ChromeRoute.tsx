@@ -96,7 +96,6 @@ const ChromeRoute = memo(
           key={`${path}-${isPreview}`}
           ErrorComponent={<ErrorComponent />}
           fallback={LoadingFallback}
-          // LoadingFallback={() => LoadingFallback}
           scope={scope}
           module={module}
           appId={scope}

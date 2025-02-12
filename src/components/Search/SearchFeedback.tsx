@@ -7,9 +7,7 @@ import OutlinedThumbsDownIcon from '@patternfly/react-icons/dist/dynamic/icons/o
 import { MenuGroup, MenuItem } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { useSegment } from '../../analytics/useSegment';
 import type { SearchItem } from './SearchTypes';
-
-export const SEARCH_FEEDBACK_POSITIVE = 'chrome.search-query-feedback-positive';
-export const SEARCH_FEEDBACK_NEGATIVE = 'chrome.search-query-feedback-negative';
+import { SEARCH_FEEDBACK_NEGATIVE, SEARCH_FEEDBACK_POSITIVE } from '../../utils/common';
 
 export type SearchFeedbackType = typeof SEARCH_FEEDBACK_POSITIVE | typeof SEARCH_FEEDBACK_NEGATIVE | undefined;
 
