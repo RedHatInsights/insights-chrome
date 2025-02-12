@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { ChromeUserConfig, initChromeUserConfig } from '../utils/initUserConfig';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 import { userConfigAtom } from '../state/atoms/userConfigAtom';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
+import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 
 const useSessionConfig = () => {
+  const gatewayError = useAtomValue(gatewayErrorAtom);
   const [configLoaded, setConfigLoaded] = useState(false);
   const { getUser, token } = useContext(ChromeAuthContext);
   const initPreview = useSetAtom(isPreviewAtom);
@@ -37,7 +39,7 @@ const useSessionConfig = () => {
     initConfig();
   }, [getUser, token]);
 
-  return configLoaded;
+  return { gatewayError, configLoaded };
 };
 
 export default useSessionConfig;
