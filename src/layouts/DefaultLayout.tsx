@@ -63,7 +63,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { pathname } = useLocation();
-  const noBreadcrumb = !['/', '/allservices', '/favoritedservices'].includes(pathname);
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
   return (
     <Page
       className={

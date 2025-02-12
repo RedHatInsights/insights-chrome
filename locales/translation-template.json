@@ -31,10 +31,6 @@
     "defaultMessage": "API documentation",
     "description": "API documentation"
   },
-  "globalLearningResourcesPage": {
-    "defaultMessage": "All learning resources",
-    "description": "All learning resources"
-  },
   "authFailure": {
     "defaultMessage": "Authorization failure",
     "description": "Authorization failure"
@@ -62,10 +58,6 @@
   "checkOur": {
     "defaultMessage": "or check our",
     "description": "or check our"
-  },
-  "resetFilters": {
-    "defaultMessage": "Reset filters",
-    "description": "Reset filters"
   },
   "close": {
     "defaultMessage": "Close",
@@ -111,6 +103,30 @@
     "defaultMessage": "Filter by tags",
     "description": "Placeholder to indicate "
   },
+  "filterByTagsPopoverCCGLink": {
+    "defaultMessage": "Client Configuration Guide",
+    "description": "Client Configuration Guide link"
+  },
+  "filterByTagsPopoverContent1": {
+    "defaultMessage": "Tagging can be used to classify further and organize your hosts shown within the Insights inventory. If connected to a Satellite, tags from that Satellite can be",
+    "description": "Popover Help Content"
+  },
+  "filterByTagsPopoverContent2": {
+    "defaultMessage": ". Additionally, you can define your own tags via the Insights-Client configuration. Please see our",
+    "description": "Popover Help Content"
+  },
+  "filterByTagsPopoverContent3": {
+    "defaultMessage": "for more details. Please note that Workload tags are automatically added by the Insights service.",
+    "description": "Popover Help Content"
+  },
+  "filterByTagsPopoverHeader": {
+    "defaultMessage": "Tags",
+    "description": "Popover Header"
+  },
+  "filterByTagsPopoverSatelliteLink": {
+    "defaultMessage": "imported",
+    "description": "Installing the Satellite inventory upload plugin link"
+  },
   "filterResults": {
     "defaultMessage": "Filter results",
     "description": "Filter results"
@@ -134,6 +150,10 @@
   "globalFilterNotApplicable": {
     "defaultMessage": "Global filter is not applicable for this page",
     "description": "Global filter is not applicable for this page"
+  },
+  "globalLearningResourcesPage": {
+    "defaultMessage": "All learning resources",
+    "description": "All learning resources"
   },
   "globalRuntimeErrorId": {
     "defaultMessage": "Sentry error ID: {errorId}",
@@ -247,6 +267,10 @@
     "defaultMessage": "Org. Administrator",
     "description": "Org. Administrator"
   },
+  "orgId": {
+    "defaultMessage": "Org ID:",
+    "description": "Org ID:"
+  },
   "permissionErrorDescription": {
     "defaultMessage": "Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions."
   },
@@ -280,6 +304,10 @@
   "researchOpportunities": {
     "defaultMessage": "Yes, I would like to hear about research opportunities",
     "description": "Yes, I would like to hear about research opportunities"
+  },
+  "resetFilters": {
+    "defaultMessage": "Reset filters",
+    "description": "Reset filters"
   },
   "responseSent": {
     "defaultMessage": "Response sent",

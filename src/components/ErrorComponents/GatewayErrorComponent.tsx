@@ -13,6 +13,7 @@ import { activeProductAtom } from '../../state/atoms/activeProductAtom';
 
 export type GatewayErrorComponentProps = {
   error: ThreeScaleError;
+  serviceName?: string;
 };
 
 const MuaLink = (chunks: React.ReactNode) => (
@@ -48,12 +49,16 @@ const Description = ({ detail, complianceError }: DescriptionProps) => {
   );
 };
 
-const GatewayErrorComponent = ({ error }: GatewayErrorComponentProps) => {
+const GatewayErrorComponent = ({ error, serviceName }: GatewayErrorComponentProps) => {
   const activeModule = useAtomValue(activeModuleAtom);
   const activeProduct = useAtomValue(activeProductAtom);
-  // get active product, fallback to module name if product is not defined
-  const serviceName = activeProduct || activeModule;
-  return <NotAuthorized bodyText={<Description complianceError={error.complianceError} detail={error.detail} />} serviceName={serviceName} />;
+
+  return (
+    <NotAuthorized
+      bodyText={<Description complianceError={error.complianceError} detail={error.detail} />}
+      serviceName={activeProduct || activeModule || serviceName}
+    />
+  );
 };
 
 export default GatewayErrorComponent;

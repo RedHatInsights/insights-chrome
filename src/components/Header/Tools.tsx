@@ -181,7 +181,7 @@ const Tools = () => {
       ? [
           {
             title: intl.formatMessage(messages.globalLearningResourcesPage),
-            onClick: () => window.open('/staging/global-learning-resources-page', '_blank'),
+            onClick: () => window.open('/learning-resources', '_blank'),
           },
         ]
       : []),
