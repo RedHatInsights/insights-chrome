@@ -5,7 +5,6 @@ import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
 import { MastheadBrand, MastheadContent, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
-import SatelliteLink from './SatelliteLink';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
@@ -48,7 +47,6 @@ const MemoizedHeader = memo(
     username,
     accountNumber,
     email,
-    isOrgAdmin = false,
     isInternal = false,
   }: {
     breadcrumbsProps?: Breadcrumbsprops;
@@ -56,7 +54,6 @@ const MemoizedHeader = memo(
     username: string;
     accountNumber: string;
     email: string;
-    isOrgAdmin?: boolean;
     isInternal?: boolean;
   }) => {
     const search = new URLSearchParams(window.location.search).keys().next().value;
@@ -101,12 +98,7 @@ const MemoizedHeader = memo(
           <Toolbar isFullHeight>
             <ToolbarContent>
               <ToolbarGroup variant="filter-group">
-                {userReady && (
-                  <ToolbarItem>
-                    {!(!md && searchOpen) && <AllServicesDropdown />}
-                    {isITLess && isOrgAdmin && <SatelliteLink />}
-                  </ToolbarItem>
-                )}
+                {userReady && <ToolbarItem> {!(!md && searchOpen) && <AllServicesDropdown />} </ToolbarItem>}
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
@@ -147,7 +139,6 @@ export const Header = ({ breadcrumbsProps }: { breadcrumbsProps?: Breadcrumbspro
   return (
     <MemoizedHeader
       username={user.identity.user.username}
-      isOrgAdmin={user.identity.user.is_org_admin}
       accountNumber={user.identity.account_number}
       email={user.identity.user.email}
       orgId={user.identity.org_id}

@@ -8,19 +8,16 @@ export type AllServicesLink = {
   description?: string;
   isExternal?: boolean;
   prod?: boolean;
-  ITLess?: boolean;
 };
 export type AllServicesGroup = {
   isGroup: true;
   title: string;
-  ITLess?: boolean;
   links: AllServicesLink[];
   description?: string;
 };
 export type AllServicesSection = {
   id?: string;
   icon?: FavorableIcons;
-  ITLess?: boolean;
   title: string;
   description?: string;
   links: (AllServicesLink | AllServicesGroup)[];

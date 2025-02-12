@@ -18,7 +18,7 @@ import AllServicesSection from '../components/AllServices/AllServicesSection';
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
-import { ITLess, updateDocumentTitle } from '../utils/common';
+import { updateDocumentTitle } from '../utils/common';
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
@@ -34,7 +34,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     return <div>Error</div>;
   }
 
-  const sections = ITLess() ? linkSections.filter((section) => section.ITLess) : linkSections;
+  const sections = linkSections;
 
   return (
     <div id="chrome-app-render-root">
