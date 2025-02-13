@@ -73,19 +73,19 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     >
       <div
         ref={menuRef}
-        className={classNames('pf-v5-u-w-100 chr-c-page__services-nav-dropdown-menu', {
+        className={classNames('pf-v6-u-w-100 chr-c-page__services-nav-dropdown-menu', {
           'preview-offset': !hideBanner,
         })}
         data-testid="chr-c__find-app-service"
         onClick={handleClickOutside}
       >
         <Backdrop>
-          <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
+          <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
             <PanelMain>
               <Sidebar>
                 <SidebarPanel>
                   <Stack>
-                    <StackItem className="pf-v5-u-w-100">
+                    <StackItem className="pf-v6-u-w-100">
                       <AllServicesTabs
                         activeTabKey={activeTabKey}
                         handleTabClick={handleTabClick}
@@ -104,12 +104,10 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     <CardHeader
                       actions={{
                         actions: [
-                          <Button key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                            <TimesIcon />
-                          </Button>,
+                          <Button icon={<TimesIcon />} key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)} />,
                         ],
                       }}
-                      className="pf-v5-u-pr-xs pf-v5-u-pr-md-on-md"
+                      className="pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
                     >
                       <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
                     </CardHeader>

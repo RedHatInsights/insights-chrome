@@ -280,16 +280,16 @@ const columnsRegistry: {
           }
           return (
             <>
-              <span className="pf-v5-u-mr-sm">
-                <ShieldIcon className="pf-v5-u-mr-sm" />
+              <span className="pf-v6-u-mr-sm">
+                <ShieldIcon className="pf-v6-u-mr-sm" />
                 {r.attributes.installable_rhsa_count}
               </span>
-              <span className="pf-v5-u-mr-sm">
-                <BugIcon className="pf-v5-u-mr-sm" />
+              <span className="pf-v6-u-mr-sm">
+                <BugIcon className="pf-v6-u-mr-sm" />
                 {r.attributes.installable_rhba_count}
               </span>
-              <span className="pf-v5-u-mr-sm">
-                <CogIcon className="pf-v5-u-mr-sm" />
+              <span className="pf-v6-u-mr-sm">
+                <CogIcon className="pf-v6-u-mr-sm" />
                 {r.attributes.installable_rhea_count}
               </span>
             </>
@@ -347,14 +347,14 @@ const columnsRegistry: {
         return res.map((r, index) => {
           return (
             <>
-              <span key={index} className="pf-v5-u-mr-md">
-                <Icon status="danger" className="pf-v5-u-mr-sm">
+              <span key={index} className="pf-v6-u-mr-md">
+                <Icon status="danger" className="pf-v6-u-mr-sm">
                   <SecurityIcon />
                 </Icon>
                 <a href="#">{r.criticalCount}</a>
               </span>
               <span>
-                <Icon status="warning" className="pf-v5-u-mr-sm">
+                <Icon status="warning" className="pf-v6-u-mr-sm">
                   <SecurityIcon />
                 </Icon>
                 <a href="#">{r.highCount}</a>
@@ -380,7 +380,7 @@ const columnsRegistry: {
           const tagCount = Object.values(r.results).reduce((acc, curr) => acc + curr, 0);
           return (
             <span key={index}>
-              <TagIcon className="pf-v5-u-mr-md" />
+              <TagIcon className="pf-v6-u-mr-md" />
               {tagCount}
             </span>
           );
@@ -479,7 +479,7 @@ const ModularInventoryRoute = () => {
   };
 
   return (
-    <div className="pf-v5-u-p-md">
+    <div className="pf-v6-u-p-md">
       <ColumnEnabler enabledColumns={enabledColumns} handleCheckboxChange={handleCheckboxChange} />
       <FilterToolbar onPerPageSelect={onPerPageSelect} onSetPage={onSetPage} {...filterState} />
       <ModularInventory

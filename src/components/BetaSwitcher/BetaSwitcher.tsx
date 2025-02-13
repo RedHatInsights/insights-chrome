@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
-import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
 import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
@@ -94,10 +94,13 @@ const BetaSwitcher = () => {
     return null;
   }
 
+  const currentMode = isPreview ? 'Preview' : 'production';
+  const changeModeContent = isPreview ? 'return to production, turn off' : 'see new pre-production features, turn on';
+
   return (
     <div ref={bannerRef}>
       <Split
-        className={classNames('chr-c-beta-switcher pf-v5-u-p-xs', {
+        className={classNames('chr-c-beta-switcher pf-v6-u-p-xs', {
           active: isPreview,
         })}
       >
@@ -108,16 +111,10 @@ const BetaSwitcher = () => {
                 ouiaId="PreviewSwitcher"
                 id="preview-toggle"
                 label={
-                  <Text className="pf-v5-u-color-100" component={TextVariants.small}>
-                    You&apos;re in Hybrid Cloud Console Preview mode.{' '}
-                    <div className="pf-v5-u-display-none pf-v5-u-display-inline-on-md"> To return to production, turn off Preview mode</div>
-                  </Text>
-                }
-                labelOff={
-                  <Text className="pf-v5-u-color-light-100" component={TextVariants.small}>
-                    You&apos;re in Hybrid Cloud Console production.{' '}
-                    <div className="pf-v5-u-display-none pf-v5-u-display-inline-on-md"> To see new pre-production features, turn on Preview mode</div>
-                  </Text>
+                  <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
+                    You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
+                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
+                  </Content>
                 }
                 aria-label="preview-toggle"
                 isChecked={isPreview}

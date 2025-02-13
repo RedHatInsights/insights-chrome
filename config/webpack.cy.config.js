@@ -10,6 +10,9 @@ const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
+      if (base.includes('pf-5-styles')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-5-styles', item.uri))];
+      }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
       }

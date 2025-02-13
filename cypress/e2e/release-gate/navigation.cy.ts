@@ -14,7 +14,7 @@ describe('Navigation', () => {
     cy.get('.chr-c-link-service-toggle').click();
 
     // check if favorite services links exist
-    cy.contains('.pf-v5-c-tabs__link', 'Favorites');
+    cy.contains('.pf-v6-c-tabs__link', 'Favorites');
 
     // click on all services
     cy.get('[data-ouia-component-id="View all link"]').first().click();

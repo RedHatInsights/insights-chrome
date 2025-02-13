@@ -1,24 +1,24 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 @import '~@patternfly/patternfly/patternfly-addons.scss';
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
 
 .chr-c-all-services {
-  .chr-c-all-services-filter .pf-v5-c-text-input-group__icon {
+  .chr-c-all-services-filter .pf-v6-c-text-input-group__icon {
     display: none;
   }
   .chr-c-icon-filter {
-    position: absolute;
-    padding-left: 10px;
-    padding-top: 34px;
+    margin-right: -28px;
+    padding-top: 18px;
     z-index: 2;
   }
   .chr-c-all-services-filter {
     max-width: 300px;
   }
-  .pf-v5-l-gallery {
+  .pf-v6-l-gallery {
     column-count: auto;
     column-width: 330px;
   }
-  .pf-v5-c-card {
+  .pf-v6-c-card {
     overflow: hidden;
     break-inside: avoid-column;
     .chr-c-icon-not-favorited {
@@ -26,7 +26,7 @@
     }
   }
 
-  @media screen and (max-width: $pf-v5-global--breakpoint--md) {
+  @media screen and (max-width: $pf-v6-global--breakpoint--md) {
     .chr-c-all-services-filter {
       max-width: 100%;
       width: 100%;

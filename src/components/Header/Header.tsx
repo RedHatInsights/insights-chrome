@@ -3,21 +3,22 @@ import ReactDOM from 'react-dom';
 import { useFlag } from '@unleash/proxy-client-react';
 import Tools from './Tools';
 import UnAuthtedHeader from './UnAuthtedHeader';
-import { MastheadBrand, MastheadContent, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { MastheadBrand, MastheadContent, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import ContextSwitcher from '../ContextSwitcher';
 import Feedback from '../Feedback';
 import Activation from '../Activation';
 import Logo from './Logo';
 import ChromeLink from '../ChromeLink';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DeepRequired } from 'utility-types';
 
 import './Header.scss';
 import { activationRequestURLs } from '../../utils/consts';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
-import Breadcrumbs, { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
+import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 
@@ -58,9 +59,7 @@ const MemoizedHeader = memo(
   }) => {
     const search = new URLSearchParams(window.location.search).keys().next().value;
     const isActivationPath = activationRequestURLs.includes(search);
-    const { pathname } = useLocation();
-    const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
-    const { md, lg } = useWindowWidth();
+    const { md } = useWindowWidth();
     const [searchOpen, setSearchOpen] = useState(false);
     const hideAllServices = (isOpen: boolean) => {
       setSearchOpen(isOpen);
@@ -69,21 +68,26 @@ const MemoizedHeader = memo(
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
+    const { hideNav, isNavOpen, setIsNavOpen } = breadcrumbsProps || {};
+
+    const rootElementClasses = Array.from(document?.documentElement?.classList);
+    const theme = rootElementClasses.includes('pf-v6-theme-dark') ? 'dark' : 'light';
+
     return (
       <Fragment>
-        <MastheadMain className="pf-v5-u-pl-lg pf-v5-u-pt-0 pf-v5-u-pb-xs">
-          <MastheadBrand className="pf-v5-u-flex-shrink-0 pf-v5-u-mr-lg" component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
-            <Logo />
+        <MastheadMain>
+          {!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}
+          <MastheadBrand data-codemods>
+            <MastheadLogo
+              data-codemods
+              className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg"
+              component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
+            >
+              <Logo theme={theme} />
+            </MastheadLogo>
           </MastheadBrand>
-          <Toolbar isFullHeight>
-            <ToolbarContent>
-              <ToolbarGroup className="pf-v5-m-icon-button-group pf-v5-u-ml-auto" widget-type="InsightsToolbar" visibility={{ '2xl': 'hidden' }}>
-                {!lg && <HeaderTools />}
-              </ToolbarGroup>
-            </ToolbarContent>
-          </Toolbar>
         </MastheadMain>
-        <MastheadContent className="pf-v5-u-mx-md pf-v5-u-mx-0-on-2xl">
+        <MastheadContent className="pf-v6-u-mx-md pf-v6-u-mx-0-on-2xl">
           {orgId && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
           {userReady && isActivationPath && (
             <Activation
@@ -100,31 +104,28 @@ const MemoizedHeader = memo(
               <ToolbarGroup variant="filter-group">
                 {userReady && <ToolbarItem> {!(!md && searchOpen) && <AllServicesDropdown />} </ToolbarItem>}
                 {userReady && !isITLess && (
-                  <ToolbarItem className="pf-v5-m-hidden pf-v5-m-visible-on-xl">
+                  <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
               </ToolbarGroup>
-              <ToolbarGroup className="pf-v5-u-flex-grow-1 pf-v5-u-mr-0 pf-v5-u-mr-0-on-2xl" variant="filter-group">
-                <Suspense fallback={null}>
-                  <SearchInput onStateChange={hideAllServices} />
-                </Suspense>
-              </ToolbarGroup>
-              <ToolbarGroup
-                className="pf-v5-m-icon-button-group pf-v5-u-ml-auto pf-v5-u-mr-0"
-                visibility={{ default: 'hidden', '2xl': 'visible' }}
-                widget-type="InsightsToolbar"
-              >
-                {lg && <HeaderTools />}
+              <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
+                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm" variant="filter-group">
+                  <Suspense fallback={null}>
+                    <SearchInput onStateChange={hideAllServices} />
+                  </Suspense>
+                </ToolbarGroup>
+                <ToolbarGroup
+                  className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0"
+                  widget-type="InsightsToolbar"
+                  gap={{ default: 'gapSm' }}
+                >
+                  <HeaderTools />
+                </ToolbarGroup>
               </ToolbarGroup>
             </ToolbarContent>
           </Toolbar>
         </MastheadContent>
-        {noBreadcrumb && (
-          <ToolbarGroup className="chr-c-breadcrumbs__group">
-            <Breadcrumbs {...breadcrumbsProps} />
-          </ToolbarGroup>
-        )}
       </Fragment>
     );
   }

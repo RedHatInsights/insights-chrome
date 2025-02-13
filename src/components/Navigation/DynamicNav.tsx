@@ -59,7 +59,7 @@ const HookedNavigation = ({ useNavigation, dynamicNav, pathname, ...props }: Dyn
   ) : (
     <NavItem preventDefault>
       <a href="#">
-        <Skeleton size={SkeletonSize.lg} isDark />
+        <Skeleton size={SkeletonSize.lg} isDark={Array.from(document?.documentElement?.classList).includes('pf-v6-theme-dark')} />
       </a>
     </NavItem>
   );

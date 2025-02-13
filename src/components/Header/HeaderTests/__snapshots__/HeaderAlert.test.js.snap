@@ -2,17 +2,17 @@
 
 exports[`HeaderAlert should render correctly dismissable 1`] = `
 <div
-  class="pf-v5-c-alert pf-m-info chr-c-alert"
+  class="pf-v6-c-alert pf-m-info chr-c-alert"
   data-ouia-component-id="OUIA-Generated-Alert-info-2"
-  data-ouia-component-type="PF5/Alert"
+  data-ouia-component-type="PF6/Alert"
   data-ouia-safe="true"
 >
   <div
-    class="pf-v5-c-alert__icon"
+    class="pf-v6-c-alert__icon"
   >
     <svg
       aria-hidden="true"
-      class="pf-v5-svg"
+      class="pf-v6-svg"
       fill="currentColor"
       height="1em"
       role="img"
@@ -25,40 +25,44 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
     </svg>
   </div>
   <h4
-    class="pf-v5-c-alert__title"
+    class="pf-v6-c-alert__title"
   >
     <span
-      class="pf-v5-screen-reader"
+      class="pf-v6-screen-reader"
     >
       Info alert:
     </span>
     test
   </h4>
   <div
-    class="pf-v5-c-alert__action"
+    class="pf-v6-c-alert__action"
   >
     <button
       aria-disabled="false"
       aria-label="Close Info alert: alert: test"
-      class="pf-v5-c-button pf-m-plain"
+      class="pf-v6-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-2"
-      data-ouia-component-type="PF5/Button"
+      data-ouia-component-type="PF6/Button"
       data-ouia-safe="true"
       type="button"
     >
-      <svg
-        aria-hidden="true"
-        class="pf-v5-svg"
-        fill="currentColor"
-        height="1em"
-        role="img"
-        viewBox="0 0 352 512"
-        width="1em"
+      <span
+        class="pf-v6-c-button__icon"
       >
-        <path
-          d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-        />
-      </svg>
+        <svg
+          aria-hidden="true"
+          class="pf-v6-svg"
+          fill="currentColor"
+          height="1em"
+          role="img"
+          viewBox="0 0 352 512"
+          width="1em"
+        >
+          <path
+            d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+          />
+        </svg>
+      </span>
     </button>
   </div>
 </div>
@@ -66,17 +70,17 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
 
 exports[`HeaderAlert should render correctly not dismissable 1`] = `
 <div
-  class="pf-v5-c-alert pf-m-info chr-c-alert"
+  class="pf-v6-c-alert pf-m-info chr-c-alert"
   data-ouia-component-id="OUIA-Generated-Alert-info-1"
-  data-ouia-component-type="PF5/Alert"
+  data-ouia-component-type="PF6/Alert"
   data-ouia-safe="true"
 >
   <div
-    class="pf-v5-c-alert__icon"
+    class="pf-v6-c-alert__icon"
   >
     <svg
       aria-hidden="true"
-      class="pf-v5-svg"
+      class="pf-v6-svg"
       fill="currentColor"
       height="1em"
       role="img"
@@ -89,40 +93,44 @@ exports[`HeaderAlert should render correctly not dismissable 1`] = `
     </svg>
   </div>
   <h4
-    class="pf-v5-c-alert__title"
+    class="pf-v6-c-alert__title"
   >
     <span
-      class="pf-v5-screen-reader"
+      class="pf-v6-screen-reader"
     >
       Info alert:
     </span>
     test
   </h4>
   <div
-    class="pf-v5-c-alert__action"
+    class="pf-v6-c-alert__action"
   >
     <button
       aria-disabled="false"
       aria-label="Close Info alert: alert: test"
-      class="pf-v5-c-button pf-m-plain"
+      class="pf-v6-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-1"
-      data-ouia-component-type="PF5/Button"
+      data-ouia-component-type="PF6/Button"
       data-ouia-safe="true"
       type="button"
     >
-      <svg
-        aria-hidden="true"
-        class="pf-v5-svg"
-        fill="currentColor"
-        height="1em"
-        role="img"
-        viewBox="0 0 352 512"
-        width="1em"
+      <span
+        class="pf-v6-c-button__icon"
       >
-        <path
-          d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-        />
-      </svg>
+        <svg
+          aria-hidden="true"
+          class="pf-v6-svg"
+          fill="currentColor"
+          height="1em"
+          role="img"
+          viewBox="0 0 352 512"
+          width="1em"
+        >
+          <path
+            d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+          />
+        </svg>
+      </span>
     </button>
   </div>
 </div>

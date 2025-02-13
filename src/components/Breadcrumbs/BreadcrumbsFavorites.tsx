@@ -64,18 +64,21 @@ const BreadcrumbsFavorites = ({
       variant="plain"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      className="pf-v5-u-pt-xs pf-v5-u-text-nowrap"
-    >
-      <Icon
-        className={classNames('chr-c-breadcrumbs__favorite', {
-          isFavorited,
-        })}
-        isInline
-      >
-        <StarIcon />
-      </Icon>
-      <CaretDownIcon className="pf-v5-u-ml-sm" />
-    </MenuToggle>
+      className="pf-v6-u-pt-xs pf-v6-u-text-nowrap"
+      icon={
+        <>
+          <Icon
+            className={classNames('chr-c-breadcrumbs__favorite', {
+              isFavorited,
+            })}
+            isInline
+          >
+            <StarIcon />
+          </Icon>
+          <CaretDownIcon className="pf-v6-u-ml-sm" />
+        </>
+      }
+    />
   );
 
   const menu = (

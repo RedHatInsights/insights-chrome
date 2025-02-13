@@ -99,7 +99,7 @@ describe('<CrossRequestNotifier />', () => {
     });
     cy.mount(<Wrapper />);
     cy.contains('View request').should('exist');
-    cy.get('.pf-v5-c-alert__action').click();
+    cy.get('.pf-v6-c-alert__action').click();
     cy.contains('View request').should('not.exist');
   });
 

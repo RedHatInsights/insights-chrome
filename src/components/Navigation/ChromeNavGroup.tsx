@@ -15,7 +15,7 @@ const ChromeNavGroup = ({ navItems, isHidden, icon, title }: ChromeNavGroupProps
   const groupTitle = (
     <div>
       {icon && (
-        <Icon size="sm" className="pf-v5-u-mr-sm" isInline>
+        <Icon size="sm" className="pf-v6-u-mr-sm" isInline>
           {sectionTitleMapper[icon]}
         </Icon>
       )}

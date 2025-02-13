@@ -1,7 +1,7 @@
 .chr-c-beta-switcher {
-    background-color: var(--pf-v5-global--BackgroundColor--dark-400);
+    background-color: var(--pf-t--global--background--color--inverse--default);
     transition: background-color 0.3s;
     &.active {
-        background-color: var(--pf-v5-global--palette--blue-200);
+        background-color: var(--pf-t--global--color--brand--clicked);
     }
 }

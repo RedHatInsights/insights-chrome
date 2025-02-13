@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
-import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { CogIcon } from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import { useSetAtom } from 'jotai';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
@@ -16,9 +16,9 @@ const BetaSwitcherDropdown = () => {
   };
 
   const description = (
-    <Text component="small">
+    <Content component="small">
       You can enable &quot;Preview&quot; from the Settings menu <CogIcon /> at any time.
-    </Text>
+    </Content>
   );
 
   return (
@@ -31,15 +31,14 @@ const BetaSwitcherDropdown = () => {
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
-          className="pf-v5-u-color-light-100 pf-v5-u-pt-0 pf-v5-u-pb-0"
+          className="pf-v6-u-icon-color-inverse pf-v6-u-pt-0 pf-v6-u-pb-0"
           ref={toggleRef}
           aria-label="hide preview banner"
           variant="plain"
           onClick={onToggleClick}
           isExpanded={isOpen}
-        >
-          <EllipsisVIcon />
-        </MenuToggle>
+          icon={<EllipsisVIcon />}
+        />
       )}
       shouldFocusToggleOnSelect
     >
