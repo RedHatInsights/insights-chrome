@@ -34,7 +34,7 @@ const commonConfig = ({ dev }) => {
         }
       : path.resolve(__dirname, '../src/index.ts'),
     output: {
-      path: path.resolve(__dirname, '../build/js'),
+      path: path.resolve(__dirname, '../dist/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
       filename: dev ? '[name].js' : 'chrome-root.[contenthash].js',
       hashFunction: 'xxhash64',
@@ -192,7 +192,7 @@ const pfConfig = {
     'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
   },
   output: {
-    path: path.resolve(__dirname, '../build/js/pf'),
+    path: path.resolve(__dirname, '../dist/js/pf'),
     // the HMR needs dynamic entry filename to remove name conflicts
     filename: '[name].js',
     publicPath: `auto`,
