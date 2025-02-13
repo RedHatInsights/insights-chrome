@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
 import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup } from '../AllServices/allServicesLinks';
 import AllServicesGalleryLink from './AllServicesGalleryLink';
 import AllServicesGallerySection from './AllServicesGallerySection';
@@ -21,11 +20,9 @@ const AllServicesGallery = ({ selectedService }: AllServicesGalleryProps) => {
   });
   return (
     <Fragment>
-      <Gallery hasGutter>
-        {links.map((link, index) => (
-          <AllServicesGalleryLink key={index} category={titleToId(selectedService.title)} {...link} />
-        ))}
-      </Gallery>
+      {links.map((link, index) => (
+        <AllServicesGalleryLink key={index} category={titleToId(selectedService.title)} {...link} />
+      ))}
       {sections.map((section, index) => (
         <AllServicesGallerySection key={index} category={titleToId(selectedService.title)} {...section} />
       ))}
