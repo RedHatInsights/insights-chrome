@@ -3,14 +3,12 @@ import React, { useContext } from 'react';
 import { NotificationDrawer } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
 
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-
-import { getSharedScope } from '@scalprum/core';
+import { useNotificationsScope } from './NotificationsScope';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;
   toggleDrawer: () => void;
 };
-const NOTIF_DRAWER_MODULE = '@notif-module/drawer';
 
 const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer }) => {
   const auth = useContext(ChromeAuthContext);
@@ -21,7 +19,8 @@ const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer })
     toggleDrawer: toggleDrawer,
   };
 
-  const { DrawerPanel } = getSharedScope()[NOTIF_DRAWER_MODULE]['1.0.0'].get();
+  const scope = useNotificationsScope();
+  const DrawerPanel = scope?.DrawerPanel;
 
   return (
     <NotificationDrawer ref={panelRef} {...notificationProps}>
