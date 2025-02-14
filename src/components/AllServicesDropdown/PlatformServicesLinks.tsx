@@ -1,22 +1,48 @@
 import React from 'react';
 import ChromeLink from '../ChromeLink';
+import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
+
+import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
+import OpenShiftIcon from '../AllServicesDropdown/icon-openshift';
+import RhelIcon from '../AllServicesDropdown/icon-rhel';
 
 const PlatformServiceslinks = () => {
   return (
     <>
-      <ChromeLink
-        href="/ansible"
-        className="pf-v6-u-pl-md pf-v6-u-pb-sm pf-v6-u-pr-md pf-v6-u-text-nowrap"
-        data-ouia-component-id="AllServices-Dropdown-Ansible"
-      >
-        Red Hat Ansible Automation Platform
-      </ChromeLink>
-      <ChromeLink href="/insights" className="pf-v6-u-pl-md pf-v6-u-pb-sm" data-ouia-component-id="AllServices-Dropdown-RHEL">
-        Red Hat Enterprise Linux
-      </ChromeLink>
-      <ChromeLink href="/openshift/overview" className="pf-v6-u-pl-md pf-v6-u-pb-sm" data-ouia-component-id="AllServices-Dropdown-Openshift">
-        Red Hat OpenShift
-      </ChromeLink>
+      <Split className="pf-v6-u-pl-lg pf-v6-u-mb-0">
+        <SplitItem>
+          <AnsibleIcon />
+        </SplitItem>
+        <SplitItem className="pf-v6-u-pt-xs">
+          <ChromeLink href="/ansible" data-ouia-component-id="AllServices-Dropdown-Ansible" className="pf-v6-u-pl-sm chr-m-plain">
+            Red Hat Ansible Automation Platform
+          </ChromeLink>
+        </SplitItem>
+      </Split>
+      <Split className="pf-v6-u-pl-lg pf-v6-u-mb-0">
+        <SplitItem>
+          <RhelIcon />
+        </SplitItem>
+        <SplitItem>
+          <ChromeLink href="/insights" data-ouia-component-id="AllServices-Dropdown-RHEL" className="pf-v6-u-pl-sm chr-m-plain">
+            Red Hat Enterprise Linux
+          </ChromeLink>
+        </SplitItem>
+      </Split>
+      <Split className="pf-v6-u-pl-lg pf-v6-u-mb-0">
+        <SplitItem>
+          <OpenShiftIcon />
+        </SplitItem>
+        <SplitItem className="pf-v6-u-pt-xs">
+          <ChromeLink
+            href="/openshift/overview"
+            data-ouia-component-id="AllServices-Dropdown-Openshift"
+            className="pf-v6-u-pl-sm pf-v6-u-pt-xs chr-m-plain"
+          >
+            Red Hat OpenShift
+          </ChromeLink>
+        </SplitItem>
+      </Split>
     </>
   );
 };
