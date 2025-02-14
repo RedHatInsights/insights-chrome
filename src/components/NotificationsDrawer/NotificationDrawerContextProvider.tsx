@@ -13,7 +13,7 @@ interface NotificationDrawerContextProviderProps {
 }
 
 export const NotificationDrawerContextProvider: React.FC<NotificationDrawerContextProviderProps> = ({ children }) => {
-  const [NotificationDrawerContext, setNotificationDrawerContext] = useState<React.FC | null>(null);
+  const [NotificationDrawerContext, setNotificationDrawerContext] = useState<React.FC<NotificationDrawerContextProviderProps> | null>(null);
   const setisNotificationsDrawerScopeReady = useSetAtom(notificationDrawerScopeReadyAtom);
 
   useEffect(() => {
@@ -35,5 +35,5 @@ export const NotificationDrawerContextProvider: React.FC<NotificationDrawerConte
     return <>{children}</>;
   }
 
-  return React.createElement(NotificationDrawerContext, null, children);
+  return <NotificationDrawerContext>{children}</NotificationDrawerContext>;
 };
