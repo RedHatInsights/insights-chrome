@@ -8,7 +8,7 @@ import {
   isAllServicesGroup,
   isAllServicesLink,
 } from '../components/AllServices/allServicesLinks';
-import { getChromeStaticPathname } from '../utils/common';
+import { GENERATED_SEARCH_FLAG, getChromeStaticPathname } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 
 export type AvailableLinks = {
@@ -109,6 +109,9 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   return groupQue;
 };
 
+const generatedServicesEnabled = localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true';
+const GENERATED_SERVICES_PATH = '/api/chrome-service/v1/static/service-tiles-generated.json';
+
 const useAllServices = () => {
   const [{ ready, error, availableSections }, setState] = useState<{
     error: boolean;
@@ -122,7 +125,7 @@ const useAllServices = () => {
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
   const fetchSections = useCallback(async () => {
-    const query = `${getChromeStaticPathname('services')}/services-generated.json`;
+    const query = generatedServicesEnabled ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
     let request = allServicesFetchCache[query];
     if (!request) {
       request = axios.get<

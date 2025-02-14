@@ -3,7 +3,7 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import ChromeLink from '../ChromeLink';
@@ -26,35 +26,36 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
   const { unfavoritePage } = useFavoritePagesWrapper();
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
-      <Card className="chr-c-link-favorite-card" isFlat isFullHeight isSelectableRaised>
-        <CardBody className="pf-v5-u-p-md">
+      <Card className="chr-c-link-favorite-card" isFullHeight>
+        <CardBody className="pf-v6-u-p-md">
           <Split>
-            <SplitItem className="pf-v5-m-fill">{name}</SplitItem>
+            <SplitItem className="pf-v6-m-fill">{name}</SplitItem>
             <SplitItem>
               <Button
+                icon={
+                  <Icon className="pf-v6-u-ml-sm chr-c-icon-star">
+                    <StarIcon />
+                  </Icon>
+                }
                 onClick={(e) => {
                   // do not trigger click events on the the parent elements
                   e.stopPropagation();
                   e.preventDefault();
                   unfavoritePage(pathname);
                 }}
-                className="pf-v5-u-p-0"
+                className="pf-v6-u-p-0"
                 variant="plain"
-              >
-                <Icon className="pf-v5-u-ml-sm chr-c-icon-star">
-                  <StarIcon />
-                </Icon>
-              </Button>
+              />
             </SplitItem>
           </Split>
-          <TextContent>
-            <Text component="small">{bundle}</Text>
+          <Content>
+            <Content component="small">{bundle}</Content>
             {description ? (
-              <Text component="small" className="pf-v5-u-color-100">
+              <Content component="small" className="pf-v6-u-color-100">
                 {description}
-              </Text>
+              </Content>
             ) : null}
-          </TextContent>
+          </Content>
         </CardBody>
       </Card>
     </ChromeLink>

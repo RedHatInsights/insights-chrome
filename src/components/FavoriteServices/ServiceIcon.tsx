@@ -12,6 +12,7 @@ import QuayIoIcon from '../AllServicesDropdown/icon-quay-io';
 import RHIcon from '../AllServicesDropdown/icon-rh';
 import ServicesIcon from '../AllServicesDropdown/icon-services';
 import SubscriptionsIcon from '../AllServicesDropdown/icon-subscriptions';
+import TrustedArtifactIcon from '../AllServicesDropdown/icon-trusted-artifact';
 import TrustedContentIcon from '../AllServicesDropdown/icon-trusted-content';
 import BoxesIcon from '@patternfly/react-icons/dist/dynamic/icons/boxes-icon';
 import ChartLineIcon from '@patternfly/react-icons/dist/dynamic/icons/chart-line-icon';
@@ -44,6 +45,7 @@ export enum FavorableIcons {
   RHIcon = 'RHIcon',
   ServicesIcon = 'ServicesIcon',
   SubscriptionsIcon = 'SubscriptionsIcon',
+  TrustedArtifactIcon = 'TrustedArtifactIcon',
   TrustedContentIcon = 'TrustedContentIcon',
   PlaceholderIcon = 'PlaceholderIcon',
   CloudUploadAltIcon = 'CloudUploadAltIcon',
@@ -76,6 +78,7 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   RHIcon,
   ServicesIcon,
   SubscriptionsIcon,
+  TrustedArtifactIcon,
   TrustedContentIcon,
   PlaceholderIcon,
   CloudUploadAltIcon,
