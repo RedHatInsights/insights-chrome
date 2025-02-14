@@ -2,7 +2,6 @@ import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
-// import { getModule, getSharedScope } from '@scalprum/core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebar } from '@patternfly/react-core/dist/dynamic/components/Page';
@@ -13,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
@@ -26,12 +25,10 @@ import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
-// import VirtualAssistant from '../components/Routes/VirtualAssistant';
-import { notificationDrawerExpandedAtom, notificationDrawerScopeReadyAtom } from '../state/atoms/notificationDrawerAtom';
-// import { ITLess } from '../utils/common';
+import VirtualAssistant from '../components/Routes/VirtualAssistant';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
+import { ITLess } from '../utils/common';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
-import { NotificationDrawerContextProvider } from '../components/NotificationsDrawer/NotificationDrawerContextProvider';
-import { InitializeNotificaionDrawerState } from '../components/NotificationsDrawer/InitializeNotificationDrawerState';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -52,8 +49,6 @@ type DefaultLayoutProps = {
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
   const drawerPanelRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line no-unsafe-optional-chaining
-  const isNotificationsDrawerScopeReady = useAtomValue(notificationDrawerScopeReadyAtom);
   useEffect(() => {
     if (drawerPanelRef.current !== null) {
       focusDrawer();
@@ -78,12 +73,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
-  useEffect(() => {
-    if (drawerPanelRef.current !== null) {
-      focusDrawer();
-    }
-  }, []);
-
   return (
     <Page
       className={
@@ -104,7 +93,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       }
       {...(isNotificationsEnabled && {
         onNotificationDrawerExpand: focusDrawer,
-        notificationDrawer: isNotificationsDrawerScopeReady && <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
+        notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
         isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
       })}
       sidebar={
@@ -119,7 +108,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
             )
       }
     >
-      <InitializeNotificaionDrawerState />
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
         {selectedAccountNumber && (
@@ -128,7 +116,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           </div>
         )}
         <RedirectBanner />
-        {/* {ITLess() ? null : <VirtualAssistant />} */}
+        {ITLess() ? null : <VirtualAssistant />}
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         {Footer}
       </div>
@@ -179,17 +167,15 @@ const ShieldedRoot = memo(
     const hasBanner = false; // Update this later when we use feature flags
 
     return (
-      <NotificationDrawerContextProvider>
-        <DefaultLayout
-          setIsNavOpen={setIsNavOpen}
-          hideNav={hideNav}
-          isNavOpen={isNavOpen}
-          hasBanner={hasBanner}
-          selectedAccountNumber={selectedAccountNumber}
-          Sidebar={Sidebar}
-          Footer={Footer}
-        />
-      </NotificationDrawerContextProvider>
+      <DefaultLayout
+        setIsNavOpen={setIsNavOpen}
+        hideNav={hideNav}
+        isNavOpen={isNavOpen}
+        hasBanner={hasBanner}
+        selectedAccountNumber={selectedAccountNumber}
+        Sidebar={Sidebar}
+        Footer={Footer}
+      />
     );
   },
   (prevProps, nextProps) => isEqual(prevProps, nextProps)

@@ -36,6 +36,7 @@ import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/act
 import BetaSwitcher from '../BetaSwitcher';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { useNotificationDrawerStore } from '../NotificationsDrawer/useNotificationDrawerStore';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -46,6 +47,7 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
 
 const ScalprumRoot = memo(
   () => {
+    useNotificationDrawerStore();
     return (
       <ChromeProvider>
         <BetaSwitcher />
