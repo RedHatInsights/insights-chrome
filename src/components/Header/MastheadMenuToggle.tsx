@@ -3,7 +3,7 @@ import { MastheadToggle } from '@patternfly/react-core/dist/dynamic/components/M
 import { PageToggleButton } from '@patternfly/react-core/dist/dynamic/components/Page';
 import BarsIcon from '@patternfly/react-icons/dist/dynamic/icons/bars-icon';
 import { useDispatch } from 'react-redux';
-import { onToggle } from '../../redux/actions';
+import { onToggle } from '../../state/actions/globalFilterActions';
 
 const MastheadMenuToggle = ({
   isNavOpen,
