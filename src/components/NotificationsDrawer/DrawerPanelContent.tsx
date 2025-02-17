@@ -22,7 +22,7 @@ const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer })
   const { DrawerPanel } = useNotificationsScope();
 
   return (
-    <NotificationDrawer ref={panelRef} {...notificationProps}>
+    <NotificationDrawer ref={panelRef}>
       <DrawerPanel {...notificationProps} />
     </NotificationDrawer>
   );
