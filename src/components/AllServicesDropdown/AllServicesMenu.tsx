@@ -6,10 +6,10 @@ import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/St
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
-import { Text, TextContent, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { useAtomValue } from 'jotai';
+import classNames from 'classnames';
 
-import ChromeLink from '../ChromeLink';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
@@ -18,6 +18,7 @@ import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import QuickAccess from '../FavoriteServices/QuickAccess';
 import { AllServicesDropdownContext } from './common';
+import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -34,6 +35,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [selectedService, setSelectedService] = React.useState<AllServicesSection>(linkSections[0]);
+  const hideBanner = useAtomValue(hidePreviewBannerAtom);
 
   // Toggle currently active tab
   const handleTabClick = (event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent, tabIndex: string | number) => {
@@ -71,26 +73,19 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     >
       <div
         ref={menuRef}
-        className="pf-v5-u-w-100 chr-c-page__services-nav-dropdown-menu"
+        className={classNames('pf-v6-u-w-100 chr-c-page__services-nav-dropdown-menu', {
+          'preview-offset': !hideBanner,
+        })}
         data-testid="chr-c__find-app-service"
         onClick={handleClickOutside}
       >
         <Backdrop>
-          <Panel variant="raised" className="pf-v5-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
+          <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
             <PanelMain>
               <Sidebar>
                 <SidebarPanel>
                   <Stack>
-                    <StackItem className="chr-l-stack__item-browse-all-services pf-v5-u-w-100 pf-v5-u-p-md">
-                      <TextContent className="pf-v5-u-text-align-center-on-md pf-v5-u-pl-sm pf-v5-u-pl-0-on-md">
-                        <Text component={TextVariants.p}>
-                          <ChromeLink href="/allservices">
-                            <Button isBlock>All services</Button>
-                          </ChromeLink>
-                        </Text>
-                      </TextContent>
-                    </StackItem>
-                    <StackItem className="pf-v5-u-w-100">
+                    <StackItem className="pf-v6-u-w-100">
                       <AllServicesTabs
                         activeTabKey={activeTabKey}
                         handleTabClick={handleTabClick}
@@ -109,12 +104,10 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     <CardHeader
                       actions={{
                         actions: [
-                          <Button key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)}>
-                            <TimesIcon />
-                          </Button>,
+                          <Button icon={<TimesIcon />} key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)} />,
                         ],
                       }}
-                      className="pf-v5-u-pr-xs pf-v5-u-pr-md-on-md"
+                      className="pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
                     >
                       <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
                     </CardHeader>

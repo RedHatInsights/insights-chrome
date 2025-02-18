@@ -69,7 +69,7 @@ describe('useQuickstartsStates stage', () => {
     const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
-      const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
+      const { result: resultInternal } = renderHook(() => useQuickstartsStates('123'), { wrapper });
       result = resultInternal;
     });
 
@@ -96,7 +96,7 @@ describe('useQuickstartsStates stage', () => {
     const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
-      const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
+      const { result: resultInternal } = renderHook(() => useQuickstartsStates('123'), { wrapper });
       result = resultInternal;
     });
 
