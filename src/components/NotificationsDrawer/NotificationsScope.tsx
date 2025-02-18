@@ -20,7 +20,6 @@ export const useNotificationsScope = (): {
   DrawerPanel: React.ComponentType<React.PropsWithChildren<Record<string, any>>>;
   useNotificationDrawer: () => void;
   initialize: (mounted: boolean, permissions: Access[]) => Promise<void>;
-  getState: () => { notificationData: { read?: boolean }[] };
 } => {
   const isNotificationsDrawerScopeReady = useAtomValue(notificationDrawerScopeReadyAtom);
 
@@ -29,9 +28,8 @@ export const useNotificationsScope = (): {
       DrawerPanel: () => <Spinner centered />,
       useNotificationDrawer: () => {},
       initialize: async () => Promise.resolve(),
-      getState: () => ({ notificationData: [] }),
     };
   }
-  const { DrawerPanel, useNotificationDrawer, initialize, getState } = getNotificationsScope();
-  return { DrawerPanel, useNotificationDrawer, initialize, getState };
+  const { DrawerPanel, useNotificationDrawer, initialize } = getNotificationsScope();
+  return { DrawerPanel, useNotificationDrawer, initialize };
 };

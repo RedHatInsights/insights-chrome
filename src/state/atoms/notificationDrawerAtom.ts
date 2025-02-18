@@ -28,7 +28,6 @@ export const notificationDrawerExpandedAtom = atom(false);
 export const notificationDrawerDataAtom = atom<NotificationData[]>([]);
 export const notificationDrawerCountAtom = atom(0);
 export const notificationDrawerFilterAtom = atom<string[]>([]);
-export const notificationDrawerUnreadAtom = atom(false);
 export const updateNotificationsStatusAtom = atom(null, (_get, set, read: boolean = false) => {
   set(notificationDrawerDataAtom, (prev) => prev.map((notification) => ({ ...notification, read })));
 });
