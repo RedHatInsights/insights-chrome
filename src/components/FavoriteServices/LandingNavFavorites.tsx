@@ -54,7 +54,7 @@ const LandingNavFavorites = () => {
               </Icon>
               My favorite services
             </Content>
-            <Content component={ContentVariants.p} className="pf-v6-u-display-inline">
+            <Content ouiaId="FavoritesViewAllServicesButton" component={ContentVariants.p} className="pf-v6-u-display-inline">
               <Link to="/allservices">View all services</Link>
             </Content>
           </Content>
