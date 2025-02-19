@@ -236,15 +236,19 @@ const Tools = () => {
   const toggleDrawer = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
-  const notificationsDrawerBellProps = {
-    isNotificationDrawerExpanded: isNotificationDrawerExpanded,
-    toggleDrawer: toggleDrawer,
-  };
 
   return (
     <>
       {isNotificationsEnabled && (
-        <ScalprumComponent scope="notifications" module="./NotificationsDrawerBell" fallback={null} {...notificationsDrawerBellProps} />
+        <ScalprumComponent
+          scope="notifications"
+          module="./NotificationsDrawerBell"
+          fallback={null}
+          {...{
+            isNotificationDrawerExpanded: isNotificationDrawerExpanded,
+            toggleDrawer: toggleDrawer,
+          }}
+        />
       )}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>

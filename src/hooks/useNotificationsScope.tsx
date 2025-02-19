@@ -3,7 +3,7 @@ import { getSharedScope } from '@scalprum/core';
 import { useAtomValue } from 'jotai';
 import { Access } from '@redhat-cloud-services/rbac-client';
 
-import { notificationDrawerScopeReadyAtom } from '../../state/atoms/notificationDrawerAtom';
+import { notificationDrawerScopeReadyAtom } from '../state/atoms/notificationDrawerAtom';
 import Spinner from '@redhat-cloud-services/frontend-components/Spinner';
 
 export const NOTIF_DRAWER_MODULE = '@notif-module/drawer';

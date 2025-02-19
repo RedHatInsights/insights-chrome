@@ -36,7 +36,7 @@ import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/act
 import BetaSwitcher from '../BetaSwitcher';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
-import { useNotificationDrawerStore } from '../NotificationsDrawer/useNotificationDrawerStore';
+import { useNotificationDrawerStore } from '../../hooks/useNotificationDrawerStore';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 

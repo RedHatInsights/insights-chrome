@@ -63,7 +63,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       return;
     }
     const tabbableElement = drawerPanelRef.current?.querySelector('[aria-label="Close"], a, button') as HTMLAnchorElement | HTMLButtonElement;
-    console.log(tabbableElement);
     if (tabbableElement) {
       tabbableElement.focus();
     }

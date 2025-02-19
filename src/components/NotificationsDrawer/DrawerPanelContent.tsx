@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { NotificationDrawer } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
 
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useNotificationsScope } from './NotificationsScope';
+import { useNotificationsScope } from '../../hooks/useNotificationsScope';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;

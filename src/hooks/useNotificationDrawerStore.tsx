@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
 import { getModule } from '@scalprum/core';
 import { useSetAtom } from 'jotai';
-import InternalChromeContext from '../../utils/internalChromeContext';
-import { notificationDrawerScopeReadyAtom } from '../../state/atoms/notificationDrawerAtom';
-import { getNotificationsScope } from './NotificationsScope';
+import InternalChromeContext from '../utils/internalChromeContext';
+import { notificationDrawerScopeReadyAtom } from '../state/atoms/notificationDrawerAtom';
+import { getNotificationsScope } from './useNotificationsScope';
 
 export const useNotificationDrawerStore = () => {
   const { getUserPermissions } = useContext(InternalChromeContext);
