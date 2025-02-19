@@ -46,7 +46,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
         <SplitItem className="pf-v6-u-pt-sm" isFilled>
           {title}
         </SplitItem>
-        <SplitItem className="pf-v6-u-mt-md">
+        <SplitItem className="pf-v6-u-mt-sm">
           {isExternal ? (
             <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
               <ExternalLinkAltIcon />
