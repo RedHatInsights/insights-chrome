@@ -1,6 +1,4 @@
 import React from 'react';
-import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
 
 import ServiceTile, { ServiceTileProps } from './ServiceTile';

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
-import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 
@@ -13,15 +12,13 @@ import ChromeLink from '../ChromeLink';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 import { AllServicesDropdownContext } from './common';
-import ServiceIcon from '../FavoriteServices/ServiceIcon';
 import { titleToId } from '../../utils/common';
 
 export type AllServicesGalleryLinkProps = AllServicesLinkProps;
 
-const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, category, group }: AllServicesGalleryLinkProps) => {
+const AllServicesGalleryLink = ({ href, title, description, isExternal, category, group }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
   const { onLinkClick } = useContext(AllServicesDropdownContext);
-  const TitleIcon = icon ? <ServiceIcon icon={icon} /> : null;
 
   const handleFavoriteToggle = (pathname: string, favorite?: boolean) => {
     if (favorite) {

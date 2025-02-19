@@ -1,5 +1,4 @@
-import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import { Content } from '@patternfly/react-core/dist/dynamic/components/content';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 
 import React from 'react';

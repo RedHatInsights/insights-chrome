@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
-import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
@@ -11,7 +10,6 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
 
-import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
