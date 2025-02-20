@@ -68,7 +68,7 @@ describe('ToolbarToggle', () => {
     for (const item of expectedTexts) {
       expect(screen.queryByText(item.title)).not.toBeInTheDocument();
     }
-    // expect(container.querySelectorAll('.pf-v5-c-menu__list-item')).toHaveLength(0);
+    // expect(container.querySelectorAll('.pf-v6-c-menu__list-item')).toHaveLength(0);
   });
 
   it('should call onClick menu item callback', async () => {
@@ -77,7 +77,7 @@ describe('ToolbarToggle', () => {
     await act(async () => {
       await fireEvent.click(toggleButton);
     });
-    const actionButton = container.querySelector('button.pf-v5-c-menu__item');
+    const actionButton = container.querySelector('button.pf-v6-c-menu__item');
     expect(actionButton).toBeTruthy();
     await act(async () => {
       await fireEvent.click(actionButton);

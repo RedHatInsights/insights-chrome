@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import DrawerPanel from '../../../src/components/NotificationsDrawer/DrawerPanelContent';
-import { Page } from '@patternfly/react-core';
+import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { NotificationData, notificationDrawerDataAtom, notificationDrawerExpandedAtom } from '../../../src/state/atoms/notificationDrawerAtom';
 import { useAtom, useSetAtom } from 'jotai';
 
@@ -112,7 +112,7 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 0);
     // select all notifications
-    cy.get('[data-ouia-component-id="BulkSelectCheckbox"]').click();
+    cy.get('[data-ouia-component-id="OUIA-Generated-MenuToggle-5"]').click();
     cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as read
     cy.get('#notifications-actions-toggle').click();
@@ -129,7 +129,7 @@ describe('Notification Drawer', () => {
     cy.get('#drawer-toggle').click();
     cy.get('.pf-m-read').should('have.length', 3);
     // select all notifications
-    cy.get('[data-ouia-component-id="BulkSelectCheckbox"]').click();
+    cy.get('[data-ouia-component-id="OUIA-Generated-MenuToggle-6"]').click();
     cy.get('[data-ouia-component-id="BulkSelectList-select-all"]').click();
     // mark selected as unread
     cy.get('#notifications-actions-toggle').click();
@@ -154,11 +154,11 @@ describe('Notification Drawer', () => {
     cy.mount(<DrawerLayout />);
     cy.get('#populate-notifications').click();
     cy.get('#drawer-toggle').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 3);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 3);
     cy.get('#notifications-filter-toggle').click();
     cy.contains('Console').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 2);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 2);
     cy.contains('Reset filter').click();
-    cy.get('.pf-v5-c-notification-drawer__list-item').should('have.length', 3);
+    cy.get('.pf-v6-c-notification-drawer__list-item').should('have.length', 3);
   });
 });

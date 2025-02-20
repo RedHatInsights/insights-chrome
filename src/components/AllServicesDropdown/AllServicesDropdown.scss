@@ -1,27 +1,36 @@
-@import '~@patternfly/patternfly/sass-utilities/_all';
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
 
 .chr-c-link-service-toggle {
+
   // override menu toggle extra bottom border
-  &.pf-v5-c-menu-toggle::after {
+  &.pf-v6-c-menu-toggle::after {
     border-bottom: none;
   }
-  &.pf-v5-c-menu-toggle:hover::after, &.pf-m-expanded::after {
-    border-bottom: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--info-color--100);
+
+  &.pf-v6-c-menu-toggle:hover::after,
+  &.pf-m-expanded::after {
+    border-bottom: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--border--color--status--info--default);
   }
 }
 
+.platform-icon {
+  width: 24px;
+}
+
 .chr-c-page__services-nav-dropdown-menu {
-  @media screen and (min-width: $pf-v5-global--breakpoint--2xl) {
-    top: 70px;
+  @media screen and (min-width: $pf-v6-global--breakpoint--2xl) {
+    top: 65px;
     height: 100vh;
     &.preview-offset {
       // consider the preview banner
-      top: calc(70px + 32px);
+      top: calc(65px + 32px);
     }
   }
-  @media screen and (max-width: $pf-v5-global--breakpoint--2xl) {
+
+  @media screen and (max-width: $pf-v6-global--breakpoint--2xl) {
     top: 118px;
     height: 100vh;
+
     &.preview-offset {
       // consider the preview banner
       top: calc(118px + 32px);
@@ -31,77 +40,101 @@
   // pos has to be important to override PF styles that get lazy loaded!
   position: absolute !important;
   z-index: 1000;
-  .pf-v5-c-dropdown__menu::before {
+
+  .pf-v6-c-dropdown__menu::before {
     z-index: -1000;
   }
 
   // To not cover the entire screen including masthead
-  .pf-v5-c-backdrop {
+  .pf-v6-c-backdrop {
     position: relative;
   }
-  .pf-v5-c-dropdown__menu {
+
+  .pf-v6-c-dropdown__menu {
     position: relative; // make sure to enable scroll within backdrop
     top: 0;
   }
 }
 
-@media (max-width: $pf-v5-global--breakpoint--md) {
+@media (max-width: $pf-v6-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
-      background: var(--pf-v5-global--BackgroundColor--200);
-      border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
+      background: var(--pf-t--global--background--color--200);
+      border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
-    .pf-v5-c-tabs {
-      background: var(--pf-v5-global--BackgroundColor--200);
-      border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);
+
+    .pf-v6-c-tabs {
+      background: var(--pf-t--global--background--color--200);
+      border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
       height: 100%;
     }
-    .pf-v5-c-sidebar__panel {
-      --pf-v5-l-flex--RowGap: 0;
+
+    .pf-v6-c-sidebar__panel {
+      --pf-v6-l-flex--RowGap: 0;
     }
   }
 }
 
-@media (min-width: $pf-v5-global--breakpoint--md) {
+@media (min-width: $pf-v6-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
-      border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--dark-100);  
+      border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
-    .pf-v5-c-sidebar {
-      --pf-v5-c-sidebar__panel--md--FlexBasis: 20rem;
-      --pf-v5-c-sidebar__panel--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
+
+    .pf-v6-c-sidebar {
+      --pf-v6-c-sidebar__panel--md--FlexBasis: 20rem;
+
       &__main {
-        height: 770px;
+        height: 810px;
       }
+
       &__content {
-        height: 770px;  
+        height: 810px;
         overflow: auto;
       }
+
       &__panel {
-        height: 770px;
+        height: 810px;
+        flex-basis: 500px;
         box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
-        .pf-v5-c-tabs {
-          --pf-v5-c-tabs__item--m-current__link--after--BorderColor: transparent;
-          --pf-v5-c-tabs--m-vertical__link--PaddingTop: var(--pf-v5-global--spacer--sm);
-          --pf-v5-c-tabs--m-vertical__link--PaddingBottom: var(--pf-v5-global--spacer--sm);
-          --pf-v5-c-tabs__link--PaddingRight: var(--pf-v5-global--spacer--md);
-          --pf-v5-c-tabs__link--PaddingLeft: var(--pf-v5-global--spacer--md);
-          --pf-v5-c-tabs__item--m-current__link--Color: var(--pf-v5-global--link--Color);
-          --pf-v5-c-tabs--m-vertical--MaxWidth: 100%;
-          --pf-v5-c-tabs--m-vertical__list--before--BorderColor: transparent;
-          .pf-v5-c-tabs__item:hover, .pf-v5-c-tabs__item:focus {
-            button {
-              color: var(--pf-v5-global--primary-color--200)
-            }
-          } 
-          .pf-v5-c-tabs__item.pf-m-current {
-            --pf-v5-c-tabs__link--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
-          }
+
+        .pf-v6-c-tabs {
+          --pf-v6-c-tabs__item--m-current__link--after--BorderColor: transparent;
+          --pf-v6-c-tabs--m-vertical__link--PaddingTop: var(--pf-t--global--spacer--sm);
+          --pf-v6-c-tabs--m-vertical__link--PaddingBottom: var(--pf-t--global--spacer--sm);
+          --pf-v6-c-tabs__link--PaddingRight: var(--pf-t--global--spacer--md);
+          --pf-v6-c-tabs__link--PaddingLeft: var(--pf-t--global--spacer--md);
+          --pf-v6-c-tabs__item--m-current__link--Color: var(--pf-t--global--text--color--link--default);
+          --pf-v6-c-tabs--m-vertical--MaxWidth: 100%;
+        }
+        .pf-v6-c-tabs__item-text {
+          flex-grow: 1;
         }
       }
-      .pf-v5-c-card {
-        --pf-v5-c-card--first-child--PaddingTop: var(--pf-v5-global--spacer--md);
+
+      .pf-v6-c-card {
+        --pf-v6-c-card--first-child--PaddingTop: var(--pf-t--global--spacer--md);
       }
+    }
+  }
+}
+
+.chr-c-favorite-service__tile {
+  text-decoration: none !important;
+
+  :hover {
+    .chr-c-icon-star {
+      visibility: visible;
+    }
+  }
+
+  .chr-c-icon-star {
+    visibility: hidden;
+  }
+
+  .chr-c-favorite-button {
+    :hover {
+      background-color: none;
     }
   }
 }

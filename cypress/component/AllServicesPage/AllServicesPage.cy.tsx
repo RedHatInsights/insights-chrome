@@ -79,7 +79,7 @@ describe('<AllServices />', () => {
       </ChromeAuthContext.Provider>
     );
 
-    cy.get('.pf-v5-c-text-input-group__text-input').type('consoleset');
+    cy.get('.pf-v6-c-text-input-group__text-input').type('consoleset');
     cy.contains('Console Settings').should('exist');
   });
 });

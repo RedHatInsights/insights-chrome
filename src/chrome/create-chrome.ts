@@ -179,8 +179,9 @@ export const createChromeContext = ({
     clearAnsibleTrialFlag,
     isAnsibleTrialFlagActive,
     setAnsibleTrialFlag,
-    chromeHistory,
-    analytics: analytics!,
+    // FIXME: get rid of these anys
+    chromeHistory: chromeHistory as any,
+    analytics: analytics! as any,
     // FIXME: Update types once merged
     useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
     init: () => {

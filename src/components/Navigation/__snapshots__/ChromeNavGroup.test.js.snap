@@ -6,10 +6,10 @@ exports[`ChromeNavGroup should render nav item group 1`] = `
 <div>
   <section
     aria-labelledby="Foo"
-    class="pf-v5-c-nav__section chr-c-section-nav"
+    class="pf-v6-c-nav__section chr-c-section-nav"
   >
     <h2
-      class="pf-v5-c-nav__section-title"
+      class="pf-v6-c-nav__section-title"
       id="Foo"
     >
       <div>
@@ -17,7 +17,7 @@ exports[`ChromeNavGroup should render nav item group 1`] = `
       </div>
     </h2>
     <ul
-      class="pf-v5-c-nav__list chr-c-section-nav"
+      class="pf-v6-c-nav__list chr-c-section-nav"
       role="list"
     />
   </section>
@@ -28,22 +28,22 @@ exports[`ChromeNavGroup should render nav item group with icon 1`] = `
 <div>
   <section
     aria-labelledby="Foo"
-    class="pf-v5-c-nav__section chr-c-section-nav"
+    class="pf-v6-c-nav__section chr-c-section-nav"
   >
     <h2
-      class="pf-v5-c-nav__section-title"
+      class="pf-v6-c-nav__section-title"
       id="Foo"
     >
       <div>
         <span
-          class="pf-v5-c-icon pf-m-inline pf-m-sm pf-v5-u-mr-sm"
+          class="pf-v6-c-icon pf-m-inline pf-m-sm pf-v6-u-mr-sm"
         >
           <span
-            class="pf-v5-c-icon__content"
+            class="pf-v6-c-icon__content"
           >
             <svg
               aria-hidden="true"
-              class="pf-v5-svg"
+              class="pf-v6-svg"
               fill="currentColor"
               height="1em"
               role="img"
@@ -60,7 +60,7 @@ exports[`ChromeNavGroup should render nav item group with icon 1`] = `
       </div>
     </h2>
     <ul
-      class="pf-v5-c-nav__list chr-c-section-nav"
+      class="pf-v6-c-nav__list chr-c-section-nav"
       role="list"
     />
   </section>
@@ -71,10 +71,10 @@ exports[`ChromeNavGroup should render nav item group with items 1`] = `
 <div>
   <section
     aria-labelledby="Foo"
-    class="pf-v5-c-nav__section chr-c-section-nav"
+    class="pf-v6-c-nav__section chr-c-section-nav"
   >
     <h2
-      class="pf-v5-c-nav__section-title"
+      class="pf-v6-c-nav__section-title"
       id="Foo"
     >
       <div>
@@ -82,24 +82,28 @@ exports[`ChromeNavGroup should render nav item group with items 1`] = `
       </div>
     </h2>
     <ul
-      class="pf-v5-c-nav__list chr-c-section-nav"
+      class="pf-v6-c-nav__list chr-c-section-nav"
       role="list"
     >
       <li
-        class="pf-v5-c-nav__item chr-c-navigation__item"
+        class="pf-v6-c-nav__item chr-c-navigation__item"
         data-ouia-component-id="Sub Item"
-        data-ouia-component-type="PF5/NavItem"
+        data-ouia-component-type="PF6/NavItem"
         data-ouia-safe="true"
       >
         <a
-          class="pf-v5-c-nav__link chr-c-navigation__item"
+          class="pf-v6-c-nav__link chr-c-navigation__item"
           data-quickstart-id="foo"
           data-testid="router-link"
           href="/foo"
           itemid="/foo"
         >
-          Sub Item
-           
+          <span
+            class="pf-v6-c-nav__link-text"
+          >
+            Sub Item
+             
+          </span>
         </a>
       </li>
     </ul>

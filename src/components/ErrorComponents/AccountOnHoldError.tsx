@@ -11,7 +11,7 @@ export const checkAccountOnHold = (error: any) => {
 const AccountOnHoldError = ({ error }: { error: AxiosError<{ errors: { detail: string }[] }> }) => {
   const data = error.response?.data.errors[0].detail;
   const description = <div dangerouslySetInnerHTML={{ __html: data! }}></div>;
-  return <NotAuthorized description={description} serviceName="Hybrid Cloud Console" />;
+  return <NotAuthorized bodyText={description} serviceName="Hybrid Cloud Console" />;
 };
 
 export default AccountOnHoldError;

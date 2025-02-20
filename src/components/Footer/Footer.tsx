@@ -164,7 +164,7 @@ const ChromeFooter = () => {
           </Cta>
         </FooterBlock>
         <FooterUniversal slot="universal">
-          <h3 slot="links-primary" className="pf-v5-u-w-100 pf-v5-u-pb-md">
+          <h3 slot="links-primary" className="pf-v6-u-w-100 pf-v6-u-pb-md">
             About
           </h3>
           <ul slot="links-primary">
@@ -196,7 +196,7 @@ const ChromeFooter = () => {
               <a href="https://www.redhat.com/en/summit">Red Hat Summit</a>
             </li>
           </ul>
-          <h3 slot="links-secondary" className="pf-v5-u-w-100 pf-v5-u-pb-md">
+          <h3 slot="links-secondary" className="pf-v6-u-w-100 pf-v6-u-pb-md">
             Privacy and legal
           </h3>
           <ul slot="links-secondary">
@@ -219,7 +219,7 @@ const ChromeFooter = () => {
             </li>
             <CookieConsentElement />
           </ul>
-          <FooterCopyright slot="links-secondary" className="pf-v5-u-pt-md">
+          <FooterCopyright slot="links-secondary" className="pf-v6-u-pt-md">
             © 2025 Red Hat, Inc.
           </FooterCopyright>
         </FooterUniversal>

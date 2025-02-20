@@ -1,4 +1,6 @@
 @import '~@patternfly/patternfly/patternfly-addons.scss';
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+
 $cards: 0, 1, 2, 3;
 
 .chr-c-product-card {
@@ -7,32 +9,32 @@ $cards: 0, 1, 2, 3;
   }
 
   &__title {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    padding: var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--lg);
+    background-color: var(--pf-t--global--background--color--100);
+    border-top: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-left: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-right: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    padding: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.title-#{$card} {
         grid-column: $card + 1;
         grid-row: 1;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--xl) {
       @each $card in $cards {
         &.title-#{$card} {
           @if $card > 1 {
-            margin-top: var(--pf-v5-global--spacer--lg);
+            margin-top: var(--pf-t--global--spacer--lg);
             grid-column: $card - 1;
             grid-row: 4;
           }
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.title-#{$card} {
-            margin-top: var(--pf-v5-global--spacer--lg);
+            margin-top: var(--pf-t--global--spacer--lg);
             grid-column: 1;
             grid-row: ($card * 3) + 1;
         }
@@ -41,17 +43,17 @@ $cards: 0, 1, 2, 3;
   }
 
   &__body {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border-left: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    padding: 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
+    background-color: var(--pf-t--global--background--color--100);
+    border-left: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-right: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.body-#{$card} {
         grid-column: $card + 1;
         grid-row: 2;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--xl) {
       @each $card in $cards {
         &.body-#{$card} {
           @if $card > 1 {
@@ -61,7 +63,7 @@ $cards: 0, 1, 2, 3;
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.body-#{$card} {
             grid-column: 1;
@@ -71,17 +73,17 @@ $cards: 0, 1, 2, 3;
     }
   }
   &__footer {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    background-color: var(--pf-t--global--background--color--100);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
     border-top: none;
-    padding: 0 var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg);
+    padding: 0 var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg);
     @each $card in $cards {
       &.footer-#{$card} {
         grid-column: $card + 1;
         grid-row: 3;
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--xl) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--xl) {
       @each $card in $cards {
         &.footer-#{$card} {
           @if $card > 1 {
@@ -91,7 +93,7 @@ $cards: 0, 1, 2, 3;
         }
       }
     }
-    @media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+    @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
       @each $card in $cards {
         &.footer-#{$card} {
             grid-column: 1;

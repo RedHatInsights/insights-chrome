@@ -30,7 +30,7 @@ test('addNavListenerAtom should add a listener', async () => {
 
     return (
       <MemoryRouter>
-        <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md" data-ouia-component-id="add-event-listener">
+        <ChromeLink href="/allservices" className="pf-v6-u-font-size-sm pf-v6-u-p-md" data-ouia-component-id="add-event-listener">
           Add Event Listener
         </ChromeLink>
       </MemoryRouter>
