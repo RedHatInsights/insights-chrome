@@ -23,7 +23,7 @@ import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
-import { ScalprumComponent } from '@scalprum/react-core';
+import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 
 const isITLessEnv = ITLess();
 
@@ -237,19 +237,22 @@ const Tools = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
 
+  type NotificationBellProps = {
+    isNotificationDrawerExpanded: boolean;
+    toggleDrawer: () => void;
+  };
+
+  const drawerBellProps: ScalprumComponentProps & NotificationBellProps = {
+    scope: 'notifications',
+    module: './NotificationsDrawerBell',
+    fallback: null,
+    isNotificationDrawerExpanded,
+    toggleDrawer,
+  };
+
   return (
     <>
-      {isNotificationsEnabled && (
-        <ScalprumComponent
-          scope="notifications"
-          module="./NotificationsDrawerBell"
-          fallback={null}
-          {...{
-            isNotificationDrawerExpanded: isNotificationDrawerExpanded,
-            toggleDrawer: toggleDrawer,
-          }}
-        />
-      )}
+      {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>
           <ThemeToggle />
