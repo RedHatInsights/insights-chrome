@@ -22,6 +22,8 @@ export type NotificationsPayload = {
   time: string;
 };
 
+export const notificationDrawerScopeReadyAtom = atom(false);
+export const notificationDrawerStateReadyAtom = atom(false);
 export const notificationDrawerExpandedAtom = atom(false);
 export const notificationDrawerDataAtom = atom<NotificationData[]>([]);
 export const notificationDrawerCountAtom = atom(0);
