@@ -60,7 +60,7 @@ const DropdownItems = ({
                 <>
                   <dt className="chr-c-dropdown-item__stack--header">
                     {intl.formatMessage(messages.accountNumber)}
-                    <span ref={questionMarkRef} className="visible-pointer pf-v5-u-ml-sm">
+                    <span ref={questionMarkRef} className="visible-pointer pf-v6-u-ml-sm">
                       <QuestionCircleIcon />
                     </span>
                   </dt>
@@ -161,6 +161,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
     <Dropdown
       popperProps={{
         position: 'right',
+        appendTo: 'inline',
       }}
       aria-label="Overflow actions"
       ouiaId="chrome-user-menu"
@@ -170,10 +171,9 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
         <MenuToggle
           ref={toggleRef}
           isExpanded={isOpen}
-          isFullHeight
           onClick={onToggle}
           variant={isSmall ? 'plain' : undefined}
-          className={classNames('data-hj-suppress', 'sentry-mask', { 'pf-v5-u-pr-lg pf-v5-u-pl-lg': isSmall })}
+          className={classNames('data-hj-suppress', 'sentry-mask', { 'pf-v6-u-pr-lg pf-v6-u-pl-lg': isSmall })}
           {...(isSmall
             ? {
                 id: 'UserMenu',

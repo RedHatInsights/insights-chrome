@@ -2,7 +2,7 @@
 
 exports[`Tools should render correctly 1`] = `
 <div
-  class="pf-v5-c-toolbar__item pf-v5-u-mx-0"
+  class="pf-v6-c-toolbar__item pf-v6-u-mx-0"
 >
   <div
     style="display: contents;"
@@ -11,18 +11,18 @@ exports[`Tools should render correctly 1`] = `
       aria-disabled="false"
       aria-expanded="false"
       aria-label="Notifications"
-      class="pf-v5-c-button pf-m-plain chr-c-notification-badge"
-      data-ouia-component-id="OUIA-Generated-Button-plain-1"
-      data-ouia-component-type="PF5/Button"
+      class="pf-v6-c-button pf-m-stateful pf-m-read chr-c-notification-badge"
+      data-ouia-component-id="OUIA-Generated-Button-stateful-1"
+      data-ouia-component-type="PF6/Button"
       data-ouia-safe="true"
       type="button"
     >
       <span
-        class="pf-v5-c-notification-badge pf-m-read"
+        class="pf-v6-c-button__text"
       >
         <svg
           aria-hidden="true"
-          class="pf-v5-svg"
+          class="pf-v6-svg"
           fill="currentColor"
           height="1em"
           role="img"

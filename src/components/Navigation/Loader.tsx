@@ -5,14 +5,14 @@ import { Nav, NavItem, NavList } from '@patternfly/react-core/dist/dynamic/compo
 const NavLoader = () => (
   <Fragment>
     <section className="chr-c-app-switcher--loading">
-      <Skeleton isDark size={SkeletonSize.lg} />
+      <Skeleton isDark={Array.from(document?.documentElement?.classList).includes('pf-v6-theme-dark')} size={SkeletonSize.lg} />
     </section>
     <Nav aria-label="Insights Global Navigation" data-ouia-safe="false" ouiaId="SideNavigation">
       <NavList>
         {[...new Array(4)].map((_i, key) => (
           <NavItem key={key} preventDefault>
             <a href="#">
-              <Skeleton isDark size={SkeletonSize.lg} />
+              <Skeleton isDark={Array.from(document?.documentElement?.classList).includes('pf-v6-theme-dark')} size={SkeletonSize.lg} />
             </a>
           </NavItem>
         ))}

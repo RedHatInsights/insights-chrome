@@ -9,7 +9,7 @@ import './loading-fallback.scss';
  * Node will be persistent when switching parent component and won't reset its instance and animation
  */
 const LoadingFallback = (
-  <Bullseye className="pf-v5-u-p-xl chr-c-loading-fallback">
+  <Bullseye className="pf-v6-u-p-xl chr-c-loading-fallback">
     <Spinner data-ouia-component-id="remote-module-loader" size="xl" />
   </Bullseye>
 );

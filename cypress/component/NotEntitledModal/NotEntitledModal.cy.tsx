@@ -24,7 +24,7 @@ describe('NonEntitledModal', () => {
         cy.get(`[src="${image}"]`).should('be.visible');
       }
       // make sure the scrollbar is hidden to ensure valid snapshot
-      cy.get('.pf-v5-c-modal-box__body').invoke('attr', 'style', 'overflow: hidden');
+      cy.get('.pf-v6-c-modal-box__body').invoke('attr', 'style', 'overflow: hidden');
       elem.matchImageSnapshot();
     });
   });

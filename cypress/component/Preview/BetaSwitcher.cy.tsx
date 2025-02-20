@@ -118,10 +118,10 @@ describe('BetaSwitcher', () => {
 
     // if the node is turned off immediately it sometimes doesn't render the banner and the test fails
     cy.wait(1000);
-    cy.get('.pf-v5-c-menu-toggle').click();
-    cy.get('.pf-v5-c-menu__item-text').should('exist');
-    cy.get('.pf-v5-c-menu__item-text').click();
-    cy.get('.pf-v5-c-menu-toggle').should('not.exist');
+    cy.get('.pf-v6-c-menu-toggle').click();
+    cy.get('.pf-v6-c-menu__item-text').should('exist');
+    cy.get('.pf-v6-c-menu__item-text').click();
+    cy.get('.pf-v6-c-menu-toggle').should('not.exist');
 
     // turn preview and banner should show
     cy.contains('Fake').click();

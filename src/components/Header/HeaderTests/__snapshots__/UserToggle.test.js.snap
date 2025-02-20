@@ -4,31 +4,31 @@ exports[`UserToggle should render correctly as org admin 1`] = `
 <div>
   <button
     aria-expanded="false"
-    class="pf-v5-c-menu-toggle pf-m-full-height data-hj-suppress sentry-mask"
+    class="pf-v6-c-menu-toggle data-hj-suppress sentry-mask"
     data-ouia-component-id="OUIA-Generated-MenuToggle-2"
-    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-component-type="PF6/MenuToggle"
     data-ouia-safe="true"
     type="button"
   >
     <span
-      class="pf-v5-c-menu-toggle__icon"
+      class="pf-v6-c-menu-toggle__icon"
     >
       &lt;UserIcon /&gt;
     </span>
     <span
-      class="pf-v5-c-menu-toggle__text"
+      class="pf-v6-c-menu-toggle__text"
     >
       someFirstName someLastName
     </span>
     <span
-      class="pf-v5-c-menu-toggle__controls"
+      class="pf-v6-c-menu-toggle__controls"
     >
       <span
-        class="pf-v5-c-menu-toggle__toggle-icon"
+        class="pf-v6-c-menu-toggle__toggle-icon"
       >
         <svg
           aria-hidden="true"
-          class="pf-v5-svg"
+          class="pf-v6-svg"
           fill="currentColor"
           height="1em"
           role="img"
@@ -49,31 +49,31 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
 <div>
   <button
     aria-expanded="true"
-    class="pf-v5-c-menu-toggle pf-m-expanded pf-m-full-height data-hj-suppress sentry-mask"
+    class="pf-v6-c-menu-toggle pf-m-expanded data-hj-suppress sentry-mask"
     data-ouia-component-id="OUIA-Generated-MenuToggle-1"
-    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-component-type="PF6/MenuToggle"
     data-ouia-safe="true"
     type="button"
   >
     <span
-      class="pf-v5-c-menu-toggle__icon"
+      class="pf-v6-c-menu-toggle__icon"
     >
       &lt;UserIcon /&gt;
     </span>
     <span
-      class="pf-v5-c-menu-toggle__text"
+      class="pf-v6-c-menu-toggle__text"
     >
       someFirstName someLastName
     </span>
     <span
-      class="pf-v5-c-menu-toggle__controls"
+      class="pf-v6-c-menu-toggle__controls"
     >
       <span
-        class="pf-v5-c-menu-toggle__toggle-icon"
+        class="pf-v6-c-menu-toggle__toggle-icon"
       >
         <svg
           aria-hidden="true"
-          class="pf-v5-svg"
+          class="pf-v6-svg"
           fill="currentColor"
           height="1em"
           role="img"
@@ -89,9 +89,9 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
   </button>
   <div
     aria-label="Overflow actions"
-    class="pf-v5-c-menu chr-c-dropdown-user-toggle"
+    class="pf-v6-c-menu chr-c-dropdown-user-toggle"
     data-ouia-component-id="chrome-user-menu"
-    data-ouia-component-type="PF5/Dropdown"
+    data-ouia-component-type="PF6/Dropdown"
     data-ouia-safe="true"
     data-popper-escaped="true"
     data-popper-placement="bottom-end"
@@ -99,31 +99,31 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
     style="position: absolute; left: 0px; top: 0px; z-index: 9999; opacity: 1; transition: opacity 0ms cubic-bezier(.54, 1.5, .38, 1.11); min-width: 0px; transform: translate(0px, 0px);"
   >
     <div
-      class="pf-v5-c-menu__content"
+      class="pf-v6-c-menu__content"
     >
       <ul
-        class="pf-v5-c-menu__list"
+        class="pf-v6-c-menu__list"
         role="menu"
       >
         <li
-          class="pf-v5-c-menu__list-item pf-m-disabled"
+          class="pf-v6-c-menu__list-item pf-m-disabled"
           data-ouia-component-id="OUIA-Generated-DropdownItem-1"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <button
-            class="pf-v5-c-menu__item"
+            class="pf-v6-c-menu__item"
             disabled=""
             role="menuitem"
             tabindex="-1"
             type="button"
           >
             <span
-              class="pf-v5-c-menu__item-main"
+              class="pf-v6-c-menu__item-main"
             >
               <span
-                class="pf-v5-c-menu__item-text"
+                class="pf-v6-c-menu__item-text"
               >
                 <dl
                   class="chr-c-dropdown-item__stack"
@@ -144,22 +144,22 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           </button>
         </li>
         <li
-          class="pf-v5-c-menu__list-item chr-c-disabled-pointer"
+          class="pf-v6-c-menu__list-item chr-c-disabled-pointer"
           data-ouia-component-id="OUIA-Generated-DropdownItem-2"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <span
-            class="pf-v5-c-menu__item chr-c-disabled-pointer"
+            class="pf-v6-c-menu__item chr-c-disabled-pointer"
             role="menuitem"
             tabindex="-1"
           >
             <span
-              class="pf-v5-c-menu__item-main"
+              class="pf-v6-c-menu__item-main"
             >
               <span
-                class="pf-v5-c-menu__item-text"
+                class="pf-v6-c-menu__item-text"
               >
                 <dl
                   class="chr-c-dropdown-item__stack"
@@ -169,11 +169,11 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
                   >
                     Account number:
                     <span
-                      class="visible-pointer pf-v5-u-ml-sm"
+                      class="visible-pointer pf-v6-u-ml-sm"
                     >
                       <svg
                         aria-hidden="true"
-                        class="pf-v5-svg"
+                        class="pf-v6-svg"
                         fill="currentColor"
                         height="1em"
                         role="img"
@@ -197,18 +197,18 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           </span>
         </li>
         <li
-          class="pf-v5-c-divider"
+          class="pf-v6-c-divider"
           role="separator"
         />
         <li
-          class="pf-v5-c-menu__list-item"
+          class="pf-v6-c-menu__list-item"
           data-ouia-component-id="OUIA-Generated-DropdownItem-3"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <a
-            class="pf-v5-c-menu__item"
+            class="pf-v6-c-menu__item"
             href="https://www.qa.redhat.com/wapps/ugc/protected/personalInfo.html"
             rel="noopener noreferrer"
             role="menuitem"
@@ -216,10 +216,10 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
             target="_blank"
           >
             <span
-              class="pf-v5-c-menu__item-main"
+              class="pf-v6-c-menu__item-main"
             >
               <span
-                class="pf-v5-c-menu__item-text"
+                class="pf-v6-c-menu__item-text"
               >
                 My profile
               </span>
@@ -227,14 +227,14 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           </a>
         </li>
         <li
-          class="pf-v5-c-menu__list-item"
+          class="pf-v6-c-menu__list-item"
           data-ouia-component-id="OUIA-Generated-DropdownItem-4"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <a
-            class="pf-v5-c-menu__item"
+            class="pf-v6-c-menu__item"
             data-quickstart-id="iam_my-user-access"
             data-testid="router-link"
             href="/iam/my-user-access"
@@ -243,14 +243,14 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           </a>
         </li>
         <li
-          class="pf-v5-c-menu__list-item"
+          class="pf-v6-c-menu__list-item"
           data-ouia-component-id="OUIA-Generated-DropdownItem-5"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <a
-            class="pf-v5-c-menu__item"
+            class="pf-v6-c-menu__item"
             data-quickstart-id="settings_notifications_user-preferences"
             data-testid="router-link"
             href="/settings/notifications/user-preferences"
@@ -259,23 +259,23 @@ exports[`UserToggle should render correctly with isSmall false 1`] = `
           </a>
         </li>
         <li
-          class="pf-v5-c-menu__list-item"
+          class="pf-v6-c-menu__list-item"
           data-ouia-component-id="OUIA-Generated-DropdownItem-6"
-          data-ouia-component-type="PF5/DropdownItem"
+          data-ouia-component-type="PF6/DropdownItem"
           data-ouia-safe="true"
           role="none"
         >
           <button
-            class="pf-v5-c-menu__item"
+            class="pf-v6-c-menu__item"
             role="menuitem"
             tabindex="-1"
             type="button"
           >
             <span
-              class="pf-v5-c-menu__item-main"
+              class="pf-v6-c-menu__item-main"
             >
               <span
-                class="pf-v5-c-menu__item-text"
+                class="pf-v6-c-menu__item-text"
               >
                 Log out
               </span>
@@ -292,27 +292,31 @@ exports[`UserToggle should render correctly with isSmall true 1`] = `
 <div>
   <button
     aria-expanded="false"
-    class="pf-v5-c-menu-toggle pf-m-plain pf-m-full-height data-hj-suppress sentry-mask pf-v5-u-pr-lg pf-v5-u-pl-lg"
+    class="pf-v6-c-menu-toggle pf-m-plain data-hj-suppress sentry-mask pf-v6-u-pr-lg pf-v6-u-pl-lg"
     data-ouia-component-id="OUIA-Generated-MenuToggle-plain-1"
-    data-ouia-component-type="PF5/MenuToggle"
+    data-ouia-component-type="PF6/MenuToggle"
     data-ouia-safe="true"
     id="UserMenu"
     type="button"
     widget-type="UserMenu"
   >
-    <svg
-      aria-hidden="true"
-      class="pf-v5-svg"
-      fill="currentColor"
-      height="1em"
-      role="img"
-      viewBox="0 0 192 512"
-      width="1em"
+    <span
+      class="pf-v6-c-menu-toggle__text"
     >
-      <path
-        d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"
-      />
-    </svg>
+      <svg
+        aria-hidden="true"
+        class="pf-v6-svg"
+        fill="currentColor"
+        height="1em"
+        role="img"
+        viewBox="0 0 192 512"
+        width="1em"
+      >
+        <path
+          d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"
+        />
+      </svg>
+    </span>
   </button>
 </div>
 `;

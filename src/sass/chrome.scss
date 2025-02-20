@@ -1,6 +1,6 @@
-$pf-v5-global--enable-reset: 'true';
+$pf-v6-global--enable-reset: 'true';
 
-@import '~@patternfly/patternfly/sass-utilities/_all';
+@import '~@patternfly/patternfly/sass-utilities/_index';
 @import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 // TODO: Bring these quick starts overrides into the lib instead 
@@ -28,11 +28,11 @@ aside {
   height: 100vh;
 }
 
-.pf-v5-c-page.chr-c-page {
-  .pf-v5-c-page__sidebar {
+.pf-v6-c-page.chr-c-page {
+  .pf-v6-c-page__sidebar {
     border-top-style: solid;
     border-top-width: 1px;
-    border-top-color: var(--pf-v5-global--palette--black-800);
+    border-top-color: var(--pf-t--global--border--color--on-secondary);
   }
   &__hasBanner {
     grid-template-areas: "banner banner"
@@ -41,19 +41,19 @@ aside {
   }
 }
 
-#no-access.pf-v5-c-page__main {
+#no-access.pf-v6-c-page__main {
     display: none;
 }
 
 // Page temp styles
-.pf-v5-c-page {
-  --pf-m-emphasis--FontSize: var(--pf-v5-global--FontSize--xl);
+.pf-v6-c-page {
+  --pf-m-emphasis--FontSize: var(--pf-t--global--font--size--xl);
 }
 
 // Page root background color
-.pf-v5-c-page__main {
+.pf-v6-c-page__main {
   &#root, &#no-access {
-    background: var(--pf-v5-v5-c-page__main-section--BackgroundColor);
+    background: var(--pf-v6-c-page__main-section--BackgroundColor);
   }
 }
 
@@ -68,14 +68,14 @@ aside {
 }
 
 // Landing page logout alert
-.pf-v5-c-alert.chr-c-alert {
+.pf-v6-c-alert.chr-c-alert {
   position: absolute;
-  top: var(--pf-v5-v5-c-page__header--MinHeight);
-  right: var(--pf-v5-v5-c-page__header-tools--MarginRight);
+  top: var(--pf-v6-c-page__header--MinHeight);
+  right: var(--pf-v6-c-page__header-tools--MarginRight);
 }
 
 // Page sidebar
-.pf-v5-c-page__sidebar {
+.pf-v6-c-page__sidebar {
   grid-row-end: 4;
 }
 
@@ -91,7 +91,7 @@ aside {
 * The footer is tall and during the module loading process, it create "rubber banding" effect as the loading
 * elements change during different stages. 
 */
-@media screen and (min-width : $pf-v5-global--breakpoint--2xl) {
+@media screen and (min-width : $pf-v6-global--breakpoint--2xl) {
   .chr-scope__default-layout {
     // we do not have PF variables for the header height unfortunately
     min-height: calc(100vh - 152px /** the size of the masthead on extra large screens */);
@@ -99,23 +99,23 @@ aside {
 }
 
 
-@media screen and (min-width : $pf-v5-global--breakpoint--xl) and (max-width : $pf-v5-global--breakpoint--2xl)  {
+@media screen and (min-width : $pf-v6-global--breakpoint--xl) and (max-width : $pf-v6-global--breakpoint--2xl)  {
   .chr-scope__default-layout {
     min-height: calc(100vh - 118px /** the size of the masthead on large screens */);
   };
 }
 
-@media only screen and (max-width: $pf-v5-global--breakpoint--md) {
+@media only screen and (max-width: $pf-v6-global--breakpoint--md) {
   .ins-m-hide-on-md {display: none;}
 }
 
-@media only screen and (max-width: $pf-v5-global--breakpoint--sm) {
+@media only screen and (max-width: $pf-v6-global--breakpoint--sm) {
   .ins-m-hide-on-sm {display: none;}
 
-  .ins-c-table-empty-state.pf-m-grid-md.pf-v5-c-table,
-  .ins-c-table-empty-state.pf-m-grid-lg.pf-v5-c-table {
+  .ins-c-table-empty-state.pf-m-grid-md.pf-v6-c-table,
+  .ins-c-table-empty-state.pf-m-grid-lg.pf-v6-c-table {
       [data-label] {
-          --pf-v5-c-table--cell--hidden-visible--Display: 0;
+          --pf-v6-c-table--cell--hidden-visible--Display: 0;
       }
       tr:first-of-type {
           > td::before { 
@@ -135,11 +135,11 @@ aside {
   z-index: 19001;
   position: fixed;
   bottom: 0;
-  padding-left: var(--pf-global--spacer--xl);
-  padding-right: var(--pf-global--spacer--xl);
+  padding-left: var(--pf-t--global--spacer--xl);
+  padding-right: var(--pf-t--global--spacer--xl);
   width: 100%;
 
-  @media only screen and (max-width: $pf-v5-global--breakpoint--lg) {
+  @media only screen and (max-width: $pf-v6-global--breakpoint--lg) {
     .truste-banner {
       display: flex;
       flex-direction: column;
@@ -150,8 +150,8 @@ aside {
 
 // centers modals when a quick start drawer is open
 .pfext-quick-start-drawer__body {
-    .pf-v5-c-backdrop {
-      --pf-v5-c-backdrop--Position: absolute;
+    .pf-v6-c-backdrop {
+      --pf-v6-c-backdrop--Position: absolute;
     }
   }
 
@@ -168,41 +168,60 @@ aside {
 .chr-c-favorite-trigger {
   cursor: pointer;
   .chr-c-icon-star {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--Color--light-100);
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
+    visibility: hidden;
+    .favorite {
+      visibility: visible;
+    }
   }
   &:hover {
-    .pf-v5-c-icon {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--icon--Color--light);
+    .chr-c-icon-star {
+      visibility: visible;
+    }
+    .pf-v6-c-icon {
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
       &:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--icon--Color--dark);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--regular);
       }
     }
-    .pf-v5-c-icon-external-link, .pf-v5-c-icon-external-link:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+    .pf-v6-c-icon-external-link, .pf-v6-c-icon-external-link:hover {
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
     }
   }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
-  .pf-v5-c-icon {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-400);
+  .chr-c-icon-star {
+    visibility: visible;
+  }
+  .pf-v6-c-icon {
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-500);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
       .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
   }
 }
-
 .chr-c-link-favorite-card { //trigger not needed here
-  .pf-v5-c-icon {
-    --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-400);
+  .pf-v6-c-icon {
+    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
     &:hover {
-      --pf-v5-c-icon__content--Color: var(--pf-v5-global--palette--gold-500);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
       .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v5-c-icon__content--Color: var(--pf-v5-global--active-color--100);
+        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
   }
+  .pf-v6-c-icon.chr-c-icon-star {
+    visibility: visible;
+  }
 }
 
+.chr-render {
+  font-size: 16px !important;
+}
+
+.chr-m-plain {
+  text-decoration: none;
+}

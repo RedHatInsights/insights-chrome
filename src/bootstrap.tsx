@@ -15,6 +15,7 @@ import chromeStore from './state/chromeStore';
 import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/GenerateId/GenerateId';
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
+import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 
 const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
@@ -36,12 +37,12 @@ const useInitializeAnalytics = () => {
 };
 
 const App = () => {
-  const loaded = useSessionConfig();
+  const { gatewayError, configLoaded } = useSessionConfig();
 
   useInitializeAnalytics();
 
-  if (!loaded) {
-    return <AppPlaceholder />;
+  if (!configLoaded) {
+    return gatewayError ? <GatewayErrorComponent error={gatewayError} serviceName="Hybrid Cloud Console" /> : <AppPlaceholder />;
   }
 
   return <RootApp />;

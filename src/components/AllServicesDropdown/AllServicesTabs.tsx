@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 
+import AngleRightIcon from '@patternfly/react-icons/dist/dynamic/icons/angle-right-icon';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
-import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
-import { Text, TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import ChromeLink from '../ChromeLink';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
@@ -81,22 +82,25 @@ const AllServicesTabs = ({
       onToggle={onToggle}
       toggleText={activeTabTitle}
       role="region"
-      className="pf-v5-u-p-md pf-v5-u-pr-0 pf-v5-u-pl-0-on-md"
+      className="pf-v6-u-p-md pf-v6-u-pr-0 pf-v6-u-pl-0-on-md"
       ouiaId={'all-services-tabs'}
     >
-      <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-0 pf-v5-u-pb-sm" component={TextVariants.p}>
-        Platform
-      </Text>
-      <Divider className="pf-v5-u-pb-md" />
+      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-sm pf-v6-u-mb-sm" component={ContentVariants.small}>
+        Platforms
+      </Content>
       <PlatformServiceslinks />
       <>
-        <Text className="pf-v5-u-pl-lg pf-v5-u-pr-0 pf-v5-u-pt-lg pf-v5-u-pb-sm" component={TextVariants.p}>
-          Solutions{' '}
-          <ChromeLink href="/allservices" className="pf-v5-u-font-size-sm pf-v5-u-p-md" data-ouia-component-id="View all link">
-            View all
+        <Divider />
+        <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
+          Services{' '}
+          <ChromeLink
+            href="/allservices"
+            className="pf-v6-u-font-size-xs pf-v6-u-p-md pf-v5-u-pl-sm chr-m-plain"
+            data-ouia-component-id="View all link"
+          >
+            View all services
           </ChromeLink>
-        </Text>
-        <Divider className="pf-v5-u-pb-sm" />
+        </Content>
         <TabWrapper
           ouiaId="AllServices-favorites-Tab"
           onClick={(e) => {
@@ -104,13 +108,14 @@ const AllServicesTabs = ({
           }}
           eventKey={FAVORITE_TAB_ID}
           title={
-            <TabTitleText className="pf-v5-u-pl-sm">
-              Favorites
-              <Icon className="chr-c-icon-service-tab pf-v5-u-ml-sm" status="warning" isInline>
+            <TabTitleText className="pf-v6-u-text-color-regular">
+              My Favorite services
+              <Icon className="chr-c-icon-service-tab pf-v6-u-ml-sm" status="warning" isInline>
                 <StarIcon />
               </Icon>
             </TabTitleText>
           }
+          className="pf-v6-u-pl-md"
         />
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
         {linkSections.map((section, index) => (
@@ -118,11 +123,17 @@ const AllServicesTabs = ({
             ouiaId={`AllServices-${section.id}-Tab`}
             key={index}
             eventKey={index}
-            title={<TabTitleText>{section.title}</TabTitleText>}
+            title={
+              <TabTitleText>
+                {section.title}
+                <Icon className="pf-v6-u-float-inline-end">
+                  <AngleRightIcon />
+                </Icon>
+              </TabTitleText>
+            }
             tabContentId={TAB_CONTENT_ID}
             tabContentRef={tabContentRef}
             onClick={() => onTabClick(section, index)}
-            className="pf-v5-u-pl-sm"
           />
         ))}
       </>

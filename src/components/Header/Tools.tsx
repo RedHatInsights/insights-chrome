@@ -30,15 +30,14 @@ const isITLessEnv = ITLess();
 
 const InternalButton = () => (
   <Button
-    variant="plain"
+    icon={<RedhatIcon />}
+    variant="control"
     aria-label="Go to internal tools"
     widget-type="InternalButton"
-    className="chr-c-toolbar__button-internal"
+    className="chr-c-toolbar__button-internal pf-v6-u-align-items-center"
     href={`${document.baseURI}internal`}
     component="a"
-  >
-    <RedhatIcon />
-  </Button>
+  />
 );
 
 type ExpandedSettingsButtonProps = {
@@ -182,7 +181,7 @@ const Tools = () => {
       ? [
           {
             title: intl.formatMessage(messages.globalLearningResourcesPage),
-            onClick: () => window.open('/staging/global-learning-resources-page', '_blank'),
+            onClick: () => window.open('/learning-resources', '_blank'),
           },
         ]
       : []),
@@ -240,7 +239,7 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && (
-        <ToolbarItem className="pf-v5-u-mx-0">
+        <ToolbarItem className="pf-v6-u-mx-0">
           <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
             <NotificationBadge
               className="chr-c-notification-badge"
@@ -260,19 +259,19 @@ const Tools = () => {
         </ToolbarItem>
       )}
       {isInternal && !ITLess() && (
-        <ToolbarItem className="pf-v5-u-mr-0">
+        <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
@@ -280,7 +279,6 @@ const Tools = () => {
       <ToolbarItem visibility={{ lg: 'hidden' }}>
         <Tooltip aria="none" aria-live="polite" content={'More options'} flipBehavior={['bottom']}>
           <UserToggle
-            isSmall
             extraItems={mobileDropdownItems.map((action, key) => (
               <React.Fragment key={key}>
                 {action.title === 'separator' ? (

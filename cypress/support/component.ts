@@ -20,6 +20,7 @@
 import './commands'
 import '../../src/sass/chrome.scss'
 import '../../src/sass/pf-5-assets.scss'
+import '../../src/sass/pf-6-assets.scss'
 import { mount } from 'cypress/react18'
 import '@cypress/code-coverage/support'
 

@@ -1,3 +1,8 @@
 .chr-c-disabled-pointer {
   cursor: pointer;
 }
+
+.pf-v6-c-masthead .pf-v6-c-menu-toggle__icon .pf-v6-c-avatar {
+  margin-block-start: calc(var(--pf-v6-c-menu-toggle--PaddingBlockStart) * -1);
+  margin-block-end: calc(var(--pf-v6-c-menu-toggle--PaddingBlockEnd) * -1);
+}

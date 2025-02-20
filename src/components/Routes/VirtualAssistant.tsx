@@ -24,7 +24,7 @@ const VirtualAssistant = () => {
           key={route}
           path={route}
           element={
-            <div className="virtualAssistant astro__virtual-assistant pf-v5-u-mr-xs">
+            <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
               <ScalprumComponent scope="virtualAssistant" module="./AstroVirtualAssistant" fallback={null} ErrorComponent={<Fragment />} />
             </div>
           }
