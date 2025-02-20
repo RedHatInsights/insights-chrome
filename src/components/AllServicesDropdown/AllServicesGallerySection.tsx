@@ -13,17 +13,19 @@ const AllServicesGallerySection = ({ title, links, category }: AllServicesGaller
     return null;
   }
   return (
-    <div className="pf-v6-u-mb-lg">
-      <Content component="small" className="pf-v6-u-px-lg pf-v6-u-mb-sm">
-        {title}
-      </Content>
-      <div>
-        {links.map((link, index) => (
-          <AllServicesGalleryLink {...link} category={category} group={titleToId(title)} key={index} />
-        ))}
+    <>
+      <div className="pf-v6-u-pb-sm">
+        <Content component="small" className="pf-v6-u-px-lg pf-v6-u-mb-sm pf-v6-u-mt-md">
+          {title}
+        </Content>
+        <div>
+          {links.map((link, index) => (
+            <AllServicesGalleryLink {...link} category={category} group={titleToId(title)} key={index} />
+          ))}
+        </div>
       </div>
       <Divider />
-    </div>
+    </>
   );
 };
 

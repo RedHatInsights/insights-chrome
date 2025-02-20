@@ -102,7 +102,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     <CardHeader className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md">
                       <Title headingLevel="h3">{activeTabKey === FAVORITE_TAB_ID ? 'My favorite services' : selectedService.title}</Title>
                     </CardHeader>
-                    <Divider className="pf-v6-u-mb-lg" />
+                    <Divider />
                     <CardBody className="pf-v6-u-p-0">
                       <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
                         {activeTabKey === FAVORITE_TAB_ID ? (

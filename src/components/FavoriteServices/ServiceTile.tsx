@@ -26,6 +26,9 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
   const { unfavoritePage } = useFavoritePagesWrapper();
   return (
     <ChromeLink isExternal={isExternal} href={pathname} className="chr-c-favorite-service__tile">
+      <Content className="pf-v6-u-px-lg pf-v6-u-pt-md">
+        <Content component="small">{bundle}</Content>
+      </Content>
       <Split className="chr-c-link-favorite-card pf-v6-u-px-lg">
         <SplitItem className="pf-v6-u-pt-md" isFilled>
           {name}
@@ -49,7 +52,6 @@ const ServiceTile = ({ name, pathname, description, isExternal }: ServiceTilePro
         </SplitItem>
       </Split>
       <Content className="pf-v6-u-px-lg pf-v6-u-pb-md">
-        <Content component="small">{bundle}</Content>
         {description ? (
           <Content component="small" className="pf-v6-u-color-100">
             {description}
