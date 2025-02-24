@@ -348,8 +348,6 @@ const fedModulesheaders = {
   Expires: '0',
 };
 
-export const GENERATED_SEARCH_FLAG = '@chrome:generated-search-index';
-
 // FIXME: Remove once qaprodauth is dealt with
 // can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
 // Always use stable
@@ -359,10 +357,7 @@ const loadCSCFedModules = () =>
   });
 
 export const loadFedModules = async () => {
-  const fedModulesPath =
-    localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true'
-      ? '/api/chrome-service/v1/static/fed-modules-generated.json'
-      : `${getChromeStaticPathname('modules')}/fed-modules.json`;
+  const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';
   return Promise.all([
     axios
       .get(fedModulesPath, {

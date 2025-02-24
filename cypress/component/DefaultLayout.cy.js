@@ -111,6 +111,7 @@ describe('<Default layout />', () => {
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
+    cy.intercept('GET', '/api/chrome-service/v1/static/search-index-generated.json', []);
   });
 
   it('render correctly with few nav items', () => {

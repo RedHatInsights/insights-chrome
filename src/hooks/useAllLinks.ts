@@ -3,6 +3,7 @@ import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
 import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 import { isExpandableNav } from '../utils/common';
+import useFeoConfig from './useFeoConfig';
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
@@ -81,8 +82,8 @@ const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   return links;
 };
 
-const fetchNavigation = async () => {
-  const bundlesNavigation = await fetchNavigationFiles().then((data) => data.map(handleBundleResponse));
+const fetchNavigation = async (feoGenerated = false) => {
+  const bundlesNavigation = await fetchNavigationFiles(feoGenerated).then((data) => data.map(handleBundleResponse));
   const parsedBundles = await Promise.all(
     bundlesNavigation.map(async (bundleNav) => ({
       ...bundleNav,
@@ -94,10 +95,11 @@ const fetchNavigation = async () => {
 };
 
 const useAllLinks = () => {
+  const useFeoGenerated = useFeoConfig();
   const [allLinks, setAllLinks] = useState<NavItem[]>([]);
   useEffect(() => {
-    fetchNavigation().then(setAllLinks);
-  }, []);
+    fetchNavigation(useFeoGenerated).then(setAllLinks);
+  }, [useFeoGenerated]);
   return allLinks;
 };
 
