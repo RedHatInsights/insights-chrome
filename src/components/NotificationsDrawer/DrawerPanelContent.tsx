@@ -22,7 +22,8 @@ const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer })
   const { DrawerPanel } = useNotificationsScope();
 
   return (
-    <NotificationDrawer ref={panelRef}>
+    // Need the v5 styles here in order for pf5 nested child drawer nodes to be properly styled until pf6 migration is finished
+    <NotificationDrawer className="pf-v5-c-notification-drawer" ref={panelRef}>
       <DrawerPanel {...notificationProps} />
     </NotificationDrawer>
   );

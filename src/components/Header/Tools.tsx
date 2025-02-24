@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -58,6 +58,11 @@ const ExpandedSettingsButton = ({ settingsMenuDropdownGroups }: ExpandedSettings
     />
   </Tooltip>
 );
+
+type NotificationBellProps = {
+  isNotificationDrawerExpanded: boolean;
+  toggleDrawer: () => void;
+};
 
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
@@ -237,16 +242,15 @@ const Tools = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
 
-  type NotificationBellProps = {
-    isNotificationDrawerExpanded: boolean;
-    toggleDrawer: () => void;
-  };
-
-  const drawerBellProps: ScalprumComponentProps & NotificationBellProps = {
+  const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
     scope: 'notifications',
     module: './NotificationsDrawerBell',
     fallback: null,
     isNotificationDrawerExpanded,
+    // Do not show the error component if module fails to load
+    // Prevents broken layout
+    // @ts-ignore
+    ErrorComponent: Fragment,
     toggleDrawer,
   };
 
