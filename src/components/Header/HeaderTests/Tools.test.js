@@ -1,5 +1,6 @@
 import React from 'react';
 import Tools from '../Tools';
+import { ScalprumProvider } from '@scalprum/react-core';
 import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -26,6 +27,11 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
+beforeAll(() => {
+  global.__webpack_init_sharing__ = () => undefined;
+  global.__webpack_share_scopes__ = { default: {} };
+});
+
 describe('Tools', () => {
   let assignMock = jest.fn();
 
@@ -40,9 +46,11 @@ describe('Tools', () => {
     await act(async () => {
       container = render(
         <MemoryRouter>
-          <Provider store={createStore((state = { chrome: { user: {}, notifications: { data: [] } } }) => state)}>
-            <Tools onClick={mockClick} />
-          </Provider>
+          <ScalprumProvider config={{ notifications: { manifestLocation: '/apps/notifications/fed-mods.json' } }}>
+            <Provider store={createStore((state = { chrome: { user: {} } }) => state)}>
+              <Tools onClick={mockClick} />
+            </Provider>
+          </ScalprumProvider>
         </MemoryRouter>
       ).container;
     });
