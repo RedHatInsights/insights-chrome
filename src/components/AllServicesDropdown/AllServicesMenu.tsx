@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
-import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
@@ -10,13 +10,11 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
 
-import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import type { AllServicesSection } from '../AllServices/allServicesLinks';
 import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
-import QuickAccess from '../FavoriteServices/QuickAccess';
 import { AllServicesDropdownContext } from './common';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
 
@@ -101,21 +99,14 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>
-                    <CardHeader
-                      actions={{
-                        actions: [
-                          <Button icon={<TimesIcon />} key="close" variant="plain" aria-label="Close menu" onClick={() => setIsOpen(!isOpen)} />,
-                        ],
-                      }}
-                      className="pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
-                    >
-                      <Title headingLevel="h2">{activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}</Title>
+                    <CardHeader className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md">
+                      <Title headingLevel="h3">{activeTabKey === FAVORITE_TAB_ID ? 'My favorite services' : selectedService.title}</Title>
                     </CardHeader>
-                    <CardBody>
+                    <Divider />
+                    <CardBody className="pf-v6-u-p-0">
                       <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
                         {activeTabKey === FAVORITE_TAB_ID ? (
                           <Fragment>
-                            <QuickAccess />
                             <FavoriteServicesGallery favoritedServices={favoritedServices} />
                           </Fragment>
                         ) : (
