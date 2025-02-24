@@ -9,7 +9,7 @@ import RhelIcon from '../AllServicesDropdown/icon-rhel';
 const PlatformServiceslinks = () => {
   return (
     <>
-      <Split className="pf-v6-u-pl-lg pf-v6-u-mb-0">
+      <Split className="pf-v6-u-px-lg pf-v6-u-mb-0">
         <SplitItem>
           <AnsibleIcon />
         </SplitItem>
