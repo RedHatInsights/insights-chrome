@@ -111,6 +111,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
               </PageSidebar>
             )
       }
+      isContentFilled
     >
       {noBreadcrumb && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
