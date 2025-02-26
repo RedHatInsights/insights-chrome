@@ -19,6 +19,14 @@ import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import { updateDocumentTitle } from '../utils/common';
+import fetchNavigationFiles from '../utils/fetchNavigationFiles';
+
+const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
+// console.log(await fetchNavigationFiles()).filter(({ id }) => availableBundles.includes(id));
+console.log(fetchNavigationFiles, 'this is allservices');
+
+const bundles = await fetchNavigationFiles();
+const filteredBundles = bundles.filter(({ id }) => availableBundles.includes(id));
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
@@ -86,8 +94,8 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             </PageGroup>
             <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
-                {sections.map((section, index) => (
-                  <AllServicesSection key={index} {...section} />
+                {filteredBundles.map((bundle, index) => (
+                  <AllServicesSection key={index} {...bundle} />
                 ))}
                 {/* TODO: Add empty state */}
                 {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}

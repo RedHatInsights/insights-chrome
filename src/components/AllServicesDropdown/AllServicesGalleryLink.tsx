@@ -7,16 +7,15 @@ import { Content } from '@patternfly/react-core/dist/dynamic/components/Content'
 
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
-
-import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 import { AllServicesDropdownContext } from './common';
 import ServiceIcon from '../FavoriteServices/ServiceIcon';
 import { titleToId } from '../../utils/common';
+import type { AllServicesLink as AllServicesLinkType } from '../AllServices/allServicesLinks';
 
-export type AllServicesGalleryLinkProps = AllServicesLinkProps;
+type AllServicesGalleryLinkProps = AllServicesLinkType & { category: string; group?: string };
 
 const AllServicesGalleryLink = ({ href, title, icon, description, isExternal, category, group }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
