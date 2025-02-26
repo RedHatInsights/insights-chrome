@@ -56,7 +56,7 @@
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.4",
-    "@redhat-cloud-services/frontend-components-config-utilities": "^4.0.5",
+    "@redhat-cloud-services/frontend-components-config-utilities": "^4.1.5",
     "@redhat-cloud-services/types": "2.0.0-beta.1",
     "@simonsmith/cypress-image-snapshot": "^8.1.2",
     "@swc/core": "^1.6.5",
