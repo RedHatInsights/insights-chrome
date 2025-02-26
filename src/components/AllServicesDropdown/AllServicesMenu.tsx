@@ -7,6 +7,7 @@ import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon'; // Add this import
 import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
 
@@ -17,6 +18,7 @@ import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import { AllServicesDropdownContext } from './common';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
+import ServiceIcon from '../FavoriteServices/ServiceIcon';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -100,7 +102,17 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                 <SidebarContent>
                   <Card isPlain>
                     <CardHeader className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md">
-                      <Title headingLevel="h3">{activeTabKey === FAVORITE_TAB_ID ? 'My favorite services' : selectedService.title}</Title>
+                      <Title headingLevel="h3">
+                        {activeTabKey === FAVORITE_TAB_ID ? (
+                          <>
+                            <StarIcon /> My Favorite Services
+                          </>
+                        ) : (
+                          <>
+                            <ServiceIcon icon={selectedService.icon} /> {selectedService.title}
+                          </>
+                        )}
+                      </Title>
                     </CardHeader>
                     <Divider />
                     <CardBody className="pf-v6-u-p-0">
