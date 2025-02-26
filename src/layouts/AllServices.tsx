@@ -22,8 +22,6 @@ import { updateDocumentTitle } from '../utils/common';
 import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
-// console.log(await fetchNavigationFiles()).filter(({ id }) => availableBundles.includes(id));
-console.log(fetchNavigationFiles, 'this is allservices');
 
 const bundles = await fetchNavigationFiles();
 const filteredBundles = bundles.filter(({ id }) => availableBundles.includes(id));

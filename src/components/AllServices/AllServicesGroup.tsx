@@ -7,7 +7,7 @@ import { AllServicesGroup } from './allServicesLinks';
 export type AllServicesGroupProps = AllServicesGroup & {
   category: string;
 };
-const AllServicesGroup = ({ links }: AllServicesGroupProps) => {
+const AllServicesGroup = ({ links, title }: AllServicesGroupProps) => {
   const filteredLinks = links;
   if (filteredLinks.length === 0) {
     return null;
@@ -15,7 +15,7 @@ const AllServicesGroup = ({ links }: AllServicesGroupProps) => {
   return (
     <Fragment>
       <Content component={ContentVariants.p} className="pf-v6-u-pt-xs pf-v6-u-font-weight-bold">
-        chicken
+        {title}
       </Content>
       {filteredLinks.map((link, index) => (
         <AllServicesLink key={index} {...link} />
