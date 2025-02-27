@@ -80,14 +80,15 @@ const MemoizedHeader = memo(
           <MastheadBrand data-codemods>
             <MastheadLogo
               data-codemods
-              className="pf-v6-u-flex-shrink-0 pf-v6-u-mr-lg"
+              className="chr-c-masthead__logo pf-v6-u-pr-0 pf-v6-u-pl-sm"
               component={(props) => <ChromeLink {...props} appId="landing" href="/" />}
             >
               <Logo theme={theme} />
             </MastheadLogo>
+            {userReady && <> {!(!md && searchOpen) && <AllServicesDropdown />} </>}
           </MastheadBrand>
         </MastheadMain>
-        <MastheadContent className="pf-v6-u-mx-md pf-v6-u-mx-0-on-2xl">
+        <MastheadContent className="pf-v6-u-mx-0">
           {orgId && !isITLess && ReactDOM.createPortal(<FeedbackRoute />, document.body)}
           {userReady && isActivationPath && (
             <Activation
@@ -102,7 +103,6 @@ const MemoizedHeader = memo(
           <Toolbar isFullHeight>
             <ToolbarContent>
               <ToolbarGroup variant="filter-group">
-                {userReady && <ToolbarItem> {!(!md && searchOpen) && <AllServicesDropdown />} </ToolbarItem>}
                 {userReady && !isITLess && (
                   <ToolbarItem className="pf-v6-m-hidden pf-v6-m-visible-on-xl">
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
