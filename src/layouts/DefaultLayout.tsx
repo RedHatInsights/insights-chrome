@@ -1,5 +1,4 @@
 import React, { memo, useContext, useEffect, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import classnames from 'classnames';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
@@ -16,12 +15,11 @@ import isEqual from 'lodash/isEqual';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
+import { useAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
-
-import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
@@ -33,6 +31,7 @@ import ChromeAuthContext from '../auth/ChromeAuthContext';
 import VirtualAssistant from '../components/Routes/VirtualAssistant';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { ITLess } from '../utils/common';
+import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -53,14 +52,28 @@ type DefaultLayoutProps = {
 };
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
+  const drawerPanelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (drawerPanelRef.current !== null) {
+      focusDrawer();
+    }
+  }, []);
+  const focusDrawer = () => {
+    if (drawerPanelRef.current === null) {
+      return;
+    }
+    const tabbableElement = drawerPanelRef.current?.querySelector('[aria-label="Close"], a, button') as HTMLAnchorElement | HTMLButtonElement;
+    if (tabbableElement) {
+      tabbableElement.focus();
+    }
+  };
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
+  };
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
-  const isNotificationsDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
-  const drawerPanelRef = useRef<HTMLDivElement>();
-  const focusDrawer = () => {
-    const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
-    tabbableElement.focus();
-  };
+
+  const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
@@ -70,7 +83,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
         (classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber }),
         'pf-c-page') /** we have to add the legacy styling to allow v4 page layout sub components to be able to inherit legacy styling */
       }
-      onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
+      onPageResize={null} // required to disable PF resize observer that causes re-rendering issue
       masthead={
         <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
@@ -84,7 +97,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       }
       {...(isNotificationsEnabled && {
         onNotificationDrawerExpand: focusDrawer,
-        notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
+        notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
         isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
       })}
       sidebar={
@@ -98,6 +111,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
               </PageSidebar>
             )
       }
+      isContentFilled
     >
       {noBreadcrumb && (
         <ToolbarGroup className="chr-c-breadcrumbs__group">
