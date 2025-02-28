@@ -46,9 +46,9 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
       case 'Subscription Services':
         return <ServiceIcon icon={FavorableIcons.SubscriptionsIcon} />;
       case 'Identity & Access Management':
-        return <ServiceIcon icon={FavorableIcons.PlaceholderIcon} />;
+        return <ServiceIcon icon={FavorableIcons.IAmIcon} />;
       case 'Settings':
-        return <ServiceIcon icon={FavorableIcons.PlaceholderIcon} />;
+        return <ServiceIcon icon={FavorableIcons.SettingsIcon} />;
       default:
         return null;
     }
