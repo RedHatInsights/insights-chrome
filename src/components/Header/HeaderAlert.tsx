@@ -45,6 +45,9 @@ const HeaderAlert = ({
   const onClose = () => {
     onDismiss && onDismiss();
     setAlertVisible(false);
+    if (timer) {
+      clearTimeout(timer);
+    }
   };
 
   return (
