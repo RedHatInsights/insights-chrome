@@ -19,10 +19,10 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
     return children
       ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId }) => {
           return routes
-            ? routes.map(({ href: childHref, id: childId, title: childTitle }) => ({
-                title: childTitle,
+            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle }) => ({
+                title: nestedTitle,
                 href: childHref,
-                id: childId,
+                id: nestedId,
                 bundleTitle: title,
                 sectionTitle: childTitle,
               }))
@@ -30,6 +30,8 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
         })
       : { href, title, id };
   });
+
+  console.log(items);
 
   const itemOverview = items.find((item) => item.title === 'Overview');
   const itemLearningResources = items.find((item) => item.title === 'Learning Resources');
