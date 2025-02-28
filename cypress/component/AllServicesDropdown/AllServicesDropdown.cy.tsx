@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import AllServicesDropdown from '../../../src/components/AllServicesDropdown/AllServicesDropdown';
 import { BrowserRouter } from 'react-router-dom';
@@ -5,6 +6,8 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { ScalprumProvider } from '@scalprum/react-core';
+import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
+import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 describe('<AllServicesDropdown />', () => {
   beforeEach(() => {
@@ -72,13 +75,18 @@ describe('<AllServicesDropdown />', () => {
           },
         }}
       >
-        <Provider store={store}>
-          <BrowserRouter>
-            <IntlProvider locale="en">
-              <AllServicesDropdown />
-            </IntlProvider>
-          </BrowserRouter>
-        </Provider>
+        {/* @ts-ignore */}
+        <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
+          <FeatureFlagsProvider>
+            <Provider store={store}>
+              <BrowserRouter>
+                <IntlProvider locale="en">
+                  <AllServicesDropdown />
+                </IntlProvider>
+              </BrowserRouter>
+            </Provider>
+          </FeatureFlagsProvider>
+        </ChromeAuthContext.Provider>
       </ScalprumProvider>
     );
 
@@ -135,11 +143,16 @@ describe('<AllServicesDropdown />', () => {
         }}
       >
         <Provider store={store}>
-          <BrowserRouter>
-            <IntlProvider locale="en">
-              <AllServicesDropdown />
-            </IntlProvider>
-          </BrowserRouter>
+          {/* @ts-ignore */}
+          <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
+            <FeatureFlagsProvider>
+              <BrowserRouter>
+                <IntlProvider locale="en">
+                  <AllServicesDropdown />
+                </IntlProvider>
+              </BrowserRouter>
+            </FeatureFlagsProvider>
+          </ChromeAuthContext.Provider>
         </Provider>
       </ScalprumProvider>
     );

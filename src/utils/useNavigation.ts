@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BLOCK_CLEAR_GATEWAY_ERROR, GENERATED_SEARCH_FLAG, getChromeStaticPathname } from './common';
+import { BLOCK_CLEAR_GATEWAY_ERROR, getChromeStaticPathname } from './common';
 import { evaluateVisibility } from './isNavItemVisible';
 import { QuickStartContext } from '@patternfly/quickstarts';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
@@ -10,6 +10,7 @@ import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { clearGatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 import { navigationAtom, setNavigationSegmentAtom } from '../state/atoms/navigationAtom';
 import fetchNavigationFiles from './fetchNavigationFiles';
+import useFeoConfig from '../hooks/useFeoConfig';
 
 function cleanNavItemsHref(navItem: NavItem) {
   const result = { ...navItem };
@@ -44,6 +45,7 @@ const appendQSSearch = (currentSearch: string, activeQuickStartID: string) => {
 };
 
 const useNavigation = () => {
+  const useFeoGenerated = useFeoConfig();
   const { flagsReady, flagsError } = useFlagsStatus();
   const clearGatewayError = useSetAtom(clearGatewayErrorAtom);
   const location = useLocation();
@@ -128,8 +130,8 @@ const useNavigation = () => {
     let observer: MutationObserver | undefined;
     // reset no nav flag
     setNoNav(false);
-    if (localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true' && currentNamespace && (flagsReady || flagsError)) {
-      fetchNavigationFiles()
+    if (useFeoGenerated && currentNamespace && (flagsReady || flagsError)) {
+      fetchNavigationFiles(useFeoGenerated)
         .then((bundles) => {
           const bundle = bundles.find((b) => b.id === currentNamespace);
           if (!bundle) {
@@ -161,7 +163,7 @@ const useNavigation = () => {
         observer.disconnect();
       }
     };
-  }, [currentNamespace, flagsReady, flagsError]);
+  }, [currentNamespace, flagsReady, flagsError, useFeoGenerated]);
 
   return {
     loaded: !!schema,

@@ -21,6 +21,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { ReleaseEnv } from '../../@types/types.d';
 import type { SearchItem } from './SearchTypes';
 import SearchFeedback, { SearchFeedbackType } from './SearchFeedback';
+import useFeoConfig from '../../hooks/useFeoConfig';
 
 export type SearchInputprops = {
   isExpanded?: boolean;
@@ -51,6 +52,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
   const asyncLocalOramaData = useAtomValue(asyncLocalOrama);
+  const useFeoGenerated = useFeoConfig();
 
   const debouncedTrack = useCallback(analytics ? debounce(analytics.track, 1000) : () => null, [analytics]);
 
@@ -151,7 +153,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
     setSearchValue(value);
     setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE);
+    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, useFeoGenerated);
     setSearchItems(results ?? []);
     isMounted.current && setIsFetching(false);
     if (ready && analytics) {
