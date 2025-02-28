@@ -1,30 +1,27 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { NotificationDrawer } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
+import Spinner from '@redhat-cloud-services/frontend-components/Spinner';
 
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { useNotificationsScope } from '../../hooks/useNotificationsScope';
+import { ScalprumComponent } from '@scalprum/react-core';
+import { useAtomValue } from 'jotai';
+import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;
   toggleDrawer: () => void;
 };
+const DrawerPanelBase = (props: DrawerPanelProps) => {
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
 
-const DrawerPanelBase: React.FC<DrawerPanelProps> = ({ panelRef, toggleDrawer }) => {
-  const auth = useContext(ChromeAuthContext);
-  const isOrgAdmin = auth?.user?.identity?.user?.is_org_admin;
-  const notificationProps = {
-    isOrgAdmin: isOrgAdmin,
-    panelRef: panelRef,
-    toggleDrawer: toggleDrawer,
-  };
-
-  const { DrawerPanel } = useNotificationsScope();
+  if (!drawerContent) {
+    return null;
+  }
 
   return (
     // Need the v5 styles here in order for pf5 nested child drawer nodes to be properly styled until pf6 migration is finished
-    <NotificationDrawer className="pf-v5-c-notification-drawer" ref={panelRef}>
-      <DrawerPanel {...notificationProps} />
+    <NotificationDrawer className="pf-v5-c-notification-drawer" ref={props.panelRef}>
+      <ScalprumComponent {...drawerContent} {...props} fallback={<Spinner centered />} />
     </NotificationDrawer>
   );
 };

@@ -67,13 +67,14 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       tabbableElement.focus();
     }
   };
-  const toggleDrawer = () => {
-    setIsNotificationsDrawerExpanded((prev) => !prev);
-  };
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
 
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
+  };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
