@@ -31,8 +31,6 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
       : { href, title, id };
   });
 
-  console.log(items);
-
   const itemOverview = items.find((item) => item.title === 'Overview');
   const itemLearningResources = items.find((item) => item.title === 'Learning Resources');
   const itemDashboard = items.find((item) => item.title === 'Dashboard');
