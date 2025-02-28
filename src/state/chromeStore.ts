@@ -1,15 +1,26 @@
 import { createStore } from 'jotai';
-import { activeModuleAtom } from './atoms/activeModuleAtom';
-import { contextSwitcherOpenAtom } from './atoms/contextSwitcher';
-import { isPreviewAtom } from './atoms/releaseAtom';
-import { gatewayErrorAtom } from './atoms/gatewayErrorAtom';
-import { isFeedbackModalOpenAtom } from './atoms/feedbackModalAtom';
 import { activeAppAtom } from './atoms/activeAppAtom';
-import { isDebuggerEnabledAtom } from './atoms/debuggerModalatom';
-import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
+import { activeModuleAtom } from './atoms/activeModuleAtom';
 import { moduleRoutesAtom } from './atoms/chromeModuleAtom';
+import { contextSwitcherOpenAtom } from './atoms/contextSwitcher';
+import { isDebuggerEnabledAtom } from './atoms/debuggerModalatom';
 import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
+import { isFeedbackModalOpenAtom } from './atoms/feedbackModalAtom';
+import { gatewayErrorAtom } from './atoms/gatewayErrorAtom';
 import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
+import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
+import { isPreviewAtom } from './atoms/releaseAtom';
+import {
+  fetchedWorkspaces,
+  isFecthingRecentlyUsedWorkspaces,
+  isFecthingRecentlyUsedWorkspacesError,
+  isFetchingWorkspacesFromRBAC,
+  isFetchingWorkspacesFromRBACError,
+  isWorkspacesMenuExpanded,
+  recentlyUsedWorkspaces,
+  selectedWorkspace,
+  workspaceTree,
+} from './atoms/workspacesAtom';
 
 const chromeStore = createStore();
 
@@ -31,6 +42,17 @@ chromeStore.set(moduleRoutesAtom, []);
 
 chromeStore.set(drawerPanelContentAtom, undefined);
 chromeStore.set(notificationDrawerExpandedAtom, false);
+
+// Workspaces
+chromeStore.set(fetchedWorkspaces, []);
+chromeStore.set(isFecthingRecentlyUsedWorkspaces, false);
+chromeStore.set(isFecthingRecentlyUsedWorkspacesError, false);
+chromeStore.set(isFetchingWorkspacesFromRBAC, false);
+chromeStore.set(isFetchingWorkspacesFromRBACError, false);
+chromeStore.set(isWorkspacesMenuExpanded, false);
+chromeStore.set(recentlyUsedWorkspaces, []);
+chromeStore.set(selectedWorkspace, undefined);
+chromeStore.set(workspaceTree, undefined);
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
