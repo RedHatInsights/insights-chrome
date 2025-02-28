@@ -3,11 +3,12 @@ import React, { Fragment } from 'react';
 
 import AllServicesLink from './AllServicesLink';
 import { AllServicesGroup } from './allServicesLinks';
+import { titleToId } from '../../utils/common';
 
 export type AllServicesGroupProps = AllServicesGroup & {
   category: string;
 };
-const AllServicesGroup = ({ links, title }: AllServicesGroupProps) => {
+const AllServicesGroup = ({ title, links, category }: AllServicesGroupProps) => {
   const filteredLinks = links;
   if (filteredLinks.length === 0) {
     return null;
@@ -18,7 +19,7 @@ const AllServicesGroup = ({ links, title }: AllServicesGroupProps) => {
         {title}
       </Content>
       {filteredLinks.map((link, index) => (
-        <AllServicesLink key={index} {...link} />
+        <AllServicesLink key={index} category={category} group={titleToId(title)} {...link} />
       ))}
     </Fragment>
   );

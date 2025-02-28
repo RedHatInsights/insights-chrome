@@ -19,6 +19,8 @@ interface AllServicesLinkProps {
   sectionTitle?: string;
   bundleTitle?: string;
   isExternal?: boolean;
+  category?: string;
+  group?: string;
 }
 
 const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = false }: AllServicesLinkProps) => {
