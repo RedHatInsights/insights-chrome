@@ -12,7 +12,7 @@ export default function platformUlr(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl
   // we have to use hard coded value for console.dev.redhat.com
   // ugly hack
 
-  if (location.hostname === 'console.dev.redhat.com') {
+  if (DEFAULT_SSO_ROUTES.dev.url.includes(location.hostname)) {
     return sanitizeUrl(DEFAULT_SSO_ROUTES.dev.sso);
   }
   if (configSsoUrl) {

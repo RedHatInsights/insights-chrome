@@ -203,7 +203,6 @@ aside {
     }
   }
 }
-
 .chr-c-link-favorite-card { //trigger not needed here
   .pf-v6-c-icon {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
@@ -214,7 +213,6 @@ aside {
       }
     }
   }
-
   .pf-v6-c-icon.chr-c-icon-star {
     visibility: visible;
   }
@@ -222,4 +220,8 @@ aside {
 
 .chr-render {
   font-size: 16px !important;
+}
+
+.chr-m-plain {
+  text-decoration: none;
 }

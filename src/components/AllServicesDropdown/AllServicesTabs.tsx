@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
+import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 
+import AngleRightIcon from '@patternfly/react-icons/dist/dynamic/icons/angle-right-icon';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
@@ -83,22 +85,20 @@ const AllServicesTabs = ({
       className="pf-v6-u-p-md pf-v6-u-pr-0 pf-v6-u-pl-0-on-md"
       ouiaId={'all-services-tabs'}
     >
-      <Content className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-0 pf-v6-u-font-weight-bold pf-v6-u-pb-sm" component={ContentVariants.p}>
-        Platform
+      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-sm pf-v6-u-mb-sm" component={ContentVariants.small}>
+        Platforms
       </Content>
       <PlatformServiceslinks />
       <>
-        <Content
-          className="pf-v6-u-pl-md pf-v6-u-pr-0 pf-v6-u-pt-xl pf-v6-u-font-weight-bold pf-v6-u-mb-sm pf-v6-u-pb-xs"
-          component={ContentVariants.p}
-        >
-          Solutions{' '}
+        <Divider />
+        <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
+          Services{' '}
           <ChromeLink
             href="/allservices"
-            className="pf-v6-u-font-size-sm pf-v6-u-p-sm pf-v6-u-font-weight-normal"
+            className="pf-v6-u-font-size-xs pf-v6-u-p-md pf-v5-u-pl-sm chr-m-plain"
             data-ouia-component-id="View all link"
           >
-            View all
+            View all services
           </ChromeLink>
         </Content>
         <TabWrapper
@@ -108,14 +108,14 @@ const AllServicesTabs = ({
           }}
           eventKey={FAVORITE_TAB_ID}
           title={
-            <TabTitleText>
-              Favorites
+            <TabTitleText className="pf-v6-u-text-color-regular">
+              My Favorite services
               <Icon className="chr-c-icon-service-tab pf-v6-u-ml-sm" status="warning" isInline>
                 <StarIcon />
               </Icon>
             </TabTitleText>
           }
-          className="pf-v6-u-pl-sm"
+          className="pf-v6-u-pl-md"
         />
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
         {linkSections.map((section, index) => (
@@ -123,11 +123,17 @@ const AllServicesTabs = ({
             ouiaId={`AllServices-${section.id}-Tab`}
             key={index}
             eventKey={index}
-            title={<TabTitleText>{section.title}</TabTitleText>}
+            title={
+              <TabTitleText>
+                {section.title}
+                <Icon className="pf-v6-u-float-inline-end">
+                  <AngleRightIcon />
+                </Icon>
+              </TabTitleText>
+            }
             tabContentId={TAB_CONTENT_ID}
             tabContentRef={tabContentRef}
             onClick={() => onTabClick(section, index)}
-            className="pf-v6-u-pl-sm"
           />
         ))}
       </>

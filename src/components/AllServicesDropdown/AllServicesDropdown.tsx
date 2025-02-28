@@ -5,6 +5,7 @@ import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuT
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import ThIcon from '@patternfly/react-icons/dist/dynamic/icons/th-icon';
 
 import './AllServicesDropdown.scss';
 import AllServicesPortal from './AllServicesMenu';
@@ -69,13 +70,14 @@ const AllServicesDropdown = () => {
 
   const toggle = (
     <MenuToggle
-      data-ouia-component-id="AllServices-DropdownToggle"
-      className="chr-c-link-service-toggle"
+      ouiaId="AllServices-DropdownToggle"
+      className="chr-c-link-service-toggle pf-v6-u-pr-sm"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
-      Services
+      <ThIcon className="pf-v6-u-mr-sm" />
+      Red Hat Hybrid Cloud Console
     </MenuToggle>
   );
 

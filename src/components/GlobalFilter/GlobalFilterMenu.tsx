@@ -140,6 +140,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
                 {!isDisabled && (
                   <Button
                     variant="link"
+                    className="pf-v6-u-ml-sm"
                     ouiaId="global-filter-clear"
                     onClick={() => {
                       setValue(() => ({}));

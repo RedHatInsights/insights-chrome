@@ -10,7 +10,6 @@ import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import EmptyState from '../components/FavoriteServices/EmptyState';
 import FavoriteServicesGallery from '../components/FavoriteServices/ServicesGallery';
 import useFavoritedServices from '../hooks/useFavoritedServices';
-import QuickAccess from '../components/FavoriteServices/QuickAccess';
 
 import './FavoritedServices.scss';
 import { updateDocumentTitle } from '../utils/common';
@@ -39,7 +38,6 @@ const FavoritedServices = ({ Footer }: FavoritedServicesProps) => {
             <StackItem className="pf-v6-u-pb-md">
               <Title headingLevel="h2">Favorited Services</Title>
             </StackItem>
-            <QuickAccess />
             {favoritedServices.length === 0 ? (
               <EmptyState />
             ) : (

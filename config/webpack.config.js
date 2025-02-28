@@ -156,6 +156,7 @@ const commonConfig = ({ dev }) => {
         publicPath,
         proxyVerbose: true,
         isChrome: true,
+        frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
         routes: {
           ...(process.env.CHROME_SERVICE && {
             // web sockets
