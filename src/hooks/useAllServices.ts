@@ -8,8 +8,9 @@ import {
   isAllServicesGroup,
   isAllServicesLink,
 } from '../components/AllServices/allServicesLinks';
-import { GENERATED_SEARCH_FLAG, getChromeStaticPathname } from '../utils/common';
+import { getChromeStaticPathname } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
+import useFeoConfig from './useFeoConfig';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
@@ -109,7 +110,6 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   return groupQue;
 };
 
-const generatedServicesEnabled = localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true';
 const GENERATED_SERVICES_PATH = '/api/chrome-service/v1/static/service-tiles-generated.json';
 
 const useAllServices = () => {
@@ -122,10 +122,11 @@ const useAllServices = () => {
     error: false,
     availableSections: [],
   });
+  const useFeoGenerated = useFeoConfig();
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
   const fetchSections = useCallback(async () => {
-    const query = generatedServicesEnabled ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
+    const query = useFeoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
     let request = allServicesFetchCache[query];
     if (!request) {
       request = axios.get<
@@ -141,7 +142,7 @@ const useAllServices = () => {
     delete allServicesFetchCache[query];
 
     return evaluateLinksVisibility(response.data);
-  }, []);
+  }, [useFeoGenerated]);
 
   const setNavigation = useCallback(async () => {
     const sections = await fetchSections();
@@ -160,16 +161,16 @@ const useAllServices = () => {
         ready: true,
       }));
     }
-  }, [fetchSections]);
+  }, [fetchSections, useFeoGenerated]);
   useEffect(() => {
     isMounted.current = true;
     setNavigation();
     return () => {
       isMounted.current = false;
     };
-  }, [setNavigation]);
+  }, [setNavigation, useFeoGenerated]);
 
-  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
+  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue, useFeoGenerated]);
 
   return {
     linkSections,
