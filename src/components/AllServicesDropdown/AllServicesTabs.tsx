@@ -126,7 +126,7 @@ const AllServicesTabs = ({
             title={
               <TabTitleText>
                 {section.title}
-                <Icon className="pf-v6-u-float-inline-end">
+                <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
                   <AngleRightIcon />
                 </Icon>
               </TabTitleText>
