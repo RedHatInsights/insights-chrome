@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BundleNavigation, NavItem, Navigation } from '../@types/types';
 import { Required } from 'utility-types';
 import { itLessBundles, requiredBundles } from '../components/AppFilter/useAppFilter';
-import { GENERATED_SEARCH_FLAG, ITLess, getChromeStaticPathname } from './common';
+import { ITLess, getChromeStaticPathname } from './common';
 
 export function isBundleNavigation(item: unknown): item is BundleNavigation {
   return typeof item !== 'undefined';
@@ -37,8 +37,8 @@ const filesCache: {
   existingRequest: undefined,
 };
 
-const fetchNavigationFiles = async () => {
-  if (localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true') {
+const fetchNavigationFiles = async (feoGenerated = false) => {
+  if (feoGenerated) {
     // aggregate data call
     const { data: aggregateData } = await axios.get<BundleNavigation[]>('/api/chrome-service/v1/static/bundles-generated.json');
     const bundleNavigation = aggregateData.filter(isBundleNavigation);

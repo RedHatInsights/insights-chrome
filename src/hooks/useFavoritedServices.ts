@@ -7,8 +7,10 @@ import { findNavLeafPath } from '../utils/common';
 import useFavoritePagesWrapper from './useFavoritePagesWrapper';
 import { isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import useAllLinks from './useAllLinks';
+import useFeoConfig from './useFeoConfig';
 
 const useFavoritedServices = () => {
+  const useFeoGenerated = useFeoConfig();
   const { favoritePages } = useFavoritePagesWrapper();
   const { availableSections } = useAllServices();
   const allLinks = useAllLinks();
@@ -30,12 +32,12 @@ const useFavoritedServices = () => {
   }, [availableSections]);
 
   useEffect(() => {
-    fetchNavigationFiles()
+    fetchNavigationFiles(useFeoGenerated)
       .then((data) => setBundles(data as Navigation[]))
       .catch((error) => {
         console.error('Unable to fetch favorite services', error);
       });
-  }, []);
+  }, [useFeoGenerated]);
 
   const linksWithFragments = useMemo(() => {
     const internalLinks = [...allLinks];

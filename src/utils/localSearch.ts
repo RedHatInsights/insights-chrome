@@ -115,7 +115,7 @@ async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.S
   return result;
 }
 
-export const localQuery = async (db: any, term: string, env: ReleaseEnv = ReleaseEnv.STABLE) => {
+export const localQuery = async (db: any, term: string, env: ReleaseEnv = ReleaseEnv.STABLE, useGenerated = false) => {
   try {
     const cacheKey = `${env}-${term}`;
     let results: ResultItem[] | undefined = resultCache[cacheKey];
@@ -129,6 +129,9 @@ export const localQuery = async (db: any, term: string, env: ReleaseEnv = Releas
       threshold: 0.5,
       tolerance: 1.5,
       properties: ['title', 'description', 'altTitle'],
+      where: {
+        type: useGenerated ? ['legacy', 'generated'] : 'legacy',
+      },
       boost: {
         title: 10,
         altTitle: 5,
