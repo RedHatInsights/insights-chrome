@@ -1,10 +1,8 @@
-import React from 'react';
 import { getSharedScope } from '@scalprum/core';
 import { useAtomValue } from 'jotai';
 import { Access } from '@redhat-cloud-services/rbac-client';
 
 import { notificationDrawerScopeReadyAtom } from '../state/atoms/notificationDrawerAtom';
-import Spinner from '@redhat-cloud-services/frontend-components/Spinner';
 
 export const NOTIF_DRAWER_MODULE = '@notif-module/drawer';
 
@@ -17,7 +15,6 @@ export const getNotificationsScope = () => {
 };
 
 export const useNotificationsScope = (): {
-  DrawerPanel: React.ComponentType<React.PropsWithChildren<Record<string, any>>>;
   useNotificationDrawer: () => void;
   initialize: (mounted: boolean, permissions: Access[]) => Promise<void>;
 } => {
@@ -25,11 +22,10 @@ export const useNotificationsScope = (): {
 
   if (!isNotificationsDrawerScopeReady) {
     return {
-      DrawerPanel: () => <Spinner centered />,
       useNotificationDrawer: () => {},
       initialize: async () => Promise.resolve(),
     };
   }
-  const { DrawerPanel, useNotificationDrawer, initialize } = getNotificationsScope();
-  return { DrawerPanel, useNotificationDrawer, initialize };
+  const { useNotificationDrawer, initialize } = getNotificationsScope();
+  return { useNotificationDrawer, initialize };
 };

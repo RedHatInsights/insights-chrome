@@ -29,6 +29,9 @@ import { usePendoFeedback } from '../components/Feedback';
 import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
 import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
+import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
+import { ScalprumComponentProps } from '@scalprum/react-core';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -71,6 +74,18 @@ export const createChromeContext = ({
     removeGlobalFilter: (isHidden: boolean) => {
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
       return dispatch(removeGlobalFilter(isHidden));
+    },
+  };
+
+  const drawerActions = {
+    setDrawerPanelContent: (data: ScalprumComponentProps) => chromeStore.set(drawerPanelContentAtom, data),
+    toggleDrawerPanel: () => chromeStore.set(notificationDrawerExpandedAtom, (prev) => !prev),
+    toggleDrawerContent: (data: ScalprumComponentProps) => {
+      const isOpened = chromeStore.get(notificationDrawerExpandedAtom);
+      const currentContent = chromeStore.get(drawerPanelContentAtom);
+      const futureOpened = (currentContent?.scope !== data.scope && currentContent?.module !== data.module) || !isOpened;
+      chromeStore.set(drawerPanelContentAtom, futureOpened ? data : undefined);
+      chromeStore.set(notificationDrawerExpandedAtom, futureOpened);
     },
   };
 
@@ -201,6 +216,7 @@ export const createChromeContext = ({
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,
+    drawerActions,
   };
   return api;
 };
