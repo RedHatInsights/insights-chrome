@@ -19,12 +19,22 @@ import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import { updateDocumentTitle } from '../utils/common';
+import fetchNavigationFiles from '../utils/fetchNavigationFiles';
+import { useFlag } from '@unleash/proxy-client-react';
+import AllServicesBundle from '../components/AllServices/AllServicesBundle';
+
+const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
+
+const bundles = await fetchNavigationFiles();
+const filteredBundles = bundles.filter(({ id }) => availableBundles.includes(id));
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
+
   updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
@@ -86,9 +96,9 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             </PageGroup>
             <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
-                {sections.map((section, index) => (
-                  <AllServicesSection key={index} {...section} />
-                ))}
+                {enableAllServicesRedesign
+                  ? filteredBundles.map((bundle, index) => <AllServicesBundle key={index} {...bundle} />)
+                  : sections.map((section, index) => <AllServicesSection key={index} {...section} />)}
                 {/* TODO: Add empty state */}
                 {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
               </Gallery>
