@@ -2,7 +2,7 @@ import React from 'react';
 
 const AnsibleIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>{`.a{fill:#fff;}.b{fill:#e00;}`}</style>
       </defs>

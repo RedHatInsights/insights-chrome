@@ -1,33 +1,20 @@
 import { createFetchPermissionsWatcher } from '../auth/fetchPermissions';
-import { AppNavigationCB, ChromeAPI, GenericCB, NavDOMEvent } from '@redhat-cloud-services/types';
+import { AddChromeWsEventListener, AppNavigationCB, ChromeAPI, GenericCB } from '@redhat-cloud-services/types';
 import { Store } from 'redux';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import get from 'lodash/get';
 import Cookies from 'js-cookie';
 
-import {
-  AppNavClickItem,
-  appAction,
-  appNavClick,
-  appObjectId,
-  globalFilterScope,
-  removeGlobalFilter,
-  toggleDebuggerButton,
-  toggleDebuggerModal,
-  toggleFeedbackModal,
-  toggleGlobalFilter,
-} from '../redux/actions';
-import { ITLess, getEnv, getEnvDetails, isBeta, isProd, updateDocumentTitle } from '../utils/common';
+import { globalFilterScope, removeGlobalFilter, toggleGlobalFilter } from '../redux/actions';
+import { ITLess, getEnv, getEnvDetails, isProd, updateDocumentTitle } from '../utils/common';
 import { createSupportCase } from '../utils/createCase';
 import debugFunctions from '../utils/debugFunctions';
 import { flatTags } from '../components/GlobalFilter/globalFilterApi';
 import { PUBLIC_EVENTS } from '../utils/consts';
-import { usePendoFeedback } from '../components/Feedback';
 import { middlewareListener } from '../redux/redux-config';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
 import { ReduxState } from '../redux/store';
-import { STORE_INITIAL_HASH } from '../redux/action-types';
 import { FlagTagsFilter } from '../@types/types';
 import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -37,6 +24,14 @@ import qe from '../utils/iqeEnablement';
 import { RegisterModulePayload } from '../state/atoms/chromeModuleAtom';
 import requestPdf from '../pdf/requestPdf';
 import chromeStore from '../state/chromeStore';
+import { isFeedbackModalOpenAtom } from '../state/atoms/feedbackModalAtom';
+import { usePendoFeedback } from '../components/Feedback';
+import { NavListener, activeAppAtom } from '../state/atoms/activeAppAtom';
+import { isDebuggerEnabledAtom } from '../state/atoms/debuggerModalatom';
+import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
+import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
+import { ScalprumComponentProps } from '@scalprum/react-core';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -47,6 +42,10 @@ export type CreateChromeContextConfig = {
   helpTopics: ChromeAPI['helpTopics'];
   chromeAuth: ChromeAuthContextValue;
   registerModule: (payload: RegisterModulePayload) => void;
+  isPreview: boolean;
+  addNavListener: (cb: NavListener) => number;
+  deleteNavListener: (id: number) => void;
+  addWsEventListener: AddChromeWsEventListener;
 };
 
 export const createChromeContext = ({
@@ -58,14 +57,18 @@ export const createChromeContext = ({
   helpTopics,
   registerModule,
   chromeAuth,
+  isPreview,
+  addNavListener,
+  deleteNavListener,
+  addWsEventListener,
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
   const dispatch = store.dispatch;
   const actions = {
-    appAction: (action: string) => dispatch(appAction(action)),
-    appObjectId: (objectId: string) => dispatch(appObjectId(objectId)),
-    appNavClick: (item: AppNavClickItem, event?: NavDOMEvent) => dispatch(appNavClick(item, event)),
+    appAction: (action: string) => chromeStore.set(appActionAtom, action),
+    appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
+    appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => dispatch(globalFilterScope(scope)),
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
@@ -74,13 +77,29 @@ export const createChromeContext = ({
     },
   };
 
-  const on = (type: keyof typeof PUBLIC_EVENTS, callback: AppNavigationCB | GenericCB) => {
+  const drawerActions = {
+    setDrawerPanelContent: (data: ScalprumComponentProps) => chromeStore.set(drawerPanelContentAtom, data),
+    toggleDrawerPanel: () => chromeStore.set(notificationDrawerExpandedAtom, (prev) => !prev),
+    toggleDrawerContent: (data: ScalprumComponentProps) => {
+      const isOpened = chromeStore.get(notificationDrawerExpandedAtom);
+      const currentContent = chromeStore.get(drawerPanelContentAtom);
+      const futureOpened = (currentContent?.scope !== data.scope && currentContent?.module !== data.module) || !isOpened;
+      chromeStore.set(drawerPanelContentAtom, futureOpened ? data : undefined);
+      chromeStore.set(notificationDrawerExpandedAtom, futureOpened);
+    },
+  };
+
+  const on = (type: keyof typeof PUBLIC_EVENTS | 'APP_NAVIGATION', callback: AppNavigationCB | GenericCB) => {
+    if (type === 'APP_NAVIGATION') {
+      const listenerId = addNavListener(callback);
+      return () => deleteNavListener(listenerId);
+    }
     if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
       throw new Error(`Unknown event type: ${type}`);
     }
 
     const [listener, selector] = PUBLIC_EVENTS[type];
-    if (type !== 'APP_NAVIGATION' && typeof selector === 'string') {
+    if (typeof selector === 'string') {
       (callback as GenericCB)({
         data: get(store.getState(), selector) || {},
       });
@@ -99,6 +118,7 @@ export const createChromeContext = ({
 
   const api: ChromeAPI = {
     ...actions,
+    addWsEventListener,
     auth: {
       getRefreshToken: chromeAuth.getRefreshToken,
       getToken: chromeAuth.getToken,
@@ -134,27 +154,16 @@ export const createChromeContext = ({
       return environment;
     },
     getAvailableBundles: () => Object.entries(bundleMapping).map(([key, value]) => ({ id: key, title: value })),
-    createCase: (fields?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, fields)),
+    createCase: (options?: any) => chromeAuth.getUser().then((user) => createSupportCase(user!.identity, chromeAuth.token, options)),
     getUserPermissions: async (app = '', bypassCache?: boolean) => {
       const token = await chromeAuth.getToken();
       return fetchPermissions(token, app, bypassCache);
     },
     identifyApp,
     hideGlobalFilter: (isHidden: boolean) => {
-      const initialHash = store.getState()?.chrome?.initialHash;
-      /**
-       * Restore app URL hash fragment after the global filter is disabled
-       */
-      if (initialHash) {
-        chromeHistory.replace({
-          ...chromeHistory.location,
-          hash: initialHash,
-        });
-        dispatch({ type: STORE_INITIAL_HASH });
-      }
       dispatch(toggleGlobalFilter(isHidden));
     },
-    isBeta,
+    isBeta: () => isPreview,
     isChrome2: true,
     enable: debugFunctions,
     isDemo: () => Boolean(Cookies.get('cs_demo')),
@@ -170,17 +179,24 @@ export const createChromeContext = ({
     segment: {
       setPageMetadata,
     },
-    toggleFeedbackModal: (isOpen: boolean) => dispatch(toggleFeedbackModal(isOpen)),
-    enableDebugging: () => dispatch(toggleDebuggerButton(true)),
-    toggleDebuggerModal: (isOpen: boolean) => dispatch(toggleDebuggerModal(isOpen)),
+    toggleFeedbackModal: (isOpen: boolean) => {
+      chromeStore.set(isFeedbackModalOpenAtom, isOpen);
+    },
+    enableDebugging: () => {
+      chromeStore.set(isDebuggerEnabledAtom, true);
+    },
+    toggleDebuggerModal: (isOpen: boolean) => {
+      chromeStore.set(isDebuggerEnabledAtom, isOpen);
+    },
     // FIXME: Update types once merged
     quickStarts: quickstartsAPI as unknown as ChromeAPI['quickStarts'],
     helpTopics,
     clearAnsibleTrialFlag,
     isAnsibleTrialFlagActive,
     setAnsibleTrialFlag,
-    chromeHistory,
-    analytics: analytics!,
+    // FIXME: get rid of these anys
+    chromeHistory: chromeHistory as any,
+    analytics: analytics! as any,
     // FIXME: Update types once merged
     useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
     init: () => {
@@ -195,9 +211,12 @@ export const createChromeContext = ({
     },
     $internal: {
       store,
+      // Not supposed to be used by tenants
+      forceAuthRefresh: chromeAuth.forceRefresh,
     },
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,
+    drawerActions,
   };
   return api;
 };
