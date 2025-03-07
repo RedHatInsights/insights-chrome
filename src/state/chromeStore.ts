@@ -10,6 +10,16 @@ import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
 import { moduleRoutesAtom } from './atoms/chromeModuleAtom';
 import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
+import {
+  fetchedWorkspaces,
+  isFecthingRecentlyUsedWorkspaces,
+  isFecthingRecentlyUsedWorkspacesError,
+  isFetchingWorkspaces,
+  isFetchingWorkspacesError,
+  isWorkspacesMenuExpanded,
+  selectedWorkspace,
+  workspaceTree,
+} from './atoms/workspacesAtom';
 
 const chromeStore = createStore();
 
@@ -31,6 +41,16 @@ chromeStore.set(moduleRoutesAtom, []);
 
 chromeStore.set(drawerPanelContentAtom, undefined);
 chromeStore.set(notificationDrawerExpandedAtom, false);
+
+// Workspaces
+chromeStore.set(isWorkspacesMenuExpanded, false);
+chromeStore.set(isFetchingWorkspaces, false);
+chromeStore.set(isFetchingWorkspacesError, false);
+chromeStore.set(isFecthingRecentlyUsedWorkspaces, false);
+chromeStore.set(isFecthingRecentlyUsedWorkspacesError, false);
+chromeStore.set(selectedWorkspace, undefined);
+chromeStore.set(fetchedWorkspaces, []);
+chromeStore.set(workspaceTree, undefined);
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
