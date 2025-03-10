@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
@@ -22,17 +22,17 @@ import { updateDocumentTitle } from '../utils/common';
 import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { useFlag } from '@unleash/proxy-client-react';
 import AllServicesBundle from '../components/AllServices/AllServicesBundle';
+import { BundleNavigation } from '../@types/types';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
-
-const bundles = await fetchNavigationFiles();
-const filteredBundles = bundles.filter(({ id }) => availableBundles.includes(id));
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  const [bundles, setBundles] = useState<BundleNavigation[]>([]);
+
   const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
 
   updateDocumentTitle('All Services', true);
@@ -43,6 +43,16 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     // TODO: Add error state
     return <div>Error</div>;
   }
+
+  const fetchNavigation = async () => {
+    const fetchNav = await fetchNavigationFiles();
+    const filteredBundles = await Promise.all(fetchNav.filter(({ id }) => availableBundles.includes(id)));
+    return filteredBundles;
+  };
+
+  useEffect(() => {
+    fetchNavigation().then(setBundles);
+  });
 
   const sections = linkSections;
 
@@ -97,7 +107,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
                 {enableAllServicesRedesign
-                  ? filteredBundles.map((bundle, index) => <AllServicesBundle key={index} {...bundle} />)
+                  ? bundles.map((bundle, index) => <AllServicesBundle key={index} {...bundle} />)
                   : sections.map((section, index) => <AllServicesSection key={index} {...section} />)}
                 {/* TODO: Add empty state */}
                 {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
