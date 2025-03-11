@@ -70,7 +70,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     }),
     new HtmlWebpackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',
-      filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
+      filename: 'silent-check-sso.html',
       inject: false,
       minify: false,
       template: path.resolve(__dirname, '../src/silent-check-sso.html'),
