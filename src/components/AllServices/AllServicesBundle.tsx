@@ -13,7 +13,7 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 
 type AllServicesBundleProps = BundleNavigation;
 
-const AllServicesBundle = ({ title, description, navItems }: AllServicesBundleProps) => {
+const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBundleProps) => {
   const items = navItems.flatMap(({ href, title, navItems, id, routes }) => {
     const children = routes || navItems;
     return children
@@ -35,19 +35,19 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
   const itemLearningResources = items.find((item) => item.title === 'Learning Resources');
   const itemDashboard = items.find((item) => item.title === 'Dashboard');
 
-  const findIcon = (title: string) => {
-    switch (title) {
-      case 'OpenShift':
+  const findIcon = (bundleId: string) => {
+    switch (bundleId) {
+      case 'openshift':
         return <ServiceIcon icon={FavorableIcons.OpenShiftIcon} />;
-      case 'Red Hat Insights':
+      case 'insights':
         return <ServiceIcon icon={FavorableIcons.InsightsIcon} />;
-      case 'Ansible Automation Platform':
+      case 'ansible':
         return <ServiceIcon icon={FavorableIcons.AnsibleIcon} />;
-      case 'Subscription Services':
+      case 'subscriptions':
         return <ServiceIcon icon={FavorableIcons.SubscriptionsIcon} />;
-      case 'Identity & Access Management':
+      case 'iam':
         return <ServiceIcon icon={FavorableIcons.IAmIcon} />;
-      case 'Settings':
+      case 'settings':
         return <ServiceIcon icon={FavorableIcons.SettingsIcon} />;
       default:
         return null;
@@ -59,7 +59,7 @@ const AllServicesBundle = ({ title, description, navItems }: AllServicesBundlePr
       <CardHeader className="pf-v6-u-background-color-400">
         <Title headingLevel="h4" size="lg">
           <Split hasGutter>
-            <SplitItem> {findIcon(title)} </SplitItem>
+            <SplitItem> {findIcon(id)} </SplitItem>
             <SplitItem> {title} </SplitItem>
           </Split>
         </Title>

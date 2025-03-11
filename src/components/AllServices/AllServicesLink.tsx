@@ -34,13 +34,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
     <Content component={ContentVariants.p} className={classNames('chr-c-favorite-trigger')}>
       <Flex display={{ default: 'inlineFlex' }} gap={{ default: 'gapXs' }}>
         <FlexItem>
-          <ChromeLink
-            style={{ textDecoration: 'none' }}
-            appId={appId}
-            isExternal={isExternal}
-            href={href ? href : ''}
-            data-ouia-component-id={`${title}`}
-          >
+          <ChromeLink style={{ textDecoration: 'none' }} appId={appId} isExternal={isExternal} href={href ?? '#'} data-ouia-component-id={`${title}`}>
             {title}
             {isExternal && (
               <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>

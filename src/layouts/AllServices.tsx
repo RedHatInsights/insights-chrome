@@ -46,12 +46,12 @@ const AllServices = ({ Footer }: AllServicesProps) => {
 
   const fetchNavigation = async () => {
     const fetchNav = await fetchNavigationFiles();
-    const filteredBundles = await Promise.all(fetchNav.filter(({ id }) => availableBundles.includes(id)));
-    return filteredBundles;
+    const filteredBundles = await Promise.resolve(fetchNav.filter(({ id }) => availableBundles.includes(id)));
+    setBundles(filteredBundles);
   };
 
   useEffect(() => {
-    fetchNavigation().then(setBundles);
+    fetchNavigation();
   });
 
   const sections = linkSections;
@@ -107,7 +107,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
                 {enableAllServicesRedesign
-                  ? bundles.map((bundle, index) => <AllServicesBundle key={index} {...bundle} />)
+                  ? bundles.map((bundle) => <AllServicesBundle key={bundle.id} {...bundle} />)
                   : sections.map((section, index) => <AllServicesSection key={index} {...section} />)}
                 {/* TODO: Add empty state */}
                 {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
