@@ -66,13 +66,21 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
         <Flex>
           {itemOverview ? (
             <FlexItem>
-              <ChromeLink style={{ textDecoration: 'none' }} href={itemOverview.href ? itemOverview.href : ''} data-ouia-component-id={`${title}`}>
+              <ChromeLink
+                className="chr-c-favorite-service__tile"
+                href={itemOverview.href ? itemOverview.href : ''}
+                data-ouia-component-id={`${title}`}
+              >
                 {itemOverview.title}
               </ChromeLink>
             </FlexItem>
           ) : itemDashboard ? (
             <FlexItem>
-              <ChromeLink style={{ textDecoration: 'none' }} href={itemDashboard.href ? itemDashboard.href : ''} data-ouia-component-id={`${title}`}>
+              <ChromeLink
+                className="chr-c-favorite-service__tile"
+                href={itemDashboard.href ? itemDashboard.href : ''}
+                data-ouia-component-id={`${title}`}
+              >
                 {itemDashboard.title}
               </ChromeLink>
             </FlexItem>
@@ -85,7 +93,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
           <FlexItem>
             {itemLearningResources ? (
               <ChromeLink
-                style={{ textDecoration: 'none' }}
+                className="chr-c-favorite-service__tile"
                 href={itemLearningResources.href ? itemLearningResources.href : ''}
                 data-ouia-component-id={`${title}`}
               >
