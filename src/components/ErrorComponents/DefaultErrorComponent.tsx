@@ -6,7 +6,6 @@ import { EmptyState, EmptyStateActions, EmptyStateBody } from '@patternfly/react
 import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
-import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
@@ -80,10 +79,10 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
     <Bullseye className="chr-c-error-component">
       <EmptyState
         titleText={
-          <Title size="lg" headingLevel="h1">
+          <>
             {intl.formatMessage(messages.somethingWentWrong)}&nbsp;
             {sentryId && intl.formatMessage(messages.globalRuntimeErrorId, { errorId: sentryId })}
-          </Title>
+          </>
         }
         icon={ExclamationCircleIcon}
       >

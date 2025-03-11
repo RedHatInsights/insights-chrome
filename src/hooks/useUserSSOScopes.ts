@@ -1,23 +1,25 @@
 import { useEffect } from 'react';
-import { ChromeLogin } from '../auth/ChromeAuthContext';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
-import shouldReAuthScopes from '../auth/shouldReAuthScopes';
+import { routeAuthScopeReady } from '../state/atoms/routeAuthScopeReady';
 
 /**
  * If required, attempt to reauthenticate current user with additional scopes.
  */
-const useUserSSOScopes = (login: ChromeLogin) => {
+const useUserSSOScopes = (reAuthWithScopes: (...scopes: string[]) => Promise<void>) => {
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
+  const setAuthScopeReady = useSetAtom(routeAuthScopeReady);
   // get scope module definition
   const requiredScopes = activeModule?.config?.ssoScopes || [];
 
   useEffect(() => {
-    const [shouldReAuth, newScopes] = shouldReAuthScopes(requiredScopes);
-    if (shouldReAuth) {
-      login(newScopes);
+    if (requiredScopes.length > 0) {
+      setAuthScopeReady(false);
+      reAuthWithScopes(...requiredScopes).then(() => {
+        setAuthScopeReady(true);
+      });
     }
-  }, [requiredScopes, activeModule?.fullProfile]);
+  }, [requiredScopes, setAuthScopeReady]);
 };
 
 export default useUserSSOScopes;
