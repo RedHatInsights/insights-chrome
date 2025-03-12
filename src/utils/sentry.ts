@@ -5,29 +5,19 @@ import { isProd } from './common';
 
 let sentryInitialized = false;
 
-function getAppDetails() {
+//TODO: Manually add an appName for when url is just console.redhat.com
+export function getAppDetails() {
   const pathName = window.location.pathname.split('/');
   let appGroup = 'insights';
   let appName;
-  let environment = 'stable';
-  if (pathName[1] === 'beta') {
-    appGroup = pathName[2];
+  appGroup = pathName[1];
+  if (appGroup === 'openshift') {
     appName = pathName[3];
-    environment = 'beta';
   } else {
-    appGroup = pathName[1];
-    if (appGroup === 'openshift') {
-      appName = pathName[3];
-    } else {
-      appName = pathName[2];
-      if (appGroup === 'landing') {
-        appName = 'landing';
-      }
-    }
+    appName = pathName[2];
   }
 
   const appDetails = {
-    env: environment,
     app: {
       group: appGroup,
       name: appName,
@@ -144,7 +134,7 @@ function initSentry() {
   };
 
   // dsn: key
-  // environment: logs Prod or Prod Beta for filtering
+  // environment: logs Prod or Prod Beta for filtering (potential future changes for filtering)
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
   // attachStacktrace: attach the actual console logs
   // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
@@ -158,7 +148,7 @@ function initSentry() {
   Sentry.init({
     //default api_key -> cp-001-insights
     dsn: 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024',
-    environment: `Prod${appDetails.env}`,
+    environment: `Prod`,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
     integrations: [
