@@ -1,6 +1,6 @@
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { BundleNavigation } from '../../@types/types';
@@ -35,8 +35,8 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
   const itemLearningResources = items.find((item) => item.title === 'Learning Resources');
   const itemDashboard = items.find((item) => item.title === 'Dashboard');
 
-  const findIcon = (bundleId: string) => {
-    switch (bundleId) {
+  const bundleIcon = useMemo(() => {
+    switch (id) {
       case 'openshift':
         return <ServiceIcon icon={FavorableIcons.OpenShiftIcon} />;
       case 'insights':
@@ -52,14 +52,14 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
       default:
         return null;
     }
-  };
+  }, [id]);
 
   return (
     <Card className="pf-v6-u-display-block pf-v6-u-mb-md">
       <CardHeader className="pf-v6-u-background-color-400">
         <Title headingLevel="h4" size="lg">
           <Split hasGutter>
-            <SplitItem> {findIcon(id)} </SplitItem>
+            <SplitItem> {bundleIcon} </SplitItem>
             <SplitItem> {title} </SplitItem>
           </Split>
         </Title>
