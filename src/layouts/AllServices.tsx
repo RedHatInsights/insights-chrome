@@ -52,7 +52,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
 
   useEffect(() => {
     fetchNavigation();
-  });
+  }, []);
 
   const sections = linkSections;
 
