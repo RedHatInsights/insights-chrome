@@ -1,26 +1,29 @@
 import { getAppDetails } from './sentry';
 
 describe('getAppDetails function', () => {
+  let locationSpy;
+
   beforeEach(() => {
-    Object.defineProperty(global, 'location', {
-      value: {
-        host: 'console.redhat.com',
-        pathname: '',
-      },
-      writable: true,
+    locationSpy = jest.spyOn(global, 'location', 'get').mockReturnValue({
+      host: 'console.redhat.com',
+      pathname: '',
     });
   });
 
+  afterEach(() => {
+    locationSpy.mockRestore();
+  });
+
   it('should return insights and dashboard for /insights/dashboard', () => {
-    global.location.pathname = '/insights/dashboard';
+    locationSpy.mockReturnValueOnce({ pathname: '/insights/dashboard' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
     expect(result.app.name).toBe('dashboard');
   });
 
-  it('should return insigths and inventory for /insights/inventory', () => {
-    global.location.pathname = '/insights/inventory';
+  it('should return insights and inventory for /insights/inventory', () => {
+    locationSpy.mockReturnValueOnce({ pathname: '/insights/inventory' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
@@ -28,7 +31,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return insights and registration for /insights/registration', () => {
-    global.location.pathname = '/insights/registration';
+    locationSpy.mockReturnValueOnce({ pathname: '/insights/registration' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
@@ -36,7 +39,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return openshift and vulnerability for /openshift/insights/vulnerability/', () => {
-    global.location.pathname = '/openshift/insights/vulnerability/cves';
+    locationSpy.mockReturnValueOnce({ pathname: '/openshift/insights/vulnerability/cves' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('openshift');
@@ -44,7 +47,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return openshift and advisor for /openshift/insights/advisor/', () => {
-    global.location.pathname = '/openshift/insights/advisor/recommendations';
+    locationSpy.mockReturnValueOnce({ pathname: '/openshift/insights/advisor/recommendations' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('openshift');
