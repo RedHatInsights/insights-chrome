@@ -202,6 +202,46 @@ export function OIDCSecured({
     setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
 
+  useEffect(() => {
+    let visibilityState = document.visibilityState;
+    function loginOnTokenExpired() {
+      if (authRef.current.user?.expires_at) {
+        const currentDate = new Date();
+        // KC does not give the correct timestamp UNIX format, it has to be multiplied by 1000
+        const expiredDate = new Date(authRef.current.user?.expires_at * 1000);
+        if (expiredDate < currentDate) {
+          state.login();
+        }
+      }
+    }
+    function visibilityListener() {
+      if (visibilityState !== document.visibilityState && document.visibilityState === 'visible') {
+        // we went from non visible to visible (tab went into focus for various reasons)
+        loginOnTokenExpired();
+      }
+      visibilityState = document.visibilityState;
+    }
+
+    function networkOnlineListener() {
+      loginOnTokenExpired();
+      authRef.current.startSilentRenew();
+    }
+
+    function networkOfflineListener() {
+      authRef.current.stopSilentRenew();
+    }
+
+    window.addEventListener('online', networkOnlineListener);
+    window.addEventListener('offline', networkOfflineListener);
+    document.addEventListener('visibilitychange', visibilityListener);
+
+    return () => {
+      window.removeEventListener('online', networkOnlineListener);
+      window.removeEventListener('offline', networkOfflineListener);
+      document.removeEventListener('visibilitychange', visibilityListener);
+    };
+  }, []);
+
   if (auth.error) {
     // leave the auth error handling on the global ErrorBoundary
     throw auth.error;
