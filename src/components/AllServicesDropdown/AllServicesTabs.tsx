@@ -85,12 +85,12 @@ const AllServicesTabs = ({
       className="pf-v6-u-p-md pf-v6-u-pr-0 pf-v6-u-pl-0-on-md"
       ouiaId={'all-services-tabs'}
     >
-      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-sm pf-v6-u-mb-sm" component={ContentVariants.small}>
+      <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-sm pf-v6-u-mb-md" component={ContentVariants.small}>
         Platforms
       </Content>
       <PlatformServiceslinks />
       <>
-        <Divider />
+        <Divider className="pf-v6-u-mt-md" />
         <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
           Services{' '}
           <ChromeLink
