@@ -45,14 +45,13 @@
     z-index: -1000;
   }
 
-  // To not cover the entire screen including masthead
-  .pf-v6-c-backdrop {
-    position: relative;
-  }
-
   .pf-v6-c-dropdown__menu {
     position: relative; // make sure to enable scroll within backdrop
     top: 0;
+  }
+
+  .pf-v6-c-tabs__list::before {
+    border-left:none !important;
   }
 }
 
@@ -62,7 +61,6 @@
       background: var(--pf-t--global--background--color--200);
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
-
     .pf-v6-c-tabs {
       background: var(--pf-t--global--background--color--200);
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
@@ -77,6 +75,9 @@
 
 @media (min-width: $pf-v6-global--breakpoint--md) {
   .chr-c-panel-services-nav {
+    margin-left: 25px;
+    margin-right: 25px;
+    border-radius: 18px;
     .chr-l-stack__item-browse-all-services {
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
@@ -85,19 +86,20 @@
       --pf-v6-c-sidebar__panel--md--FlexBasis: 20rem;
 
       &__main {
-        height: 810px;
+        height: 820px;
       }
-
       &__content {
-        height: 810px;
+        border-bottom-right-radius: 16px;
+        border-top-right-radius: 16px;
+        height: 820px;
         overflow: auto;
       }
-
       &__panel {
-        height: 810px;
+        border-bottom-left-radius: 16px;
+        border-top-left-radius: 16px;
+        border-right: 1px solid var(--pf-t--global--border--color--default);
         flex-basis: 500px;
-        box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.16);
-
+        height: 820px;
         .pf-v6-c-tabs {
           --pf-v6-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-v6-c-tabs--m-vertical__link--PaddingTop: var(--pf-t--global--spacer--sm);
