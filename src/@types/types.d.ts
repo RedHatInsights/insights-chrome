@@ -167,6 +167,7 @@ export type ChromeModule = {
     fullProfile?: boolean;
     props?: Record<string, unknown>;
     ssoScopes?: string[];
+    cdnPath?: string;
   };
   analytics?: {
     APIKey?: string;
