@@ -3,7 +3,6 @@ import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
-import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -36,6 +35,7 @@ import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/act
 import BetaSwitcher from '../BetaSwitcher';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -90,7 +90,7 @@ const ScalprumRoot = memo(
 ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 
 export type ChromeApiRootProps = {
-  config: AppsConfig;
+  config: ScalprumConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
@@ -235,6 +235,18 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
               ],
               registrationMethod: manifest.registrationMethod ?? 'callback',
             };
+
+            // Handle modules that cna be served from unknown path at build time
+            // Should be the default for "hybrid" modules that can live in multiple products
+            if (manifest.baseURL === 'auto') {
+              const cdnPath = config[manifest.name]?.cdnPath;
+              if (!cdnPath) {
+                console.error('Manifest baseURL is set to auto but no cdnPath is provided in customProperties for plugin', manifest.name);
+              } else {
+                newManifest.baseURL = cdnPath;
+                newManifest.loadScripts = manifest.loadScripts.map((script) => `${cdnPath}${script}`.replace(/\/\//, '/'));
+              }
+            }
             return newManifest;
           },
         },
