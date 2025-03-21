@@ -23,6 +23,7 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
+import useManageSilentRenew from './useManageSilentRenew';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -201,6 +202,8 @@ export function OIDCSecured({
     authRef.current = auth;
     setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
+
+  useManageSilentRenew(auth, state.login);
 
   if (auth.error) {
     // leave the auth error handling on the global ErrorBoundary
