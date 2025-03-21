@@ -14,6 +14,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
+import { routeAuthScopeReady } from '../../state/atoms/routeAuthScopeReady';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -33,6 +34,7 @@ const ChromeRoute = memo(
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const gatewayError = useAtomValue(gatewayErrorAtom);
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
+    const authScopeReady = useAtomValue(routeAuthScopeReady);
 
     const setActiveModule = useSetAtom(activeModuleAtom);
 
@@ -80,7 +82,8 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
 
-    if (isHidden === null && Array.isArray(permissions)) {
+    console.log({ authScopeReady });
+    if (!authScopeReady || (isHidden === null && Array.isArray(permissions))) {
       return LoadingFallback;
     }
 
