@@ -49,10 +49,10 @@ export default defineConfig({
   },
   e2e: {
     blockHosts: ['consent.trustarc.com'],
-    baseUrl: 'https://stage.foo.redhat.com:1337/',
+    baseUrl: 'https://ee-vfwknanu.apps.crc-eph.r9lp.p1.openshiftapps.com/',
     env: {
-      E2E_USER: process.env.E2E_USER,
-      E2E_PASSWORD: process.env.E2E_PASSWORD,
+      E2E_USER: 'jdoe', //process.env.E2E_USER,
+      E2E_PASSWORD: 'jyJSIx6vo9BlW3b5', // process.env.E2E_PASSWORD,
     },
     // To avoid any flaky issues we set the timeouts to be extra gracious
     // Slow tests are faster than rerunning flaky tests
