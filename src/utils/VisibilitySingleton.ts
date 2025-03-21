@@ -1,11 +1,11 @@
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { isBeta, isProd } from './common';
+import { isProd } from './common';
 import cookie from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
-import { getFeatureFlagsError, unleashClient } from '../components/FeatureFlags/FeatureFlagsProvider';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
+import { getFeatureFlagsError, getUnleashClient } from '../components/FeatureFlags/unleashClient';
 
 const matcherMapper = {
   isEmpty,
@@ -25,10 +25,12 @@ const initialize = ({
   getUserPermissions,
   getUser,
   getToken,
+  isPreview,
 }: {
   getUser: ChromeAPI['auth']['getUser'];
   getToken: ChromeAPI['auth']['getToken'];
   getUserPermissions: ChromeAPI['getUserPermissions'];
+  isPreview: boolean;
 }) => {
   /**
    * Check if is permitted to see navigation link
@@ -81,7 +83,11 @@ const initialize = ({
           Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
     },
     isProd: () => isProd(),
-    isBeta: () => isBeta(),
+    /**
+     * @deprecated Should use feature flags instead
+     * @returns {boolean}
+     */
+    isBeta: () => isPreview,
     isHidden: () => true, // FIXME: Why always true?
     withEmail: async (...toHave: string[]) => {
       const data = await getUser();
@@ -126,7 +132,7 @@ const initialize = ({
       }
     },
     featureFlag: (flagName: string, expectedValue: boolean) =>
-      getFeatureFlagsError() !== true && unleashClient?.isEnabled(flagName) === expectedValue,
+      getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules
@@ -147,6 +153,13 @@ export const getVisibilityFunctions = () => {
   }
 
   return visibilityFunctions['*'].get();
+};
+
+export const visibilityFunctionsExist = () => !!getSharedScope()['@chrome/visibilityFunctions'];
+
+export const updateVisibilityFunctionsBeta = (isPreview: boolean) => {
+  const visibilityFunctions = getVisibilityFunctions();
+  visibilityFunctions.isBeta = () => isPreview;
 };
 
 export const initializeVisibilityFunctions = initialize;

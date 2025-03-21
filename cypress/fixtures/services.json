@@ -85,7 +85,7 @@
           "title": "Application Services",
           "links": [
             "application-services.trustedContentOverview",
-            "application-services.apiManagement"
+            "application-services.trustedArtifactSignerOverview"
           ]
         }
       ]
@@ -373,7 +373,6 @@
           "isGroup": true,
           "title": "Application Services",
           "links": [
-            "application-services.trustedContentOverview",
            {
              "title": "Advanced Cluster Security",
              "href": "/application-services/acs/overview",
