@@ -46,35 +46,34 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
   };
 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
+
   return enableAllServicesRedesign ? (
-    <Content component={ContentVariants.p} className={classNames('chr-c-favorite-trigger')}>
-      <Flex display={{ default: 'inlineFlex' }} gap={{ default: 'gapXs' }}>
-        <FlexItem>
-          <ChromeLink
-            className="chr-c-favorite-service__tile"
-            appId={appId}
-            isExternal={isExternal}
-            href={href ?? '#'}
-            data-ouia-component-id={`${title}`}
-          >
-            {title}
-            {isExternal && (
-              <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>
-                <ExternalLinkAltIcon />
-              </Icon>
-            )}
-          </ChromeLink>
-        </FlexItem>
-        <FlexItem>
-          <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-            {sectionTitle} {sectionTitle && bundleTitle ? `>` : ''}{' '}
-          </div>
-        </FlexItem>
-        <FlexItem>
-          <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{bundleTitle}</div>
-        </FlexItem>
-      </Flex>
-    </Content>
+    <Flex display={{ default: 'inlineFlex' }} gap={{ default: 'gapXs' }}>
+      <FlexItem component={'p'} className={classNames('chr-c-favorite-trigger')}>
+        <ChromeLink
+          className="chr-c-favorite-service__tile"
+          appId={appId}
+          isExternal={isExternal}
+          href={href ?? '#'}
+          data-ouia-component-id={`${title}`}
+        >
+          {title}
+          {isExternal && (
+            <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>
+              <ExternalLinkAltIcon />
+            </Icon>
+          )}
+        </ChromeLink>
+      </FlexItem>
+      <FlexItem>
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+          {sectionTitle} {sectionTitle && bundleTitle ? `>` : ''}{' '}
+        </div>
+      </FlexItem>
+      <FlexItem>
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{bundleTitle}</div>
+      </FlexItem>
+    </Flex>
   ) : (
     <Content
       component={ContentVariants.p}
