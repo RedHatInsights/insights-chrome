@@ -55,7 +55,7 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: dev ? false : 'hidden-source-map',
+    devtool: dev ? 'eval-source-map' : 'hidden-source-map',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
@@ -181,6 +181,11 @@ const commonConfig = ({ dev }) => {
           ...(process.env.NAV_CONFIG && {
             '/api/chrome-service/v1/static': {
               host: `http://localhost:${process.env.NAV_CONFIG}`,
+            },
+          }),
+          ...(process.env.RBAC_PORT && {
+            '/api/rbac/v2/workspaces/': {
+              host: `http://localhost:${process.env.RBAC_PORT}`,
             },
           }),
         },

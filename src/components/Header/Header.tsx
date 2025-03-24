@@ -18,6 +18,7 @@ import './Header.scss';
 import { activationRequestURLs } from '../../utils/consts';
 import SearchInput from '../Search/SearchInput';
 import AllServicesDropdown from '../AllServicesDropdown/AllServicesDropdown';
+import WorkspaceSwitcher from '../WorkspaceSwitcher/WorkspaceSwitcher';
 import { Breadcrumbsprops } from '../Breadcrumbs/Breadcrumbs';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
@@ -108,6 +109,9 @@ const MemoizedHeader = memo(
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
+                <ToolbarItem>
+                  <WorkspaceSwitcher />
+                </ToolbarItem>
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
                 <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm" variant="filter-group">
