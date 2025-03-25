@@ -1,9 +1,24 @@
-export type ThreeScaleError = { complianceError?: boolean; status: number; source?: string; detail: string; meta?: { response_by: string } };
+// eslint-disable-next-line no-restricted-imports
+import { AuthContextProps } from 'react-oidc-context';
+
+export type ThreeScaleError = {
+  data?: string;
+  complianceError?: boolean;
+  status: number;
+  source?: string;
+  detail: string;
+  meta?: { response_by: string };
+};
 
 export const COMPLIACE_ERROR_CODES = ['ERROR_OFAC', 'ERROR_T5', 'ERROR_EXPORT_CONTROL'];
 const errorCodeRegexp = new RegExp(`(${COMPLIACE_ERROR_CODES.join('|')})`);
 
-export function get3scaleError(response: string | { errors: ThreeScaleError[] }) {
+export function get3scaleError(response: string | { errors: ThreeScaleError[] }, signIn?: AuthContextProps['signinRedirect']) {
+  if (signIn && typeof response !== 'string' && isTokenExpiredError(response)) {
+    signIn();
+    return;
+  }
+
   // attempt to parse XHR response
   let parsedResponse: ThreeScaleError[];
   try {
@@ -39,4 +54,10 @@ export function get3scaleError(response: string | { errors: ThreeScaleError[] })
 
 function isComplianceError(response = '') {
   return !!response.match(errorCodeRegexp);
+}
+
+const TOKEN_EXPIRED_MATCHER = `Invalid JWT token - 'exp' claim expired at`;
+
+function isTokenExpiredError(error?: { errors?: ThreeScaleError[] }) {
+  return error?.errors?.find(({ status, detail }) => status === 401 && detail?.includes(TOKEN_EXPIRED_MATCHER));
 }
