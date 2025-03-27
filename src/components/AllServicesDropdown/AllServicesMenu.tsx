@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
@@ -19,6 +20,7 @@ import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import { AllServicesDropdownContext } from './common';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
 import ServiceIcon from '../FavoriteServices/ServiceIcon';
+import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 
 export type AllServicesMenuProps = {
   setIsOpen: (isOpen: boolean) => void;
@@ -101,11 +103,25 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                 </SidebarPanel>
                 <SidebarContent>
                   <Card isPlain>
-                    <CardHeader className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md">
+                    <CardHeader
+                      actions={{
+                        actions: [
+                          <Button
+                            className="pf-v6-u-mr-xs"
+                            icon={<TimesIcon />}
+                            key="close"
+                            variant="plain"
+                            aria-label="Close menu"
+                            onClick={() => setIsOpen(!isOpen)}
+                          />,
+                        ],
+                      }}
+                      className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
+                    >
                       <Title headingLevel="h3">
                         {activeTabKey === FAVORITE_TAB_ID ? (
                           <>
-                            <StarIcon /> My Favorite Services
+                            <StarIcon /> My Favorite services
                           </>
                         ) : (
                           <>

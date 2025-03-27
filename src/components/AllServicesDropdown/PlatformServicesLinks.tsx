@@ -23,7 +23,7 @@ const PlatformServiceslinks = () => {
         <SplitItem>
           <RhelIcon />
         </SplitItem>
-        <SplitItem>
+        <SplitItem className="pf-v6-u-pt-xs">
           <ChromeLink href="/insights" data-ouia-component-id="AllServices-Dropdown-RHEL" className="pf-v6-u-pl-sm chr-m-plain">
             Red Hat Enterprise Linux
           </ChromeLink>
