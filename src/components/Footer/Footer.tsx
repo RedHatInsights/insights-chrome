@@ -118,9 +118,6 @@ const ChromeFooter = () => {
             <a href="https://redhat.com/en/products/trials">Product trial center</a>
           </li>
           <li>
-            <a href="https://marketplace.redhat.com">Red Hat Marketplace</a>
-          </li>
-          <li>
             <a href="https://catalog.redhat.com/">Red Hat Ecosystem Catalog</a>
           </li>
           <li>
