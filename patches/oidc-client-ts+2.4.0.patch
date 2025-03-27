@@ -1,0 +1,14 @@
+diff --git a/node_modules/oidc-client-ts/dist/esm/oidc-client-ts.js b/node_modules/oidc-client-ts/dist/esm/oidc-client-ts.js
+index 32a5477..a7ccc57 100644
+--- a/node_modules/oidc-client-ts/dist/esm/oidc-client-ts.js
++++ b/node_modules/oidc-client-ts/dist/esm/oidc-client-ts.js
+@@ -2645,7 +2645,8 @@ var UserManager = class {
+       ...requestArgs
+     } = args;
+     let user = await this._loadUser();
+-    if (user == null ? void 0 : user.refresh_token) {
++    // ensure the iframe flow is triggered on silent signin
++    if(window.enableOIDCRefreshTokenFlow && (user == null ? void 0 : user.refresh_token)) {
+       logger2.debug("using refresh token");
+       const state = new RefreshState(user, resource);
+       return await this._useRefreshToken(state);

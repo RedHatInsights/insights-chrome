@@ -68,6 +68,7 @@ export type BundleNavigation = {
 
 declare global {
   interface Window {
+    enableOIDCRefreshTokenFlow: boolean;
     hj: any;
     pendo?: {
       updateOptions: (...args: any[]) => void;

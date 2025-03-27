@@ -19,7 +19,6 @@ import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
 import { useAtomValue } from 'jotai';
-import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
@@ -116,10 +115,30 @@ export function OIDCSecured({
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
-      const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-      if (shouldReAuth) {
-        login(authRef.current, reAuthScopes);
+      window.enableOIDCRefreshTokenFlow = false;
+      let scopes = [...requiredScopes, ...additionalScopes].flat();
+      if (authRef.current.user?.scope) {
+        scopes = scopes.concat(authRef.current.user.scope.split(' '));
       }
+      auth
+        .signinSilent({
+          scope: scopes.join(' '),
+          prompt: 'none',
+        })
+        .then((user) => {
+          if (user === null) {
+            // silent auth failed,no user was created, trigger normal login flow
+            window.enableOIDCRefreshTokenFlow = true;
+            login(authRef.current, scopes);
+          }
+        })
+        .catch((error) => {
+          console.error('Error while re-authenticating user', error);
+          login(authRef.current, scopes);
+        })
+        .finally(() => {
+          window.enableOIDCRefreshTokenFlow = true;
+        });
     },
   });
 
@@ -181,6 +200,7 @@ export function OIDCSecured({
   }, [JSON.stringify(auth.user), auth.isAuthenticated]);
 
   useEffect(() => {
+    window.enableOIDCRefreshTokenFlow = true;
     if (!auth.error) {
       startChrome();
     }

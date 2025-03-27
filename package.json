@@ -32,7 +32,7 @@
     "translations:compile": "npx formatjs compile ./locales/translation-template.json --out-file ./src/locales/translations.json",
     "translations:datafile": "node scripts/createDataJson.js",
     "verify": "npm-run-all lint build test",
-    "postinstall": "rm -rf .webpack-cache",
+    "postinstall": "rm -rf .webpack-cache && patch-package",
     "ci:unit-tests": "run-s test",
     "ci:lint": "run-s lint",
     "ci:cypress-component-tests": "run-s test:ct",
@@ -96,6 +96,7 @@
     "madge": "^6.1.0",
     "mini-css-extract-plugin": "^2.9.0",
     "npm-run-all": "^4.1.5",
+    "patch-package": "^8.0.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
     "react-refresh": "^0.14.2",
@@ -131,7 +132,6 @@
     "@openshift/dynamic-plugin-sdk": "^5.0.1",
     "@orama/orama": "^2.0.21",
     "@patternfly/patternfly": "^6.0.0",
-    "pf-5-styles": "npm:@patternfly/patternfly@^5.4.0",
     "@patternfly/quickstarts": "^6.0.0",
     "@patternfly/react-charts": "^8.0.0",
     "@patternfly/react-core": "^6.0.0",
@@ -170,6 +170,7 @@
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "oidc-client-ts": "^2.4.0",
+    "pf-5-styles": "npm:@patternfly/patternfly@^5.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intl": "^6.7.0",
@@ -182,8 +183,8 @@
     "remark-gfm": "^4.0.0",
     "sanitize-html": "^2.13.0",
     "title-case": "^3.0.3",
-    "urijs": "^1.19.11",
-    "unleash-proxy-client": "^2.5.0"
+    "unleash-proxy-client": "^2.5.0",
+    "urijs": "^1.19.11"
   },
   "overrides": {
     "react-redux": "^8.1.3"
