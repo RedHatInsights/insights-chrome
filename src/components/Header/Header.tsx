@@ -85,7 +85,7 @@ const MemoizedHeader = memo(
             >
               <Logo theme={theme} />
             </MastheadLogo>
-            {userReady && <> {!(!md && searchOpen) && <AllServicesDropdown />} </>}
+            {!(!md && searchOpen) && <AllServicesDropdown />}
           </MastheadBrand>
         </MastheadMain>
         <MastheadContent className="pf-v6-u-mx-0">

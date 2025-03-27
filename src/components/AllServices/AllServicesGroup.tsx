@@ -1,9 +1,9 @@
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import React, { Fragment } from 'react';
-import { titleToId } from '../../utils/common';
 
 import AllServicesLink from './AllServicesLink';
 import { AllServicesGroup } from './allServicesLinks';
+import { titleToId } from '../../utils/common';
 
 export type AllServicesGroupProps = AllServicesGroup & {
   category: string;
