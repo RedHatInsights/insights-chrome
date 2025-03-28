@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
 import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
@@ -98,15 +97,13 @@ const AllServicesDropdown = () => {
             />
           ) : (
             <div ref={menuRef} className="pf-v6-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
-              <Backdrop>
-                <Panel variant="raised" className="pf-v6-c-dropdown__menu pf-v6-u-p-0 pf-v6-u-w-100 chr-c-panel-services-nav ">
-                  <PanelMain>
-                    <Bullseye>
-                      <Spinner />
-                    </Bullseye>
-                  </PanelMain>
-                </Panel>
-              </Backdrop>
+              <Panel variant="raised" className="pf-v6-c-dropdown__menu pf-v6-u-p-0 pf-v6-u-w-100 chr-c-panel-services-nav ">
+                <PanelMain>
+                  <Bullseye>
+                    <Spinner />
+                  </Bullseye>
+                </PanelMain>
+              </Panel>
             </div>
           )}
         </>
