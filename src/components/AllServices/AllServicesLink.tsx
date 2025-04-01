@@ -48,7 +48,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
 
   return enableAllServicesRedesign ? (
-    <Flex display={{ default: 'inlineFlex' }} gap={{ default: 'gapXs' }}>
+    <Flex gap={{ default: 'gapXs' }}>
       <FlexItem component={'p'} className={classNames('chr-c-favorite-trigger')}>
         <ChromeLink
           className="chr-c-favorite-service__tile"
@@ -66,12 +66,12 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
         </ChromeLink>
       </FlexItem>
       <FlexItem>
-        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-disabled">
           {sectionTitle} {sectionTitle && bundleTitle ? `>` : ''}{' '}
         </div>
       </FlexItem>
       <FlexItem>
-        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{bundleTitle}</div>
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-disabled">{bundleTitle}</div>
       </FlexItem>
     </Flex>
   ) : (
