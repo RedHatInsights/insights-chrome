@@ -1,11 +1,8 @@
 import React, { Fragment, useContext, useMemo } from 'react';
 import { Group, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
-
 import messages from '../../locales/Messages';
-
 import './global-filter-menu.scss';
-import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/deprecated/components/Chip';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -14,12 +11,14 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import TagsModal from './TagsModal';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
-import { CommonSelectedTag, ReduxState } from '../../redux/store';
+import { CommonSelectedTag } from '../../state/atoms/globalFilterAtom';
 import { updateSelected } from './globalFilterApi';
-import { fetchAllTags } from '../../redux/actions';
 import { FlagTagsFilter } from '../../@types/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import GroupFilterInputGroup from './GroupFilterInputGroup';
+import { registeredWithAtom } from '../../state/atoms/globalFilterAtom';
+import { useAtomValue } from 'jotai';
+import { getAllTags } from './tagsApi';
 
 export type GlobalFilterMenuGroupKeys = GroupType;
 
@@ -89,10 +88,9 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
    * We are unable to test it in any local development environment
    * */
   const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
-  const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope);
+  const registeredWith = useAtomValue(registeredWithAtom);
   const auth = useContext(ChromeAuthContext);
   const intl = useIntl();
-  const dispatch = useDispatch();
   const GroupFilterWrapper = useMemo(
     () => (!allowed || isDisabled ? Tooltip : ({ children }: { children: any }) => <Fragment>{children}</Fragment>),
     [allowed, isDisabled]
@@ -162,13 +160,11 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
           selectedTags={selectedTags}
           toggleModal={(isSubmit) => {
             if (!isSubmit) {
-              dispatch(
-                fetchAllTags({
-                  registeredWith: registeredWith as 'insights',
-                  activeTags: selectedTags,
-                  search: filterTagsBy,
-                })
-              );
+              getAllTags({
+                registeredWith: registeredWith as 'insights',
+                activeTags: selectedTags,
+                search: filterTagsBy,
+              });
             }
             hotjarEventEmitter('event', 'global_filter_bulk_action');
             setIsOpen(false);
