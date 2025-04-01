@@ -1,17 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
-import { fetchAllSIDs, fetchAllTags } from '../../redux/actions';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
-import { TagFilterOptions, TagPagination } from './tagsApi';
+import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags } from './tagsApi';
 import { Action } from 'redux';
 import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-components/TagModal/TableWithFilter';
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 import messages from '../../locales/Messages';
-import { CommonSelectedTag, CommonTag, GlobalFilterTag, ReduxState, SID } from '../../redux/store';
 import { FlagTagsFilter } from '../../@types/types';
+import {
+  CommonSelectedTag,
+  CommonTag,
+  GlobalFilterTag,
+  SID,
+  registeredWithAtom,
+  sidsAtom,
+  tagsAtom,
+  workloadsAtom,
+} from '../../state/atoms/globalFilterAtom';
+import { useAtomValue } from 'jotai';
 
 export type TagsModalProps = {
   isOpen?: boolean;
@@ -23,13 +32,16 @@ export type TagsModalProps = {
 
 export type IDMapper = (tag: CommonTag) => string;
 export type CellsMapper = (tag: CommonTag) => (string | number | boolean | undefined)[];
-export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => Action;
+export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => void | Promise<any>;
 
-export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') =>
-  useSelector<ReduxState, [boolean | unknown, number, number, number]>(({ globalFilter }) => {
-    const selected = globalFilter[key];
-    return [selected?.isLoaded, selected?.total || 0, selected?.page || 1, selected?.perPage || 10];
-  }, shallowEqual);
+export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') => {
+  const tags = useAtomValue(tagsAtom);
+  const workloads = useAtomValue(workloadsAtom);
+  const sids = useAtomValue(sidsAtom);
+  const selected = { tags, workloads, sid: sids }[key];
+
+  return [selected?.isLoaded ?? false, selected?.total ?? 0, selected?.page ?? 1, selected?.perPage ?? 10] as [boolean, number, number, number];
+};
 
 const usePagination = (loaded: boolean | unknown, perPage?: number, page?: number, count?: number) => {
   return useMemo(() => {
@@ -69,19 +81,16 @@ const useRow = (
 };
 
 const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: FlagTagsFilter) => {
-  const registeredWith = useSelector(({ globalFilter: { scope } }: ReduxState) => scope || undefined);
-  const dispatch = useDispatch();
+  const registeredWith = useAtomValue(registeredWithAtom);
   return useCallback(
     debounce((search?: string) => {
-      dispatch(
-        callback(
-          {
-            registeredWith,
-            activeTags,
-            search,
-          },
-          { page: 1, perPage }
-        )
+      callback(
+        {
+          registeredWith,
+          activeTags,
+          search,
+        },
+        { page: 1, perPage }
       );
     }, 800),
     [perPage, registeredWith, activeTags]
@@ -100,14 +109,15 @@ const TagsModal = ({
   const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
-  const dispatch = useDispatch();
+  const tagsData = useAtomValue(tagsAtom);
+  const sidsData = useAtomValue(sidsAtom);
   const [tagsLoaded, tagsCount, tagsPage, tagsPerPage] = useMetaSelector('tags');
   const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
-  const tags = useSelector<ReduxState, GlobalFilterTag[]>(({ globalFilter: { tags } }) => tags?.items || []);
-  const sids = useSelector<ReduxState, SID[]>(({ globalFilter: { sid } }) => sid?.items || []);
-  const filterScope = useSelector(({ globalFilter: { scope } }: ReduxState) => scope || undefined);
-  const debounceGetTags = useDebounce(fetchAllTags, tagsPerPage, selectedTags);
-  const debounceGetSIDs = useDebounce(fetchAllSIDs, sidPerPage, selectedTags);
+  const tags = tagsData.items;
+  const sids = sidsData.items;
+  const filterScope = useAtomValue(registeredWithAtom);
+  const debounceGetTags = useDebounce(getAllTags, tagsPerPage, selectedTags);
+  const debounceGetSIDs = useDebounce(getAllSIDs, sidPerPage, selectedTags);
   useEffect(() => {
     setFilterBy(filterTagsBy);
     setFilterSIDsBy(filterTagsBy);
@@ -123,7 +133,7 @@ const TagsModal = ({
     tagsSelected
   );
   const sidRows = useRow(
-    sids,
+    sids ?? [],
     sidLoaded,
     ({ key }) => key as string,
     ({ key }) => [key],
@@ -183,27 +193,23 @@ const TagsModal = ({
       onUpdateData={
         [
           (pagination: TagPagination) => {
-            dispatch(
-              fetchAllTags(
-                {
-                  registeredWith: filterScope,
-                  activeTags: selectedTags,
-                  search: filterBy,
-                },
-                pagination
-              )
+            getAllTags(
+              {
+                registeredWith: filterScope,
+                activeTags: selectedTags,
+                search: filterBy,
+              },
+              pagination
             );
           },
           (pagination: TagPagination) => {
-            dispatch(
-              fetchAllSIDs(
-                {
-                  registeredWith: filterScope,
-                  activeTags: selectedTags,
-                  search: filterSIDsBy,
-                },
-                pagination
-              )
+            getAllSIDs(
+              {
+                registeredWith: filterScope,
+                activeTags: selectedTags,
+                search: filterSIDsBy,
+              },
+              pagination
             );
           },
         ] as OnUpdateData[]
