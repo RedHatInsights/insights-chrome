@@ -3,7 +3,7 @@ import FindPathForWorkspaces from './RecentWorkspacesManager';
 import { TreeViewWorkspaceItem } from './TreeViewWorkspaceItem';
 import Workspace from './Workspace';
 import WorkspaceType from './WorkspaceType';
-import BuildWorkspaceTree from './WorskpaceTreeBuilder';
+import buildWorkspaceTree from './WorskpaceTreeBuilder';
 
 // Defines a flat tree of workspaces.
 const workspaces: Workspace[] = [
@@ -87,7 +87,7 @@ const workspaces: Workspace[] = [
 ];
 
 // Defines a structured tree of workspaces.
-const tree: TreeViewWorkspaceItem | undefined = BuildWorkspaceTree(workspaces);
+const tree: TreeViewWorkspaceItem | undefined = buildWorkspaceTree(workspaces);
 
 describe('The recent workspaces manager', () => {
   it(`Should return a recently used workspace with no path when the tree's node does not have an ID`, () => {

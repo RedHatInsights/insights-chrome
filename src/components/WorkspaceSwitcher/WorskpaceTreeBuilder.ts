@@ -8,7 +8,7 @@ import WorkspaceType from './WorkspaceType';
  * @returns a single root item of the workspace, which contains all the
  * subworkspaces in its children property.
  */
-function BuildWorkspaceTree(wps: Workspace[]): TreeViewWorkspaceItem | undefined {
+function buildWorkspaceTree(wps: Workspace[]): TreeViewWorkspaceItem | undefined {
   if (wps.length == 0) {
     return undefined;
   }
@@ -79,4 +79,4 @@ function BuildWorkspaceTree(wps: Workspace[]): TreeViewWorkspaceItem | undefined
   return rootWorkspace;
 }
 
-export default BuildWorkspaceTree;
+export default buildWorkspaceTree;

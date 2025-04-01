@@ -1,4 +1,4 @@
-import BuildWorkspaceTree from './WorskpaceTreeBuilder';
+import buildWorkspaceTree from './WorskpaceTreeBuilder';
 import Workspace from './Workspace';
 import WorkspaceType from './WorkspaceType';
 import { TreeViewWorkspaceItem, instanceOfTreeViewWorkspaceItem } from './TreeViewWorkspaceItem';
@@ -35,7 +35,7 @@ function assertChildTreeViewItemProperlyBuilt(treeItem: TreeViewDataItem, worksp
 describe('The workspace tree builder', () => {
   it('Should return "undefined" when given an empty array', () => {
     // Call the function under test and assert that no workspace was returned.
-    expect(BuildWorkspaceTree([])).toBeUndefined();
+    expect(buildWorkspaceTree([])).toBeUndefined();
   });
 
   it('Should return "undefined" when no root workspace is found in the given array', () => {
@@ -49,7 +49,7 @@ describe('The workspace tree builder', () => {
     ];
 
     // Call the function under test and assert that no workspace was returned.
-    expect(BuildWorkspaceTree(wps)).toBeUndefined();
+    expect(buildWorkspaceTree(wps)).toBeUndefined();
   });
 
   it('Should return a single root workspace when only one root workspace is given', () => {
@@ -62,7 +62,7 @@ describe('The workspace tree builder', () => {
     ];
 
     // Call the function under test.
-    const rootWorkspace = BuildWorkspaceTree(wps);
+    const rootWorkspace = buildWorkspaceTree(wps);
 
     // Assert that the root workspace got correctly wrapped up and identified.
     assertTreeViewItemProperlyBuilt(rootWorkspace, wps[0]);
@@ -151,7 +151,7 @@ describe('The workspace tree builder', () => {
     ];
 
     // Call the function under test.
-    const rootWorkspace = BuildWorkspaceTree(wps);
+    const rootWorkspace = buildWorkspaceTree(wps);
 
     // Assert that the root workspace got correctly wrapped up and identified.
     assertTreeViewItemProperlyBuilt(rootWorkspace, wps[0]);

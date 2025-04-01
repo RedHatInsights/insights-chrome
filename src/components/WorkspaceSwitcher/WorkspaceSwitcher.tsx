@@ -29,7 +29,7 @@ import { TreeViewWorkspaceItem, instanceOfTreeViewWorkspaceItem } from './TreeVi
 import Workspace from './Workspace';
 import WorkspaceMenuToggle from './WorkspaceMenuToggle';
 import WorkspaceTreeView from './WorkspaceTreeView';
-import BuildWorkspaceTree from './WorskpaceTreeBuilder';
+import buildWorkspaceTree from './WorskpaceTreeBuilder';
 
 /**
  * Defines the statuses we want to update in an atomic fashion when fetching
@@ -70,7 +70,7 @@ interface CombinedChromeFetchingStatus {
  * An atom that helps updating the statuses in an atomic fashion when fetching
  * the recently used workspaces from Chrome.
  */
-const ChromeRestApiStatusWriteAtom = atom(null, (_, set, arg: CombinedChromeFetchingStatus) => {
+const chromeRestApiStatusWriteAtom = atom(null, (_, set, arg: CombinedChromeFetchingStatus) => {
   set(isFecthingRecentlyUsedWorkspaces, arg.isCurrentlyFetchingRecentlyUsedWorkspacesFromChrome);
   set(isFecthingRecentlyUsedWorkspacesError, arg.didFetchingRecentlyUsedWorkspacesFromChromeFail);
 });
@@ -103,7 +103,7 @@ const WorkspaceSwitcher = () => {
 
   // State values fro when we are fetching the recently used workspaces from
   // Chrome.
-  const setChromeFetchOperationResult = useSetAtom(ChromeRestApiStatusWriteAtom);
+  const setChromeFetchOperationResult = useSetAtom(chromeRestApiStatusWriteAtom);
   const isCurrentlyFetchingRecentlyUsedWorkspaces = useAtomValue<boolean>(isFecthingRecentlyUsedWorkspaces);
   const isCurrentlyFetchingRecentlyUsedWorkspacesError = useAtomValue<boolean>(isFecthingRecentlyUsedWorkspacesError);
 
@@ -139,7 +139,7 @@ const WorkspaceSwitcher = () => {
         setFetchedWorkspacesFromRBAC(rbacResponse.data.data);
 
         // Build the tree of workspaces with the fetched results.
-        const tree = BuildWorkspaceTree(rbacResponse.data.data);
+        const tree = buildWorkspaceTree(rbacResponse.data.data);
         setWorkspacesTree(tree);
 
         if (!treeCallBack || !tree) {
