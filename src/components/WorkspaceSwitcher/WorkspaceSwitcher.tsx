@@ -87,22 +87,15 @@ const WorkspaceSwitcher = () => {
   const myFlaggy = useFlag('platform.chrome.workspace-switcher');
   console.log(`My flag ${myFlaggy}`);
 
-  // State for when the menu toggle is expanded.
   const [isMenuContainerOpen, setMenuContainerOpen] = useAtom<boolean>(isWorkspacesMenuExpanded);
-
-  // State for the selected tab.
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
 
-  // State for the workspace the user selected.
   const [workspaceSelected, setSelectedWorkspace] = useAtom<TreeViewWorkspaceItem | undefined>(selectedWorkspace);
 
-  // State values for when we are fetching workspaces from RBAC.
   const setRBACFetchOperationResult = useSetAtom(RBACRestApiStatusWriteAtom);
   const isWorkspaceFetchingError = useAtomValue<boolean>(isFetchingWorkspacesFromRBACError);
   const isCurrentlyFetchingWorkspacesFromRBAC = useAtomValue<boolean>(isFetchingWorkspacesFromRBAC);
 
-  // State values fro when we are fetching the recently used workspaces from
-  // Chrome.
   const setChromeFetchOperationResult = useSetAtom(chromeRestApiStatusWriteAtom);
   const isCurrentlyFetchingRecentlyUsedWorkspaces = useAtomValue<boolean>(isFecthingRecentlyUsedWorkspaces);
   const isCurrentlyFetchingRecentlyUsedWorkspacesError = useAtomValue<boolean>(isFecthingRecentlyUsedWorkspacesError);
@@ -292,9 +285,6 @@ const WorkspaceSwitcher = () => {
     });
   };
 
-  /**
-   * Defines the menu toggle for the workspaces' selector.
-   */
   const menuToggle = (
     <WorkspaceMenuToggle
       menuToggleRef={toggleRef}
