@@ -77,8 +77,8 @@ const WorkspaceTreeView = ({ workspacesTree, selectedWorkspace, onSelect, isLoad
   };
 
   const searchToolbar = (
-    <Toolbar style={{ padding: 0 }}>
-      <ToolbarContent style={{ padding: 0 }}>
+    <Toolbar>
+      <ToolbarContent>
         <ToolbarItem>
           <TreeViewSearch onSearch={onSearch} id="input-search" name="search-input" aria-label="Search input example" />
         </ToolbarItem>
