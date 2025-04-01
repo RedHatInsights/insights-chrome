@@ -287,12 +287,9 @@ const WorkspaceSwitcher = () => {
     // Attempt saving the recent workspaces in Chrome.
     const workspacesList: Workspace[] = newRUWList.map((ruw) => ({ ...ruw.workspace }));
 
-    axios
-      .post('/api/chrome-service/v1/recently-used-workspaces', workspacesList)
-      .then()
-      .catch((error) => {
-        console.log('Unable to save the recently used workspaces in Chrome: %s', error);
-      });
+    axios.post('/api/chrome-service/v1/recently-used-workspaces', workspacesList).catch((error) => {
+      console.log('Unable to save the recently used workspaces in Chrome: %s', error);
+    });
   };
 
   /**
