@@ -1,12 +1,11 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
-import { shallowEqual, useSelector, useStore } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
-
 import chromeHistory from '../../utils/chromeHistory';
 import DefaultLayout from '../../layouts/DefaultLayout';
 import AllServices from '../../layouts/AllServices';
@@ -14,7 +13,6 @@ import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
-import { ReduxState } from '../../redux/store';
 import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
@@ -39,11 +37,12 @@ import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 import transformScalprumManifest from './transformScalprumManifest';
 import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom';
 import useDPAL from '../../analytics/useDpal';
+import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
-  const selectedTags = useSelector(({ globalFilter: { selectedTags } }: ReduxState) => selectedTags, shallowEqual);
+  const selectedTags = useAtomValue(selectedTagsAtom);
   return callback(selectedTags);
 };
 
@@ -108,7 +107,6 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   const internalFilteredTopics = useRef<HelpTopic[]>([]);
   const { analytics } = useContext(SegmentContext);
   const registerModule = useSetAtom(onRegisterModuleWriteAtom);
-  const store = useStore<ReduxState>();
   const activeModule = useAtomValue(activeModuleAtom);
   const setPageOptions = useSetAtom(segmentPageOptionsAtom);
 
@@ -190,7 +188,6 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       helpTopics: helpTopicsChromeApi,
       quickstartsAPI,
       useGlobalFilter,
-      store,
       setPageMetadata,
       chromeAuth,
       registerModule,

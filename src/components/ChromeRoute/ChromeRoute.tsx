@@ -1,8 +1,7 @@
 import { ScalprumComponent } from '@scalprum/react-core';
 import React, { memo, useContext, useEffect, useState } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
-import { batch, useDispatch } from 'react-redux';
-import { toggleGlobalFilter } from '../../redux/actions';
+import { batch } from 'react-redux';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import classNames from 'classnames';
 import { HelpTopicContext } from '@patternfly/quickstarts';
@@ -14,6 +13,7 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
+import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -29,7 +29,7 @@ export type ChromeRouteProps = {
 const ChromeRoute = memo(
   ({ scope, module, scopeClass, path, props, permissions }: ChromeRouteProps) => {
     const isPreview = useAtomValue(isPreviewAtom);
-    const dispatch = useDispatch();
+    const setGlobalFilterHidden = useSetAtom(globalFilterHiddenAtom);
     const { setActiveHelpTopicByName } = useContext(HelpTopicContext);
     const gatewayError = useAtomValue(gatewayErrorAtom);
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
@@ -72,7 +72,7 @@ const ChromeRoute = memo(
         /**
          * Reset global filter when switching application
          */
-        dispatch(toggleGlobalFilter(false));
+        setGlobalFilterHidden(false);
       };
     }, [scope]);
 

@@ -5,7 +5,7 @@ import instance from '@redhat-cloud-services/frontend-components-utilities/inter
 import { AAP_KEY, INVENTORY_API_BASE, MSSQL_KEY, flatTags } from './globalFilterApi';
 import { HostsApi, SystemProfileApi, TagsApi } from '@redhat-cloud-services/host-inventory-client';
 import { FlagTagsFilter } from '../../@types/types';
-import { TagRegisteredWith } from '../../redux/store';
+import { TagRegisteredWith } from '../../state/atoms/globalFilterAtom';
 
 export const tags = new TagsApi(undefined, INVENTORY_API_BASE, instance as any);
 export const sap = new SystemProfileApi(undefined, INVENTORY_API_BASE, instance as any);
