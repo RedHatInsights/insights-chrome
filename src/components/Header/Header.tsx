@@ -66,6 +66,7 @@ const MemoizedHeader = memo(
       setSearchOpen(isOpen);
     };
     const isITLess = useFlag('platform.chrome.itless');
+    const isWorkspaceSwitcherEnabled = useFlag('platform.chrome.workspace-switcher');
 
     const userReady = hasUser({ orgId, username, accountNumber, email });
 
@@ -109,9 +110,11 @@ const MemoizedHeader = memo(
                     <ContextSwitcher accountNumber={accountNumber} isInternal={isInternal} className="data-hj-suppress sentry-mask" />
                   </ToolbarItem>
                 )}
-                <ToolbarItem>
-                  <WorkspaceSwitcher />
-                </ToolbarItem>
+                {isWorkspaceSwitcherEnabled && (
+                  <ToolbarItem>
+                    <WorkspaceSwitcher />
+                  </ToolbarItem>
+                )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
                 <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm" variant="filter-group">

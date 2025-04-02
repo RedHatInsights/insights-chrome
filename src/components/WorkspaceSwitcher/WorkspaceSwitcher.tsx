@@ -5,7 +5,6 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/dynamic/component
 import { Panel, PanelMain, PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
 import { Tab, TabTitleText, Tabs } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 import { TreeViewDataItem } from '@patternfly/react-core/dist/dynamic/components/TreeView';
-import { useFlag } from '@unleash/proxy-client-react';
 import axios, { AxiosResponse } from 'axios';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import * as React from 'react';
@@ -84,9 +83,6 @@ const fetchRecentlyUsedWorkspacesFromChrome = (): Promise<AxiosResponse<Recently
 };
 
 const WorkspaceSwitcher = () => {
-  const myFlaggy = useFlag('platform.chrome.workspace-switcher');
-  console.log(`My flag ${myFlaggy}`);
-
   const [isMenuContainerOpen, setMenuContainerOpen] = useAtom<boolean>(isWorkspacesMenuExpanded);
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
 
