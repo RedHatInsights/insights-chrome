@@ -43,11 +43,6 @@ spec:
             secretKeyRef:
               name: $(params.EPHEMERAL_ENV_URL)
               key: url
-        - name: PROJECT_URL
-          valueFrom:
-            secretKeyRef:
-              name: github.com/redhatinsights/insights-chrome 
-              key: url
       script: |
         #!/bin/bash
         set -ex
