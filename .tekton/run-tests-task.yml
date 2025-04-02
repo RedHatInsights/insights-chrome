@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-tests
+spec:
+  params:
+    - name: EPHEMERAL_ENV_PROVIDER_SECRET
+      type: string
+      default: ephemeral-env-provider
+      description: "Secret for connecting to ephemeral env provider cluster"
+
+    - name: EPHEMERAL_ENV_URL
+      type: string
+      description: "Url for accessing the UI deployed in the ephemeral environment""
+    - name: EPHEMERAL_ENV_PASSWORD
+      type: string
+      description: "Password for login to your ephemeral environment UI"
+    - name: EPHEMERAL_ENV_USERNAME
+      type: string
+      description: "Username for login to your ephemeral environment UI"
+  results:
+    - name: NS
+      description: ""
+  steps:
+    - name: run-tests
+      image:
+      env:
+        - name: EE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: $(params.EPHEMERAL_ENV_USERNAME)
+              key: token
+        - name: EE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.EPHEMERAL_ENV_PASSWORD)
+              key: token
+        - name: EE_URL
+          valueFrom:
+            secretKeyRef:
+              name: $(params.EPHEMERAL_ENV_URL)
+              key: url
+      script: |
+        #!/bin/bash
+        set -ex
+
+        echo "PLACEHOLDER: run tests"
