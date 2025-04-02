@@ -9,9 +9,12 @@ spec:
       default: ephemeral-env-provider
       description: "Secret for connecting to ephemeral env provider cluster"
 
+    - name: PROJECT_URL
+      type: string
+      description: "Project URl to grab test task from"
     - name: EPHEMERAL_ENV_URL
       type: string
-      description: "Url for accessing the UI deployed in the ephemeral environment""
+      description: "Url for accessing the UI deployed in the ephemeral environment"
     - name: EPHEMERAL_ENV_PASSWORD
       type: string
       description: "Password for login to your ephemeral environment UI"
