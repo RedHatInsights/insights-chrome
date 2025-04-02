@@ -121,6 +121,7 @@ const Tools = () => {
         {
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
+          isHidden: isITLessEnv,
         },
         {
           url: '/iam/service-accounts',
