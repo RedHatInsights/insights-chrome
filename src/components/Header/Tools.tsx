@@ -25,8 +25,6 @@ import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDr
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 
-const isITLessEnv = ITLess();
-
 const InternalButton = () => (
   <Button
     icon={<RedhatIcon />}
@@ -75,6 +73,7 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
+  const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -104,6 +103,7 @@ const Tools = () => {
         {
           url: '/settings/integrations',
           title: 'Integrations',
+          isHidden: isITLessEnv,
         },
         {
           url: '/settings/notifications',
@@ -125,6 +125,7 @@ const Tools = () => {
         {
           url: '/iam/service-accounts',
           title: 'Service Accounts',
+          isHidden: isITLessEnv,
         },
       ],
     },
