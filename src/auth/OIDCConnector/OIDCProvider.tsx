@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { DEFAULT_SSO_ROUTES, ITLess, loadFedModules } from '../../utils/common';
-import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
-import { WebStorageStateStore } from 'oidc-client-ts';
+import { AuthProvider } from 'react-oidc-context';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 import platformUrl from '../platformUrl';
 import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
+import OIDCUserManagerErrorBoundary from './OIDCUserManagerErrorBoundary';
 
 const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [state, setState] = useState<
@@ -37,34 +38,29 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     setupSSO();
   }, []);
 
-  const authProviderProps: AuthProviderProps = useMemo(
-    () => ({
-      client_id: ITLess() ? 'console-dot' : 'cloud-services',
-      silent_redirect_uri: `https://${window.location.host}/apps/chrome/silent-check-sso.html`,
-      automaticSilentRenew: true,
-      redirect_uri: `${window.location.origin}`,
-      authority: `${state?.ssoUrl}`,
-      metadataUrl: '/realms/redhat-external/protocol/openid-connect/auth',
-      monitorSession: true,
-      metadata: {
-        authorization_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/auth`,
-        token_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/token`,
-        end_session_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/logout`,
-        check_session_iframe: `https://${window.location.host}/apps/chrome/silent-check-sso.html`,
-        revocation_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/revoke`,
-      },
-      // removes code_challenge query param from the url
-      disablePKCE: true,
-      response_type: 'code',
-      response_mode: 'fragment',
-      onSigninCallback: () => {
-        const startUrl = new URL(window.location.href);
-        // remove the SSO code params from the URL
-        startUrl.hash = '';
-        window.history.replaceState({}, document.title, startUrl);
-      },
-      userStore: new WebStorageStateStore({ store: window.localStorage }),
-    }),
+  const userManager: UserManager = useMemo(
+    () =>
+      new UserManager({
+        client_id: ITLess() ? 'console-dot' : 'cloud-services',
+        silent_redirect_uri: `https://${window.location.host}/apps/chrome/js/silent-check-sso.html`,
+        automaticSilentRenew: true,
+        redirect_uri: `${window.location.origin}`,
+        authority: `${state?.ssoUrl}`,
+        metadataUrl: '/realms/redhat-external/protocol/openid-connect/auth',
+        monitorSession: true,
+        metadata: {
+          authorization_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/auth`,
+          token_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/token`,
+          end_session_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/logout`,
+          check_session_iframe: `https://${window.location.host}/apps/chrome/js/silent-check-sso.html`,
+          revocation_endpoint: `${state?.ssoUrl}realms/redhat-external/protocol/openid-connect/revoke`,
+        },
+        // removes code_challenge query param from the url
+        disablePKCE: true,
+        response_type: 'code',
+        response_mode: 'fragment',
+        userStore: new WebStorageStateStore({ store: window.localStorage }),
+      }),
     [state?.ssoUrl]
   );
 
@@ -73,11 +69,21 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   }
 
   return (
-    <AuthProvider {...authProviderProps}>
-      <OIDCSecured ssoUrl={state.ssoUrl} microFrontendConfig={state.microFrontendConfig}>
-        {children}
-      </OIDCSecured>
-    </AuthProvider>
+    <OIDCUserManagerErrorBoundary userManager={userManager}>
+      <AuthProvider
+        userManager={userManager}
+        onSigninCallback={() => {
+          const startUrl = new URL(window.location.href);
+          // remove the SSO code params from the URL
+          startUrl.hash = '';
+          window.history.replaceState({}, document.title, startUrl);
+        }}
+      >
+        <OIDCSecured ssoUrl={state.ssoUrl} microFrontendConfig={state.microFrontendConfig}>
+          {children}
+        </OIDCSecured>
+      </AuthProvider>
+    </OIDCUserManagerErrorBoundary>
   );
 };
 
