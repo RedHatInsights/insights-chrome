@@ -23,7 +23,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       ? [
           new webpack.SourceMapDevToolPlugin({
             test: /\.js/i,
-            filename: `sourcemaps/[name].js.map`,
+            filename: `sourcemaps/[name].[contenthash].js.map`,
           }),
         ]
       : []),
