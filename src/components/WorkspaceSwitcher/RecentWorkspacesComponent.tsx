@@ -32,6 +32,10 @@ interface ConditionalBreadcrumbProps {
  * root workspace.
  */
 const RecentWorkspacesComponent = ({ recentlyUsedWorkspaces }: RecentWorkspacesComponentProps) => {
+  if (recentlyUsedWorkspaces.length == 0) {
+    return <p>No recent workspaces to show.</p>;
+  }
+
   return (
     <List isPlain>
       {recentlyUsedWorkspaces.map((recentlyUsedWorkspace) => {

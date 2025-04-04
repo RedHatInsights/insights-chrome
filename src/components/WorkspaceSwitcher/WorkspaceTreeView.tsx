@@ -98,16 +98,7 @@ const WorkspaceTreeView = ({ workspacesTree, selectedWorkspace, onSelect, isLoad
       />
     );
   } else {
-    return (
-      <TreeView
-        activeItems={selectedWorkspace ? [selectedWorkspace] : []}
-        allExpanded={areElementsFiltered}
-        data={[]}
-        hasGuides={true}
-        onSelect={onSelect}
-        toolbar={searchToolbar}
-      />
-    );
+    return <p>No workspaces to show.</p>;
   }
 };
 
