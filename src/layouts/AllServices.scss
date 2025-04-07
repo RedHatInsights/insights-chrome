@@ -16,16 +16,25 @@
   }
   .pf-v6-l-gallery {
     column-count: auto;
-    column-width: 330px;
+    column-width: 400px;
   }
   .pf-v6-c-card {
     overflow: hidden;
     break-inside: avoid-column;
+    &__body {
+      padding-bottom: 0;
+    }
     .chr-c-icon-not-favorited {
       cursor: pointer;
     }
+    .pf-v6-l-split {
+      --pf-v6-l-stack--m-gutter--Gap: 10px;
+      .allservices-icon {
+        height: 54px;
+        width: 54px;
+      }
+    }
   }
-
   @media screen and (max-width: $pf-v6-global--breakpoint--md) {
     .chr-c-all-services-filter {
       max-width: 100%;

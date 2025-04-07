@@ -1,13 +1,10 @@
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import React, { useMemo } from 'react';
-import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { BundleNavigation } from '../../@types/types';
 import AllServicesLink from './AllServicesLink';
 import ChromeLink from '../ChromeLink';
-import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
-import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import ServiceIcon, { FavorableIcons } from '../FavoriteServices/ServiceIcon';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 
@@ -55,53 +52,47 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
   }, [id]);
 
   return (
-    <Card className="pf-v6-u-display-block pf-v6-u-mb-md">
+    <Card className="pf-v6-u-mb-md" isCompact>
       <CardHeader className="pf-v6-u-background-color-400">
-        <Title headingLevel="h4" size="lg">
-          <Split hasGutter>
-            <SplitItem> {bundleIcon} </SplitItem>
-            <SplitItem> {title} </SplitItem>
-          </Split>
-        </Title>
-        <Flex>
-          {itemOverview ? (
-            <FlexItem>
-              <ChromeLink
-                className="chr-c-favorite-service__tile"
-                href={itemOverview.href ? itemOverview.href : ''}
-                data-ouia-component-id={`${title}`}
-              >
-                {itemOverview.title}
-              </ChromeLink>
-            </FlexItem>
-          ) : itemDashboard ? (
-            <FlexItem>
-              <ChromeLink
-                className="chr-c-favorite-service__tile"
-                href={itemDashboard.href ? itemDashboard.href : ''}
-                data-ouia-component-id={`${title}`}
-              >
-                {itemDashboard.title}
-              </ChromeLink>
-            </FlexItem>
-          ) : null}
-          {itemOverview || itemDashboard ? (
-            <FlexItem>
-              <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle"> | </div>
-            </FlexItem>
-          ) : null}
-          <FlexItem>
-            {itemLearningResources ? (
-              <ChromeLink
-                className="chr-c-favorite-service__tile"
-                href={itemLearningResources.href ? itemLearningResources.href : ''}
-                data-ouia-component-id={`${title}`}
-              >
-                {itemLearningResources.title}
-              </ChromeLink>
-            ) : null}
-          </FlexItem>
-        </Flex>
+        <Split hasGutter>
+          <SplitItem> {bundleIcon} </SplitItem>
+          <SplitItem className="pf-v6-u-pt-xs" isFilled>
+            <Content component={ContentVariants.h4} className="pf-v6-u-mb-xs">
+              {title}
+            </Content>
+            <Content component={ContentVariants.small}>
+              {itemOverview ? (
+                <ChromeLink
+                  className="chr-c-favorite-service__tile"
+                  href={itemOverview.href ? itemOverview.href : ''}
+                  data-ouia-component-id={`${title}`}
+                >
+                  {itemOverview.title}
+                </ChromeLink>
+              ) : itemDashboard ? (
+                <ChromeLink
+                  className="chr-c-favorite-service__tile"
+                  href={itemDashboard.href ? itemDashboard.href : ''}
+                  data-ouia-component-id={`${title}`}
+                >
+                  {itemDashboard.title}
+                </ChromeLink>
+              ) : null}
+              {itemOverview || itemDashboard ? <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle"> | </span> : null}
+
+              {itemLearningResources ? (
+                <ChromeLink
+                  className="chr-c-favorite-service__tile"
+                  href={itemLearningResources.href ? itemLearningResources.href : ''}
+                  data-ouia-component-id={`${title}`}
+                >
+                  {itemLearningResources.title}
+                </ChromeLink>
+              ) : null}
+            </Content>
+          </SplitItem>
+        </Split>
+
         <Content component={ContentVariants.p} className="pf-v6-u-mb-md">
           {description || null}
         </Content>
