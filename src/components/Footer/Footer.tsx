@@ -184,7 +184,7 @@ const ChromeFooter = () => {
               <a href="https://redhat.com/en/blog">Red Hat Blog</a>
             </li>
             <li>
-              <a href="https://redhat.com/en/about/our-culture/diversity-equity-inclusion">Diversity, equity, and inclusion</a>
+              <a href="https://redhat.com/en/about/our-culture/inclusion">Inclusion at Red Hat</a>
             </li>
             <li>
               <a href="https://coolstuff.redhat.com/">Cool Stuff Store</a>
