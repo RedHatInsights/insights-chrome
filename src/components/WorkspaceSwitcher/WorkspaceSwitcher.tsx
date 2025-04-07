@@ -29,6 +29,7 @@ import Workspace from './Workspace';
 import WorkspaceMenuToggle from './WorkspaceMenuToggle';
 import WorkspaceTreeView from './WorkspaceTreeView';
 import buildWorkspaceTree from './WorskpaceTreeBuilder';
+import { SearchInput } from '@patternfly/react-core';
 
 /**
  * Defines the statuses we want to update in an atomic fashion when fetching
@@ -53,7 +54,11 @@ const RBACRestApiStatusWriteAtom = atom(null, (_, set, arg: CombinedRBACFetching
  * @returns the promise of the HTTP call.
  */
 const fetchWorkspacesFromRBAC = (): Promise<AxiosResponse<RBACListWorkspacesResponse>> => {
-  return axios.get<RBACListWorkspacesResponse>('/api/rbac/v2/workspaces/');
+  return axios.get<RBACListWorkspacesResponse>('/api/rbac/v2/workspaces/', {
+    params: {
+      limit: Number.MAX_SAFE_INTEGER,
+    },
+  });
 };
 
 /**
@@ -105,6 +110,11 @@ const WorkspaceSwitcher = () => {
   // RBAC.
   const setFetchedWorkspacesFromRBAC = useSetAtom(fetchedWorkspaces);
   const [workspacesTree, setWorkspacesTree] = useAtom<TreeViewWorkspaceItem | undefined>(workspaceTree);
+
+  // The required state values to be able to filter the tree's elements.
+  const [searchInputValue, setSearchInputValue] = React.useState<string>('');
+  const [filteredTreeElements, setFilteredTreeElements] = React.useState<TreeViewWorkspaceItem[]>(workspacesTree ? [workspacesTree] : []);
+  const [areElementsFiltered, setElementsAreFiltered] = React.useState<boolean>(false);
 
   // References for the menu and the menu toggle.
   const menuRef = React.useRef<MenuToggleElement>(null);
@@ -201,6 +211,11 @@ const WorkspaceSwitcher = () => {
       return;
     }
 
+    // Reset the search filter and the filtered elements to the new tree.
+    setSearchInputValue('');
+    setFilteredTreeElements([workspacesTree]);
+    setElementsAreFiltered(false);
+
     // Turn the processed workspaces into raw workspaces, since the tree
     // structure changing might have probably changed the paths.
     const rawWorkspaces: Workspace[] = processedRecentlyUsedWorkspaces.map((pruw) => {
@@ -213,6 +228,60 @@ const WorkspaceSwitcher = () => {
     // Update the state variable which contains all the recent workspaces.
     setProcessedRecentlyUsedWorkspaces(recentlyUsedWorkspaces);
   }, [workspacesTree]);
+
+  const onSearchFilter = (_: React.FormEvent<HTMLInputElement>, searchInput: string) => {
+    // Make the tab of the workspaces' tree as the active upon receiving any
+    // input.
+    setActiveTabKey(1);
+    setSearchInputValue(searchInput);
+
+    if (searchInput === '') {
+      // With an empty input we just reset the tree to the full original tree.
+      setFilteredTreeElements(workspacesTree ? [workspacesTree] : []);
+      setElementsAreFiltered(false);
+    } else {
+      // When there's no tree there's nothing to filter.
+      if (!workspacesTree) {
+        setElementsAreFiltered(false);
+        return;
+      }
+
+      // Filter the elements and the subelements of the given tree.
+      const filteredElements = [workspacesTree].map((item) => Object.assign({}, item)).filter((item) => filterItems(item, searchInput));
+      setFilteredTreeElements(filteredElements);
+      setElementsAreFiltered(true);
+    }
+  };
+
+  const filterItems = (item: TreeViewDataItem | TreeViewWorkspaceItem, input: string): boolean => {
+    // When the item does not have a name, which is an edge case that shouldn't
+    // happen, then it can never be part of the filetered results.
+    if (!item.name) {
+      return false;
+    }
+
+    // When the item's name isn't a string, we can't really compare it to the
+    // given input.
+    if (typeof item.name !== 'string') {
+      return false;
+    }
+
+    // Match the current item's name and mark it as a partial match, since we
+    // are interested in returning the item's children too in the case that
+    // we've got a match.
+    const partiallyMatched = item.name.toLowerCase().includes(input.toLowerCase());
+
+    // When the item has children, we need to repeat the process to see if we
+    // should include the subtree in the results too.
+    if (item.children) {
+      return (
+        partiallyMatched ||
+        (item.children = item.children.map((opt) => Object.assign({}, opt)).filter((child) => filterItems(child, input))).length > 0
+      );
+    } else {
+      return partiallyMatched;
+    }
+  };
 
   /**
    * Handler which gets called when the user changes the selected workspace.
@@ -301,6 +370,12 @@ const WorkspaceSwitcher = () => {
       <PanelMain>
         <section>
           <PanelMainBody>
+            <SearchInput
+              placeholder="Find a workspace by name"
+              value={searchInputValue}
+              onChange={onSearchFilter}
+              onClear={() => setSearchInputValue('')}
+            />
             <Tabs activeKey={activeTabKey} onSelect={(_, tabKey) => setActiveTabKey(tabKey)} isFilled>
               <Tab eventKey={0} title={<TabTitleText>Recents</TabTitleText>}>
                 <Panel>
@@ -317,7 +392,8 @@ const WorkspaceSwitcher = () => {
                     <section>
                       <PanelMainBody>
                         <WorkspaceTreeView
-                          workspacesTree={workspacesTree}
+                          treeElements={filteredTreeElements}
+                          areElementsFiltered={areElementsFiltered}
                           selectedWorkspace={workspaceSelected}
                           onSelect={onSelectTreeViewWorkspaceItem}
                           isLoading={isCurrentlyFetchingWorkspacesFromRBAC}
