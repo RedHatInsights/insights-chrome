@@ -52,7 +52,6 @@ describe('BetaSwitcher', () => {
     cy.contains('Turn on').should('exist');
     cy.contains('Turn on').click();
     cy.wait(5000);
-    // popover disappears after 5 seconds on its own
     cy.contains('turn off Preview mode').should('exist');
 
     // turn off preview again
