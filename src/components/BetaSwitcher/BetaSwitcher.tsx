@@ -1,12 +1,9 @@
-import React, { PropsWithChildren, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
-import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
-import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
-import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import {
   hidePreviewBannerAtom,
