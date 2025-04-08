@@ -21,44 +21,6 @@ import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 
 import './BetaSwitcher.scss';
 
-const BetaPopover = ({ children, isFirstTime }: PropsWithChildren<{ isFirstTime: boolean }>) => {
-  const [isVisible, setIsVisible] = React.useState(isFirstTime);
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (isFirstTime) {
-      setIsVisible(true);
-      timeout = setTimeout(() => {
-        setIsVisible(false);
-      }, 5000);
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-        setIsVisible(false);
-      }
-    };
-  }, [isFirstTime]);
-  return (
-    <Popover
-      isVisible={isVisible}
-      position="bottom-end"
-      shouldClose={() => setIsVisible(false)}
-      headerContent="Welcome to preview"
-      bodyContent={
-        <span>
-          Look for items with this icon&nbsp;
-          <Label color="purple">
-            <WrenchIcon />
-          </Label>
-          &nbsp;to quickly identify preview features.
-        </span>
-      }
-    >
-      <>{children}</>
-    </Popover>
-  );
-};
-
 const BetaSwitcher = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [hideBanner, setHideBanner] = useAtom(hidePreviewBannerAtom);
@@ -106,22 +68,20 @@ const BetaSwitcher = () => {
       >
         <SplitItem isFilled>
           <Bullseye>
-            <BetaPopover isFirstTime={isPreview}>
-              <Switch
-                ouiaId="PreviewSwitcher"
-                id="preview-toggle"
-                label={
-                  <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
-                    You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
-                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
-                  </Content>
-                }
-                aria-label="preview-toggle"
-                isChecked={isPreview}
-                onChange={(_e, checked) => togglePreviewWithCheck(checked)}
-                isReversed
-              />
-            </BetaPopover>
+            <Switch
+              ouiaId="PreviewSwitcher"
+              id="preview-toggle"
+              label={
+                <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
+                  You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
+                  <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
+                </Content>
+              }
+              aria-label="preview-toggle"
+              isChecked={isPreview}
+              onChange={(_e, checked) => togglePreviewWithCheck(checked)}
+              isReversed
+            />
           </Bullseye>
         </SplitItem>
         {!isPreview ? (
