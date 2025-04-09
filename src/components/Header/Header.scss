@@ -5,9 +5,11 @@
   --pf-v6-c-masthead__content--MinHeight: 48px !important;
   --pf-v6-c-masthead__main--before--Right: 0;
   .chr-c-brand {
-    width: 208px;
+    width: 30px;
   }
-
+  .pf-v6-c-masthead__logo {
+    width: 50px;
+  }
   a.chr-c-button-masthead  {
      display: flex;
      align-items: center; 

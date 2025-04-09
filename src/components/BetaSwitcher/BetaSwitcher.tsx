@@ -1,12 +1,9 @@
-import React, { PropsWithChildren, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import classNames from 'classnames';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
-import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
-import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
-import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
 import {
   hidePreviewBannerAtom,
@@ -20,44 +17,6 @@ import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 import BetaSwitcherDropdown from './BetaSwitcherDropdown';
 
 import './BetaSwitcher.scss';
-
-const BetaPopover = ({ children, isFirstTime }: PropsWithChildren<{ isFirstTime: boolean }>) => {
-  const [isVisible, setIsVisible] = React.useState(isFirstTime);
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (isFirstTime) {
-      setIsVisible(true);
-      timeout = setTimeout(() => {
-        setIsVisible(false);
-      }, 5000);
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-        setIsVisible(false);
-      }
-    };
-  }, [isFirstTime]);
-  return (
-    <Popover
-      isVisible={isVisible}
-      position="bottom-end"
-      shouldClose={() => setIsVisible(false)}
-      headerContent="Welcome to preview"
-      bodyContent={
-        <span>
-          Look for items with this icon&nbsp;
-          <Label color="purple">
-            <WrenchIcon />
-          </Label>
-          &nbsp;to quickly identify preview features.
-        </span>
-      }
-    >
-      <>{children}</>
-    </Popover>
-  );
-};
 
 const BetaSwitcher = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -106,22 +65,20 @@ const BetaSwitcher = () => {
       >
         <SplitItem isFilled>
           <Bullseye>
-            <BetaPopover isFirstTime={isPreview}>
-              <Switch
-                ouiaId="PreviewSwitcher"
-                id="preview-toggle"
-                label={
-                  <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
-                    You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
-                    <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
-                  </Content>
-                }
-                aria-label="preview-toggle"
-                isChecked={isPreview}
-                onChange={(_e, checked) => togglePreviewWithCheck(checked)}
-                isReversed
-              />
-            </BetaPopover>
+            <Switch
+              ouiaId="PreviewSwitcher"
+              id="preview-toggle"
+              label={
+                <Content className="pf-v6-u-text-color-inverse" component={ContentVariants.small}>
+                  You&apos;re in Hybrid Cloud Console {currentMode} mode.{' '}
+                  <div className="pf-v6-u-display-none pf-v6-u-display-inline-on-md"> To {changeModeContent} Preview mode</div>
+                </Content>
+              }
+              aria-label="preview-toggle"
+              isChecked={isPreview}
+              onChange={(_e, checked) => togglePreviewWithCheck(checked)}
+              isReversed
+            />
           </Bullseye>
         </SplitItem>
         {!isPreview ? (

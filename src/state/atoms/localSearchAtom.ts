@@ -1,9 +1,10 @@
 import { atom } from 'jotai';
 import { Orama, create, insert } from '@orama/orama';
 
-import { GENERATED_SEARCH_FLAG, getChromeStaticPathname } from '../../utils/common';
-import axios from 'axios';
+import { getChromeStaticPathname } from '../../utils/common';
+import axios, { AxiosResponse } from 'axios';
 import { NavItemPermission } from '../../@types/types';
+import { bundleMapping, getUrl } from '../../hooks/useBundle';
 
 type IndexEntry = {
   icon?: string;
@@ -27,6 +28,7 @@ type SearchEntry = {
   id: string;
   bundleTitle: string;
   altTitle?: string[];
+  type: 'legacy' | 'generated';
 };
 
 type GeneratedSearchIndexResponse = {
@@ -40,14 +42,32 @@ type GeneratedSearchIndexResponse = {
 export const SearchPermissions = new Map<string, NavItemPermission[]>();
 export const SearchPermissionsCache = new Map<string, boolean>();
 
+const bundleCache = new Map<string, string>();
+export const getBundleTitle = (pathname: string): string => {
+  const bundle = getUrl('bundle', pathname);
+  const cachedBundle = bundleCache.get(bundle);
+  if (cachedBundle) {
+    return cachedBundle;
+  }
+
+  const bundleTitle = bundleMapping[bundle] || bundle;
+  bundleCache.set(bundle, bundleTitle);
+  return bundleTitle;
+};
+
 const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
   const searchIndex: SearchEntry[] = [];
   const idSet = new Set<string>();
-  if (localStorage.getItem(GENERATED_SEARCH_FLAG) === 'true') {
-    // parse data from generated search index
-    const { data: rawIndex } = await axios.get<GeneratedSearchIndexResponse[]>(`/api/chrome-service/v1/static/search-index-generated.json`);
-    rawIndex.forEach((entry) => {
+  const searchRequests: [Promise<AxiosResponse<IndexEntry[]>>, Promise<AxiosResponse<GeneratedSearchIndexResponse[]>>] = [
+    axios.get<IndexEntry[]>(`${staticPath}/search-index.json`),
+    axios.get<GeneratedSearchIndexResponse[]>(`/api/chrome-service/v1/static/search-index-generated.json`),
+  ];
+
+  const [legacyIndex, generatedIndex] = await Promise.allSettled(searchRequests);
+
+  if (generatedIndex.status === 'fulfilled') {
+    generatedIndex.value.data.forEach((entry) => {
       if (idSet.has(entry.id)) {
         console.warn('Duplicate id found in index', entry.id);
         return;
@@ -59,6 +79,7 @@ const asyncSearchIndexAtom = atom(async () => {
       }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, []);
+      const bundleTitle = getBundleTitle(entry.href);
       searchIndex.push({
         title: entry.title,
         uri: entry.href,
@@ -66,13 +87,15 @@ const asyncSearchIndexAtom = atom(async () => {
         description: entry.description ?? entry.href,
         icon: undefined,
         id: entry.id,
-        bundleTitle: entry.title,
+        bundleTitle: bundleTitle,
         altTitle: entry.alt_title,
+        type: 'generated',
       });
     });
-  } else {
-    const { data: rawIndex } = await axios.get<IndexEntry[]>(`${staticPath}/search-index.json`);
-    rawIndex.forEach((entry) => {
+  }
+
+  if (legacyIndex.status === 'fulfilled') {
+    legacyIndex.value.data.forEach((entry) => {
       if (idSet.has(entry.id)) {
         console.warn('Duplicate id found in index', entry.id);
         return;
@@ -93,6 +116,7 @@ const asyncSearchIndexAtom = atom(async () => {
         id: entry.id,
         bundleTitle: entry.bundleTitle[0],
         altTitle: entry.alt_title,
+        type: 'legacy',
       });
     });
   }
@@ -107,6 +131,7 @@ const entrySchema = {
   descriptionMatch: 'string',
   bundleTitle: 'string',
   pathname: 'string',
+  type: 'string',
 } as const;
 
 async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
@@ -118,6 +143,7 @@ async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
     altTitle: entry.altTitle ?? [],
     bundleTitle: entry.bundleTitle,
     pathname: entry.pathname,
+    type: entry.type,
   });
 }
 

@@ -1,10 +1,8 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import axios from 'axios';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector, useStore } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
-import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -25,19 +23,20 @@ import ChromeFooter from '../Footer/Footer';
 import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
-import { ITLess, getSevenDaysAgo } from '../../utils/common';
+import { ITLess } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { onRegisterModuleWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import useTabName from '../../hooks/useTabName';
-import { NotificationData, notificationDrawerDataAtom } from '../../state/atoms/notificationDrawerAtom';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { addNavListenerAtom, deleteNavListenerAtom } from '../../state/atoms/activeAppAtom';
 import BetaSwitcher from '../BetaSwitcher';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
+import transformScalprumManifest from './transformScalprumManifest';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -92,7 +91,7 @@ const ScalprumRoot = memo(
 ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 
 export type ChromeApiRootProps = {
-  config: AppsConfig;
+  config: ScalprumConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
@@ -123,28 +122,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   // setting default tab title
   useTabName();
 
-  const populateNotifications = useSetAtom(notificationDrawerDataAtom);
-
-  async function getNotifications() {
-    try {
-      const { data } = await axios.get<{ data: NotificationData[] }>(`/api/notifications/v1/notifications/drawer`, {
-        params: {
-          limit: 50,
-          sort_by: 'read:asc',
-          startDate: getSevenDaysAgo(),
-        },
-      });
-      populateNotifications(data?.data || []);
-    } catch (error) {
-      console.error('Unable to get Notifications ', error);
-    }
-  }
-
   useEffect(() => {
     // prepare webpack module sharing scope overrides
     updateSharedScope();
-    // get notifications drawer api
-    getNotifications();
     const unregister = chromeHistory.listen(historyListener);
     return () => {
       if (typeof unregister === 'function') {
@@ -238,26 +218,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       pluginSDKOptions: {
         pluginLoaderOptions: {
           // sharedScope: scope,
-          transformPluginManifest: (manifest) => {
-            if (manifest.name === 'chrome') {
-              return {
-                ...manifest,
-                // Do not include chrome chunks in manifest for chrome. It will result in an infinite loading loop
-                // window.chrome always exists because chrome container is always initialized
-                loadScripts: [],
-              };
-            }
-            const newManifest = {
-              ...manifest,
-              // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
-              baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isPreview ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
-              loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
-                `${manifest.baseURL ?? ''}plugin-entry.js`,
-              ],
-              registrationMethod: manifest.registrationMethod ?? 'callback',
-            };
-            return newManifest;
-          },
+          transformPluginManifest: (manifest) => transformScalprumManifest(manifest, config),
         },
       },
     };

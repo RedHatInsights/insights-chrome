@@ -5,24 +5,19 @@ import { isProd } from './common';
 
 let sentryInitialized = false;
 
-function getAppDetails() {
+//TODO: Manually add an appName for when url is just console.redhat.com
+export function getAppDetails() {
   const pathName = window.location.pathname.split('/');
-  let appGroup;
+  let appGroup = 'insights';
   let appName;
-  let betaCheck;
-
-  if (pathName[1] === 'beta') {
-    betaCheck = ' Beta';
-    appGroup = pathName[2];
-    appName = appGroup === 'landing' ? 'landing' : pathName[3];
+  appGroup = pathName[1];
+  if (appGroup === 'openshift') {
+    appName = pathName[3];
   } else {
-    betaCheck = '';
-    appGroup = pathName[1];
-    appName = appGroup === 'landing' ? 'landing' : pathName[2];
+    appName = pathName[2];
   }
 
   const appDetails = {
-    beta: betaCheck,
     app: {
       group: appGroup,
       name: appName,
@@ -45,79 +40,101 @@ function initSentry() {
   if (sentryInitialized) {
     return;
   }
+  type ConfiguredApp = {
+    appName: string;
+    dsn: string;
+    project: string;
+  };
 
+  type ConfiguredApps = {
+    [key: string]: ConfiguredApp[];
+  };
   sentryInitialized = true;
   const appDetails = getAppDetails();
-  const configuredApps = [
-    {
-      appName: 'inventory',
-      dsn: 'https://f6f21a635c05b0f91875de6a557f8c34@o490301.ingest.us.sentry.io/4507454722211840',
-      project: 'inventory-rhel',
-    },
-    {
-      appName: 'patch',
-      dsn: 'https://7308344e3a96d7a5c31a2d3899328f10@o490301.ingest.us.sentry.io/4508683262951424',
-      project: 'patchman-rhel',
-    },
-    {
-      appName: 'advisor',
-      dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
-      project: 'advisor-rhel',
-    },
-    {
-      appName: 'dashboard',
-      dsn: 'https://cf3d9690738f2e4beb92e5c32b92aeb4@o490301.ingest.us.sentry.io/4508683243028485',
-      project: 'dashboard-rhel',
-    },
-    {
-      appName: 'policies',
-      dsn: 'https://a9410934c7cf8b0a63576ded76dd6707@o490301.ingest.us.sentry.io/4508683264262144',
-      project: 'policies-rhel',
-    },
-    {
-      appName: 'vulnerability',
-      dsn: 'https://cb035c73625db2cf00141494a95bdedb@o490301.ingest.us.sentry.io/4508683271077888',
-      project: 'vulnerability-rhel',
-    },
-    {
-      appName: 'compliance',
-      dsn: 'https://6410c806f0ac7b638105bb4e15eb3399@o490301.ingest.us.sentry.io/4508083145408512',
-      project: 'compliance-rhel',
-    },
-    {
-      appName: 'malware',
-      dsn: 'https://1422e636c948549d1dea1c8e87387aa3@o490301.ingest.us.sentry.io/4508683260002304',
-      project: 'malware-rhel',
-    },
-    {
-      appName: 'remediations',
-      dsn: 'https://5d7d7a7fb9032c5316f131dc8323137c@o490301.ingest.us.sentry.io/4508683233787904',
-      project: 'remediations-rhel',
-    },
-    {
-      appName: 'tasks',
-      dsn: 'https://5b8c5a580090ff977052ac622b242057@o490301.ingest.us.sentry.io/4508683269570560',
-      project: 'tasks-rhel',
-    },
-    {
-      appName: 'registration',
-      dsn: 'https://95df6c65ea4016243ee2bcc2d45fcba8@o490301.ingest.us.sentry.io/4508683266686976',
-      project: 'registration-assistant-rhel',
-    },
-    {
-      appName: 'connector',
-      dsn: 'https://08c275222a74229dda763dec7c7c2fa8@o490301.ingest.us.sentry.io/4508683268128768',
-      project: 'sed-frontend-rhc',
-    },
-    {
-      appName: 'image-builder',
-      dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
-      project: 'image-builder-rhel',
-    },
-  ];
+  const configuredApps: ConfiguredApps = {
+    insights: [
+      {
+        appName: 'inventory',
+        dsn: 'https://f6f21a635c05b0f91875de6a557f8c34@o490301.ingest.us.sentry.io/4507454722211840',
+        project: 'inventory-rhel',
+      },
+      {
+        appName: 'patch',
+        dsn: 'https://7308344e3a96d7a5c31a2d3899328f10@o490301.ingest.us.sentry.io/4508683262951424',
+        project: 'patchman-rhel',
+      },
+      {
+        appName: 'advisor',
+        dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
+        project: 'advisor-rhel',
+      },
+      {
+        appName: 'dashboard',
+        dsn: 'https://cf3d9690738f2e4beb92e5c32b92aeb4@o490301.ingest.us.sentry.io/4508683243028485',
+        project: 'dashboard-rhel',
+      },
+      {
+        appName: 'policies',
+        dsn: 'https://a9410934c7cf8b0a63576ded76dd6707@o490301.ingest.us.sentry.io/4508683264262144',
+        project: 'policies-rhel',
+      },
+      {
+        appName: 'vulnerability',
+        dsn: 'https://cb035c73625db2cf00141494a95bdedb@o490301.ingest.us.sentry.io/4508683271077888',
+        project: 'vulnerability-rhel',
+      },
+      {
+        appName: 'compliance',
+        dsn: 'https://6410c806f0ac7b638105bb4e15eb3399@o490301.ingest.us.sentry.io/4508083145408512',
+        project: 'compliance-rhel',
+      },
+      {
+        appName: 'malware',
+        dsn: 'https://1422e636c948549d1dea1c8e87387aa3@o490301.ingest.us.sentry.io/4508683260002304',
+        project: 'malware-rhel',
+      },
+      {
+        appName: 'remediations',
+        dsn: 'https://5d7d7a7fb9032c5316f131dc8323137c@o490301.ingest.us.sentry.io/4508683233787904',
+        project: 'remediations-rhel',
+      },
+      {
+        appName: 'tasks',
+        dsn: 'https://5b8c5a580090ff977052ac622b242057@o490301.ingest.us.sentry.io/4508683269570560',
+        project: 'tasks-rhel',
+      },
+      {
+        appName: 'registration',
+        dsn: 'https://95df6c65ea4016243ee2bcc2d45fcba8@o490301.ingest.us.sentry.io/4508683266686976',
+        project: 'registration-assistant-rhel',
+      },
+      {
+        appName: 'connector',
+        dsn: 'https://08c275222a74229dda763dec7c7c2fa8@o490301.ingest.us.sentry.io/4508683268128768',
+        project: 'sed-frontend-rhc',
+      },
+      {
+        appName: 'image-builder',
+        dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
+        project: 'image-builder-rhel',
+      },
+    ],
+    openshift: [
+      {
+        appName: 'advisor',
+        dsn: 'https://27daee0fa0238ac7f7d5389b8ac8f825@o490301.ingest.us.sentry.io/4508683272454144',
+        project: 'ocp-advisor',
+      },
+      {
+        appName: 'vulnerability',
+        dsn: 'https://e88ee1ea3dcfd65015894853d75edf1c@o490301.ingest.us.sentry.io/4508683273830400',
+        project: 'ocp-vulnerability',
+      },
+    ],
+  };
 
   // dsn: key
-  // environment: logs Prod or Prod Beta for filtering
+  // environment: logs Prod or Prod Beta for filtering (potential future changes for filtering)
   // maxBreadcrumbs, if there is an error, trace back up to (x) lines if needed
   // attachStacktrace: attach the actual console logs
   // sampleRate: 0.0 to 1.0 - percentage of events to send (1.0 by default)
@@ -131,7 +148,7 @@ function initSentry() {
   Sentry.init({
     //default api_key -> cp-001-insights
     dsn: 'https://8b6372cad9604745ae3606bc4adc0060@o271843.ingest.sentry.io/1484024',
-    environment: `Prod${appDetails.beta}`,
+    environment: `Prod`,
     maxBreadcrumbs: 50,
     attachStacktrace: true,
     integrations: [
@@ -152,7 +169,8 @@ function initSentry() {
           .filter((frame) => frame.module_metadata && frame.module_metadata.dsn)
           .map((v) => v.module_metadata)
           .slice(-1); // using top frame only
-        const configuredApp = configuredApps.filter((app) => app.appName === event.tags?.app_name);
+        const configuredApp = configuredApps[appDetails.app.group].filter((app) => app.appName === event.tags?.app_name);
+
         if (routeTo.length) {
           event.extra = {
             ...event.extra,

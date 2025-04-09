@@ -7,6 +7,9 @@ import { isFeedbackModalOpenAtom } from './atoms/feedbackModalAtom';
 import { activeAppAtom } from './atoms/activeAppAtom';
 import { isDebuggerEnabledAtom } from './atoms/debuggerModalatom';
 import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
+import { moduleRoutesAtom } from './atoms/chromeModuleAtom';
+import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
+import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
 
 const chromeStore = createStore();
 
@@ -23,6 +26,11 @@ chromeStore.set(isDebuggerEnabledAtom, false);
 // page actions
 chromeStore.set(pageObjectIdAtom, undefined);
 chromeStore.set(appActionAtom, undefined);
+// routing configuration
+chromeStore.set(moduleRoutesAtom, []);
+
+chromeStore.set(drawerPanelContentAtom, undefined);
+chromeStore.set(notificationDrawerExpandedAtom, false);
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {

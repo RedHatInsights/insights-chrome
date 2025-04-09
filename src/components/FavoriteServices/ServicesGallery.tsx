@@ -1,38 +1,47 @@
 import React from 'react';
-import { Card, CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
-import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
-import { Stack, StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
-import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
 
 import ServiceTile, { ServiceTileProps } from './ServiceTile';
 import ChromeLink from '../ChromeLink';
 import EmptyState from './EmptyState';
+import { bundleMapping } from '../../hooks/useBundle';
+
+export type FavoritedBundleProps = {
+  bundleName: string;
+  services: ServiceTileProps[];
+};
 
 const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: ServiceTileProps[] }) => {
+  const bundles: FavoritedBundleProps[] = [];
+  favoritedServices.forEach((service) => {
+    const newBundleName = bundleMapping[service.pathname.split('/')[1]];
+    if (bundles.some((bundle) => bundle.bundleName === newBundleName)) {
+      const index = bundles.findIndex((bundle) => bundle.bundleName === newBundleName);
+      bundles[index].services = [...bundles[index].services, service];
+    } else {
+      bundles.push({
+        bundleName: newBundleName,
+        services: [service],
+      });
+    }
+  });
+
   return (
-    <Stack>
+    <>
       {favoritedServices.length === 0 ? (
         <EmptyState />
       ) : (
-        <StackItem>
-          <Gallery hasGutter>
-            {favoritedServices.map((props, index) => (
-              <ServiceTile {...props} key={index} />
-            ))}
-            <Card isPlain className="chr-c-card-centered pf-v6-u-background-color-200">
-              <CardBody className="pf-v6-u-pt-lg">
-                <Content>
-                  <Content component="p">Go to the All Services page to tag your favorites.</Content>
-                  <Content component="p">
-                    <ChromeLink href="/allservices">View all services</ChromeLink>
-                  </Content>
-                </Content>
-              </CardBody>
-            </Card>
-          </Gallery>
-        </StackItem>
+        <>
+          {bundles.map((props, index) => (
+            <ServiceTile {...props} key={index} />
+          ))}
+          <Alert variant="info" title="Want to add more favorites?" className="pf-v6-u-m-md" isInline>
+            Get quick access to your favorite services. To add more services to your favorites,{' '}
+            <ChromeLink href="/allservices">View all services</ChromeLink>
+          </Alert>
+        </>
       )}
-    </Stack>
+    </>
   );
 };
 

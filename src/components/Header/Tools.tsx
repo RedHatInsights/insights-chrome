@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { NotificationBadge } from '@patternfly/react-core/dist/dynamic/components/NotificationBadge';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
@@ -20,13 +19,11 @@ import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
-import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
-import { notificationDrawerExpandedAtom, unreadNotificationsAtom } from '../../state/atoms/notificationDrawerAtom';
+import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
-
-const isITLessEnv = ITLess();
+import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 
 const InternalButton = () => (
   <Button
@@ -60,6 +57,11 @@ const ExpandedSettingsButton = ({ settingsMenuDropdownGroups }: ExpandedSettings
   </Tooltip>
 );
 
+type NotificationBellProps = {
+  isNotificationDrawerExpanded: boolean;
+  toggleDrawer: () => void;
+};
+
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
@@ -71,9 +73,8 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
+  const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
-  const unreadNotifications = useAtomValue(unreadNotificationsAtom);
-  const [isNotificationDrawerExpanded, toggleNotifications] = useAtom(notificationDrawerExpandedAtom);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
@@ -83,8 +84,6 @@ const Tools = () => {
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
-
-  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -104,6 +103,7 @@ const Tools = () => {
         {
           url: '/settings/integrations',
           title: 'Integrations',
+          isHidden: isITLessEnv,
         },
         {
           url: '/settings/notifications',
@@ -121,10 +121,12 @@ const Tools = () => {
         {
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
+          isHidden: isITLessEnv,
         },
         {
           url: '/iam/service-accounts',
           title: 'Service Accounts',
+          isHidden: isITLessEnv,
         },
       ],
     },
@@ -236,23 +238,27 @@ const Tools = () => {
     );
   };
 
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const [isNotificationDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
+  };
+
+  const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
+    scope: 'notifications',
+    module: './NotificationsDrawerBell',
+    fallback: null,
+    isNotificationDrawerExpanded,
+    // Do not show the error component if module fails to load
+    // Prevents broken layout
+    // @ts-ignore
+    ErrorComponent: Fragment,
+    toggleDrawer,
+  };
+
   return (
     <>
-      {isNotificationsEnabled && (
-        <ToolbarItem className="pf-v6-u-mx-0">
-          <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
-            <NotificationBadge
-              className="chr-c-notification-badge"
-              variant={unreadNotifications ? 'unread' : 'read'}
-              onClick={() => toggleNotifications((prev) => !prev)}
-              aria-label="Notifications"
-              isExpanded={isNotificationDrawerExpanded}
-            >
-              <BellIcon />
-            </NotificationBadge>
-          </Tooltip>
-        </ToolbarItem>
-      )}
+      {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>
           <ThemeToggle />
