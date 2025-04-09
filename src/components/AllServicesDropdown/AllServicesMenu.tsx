@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Backdrop } from '@patternfly/react-core/dist/dynamic/components/Backdrop';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -81,73 +80,71 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
         data-testid="chr-c__find-app-service"
         onClick={handleClickOutside}
       >
-        <Backdrop>
-          <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
-            <PanelMain>
-              <Sidebar>
-                <SidebarPanel>
-                  <Stack>
-                    <StackItem className="pf-v6-u-w-100">
-                      <AllServicesTabs
-                        activeTabKey={activeTabKey}
-                        handleTabClick={handleTabClick}
-                        isExpanded={isExpanded}
-                        onToggle={onToggle}
-                        linkSections={linkSections}
-                        tabContentRef={tabContentRef}
-                        onTabClick={onTabClick}
-                        activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
-                      />
-                    </StackItem>
-                  </Stack>
-                </SidebarPanel>
-                <SidebarContent>
-                  <Card isPlain>
-                    <CardHeader
-                      actions={{
-                        actions: [
-                          <Button
-                            className="pf-v6-u-mr-xs"
-                            icon={<TimesIcon />}
-                            key="close"
-                            variant="plain"
-                            aria-label="Close menu"
-                            onClick={() => setIsOpen(!isOpen)}
-                          />,
-                        ],
-                      }}
-                      className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
-                    >
-                      <Title headingLevel="h3">
-                        {activeTabKey === FAVORITE_TAB_ID ? (
-                          <>
-                            <StarIcon /> My Favorite services
-                          </>
-                        ) : (
-                          <>
-                            <ServiceIcon icon={selectedService.icon} /> {selectedService.title}
-                          </>
-                        )}
-                      </Title>
-                    </CardHeader>
-                    <Divider />
-                    <CardBody className="pf-v6-u-p-0">
-                      <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
-                        {activeTabKey === FAVORITE_TAB_ID ? (
-                          <Fragment>
-                            <FavoriteServicesGallery favoritedServices={favoritedServices} />
-                          </Fragment>
-                        ) : (
-                          <AllServicesGallery selectedService={selectedService} />
-                        )}
-                      </TabContent>
-                    </CardBody>
-                  </Card>
-                </SidebarContent>
-              </Sidebar>
-            </PanelMain>
-          </Panel>
-        </Backdrop>
+        <Panel variant="raised" className="pf-v6-u-p-0 chr-c-panel-services-nav" ref={panelRef}>
+          <PanelMain>
+            <Sidebar>
+              <SidebarPanel>
+                <Stack>
+                  <StackItem className="pf-v6-u-w-100">
+                    <AllServicesTabs
+                      activeTabKey={activeTabKey}
+                      handleTabClick={handleTabClick}
+                      isExpanded={isExpanded}
+                      onToggle={onToggle}
+                      linkSections={linkSections}
+                      tabContentRef={tabContentRef}
+                      onTabClick={onTabClick}
+                      activeTabTitle={activeTabKey === FAVORITE_TAB_ID ? 'Favorites' : selectedService.title}
+                    />
+                  </StackItem>
+                </Stack>
+              </SidebarPanel>
+              <SidebarContent>
+                <Card isPlain>
+                  <CardHeader
+                    actions={{
+                      actions: [
+                        <Button
+                          className="pf-v6-u-mr-xs"
+                          icon={<TimesIcon />}
+                          key="close"
+                          variant="plain"
+                          aria-label="Close menu"
+                          onClick={() => setIsOpen(!isOpen)}
+                        />,
+                      ],
+                    }}
+                    className="pf-v6-u-pl-lg pf-v6-u-pr-xs pf-v6-u-pr-md-on-md"
+                  >
+                    <Title headingLevel="h3">
+                      {activeTabKey === FAVORITE_TAB_ID ? (
+                        <>
+                          <StarIcon /> My Favorite services
+                        </>
+                      ) : (
+                        <>
+                          <ServiceIcon icon={selectedService.icon} /> {selectedService.title}
+                        </>
+                      )}
+                    </Title>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody className="pf-v6-u-p-0">
+                    <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
+                      {activeTabKey === FAVORITE_TAB_ID ? (
+                        <Fragment>
+                          <FavoriteServicesGallery favoritedServices={favoritedServices} />
+                        </Fragment>
+                      ) : (
+                        <AllServicesGallery selectedService={selectedService} />
+                      )}
+                    </TabContent>
+                  </CardBody>
+                </Card>
+              </SidebarContent>
+            </Sidebar>
+          </PanelMain>
+        </Panel>
       </div>
     </AllServicesDropdownContext.Provider>
   );
