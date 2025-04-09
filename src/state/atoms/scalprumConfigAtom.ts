@@ -1,14 +1,14 @@
 import { atom } from 'jotai';
 import { ChromeModule } from '../../@types/types';
 import isEqual from 'lodash/isEqual';
+import { AppsConfig } from '@scalprum/core';
 
-export type ScalprumConfig = {
-  [key: string]: {
-    name: string;
-    manifestLocation: string;
-    module?: string;
-  };
-};
+export type ScalprumConfig = AppsConfig<{
+  name: string;
+  manifestLocation: string;
+  module?: string;
+  cdnPath?: string;
+}>;
 
 export const scalprumConfigAtom = atom<ScalprumConfig>({});
 
@@ -23,12 +23,13 @@ export const writeInitialScalprumConfigAtom = atom(
     }
   ) => {
     const scalprumConfig = Object.entries(schema).reduce(
-      (acc, [name, config]) => ({
+      (acc, [name, moduleEntry]) => ({
         ...acc,
         [name]: {
           name,
           module: `${name}#./RootApp`,
-          manifestLocation: `${window.location.origin}${config.manifestLocation}`,
+          manifestLocation: `${window.location.origin}${moduleEntry.manifestLocation}`,
+          cdnPath: moduleEntry?.config?.cdnPath,
         },
       }),
       {
