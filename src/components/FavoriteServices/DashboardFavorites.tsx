@@ -32,7 +32,7 @@ const DashboardFavorites = () => {
                   <SplitItem>
                     <Content>
                       <Link to={favorite.pathname}>
-                        <Content component="p" className="pf-v6-u-mb-0">
+                        <Content component="a" className="pf-v6-u-mb-0">
                           {favorite.name}
                         </Content>
                       </Link>
