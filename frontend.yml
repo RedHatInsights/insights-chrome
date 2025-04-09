@@ -29,7 +29,6 @@ objects:
       frontend:
         paths:
           - /
-          - /config/chrome
       akamaiCacheBustPaths:
         - /config/chrome/fed-modules.json
         - /apps/chrome/index.html
