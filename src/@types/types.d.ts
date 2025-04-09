@@ -161,13 +161,13 @@ export type RemoteModule = {
 export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
+  cdnPath?: string;
   config?: {
     supportCaseData?: SupportCaseConfig;
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
     ssoScopes?: string[];
-    cdnPath?: string;
   };
   analytics?: {
     APIKey?: string;
