@@ -8,10 +8,6 @@ spec:
       type: string
       default: ephemeral-env-provider
       description: "Secret for connecting to ephemeral env provider cluster"
-
-    - name: PROJECT_URL
-      type: string
-      description: "Project URl to grab test task from"
     - name: EPHEMERAL_ENV_URL
       type: string
       description: "Url for accessing the UI deployed in the ephemeral environment"
@@ -26,7 +22,7 @@ spec:
       description: ""
   steps:
     - name: run-tests
-      image:
+      image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
       env:
         - name: EE_USERNAME
           valueFrom:
