@@ -29,7 +29,7 @@ export const writeInitialScalprumConfigAtom = atom(
           name,
           module: `${name}#./RootApp`,
           manifestLocation: `${window.location.origin}${moduleEntry.manifestLocation}`,
-          cdnPath: moduleEntry?.config?.cdnPath,
+          cdnPath: moduleEntry?.cdnPath,
         },
       }),
       {
