@@ -16,6 +16,13 @@ import messages from '../../locales/Messages';
 import { useIntl } from 'react-intl';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useFlag } from '@unleash/proxy-client-react';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { DescriptionList } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListGroup } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListTerm } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListDescription } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
 
 const DropdownItems = ({
   username = '',
@@ -44,43 +51,43 @@ const DropdownItems = ({
   const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [
-    <DropdownItem key="Username" isDisabled>
-      <dl className="chr-c-dropdown-item__stack">
-        <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.username)}</dt>
-        <dd className="chr-c-dropdown-item__stack--value data-hj-suppress sentry-mask">{username}</dd>
-        {isOrgAdmin && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.orgAdministrator)}</dd>}
-      </dl>
-    </DropdownItem>,
-    <React.Fragment key="account wrapper">
-      {accountNumber && (
-        <Tooltip triggerRef={questionMarkRef} id="accountNumber-tooltip" content={accountNumberTooltip}>
-          <DropdownItem component="span" key="Account" className="chr-c-disabled-pointer">
-            <dl className="chr-c-dropdown-item__stack">
-              {!isITLessEnv && (
-                <>
-                  <dt className="chr-c-dropdown-item__stack--header">
-                    {intl.formatMessage(messages.accountNumber)}
-                    <span ref={questionMarkRef} className="visible-pointer pf-v6-u-ml-sm">
-                      <QuestionCircleIcon />
-                    </span>
-                  </dt>
-                  <dd className="chr-c-dropdown-item__stack--value sentry-mask data-hj-suppress">{accountNumber}</dd>
-                </>
-              )}
-              {isInternal && <dd className="chr-c-dropdown-item__stack--subValue">{intl.formatMessage(messages.internalUser)}</dd>}
-            </dl>
-          </DropdownItem>
-        </Tooltip>
-      )}
-      {orgId && (
-        <DropdownItem key="Org ID" isDisabled ouiaId="chrome-user-org-id">
-          <dl className="chr-c-dropdown-item__stack">
-            <dt className="chr-c-dropdown-item__stack--header">{intl.formatMessage(messages.orgId)}</dt>
-            <dd className="chr-c-dropdown-item__stack--value">{orgId}</dd>
-          </dl>
-        </DropdownItem>
-      )}
-    </React.Fragment>,
+    <Panel key="read-only-info" className="pf-v6-u-text-color-subtle">
+      <PanelMain>
+        <PanelMainBody>
+          <DescriptionList isCompact>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{intl.formatMessage(messages.username)}</DescriptionListTerm>
+              <DescriptionListDescription>{username}</DescriptionListDescription>
+              {isOrgAdmin && <DescriptionListDescription>{intl.formatMessage(messages.orgAdministrator)}</DescriptionListDescription>}
+            </DescriptionListGroup>
+            {accountNumber && (
+              <Tooltip triggerRef={questionMarkRef} id="accountNumber-tooltip" content={accountNumberTooltip}>
+                <DescriptionListGroup>
+                  {!isITLessEnv && (
+                    <>
+                      <DescriptionListTerm>
+                        {intl.formatMessage(messages.accountNumber)}
+                        <span ref={questionMarkRef} className="visible-pointer pf-v6-u-ml-sm">
+                          <QuestionCircleIcon />
+                        </span>
+                      </DescriptionListTerm>
+                      <DescriptionListDescription>{accountNumber}</DescriptionListDescription>
+                    </>
+                  )}
+                  {isInternal && <DescriptionListDescription>{intl.formatMessage(messages.internalUser)}</DescriptionListDescription>}
+                </DescriptionListGroup>
+              </Tooltip>
+            )}
+            {orgId && (
+              <DescriptionListGroup>
+                <DescriptionListTerm>{intl.formatMessage(messages.orgId)}</DescriptionListTerm>
+                <DescriptionListDescription>{orgId}</DescriptionListDescription>
+              </DescriptionListGroup>
+            )}
+          </DescriptionList>
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>,
     <Divider component="li" key="separator" />,
     <React.Fragment key="My Profile wrapper">
       {!isITLessEnv && (
