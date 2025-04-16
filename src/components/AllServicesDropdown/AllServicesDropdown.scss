@@ -40,6 +40,16 @@
   position: absolute !important;
   z-index: 1000;
 
+  .pf-v6-c-dropdown__menu::before {
+    z-index: -1000;
+  }
+
+  // To not cover the entire screen including masthead
+  .pf-v6-c-backdrop {
+    position: relative;
+    background-color: rgba(21, 21, 21, 0.0)
+  }
+
   .pf-v6-c-tabs__list::before {
     border-left:none !important;
   }
