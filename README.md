@@ -1,4 +1,4 @@
-# Insights Chrome
+# Insights Chrome 
 
 The "wrapper" around your application!
 
@@ -12,7 +12,7 @@ For more detailed information about chrome and what it provides, [look through t
 
 ## JavaScript API
 
-Insights Chrome comes with a Javacript API that allows applications to control navigation, global filters, etc.
+Insights Chrome comes with a Javascript API that allows applications to control navigation, global filters, etc.
 
 Check out the [useChrome hook docs](http://front-end-docs-insights.apps.ocp4.prod.psi.redhat.com/chrome/chrome-api#Chrome)
 
@@ -54,18 +54,23 @@ To run a script you have to install dependencies `npm install`. Then you are fre
     > npm run dev
     ```
 
-3. Open browser at `https://stage.foo.redhat.com:1337/` or Open browser at `https://stage.foo.redhat.com:1337/preview`.
+3. Open browser at `https://stage.foo.redhat.com:1337/`.
 
 ### Running chrome with other applications locally
 
 You can spin chrome locally together with other applications. Use `LOCAL_APPS` to list the locally deployed applications.
 
-#### Example 1 (using LOCAL_APPS)
+#### Example 1 (using fec static)
 
 For illustration, to deploy Advisor together with Insights Chrome, you would require to
 
-1. Run Advisor on any available port with `npm run start -- --port=8004` or `npm run start:beta -- --port=8004`,
-2. Run Chrome and list the Advisor's port: `LOCAL_APPS=advisor:8004:http npm run dev` or `LOCAL_APPS=advisor:8004:http npm run dev:beta`.
+1. Ensure Advisor has the 'static: fec static' script
+2. Run Advisor with `npm run static`
+3. In Chrome, add advisor to the routes portion inside webpack.config.js `'/apps/advisor': {
+    host: 'http://0.0.0.0:8003',
+},`
+4. In Chrome then run `npm run dev`
+   - If youd like to run against a different env, this can be altered with the env variable, ex. 'prod-stable'.
 
 #### Example 2 (using devServer route)
 
@@ -85,11 +90,15 @@ devServer: {
 }
 ...
 ```
-3. Run insights-chrome with `npm run dev` or `npm run dev:beta`.
+3. Run insights-chrome with `npm run dev`.
+
+## Local search development
+
+See [local search development documentation](./docs/localSearchDevelopment.md).
 
 ## LocalStorage Debugging
 
-There are some localStorage values for you to enable debuging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
+There are some localStorage values for you to enable debugging information or enable some values that are in experimental state. If you want to enable them call `const iqe = insights.chrome.enable.iqe()` for instance to enable such service. This function will return callback to disable such feature so calling `iqe()` will remove such item from localStorage.
 
 Available function:
 
@@ -98,9 +107,23 @@ Available function:
 - `jwtDebug` - to enable debugging of JWT
 - `remediationsDebug` - to enable debug buttons in remediations app
 - `shortSession` - to enable short session in order to test automatic logouts
-- `forcePendo` - to force Pendo initializtion
+- `forcePendo` - to force Pendo initialization
 - `appFilter` - to enable new application filter in any environment
 
-## Futher reading
+## Further reading
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
+
+## Staleness
+
+A bot will post a comment after 60 days of inactivity giving the opener 5 days to update their issue/PR before it's closed.
+
+If you want the bot to ignore your issue or PR, please add one of the following labels:
+
+- work-in-progress
+- in-progress
+- in-review
+- help-wanted
+- blocked
+- wip
+- dependencies
