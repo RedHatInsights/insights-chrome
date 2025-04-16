@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
-import { Tab, TabProps, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { Tab, TabProps, TabTitleIcon, TabTitleText, Tabs, TabsProps } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 
 import AngleRightIcon from '@patternfly/react-icons/dist/dynamic/icons/angle-right-icon';
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
@@ -14,6 +14,7 @@ import ChromeLink from '../ChromeLink';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import ServiceIcon from '../FavoriteServices/ServiceIcon';
 
 export type AllServicesTabsProps = {
   activeTabKey: string | number;
@@ -109,10 +110,10 @@ const AllServicesTabs = ({
           eventKey={FAVORITE_TAB_ID}
           title={
             <TabTitleText className="pf-v6-u-text-color-regular">
-              My Favorite services
-              <Icon className="chr-c-icon-service-tab pf-v6-u-ml-sm" status="warning" isInline>
+              <TabTitleIcon>
                 <StarIcon />
-              </Icon>
+              </TabTitleIcon>{' '}
+              My Favorite services
               <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
                 <AngleRightIcon />
               </Icon>
@@ -128,6 +129,9 @@ const AllServicesTabs = ({
             eventKey={index}
             title={
               <TabTitleText>
+                <TabTitleIcon>
+                  <ServiceIcon icon={section.icon} />
+                </TabTitleIcon>{' '}
                 {section.title}
                 <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
                   <AngleRightIcon />
