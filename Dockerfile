@@ -1,4 +1,4 @@
-FROM quay.io/cloudservices/caddy-ubi:ec1577c
+FROM quay.io/cloudservices/caddy-ubi:latest
 
 ENV CADDY_TLS_MODE http_port 8000
 
