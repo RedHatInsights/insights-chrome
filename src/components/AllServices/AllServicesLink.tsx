@@ -73,6 +73,23 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
       <FlexItem>
         <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-disabled">{bundleTitle}</div>
       </FlexItem>
+      <FlexItem
+        className={classNames('chr-c-favorite-trigger', {
+          'chr-c-icon-favorited': isFavorite,
+        })}
+      >
+        {!isExternal && (
+          <Icon
+            data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-FavoriteToggle`}
+            onClick={() => handleFavouriteToggle(href ?? '#', isFavorite)}
+            aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
+            className="pf-v6-u-ml-sm chr-c-icon-star"
+            isInline
+          >
+            <StarIcon />
+          </Icon>
+        )}
+      </FlexItem>
     </Flex>
   ) : (
     <Content
