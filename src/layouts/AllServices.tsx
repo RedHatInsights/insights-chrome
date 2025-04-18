@@ -57,7 +57,6 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     const fetchNav = await fetchNavigationFiles();
     const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
 
-    console.log(filteredBundles);
     setBundles(filteredBundles.concat(otherServicesBundle));
   };
 
