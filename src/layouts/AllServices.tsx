@@ -44,10 +44,21 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     return <div>Error</div>;
   }
 
+  const otherServicesBundle: BundleNavigation = {
+    id: 'otherServices',
+    title: 'Other Services',
+    navItems: [
+      { id: 'redhatProductTrials', title: 'Red Hat Product Trials', isExternal: true },
+      { id: 'trustedArtifactSigner', title: 'Trusted Artifact Signer', isExternal: true },
+      { id: 'trustedAnalyzer', title: 'Trusted Profile Analyzer', isExternal: true },
+    ],
+  };
   const fetchNavigation = async () => {
     const fetchNav = await fetchNavigationFiles();
     const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
-    setBundles(filteredBundles);
+
+    console.log(filteredBundles);
+    setBundles(filteredBundles.concat(otherServicesBundle));
   };
 
   useEffect(() => {
