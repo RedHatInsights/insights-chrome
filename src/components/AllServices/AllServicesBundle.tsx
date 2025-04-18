@@ -11,21 +11,22 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 type AllServicesBundleProps = BundleNavigation;
 
 const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBundleProps) => {
-  const items = navItems.flatMap(({ href, title, navItems, id, routes }) => {
+  const items = navItems.flatMap(({ href, title, navItems, id, routes, isExternal }) => {
     const children = routes || navItems;
     return children
-      ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId }) => {
+      ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId, isExternal: isExternal }) => {
           return routes
-            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle }) => ({
+            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle, isExternal: isExternal }) => ({
                 title: nestedTitle,
                 href: childHref,
                 id: nestedId,
                 bundleTitle: title,
                 sectionTitle: childTitle,
+                isExternal: isExternal,
               }))
-            : { href: subHref, title: childTitle, id: subId, bundleTitle: title };
+            : { href: subHref, title: childTitle, id: subId, bundleTitle: title, isExternal: isExternal };
         })
-      : { href, title, id };
+      : { href, title, id, isExternal };
   });
 
   const itemOverview = items.find((item) => item.title === 'Overview');
@@ -46,6 +47,8 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
         return <ServiceIcon icon={FavorableIcons.IAmIcon} />;
       case 'settings':
         return <ServiceIcon icon={FavorableIcons.SettingsIcon} />;
+      case 'otherServices':
+        return <ServiceIcon icon={FavorableIcons.OtherServicesIcon} />;
       default:
         return null;
     }
