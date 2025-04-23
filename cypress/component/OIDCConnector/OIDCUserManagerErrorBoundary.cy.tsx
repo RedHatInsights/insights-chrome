@@ -47,7 +47,7 @@ describe('OIDCUserManagerErrorBoundary', () => {
     cy.contains('Fake error').should('exist');
   });
 
-  [SESSION_NOT_ACTIVE, TOKEN_NOT_ACTIVE].forEach((error) => {
+  [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
     it('should try redirect to signin page if error is thrown', () => {
       cy.intercept('GET', '/authorityUrl', {
         statusCode: 200,
