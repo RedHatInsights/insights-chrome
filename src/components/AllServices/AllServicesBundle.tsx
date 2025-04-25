@@ -14,9 +14,9 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
   const items = navItems.flatMap(({ href, title, navItems, id, routes, isExternal }) => {
     const children = routes || navItems;
     return children
-      ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId, isExternal: isExternal }) => {
+      ? children.flatMap(({ routes, title: childTitle, href: subHref, id: subId, isExternal }) => {
           return routes
-            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle, isExternal: isExternal }) => ({
+            ? routes.map(({ href: childHref, id: nestedId, title: nestedTitle, isExternal }) => ({
                 title: nestedTitle,
                 href: childHref,
                 id: nestedId,
@@ -24,7 +24,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
                 sectionTitle: childTitle,
                 isExternal: isExternal,
               }))
-            : { href: subHref, title: childTitle, id: subId, bundleTitle: title, isExternal: isExternal };
+            : { href: subHref, title: childTitle, id: subId, bundleTitle: title, isExternal };
         })
       : { href, title, id, isExternal };
   });
