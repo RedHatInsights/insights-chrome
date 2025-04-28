@@ -14,7 +14,7 @@ import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
 
 type SegmentEnvs = 'dev' | 'prod';
-type SegmentModules = 'acs' | 'openshift' | 'hacCore';
+type SegmentModules = 'acs' | 'openshift' | 'hacCore' | 'insights';
 
 const KEY_FALLBACK = {
   prod: 'nm7VsnYsBVJ9MqjaVInft69pAkhCXq9Q',
@@ -68,11 +68,13 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
       acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
       hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
       openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
+      insights: 'apRCg9V6oMXCcnTingqRYW6m1er4hkCW',
     },
     dev: {
       acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
       hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
       openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
+      insights: 'aMINBssUhXV1okzk7ZBaqwdTgtA0ySpg',
     },
   }[env]?.[module] ||
   KEY_FALLBACK[env];
