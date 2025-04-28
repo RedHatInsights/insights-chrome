@@ -47,9 +47,11 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
         </SplitItem>
         <SplitItem className="pf-v6-u-mt-sm">
           {isExternal ? (
-            <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
-              <ExternalLinkAltIcon />
-            </Icon>
+            <Button variant="plain">
+              <Icon className="pf-v6-u-ml-0 chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
+                <ExternalLinkAltIcon />
+              </Icon>
+            </Button>
           ) : (
             <Button
               variant="plain"

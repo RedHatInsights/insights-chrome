@@ -107,7 +107,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                       actions={{
                         actions: [
                           <Button
-                            className="pf-v6-u-mr-xs"
+                            className="pf-v6-u-mr-sm"
                             icon={<TimesIcon />}
                             key="close"
                             variant="plain"
