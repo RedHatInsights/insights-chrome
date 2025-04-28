@@ -11,6 +11,7 @@ export type ChromeAuthContextValue<LoginResponse = void> = {
   user: ChromeUser;
   getUser: () => Promise<ChromeUser>;
   token: string;
+  refreshToken: string;
   logoutAllTabs: (bounce?: boolean) => void;
   loginAllTabs: () => void;
   logout: () => void;
@@ -49,6 +50,7 @@ const ChromeAuthContext = createContext<ChromeAuthContextValue>({
   doOffline: () => Promise.resolve(),
   getUser: () => Promise.resolve(blankUser),
   token: '',
+  refreshToken: '',
   tokenExpires: 0,
   user: blankUser,
   reAuthWithScopes: () => Promise.resolve(),
