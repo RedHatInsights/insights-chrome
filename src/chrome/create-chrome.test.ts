@@ -85,6 +85,7 @@ describe('create chrome', () => {
     },
     ready: true,
     token: 'string',
+    refreshToken: 'string',
     tokenExpires: 0,
     user: mockUser,
     forceRefresh() {

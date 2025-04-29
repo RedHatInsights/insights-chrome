@@ -2,7 +2,7 @@ import React from 'react';
 
 const OtherServicesIcon = () => {
   return (
-    <svg className="platform-icon" viewBox="0 0 37 37">
+    <svg className="platform-icon allservices-icon" viewBox="0 0 37 37">
       <defs>
         <style>
           {`.uuid-5c974383-6227-42bf-8c81-30f3c0a2a013{fill:#e00;}`}

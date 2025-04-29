@@ -214,64 +214,64 @@ spec:
         workspace: netrc
     - name: parse-build-deploy-script
       params:
-        - name: path-context
-          value: $(params.path-context)
-      taskRef:
-        resolver: git
-        params:
-          - name: url
-            value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-          - name: revision
-            value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
-          - name: pathInRepo
-            value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-      workspaces:
-      - name: source
-        workspace: workspace
+      - name: path-context
+        value: $(params.path-context)
       runAfter:
       - clone-repository
-    - name: create-frontend-dockerfile
       taskRef:
-        resolver: git
         params:
-          - name: url
-            value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-          - name: revision
-            value: e0b400ca6433f1ff05722c412ab837c4bd49a45a  # replace with the latest commit from https://github.com/RedHatInsights/konflux-consoledot-frontend-build/commits
-          - name: pathInRepo
-            value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        - name: url
+          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+        - name: revision
+          value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
+        - name: pathInRepo
+          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+        resolver: git
       workspaces:
       - name: source
         workspace: workspace
+    - name: create-frontend-dockerfile
       params:
-        - name: path-context
-          value: $(params.path-context)
-        - name: component
-          value: $(tasks.parse-build-deploy-script.results.component)
-        - name: image
-          value: $(tasks.parse-build-deploy-script.results.image)
-        - name: node-build-version
-          value: $(tasks.parse-build-deploy-script.results.node-build-version)
-        - name: quay-expire-time
-          value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-        - name: npm-build-script
-          value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-        - name: yarn-build-script
-          value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-        - name: route-path
-          value: $(tasks.parse-build-deploy-script.results.route-path)
-        - name: beta-route-path
-          value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-        - name: preview-route-path
-          value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-        - name: ci-root
-          value: $(tasks.parse-build-deploy-script.results.ci-root)
-        - name: server-name
-          value: $(tasks.parse-build-deploy-script.results.server-name)
-        - name: dist-folder
-          value: $(tasks.parse-build-deploy-script.results.dist-folder)
+      - name: path-context
+        value: $(params.path-context)
+      - name: component
+        value: $(tasks.parse-build-deploy-script.results.component)
+      - name: image
+        value: $(tasks.parse-build-deploy-script.results.image)
+      - name: node-build-version
+        value: $(tasks.parse-build-deploy-script.results.node-build-version)
+      - name: quay-expire-time
+        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
+      - name: npm-build-script
+        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+      - name: yarn-build-script
+        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
+      - name: route-path
+        value: $(tasks.parse-build-deploy-script.results.route-path)
+      - name: beta-route-path
+        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
+      - name: preview-route-path
+        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
+      - name: ci-root
+        value: $(tasks.parse-build-deploy-script.results.ci-root)
+      - name: server-name
+        value: $(tasks.parse-build-deploy-script.results.server-name)
+      - name: dist-folder
+        value: $(tasks.parse-build-deploy-script.results.dist-folder)
       runAfter:
       - parse-build-deploy-script
+      taskRef:
+        params:
+        - name: url
+          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+        - name: revision
+          value: e0b400ca6433f1ff05722c412ab837c4bd49a45a
+        - name: pathInRepo
+          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        resolver: git
+      workspaces:
+      - name: source
+        workspace: workspace
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -299,48 +299,51 @@ spec:
       workspaces:
       - name: basic-auth
         workspace: git-auth
-    - name: run-unit-tests
-      description: Validates frontend unit tests
+    - description: Validates frontend unit tests
+      name: run-unit-tests
       params:
-        - name: SOURCE_ARTIFACT
-          value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
       runAfter:
-        - clone-repository-oci-ta
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the
+            application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec: null
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources: {}
+          image: registry.access.redhat.com/ubi8/nodejs-20
+          name: unit-tests
+          script: |
+            #!/bin/bash
+            set -ex
+
+            npm install
+            npm test
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
       workspaces:
       - name: basic-auth
         workspace: git-auth
-      taskSpec:
-        params:
-          - description: The Trusted Artifact URI pointing to the artifact with the application source code.
-            name: SOURCE_ARTIFACT
-            type: string
-        volumes:
-          # New volume to store a copy of the source code accessible only to this Task.
-          - name: workdir
-            emptyDir: {}
-        stepTemplate:
-          volumeMounts:
-            - mountPath: /var/workdir
-              name: workdir
-              readOnly: false
-        sidecars:
-        steps:
-          - name: use-trusted-artifact
-            image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
-            args:
-              - use
-              - $(params.SOURCE_ARTIFACT)=/var/workdir
-          - image: registry.access.redhat.com/ubi8/nodejs-20
-            workingDir: /var/workdir
-            name: unit-tests
-            securityContext:
-              runAsUser: 0
-            script: |
-              #!/bin/bash
-              set -ex
-              
-              npm install
-              npm test
     - name: build-container
       params:
       - name: IMAGE
@@ -440,52 +443,52 @@ spec:
         workspace: workspace
     - name: sast-shell-check
       params:
-        - name: image-digest
-          value: $(tasks.build-image-index.results.IMAGE_DIGEST)
-        - name: image-url
-          value: $(tasks.build-image-index.results.IMAGE_URL)
+      - name: image-digest
+        value: $(tasks.build-image-index.results.IMAGE_DIGEST)
+      - name: image-url
+        value: $(tasks.build-image-index.results.IMAGE_URL)
       runAfter:
-        - build-image-index
+      - build-image-index
       taskRef:
         params:
-          - name: name
-            value: sast-shell-check
-          - name: bundle
-            value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:188a4f6a582ac43d4de46c3998ded3c2a8ee237fb0604d90559a3b6e0aa62b0f
-          - name: kind
-            value: task
+        - name: name
+          value: sast-shell-check
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:188a4f6a582ac43d4de46c3998ded3c2a8ee237fb0604d90559a3b6e0aa62b0f
+        - name: kind
+          value: task
         resolver: bundles
       when:
-        - input: $(params.skip-checks)
-          operator: in
-          values:
-            - "false"
+      - input: $(params.skip-checks)
+        operator: in
+        values:
+        - "false"
       workspaces:
-        - name: workspace
-          workspace: workspace
+      - name: workspace
+        workspace: workspace
     - name: sast-unicode-check
       params:
-        - name: image-url
-          value: $(tasks.build-image-index.results.IMAGE_URL)
+      - name: image-url
+        value: $(tasks.build-image-index.results.IMAGE_URL)
       runAfter:
-        - build-image-index
+      - build-image-index
       taskRef:
         params:
-          - name: name
-            value: sast-unicode-check
-          - name: bundle
-            value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.2@sha256:e4a5215b45b1886a185a9db8ab392f8440c2b0848f76d719885637cf8d2628ed
-          - name: kind
-            value: task
+        - name: name
+          value: sast-unicode-check
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.2@sha256:e4a5215b45b1886a185a9db8ab392f8440c2b0848f76d719885637cf8d2628ed
+        - name: kind
+          value: task
         resolver: bundles
       when:
-        - input: $(params.skip-checks)
-          operator: in
-          values:
-            - "false"
+      - input: $(params.skip-checks)
+        operator: in
+        values:
+        - "false"
       workspaces:
-        - name: workspace
-          workspace: workspace
+      - name: workspace
+        workspace: workspace
     - name: deprecated-base-image-check
       params:
       - name: IMAGE_URL
@@ -664,7 +667,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-insights-chrome
   workspaces:
   - name: workspace
     volumeClaimTemplate:
