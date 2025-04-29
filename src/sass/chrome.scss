@@ -167,40 +167,10 @@ aside {
 
 .chr-c-favorite-trigger {
   cursor: pointer;
-  .chr-c-icon-star {
-    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
-    visibility: hidden;
-    .favorite {
-      visibility: visible;
-    }
-  }
-  &:hover {
-    .chr-c-icon-star {
-      visibility: visible;
-    }
-    .pf-v6-c-icon {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
-      &:hover {
-        --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--regular);
-      }
-    }
-    .pf-v6-c-icon-external-link, .pf-v6-c-icon-external-link:hover {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
-    }
-  }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
-  .chr-c-icon-star {
-    visibility: visible;
-  }
   .pf-v6-c-icon {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
-    &:hover {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
-      .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
-      }
-    }
   }
 }
 .chr-c-link-favorite-card { //trigger not needed here
@@ -212,9 +182,6 @@ aside {
         --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
-  }
-  .pf-v6-c-icon.chr-c-icon-star {
-    visibility: visible;
   }
 }
 
