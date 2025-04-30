@@ -131,7 +131,10 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
     }
     this.onload = function () {
       if (this.status >= 400) {
-        const gatewayError = get3scaleError(this.response, authRef.current.signinRedirect);
+        const gatewayError = get3scaleError(this.response, {
+          loginRedirect: authRef.current.signinRedirect,
+          loginSilent: authRef.current.signinSilent,
+        });
         if (this.status === 403 && this.responseText.includes(DENIED_CROSS_CHECK)) {
           crossAccountBouncer();
           // check for 3scale error
@@ -179,7 +182,10 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
           try {
             const isJson = resCloned?.headers?.get('content-type')?.includes('application/json');
             const data = isJson ? await resCloned.json() : await resCloned.text();
-            const gatewayError = get3scaleError(data, authRef.current.signinRedirect);
+            const gatewayError = get3scaleError(data, {
+              loginRedirect: authRef.current.signinRedirect,
+              loginSilent: authRef.current.signinSilent,
+            });
             if (gatewayError) {
               chromeStore.set(gatewayErrorAtom, gatewayError);
             }

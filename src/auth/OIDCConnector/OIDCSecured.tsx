@@ -114,6 +114,7 @@ export function OIDCSecured({
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
+    refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
@@ -121,6 +122,9 @@ export function OIDCSecured({
       if (shouldReAuth) {
         login(authRef.current, reAuthScopes);
       }
+    },
+    loginSilent: async () => {
+      await auth.signinSilent();
     },
   });
 

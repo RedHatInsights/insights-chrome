@@ -1,4 +1,4 @@
-# Insights Chrome 
+# Insights Chrome
 
 The "wrapper" around your application!
 

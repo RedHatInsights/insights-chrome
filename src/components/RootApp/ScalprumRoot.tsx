@@ -197,7 +197,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       deleteNavListener,
       addWsEventListener,
     });
-  }, [isPreview]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
 
   if (!mutableChromeApi.current) {
     return null;
@@ -222,7 +222,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
         },
       },
     };
-  }, [isPreview]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>
