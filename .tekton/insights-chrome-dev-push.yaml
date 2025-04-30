@@ -4,17 +4,17 @@ metadata:
   annotations:
     build.appstudio.openshift.io/repo: https://github.com/RedHatInsights/insights-chrome?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
-    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "false"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
       == "master"
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: chrome-frontend
-    appstudio.openshift.io/component: insights-chrome
+    appstudio.openshift.io/component: insights-chrome-dev
     pipelines.appstudio.openshift.io/type: build
-  name: insights-chrome-on-pull-request
+  name: insights-chrome-dev-on-push
   namespace: hcc-platex-services-tenant
 spec:
   params:
@@ -23,9 +23,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/insights-chrome:on-pr-{{revision}}
-  - name: image-expires-after
-    value: 5d
+    value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/insights-chrome-dev:{{revision}}
   - name: dockerfile
     value: ./Dockerfile
   pipelineSpec:
@@ -243,7 +241,7 @@ spec:
       - name: quay-expire-time
         value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
       - name: npm-build-script
-        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+        value: "build:dev"
       - name: yarn-build-script
         value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
       - name: route-path
@@ -296,51 +294,6 @@ spec:
         operator: in
         values:
         - "true"
-      workspaces:
-      - name: basic-auth
-        workspace: git-auth
-    - description: Validates frontend unit tests
-      name: run-unit-tests
-      params:
-      - name: SOURCE_ARTIFACT
-        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
-      runAfter:
-      - clone-repository-oci-ta
-      taskSpec:
-        metadata: {}
-        params:
-        - description: The Trusted Artifact URI pointing to the artifact with the
-            application source code.
-          name: SOURCE_ARTIFACT
-          type: string
-        spec: null
-        stepTemplate:
-          computeResources: {}
-          volumeMounts:
-          - mountPath: /var/workdir
-            name: workdir
-        steps:
-        - args:
-          - use
-          - $(params.SOURCE_ARTIFACT)=/var/workdir
-          computeResources: {}
-          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
-          name: use-trusted-artifact
-        - computeResources: {}
-          image: registry.access.redhat.com/ubi8/nodejs-20
-          name: unit-tests
-          script: |
-            #!/bin/bash
-            set -ex
-
-            npm install
-            npm test
-          securityContext:
-            runAsUser: 0
-          workingDir: /var/workdir
-        volumes:
-        - emptyDir: {}
-          name: workdir
       workspaces:
       - name: basic-auth
         workspace: git-auth
@@ -668,7 +621,7 @@ spec:
     - name: netrc
       optional: true
   taskRunTemplate:
-    serviceAccountName: build-pipeline-insights-chrome
+    serviceAccountName: build-pipeline-insights-chrome-dev
   workspaces:
   - name: workspace
     volumeClaimTemplate:
