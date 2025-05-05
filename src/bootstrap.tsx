@@ -6,7 +6,6 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
-import registerAnalyticsObserver from './analytics/analyticsObserver';
 import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
@@ -31,7 +30,6 @@ const useInitializeAnalytics = () => {
     // setup adobe analytics
     if (!isITLessEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
       window._satellite.pageBottom();
-      registerAnalyticsObserver();
     }
   }, []);
 };
