@@ -251,8 +251,7 @@ const Tools = () => {
     isNotificationDrawerExpanded,
     // Do not show the error component if module fails to load
     // Prevents broken layout
-    // @ts-ignore
-    ErrorComponent: Fragment,
+    ErrorComponent: <Fragment />,
     toggleDrawer,
   };
 
