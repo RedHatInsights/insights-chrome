@@ -24,6 +24,7 @@ import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/rel
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
+import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 
 const InternalButton = () => (
   <Button
@@ -243,12 +244,13 @@ const Tools = () => {
   const toggleDrawer = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
 
   const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
     scope: 'notifications',
     module: './NotificationsDrawerBell',
     fallback: null,
-    isNotificationDrawerExpanded,
+    isNotificationDrawerExpanded: drawerContent?.scope === 'notifications' && isNotificationDrawerExpanded,
     // Do not show the error component if module fails to load
     // Prevents broken layout
     ErrorComponent: <Fragment />,
