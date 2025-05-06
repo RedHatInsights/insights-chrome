@@ -10,6 +10,7 @@ import {
 } from '../components/AllServices/allServicesLinks';
 import { getChromeStaticPathname } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
+import useFeoConfig from './useFeoConfig';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
@@ -79,7 +80,7 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   const que: EnhancedSection[] = [];
   sections.forEach((section) => {
     const newLinksQue = section.links.map(async (link) => {
-      if (isAllServicesGroup(link)) {
+      if (isAllServicesGroup(link) && link.links) {
         const nestedLinksQue = await link.links.map(evaluateVisibility);
         const links = await Promise.all(nestedLinksQue);
         return { ...link, links };
@@ -109,6 +110,8 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   return groupQue;
 };
 
+const GENERATED_SERVICES_PATH = '/api/chrome-service/v1/static/service-tiles-generated.json';
+
 const useAllServices = () => {
   const [{ ready, error, availableSections }, setState] = useState<{
     error: boolean;
@@ -119,10 +122,11 @@ const useAllServices = () => {
     error: false,
     availableSections: [],
   });
+  const useFeoGenerated = useFeoConfig();
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
   const fetchSections = useCallback(async () => {
-    const query = `${getChromeStaticPathname('services')}/services-generated.json`;
+    const query = useFeoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
     let request = allServicesFetchCache[query];
     if (!request) {
       request = axios.get<
@@ -138,7 +142,7 @@ const useAllServices = () => {
     delete allServicesFetchCache[query];
 
     return evaluateLinksVisibility(response.data);
-  }, []);
+  }, [useFeoGenerated]);
 
   const setNavigation = useCallback(async () => {
     const sections = await fetchSections();
@@ -157,16 +161,16 @@ const useAllServices = () => {
         ready: true,
       }));
     }
-  }, [fetchSections]);
+  }, [fetchSections, useFeoGenerated]);
   useEffect(() => {
     isMounted.current = true;
     setNavigation();
     return () => {
       isMounted.current = false;
     };
-  }, [setNavigation]);
+  }, [setNavigation, useFeoGenerated]);
 
-  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
+  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue, useFeoGenerated]);
 
   return {
     linkSections,

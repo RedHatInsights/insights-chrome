@@ -4,7 +4,7 @@ const { spawn, execSync } = require('child_process');
 const waitOn = require('wait-on');
 
 const options = {
-  resources: ['https://localhost:1337/webpack-dev-server'],
+  resources: ['https://127.0.0.1:1337/webpack-dev-server'],
   delay: 6000,
   interval: 3000, // wait for 3 sec
   validateStatus: function (status) {
