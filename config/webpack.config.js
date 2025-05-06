@@ -183,6 +183,11 @@ const commonConfig = ({ dev }) => {
               host: `http://localhost:${process.env.NAV_CONFIG}`,
             },
           }),
+          ...(process.env.RBAC_PORT && {
+            '/api/rbac/v2/workspaces/': {
+              host: `http://localhost:${process.env.RBAC_PORT}`,
+            },
+          }),
         },
       }),
     },
