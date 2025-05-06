@@ -10,6 +10,7 @@ import { appActionAtom, pageObjectIdAtom } from './atoms/pageAtom';
 import { moduleRoutesAtom } from './atoms/chromeModuleAtom';
 import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
+import { segmentPageOptionsAtom } from './atoms/segmentPageOptionsAtom';
 
 const chromeStore = createStore();
 
@@ -31,6 +32,9 @@ chromeStore.set(moduleRoutesAtom, []);
 
 chromeStore.set(drawerPanelContentAtom, undefined);
 chromeStore.set(notificationDrawerExpandedAtom, false);
+
+// analytics data
+chromeStore.set(segmentPageOptionsAtom, {});
 
 // globally handle subscription to activeModuleAtom
 chromeStore.sub(activeModuleAtom, () => {
