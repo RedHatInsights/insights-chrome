@@ -62,7 +62,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
               }}
               icon={
                 <Icon
-                  className={classNames('pf-v6-u-ml-0 chr-c-icon-star', {
+                  className={classNames('pf-v6-u-ml-0', {
                     favorite: isFavorite,
                   })}
                 >
