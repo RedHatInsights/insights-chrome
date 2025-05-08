@@ -164,9 +164,17 @@ aside {
 #chrome-entry {
   height: 100vh;
 }
-
 .chr-c-favorite-trigger {
   cursor: pointer;
+  .pf-v6-c-icon { // AllServicesLink
+    color: var(--pf-t--global--background--color--disabled--default);
+  }
+  .pf-v6-c-button { // AllServicesGalleryLink
+     background: none;
+    .pf-v6-c-icon {
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--background--color--disabled--default);
+    }
+  }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
   .pf-v6-c-icon {
