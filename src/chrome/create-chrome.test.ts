@@ -91,6 +91,9 @@ describe('create chrome', () => {
     forceRefresh() {
       return Promise.resolve();
     },
+    loginSilent: () => {
+      return Promise.resolve();
+    },
   };
 
   const chromeContextOptionsMock = {

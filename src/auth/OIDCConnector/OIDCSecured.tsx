@@ -123,6 +123,9 @@ export function OIDCSecured({
         login(authRef.current, reAuthScopes);
       }
     },
+    loginSilent: async () => {
+      await auth.signinSilent();
+    },
   });
 
   const startChrome = async () => {
