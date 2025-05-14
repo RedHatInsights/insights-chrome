@@ -94,6 +94,27 @@ const fetchNavigation = async (feoGenerated = false) => {
   return allLinks;
 };
 
+const filterItem = async (navItems: NavItem[]): Promise<NavItem & { isHidden?: boolean }[]> => {
+  return Promise.all(
+    navItems.map(async (navItem) => ({
+      ...(await evaluateVisibility(navItem)),
+      ...(navItem.routes ? { routes: ((await filterItem(navItem.routes)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
+      ...(navItem.navItems ? { navItems: ((await filterItem(navItem.navItems)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
+    }))
+  );
+};
+
+export const fetchBundles = async (feoGenerated = false) => {
+  const bundlesNavigation = await fetchNavigationFiles(feoGenerated);
+  const parsedBundles = await Promise.all(
+    bundlesNavigation.map(async (bundleNav) => ({
+      ...bundleNav,
+      navItems: (await filterItem(bundleNav.navItems)).filter(({ isHidden }) => !isHidden),
+    }))
+  );
+  return parsedBundles;
+};
+
 const useAllLinks = () => {
   const useFeoGenerated = useFeoConfig();
   const [allLinks, setAllLinks] = useState<NavItem[]>([]);
