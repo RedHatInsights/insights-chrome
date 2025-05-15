@@ -25,7 +25,7 @@ spec:
       image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
       env:
         - name: EE_HOSTNAME
-          value: $(params.EPHEMERAL_ENV_HOSTNAME)
+          value: $(params.EPHEMERAL_ENV_URL)
         - name: EE_USERNAME
           value: $(params.EPHEMERAL_ENV_USERNAME)
         - name: EE_PASSWORD
