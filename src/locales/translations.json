@@ -21,7 +21,7 @@
   "describeReportBug": "Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow,",
   "directInfluence": ", your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.",
   "email": "Email",
-  "enterFeedback": "Enter your feedback",
+  "enterFeedback": "Enter your feedback: Do not include any personal information or other sensitive information.",
   "feedback": "Feedback",
   "feedbackSent": "Feedback Sent",
   "filterByTags": "Filter by tags",
