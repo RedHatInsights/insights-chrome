@@ -1,4 +1,4 @@
-FROM quay.io/redhat-services-prod/hcm-eng-prod-tenant/caddy-ubi:0d6954b
+FROM quay.io/redhat-services-prod/hcm-eng-prod-tenant/caddy-ubi:3ce2c4c
 
 ENV CADDY_TLS_MODE http_port 8000
 
