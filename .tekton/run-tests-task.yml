@@ -24,23 +24,14 @@ spec:
     - name: run-tests
       image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
       env:
+        - name: EE_HOSTNAME
+          value: $(params.EPHEMERAL_ENV_HOSTNAME)
         - name: EE_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: $(params.EPHEMERAL_ENV_USERNAME)
-              key: token
+          value: $(params.EPHEMERAL_ENV_USERNAME)
         - name: EE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: $(params.EPHEMERAL_ENV_PASSWORD)
-              key: token
-        - name: EE_URL
-          valueFrom:
-            secretKeyRef:
-              name: $(params.EPHEMERAL_ENV_URL)
-              key: url
+          value: $(params.EPHEMERAL_ENV_PASSWORD)
       script: |
         #!/bin/bash
         set -ex
 
-        echo "PLACEHOLDER: run tests"
+        echo $EE_HOSTNAME
