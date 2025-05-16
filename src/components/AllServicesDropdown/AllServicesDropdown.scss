@@ -55,6 +55,12 @@
   }
 }
 
+.chr-c-panel-services-nav {
+  .chr-c-empty-state-favorites {
+    padding-top: var(--pf-t--global--spacer--md);
+  }
+}
+
 @media (max-width: $pf-v6-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
