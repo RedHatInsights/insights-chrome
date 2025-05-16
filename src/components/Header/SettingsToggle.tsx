@@ -16,6 +16,7 @@ export type SettingsToggleDropdownGroup = {
 export type SettingsToggleDropdownItem = {
   url: string;
   title: string;
+  titleLabel?: React.ReactNode;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
   isHidden?: boolean;
   isDisabled?: boolean;
@@ -41,7 +42,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
 
   const dropdownItems = props.dropdownItems.map(({ title, items }, groupIndex) => (
     <DropdownGroup key={title} label={title}>
-      {items.map(({ url, title, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }) =>
+      {items.map(({ url, title, titleLabel, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }) =>
         !isHidden ? (
           <DropdownItem
             onClick={onClick}
@@ -54,6 +55,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
                 : ({ className: itemClassName }) => (
                     <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
                       {title}
+                      {titleLabel}
                     </ChromeLink>
                   )
             }
