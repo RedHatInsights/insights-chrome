@@ -161,6 +161,7 @@ export type RemoteModule = {
 export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
+  cdnPath?: string;
   config?: {
     supportCaseData?: SupportCaseConfig;
     ssoUrl?: string;

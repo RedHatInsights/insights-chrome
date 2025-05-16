@@ -4,6 +4,7 @@ import { Orama, create, insert } from '@orama/orama';
 import { getChromeStaticPathname } from '../../utils/common';
 import axios, { AxiosResponse } from 'axios';
 import { NavItemPermission } from '../../@types/types';
+import { bundleMapping, getUrl } from '../../hooks/useBundle';
 
 type IndexEntry = {
   icon?: string;
@@ -41,6 +42,19 @@ type GeneratedSearchIndexResponse = {
 export const SearchPermissions = new Map<string, NavItemPermission[]>();
 export const SearchPermissionsCache = new Map<string, boolean>();
 
+const bundleCache = new Map<string, string>();
+export const getBundleTitle = (pathname: string): string => {
+  const bundle = getUrl('bundle', pathname);
+  const cachedBundle = bundleCache.get(bundle);
+  if (cachedBundle) {
+    return cachedBundle;
+  }
+
+  const bundleTitle = bundleMapping[bundle] || bundle;
+  bundleCache.set(bundle, bundleTitle);
+  return bundleTitle;
+};
+
 const asyncSearchIndexAtom = atom(async () => {
   const staticPath = getChromeStaticPathname('search');
   const searchIndex: SearchEntry[] = [];
@@ -65,6 +79,7 @@ const asyncSearchIndexAtom = atom(async () => {
       }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, []);
+      const bundleTitle = getBundleTitle(entry.href);
       searchIndex.push({
         title: entry.title,
         uri: entry.href,
@@ -72,7 +87,7 @@ const asyncSearchIndexAtom = atom(async () => {
         description: entry.description ?? entry.href,
         icon: undefined,
         id: entry.id,
-        bundleTitle: entry.title,
+        bundleTitle: bundleTitle,
         altTitle: entry.alt_title,
         type: 'generated',
       });

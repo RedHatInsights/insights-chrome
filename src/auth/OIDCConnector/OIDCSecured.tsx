@@ -23,6 +23,7 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
+import useManageSilentRenew from './useManageSilentRenew';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -113,6 +114,7 @@ export function OIDCSecured({
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
+    refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
@@ -120,6 +122,9 @@ export function OIDCSecured({
       if (shouldReAuth) {
         login(authRef.current, reAuthScopes);
       }
+    },
+    loginSilent: async () => {
+      await auth.signinSilent();
     },
   });
 
@@ -201,6 +206,8 @@ export function OIDCSecured({
     authRef.current = auth;
     setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
   }, [auth]);
+
+  useManageSilentRenew(auth, state.login);
 
   if (auth.error) {
     // leave the auth error handling on the global ErrorBoundary

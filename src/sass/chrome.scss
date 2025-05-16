@@ -155,6 +155,11 @@ aside {
     }
   }
 
+// https://github.com/patternfly/patternfly-quickstarts/issues/392
+.pfext-quick-start-task .pf-v6-c-wizard {
+  height: initial;
+}
+
 // remove float from restart button so it's not obscured by pendo or the va badge
 .pfext-quick-start-footer__restartbtn {
   float: none;
@@ -164,43 +169,21 @@ aside {
 #chrome-entry {
   height: 100vh;
 }
-
 .chr-c-favorite-trigger {
   cursor: pointer;
-  .chr-c-icon-star {
-    --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
-    visibility: hidden;
-    .favorite {
-      visibility: visible;
-    }
+  .pf-v6-c-icon { // AllServicesLink
+    color: var(--pf-t--global--background--color--disabled--default);
   }
-  &:hover {
-    .chr-c-icon-star {
-      visibility: visible;
-    }
+  .pf-v6-c-button { // AllServicesGalleryLink
+     background: none;
     .pf-v6-c-icon {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--subtle);
-      &:hover {
-        --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--regular);
-      }
-    }
-    .pf-v6-c-icon-external-link, .pf-v6-c-icon-external-link:hover {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
+      --pf-v6-c-icon__content--Color: var(--pf-t--global--background--color--disabled--default);
     }
   }
 }
 .chr-c-favorite-trigger.chr-c-icon-favorited {
-  .chr-c-icon-star {
-    visibility: visible;
-  }
   .pf-v6-c-icon {
     --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--default);
-    &:hover {
-      --pf-v6-c-icon__content--Color: var(--pf-t--global--icon--color--favorite--hover);
-      .chr-c-icon-external-link, .chr-c-icon-external-link:hover {
-        --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
-      }
-    }
   }
 }
 .chr-c-link-favorite-card { //trigger not needed here
@@ -212,9 +195,6 @@ aside {
         --pf-v6-c-icon__content--Color: var(--pf-t--global--text--color--link--hover);
       }
     }
-  }
-  .pf-v6-c-icon.chr-c-icon-star {
-    visibility: visible;
   }
 }
 

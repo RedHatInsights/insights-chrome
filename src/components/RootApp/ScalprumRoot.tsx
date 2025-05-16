@@ -3,7 +3,6 @@ import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { shallowEqual, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
-import { AppsConfig } from '@scalprum/core';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
 import { ChromeProvider } from '@redhat-cloud-services/chrome';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -35,6 +34,8 @@ import BetaSwitcher from '../BetaSwitcher';
 import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
+import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
+import transformScalprumManifest from './transformScalprumManifest';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -89,7 +90,7 @@ const ScalprumRoot = memo(
 ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 
 export type ChromeApiRootProps = {
-  config: AppsConfig;
+  config: ScalprumConfig;
   helpTopicsAPI: HelpTopicsAPI;
   quickstartsAPI: QuickstartsApi;
 };
@@ -193,7 +194,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       deleteNavListener,
       addWsEventListener,
     });
-  }, [isPreview]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
 
   if (!mutableChromeApi.current) {
     return null;
@@ -214,30 +215,11 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       pluginSDKOptions: {
         pluginLoaderOptions: {
           // sharedScope: scope,
-          transformPluginManifest: (manifest) => {
-            if (manifest.name === 'chrome') {
-              return {
-                ...manifest,
-                // Do not include chrome chunks in manifest for chrome. It will result in an infinite loading loop
-                // window.chrome always exists because chrome container is always initialized
-                loadScripts: [],
-              };
-            }
-            const newManifest = {
-              ...manifest,
-              // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
-              baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `${isPreview ? '/beta' : ''}/api/plugins/${manifest.name}/` : '/',
-              loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [
-                `${manifest.baseURL ?? ''}plugin-entry.js`,
-              ],
-              registrationMethod: manifest.registrationMethod ?? 'callback',
-            };
-            return newManifest;
-          },
+          transformPluginManifest: (manifest) => transformScalprumManifest(manifest, config),
         },
       },
     };
-  }, [isPreview]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>

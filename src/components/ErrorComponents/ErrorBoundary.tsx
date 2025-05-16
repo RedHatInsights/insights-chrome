@@ -14,7 +14,10 @@ const INVALID_AUTH_STATE_ERROR = 'No matching state found in storage';
 class ErrorBoundary extends React.Component<
   {
     children: React.ReactNode;
-    singIn?: () => Promise<void>;
+    auth?: {
+      loginSilent: () => Promise<void>;
+      loginRedirect: () => Promise<void>;
+    };
   },
   ErrorBoundaryState
 > {
@@ -54,7 +57,7 @@ class ErrorBoundary extends React.Component<
       if (checkAccountOnHold(this.state.error)) {
         return <AccountOnHoldError error={this.state.error} />;
       }
-      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} signIn={this.props.singIn} />;
+      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} auth={this.props.auth} />;
     }
 
     return this.props.children;

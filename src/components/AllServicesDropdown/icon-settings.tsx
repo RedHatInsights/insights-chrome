@@ -2,7 +2,7 @@ import React from 'react';
 
 const SettingsIcon = () => {
   return (
-    <svg className="platform-icon" width="28" height="28" viewBox="0 0 52 52">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 52 52">
       <rect width="52" height="52" fill="white" />
       <rect x="1.875" y="1.875" width="50.25" height="50.25" rx="12.125" fill="white" stroke="#E0E0E0" strokeWidth="1.75" />
       <path

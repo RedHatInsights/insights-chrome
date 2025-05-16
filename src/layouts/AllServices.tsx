@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
@@ -14,25 +14,69 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
-
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import { updateDocumentTitle } from '../utils/common';
+import fetchNavigationFiles from '../utils/fetchNavigationFiles';
+import { useFlag } from '@unleash/proxy-client-react';
+import AllServicesBundle from '../components/AllServices/AllServicesBundle';
+import { BundleNavigation } from '../@types/types';
+import filterNavItemsByTitle from '../utils/filterNavItemsByTitle';
+
+const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
 
 export type AllServicesProps = {
   Footer?: React.ReactNode;
 };
 
 const AllServices = ({ Footer }: AllServicesProps) => {
+  const [bundles, setBundles] = useState<BundleNavigation[]>([]);
+  const [originalBundles, setOriginalBundles] = useState<BundleNavigation[]>([]);
+  const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
   updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
   if (error) {
-    // TODO: Add error state
     return <div>Error</div>;
   }
+
+  const otherServicesBundle: BundleNavigation = {
+    id: 'otherServices',
+    title: 'Other Services',
+    navItems: [
+      { id: 'redhatProductTrials', title: 'Red Hat Product Trials', isExternal: true },
+      { id: 'trustedArtifactSigner', title: 'Trusted Artifact Signer', isExternal: true },
+      { id: 'trustedAnalyzer', title: 'Trusted Profile Analyzer', isExternal: true },
+    ],
+  };
+
+  const fetchNavigation = async () => {
+    const fetchNav = await fetchNavigationFiles();
+    const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
+    const withOthers = filteredBundles.concat(otherServicesBundle);
+    setOriginalBundles(withOthers);
+    setBundles(withOthers);
+  };
+
+  useEffect(() => {
+    fetchNavigation();
+  }, []);
+
+  useEffect(() => {
+    if (!filterValue) {
+      setBundles(originalBundles);
+    } else {
+      const filtered = originalBundles
+        .map((bundle) => {
+          const filteredNavItems = filterNavItemsByTitle(bundle.navItems, filterValue);
+          return filteredNavItems.length > 0 ? { ...bundle, navItems: filteredNavItems } : null;
+        })
+        .filter((bundle): bundle is BundleNavigation => bundle !== null);
+      setBundles(filtered);
+    }
+  }, [filterValue, originalBundles]);
 
   const sections = linkSections;
 
@@ -86,9 +130,9 @@ const AllServices = ({ Footer }: AllServicesProps) => {
             </PageGroup>
             <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding', md: 'padding', lg: 'padding' }} className="pf-v6-u-pt-lg">
               <Gallery className="pf-v6-u-display-block" hasGutter>
-                {sections.map((section, index) => (
-                  <AllServicesSection key={index} {...section} />
-                ))}
+                {enableAllServicesRedesign
+                  ? bundles.map((bundle) => <AllServicesBundle key={bundle.id} {...bundle} />)
+                  : sections.map((section, index) => <AllServicesSection key={index} {...section} />)}
                 {/* TODO: Add empty state */}
                 {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
               </Gallery>
@@ -100,4 +144,5 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     </div>
   );
 };
+
 export default AllServices;

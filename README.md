@@ -1,4 +1,4 @@
-# Insights Chrome 
+# Insights Chrome
 
 The "wrapper" around your application!
 
@@ -113,3 +113,17 @@ Available function:
 ## Further reading
 
 More detailed documentation can be found in the [docs section](https://github.com/redhatinsights/insights-chrome/tree/master/docs)
+
+## Staleness
+
+A bot will post a comment after 60 days of inactivity giving the opener 5 days to update their issue/PR before it's closed.
+
+If you want the bot to ignore your issue or PR, please add one of the following labels:
+
+- work-in-progress
+- in-progress
+- in-review
+- help-wanted
+- blocked
+- wip
+- dependencies

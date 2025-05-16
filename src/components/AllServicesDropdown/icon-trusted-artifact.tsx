@@ -2,7 +2,7 @@ import React from 'react';
 
 const TrustedArtifactIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <g id="uuid-a65c70ad-12b3-4cda-8a7e-1f2cfe14ffa5">
         <rect x="1" y="1" width="36" height="36" rx="9" ry="9" strokeWidth="0" />
         <path

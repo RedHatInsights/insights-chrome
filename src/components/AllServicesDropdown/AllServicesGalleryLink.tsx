@@ -6,15 +6,14 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 
 import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
-
-import { AllServicesLinkProps } from '../AllServices/AllServicesLink';
 import ChromeLink from '../ChromeLink';
 import classNames from 'classnames';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 import { AllServicesDropdownContext } from './common';
 import { titleToId } from '../../utils/common';
+import type { AllServicesLink as AllServicesLinkType } from '../AllServices/allServicesLinks';
 
-export type AllServicesGalleryLinkProps = AllServicesLinkProps;
+type AllServicesGalleryLinkProps = AllServicesLinkType & { category: string; group?: string };
 
 const AllServicesGalleryLink = ({ href, title, description, isExternal, category, group }: AllServicesGalleryLinkProps) => {
   const { favoritePage, unfavoritePage, favoritePages } = useFavoritePagesWrapper();
@@ -48,7 +47,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
         </SplitItem>
         <SplitItem className="pf-v6-u-mt-sm">
           {isExternal ? (
-            <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
+            <Icon className="pf-v6-u-mr-sm chr-c-icon-external-link pf-v6-u-text-color-link" isInline>
               <ExternalLinkAltIcon />
             </Icon>
           ) : (
@@ -63,7 +62,7 @@ const AllServicesGalleryLink = ({ href, title, description, isExternal, category
               }}
               icon={
                 <Icon
-                  className={classNames('pf-v6-u-ml-0 chr-c-icon-star', {
+                  className={classNames('pf-v6-u-ml-0', {
                     favorite: isFavorite,
                   })}
                 >

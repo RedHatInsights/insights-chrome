@@ -80,7 +80,7 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   const que: EnhancedSection[] = [];
   sections.forEach((section) => {
     const newLinksQue = section.links.map(async (link) => {
-      if (isAllServicesGroup(link)) {
+      if (isAllServicesGroup(link) && link.links) {
         const nestedLinksQue = await link.links.map(evaluateVisibility);
         const links = await Promise.all(nestedLinksQue);
         return { ...link, links };

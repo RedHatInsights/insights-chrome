@@ -1,6 +1,3 @@
-// eslint-disable-next-line no-restricted-imports
-import { AuthContextProps } from 'react-oidc-context';
-
 export type ThreeScaleError = {
   data?: string;
   complianceError?: boolean;
@@ -13,9 +10,18 @@ export type ThreeScaleError = {
 export const COMPLIACE_ERROR_CODES = ['ERROR_OFAC', 'ERROR_T5', 'ERROR_EXPORT_CONTROL'];
 const errorCodeRegexp = new RegExp(`(${COMPLIACE_ERROR_CODES.join('|')})`);
 
-export function get3scaleError(response: string | { errors: ThreeScaleError[] }, signIn?: AuthContextProps['signinRedirect']) {
-  if (signIn && typeof response !== 'string' && isTokenExpiredError(response)) {
-    signIn();
+export function get3scaleError(
+  response: string | { errors: ThreeScaleError[] },
+  auth?: {
+    loginSilent: () => Promise<unknown>;
+    loginRedirect: () => Promise<unknown>;
+  }
+) {
+  if (auth && typeof response !== 'string' && isTokenExpiredError(response)) {
+    auth.loginSilent().catch(() => {
+      // if the silent login fails, we have to redirect to the login page
+      auth.loginRedirect();
+    });
     return;
   }
 
