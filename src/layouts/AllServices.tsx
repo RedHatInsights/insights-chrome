@@ -61,8 +61,10 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   };
 
   useEffect(() => {
-    fetchNavigation();
-  }, []);
+    if (enableAllServicesRedesign) {
+      fetchNavigation();
+    }
+  }, [enableAllServicesRedesign]);
 
   useEffect(() => {
     if (!filterValue) {
