@@ -107,12 +107,11 @@ const filterItem = async (navItems: NavItem[]): Promise<NavItem & { isHidden?: b
 export const fetchBundles = async (feoGenerated = false) => {
   const bundlesNavigation = await fetchNavigationFiles(feoGenerated);
   return await Promise.all(
-      bundlesNavigation.map(async (bundleNav) => ({
-        ...bundleNav,
-        navItems: (await filterItem(bundleNav.navItems)).filter(({ isHidden }) => !isHidden),
-      }))
-    );
-
+    bundlesNavigation.map(async (bundleNav) => ({
+      ...bundleNav,
+      navItems: (await filterItem(bundleNav.navItems)).filter(({ isHidden }) => !isHidden),
+    }))
+  );
 };
 
 const useAllLinks = () => {
