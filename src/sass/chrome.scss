@@ -155,6 +155,11 @@ aside {
     }
   }
 
+// https://github.com/patternfly/patternfly-quickstarts/issues/392
+.pfext-quick-start-task .pf-v6-c-wizard {
+  height: initial;
+}
+
 // remove float from restart button so it's not obscured by pendo or the va badge
 .pfext-quick-start-footer__restartbtn {
   float: none;
