@@ -88,8 +88,8 @@
     "description": "Email"
   },
   "enterFeedback": {
-    "defaultMessage": "Enter your feedback",
-    "description": "Enter your feedback"
+    "defaultMessage": "Enter your feedback: Do not include any personal information or other sensitive information.",
+    "description": "Enter your feedback: Do not include any personal information or other sensitive information."
   },
   "feedback": {
     "defaultMessage": "Feedback",
