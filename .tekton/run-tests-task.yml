@@ -17,9 +17,6 @@ spec:
     - name: EPHEMERAL_ENV_USERNAME
       type: string
       description: "Username for login to your ephemeral environment UI"
-  results:
-    - name: NS
-      description: ""
   steps:
     - name: run-tests
       image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
@@ -34,4 +31,4 @@ spec:
         #!/bin/bash
         set -ex
 
-        echo $EE_HOSTNAME
+        echo "write your tests here"
