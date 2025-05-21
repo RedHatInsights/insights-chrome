@@ -18,11 +18,11 @@ import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import { updateDocumentTitle } from '../utils/common';
-import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { useFlag } from '@unleash/proxy-client-react';
 import AllServicesBundle from '../components/AllServices/AllServicesBundle';
 import { BundleNavigation } from '../@types/types';
 import filterNavItemsByTitle from '../utils/filterNavItemsByTitle';
+import { fetchBundles } from '../hooks/useAllLinks';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
 
@@ -53,7 +53,7 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   };
 
   const fetchNavigation = async () => {
-    const fetchNav = await fetchNavigationFiles();
+    const fetchNav = await fetchBundles();
     const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
     const withOthers = filteredBundles.concat(otherServicesBundle);
     setOriginalBundles(withOthers);
@@ -61,8 +61,10 @@ const AllServices = ({ Footer }: AllServicesProps) => {
   };
 
   useEffect(() => {
-    fetchNavigation();
-  }, []);
+    if (enableAllServicesRedesign) {
+      fetchNavigation();
+    }
+  }, [enableAllServicesRedesign]);
 
   useEffect(() => {
     if (!filterValue) {
