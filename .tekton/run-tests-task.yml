@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-tests
+spec:
+  params:
+    - name: EPHEMERAL_ENV_PROVIDER_SECRET
+      type: string
+      default: ephemeral-env-provider
+      description: "Secret for connecting to ephemeral env provider cluster"
+    - name: EPHEMERAL_ENV_URL
+      type: string
+      description: "Url for accessing the UI deployed in the ephemeral environment"
+    - name: EPHEMERAL_ENV_PASSWORD
+      type: string
+      description: "Password for login to your ephemeral environment UI"
+    - name: EPHEMERAL_ENV_USERNAME
+      type: string
+      description: "Username for login to your ephemeral environment UI"
+  steps:
+    - name: run-tests
+      image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
+      env:
+        - name: EE_HOSTNAME
+          value: $(params.EPHEMERAL_ENV_URL)
+        - name: EE_USERNAME
+          value: $(params.EPHEMERAL_ENV_USERNAME)
+        - name: EE_PASSWORD
+          value: $(params.EPHEMERAL_ENV_PASSWORD)
+      script: |
+        #!/bin/bash
+        set -ex
+
+        echo "write your tests here"

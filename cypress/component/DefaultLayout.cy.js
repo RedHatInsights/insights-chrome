@@ -5,7 +5,8 @@ import { ScalprumProvider } from '@scalprum/react-core';
 import chromeReducer, { chromeInitialState } from '../../src/redux';
 import DefaultLayout from '../../src/layouts/DefaultLayout';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
-import { Nav, NavList } from '@patternfly/react-core';
+import { Nav } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
@@ -91,6 +92,9 @@ describe('<Default layout />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
+    });
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {
@@ -107,6 +111,7 @@ describe('<Default layout />', () => {
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
+    cy.intercept('GET', '/api/chrome-service/v1/static/search-index-generated.json', []);
   });
 
   it('render correctly with few nav items', () => {

@@ -94,8 +94,8 @@ export default defineMessages({
   },
   enterFeedback: {
     id: 'enterFeedback',
-    description: 'Enter your feedback',
-    defaultMessage: 'Enter your feedback',
+    description: 'Enter your feedback: Do not include any personal information or other sensitive information.',
+    defaultMessage: 'Enter your feedback: Do not include any personal information or other sensitive information.',
   },
   researchOpportunities: {
     id: 'researchOpportunities',
@@ -197,10 +197,10 @@ export default defineMessages({
     description: 'Show more',
     defaultMessage: 'Show more',
   },
-  clearFilters: {
-    id: 'clearFilters',
-    description: 'Clear filters',
-    defaultMessage: 'Clear filters',
+  resetFilters: {
+    id: 'resetFilters',
+    description: 'Reset filters',
+    defaultMessage: 'Reset filters',
   },
   noInventoryPermissions: {
     id: 'noInventoryPermissions',
@@ -326,6 +326,11 @@ export default defineMessages({
     id: 'demoMode',
     description: 'Demo mode',
     defaultMessage: 'Demo mode',
+  },
+  globalLearningResourcesPage: {
+    id: 'globalLearningResourcesPage',
+    description: 'All learning resources',
+    defaultMessage: 'All learning resources',
   },
   loggedOut: {
     id: 'loggedOut',
@@ -556,8 +561,8 @@ export default defineMessages({
   },
   teamWillReviewBug: {
     id: 'teamWillReviewBug',
-    description: 'We appreciate your feedback and our team will review your report shorlty',
-    defaultMessage: 'We appreciate your feedback and our team will review your report shorlty',
+    description: 'We appreciate your feedback and our team will review your report shortly',
+    defaultMessage: 'We appreciate your feedback and our team will review your report shortly',
   },
   responseSent: {
     id: 'responseSent',
