@@ -24,7 +24,10 @@ export type DefaultErrorComponentProps = {
   errorInfo?: {
     componentStack?: string;
   };
-  signIn?: () => Promise<void>;
+  auth?: {
+    loginSilent: () => Promise<void>;
+    loginRedirect: () => Promise<void>;
+  };
 };
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
@@ -67,7 +70,7 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
   }, [props.error, activeModule]);
 
   // second level of error capture if xhr/fetch interceptor fails
-  const gatewayError = get3scaleError(props.error as any, props.signIn);
+  const gatewayError = get3scaleError(props.error as any, props.auth);
   if (gatewayError) {
     return <GatewayErrorComponent error={gatewayError} />;
   }

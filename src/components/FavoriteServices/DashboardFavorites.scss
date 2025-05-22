@@ -4,4 +4,10 @@
 
 .widget-favorites {
   column-width: 300px;
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

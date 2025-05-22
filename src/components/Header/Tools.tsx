@@ -24,8 +24,7 @@ import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/rel
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-
-const isITLessEnv = ITLess();
+import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 
 const InternalButton = () => (
   <Button
@@ -75,6 +74,7 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
+  const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -104,6 +104,7 @@ const Tools = () => {
         {
           url: '/settings/integrations',
           title: 'Integrations',
+          isHidden: isITLessEnv,
         },
         {
           url: '/settings/notifications',
@@ -121,10 +122,12 @@ const Tools = () => {
         {
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
+          isHidden: isITLessEnv,
         },
         {
           url: '/iam/service-accounts',
           title: 'Service Accounts',
+          isHidden: isITLessEnv,
         },
       ],
     },
@@ -241,16 +244,16 @@ const Tools = () => {
   const toggleDrawer = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
 
   const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
     scope: 'notifications',
     module: './NotificationsDrawerBell',
     fallback: null,
-    isNotificationDrawerExpanded,
+    isNotificationDrawerExpanded: drawerContent?.scope === 'notifications' && isNotificationDrawerExpanded,
     // Do not show the error component if module fails to load
     // Prevents broken layout
-    // @ts-ignore
-    ErrorComponent: Fragment,
+    ErrorComponent: <Fragment />,
     toggleDrawer,
   };
 

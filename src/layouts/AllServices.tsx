@@ -14,15 +14,15 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { Header } from '../components/Header/Header';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
 import AllServicesSection from '../components/AllServices/AllServicesSection';
-
 import './AllServices.scss';
 import useAllServices from '../hooks/useAllServices';
 import Messages from '../locales/Messages';
 import { updateDocumentTitle } from '../utils/common';
-import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { useFlag } from '@unleash/proxy-client-react';
 import AllServicesBundle from '../components/AllServices/AllServicesBundle';
 import { BundleNavigation } from '../@types/types';
+import filterNavItemsByTitle from '../utils/filterNavItemsByTitle';
+import { fetchBundles } from '../hooks/useAllLinks';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
 
@@ -32,27 +32,53 @@ export type AllServicesProps = {
 
 const AllServices = ({ Footer }: AllServicesProps) => {
   const [bundles, setBundles] = useState<BundleNavigation[]>([]);
-
+  const [originalBundles, setOriginalBundles] = useState<BundleNavigation[]>([]);
   const enableAllServicesRedesign = useFlag('platform.chrome.allservices.redesign');
-
   updateDocumentTitle('All Services', true);
   const { linkSections, error, ready, filterValue, setFilterValue } = useAllServices();
   const intl = useIntl();
 
   if (error) {
-    // TODO: Add error state
     return <div>Error</div>;
   }
 
+  const otherServicesBundle: BundleNavigation = {
+    id: 'otherServices',
+    title: 'Other Services',
+    navItems: [
+      { id: 'redhatProductTrials', title: 'Red Hat Product Trials', isExternal: true },
+      { id: 'trustedArtifactSigner', title: 'Trusted Artifact Signer', isExternal: true },
+      { id: 'trustedAnalyzer', title: 'Trusted Profile Analyzer', isExternal: true },
+    ],
+  };
+
   const fetchNavigation = async () => {
-    const fetchNav = await fetchNavigationFiles();
+    const fetchNav = await fetchBundles();
     const filteredBundles = fetchNav.filter(({ id }) => availableBundles.includes(id));
-    setBundles(filteredBundles);
+    const withOthers = filteredBundles.concat(otherServicesBundle);
+    setOriginalBundles(withOthers);
+    setBundles(withOthers);
   };
 
   useEffect(() => {
-    fetchNavigation();
-  }, []);
+    if (enableAllServicesRedesign) {
+      fetchNavigation();
+    }
+  }, [enableAllServicesRedesign]);
+
+  useEffect(() => {
+    if (!filterValue) {
+      setBundles(originalBundles);
+    } else {
+      const filtered = originalBundles
+        .map((bundle) => {
+          const filteredNavItems = filterNavItemsByTitle(bundle.navItems, filterValue);
+          return filteredNavItems.length > 0 ? { ...bundle, navItems: filteredNavItems } : null;
+        })
+        .filter((bundle): bundle is BundleNavigation => bundle !== null);
+      setBundles(filtered);
+    }
+  }, [filterValue, originalBundles]);
 
   const sections = linkSections;
 
@@ -120,4 +146,5 @@ const AllServices = ({ Footer }: AllServicesProps) => {
     </div>
   );
 };
+
 export default AllServices;

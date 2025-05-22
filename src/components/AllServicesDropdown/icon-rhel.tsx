@@ -2,7 +2,7 @@ import React from 'react';
 
 const RhelIcon = () => {
   return (
-    <svg className="platform-icon" width="28" height="28" viewBox="0 0 52 52">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 52 52">
       <g id="Widgets" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Icons-/-1.-Size-md-/-Object-/-star" fillRule="nonzero">
           <path
