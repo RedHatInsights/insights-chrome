@@ -94,8 +94,8 @@ export default defineMessages({
   },
   enterFeedback: {
     id: 'enterFeedback',
-    description: 'Enter your feedback',
-    defaultMessage: 'Enter your feedback',
+    description: 'Enter your feedback: Do not include any personal information or other sensitive information.',
+    defaultMessage: 'Enter your feedback: Do not include any personal information or other sensitive information.',
   },
   researchOpportunities: {
     id: 'researchOpportunities',

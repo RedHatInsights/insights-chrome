@@ -2,7 +2,7 @@ import React from 'react';
 
 const PlaceholderIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>{`.babc916c-e1fb-432c-82f5-f31008f864ae{fill:red;}.bd54039f-1ff7-4ad7-a5a2-655d1144d9f5{fill:#fff;}`}</style>
       </defs>
