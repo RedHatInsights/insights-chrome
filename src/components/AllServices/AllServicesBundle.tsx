@@ -60,13 +60,11 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
         <Split hasGutter>
           <SplitItem> {bundleIcon} </SplitItem>
           <SplitItem className="pf-v6-u-pt-xs" isFilled>
-            <Content component={ContentVariants.h4} className="pf-v6-u-mb-xs">
-              {title}
-            </Content>
+            <Content component={ContentVariants.h4}>{title}</Content>
             <Content component={ContentVariants.small}>
               {itemOverview ? (
                 <ChromeLink
-                  className="chr-c-favorite-service__tile"
+                  className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemOverview.href ? itemOverview.href : ''}
                   data-ouia-component-id={`${title}`}
                 >
@@ -74,7 +72,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
                 </ChromeLink>
               ) : itemDashboard ? (
                 <ChromeLink
-                  className="chr-c-favorite-service__tile"
+                  className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemDashboard.href ? itemDashboard.href : ''}
                   data-ouia-component-id={`${title}`}
                 >
@@ -85,7 +83,7 @@ const AllServicesBundle = ({ id, title, description, navItems }: AllServicesBund
 
               {itemLearningResources ? (
                 <ChromeLink
-                  className="chr-c-favorite-service__tile"
+                  className="chr-c-favorite-service__tile pf-v6-u-display-inline"
                   href={itemLearningResources.href ? itemLearningResources.href : ''}
                   data-ouia-component-id={`${title}`}
                 >
