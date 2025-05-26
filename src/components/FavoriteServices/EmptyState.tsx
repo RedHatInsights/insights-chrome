@@ -13,7 +13,11 @@ const EmptyState = () => (
     <Flex className="pf-v6-u-justify-content-center pf-v6-u-align-items-stretch">
       <Stack className="pf-v6-u-justify-content-center">
         <StackItem className="pf-v6-u-text-align-center">
-          <img src="https://console.redhat.com/apps/frontend-assets/favoritedservices/favoriting-emptystate.svg" alt="favoriting image" />
+          <img
+            src="https://console.redhat.com/apps/frontend-assets/favoritedservices/favoriting-emptystate.svg"
+            className="chr-c-empty-state-favorites"
+            alt="favoriting image"
+          />
         </StackItem>
         <StackItem className="pf-v6-u-text-align-center">
           <Content>
