@@ -15,6 +15,23 @@ spec:
     - name: E2E_PASSWORD
       type: string
   steps:
+    - name: init
+      params:
+      - name: image-url
+        value: $(params.output-image)
+      - name: rebuild
+        value: $(params.rebuild)
+      - name: skip-checks
+        value: $(params.skip-checks)
+      taskRef:
+        params:
+        - name: name
+          value: init
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-init:0.2@sha256:7a24924417260b7094541caaedd2853dc8da08d4bb0968f710a400d3e8062063
+        - name: kind
+          value: task
+        resolver: bundles
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -22,7 +39,7 @@ spec:
       - name: revision
         value: $(params.revision)
       runAfter:
-      - init
+        - init
       taskRef:
         params:
         - name: name
