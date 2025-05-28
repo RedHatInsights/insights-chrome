@@ -25,6 +25,8 @@ import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDr
 import useSupportCaseData from '../../hooks/useSupportCaseData';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
+import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
 
 const InternalButton = () => (
   <Button
@@ -118,6 +120,12 @@ const Tools = () => {
         {
           url: identityAndAccessManagmentPath,
           title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
+          description:
+            isOrgAdmin && workspacesEnabled ? (
+              <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
+                Workspaces model available
+              </Label>
+            ) : null,
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
