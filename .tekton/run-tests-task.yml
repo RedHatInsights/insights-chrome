@@ -31,4 +31,5 @@ spec:
         #!/bin/bash
         set -ex
 
-        echo "write your tests here"
+        npm i
+        E2E_BASE=$EE_HOSTNAME E2E_USER=$EE_USERNAME E2E_PASSWORD=$EE_PASSWORD npm run test:e2e
