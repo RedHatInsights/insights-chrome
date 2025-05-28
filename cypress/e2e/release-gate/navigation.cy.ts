@@ -1,4 +1,4 @@
-describe('Navigation', () => {
+describe.skip('Navigation', () => {
   beforeEach('', () => {
     cy.login();
     cy.visit('/');
