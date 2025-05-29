@@ -75,6 +75,7 @@ const Tools = () => {
   const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
+  const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
@@ -121,7 +122,7 @@ const Tools = () => {
           url: identityAndAccessManagmentPath,
           title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
           description:
-            isOrgAdmin && workspacesEnabled ? (
+            workspacesEnabled || workspacesListEnabled ? (
               <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
                 Workspaces model available
               </Label>
