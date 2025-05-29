@@ -193,7 +193,10 @@ const Tools = () => {
       ? [
           {
             title: intl.formatMessage(messages.globalLearningResourcesPage),
-            onClick: () => window.open('/learning-resources', '_self'),
+            url: '/learning-resources',
+            isHidden: false,
+            appId: 'learningResources',
+            target: '_self',
           },
         ]
       : []),
