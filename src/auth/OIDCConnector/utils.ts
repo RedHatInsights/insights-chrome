@@ -64,7 +64,7 @@ export function login(auth: AuthContextProps, requiredScopes: string[] = [], red
   // Redirect to login
   Cookies.set('cs_loggedOut', 'false');
   //FIX ME: Temp fix until scope is added in-boundary
-  let scope = ITLess() ? ['openid', ...requiredScopes] : ['openid', ...requiredScopes];
+  let scope = ITLess() ? ['openid', ...requiredScopes] : ['openid', 'api.console', ...requiredScopes];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
