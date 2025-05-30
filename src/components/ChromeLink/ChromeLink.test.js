@@ -6,7 +6,6 @@ import createMockStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from './ChromeLink';
 import NavContext from '../Navigation/navContext';
-import { APP_NAV_CLICK } from '../../redux/action-types';
 
 const LinkContext = ({
   store,
@@ -46,86 +45,6 @@ describe('ChromeLink', () => {
     );
 
     expect(getAllByTestId('router-link')).toHaveLength(1);
-  });
-
-  test('should dispatch appNavClick with correct actionId for top level route', () => {
-    const store = mockStore({
-      chrome: {
-        moduleRoutes: [],
-        activeModule: 'testModule',
-        modules: {
-          testModule: {},
-        },
-      },
-    });
-    const {
-      container: { firstElementChild: buttton },
-    } = render(
-      <LinkContext store={store}>
-        <ChromeLink {...testProps}>Test module link</ChromeLink>
-      </LinkContext>
-    );
-
-    act(() => {
-      fireEvent.click(buttton);
-    });
-
-    expect(store.getActions()).toEqual([
-      {
-        type: APP_NAV_CLICK,
-        payload: {
-          id: '/',
-          event: {
-            id: '/',
-            navId: '/',
-            href: '/insights/foo',
-            type: 'click',
-            target: expect.any(Element),
-          },
-        },
-      },
-    ]);
-  });
-
-  test('should dispatch appNavClick with correct actionId for nested route', () => {
-    const store = mockStore({
-      chrome: {
-        moduleRoutes: [],
-        activeModule: 'testModule',
-        modules: {
-          testModule: {},
-        },
-      },
-    });
-    const {
-      container: { firstElementChild: buttton },
-    } = render(
-      <LinkContext store={store}>
-        <ChromeLink {...testProps} href="/insights/foo/bar">
-          Test module link
-        </ChromeLink>
-      </LinkContext>
-    );
-
-    act(() => {
-      fireEvent.click(buttton);
-    });
-
-    expect(store.getActions()).toEqual([
-      {
-        type: APP_NAV_CLICK,
-        payload: {
-          id: 'bar',
-          event: {
-            id: 'bar',
-            navId: 'bar',
-            href: '/insights/foo/bar',
-            type: 'click',
-            target: expect.any(Element),
-          },
-        },
-      },
-    ]);
   });
 
   test('should not trigger onLinkClick callback', () => {

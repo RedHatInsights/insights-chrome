@@ -3,10 +3,29 @@ import 'whatwg-fetch';
 
 global.SVGPathElement = function () {};
 
-global.MutationObserver = class {
-  constructor(callback) {}
-  disconnect() {}
-  observe(element, initObject) {}
+class ObserverShim {
+  observe() {
+    void 0;
+  }
+
+  disconnect() {
+    void 0;
+  }
+}
+
+global.ErrorEvent ??= Event;
+global.IntersectionObserver ??= ObserverShim;
+global.MutationObserver ??= ObserverShim;
+global.matchMedia = () => new EventTarget();
+global.getComputedStyle ??= function () {
+  return {
+    getPropertyPriority() {
+      return '';
+    },
+    getPropertyValue() {
+      return '';
+    },
+  };
 };
 
 global.window = Object.create(window);
