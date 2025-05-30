@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
-import Cookie from 'js-cookie';
 import { ITLess, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
@@ -12,6 +11,7 @@ import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
 import { isPreviewAtom } from '../state/atoms/releaseAtom';
+import usePageEvent, { getPageEventOptions } from './usePageEvent';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -32,35 +32,6 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-const getPageEventOptions = (isPreview: boolean) => {
-  const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
-  const search = new URLSearchParams(window.location.search);
-
-  // Do not send keys with undefined values to segment.
-  const trackingContext = [
-    { name: 'tactic_id_external', value: search.get('sc_cid') || Cookie.get('rh_omni_tc') },
-    { name: 'tactic_id_internal', value: search.get('intcmp') || Cookie.get('rh_omni_itc') },
-    { name: 'tactic_id_personalization', value: search.get('percmp') || Cookie.get('rh_omni_pc') },
-  ].reduce((acc, curr) => (typeof curr.value === 'string' ? { ...acc, [curr.name]: curr.value } : acc), {});
-
-  return [
-    {
-      path,
-      url: `${window.location.origin}${path}${window.location.search}`,
-      isBeta: isPreview,
-      module: window._segment?.activeModule,
-      // Marketing campaing tracking
-      ...trackingContext,
-      ...window?._segment?.pageOptions,
-    },
-    {
-      context: {
-        groupId: window._segment?.groupId,
-      },
-    },
-  ];
-};
-
 const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string) =>
   moduleAPIKey ||
   {
@@ -76,37 +47,6 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
     },
   }[env]?.[module] ||
   KEY_FALLBACK[env];
-
-let observer: MutationObserver | undefined;
-const registerAnalyticsObserver = (isPreview: boolean) => {
-  // never override the observer
-  if (observer) {
-    return;
-  }
-  /**
-   * We ignore hash changes
-   * Hashes only have frontend effect
-   */
-  let oldHref = document.location.href.replace(/#.*$/, '');
-
-  const bodyList = document.body;
-  observer = new MutationObserver((mutations) => {
-    mutations.forEach(() => {
-      const newLocation = document.location.href.replace(/#.*$/, '');
-      if (oldHref !== newLocation) {
-        oldHref = newLocation;
-        window?.sendCustomEvent?.('pageBottom');
-        setTimeout(() => {
-          window.segment?.page(...getPageEventOptions(isPreview));
-        });
-      }
-    });
-  });
-  observer.observe(bodyList, {
-    childList: true,
-    subtree: true,
-  });
-};
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
 
@@ -164,7 +104,8 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const activeModule = useAtomValue(activeModuleAtom);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  usePageEvent(analytics);
 
   const fetchIntercomHash = async () => {
     try {
@@ -192,13 +133,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
-      /**
-       * Clean up custom page event data after module change
-       */
-      window._segment = {
-        groupId: user.identity.internal?.org_id,
-        activeModule,
-      };
       const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
       const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
@@ -213,7 +147,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         cloud_ebs_id: user.identity.account_number,
       };
       if (!initialized.current && analytics.current) {
-        window.segment = analytics.current;
         const hash = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
@@ -228,19 +161,15 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           },
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page(...getPageEventOptions(isPreview));
+        analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        if (window.segment) {
-          window.segment = undefined;
-        }
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
         );
-        window.segment = analytics.current;
         resetIntegrations(analytics.current);
         const hash = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
@@ -259,14 +188,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       }
     }
   };
-
-  useEffect(() => {
-    registerAnalyticsObserver(isPreview);
-    return () => {
-      observer?.disconnect();
-      observer = undefined;
-    };
-  }, [isPreview]);
 
   useEffect(() => {
     handleModuleUpdate();
