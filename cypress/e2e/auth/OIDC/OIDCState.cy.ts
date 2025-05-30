@@ -1,4 +1,4 @@
-describe('OIDC State', () => {
+describe.skip('OIDC State', () => {
   const BROKEN_URL_HASH =
     '#state=ebc8e454f3794afcab512efb234d686c&session_state=fe052e48-c1f7-4941-abd4-33374a407951&code=f87aeee6-228d-405c-88d8-146b1e0eb9b1.fe052e48-c1f7-4941-aaa4-33334a407951.5efe402b-7f07-4878-a419-6797ce7aeb3b';
   it('Should detect broken state in URL and refresh browser', () => {

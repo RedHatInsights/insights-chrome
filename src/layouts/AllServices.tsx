@@ -23,6 +23,12 @@ import AllServicesBundle from '../components/AllServices/AllServicesBundle';
 import { BundleNavigation } from '../@types/types';
 import filterNavItemsByTitle from '../utils/filterNavItemsByTitle';
 import { fetchBundles } from '../hooks/useAllLinks';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 
 const availableBundles = ['openshift', 'insights', 'ansible', 'settings', 'iam', 'subscriptions'];
 
@@ -135,9 +141,27 @@ const AllServices = ({ Footer }: AllServicesProps) => {
                 {enableAllServicesRedesign
                   ? bundles.map((bundle) => <AllServicesBundle key={bundle.id} {...bundle} />)
                   : sections.map((section, index) => <AllServicesSection key={index} {...section} />)}
-                {/* TODO: Add empty state */}
-                {sections.length === 0 && filterValue.length !== 0 && <div>Nothing found</div>}
               </Gallery>
+              {(sections.length === 0 || (enableAllServicesRedesign && bundles.length === 0)) && filterValue.length !== 0 && (
+                <Bullseye>
+                  <EmptyState titleText="No results found" headingLevel="h4" icon={SearchIcon}>
+                    <EmptyStateBody>No results match the filter criteria. Clear all filters and try again.</EmptyStateBody>
+                    <EmptyStateFooter>
+                      <EmptyStateActions>
+                        <Button
+                          variant="link"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setFilterValue('');
+                          }}
+                        >
+                          Clear all filters
+                        </Button>
+                      </EmptyStateActions>
+                    </EmptyStateFooter>
+                  </EmptyState>
+                </Bullseye>
+              )}
             </PageSection>
           </Fragment>
         )}

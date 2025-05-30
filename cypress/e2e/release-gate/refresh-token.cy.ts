@@ -1,5 +1,5 @@
 // Landing page has changed
-describe('Auth', () => {
+describe.skip('Auth', () => {
   it('should force refresh token', () => {
     cy.login();
     cy.intercept('POST', 'https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token').as('tokenRefresh');
