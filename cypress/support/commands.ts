@@ -52,10 +52,21 @@ Cypress.Commands.add('login', () => {
 
       cy.wait(1000);
       // login into the session
-      cy.get('#username-verification').type(Cypress.env('E2E_USER'));
-      cy.get('#login-show-step2').click();
-      cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
-      cy.get('#rh-password-verification-submit-button').click();
+
+      cy.get('body').then((body) => {
+        // Ephemeral login is different
+        if (body.find('#username').length > 0) {
+          // If the username field is present, it means we are on the SSO login page
+          cy.get('#username').type(Cypress.env('E2E_USER'));
+          cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
+          cy.get('#kc-login').click();
+        } else {
+          cy.get('#username-verification').type(Cypress.env('E2E_USER'));
+          cy.get('#login-show-step2').click();
+          cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
+          cy.get('#rh-password-verification-submit-button').click();
+        }
+      });
     },
     { cacheAcrossSpecs: true }
   );

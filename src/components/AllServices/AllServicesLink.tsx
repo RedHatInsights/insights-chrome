@@ -48,8 +48,8 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
   const isFavorite = !!favoritePages.find(({ pathname, favorite }) => pathname === href && favorite);
 
   return enableAllServicesRedesign ? (
-    <Flex gap={{ default: 'gapXs' }}>
-      <FlexItem component={'p'} className={classNames('chr-c-favorite-trigger')}>
+    <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXs' }}>
+      <FlexItem>
         <ChromeLink
           className="chr-c-favorite-service__tile"
           appId={appId}
@@ -83,7 +83,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
             data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-FavoriteToggle`}
             onClick={() => handleFavouriteToggle(href ?? '#', isFavorite)}
             aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-            className="pf-v6-u-ml-sm chr-c-icon-star"
+            className="pf-v6-u-ml-xs"
             isInline
           >
             <StarIcon />
@@ -106,7 +106,7 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
       >
         {title}
         {isExternal && (
-          <Icon className="pf-v6-u-ml-sm chr-c-icon-external-link" isInline>
+          <Icon className="chr-c-icon-external-link" size="sm" isInline>
             <ExternalLinkAltIcon />
           </Icon>
         )}
@@ -116,7 +116,6 @@ const AllServicesLink = ({ href, title, sectionTitle, bundleTitle, isExternal = 
           data-ouia-component-id={`${category}-${group ? `${group}-` : ''}${titleToId(title ?? '')}-FavoriteToggle`}
           onClick={() => handleFavouriteToggle(href ?? '#', isFavorite)}
           aria-label={`${isFavorite ? 'Unfavorite' : 'Favorite'} ${title}`}
-          className="pf-v6-u-ml-sm chr-c-icon-star"
           isInline
         >
           <StarIcon />
