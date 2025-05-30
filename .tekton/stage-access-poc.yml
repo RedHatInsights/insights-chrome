@@ -8,19 +8,12 @@ spec:
       value: '{{source_url}}'
     - name: revision
       value: '{{revision}}'
-    - name: EPHEMERAL_ENV_PROVIDER_SECRET
+    - name: E2E_URL
       type: string
-      default: ephemeral-env-provider
-      description: "Secret for connecting to ephemeral env provider cluster"
-    - name: EPHEMERAL_ENV_URL
+    - name: E2E_USER
       type: string
-      description: "Url for accessing the UI deployed in the ephemeral environment"
-    - name: EPHEMERAL_ENV_PASSWORD
+    - name: E2E_PASSWORD
       type: string
-      description: "Password for login to your ephemeral environment UI"
-    - name: EPHEMERAL_ENV_USERNAME
-      type: string
-      description: "Username for login to your ephemeral environment UI"
   steps:
     - name: clone-repository-oci-ta
       params:
@@ -73,15 +66,15 @@ spec:
         - computeResources: {}
           image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
           env:
-            - name: EE_HOSTNAME
-              value: $(params.EPHEMERAL_ENV_URL)
-            - name: EE_USERNAME
-              value: $(params.EPHEMERAL_ENV_USERNAME)
-            - name: EE_PASSWORD
-              value: $(params.EPHEMERAL_ENV_PASSWORD)
+            - name: E2E_URL
+              value: $(params.E2E_URL)
+            - name: E2E_USER
+              value: $(params.E2E_USER)
+            - name: E2E_PASSWORD
+              value: $(params.E2E_PASSWORD)
           script: |
             #!/bin/bash
             set -ex
 
             npm i
-            E2E_BASE=$EE_HOSTNAME E2E_USER=$EE_USERNAME E2E_PASSWORD=$EE_PASSWORD npm run test:e2e
+            E2E_BASE=$E2E_URL E2E_USER=$E2E_USER E2E_PASSWORD=$E2E_PASSWORD npm run test:e2e
