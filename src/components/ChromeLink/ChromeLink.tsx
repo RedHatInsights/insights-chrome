@@ -28,7 +28,7 @@ export interface LinkWrapperProps extends RefreshLinkProps {
 }
 
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(
-  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, ...props }) => {
+  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, isExternal, ...props }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const moduleRoutes = useAtomValue(moduleRoutesAtom);
     const triggerNavListener = useSetAtom(triggerNavListenersAtom);

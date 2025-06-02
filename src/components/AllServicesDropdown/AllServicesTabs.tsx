@@ -22,7 +22,7 @@ export type AllServicesTabsProps = {
   onToggle: TabsProps['onToggle'];
   linkSections: AllServicesSectionType[];
   tabContentRef: React.RefObject<HTMLElement>;
-  onTabClick: (section: AllServicesSectionType, index: number) => void;
+  onTabClick: (section: AllServicesSectionType, index: number | string) => void;
   activeTabTitle: string;
 };
 
@@ -121,24 +121,27 @@ const AllServicesTabs = ({
           className="pf-v6-u-pl-md"
         />
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
-        {linkSections.map((section, index) => (
-          <TabWrapper
-            ouiaId={`AllServices-${section.id}-Tab`}
-            key={index}
-            eventKey={index}
-            title={
-              <TabTitleText>
-                {section.title}
-                <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
-                  <AngleRightIcon />
-                </Icon>
-              </TabTitleText>
-            }
-            tabContentId={TAB_CONTENT_ID}
-            tabContentRef={tabContentRef}
-            onClick={() => onTabClick(section, index)}
-          />
-        ))}
+        {linkSections.map((section, index) => {
+          const eventKey = `${index}-${section.id}`;
+          return (
+            <TabWrapper
+              ouiaId={`AllServices-${section.id}-Tab`}
+              key={eventKey}
+              eventKey={eventKey}
+              title={
+                <TabTitleText>
+                  {section.title}
+                  <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
+                    <AngleRightIcon />
+                  </Icon>
+                </TabTitleText>
+              }
+              tabContentId={TAB_CONTENT_ID}
+              tabContentRef={tabContentRef}
+              onClick={() => onTabClick(section, eventKey)}
+            />
+          );
+        })}
       </>
     </Tabs>
   );

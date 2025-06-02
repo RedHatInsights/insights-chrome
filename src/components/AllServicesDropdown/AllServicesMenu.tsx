@@ -49,7 +49,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
     }
   };
 
-  const onTabClick = (section: AllServicesSection, index: number) => {
+  const onTabClick = (section: AllServicesSection, index: number | string) => {
     setSelectedService(section);
     setActiveTabKey(index);
     setIsExpanded(false);
