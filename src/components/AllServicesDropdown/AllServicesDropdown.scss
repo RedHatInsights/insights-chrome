@@ -88,13 +88,9 @@
     }
     .pf-v6-c-sidebar {
       --pf-v6-c-sidebar__panel--md--FlexBasis: 20rem;
-      &__main {
-        height: 820px;
-      }
       &__content {
         border-bottom-right-radius: 16px;
         border-top-right-radius: 16px;
-        height: 820px;
         overflow: auto;
       }
       &__panel {
@@ -102,7 +98,6 @@
         border-top-left-radius: 18px;
         border-right: 1px solid var(--pf-t--global--border--color--default);
         flex-basis: 500px;
-        height: 820px;
         .pf-v6-c-tabs {
           --pf-v6-c-tabs__item--m-current__link--after--BorderColor: transparent;
           --pf-v6-c-tabs--m-vertical__link--PaddingTop: var(--pf-t--global--spacer--sm);
@@ -114,6 +109,9 @@
         }
         .pf-v6-c-tabs__item-text {
           flex-grow: 1;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
       }
       .pf-v6-c-card {
