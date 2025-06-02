@@ -79,7 +79,7 @@ const DropdownItems = ({
               </Tooltip>
             )}
             {orgId && (
-              <DescriptionListGroup>
+              <DescriptionListGroup data-ouia-component-id="chrome-user-org-id">
                 <DescriptionListTerm>{intl.formatMessage(messages.orgId)}</DescriptionListTerm>
                 <DescriptionListDescription>{orgId}</DescriptionListDescription>
               </DescriptionListGroup>
