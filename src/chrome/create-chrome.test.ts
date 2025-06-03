@@ -1,13 +1,11 @@
 import { initializeVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { createChromeContext } from './create-chrome';
-import { Store, createStore } from 'redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import { AxiosResponse } from 'axios';
 import { OfflineTokenResponse } from '../auth/offline';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import QuickStartCatalog from '../components/QuickStart/QuickStartCatalog';
-import { ReduxState } from '../redux/store';
 
 jest.mock('@scalprum/core', () => {
   return {
@@ -98,7 +96,6 @@ describe('create chrome', () => {
 
   const chromeContextOptionsMock = {
     addWsEventListener: jest.fn(),
-    store: createStore(() => ({})) as Store<ReduxState>,
     // getUser: () => Promise.resolve(mockUser),
     chromeAuth: chromeAuthMock,
     analytics: new AnalyticsBrowser(),
