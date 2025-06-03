@@ -124,9 +124,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                             <StarIcon /> My Favorite services
                           </>
                         ) : (
-                          <>
-                            <ServiceIcon icon={selectedService.icon} /> {selectedService.title}
-                          </>
+                          <>{selectedService.title}</>
                         )}
                       </Title>
                     </CardHeader>
