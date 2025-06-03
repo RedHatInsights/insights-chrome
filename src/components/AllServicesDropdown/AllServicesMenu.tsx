@@ -19,7 +19,6 @@ import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
 import { AllServicesDropdownContext } from './common';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
-import ServiceIcon from '../FavoriteServices/ServiceIcon';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 
 export type AllServicesMenuProps = {
@@ -124,9 +123,7 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                             <StarIcon /> My Favorite services
                           </>
                         ) : (
-                          <>
-                            <ServiceIcon icon={selectedService.icon} /> {selectedService.title}
-                          </>
+                          <>{selectedService.title}</>
                         )}
                       </Title>
                     </CardHeader>
