@@ -111,7 +111,7 @@
           flex-grow: 1;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: var(--pf-global--spacer--sm);
         }
       }
       .pf-v6-c-card {
