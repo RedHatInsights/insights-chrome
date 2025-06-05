@@ -37,6 +37,7 @@ import useHandlePendoScopeUpdate from '../../hooks/useHandlePendoScopeUpdate';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 import transformScalprumManifest from './transformScalprumManifest';
+import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -108,6 +109,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   const registerModule = useSetAtom(onRegisterModuleWriteAtom);
   const store = useStore<ReduxState>();
   const activeModule = useAtomValue(activeModuleAtom);
+  const setPageOptions = useSetAtom(segmentPageOptionsAtom);
 
   // initialize WS event handling
   const addWsEventListener = useChromeServiceEvents();
@@ -134,10 +136,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   }, []);
 
   const setPageMetadata = useCallback((pageOptions: any) => {
-    window._segment = {
-      ...window._segment,
-      pageOptions,
-    };
+    setPageOptions(pageOptions);
   }, []);
 
   const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
