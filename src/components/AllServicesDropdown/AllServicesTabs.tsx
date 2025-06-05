@@ -10,7 +10,7 @@ import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import type { AllServicesSection as AllServicesSectionType } from '../AllServices/allServicesLinks';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
-import ChromeLink from '../ChromeLink';
+import { Link } from 'react-router-dom';
 import './AllServicesTabs.scss';
 import PlatformServiceslinks from './PlatformServicesLinks';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
@@ -22,8 +22,9 @@ export type AllServicesTabsProps = {
   onToggle: TabsProps['onToggle'];
   linkSections: AllServicesSectionType[];
   tabContentRef: React.RefObject<HTMLElement>;
-  onTabClick: (section: AllServicesSectionType, index: number) => void;
+  onTabClick: (section: AllServicesSectionType, index: number | string) => void;
   activeTabTitle: string;
+  setIsExpanded: (isExpanded: boolean) => void;
 };
 
 type TabWrapper = Omit<TabProps, 'onMouseLeave' | 'onMouseEnter' | 'ref'>;
@@ -65,6 +66,7 @@ const AllServicesTabs = ({
   tabContentRef,
   onTabClick,
   activeTabTitle,
+  setIsExpanded,
 }: AllServicesTabsProps) => {
   return (
     <Tabs
@@ -93,13 +95,16 @@ const AllServicesTabs = ({
         <Divider className="pf-v6-u-mt-md" />
         <Content className="pf-v6-u-pl-lg pf-v6-u-pr-0 pf-v6-u-pt-lg pf-v6-u-mb-sm pf-v6-u-pb-xs" component={ContentVariants.small}>
           Services{' '}
-          <ChromeLink
-            href="/allservices"
+          <Link
+            to="/allservices"
             className="pf-v6-u-font-size-xs pf-v6-u-p-md pf-v5-u-pl-sm chr-m-plain"
             data-ouia-component-id="View all link"
+            onClick={() => {
+              setIsExpanded(false);
+            }}
           >
             View all services
-          </ChromeLink>
+          </Link>
         </Content>
         <TabWrapper
           ouiaId="AllServices-favorites-Tab"
@@ -121,24 +126,27 @@ const AllServicesTabs = ({
           className="pf-v6-u-pl-md"
         />
         {/* The tabs children type is busted and does not accept array. Hence the fragment wrapper */}
-        {linkSections.map((section, index) => (
-          <TabWrapper
-            ouiaId={`AllServices-${section.id}-Tab`}
-            key={index}
-            eventKey={index}
-            title={
-              <TabTitleText>
-                {section.title}
-                <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
-                  <AngleRightIcon />
-                </Icon>
-              </TabTitleText>
-            }
-            tabContentId={TAB_CONTENT_ID}
-            tabContentRef={tabContentRef}
-            onClick={() => onTabClick(section, index)}
-          />
-        ))}
+        {linkSections.map((section, index) => {
+          const eventKey = `${index}-${section.id}`;
+          return (
+            <TabWrapper
+              ouiaId={`AllServices-${section.id}-Tab`}
+              key={eventKey}
+              eventKey={eventKey}
+              title={
+                <TabTitleText>
+                  {section.title}
+                  <Icon className="pf-v6-u-float-inline-end pf-v6-u-mt-xs">
+                    <AngleRightIcon />
+                  </Icon>
+                </TabTitleText>
+              }
+              tabContentId={TAB_CONTENT_ID}
+              tabContentRef={tabContentRef}
+              onClick={() => onTabClick(section, eventKey)}
+            />
+          );
+        })}
       </>
     </Tabs>
   );
