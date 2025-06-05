@@ -38,6 +38,7 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { ScalprumConfig } from '../../state/atoms/scalprumConfigAtom';
 import transformScalprumManifest from './transformScalprumManifest';
 import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom';
+import useDPAL from '../../analytics/useDpal';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -123,6 +124,8 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   useHandlePendoScopeUpdate(chromeAuth.user, activeModule);
   // setting default tab title
   useTabName();
+  // initialize adobe analytics
+  useDPAL();
 
   useEffect(() => {
     // prepare webpack module sharing scope overrides

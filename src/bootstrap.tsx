@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
-import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
+import { getEnv, trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
@@ -16,7 +16,6 @@ import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 
-const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
 
@@ -27,10 +26,6 @@ const useInitializeAnalytics = () => {
   useEffect(() => {
     // setup trust arc
     trustarcScriptSetup();
-    // setup adobe analytics
-    if (!isITLessEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
-      window._satellite.pageBottom();
-    }
   }, []);
 };
 
