@@ -7,7 +7,7 @@ import messages from '../../locales/Messages';
 import './global-filter-menu.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
-import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import { Chip, ChipGroup } from '@patternfly/react-core/dist/dynamic/deprecated/components/Chip';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
@@ -140,13 +140,14 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
                 {!isDisabled && (
                   <Button
                     variant="link"
+                    className="pf-v6-u-ml-sm"
                     ouiaId="global-filter-clear"
                     onClick={() => {
                       setValue(() => ({}));
                       filter?.onFilter?.('');
                     }}
                   >
-                    {intl.formatMessage(messages.clearFilters)}
+                    {intl.formatMessage(messages.resetFilters)}
                   </Button>
                 )}
               </Fragment>

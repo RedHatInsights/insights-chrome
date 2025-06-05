@@ -17,7 +17,7 @@ describe('HeaderAlert', () => {
   it('should call onClose on user click', () => {
     const onDismiss = jest.fn();
     const { container } = render(<HeaderAlert title="test" dismissable={true} onDismiss={onDismiss} />);
-    const closeButton = container.querySelector('button.pf-v5-c-button.pf-m-plain');
+    const closeButton = container.querySelector('button.pf-v6-c-button.pf-m-plain');
     expect(closeButton).toBeTruthy();
     act(() => {
       fireEvent.click(closeButton);
