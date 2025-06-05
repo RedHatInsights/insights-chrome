@@ -94,23 +94,31 @@ aside {
 @media screen and (min-width : $pf-v6-global--breakpoint--2xl) {
   .chr-scope__default-layout {
     // we do not have PF variables for the header height unfortunately
-    min-height: calc(100vh - 152px /** the size of the masthead on extra large screens */);
+    min-height: calc(100vh - 172px /** the size of the masthead on double extra large screens */);
   }
 }
 
 
-@media screen and (min-width : $pf-v6-global--breakpoint--xl) and (max-width : $pf-v6-global--breakpoint--2xl)  {
+@media screen and (min-width : $pf-v6-global--breakpoint--md) and (max-width : $pf-v6-global--breakpoint--2xl)  {
   .chr-scope__default-layout {
-    min-height: calc(100vh - 118px /** the size of the masthead on large screens */);
+    min-height: calc(100vh - 226px /** the size of the masthead on extra large screens */);
   };
 }
 
 @media only screen and (max-width: $pf-v6-global--breakpoint--md) {
   .ins-m-hide-on-md {display: none;}
+
+  .chr-scope__default-layout {
+    min-height: calc(100vh - 226px /** the size of the masthead on medium screens */);
+  };
 }
 
 @media only screen and (max-width: $pf-v6-global--breakpoint--sm) {
   .ins-m-hide-on-sm {display: none;}
+
+  .chr-scope__default-layout {
+    min-height: calc(100vh - 226px /** the size of the masthead on small screens */);
+  };
 
   .ins-c-table-empty-state.pf-m-grid-md.pf-v6-c-table,
   .ins-c-table-empty-state.pf-m-grid-lg.pf-v6-c-table {
