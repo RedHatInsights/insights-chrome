@@ -29,43 +29,39 @@ const ServiceTile = ({ bundleName, services }: FavoritedBundleProps) => {
       <Content className="pf-v6-u-px-lg pf-v6-u-pt-md">
         <Content component="small">{bundle}</Content>
       </Content>
-      {services.map((service) => {
-        return (
-          <>
-            <ChromeLink isExternal={service.isExternal} href={service.pathname} className="chr-c-favorite-service__tile">
-              <Split className="chr-c-link-favorite-card pf-v6-u-px-lg">
-                <SplitItem className="pf-v6-u-pt-md" isFilled>
-                  {service.name}
-                </SplitItem>
-                <SplitItem className="pf-v6-u-mt-md">
-                  <Button
-                    icon={
-                      <Icon className="pf-v6-u-ml-sm chr-c-icon-star">
-                        <StarIcon />
-                      </Icon>
-                    }
-                    onClick={(e) => {
-                      // do not trigger click events on the the parent elements
-                      e.stopPropagation();
-                      e.preventDefault();
-                      unfavoritePage(service.pathname);
-                    }}
-                    className="pf-v6-u-p-0"
-                    variant="plain"
-                  />
-                </SplitItem>
-              </Split>
-              <Content className="pf-v6-u-px-lg pf-v6-u-pb-md">
-                {service.description ? (
-                  <Content component="small" className="pf-v6-u-color-100">
-                    {service.description}
-                  </Content>
-                ) : null}
+      {services.map((service) => (
+        <ChromeLink key={service.pathname} isExternal={service.isExternal} href={service.pathname} className="chr-c-favorite-service__tile">
+          <Split className="chr-c-link-favorite-card pf-v6-u-px-lg">
+            <SplitItem className="pf-v6-u-pt-md" isFilled>
+              {service.name}
+            </SplitItem>
+            <SplitItem className="pf-v6-u-mt-md">
+              <Button
+                icon={
+                  <Icon className="pf-v6-u-ml-sm chr-c-icon-star">
+                    <StarIcon />
+                  </Icon>
+                }
+                onClick={(e) => {
+                  // do not trigger click events on the the parent elements
+                  e.stopPropagation();
+                  e.preventDefault();
+                  unfavoritePage(service.pathname);
+                }}
+                className="pf-v6-u-p-0"
+                variant="plain"
+              />
+            </SplitItem>
+          </Split>
+          <Content className="pf-v6-u-px-lg pf-v6-u-pb-md">
+            {service.description ? (
+              <Content component="small" className="pf-v6-u-color-100">
+                {service.description}
               </Content>
-            </ChromeLink>
-          </>
-        );
-      })}
+            ) : null}
+          </Content>
+        </ChromeLink>
+      ))}
       <Divider />
     </>
   );

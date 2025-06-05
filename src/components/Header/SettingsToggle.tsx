@@ -41,8 +41,8 @@ const SettingsToggle = (props: SettingsToggleProps) => {
   const isPreview = useAtomValue(isPreviewAtom);
 
   const dropdownItems = props.dropdownItems.map(({ title, items }, groupIndex) => (
-    <DropdownGroup key={title} label={title}>
-      {items.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }) =>
+    <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
+      {items.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
         !isHidden ? (
           <DropdownItem
             onClick={onClick}
@@ -63,7 +63,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
             {title}
           </DropdownItem>
         ) : (
-          <React.Fragment key="fragment" />
+          <React.Fragment key={`fragment-${itemIndex}`} />
         )
       )}
       {groupIndex < props.dropdownItems.length - 1 && <Divider key="divider" />}
