@@ -5,7 +5,7 @@ const resolver = path.resolve(__dirname, './scripts/testResolver.js');
 module.exports = {
   coverageDirectory: './coverage/',
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.js', 'src/**/*.ts', '!src/**/*Styles.js'],
+  collectCoverageFrom: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.tsx', '!src/**/*Styles.js'],
   testEnvironment: 'jsdom',
   testEnvironmentOptions: {
     url: 'https://test.com',
