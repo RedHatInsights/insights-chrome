@@ -19,11 +19,13 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
+import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
+  const quickstartLinkStore = useQuickstartLinkStore();
   const config = useAtomValue(scalprumConfigAtom);
   const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } =
     useQuickstartsStates(accountId);
@@ -86,6 +88,9 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     showCardFooters: false,
     language: 'en',
     alwaysShowTaskReview: true,
+    markdown: {
+      extensions: [createQuickstartLinkMarkupExtension(quickstartLinkStore)],
+    },
   };
 
   const helpTopicsAPI = {
