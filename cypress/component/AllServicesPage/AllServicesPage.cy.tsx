@@ -90,6 +90,7 @@ describe('<AllServices />', () => {
     cy.get('.pf-v6-c-text-input-group__text-input').type('advi');
     cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'advi');
     cy.contains('Advisor').should('exist');
+    cy.get('.pf-v6-c-card').should('have.length.greaterThan', 1); // Asserts that more than one item is found
   });
 
   it('shows empty state when no services match filter', () => {
