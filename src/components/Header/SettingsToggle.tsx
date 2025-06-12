@@ -48,6 +48,7 @@ const SettingsToggle = (props: SettingsToggleProps) => {
             onClick={onClick}
             key={title}
             ouiaId={rest.ouiaId ?? title}
+            data-ouia-component-id={rest.ouiaId ?? (title === 'User Access' ? 'user-access' : undefined)}
             isDisabled={isDisabled}
             component={
               onClick
