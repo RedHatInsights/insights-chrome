@@ -19,8 +19,12 @@
     column-width: 430px;
   }
   .pf-v6-c-card {
-    overflow: hidden;
-    break-inside: avoid-column;
+    break-inside: avoid;
+    // addresses Safari 'break-inside' glitch
+    @supports (-webkit-hyphens: none) {
+     display: inline-block;
+    }
+    width: 100%;
     &__body {
       padding-bottom: 0;
     }
