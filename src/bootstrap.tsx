@@ -1,21 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider, useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
-import registerAnalyticsObserver from './analytics/analyticsObserver';
-import { ITLess, getEnv, trustarcScriptSetup } from './utils/common';
-import { ReduxState } from './redux/store';
+import { getEnv, trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import chromeStore from './state/chromeStore';
 import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/GenerateId/GenerateId';
+import AppPlaceholder from './components/AppPlaceholder';
+import useSessionConfig from './hooks/useSessionConfig';
+import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 
-const isITLessEnv = ITLess();
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
 
@@ -26,26 +26,19 @@ const useInitializeAnalytics = () => {
   useEffect(() => {
     // setup trust arc
     trustarcScriptSetup();
-    // setup adobe analytics
-    if (!isITLessEnv && typeof window._satellite !== 'undefined' && typeof window._satellite.pageBottom === 'function') {
-      window._satellite.pageBottom();
-      registerAnalyticsObserver();
-    }
   }, []);
 };
 
 const App = () => {
-  const documentTitle = useSelector(({ chrome }: ReduxState) => chrome?.documentTitle);
-  const [cookieElement, setCookieElement] = useState<HTMLAnchorElement | null>(null);
+  const { gatewayError, configLoaded } = useSessionConfig();
 
   useInitializeAnalytics();
 
-  useMemo(() => {
-    const title = typeof documentTitle === 'string' ? `${documentTitle} | Hybrid Cloud Console` : 'Hybrid Cloud Console';
-    document.title = title;
-  }, [documentTitle]);
+  if (!configLoaded) {
+    return gatewayError ? <GatewayErrorComponent error={gatewayError} serviceName="Hybrid Cloud Console" /> : <AppPlaceholder />;
+  }
 
-  return <RootApp cookieElement={cookieElement} setCookieElement={setCookieElement} />;
+  return <RootApp />;
 };
 
 const entry = document.getElementById('chrome-entry');

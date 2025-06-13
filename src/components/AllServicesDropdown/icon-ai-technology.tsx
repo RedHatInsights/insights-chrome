@@ -2,7 +2,7 @@ import React from 'react';
 
 const AITechnologyIcon = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <g id="uuid-fb69441b-b57f-4918-99bb-aad41e7175f0">
         <rect x="1" y="1" width="36" height="36" rx="9" ry="9" strokeWidth="0" />
         <path

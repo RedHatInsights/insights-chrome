@@ -6,10 +6,12 @@ import LoadingFallback from '../../utils/loading-fallback';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useAtomValue } from 'jotai';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import useTrialRedirect from '../../hooks/useTrialRedirect';
 
 const INTEGRATION_SOURCES = 'platform.sources.integrations';
 
 const QuickstartCatalogRoute = lazy(() => import('../QuickstartsCatalogRoute'));
+const ModularInventoryRoute = lazy(() => import('../../inventoryPoc'));
 
 const redirects = [
   {
@@ -64,9 +66,11 @@ export type RoutesProps = {
 
 const ChromeRoutes = ({ routesProps }: RoutesProps) => {
   const enableIntegrations = useFlag(INTEGRATION_SOURCES);
+  const enableInventoryPOC = useFlag('platform.chrome.poc.inventory');
   const featureFlags = useMemo<Record<string, boolean>>(() => ({ INTEGRATION_SOURCES: enableIntegrations }), [enableIntegrations]);
   const moduleRoutes = useAtomValue(moduleRoutesAtom);
   const showBundleCatalog = localStorage.getItem('chrome:experimental:quickstarts') === 'true';
+  useTrialRedirect();
 
   return (
     <Routes>
@@ -92,6 +96,17 @@ const ChromeRoutes = ({ routesProps }: RoutesProps) => {
       {moduleRoutes.map((app) => (
         <Route key={app.path} path={app.absolute ? app.path : `${app.path}/*`} element={<ChromeRoute {...routesProps} {...app} />} />
       ))}
+      {/* Inventory POC route only available for certain accounts */}
+      {enableInventoryPOC ? (
+        <Route
+          path="/staging/modular-inventory"
+          element={
+            <Suspense fallback={LoadingFallback}>
+              <ModularInventoryRoute />
+            </Suspense>
+          }
+        />
+      ) : null}
       <Route path="*" element={<NotFoundRoute />} />
     </Routes>
   );
