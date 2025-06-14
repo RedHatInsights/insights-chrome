@@ -1,11 +1,11 @@
 import { ITLess } from './common';
 import { ChromeAuthOptions, GenericCB } from '../@types/types';
 import { Listener } from '@redhat-cloud-services/frontend-components-utilities/MiddlewareListener';
-import { GLOBAL_FILTER_UPDATE } from '../redux/action-types';
 
 export const noAuthParam = 'noauth';
 export const offlineToken = '2402500adeacc30eb5c5a8a5e2e0ec1f';
 export const GLOBAL_FILTER_KEY = 'chrome:global-filter';
+export const GLOBAL_FILTER_UPDATE = 'GLOBAL_FILTER_UPDATE';
 export const HYDRA_ENDPOINT = '/hydra/rest/se/sessions';
 export const isITLessEnv = ITLess();
 /**
