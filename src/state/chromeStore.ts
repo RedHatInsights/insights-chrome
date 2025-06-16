@@ -11,6 +11,7 @@ import { moduleRoutesAtom } from './atoms/chromeModuleAtom';
 import { drawerPanelContentAtom } from './atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from './atoms/notificationDrawerAtom';
 import { segmentPageOptionsAtom } from './atoms/segmentPageOptionsAtom';
+import { virtualAssistantOpenAtom, virtualAssistantStartInputAtom } from './atoms/virtualAssistantAtom';
 
 const chromeStore = createStore();
 
@@ -32,6 +33,9 @@ chromeStore.set(moduleRoutesAtom, []);
 
 chromeStore.set(drawerPanelContentAtom, undefined);
 chromeStore.set(notificationDrawerExpandedAtom, false);
+
+chromeStore.set(virtualAssistantOpenAtom, false);
+chromeStore.set(virtualAssistantStartInputAtom, undefined);
 
 // analytics data
 chromeStore.set(segmentPageOptionsAtom, {});
