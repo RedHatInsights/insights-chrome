@@ -25,28 +25,48 @@ import {
 } from '../../state/atoms/globalFilterAtom';
 import { getAllSIDs, getAllTags, getAllWorkloads } from './tagsApi';
 
-const useLoadTags = (hasAccess = false) => {
+const useLoadTags = (
+  hasAccess = false,
+  setTags: ReturnType<typeof useSetAtom<typeof tagsAtom>>,
+  setSids: ReturnType<typeof useSetAtom<typeof sidsAtom>>,
+  setWorkloads: ReturnType<typeof useSetAtom<typeof workloadsAtom>>
+) => {
   const navigate = useNavigate();
   const registeredWith = useAtomValue(registeredWithAtom);
   const isDisabled = useAtomValue(isDisabledAtom);
   return useCallback(
-    debounce((activeTags: any, search: any) => {
-      storeFilter(activeTags, hasAccess && !isDisabled, navigate);
-      getAllTags({
-        registeredWith,
-        activeTags,
-        search,
-      });
-      getAllSIDs({
-        registeredWith,
-        activeTags,
-        search,
-      });
-      getAllWorkloads({
-        registeredWith,
-        activeTags,
-        search,
-      });
+    debounce(async (activeTags: any, search: any) => {
+      // Set loading state to false before fetching
+      setTags((prev) => ({ ...prev, isLoaded: false }));
+      setSids((prev) => ({ ...prev, isLoaded: false }));
+      setWorkloads((prev) => ({ ...prev, isLoaded: false }));
+      try {
+        storeFilter(activeTags, hasAccess && !isDisabled, navigate);
+        await Promise.all([
+          getAllTags({
+            registeredWith,
+            activeTags,
+            search,
+          }),
+          getAllSIDs({
+            registeredWith,
+            activeTags,
+            search,
+          }),
+          getAllWorkloads({
+            registeredWith,
+            activeTags,
+            search,
+          }),
+        ]);
+      } catch (error) {
+        console.error('Failed to load global filter tags:', error);
+      } finally {
+        // Set loaded property to true even if an error occurs
+        setTags((prev) => ({ ...prev, isLoaded: true }));
+        setSids((prev) => ({ ...prev, isLoaded: true }));
+        setWorkloads((prev) => ({ ...prev, isLoaded: true }));
+      }
     }, 600),
     [registeredWith, hasAccess]
   );
@@ -57,44 +77,104 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const isLoaded = useAtomValue(isLoadedAtom);
   const tagsData = useAtomValue(tagsAtom);
   const sidsData = useAtomValue(sidsAtom);
-  const workloads = useAtomValue(workloadsAtom);
+  const workloadsData = useAtomValue(workloadsAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
 
-  const count = (tagsData.count || 0) + (sidsData.count || 0) + (workloads.count || 0);
-  const total = (tagsData.total || 0) + (sidsData.total || 0) + (workloads.total || 0);
+  const setTags = useSetAtom(tagsAtom);
+  const setSids = useSetAtom(sidsAtom);
+  const setWorkloads = useSetAtom(workloadsAtom);
+
+  const count = (tagsData.count || 0) + (sidsData.count || 0) + (workloadsData.count || 0);
+  const total = (tagsData.total || 0) + (sidsData.total || 0) + (workloadsData.total || 0);
+
   const tags = tagsData.items || [];
   const sid = sidsData.items || [];
+  const workloads = workloadsData.items || [];
 
-  const { filter, chips, selectedTags, setValue, filterTagsBy } = (
-    useTagsFilter as unknown as (
-      tags: (GlobalFilterWorkloads | SID | GlobalFilterTag)[],
-      isLoaded: boolean,
-      count: number,
-      onShowMoreClick: (event: React.MouseEvent, callback: (...args: any[]) => any) => void,
-      reducer?: any,
-      itemText?: React.ReactNode,
-      showMoreTitle?: React.ReactNode
-    ) => {
-      filter: GlobalFilterDropdownProps['filter'];
-      chips: GlobalFilterDropdownProps['chips'];
-      selectedTags: FlagTagsFilter;
-      setValue: GlobalFilterDropdownProps['setValue'];
-      filterTagsBy: string;
-    }
-  )(
-    [workloads, ...sid, ...tags],
+  console.log('DEBUG: Tags array being passed:', tags);
+  console.log('DEBUG: SIDs array being passed:', sid);
+  console.log('DEBUG: Workloads array being passed:', workloads);
+
+  // const tagItems = tagsData.items || [];
+  // const sidItems = sidsData.items || [];
+  // const workloadItems = workloadsData.items || [];
+
+  // const filterData = [
+  //   {
+  //     name: 'Workloads',
+  //     tags: [{ items: workloadItems }],
+  //   },
+  //   {
+  //     name: 'SAP IDs (SID)',
+  //     tags: [{ items: sidItems }],
+  //   },
+  //   {
+  //     name: 'Tags',
+  //     tags: [{ items: tagItems }],
+  //   },
+  // ];
+  const filterData = [
+    {
+      name: 'Workloads',
+      type: 'checkbox',
+      tags: workloads, // The items from the atom are already TagGroup[]
+    },
+    {
+      name: 'SAP IDs (SID)',
+      type: 'checkbox',
+      tags: sid,
+    },
+    {
+      name: 'Tags',
+      type: 'checkbox',
+      tags: tags,
+    },
+  ];
+
+  // const { filter, chips, selectedTags, setValue, filterTagsBy } = (
+  //   useTagsFilter as unknown as (
+  //     tags: (GlobalFilterWorkloads | SID | GlobalFilterTag)[],
+  //     isLoaded: boolean,
+  //     count: number,
+  //     onShowMoreClick: (event: React.MouseEvent, callback: (...args: any[]) => any) => void,
+  //     reducer?: any,
+  //     itemText?: React.ReactNode,
+  //     showMoreTitle?: React.ReactNode
+  //   ) => {
+  //     filter: GlobalFilterDropdownProps['filter'];
+  //     chips: GlobalFilterDropdownProps['chips'];
+  //     selectedTags: FlagTagsFilter;
+  //     setValue: GlobalFilterDropdownProps['setValue'];
+  //     filterTagsBy: string;
+  //   }
+  // )(
+  //   [...workloads, ...sid, ...tags],
+  //   isLoaded,
+  //   total - count,
+  //   (_e, closeFn) => {
+  //     setIsOpen(() => true);
+  //     closeFn && closeFn();
+  //   },
+  //   undefined,
+  //   'system',
+  //   'View more'
+  // ); // TODO: Fix types in FEC
+
+  const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
+    // Using 'as any' to bypass complex external types
+    filterData,
     isLoaded,
     total - count,
-    (_e, closeFn) => {
+    (_e: React.MouseEvent, closeFn: () => void) => {
       setIsOpen(() => true);
       closeFn && closeFn();
     },
     undefined,
     'system',
     'View more'
-  ); // TODO: Fix types in FEC
+  );
 
-  const loadTags = useLoadTags(hasAccess);
+  const loadTags = useLoadTags(hasAccess, setTags, setSids, setWorkloads);
   const selectTags = useCallback(
     debounce((selectedTags: FlagTagsFilter) => setSelectedTags(selectedTags), 600),
     [setSelectedTags]
@@ -115,7 +195,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     <GlobalFilterDropdown
       allowed={hasAccess}
       filter={filter}
-      chips={[...chips.filter(({ key }) => key === 'Workloads'), ...chips.filter(({ key }) => key !== 'Workloads')]}
+      chips={[...chips.filter(({ key }: { key: string }) => key === 'Workloads'), ...chips.filter(({ key }: { key: string }) => key !== 'Workloads')]}
       setValue={setValue}
       selectedTags={selectedTags}
       isOpen={isOpen}
