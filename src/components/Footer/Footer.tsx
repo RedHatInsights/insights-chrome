@@ -217,7 +217,7 @@ const ChromeFooter = () => {
             <CookieConsentElement />
           </ul>
           <FooterCopyright slot="links-secondary" className="pf-v6-u-pt-md">
-            © 2025 Red Hat, Inc.
+            © 2025 Red Hat
           </FooterCopyright>
         </FooterUniversal>
       </Footer>
