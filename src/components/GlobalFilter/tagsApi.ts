@@ -80,6 +80,7 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
     isLoaded: true,
     // @ts-ignore - Transform API results into the required TagGroup[] structure
     items: (response.results || []).filter(Boolean).map((result) => ({
+      label: `${result.tag.key}=${result.tag.value ?? ''}`, // The display text
       count: result.count || 0, // The count for the item
       tag: {
         // The actual tag object

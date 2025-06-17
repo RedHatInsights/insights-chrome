@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
+import { AllTag, useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import debounce from 'lodash/debounce';
 import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { GlobalFilterDropdown, GlobalFilterDropdownProps } from './GlobalFilterMenu';
+import { GlobalFilterDropdown } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
 import { FlagTagsFilter } from '../../@types/types';
 import { isGlobalFilterAllowed } from '../../utils/common';
@@ -11,9 +11,6 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
-  GlobalFilterTag,
-  GlobalFilterWorkloads,
-  SID,
   globalFilterHiddenAtom,
   isDisabledAtom,
   isLoadedAtom,
@@ -87,78 +84,33 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const count = (tagsData.count || 0) + (sidsData.count || 0) + (workloadsData.count || 0);
   const total = (tagsData.total || 0) + (sidsData.total || 0) + (workloadsData.total || 0);
 
-  const tags = tagsData.items || [];
-  const sid = sidsData.items || [];
-  const workloads = workloadsData.items || [];
-
-  console.log('DEBUG: Tags array being passed:', tags);
-  console.log('DEBUG: SIDs array being passed:', sid);
-  console.log('DEBUG: Workloads array being passed:', workloads);
-
-  // const tagItems = tagsData.items || [];
-  // const sidItems = sidsData.items || [];
-  // const workloadItems = workloadsData.items || [];
-
-  // const filterData = [
-  //   {
-  //     name: 'Workloads',
-  //     tags: [{ items: workloadItems }],
-  //   },
-  //   {
-  //     name: 'SAP IDs (SID)',
-  //     tags: [{ items: sidItems }],
-  //   },
-  //   {
-  //     name: 'Tags',
-  //     tags: [{ items: tagItems }],
-  //   },
-  // ];
-  const filterData = [
+  const filterData: AllTag[] = [
     {
       name: 'Workloads',
       type: 'checkbox',
-      tags: workloads, // The items from the atom are already TagGroup[]
+      // Map the simple items into the required { count, tag: { key, value } } structure
+      tags: (workloadsData.items || []).map((item) => ({
+        count: item.count,
+        tag: { key: item.key, value: item.value },
+      })),
     },
     {
       name: 'SAP IDs (SID)',
       type: 'checkbox',
-      tags: sid,
+      tags: (sidsData.items || []).map((item: any) => ({
+        count: item.count,
+        tag: { key: item.key, value: item.value },
+      })),
     },
     {
       name: 'Tags',
       type: 'checkbox',
-      tags: tags,
+      tags: (tagsData.items || []).map((item: any) => ({
+        count: item.count,
+        tag: { key: item.key, value: item.value },
+      })),
     },
   ];
-
-  // const { filter, chips, selectedTags, setValue, filterTagsBy } = (
-  //   useTagsFilter as unknown as (
-  //     tags: (GlobalFilterWorkloads | SID | GlobalFilterTag)[],
-  //     isLoaded: boolean,
-  //     count: number,
-  //     onShowMoreClick: (event: React.MouseEvent, callback: (...args: any[]) => any) => void,
-  //     reducer?: any,
-  //     itemText?: React.ReactNode,
-  //     showMoreTitle?: React.ReactNode
-  //   ) => {
-  //     filter: GlobalFilterDropdownProps['filter'];
-  //     chips: GlobalFilterDropdownProps['chips'];
-  //     selectedTags: FlagTagsFilter;
-  //     setValue: GlobalFilterDropdownProps['setValue'];
-  //     filterTagsBy: string;
-  //   }
-  // )(
-  //   [...workloads, ...sid, ...tags],
-  //   isLoaded,
-  //   total - count,
-  //   (_e, closeFn) => {
-  //     setIsOpen(() => true);
-  //     closeFn && closeFn();
-  //   },
-  //   undefined,
-  //   'system',
-  //   'View more'
-  // ); // TODO: Fix types in FEC
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
     // Using 'as any' to bypass complex external types
@@ -166,7 +118,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     isLoaded,
     total - count,
     (_e: React.MouseEvent, closeFn: () => void) => {
-      setIsOpen(() => true);
+      setIsOpen(true);
       closeFn && closeFn();
     },
     undefined,
@@ -181,7 +133,9 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   );
 
   useEffect(() => {
-    setValue(() => generateFilter());
+    if (setValue) {
+      setValue(() => generateFilter());
+    }
   }, []);
 
   useEffect(() => {
