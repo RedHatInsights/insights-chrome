@@ -201,7 +201,7 @@ export type ChromeNavItemProps = {
   className?: string;
   active?: boolean;
   appId: string;
-  notifier?: Atom<boolean>;
+  notifier?: string;
   product?: string;
 };
 
