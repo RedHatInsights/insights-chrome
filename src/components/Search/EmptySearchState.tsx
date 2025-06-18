@@ -29,7 +29,14 @@ const EmptySearchState = () => {
             No results match your criteria.
           </Content>
           <Content component="p" className="pf-v6-u-text-color-subtle">
-            Try searching Hybrid Cloud help or start a conversation with our <a onClick={() => {openVA('')}}>Virtual Assistant.</a>
+            Try searching Hybrid Cloud help or start a conversation with our{' '}
+            <a
+              onClick={() => {
+                openVA('');
+              }}
+            >
+              Virtual Assistant.
+            </a>
           </Content>
         </Content>
       </EmptyStateBody>

@@ -8,13 +8,13 @@ const useVirtualAssistant = () => {
   const setShowAssistant = useSetAtom(virtualAssistantShowAssistantAtom);
   const openVA = (startInput: string) => {
     setStartInput(startInput);
-      // setStartInput(`Contact my org admin for access to ${window.location.pathname}.`)
+    // setStartInput(`Contact my org admin for access to ${window.location.pathname}.`)
     setOpen(true);
     setShowAssistant(true); // Ensure the assistant is shown
-  }
+  };
 
   return {
-    openVA
+    openVA,
   };
 };
 
