@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, Suspense } from 'react';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
@@ -7,6 +7,7 @@ import { useFlags } from '@unleash/proxy-client-react';
 import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
 
 import './virtual-assistant.scss';
+import ErrorBoundary from '../ErrorComponents/DefaultErrorComponent';
 
 const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.insights': '/openshift/insights/*' };
 
@@ -55,9 +56,11 @@ const VirtualAssistant = () => {
   };
 
   return (
-    <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
-      <ScalprumComponent {...virtualAssistantProps} />
-    </div>
+    <ErrorBoundary>
+      <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
+        <ScalprumComponent {...virtualAssistantProps} />
+      </div>
+    </ErrorBoundary>
   );
 };
 
