@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
-import { Route, Routes, matchRoutes, useLocation } from 'react-router-dom';
+import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 import { useFlags } from '@unleash/proxy-client-react';
