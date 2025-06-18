@@ -121,6 +121,7 @@ const Tools = () => {
       title: 'Identity and Access Management',
       items: [
         {
+          ouiaId: 'UserAccess',
           url: identityAndAccessManagmentPath,
           title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
           description:
