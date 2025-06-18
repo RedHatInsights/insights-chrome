@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, { Fragment, useEffect } from 'react';
+import { Route, Routes, matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 import { useFlags } from '@unleash/proxy-client-react';
 
-import { virtualAssistantOpenAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
+import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
 
 import './virtual-assistant.scss';
 
@@ -13,8 +13,10 @@ const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.i
 const VirtualAssistant = () => {
   const [isOpen, setOpen] = useAtom(virtualAssistantOpenAtom);
   const [startInput, setStartInput] = useAtom(virtualAssistantStartInputAtom);
-  // TODO: If a route that results in a 404 is not in this list, the Virtual Assistant will not be displayed. :(
-  const viableRoutes = ['/', '*', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
+  const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
+
+  const { pathname } = useLocation();
+  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
 
   const allFlags = useFlags();
   allFlags.forEach((flag) => {
@@ -23,7 +25,18 @@ const VirtualAssistant = () => {
     }
   });
 
+  useEffect(() => {
+    const match = matchRoutes(
+      viableRoutes.map((route) => ({ path: route })),
+      pathname
+    )
+    if (match != null) {
+      setShowAssistant(true);
+    }
+  }, [pathname, setShowAssistant, viableRoutes]);
+
   type VirtualAssistantProps = {
+    showAssistant: boolean;
     isOpen: boolean;
     setOpen: (open: boolean) => void;
     startInput?: string;
@@ -34,6 +47,7 @@ const VirtualAssistant = () => {
     module: './AstroVirtualAssistant',
     fallback: null,
     ErrorComponent: <Fragment />,
+    showAssistant: showAssistant,
     isOpen: isOpen,
     setOpen: setOpen,
     startInput: startInput,
@@ -41,19 +55,9 @@ const VirtualAssistant = () => {
   };
 
   return (
-    <Routes>
-      {viableRoutes.map((route) => (
-        <Route
-          key={route}
-          path={route}
-          element={
-            <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
-              <ScalprumComponent {...virtualAssistantProps} />
-            </div>
-          }
-        />
-      ))}
-    </Routes>
+    <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
+      <ScalprumComponent {...virtualAssistantProps} />
+    </div>
   );
 };
 
