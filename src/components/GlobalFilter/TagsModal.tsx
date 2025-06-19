@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { TagModal } from '@redhat-cloud-services/frontend-components/TagModal';
 import debounce from 'lodash/debounce';
 import flatMap from 'lodash/flatMap';
 import { useIntl } from 'react-intl';
 import { TagFilterOptions, TagPagination, getAllSIDs, getAllTags } from './tagsApi';
-import { Action } from 'redux';
 import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-components/TagModal/TableWithFilter';
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 import messages from '../../locales/Messages';

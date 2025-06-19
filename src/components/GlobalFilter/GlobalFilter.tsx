@@ -5,7 +5,7 @@ import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
-import { FlagTagsFilter } from '../../@types/types';
+
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
@@ -88,28 +88,51 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     {
       name: 'Workloads',
       type: 'checkbox',
-      // Map the simple items into the required { count, tag: { key, value } } structure
-      tags: (workloadsData.items || []).map((item) => ({
-        count: item.count,
-        tag: { key: item.key, value: item.value },
-      })),
+      // Extract tags from the new grouped structure
+      tags: (workloadsData.items || []).flatMap((group: any) =>
+        (group.tags || []).map((item: any) => ({
+          count: item.count,
+          tag: item.tag, // Use the full tag object which includes id, key, label, etc.
+        }))
+      ),
     },
     {
       name: 'SAP IDs (SID)',
       type: 'checkbox',
-      tags: (sidsData.items || []).map((item: any) => ({
-        count: item.count,
-        tag: { key: item.key, value: item.value },
-      })),
+      // Extract tags from the new grouped structure
+      tags: (sidsData.items || []).flatMap((group: any) =>
+        (group.tags || []).map((item: any) => ({
+          count: item.count,
+          tag: item.tag, // Use the full tag object which includes id, key, label, etc.
+        }))
+      ),
     },
-    {
-      name: 'Tags',
-      type: 'checkbox',
-      tags: (tagsData.items || []).map((item: any) => ({
-        count: item.count,
-        tag: { key: item.key, value: item.value },
-      })),
-    },
+    // Create separate AllTag sections for each namespace to enable grouping
+    ...(tagsData.items || []).reduce((acc: any[], group: any) => {
+      // Group tags by namespace
+      const tagsByNamespace = (group.tags || []).reduce((nsAcc: any, item: any) => {
+        const namespace = item.tag.namespace || 'Default';
+        if (!nsAcc[namespace]) {
+          nsAcc[namespace] = [];
+        }
+        nsAcc[namespace].push({
+          count: item.count,
+          tag: item.tag,
+        });
+        return nsAcc;
+      }, {});
+
+      // Create an AllTag section for each namespace
+      Object.entries(tagsByNamespace).forEach(([namespace, tags]: [string, any]) => {
+        acc.push({
+          name: namespace, // This should create the header
+          type: 'checkbox',
+          tags: tags,
+        });
+      });
+
+      return acc;
+    }, []),
   ];
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
@@ -127,23 +150,24 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   );
 
   const loadTags = useLoadTags(hasAccess, setTags, setSids, setWorkloads);
-  const selectTags = useCallback(
-    debounce((selectedTags: FlagTagsFilter) => setSelectedTags(selectedTags), 600),
-    [setSelectedTags]
-  );
 
+  // Update the atom when selectedTags from hook changes
+  useEffect(() => {
+    setSelectedTags(selectedTags);
+  }, [selectedTags, setSelectedTags]);
+
+  // Only set the initial value from URL on mount, don't override user selections
   useEffect(() => {
     if (setValue) {
-      setValue(() => generateFilter());
+      setValue(generateFilter());
     }
-  }, []);
+  }, [setValue]); // Only depend on setValue, not on every change
 
   useEffect(() => {
     if (hasAccess) {
       loadTags(selectedTags, filterTagsBy);
-      selectTags(selectedTags);
     }
-  }, [selectedTags, filterTagsBy, hasAccess]);
+  }, [selectedTags, filterTagsBy, hasAccess, loadTags]);
 
   return (
     <GlobalFilterDropdown

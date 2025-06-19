@@ -1,6 +1,5 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
-import { shallowEqual, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
@@ -43,6 +42,12 @@ const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
+
+  useEffect(() => {
+    console.log('useGlobalFilter: selectedTags changed, calling callback with:', selectedTags);
+    callback(selectedTags);
+  }, [selectedTags, callback]);
+
   return callback(selectedTags);
 };
 
