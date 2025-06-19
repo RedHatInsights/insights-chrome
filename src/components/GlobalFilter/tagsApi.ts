@@ -16,19 +16,26 @@ export type Workload = { isSelected?: boolean };
 export type TagPagination = { perPage?: number; page?: number };
 export type TagFilterOptions = { search?: string; registeredWith?: TagRegisteredWith[number]; activeTags?: FlagTagsFilter };
 
-const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => ({
-  system_profile: {
-    ...(workloads?.SAP?.isSelected && { sap_system: true }),
-    // enable once AAP filter is enabled
-    ...(workloads?.[AAP_KEY]?.isSelected && {
-      ansible: 'not_nil',
-    }),
-    ...(workloads?.[MSSQL_KEY]?.isSelected && {
-      mssql: 'not_nil',
-    }),
-    sap_sids: SID,
-  },
-});
+const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => {
+  console.log('buildFilter: workloads:', workloads, 'SID:', SID);
+  const result = {
+    system_profile: {
+      ...(workloads?.SAP?.isSelected && { sap_system: true }),
+      // enable once AAP filter is enabled
+      ...(workloads?.[AAP_KEY]?.isSelected && {
+        ansible: 'not_nil',
+      }),
+      ...(workloads?.[MSSQL_KEY]?.isSelected && {
+        mssql: 'not_nil',
+      }),
+      sap_sids: SID,
+    },
+  };
+  console.log('buildFilter: result:', result);
+  const generatedQuery = generateFilter(result);
+  console.log('buildFilter: generated query:', generatedQuery);
+  return result;
+};
 
 type GenerateFilterData = ReturnType<typeof buildFilter> | string | boolean | string[] | undefined;
 
@@ -78,26 +85,46 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
   chromeStore.set(tagsAtom, (prev) => ({
     ...prev,
     isLoaded: true,
-    // @ts-ignore - Transform API results into the required TagGroup[] structure
-    items: (response.results || []).filter(Boolean).map((result) => ({
-      label: `${result.tag.key}=${result.tag.value ?? ''}`, // The display text
-      count: result.count || 0, // The count for the item
-      tag: {
-        id: result.tag.key,
-        key: result.tag.key,
-        label: result.tag.value ?? result.tag.key, // Display label
-        value: result.tag.key,
+    // Update pagination state
+    page: pagination?.page || 1,
+    perPage: pagination?.perPage || 10,
+    // Transform API results into the required GlobalFilterTag[] structure for TagsModal
+    items: [
+      {
+        id: 'tags-group',
+        name: 'Tags',
+        tags: ((response as any).data?.results || (response as any).results || [])
+          .filter((result: any) => result?.tag?.key && typeof result.tag.key === 'string' && result.tag.key.trim() !== '')
+          .map((result: any) => {
+            const namespace = result.tag.namespace || '';
+            const key = result.tag.key || '';
+            const value = result.tag.value || '';
+            return {
+              tag: {
+                id: `${namespace}/${key}=${value}`,
+                key: key,
+                value: value,
+                namespace: namespace,
+                // Add group property for namespace headers
+                group: { value: namespace, label: namespace, type: 'checkbox' },
+              },
+              count: result.count || 0,
+            };
+          })
+          .filter((item: any) => item.tag.key && item.tag.id), // Additional safety check
       },
-    })),
+    ],
     // @ts-ignore
-    count: response.count,
+    count: (response as any).data?.count || (response as any).count,
     // @ts-ignore
-    total: response.total,
+    total: (response as any).data?.total || (response as any).total,
   }));
 }
 
 export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilterOptions = {}, pagination: TagPagination = {}) {
+  console.log('getAllSIDs: activeTags input:', activeTags);
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
+  console.log('getAllSIDs: flatTags output - workloads:', workloads, 'SID:', SID, 'selectedTags:', selectedTags);
 
   const response = await sap.apiSystemProfileGetSapSids(
     search,
@@ -113,26 +140,47 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
     }
   );
 
+  console.log('getAllSIDs: API response:', response);
+  console.log('getAllSIDs: API response data:', (response as any).data || response);
+  console.log('getAllSIDs: API response results:', (response as any).data?.results || (response as any).results || []);
+  console.log('getAllSIDs: API response total/count:', {
+    total: (response as any).data?.total || (response as any).total,
+    count: (response as any).data?.count || (response as any).count,
+  });
+
   // @ts-ignore
   chromeStore.set(sidsAtom, (prev) => ({
     ...prev,
     isLoaded: true,
+    // Update pagination state
+    page: pagination?.page || 1,
+    perPage: pagination?.perPage || 10,
+    // Transform API results into the required SID[] structure for TagsModal
+    items: [
+      {
+        id: 'sids-group',
+        name: 'SAP IDs (SID)',
+        tags: ((response as any).data?.results || (response as any).results || [])
+          .filter((item: any) => item?.value && typeof item.value === 'string' && item.value.trim() !== '')
+          .map((item: any) => {
+            const sidValue = item.value || '';
+            return {
+              tag: {
+                id: sidValue,
+                key: sidValue,
+                value: '', // Empty value to avoid key=value format
+                namespace: '',
+              },
+              count: item.count || 1,
+            };
+          })
+          .filter((item: any) => item.tag.key && item.tag.id), // Additional safety check
+      },
+    ],
     // @ts-ignore
-    items: (response.results || []).filter(Boolean).map((item) => {
-      const sidValue = item.value;
-      return {
-        count: item.count || 1,
-        tag: {
-          id: sidValue,
-          key: sidValue,
-          label: sidValue,
-        },
-      };
-    }),
+    count: (response as any).data?.count || (response as any).count,
     // @ts-ignore
-    count: response.count,
-    // @ts-ignore
-    total: response.total,
+    total: (response as any).data?.total || (response as any).total,
   }));
 }
 
@@ -202,7 +250,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
   // @ts-ignore
   const availableWorkloads = [
     // @ts-ignore
-    { label: 'SAP', value: 'SAP', count: SAP.total },
+    { label: 'SAP', value: 'SAP', count: (SAP as any)?.data?.total || (SAP as any)?.total },
     // @ts-ignore
     { label: 'Ansible Automation Platform', value: 'AAP', count: AAP.total },
     // @ts-ignore
@@ -212,15 +260,25 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
   chromeStore.set(workloadsAtom, (prev) => ({
     ...prev,
     isLoaded: true,
-    // Transform the available workloads into the { count, tag } structure the UI expects.
-    items: availableWorkloads.map((item) => ({
-      count: item.count,
-      tag: {
-        id: item.value,
-        key: item.label,
-        label: item.label,
+    // Transform the available workloads into the grouped structure for consistency
+    items: [
+      {
+        id: 'workloads-group',
+        name: 'Workloads',
+        tags: availableWorkloads
+          .filter((item) => item.value && item.label && typeof item.value === 'string' && typeof item.label === 'string')
+          .map((item) => ({
+            tag: {
+              id: item.value,
+              key: item.label,
+              value: '', // Empty value to avoid key=value format
+              namespace: '',
+            },
+            count: item.count,
+          }))
+          .filter((item: any) => item.tag.id), // Additional safety check
       },
-    })),
+    ],
     count: availableWorkloads.length,
     total: availableWorkloads.length,
   }));

@@ -5,7 +5,7 @@ import memoize from 'lodash/memoize';
 import { FlagTagsFilter, GroupItem } from '../../@types/types';
 import { getUrl } from '../../hooks/useBundle';
 
-export const SID_KEY = 'SAP ID (SID)';
+export const SID_KEY = 'SAP IDs (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
 
@@ -114,7 +114,7 @@ export const generateFilter = () => {
 
   return {
     Workloads,
-    ...(SIDs && { [SID_KEY]: SIDs }),
+    ...(Object.keys(SIDs).length > 0 ? { [SID_KEY]: SIDs } : {}),
     ...tags,
   };
 };
@@ -123,7 +123,9 @@ export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
+    console.log('flatTags: input filter:', filter, 'format:', format);
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
+    console.log('flatTags: destructured - Workloads:', Workloads, 'SID:', SID, 'tags:', tags);
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries<any>(item || {})
         .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
@@ -137,15 +139,20 @@ export const flatTags = memoize(
           }`;
         })
     );
-    return format
-      ? [
-          Workloads,
-          Object.entries<any>(SID || {})
-            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
-            .reduce<any>((acc, [key]) => [...acc, key], []),
-          mappedTags,
-        ]
-      : mappedTags;
+    const sidArray = Object.entries<any>(SID || {})
+      .filter(([, { isSelected }]: [unknown, GroupItem]) => {
+        console.log('flatTags: SID entry filter check - isSelected:', isSelected);
+        return isSelected;
+      })
+      .reduce<any>((acc, [key]) => [...acc, key], []);
+    console.log('flatTags: SID processing - entries:', Object.entries(SID || {}), 'filtered sidArray:', sidArray);
+    console.log(
+      'flatTags: SID detailed entries:',
+      Object.entries(SID || {}).map(([key, value]) => ({ key, value }))
+    );
+    const result = format ? [Workloads, sidArray, mappedTags] : mappedTags;
+    console.log('flatTags: final result:', result);
+    return result;
   },
   (filter = {}, encode, format) =>
     `${Object.entries(filter)

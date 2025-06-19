@@ -26,7 +26,10 @@ import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { TagRegisteredWith, globalFilterHiddenAtom, registeredWithAtom } from '../state/atoms/globalFilterAtom';
+import { TagRegisteredWith, globalFilterHiddenAtom, registeredWithAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
+
+// Global event listeners registry for PUBLIC_EVENTS
+const eventListeners = new Map<string, Map<symbol, GenericCB>>();
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -57,6 +60,32 @@ export const createChromeContext = ({
 }: CreateChromeContextConfig): ChromeAPI => {
   const fetchPermissions = createFetchPermissionsWatcher(chromeAuth.getUser);
   const visibilityFunctions = getVisibilityFunctions();
+
+  // Function to dispatch GLOBAL_FILTER_UPDATE events
+  const dispatchGlobalFilterUpdate = (data: FlagTagsFilter) => {
+    const listeners = eventListeners.get('GLOBAL_FILTER_UPDATE');
+    if (listeners) {
+      console.log('Dispatching GLOBAL_FILTER_UPDATE event to', listeners.size, 'listeners with data:', data);
+      listeners.forEach((callback) => {
+        try {
+          callback({ data });
+        } catch (error) {
+          console.error('Error in GLOBAL_FILTER_UPDATE callback:', error);
+        }
+      });
+    }
+  };
+
+  // Set up global filter event dispatching
+  let globalFilterUnsubscribe: (() => void) | null = null;
+  if (!globalFilterUnsubscribe) {
+    globalFilterUnsubscribe = chromeStore.sub(selectedTagsAtom, () => {
+      const selectedTags = chromeStore.get(selectedTagsAtom);
+      console.log('selectedTagsAtom changed, dispatching GLOBAL_FILTER_UPDATE:', selectedTags);
+      dispatchGlobalFilterUpdate(selectedTags);
+    });
+  }
+
   const actions = {
     appAction: (action: string) => chromeStore.set(appActionAtom, action),
     appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
@@ -86,6 +115,31 @@ export const createChromeContext = ({
       const listenerId = addNavListener(callback);
       return () => deleteNavListener(listenerId);
     }
+
+    if (type === 'GLOBAL_FILTER_UPDATE') {
+      // Create a unique ID for this listener
+      const listenerId = Symbol('GLOBAL_FILTER_UPDATE');
+
+      // Initialize event listeners map for this event type if it doesn't exist
+      if (!eventListeners.has('GLOBAL_FILTER_UPDATE')) {
+        eventListeners.set('GLOBAL_FILTER_UPDATE', new Map());
+      }
+
+      // Add the callback to the listeners (cast to GenericCB for GLOBAL_FILTER_UPDATE)
+      eventListeners.get('GLOBAL_FILTER_UPDATE')!.set(listenerId, callback as GenericCB);
+
+      console.log('Added GLOBAL_FILTER_UPDATE listener. Total listeners:', eventListeners.get('GLOBAL_FILTER_UPDATE')!.size);
+
+      // Return unsubscribe function
+      return () => {
+        const listeners = eventListeners.get('GLOBAL_FILTER_UPDATE');
+        if (listeners) {
+          listeners.delete(listenerId);
+          console.log('Removed GLOBAL_FILTER_UPDATE listener. Remaining listeners:', listeners.size);
+        }
+      };
+    }
+
     if (!Object.prototype.hasOwnProperty.call(PUBLIC_EVENTS, type)) {
       throw new Error(`Unknown event type: ${type}`);
     }
