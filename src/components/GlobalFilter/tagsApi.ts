@@ -2,7 +2,7 @@
 // FIXME: Figure out what are the issues with the JS client
 /* eslint-disable camelcase */
 import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-import { AAP_KEY, INVENTORY_API_BASE, MSSQL_KEY, flatTags } from './globalFilterApi';
+import { AAP_KEY, INVENTORY_API_BASE, MSSQL_KEY, SID_KEY, flatTags } from './globalFilterApi';
 import { HostsApi, SystemProfileApi, TagsApi } from '@redhat-cloud-services/host-inventory-client';
 import { FlagTagsFilter } from '../../@types/types';
 import { TagRegisteredWith, sidsAtom, tagsAtom, workloadsAtom } from '../../state/atoms/globalFilterAtom';
@@ -17,7 +17,6 @@ export type TagPagination = { perPage?: number; page?: number };
 export type TagFilterOptions = { search?: string; registeredWith?: TagRegisteredWith[number]; activeTags?: FlagTagsFilter };
 
 const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => {
-  console.log('buildFilter: workloads:', workloads, 'SID:', SID);
   const result = {
     system_profile: {
       ...(workloads?.SAP?.isSelected && { sap_system: true }),
@@ -31,9 +30,6 @@ const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) =>
       sap_sids: SID,
     },
   };
-  console.log('buildFilter: result:', result);
-  const generatedQuery = generateFilter(result);
-  console.log('buildFilter: generated query:', generatedQuery);
   return result;
 };
 
@@ -105,8 +101,6 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
                 key: key,
                 value: value,
                 namespace: namespace,
-                // Add group property for namespace headers
-                group: { value: namespace, label: namespace, type: 'checkbox' },
               },
               count: result.count || 0,
             };
@@ -122,9 +116,7 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
 }
 
 export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilterOptions = {}, pagination: TagPagination = {}) {
-  console.log('getAllSIDs: activeTags input:', activeTags);
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
-  console.log('getAllSIDs: flatTags output - workloads:', workloads, 'SID:', SID, 'selectedTags:', selectedTags);
 
   const response = await sap.apiSystemProfileGetSapSids(
     search,
@@ -139,14 +131,6 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
       query: generateFilter(buildFilter(workloads, SID)),
     }
   );
-
-  console.log('getAllSIDs: API response:', response);
-  console.log('getAllSIDs: API response data:', (response as any).data || response);
-  console.log('getAllSIDs: API response results:', (response as any).data?.results || (response as any).results || []);
-  console.log('getAllSIDs: API response total/count:', {
-    total: (response as any).data?.total || (response as any).total,
-    count: (response as any).data?.count || (response as any).count,
-  });
 
   // @ts-ignore
   chromeStore.set(sidsAtom, (prev) => ({
@@ -166,10 +150,10 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
             const sidValue = item.value || '';
             return {
               tag: {
-                id: sidValue,
+                id: `${SID_KEY}/${sidValue}`,
                 key: sidValue,
                 value: '', // Empty value to avoid key=value format
-                namespace: '',
+                namespace: SID_KEY,
               },
               count: item.count || 1,
             };
@@ -250,7 +234,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
   // @ts-ignore
   const availableWorkloads = [
     // @ts-ignore
-    { label: 'SAP', value: 'SAP', count: (SAP as any)?.data?.total || (SAP as any)?.total },
+    { label: 'SAP', value: 'SAP', count: (SAP as any)?.results?.[0]?.count || 0 },
     // @ts-ignore
     { label: 'Ansible Automation Platform', value: 'AAP', count: AAP.total },
     // @ts-ignore

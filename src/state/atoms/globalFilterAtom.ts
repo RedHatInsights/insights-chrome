@@ -10,9 +10,7 @@ export const isLoadedAtom = atom<boolean>((get) => {
 
   return tags.isLoaded && sid.isLoaded && workloads.isLoaded;
 });
-export const isGlobalFilterEnabledAtom = atom<boolean>(true);
 export const globalFilterHiddenAtom = atom<boolean>(false);
-export const globalFilterRemoved = atom<boolean>(false);
 export const registeredWithAtom = atom<TagRegisteredWith[number] | undefined>(undefined);
 export const isDisabledAtom = atom<boolean>((get) => get(globalFilterHiddenAtom) || !get(activeModuleAtom));
 export const tagsAtom = atom<GlobalFilterTags>({
@@ -104,14 +102,4 @@ export type CommonSelectedTag = CommonTag & {
   id: string;
   cells: [string, string, string];
   selected?: boolean;
-};
-
-export type GlobalFilterState = {
-  tags: GlobalFilterTags;
-  globalFilterRemoved?: boolean;
-  workloads: GlobalFilterWorkloads;
-  sid: GlobalFilterSIDs;
-  selectedTags?: FlagTagsFilter;
-  globalFilterHidden: boolean;
-  scope?: TagRegisteredWith[number];
 };

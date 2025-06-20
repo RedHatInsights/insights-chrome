@@ -88,22 +88,20 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     {
       name: 'Workloads',
       type: 'checkbox',
-      // Extract tags from the new grouped structure
       tags: (workloadsData.items || []).flatMap((group: any) =>
         (group.tags || []).map((item: any) => ({
           count: item.count,
-          tag: item.tag, // Use the full tag object which includes id, key, label, etc.
+          tag: item.tag,
         }))
       ),
     },
     {
       name: 'SAP IDs (SID)',
       type: 'checkbox',
-      // Extract tags from the new grouped structure
       tags: (sidsData.items || []).flatMap((group: any) =>
         (group.tags || []).map((item: any) => ({
           count: item.count,
-          tag: item.tag, // Use the full tag object which includes id, key, label, etc.
+          tag: item.tag,
         }))
       ),
     },
@@ -156,7 +154,6 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     setSelectedTags(selectedTags);
   }, [selectedTags, setSelectedTags]);
 
-  // Only set the initial value from URL on mount, don't override user selections
   useEffect(() => {
     if (setValue) {
       setValue(generateFilter());

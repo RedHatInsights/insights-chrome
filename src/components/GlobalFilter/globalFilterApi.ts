@@ -123,12 +123,10 @@ export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
-    console.log('flatTags: input filter:', filter, 'format:', format);
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
-    console.log('flatTags: destructured - Workloads:', Workloads, 'SID:', SID, 'tags:', tags);
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
@@ -140,18 +138,9 @@ export const flatTags = memoize(
         })
     );
     const sidArray = Object.entries<any>(SID || {})
-      .filter(([, { isSelected }]: [unknown, GroupItem]) => {
-        console.log('flatTags: SID entry filter check - isSelected:', isSelected);
-        return isSelected;
-      })
+      .filter(([, { isSelected }]: [unknown, GroupItem]) => Boolean(isSelected))
       .reduce<any>((acc, [key]) => [...acc, key], []);
-    console.log('flatTags: SID processing - entries:', Object.entries(SID || {}), 'filtered sidArray:', sidArray);
-    console.log(
-      'flatTags: SID detailed entries:',
-      Object.entries(SID || {}).map(([key, value]) => ({ key, value }))
-    );
     const result = format ? [Workloads, sidArray, mappedTags] : mappedTags;
-    console.log('flatTags: final result:', result);
     return result;
   },
   (filter = {}, encode, format) =>
