@@ -3,7 +3,6 @@ import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import type Intercom from '@types/intercom-web';
-
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
 import { FavorableIcons } from '../components/FavoriteServices/ServiceIcon';
 
@@ -201,7 +200,7 @@ export type ChromeNavItemProps = {
   className?: string;
   active?: boolean;
   appId: string;
-  notifier?: string;
+  notifier?: atom<boolean>;
   product?: string;
 };
 

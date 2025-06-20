@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
-
-import { spinUpStore } from './redux/redux-config';
 import RootApp from './components/RootApp';
 import { getEnv, trustarcScriptSetup } from './utils/common';
 import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
@@ -46,27 +44,25 @@ if (entry) {
   const reactRoot = createRoot(entry);
   reactRoot.render(
     <JotaiProvider store={chromeStore}>
-      <Provider store={spinUpStore()?.store}>
-        <IntlProvider
-          locale={language}
-          messages={messages[language]}
-          onError={(error) => {
-            if (
-              (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
-              localStorage.getItem('chrome:intl:debug') === 'true' ||
-              !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
-            ) {
-              console.error(error);
-            }
-          }}
-        >
-          <ErrorBoundary>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
-          </ErrorBoundary>
-        </IntlProvider>
-      </Provider>
+      <IntlProvider
+        locale={language}
+        messages={messages[language]}
+        onError={(error) => {
+          if (
+            (getEnv() === 'stage' && !window.location.origin.includes('foo')) ||
+            localStorage.getItem('chrome:intl:debug') === 'true' ||
+            !(error.code === ReactIntlErrorCode.MISSING_TRANSLATION)
+          ) {
+            console.error(error);
+          }
+        }}
+      >
+        <ErrorBoundary>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </ErrorBoundary>
+      </IntlProvider>
     </JotaiProvider>
   );
 }

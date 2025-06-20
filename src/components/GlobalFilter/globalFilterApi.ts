@@ -5,7 +5,7 @@ import memoize from 'lodash/memoize';
 import { FlagTagsFilter, GroupItem } from '../../@types/types';
 import { getUrl } from '../../hooks/useBundle';
 
-export const SID_KEY = 'SAP ID (SID)';
+export const SID_KEY = 'SAP IDs (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
 
@@ -114,7 +114,7 @@ export const generateFilter = () => {
 
   return {
     Workloads,
-    ...(SIDs && { [SID_KEY]: SIDs }),
+    ...(Object.keys(SIDs).length > 0 ? { [SID_KEY]: SIDs } : {}),
     ...tags,
   };
 };
@@ -126,7 +126,7 @@ export const flatTags = memoize(
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
@@ -137,15 +137,11 @@ export const flatTags = memoize(
           }`;
         })
     );
-    return format
-      ? [
-          Workloads,
-          Object.entries<any>(SID || {})
-            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
-            .reduce<any>((acc, [key]) => [...acc, key], []),
-          mappedTags,
-        ]
-      : mappedTags;
+    const sidArray = Object.entries<any>(SID || {})
+      .filter(([, { isSelected }]: [unknown, GroupItem]) => Boolean(isSelected))
+      .reduce<any>((acc, [key]) => [...acc, key], []);
+    const result = format ? [Workloads, sidArray, mappedTags] : mappedTags;
+    return result;
   },
   (filter = {}, encode, format) =>
     `${Object.entries(filter)
