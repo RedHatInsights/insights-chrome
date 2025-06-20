@@ -65,7 +65,6 @@ export const createChromeContext = ({
   const dispatchGlobalFilterUpdate = (data: FlagTagsFilter) => {
     const listeners = eventListeners.get('GLOBAL_FILTER_UPDATE');
     if (listeners) {
-      console.log('Dispatching GLOBAL_FILTER_UPDATE event to', listeners.size, 'listeners with data:', data);
       listeners.forEach((callback) => {
         try {
           callback({ data });
@@ -81,7 +80,6 @@ export const createChromeContext = ({
   if (!globalFilterUnsubscribe) {
     globalFilterUnsubscribe = chromeStore.sub(selectedTagsAtom, () => {
       const selectedTags = chromeStore.get(selectedTagsAtom);
-      console.log('selectedTagsAtom changed, dispatching GLOBAL_FILTER_UPDATE:', selectedTags);
       dispatchGlobalFilterUpdate(selectedTags);
     });
   }
@@ -128,14 +126,11 @@ export const createChromeContext = ({
       // Add the callback to the listeners (cast to GenericCB for GLOBAL_FILTER_UPDATE)
       eventListeners.get('GLOBAL_FILTER_UPDATE')!.set(listenerId, callback as GenericCB);
 
-      console.log('Added GLOBAL_FILTER_UPDATE listener. Total listeners:', eventListeners.get('GLOBAL_FILTER_UPDATE')!.size);
-
       // Return unsubscribe function
       return () => {
         const listeners = eventListeners.get('GLOBAL_FILTER_UPDATE');
         if (listeners) {
           listeners.delete(listenerId);
-          console.log('Removed GLOBAL_FILTER_UPDATE listener. Remaining listeners:', listeners.size);
         }
       };
     }
