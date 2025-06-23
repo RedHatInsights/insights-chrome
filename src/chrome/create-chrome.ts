@@ -88,7 +88,10 @@ export const createChromeContext = ({
     appAction: (action: string) => chromeStore.set(appActionAtom, action),
     appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
     appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
-    globalFilterScope: (scope: TagRegisteredWith[number] | undefined) => chromeStore.set(registeredWithAtom, scope),
+    globalFilterScope: (scope: string) => {
+      chromeStore.set(registeredWithAtom, scope as TagRegisteredWith[number] | undefined);
+      return { type: '@@chrome/global-filter-scope', payload: scope };
+    },
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
     removeGlobalFilter: (isHidden: boolean) => {
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
