@@ -140,8 +140,7 @@ export const flatTags = memoize(
     const sidArray = Object.entries<any>(SID || {})
       .filter(([, { isSelected }]: [unknown, GroupItem]) => Boolean(isSelected))
       .reduce<any>((acc, [key]) => [...acc, key], []);
-    const result = format ? [Workloads, sidArray, mappedTags] : mappedTags;
-    return result;
+    return format ? [Workloads, sidArray, mappedTags] : mappedTags;
   },
   (filter = {}, encode, format) =>
     `${Object.entries(filter)

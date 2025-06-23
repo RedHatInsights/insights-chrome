@@ -17,7 +17,7 @@ export type TagPagination = { perPage?: number; page?: number };
 export type TagFilterOptions = { search?: string; registeredWith?: TagRegisteredWith[number]; activeTags?: FlagTagsFilter };
 
 const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => {
-  const result = {
+  return {
     system_profile: {
       ...(workloads?.SAP?.isSelected && { sap_system: true }),
       // enable once AAP filter is enabled
@@ -30,7 +30,6 @@ const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) =>
       sap_sids: SID,
     },
   };
-  return result;
 };
 
 type GenerateFilterData = ReturnType<typeof buildFilter> | string | boolean | string[] | undefined;
