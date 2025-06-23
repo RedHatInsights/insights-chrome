@@ -96,6 +96,7 @@ export const createChromeContext = ({
     removeGlobalFilter: (isHidden: boolean) => {
       console.error('`removeGlobalFilter` is deprecated. Use `hideGlobalFilter` instead.');
       chromeStore.set(globalFilterHiddenAtom, isHidden);
+      return { type: '@@chrome/global-filter-toggle', payload: { isHidden } };
     },
   };
 
