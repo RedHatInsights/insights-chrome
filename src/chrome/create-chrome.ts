@@ -163,7 +163,7 @@ export const createChromeContext = ({
         init: () => qe.init(chromeStore, { current: { user: { access_token: chromeAuth.token } } as any }),
       },
       reAuthWithScopes: chromeAuth.reAuthWithScopes,
-    },
+    } as any,
     initialized: true,
     isProd,
     forceDemo: () => Cookies.set('cs_demo', 'true'),
