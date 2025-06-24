@@ -1,14 +1,12 @@
 /// <reference types="cypress" />
 
 import React, { useEffect } from 'react';
-import { Provider } from 'react-redux';
-import { AnyAction, Store } from 'redux';
-import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
+import { Provider as JotaiProvider } from 'jotai';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { IntlProvider } from 'react-intl';
 
 import RootApp from '../../../src/components/RootApp/RootApp';
-import chromeReducer, { chromeInitialState } from '../../../src/redux';
+import chromeStore from '../../../src/state/chromeStore';
 
 import testUser from '../../fixtures/testUser.json';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
@@ -23,16 +21,22 @@ import { RouteDefinition } from '../../../src/@types/types';
 const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
 
 const chromeAuthContextValue: ChromeAuthContextValue = {
+  ssoUrl: '',
   doOffline: () => Promise.resolve(),
   getOfflineToken: () => Promise.resolve({} as any),
   getToken: () => Promise.resolve(''),
+  getRefreshToken: () => Promise.resolve(''),
   getUser: () => Promise.resolve(chromeUser),
   login: () => Promise.resolve(),
   loginAllTabs: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   logoutAllTabs: () => Promise.resolve(),
+  reAuthWithScopes: () => Promise.resolve(),
+  forceRefresh: () => Promise.resolve(),
+  loginSilent: () => Promise.resolve(),
   ready: true,
   token: '',
+  refreshToken: '',
   tokenExpires: 0,
   user: chromeUser,
 };
@@ -56,11 +60,9 @@ const initialModuleRoutes = [
 ];
 
 const Wrapper = ({
-  store,
   config = initialScalprumConfig,
   moduleRoutes = initialModuleRoutes,
 }: {
-  store: Store;
   config?: ScalprumConfig;
   moduleRoutes?: RouteDefinition[];
 }) => {
@@ -76,11 +78,11 @@ const Wrapper = ({
 
   return (
     <IntlProvider locale="en">
-      <Provider store={store}>
+      <JotaiProvider store={chromeStore}>
         <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-          <RootApp setCookieElement={() => undefined} cookieElement={null} />
+          <RootApp />
         </ChromeAuthContext.Provider>
-      </Provider>
+      </JotaiProvider>
     </IntlProvider>
   );
 };
@@ -103,7 +105,6 @@ const TestComponent = () => {
 };
 
 describe('HelpTopicManager', () => {
-  let store: Store<any, AnyAction>;
   before(() => {
     initializeVisibilityFunctions({
       getUser() {
@@ -111,19 +112,11 @@ describe('HelpTopicManager', () => {
       },
       getToken: () => Promise.resolve('a.a'),
       getUserPermissions: () => Promise.resolve([]),
+      isPreview: false,
     });
   });
   beforeEach(() => {
-    const reduxRegistry = new ReducerRegistry({
-      ...chromeInitialState,
-      chrome: {
-        modules: {},
-        ...chromeInitialState.chrome,
-        user: testUser,
-      },
-    });
-    reduxRegistry.register(chromeReducer());
-    store = reduxRegistry.getStore();
+    // No Redux setup needed with Jotai
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [],
     });
@@ -183,7 +176,7 @@ describe('HelpTopicManager', () => {
       };
     });
     // mount element
-    cy.mount(<Wrapper store={store}></Wrapper>);
+    cy.mount(<Wrapper></Wrapper>);
     // open drawer
     cy.get('#open-one').click();
     cy.get(`h1.pf-v6-c-title`).should('be.visible').contains('Configure components');

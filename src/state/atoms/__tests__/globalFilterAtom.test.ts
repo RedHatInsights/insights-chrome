@@ -98,4 +98,4 @@ describe('globalFilterAtom', () => {
       expect(store.get(isDisabledAtom)).toBe(true);
     });
   });
-}); 
+});

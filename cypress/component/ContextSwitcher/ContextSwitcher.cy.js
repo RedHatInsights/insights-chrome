@@ -1,13 +1,12 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import chromeReducer, { chromeInitialState } from '../../../src/redux';
-import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
+import { Provider as JotaiProvider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import ContextSwitcher from '../../../src/components/ContextSwitcher';
+import chromeStore from '../../../src/state/chromeStore';
 
-const Wrapper = ({ children, store }) => (
+const Wrapper = ({ children }) => (
   <IntlProvider locale="en">
-    <Provider store={store}>{children}</Provider>
+    <JotaiProvider store={chromeStore}>{children}</JotaiProvider>
   </IntlProvider>
 );
 
@@ -34,16 +33,8 @@ const testUser = {
 };
 
 describe('<ContextSwithcer />', () => {
-  let store;
   beforeEach(() => {
-    const reduxRegistry = new ReducerRegistry({
-      ...chromeInitialState,
-      chrome: {
-        ...chromeInitialState.chrome,
-      },
-    });
-    reduxRegistry.register(chromeReducer());
-    store = reduxRegistry.getStore();
+    // No Redux setup needed with Jotai
   });
 
   it('should not fire cross account request for non-internal user', () => {
@@ -52,7 +43,7 @@ describe('<ContextSwithcer />', () => {
     });
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )
@@ -75,7 +66,7 @@ describe('<ContextSwithcer />', () => {
     testUser.identity.user.is_internal = true;
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <ContextSwitcher accountNumber={testUser.identity.account_number} isInternal={testUser.identity.user.is_internal} />
         </Wrapper>
       )

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
 import RootApp from './components/RootApp';
