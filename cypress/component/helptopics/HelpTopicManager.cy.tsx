@@ -116,7 +116,6 @@ describe('HelpTopicManager', () => {
     });
   });
   beforeEach(() => {
-    // No Redux setup needed with Jotai
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [],
     });

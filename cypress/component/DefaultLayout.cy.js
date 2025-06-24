@@ -80,7 +80,6 @@ const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
 
 describe('<Default layout />', () => {
   beforeEach(() => {
-    // No Redux setup needed with Jotai
     cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
       statusCode: 200,
     });

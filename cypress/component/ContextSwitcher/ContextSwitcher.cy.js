@@ -33,10 +33,6 @@ const testUser = {
 };
 
 describe('<ContextSwithcer />', () => {
-  beforeEach(() => {
-    // No Redux setup needed with Jotai
-  });
-
   it('should not fire cross account request for non-internal user', () => {
     cy.intercept('http://localhost:8080/api/rbac/v1/cross-account-requests/?status=approved&order_by=-created&query_by=user_id', {
       data: [],

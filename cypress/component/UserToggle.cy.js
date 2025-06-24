@@ -61,7 +61,6 @@ const Wrapper = ({ children }) => (
 
 describe('<UserToggle />', () => {
   beforeEach(() => {
-    // No Redux setup needed with Jotai
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {
