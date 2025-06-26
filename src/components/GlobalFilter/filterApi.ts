@@ -14,15 +14,11 @@ export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: 
       }
     }
 
-    if (SIDs && SIDs.length > 0) {
-      searchParams.append('SIDs', SIDs.join(','));
-    }
+    searchParams.append('SIDs', SIDs && SIDs.length > 0 ? SIDs.join(',') : '');
 
-    if (mappedTags && mappedTags.length > 0) {
-      searchParams.append('tags', mappedTags.join(','));
-    }
+    searchParams.append('tags', mappedTags && mappedTags.length > 0 ? mappedTags.join(',') : '');
 
-    const finalUrl = {
+    const navigationTarget = {
       pathname: location.pathname.replace(/^(\/beta\/|\/preview\/)/, ''),
       search: location.search,
       hash: searchParams.toString(),
@@ -31,7 +27,7 @@ export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: 
     setTimeout(() => {
       // needs to be in timeout to not override existing URLs caused by nested routers
       // FIXME: After router v6 migration can be removed and we can use router location instead of document location
-      navigate(finalUrl);
+      navigate(navigationTarget);
     });
   }
 };

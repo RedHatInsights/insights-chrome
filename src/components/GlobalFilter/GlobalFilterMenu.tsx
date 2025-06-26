@@ -16,7 +16,7 @@ import { updateSelected } from './globalFilterApi';
 import { FlagTagsFilter } from '../../@types/types';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import GroupFilterInputGroup from './GroupFilterInputGroup';
-import { registeredWithAtom } from '../../state/atoms/globalFilterAtom';
+import { globalFilterScopeAtom } from '../../state/atoms/globalFilterAtom';
 import { useAtomValue } from 'jotai';
 import { getAllTags } from './tagsApi';
 
@@ -88,7 +88,7 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
    * We are unable to test it in any local development environment
    * */
   const hotjarEventEmitter = typeof window.hj === 'function' ? window.hj : () => undefined;
-  const registeredWith = useAtomValue(registeredWithAtom);
+  const registeredWith = useAtomValue(globalFilterScopeAtom);
   const auth = useContext(ChromeAuthContext);
   const intl = useIntl();
   const GroupFilterWrapper = useMemo(

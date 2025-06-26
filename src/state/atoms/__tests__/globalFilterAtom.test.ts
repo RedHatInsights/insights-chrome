@@ -1,4 +1,4 @@
-import { globalFilterHiddenAtom, isDisabledAtom } from '../globalFilterAtom';
+import { globalFilterHiddenAtom, isGlobalFilterDisabledAtom } from '../globalFilterAtom';
 import { activeModuleAtom } from '../activeModuleAtom';
 import { createStore } from 'jotai';
 
@@ -39,12 +39,12 @@ describe('globalFilterAtom', () => {
     });
   });
 
-  describe('isDisabledAtom', () => {
+  describe('isGlobalFilterDisabledAtom', () => {
     it('should be true when globalFilterHiddenAtom is true', () => {
       store.set(globalFilterHiddenAtom, true);
       store.set(activeModuleAtom, 'some-module');
 
-      const isDisabled = store.get(isDisabledAtom);
+      const isDisabled = store.get(isGlobalFilterDisabledAtom);
       expect(isDisabled).toBe(true);
     });
 
@@ -52,7 +52,7 @@ describe('globalFilterAtom', () => {
       store.set(globalFilterHiddenAtom, false);
       store.set(activeModuleAtom, undefined);
 
-      const isDisabled = store.get(isDisabledAtom);
+      const isDisabled = store.get(isGlobalFilterDisabledAtom);
       expect(isDisabled).toBe(true);
     });
 
@@ -60,7 +60,7 @@ describe('globalFilterAtom', () => {
       store.set(globalFilterHiddenAtom, false);
       store.set(activeModuleAtom, 'some-module');
 
-      const isDisabled = store.get(isDisabledAtom);
+      const isDisabled = store.get(isGlobalFilterDisabledAtom);
       expect(isDisabled).toBe(false);
     });
 
@@ -68,7 +68,7 @@ describe('globalFilterAtom', () => {
       store.set(globalFilterHiddenAtom, true);
       store.set(activeModuleAtom, undefined);
 
-      const isDisabled = store.get(isDisabledAtom);
+      const isDisabled = store.get(isGlobalFilterDisabledAtom);
       expect(isDisabled).toBe(true);
     });
 
@@ -76,26 +76,26 @@ describe('globalFilterAtom', () => {
       store.set(activeModuleAtom, 'some-module');
 
       store.set(globalFilterHiddenAtom, false);
-      expect(store.get(isDisabledAtom)).toBe(false);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(false);
 
       store.set(globalFilterHiddenAtom, true);
-      expect(store.get(isDisabledAtom)).toBe(true);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(true);
 
       store.set(globalFilterHiddenAtom, false);
-      expect(store.get(isDisabledAtom)).toBe(false);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(false);
     });
 
     it('should react to changes in activeModuleAtom', () => {
       store.set(globalFilterHiddenAtom, false);
 
       store.set(activeModuleAtom, undefined);
-      expect(store.get(isDisabledAtom)).toBe(true);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(true);
 
       store.set(activeModuleAtom, 'some-module');
-      expect(store.get(isDisabledAtom)).toBe(false);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(false);
 
       store.set(activeModuleAtom, undefined);
-      expect(store.get(isDisabledAtom)).toBe(true);
+      expect(store.get(isGlobalFilterDisabledAtom)).toBe(true);
     });
   });
 });

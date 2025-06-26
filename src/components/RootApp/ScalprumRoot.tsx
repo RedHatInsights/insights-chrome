@@ -44,7 +44,6 @@ const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
 
   useEffect(() => {
-    console.log('useGlobalFilter: selectedTags changed, calling callback with:', selectedTags);
     callback(selectedTags);
   }, [selectedTags, callback]);
 

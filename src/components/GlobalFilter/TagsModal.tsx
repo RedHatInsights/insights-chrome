@@ -12,8 +12,8 @@ import {
   CommonSelectedTag,
   CommonTag,
   GlobalFilterTag,
+  globalFilterScopeAtom,
   SID,
-  registeredWithAtom,
   sidsAtom,
   tagsAtom,
   workloadsAtom,
@@ -32,13 +32,13 @@ export type IDMapper = (tag: CommonTag) => string;
 export type CellsMapper = (tag: CommonTag) => (string | number | boolean | undefined)[];
 export type DebounceCallback = (filters?: TagFilterOptions, pagination?: TagPagination) => void | Promise<any>;
 
-export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid') => {
+export const useMetaSelector = (key: 'tags' | 'workloads' | 'sid'): [boolean, number, number, number] => {
   const tags = useAtomValue(tagsAtom);
   const workloads = useAtomValue(workloadsAtom);
   const sids = useAtomValue(sidsAtom);
   const selected = { tags, workloads, sid: sids }[key];
 
-  return [selected?.isLoaded ?? false, selected?.total ?? 0, selected?.page ?? 1, selected?.perPage ?? 10] as [boolean, number, number, number];
+  return [selected?.isLoaded ?? false, selected?.total ?? 0, selected?.page ?? 1, selected?.perPage ?? 10];
 };
 
 const usePagination = (loaded: boolean | unknown, perPage?: number, page?: number, count?: number) => {
@@ -79,7 +79,7 @@ const useRow = (
 };
 
 const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: FlagTagsFilter) => {
-  const registeredWith = useAtomValue(registeredWithAtom);
+  const registeredWith = useAtomValue(globalFilterScopeAtom);
   return useCallback(
     debounce((search?: string) => {
       callback(
@@ -107,13 +107,11 @@ const TagsModal = ({
   const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
   const [filterBy, setFilterBy] = useState('');
   const [filterSIDsBy, setFilterSIDsBy] = useState('');
-  const tagsData = useAtomValue(tagsAtom);
-  const sidsData = useAtomValue(sidsAtom);
+  const { items: tags } = useAtomValue(tagsAtom);
+  const { items: sids } = useAtomValue(sidsAtom);
   const [tagsLoaded, tagsCount, tagsPage, tagsPerPage] = useMetaSelector('tags');
   const [sidLoaded, sidCount, sidPage, sidPerPage] = useMetaSelector('sid');
-  const tags = tagsData.items;
-  const sids = sidsData.items;
-  const filterScope = useAtomValue(registeredWithAtom);
+  const filterScope = useAtomValue(globalFilterScopeAtom);
   const debounceGetTags = useDebounce(getAllTags, tagsPerPage, selectedTags);
   const debounceGetSIDs = useDebounce(getAllSIDs, sidPerPage, selectedTags);
   useEffect(() => {

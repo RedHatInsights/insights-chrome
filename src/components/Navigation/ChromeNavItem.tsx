@@ -29,7 +29,7 @@ const ChromeNavItem = ({
   notifier,
 }: ChromeNavItemProps) => {
   const isPreview = useAtomValue(isPreviewAtom);
-  const hasNotifier = notifier ? useAtomValue(notifier) : undefined;
+  const hasNotifier = !!notifier;
   const markActiveProduct = useSetAtom(activeProductAtom);
   const { favoritePages } = useFavoritePagesWrapper();
   const isFavorited = useMemo(() => favoritePages.find(({ favorite, pathname }) => favorite && pathname === href), [href, favoritePages]);

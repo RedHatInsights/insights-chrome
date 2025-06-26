@@ -11,34 +11,27 @@ import InternalChromeContext from '../../utils/internalChromeContext';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
+  globalFilterDataAtom,
   globalFilterHiddenAtom,
-  isDisabledAtom,
-  isLoadedAtom,
-  registeredWithAtom,
+  globalFilterScopeAtom,
+  isGlobalFilterDisabledAtom,
   selectedTagsAtom,
-  sidsAtom,
-  tagsAtom,
-  workloadsAtom,
+  setAllLoadingAtom,
 } from '../../state/atoms/globalFilterAtom';
 import { getAllSIDs, getAllTags, getAllWorkloads } from './tagsApi';
 
-const useLoadTags = (
-  hasAccess = false,
-  setTags: ReturnType<typeof useSetAtom<typeof tagsAtom>>,
-  setSids: ReturnType<typeof useSetAtom<typeof sidsAtom>>,
-  setWorkloads: ReturnType<typeof useSetAtom<typeof workloadsAtom>>
-) => {
+const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
-  const registeredWith = useAtomValue(registeredWithAtom);
-  const isDisabled = useAtomValue(isDisabledAtom);
+  const registeredWith = useAtomValue(globalFilterScopeAtom);
+  const isGlobalFilterDisabled = useAtomValue(isGlobalFilterDisabledAtom);
+  const setAllLoading = useSetAtom(setAllLoadingAtom);
+
   return useCallback(
     debounce(async (activeTags: any, search: any) => {
-      // Set loading state to false before fetching
-      setTags((prev) => ({ ...prev, isLoaded: false }));
-      setSids((prev) => ({ ...prev, isLoaded: false }));
-      setWorkloads((prev) => ({ ...prev, isLoaded: false }));
+      // Set loading state to false before fetching (single render)
+      setAllLoading(false);
       try {
-        storeFilter(activeTags, hasAccess && !isDisabled, navigate);
+        storeFilter(activeTags, hasAccess && !isGlobalFilterDisabled, navigate);
         await Promise.all([
           getAllTags({
             registeredWith,
@@ -59,79 +52,70 @@ const useLoadTags = (
       } catch (error) {
         console.error('Failed to load global filter tags:', error);
       } finally {
-        // Set loaded property to true even if an error occurs
-        setTags((prev) => ({ ...prev, isLoaded: true }));
-        setSids((prev) => ({ ...prev, isLoaded: true }));
-        setWorkloads((prev) => ({ ...prev, isLoaded: true }));
+        // Set loaded property to true even if an error occurs (single render)
+        setAllLoading(true);
       }
     }, 600),
-    [registeredWith, hasAccess]
+    [registeredWith, hasAccess, isGlobalFilterDisabled, setAllLoading]
   );
 };
 
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const isLoaded = useAtomValue(isLoadedAtom);
-  const tagsData = useAtomValue(tagsAtom);
-  const sidsData = useAtomValue(sidsAtom);
-  const workloadsData = useAtomValue(workloadsAtom);
+  const { isLoaded, tags: tagsData, sids: sidsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
 
-  const setTags = useSetAtom(tagsAtom);
-  const setSids = useSetAtom(sidsAtom);
-  const setWorkloads = useSetAtom(workloadsAtom);
+  const filterData: AllTag[] = useMemo(
+    () => [
+      {
+        name: 'Workloads',
+        type: 'checkbox',
+        tags: (workloadsData.items || []).flatMap((group: any) =>
+          (group.tags || []).map((item: any) => ({
+            count: item.count,
+            tag: item.tag,
+          }))
+        ),
+      },
+      {
+        name: 'SAP IDs (SID)',
+        type: 'checkbox',
+        tags: (sidsData.items || []).flatMap((group: any) =>
+          (group.tags || []).map((item: any) => ({
+            count: item.count,
+            tag: item.tag,
+          }))
+        ),
+      },
+      // Create separate AllTag sections for each namespace to enable grouping
+      ...(tagsData.items || []).reduce((acc: any[], group: any) => {
+        // Group tags by namespace
+        const tagsByNamespace = (group.tags || []).reduce((nsAcc: any, item: any) => {
+          const namespace = item.tag.namespace || 'Default';
+          if (!nsAcc[namespace]) {
+            nsAcc[namespace] = [];
+          }
+          nsAcc[namespace].push({
+            count: item.count,
+            tag: item.tag,
+          });
+          return nsAcc;
+        }, {});
 
-  const count = (tagsData.count || 0) + (sidsData.count || 0) + (workloadsData.count || 0);
-  const total = (tagsData.total || 0) + (sidsData.total || 0) + (workloadsData.total || 0);
-
-  const filterData: AllTag[] = [
-    {
-      name: 'Workloads',
-      type: 'checkbox',
-      tags: (workloadsData.items || []).flatMap((group: any) =>
-        (group.tags || []).map((item: any) => ({
-          count: item.count,
-          tag: item.tag,
-        }))
-      ),
-    },
-    {
-      name: 'SAP IDs (SID)',
-      type: 'checkbox',
-      tags: (sidsData.items || []).flatMap((group: any) =>
-        (group.tags || []).map((item: any) => ({
-          count: item.count,
-          tag: item.tag,
-        }))
-      ),
-    },
-    // Create separate AllTag sections for each namespace to enable grouping
-    ...(tagsData.items || []).reduce((acc: any[], group: any) => {
-      // Group tags by namespace
-      const tagsByNamespace = (group.tags || []).reduce((nsAcc: any, item: any) => {
-        const namespace = item.tag.namespace || 'Default';
-        if (!nsAcc[namespace]) {
-          nsAcc[namespace] = [];
-        }
-        nsAcc[namespace].push({
-          count: item.count,
-          tag: item.tag,
+        // Create an AllTag section for each namespace
+        Object.entries(tagsByNamespace).forEach(([namespace, tags]: [string, any]) => {
+          acc.push({
+            name: namespace, // This should create the header
+            type: 'checkbox',
+            tags: tags,
+          });
         });
-        return nsAcc;
-      }, {});
 
-      // Create an AllTag section for each namespace
-      Object.entries(tagsByNamespace).forEach(([namespace, tags]: [string, any]) => {
-        acc.push({
-          name: namespace, // This should create the header
-          type: 'checkbox',
-          tags: tags,
-        });
-      });
-
-      return acc;
-    }, []),
-  ];
+        return acc;
+      }, []),
+    ],
+    [tagsData.items, sidsData.items, workloadsData.items]
+  );
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
     // Using 'as any' to bypass complex external types
@@ -147,7 +131,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     'View more'
   );
 
-  const loadTags = useLoadTags(hasAccess, setTags, setSids, setWorkloads);
+  const loadTags = useLoadTags(hasAccess);
 
   // Update the atom when selectedTags from hook changes
   useEffect(() => {
@@ -191,14 +175,14 @@ const GlobalFilterWrapper = () => {
   const isLanding = pathname === '/';
   const isAllowed = isGlobalFilterAllowed();
 
-  const isDisabled = useAtomValue(isDisabledAtom);
+  const isGlobalFilterDisabled = useAtomValue(isGlobalFilterDisabledAtom);
   const isGlobalFilterEnabled = useMemo(() => {
-    if (isDisabled) {
+    if (isGlobalFilterDisabled) {
       return false;
     }
     const globalFilterAllowed = isAllowed || globalFilterRemoved;
     return !isLanding && (globalFilterAllowed || Boolean(localStorage.getItem('chrome:experimental:global-filter')));
-  }, [isLanding, isAllowed, isDisabled]);
+  }, [isLanding, isAllowed, isGlobalFilterDisabled]);
 
   useEffect(() => {
     let mounted = true;

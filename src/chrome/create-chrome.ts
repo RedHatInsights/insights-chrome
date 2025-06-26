@@ -26,10 +26,10 @@ import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { TagRegisteredWith, globalFilterHiddenAtom, registeredWithAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
+import { TagRegisteredWith, globalFilterHiddenAtom, globalFilterScopeAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
 
 // Global event listeners registry for PUBLIC_EVENTS
-const eventListeners = new Map<string, Map<symbol, GenericCB>>();
+const eventListeners = new Map<string, Map<string, GenericCB>>();
 
 export type CreateChromeContextConfig = {
   useGlobalFilter: (callback: (selectedTags?: FlagTagsFilter) => any) => ReturnType<typeof callback>;
@@ -89,7 +89,7 @@ export const createChromeContext = ({
     appObjectId: (objectId: string) => chromeStore.set(pageObjectIdAtom, objectId),
     appNavClick: (item: string) => chromeStore.set(activeAppAtom, item),
     globalFilterScope: (scope: string) => {
-      chromeStore.set(registeredWithAtom, scope as TagRegisteredWith[number] | undefined);
+      chromeStore.set(globalFilterScopeAtom, scope as TagRegisteredWith[number] | undefined);
       return { type: '@@chrome/global-filter-scope', payload: scope };
     },
     registerModule: (module: string, manifest?: string) => registerModule({ module, manifest }),
@@ -120,7 +120,7 @@ export const createChromeContext = ({
 
     if (type === 'GLOBAL_FILTER_UPDATE') {
       // Create a unique ID for this listener
-      const listenerId = Symbol('GLOBAL_FILTER_UPDATE');
+      const listenerId = crypto.randomUUID();
 
       // Initialize event listeners map for this event type if it doesn't exist
       if (!eventListeners.has('GLOBAL_FILTER_UPDATE')) {
@@ -162,6 +162,8 @@ export const createChromeContext = ({
       login: chromeAuth.login,
       doOffline: chromeAuth.doOffline,
       getOfflineToken: chromeAuth.getOfflineToken,
+      token: chromeAuth.token,
+      refreshToken: chromeAuth.refreshToken,
       qe: {
         ...qe,
         init: () => qe.init(chromeStore, { current: { user: { access_token: chromeAuth.token } } as any }),

@@ -33,8 +33,8 @@ describe('flatTags', () => {
 
   it('should create flat array of global filter', () => {
     const data = flatTags(globalFilter);
-    expect(data.length).toBe(3);
-    expect(data).toEqual(expect.arrayContaining(['someTag%2Fslash/someKey=[someValue%3Dvalue]', 'Workloads/SAP', 'SAP ID (SID)/SOMEVAL']));
+    expect(data.length).toBe(2);
+    expect(data).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]', 'Workloads/SAP']);
   });
 
   it('no data', () => {
@@ -45,18 +45,16 @@ describe('flatTags', () => {
 
   it('with encode enabled', () => {
     const data = flatTags(globalFilter, true);
-    expect(data.length).toBe(3);
-    expect(data).toEqual(
-      expect.arrayContaining(['someTag%252Fslash/someKey=%5BsomeValue%253Dvalue%5D', 'Workloads/SAP', 'SAP%20ID%20(SID)/SOMEVAL'])
-    );
+    expect(data.length).toBe(2);
+    expect(data).toMatchObject(['someTag%252Fslash/someKey=%5BsomeValue%253Dvalue%5D', 'Workloads/SAP']);
   });
 
   it('should return multiple values', () => {
     const [workloads, SID, tags] = flatTags(globalFilter, false, true);
-    expect(tags.length).toBe(2);
-    expect(tags).toEqual(expect.arrayContaining(['someTag%2Fslash/someKey=[someValue%3Dvalue]', 'SAP ID (SID)/SOMEVAL']));
+    expect(tags.length).toBe(1);
+    expect(tags).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]']);
     expect(workloads.SAP.isSelected).toBe(true);
-    expect(SID).toEqual([]);
+    expect(SID).toMatchObject(['SOMEVAL']);
   });
 });
 
@@ -108,7 +106,7 @@ describe('storeFilter', () => {
         navigate
       );
       setTimeout(() => {
-        expect(navigate).toHaveBeenCalledWith({ hash: 'workloads=something', pathname: '/', search: '' });
+        expect(navigate).toHaveBeenCalledWith({ hash: 'workloads=something&SIDs=&tags=', pathname: '/', search: '' });
         done();
       });
     });
@@ -128,7 +126,7 @@ describe('storeFilter', () => {
         navigate
       );
       setTimeout(() => {
-        expect(navigate).toHaveBeenCalledWith({ hash: 'tags=SAP+ID+%28SID%29%2Fsomething', pathname: '/', search: '' });
+        expect(navigate).toHaveBeenCalledWith({ hash: 'SIDs=something&tags=', pathname: '/', search: '' });
         done();
       });
     });
@@ -160,7 +158,7 @@ describe('storeFilter', () => {
       );
       setTimeout(() => {
         expect(navigate).toHaveBeenCalledWith({
-          hash: 'tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+          hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
           pathname: '/',
           search: '',
         });
@@ -205,7 +203,7 @@ describe('storeFilter', () => {
       );
       setTimeout(() => {
         expect(navigate).toHaveBeenCalledWith({
-          hash: 'workloads=something&tags=SAP+ID+%28SID%29%2Fsomething%2Cbridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+          hash: 'workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
           pathname: '/',
           search: '',
         });

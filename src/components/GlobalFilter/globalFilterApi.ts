@@ -5,7 +5,7 @@ import memoize from 'lodash/memoize';
 import { FlagTagsFilter, GroupItem } from '../../@types/types';
 import { getUrl } from '../../hooks/useBundle';
 
-export const SID_KEY = 'SAP IDs (SID)';
+export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
 
@@ -124,7 +124,7 @@ export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
-    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
+    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) }), ([namespace, item]) =>
       Object.entries<any>(item || {})
         .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
@@ -138,7 +138,7 @@ export const flatTags = memoize(
         })
     );
     const sidArray = Object.entries<any>(SID || {})
-      .filter(([, { isSelected }]: [unknown, GroupItem]) => Boolean(isSelected))
+      .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
       .reduce<any>((acc, [key]) => [...acc, key], []);
     return format ? [Workloads, sidArray, mappedTags] : mappedTags;
   },

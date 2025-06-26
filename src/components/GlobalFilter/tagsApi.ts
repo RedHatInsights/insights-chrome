@@ -16,6 +16,76 @@ export type Workload = { isSelected?: boolean };
 export type TagPagination = { perPage?: number; page?: number };
 export type TagFilterOptions = { search?: string; registeredWith?: TagRegisteredWith[number]; activeTags?: FlagTagsFilter };
 
+// Types for API responses
+type ApiResponse<T> = {
+  data?: {
+    results?: T[];
+    count?: number;
+    total?: number;
+  };
+  results?: T[];
+  count?: number;
+  total?: number;
+};
+
+type TagResult = {
+  tag?: {
+    key?: string;
+    value?: string;
+    namespace?: string;
+  };
+  count?: number;
+};
+
+type SidResult = {
+  value?: string;
+  count?: number;
+};
+
+type WorkloadResult = {
+  count?: number;
+};
+
+// Type guards for API responses
+function isApiResponse<T>(response: unknown): response is ApiResponse<T> {
+  if (typeof response !== 'object' || response === null) {
+    return false;
+  }
+
+  const obj = response as Record<string, unknown>;
+
+  return (
+    ('data' in obj && typeof obj.data === 'object') ||
+    ('results' in obj && Array.isArray(obj.results)) ||
+    ('count' in obj && typeof obj.count === 'number') ||
+    ('total' in obj && typeof obj.total === 'number')
+  );
+}
+
+function isTagResult(item: unknown): item is TagResult {
+  return typeof item === 'object' && item !== null && ('tag' in item || 'count' in item);
+}
+
+function isSidResult(item: unknown): item is SidResult {
+  return typeof item === 'object' && item !== null && ('value' in item || 'count' in item);
+}
+
+// Helper functions to safely extract data from API responses
+function getResultsFromResponse<T>(response: unknown): T[] {
+  if (!isApiResponse<T>(response)) return [];
+  return response.data?.results || response.results || [];
+}
+
+function getCountFromResponse(response: unknown): number {
+  if (!isApiResponse(response)) return 0;
+  return response.data?.count || response.count || 0;
+}
+
+function getTotalFromResponse(response: unknown): number {
+  if (!isApiResponse(response)) return 0;
+  return response.data?.total || response.total || 0;
+}
+
 const buildFilter = (workloads?: { [key: string]: Workload }, SID?: string[]) => {
   return {
     system_profile: {
@@ -70,13 +140,15 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
     undefined,
     undefined,
     undefined,
-    // @ts-ignore
-    registeredWith ? registeredWith : undefined,
+    registeredWith ? [registeredWith] : undefined,
     undefined,
     { query: generateFilter(buildFilter(workloads, SID)) }
   );
 
-  // @ts-ignore
+  const results = getResultsFromResponse<TagResult>(response);
+  const count = getCountFromResponse(response);
+  const total = getTotalFromResponse(response);
+
   chromeStore.set(tagsAtom, (prev) => ({
     ...prev,
     isLoaded: true,
@@ -88,12 +160,15 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
       {
         id: 'tags-group',
         name: 'Tags',
-        tags: ((response as any).data?.results || (response as any).results || [])
-          .filter((result: any) => result?.tag?.key && typeof result.tag.key === 'string' && result.tag.key.trim() !== '')
-          .map((result: any) => {
-            const namespace = result.tag.namespace || '';
-            const key = result.tag.key || '';
-            const value = result.tag.value || '';
+        tags: results
+          .filter(
+            (result): result is TagResult =>
+              isTagResult(result) && !!result?.tag?.key && typeof result.tag.key === 'string' && result.tag.key.trim() !== ''
+          )
+          .map((result) => {
+            const namespace = result.tag?.namespace || '';
+            const key = result.tag?.key || '';
+            const value = result.tag?.value || '';
             return {
               tag: {
                 id: `${namespace}/${key}=${value}`,
@@ -104,13 +179,11 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
               count: result.count || 0,
             };
           })
-          .filter((item: any) => item.tag.key && item.tag.id), // Additional safety check
+          .filter((item) => item.tag.key && item.tag.id), // Additional safety check
       },
     ],
-    // @ts-ignore
-    count: (response as any).data?.count || (response as any).count,
-    // @ts-ignore
-    total: (response as any).data?.total || (response as any).total,
+    count,
+    total,
   }));
 }
 
@@ -123,15 +196,17 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
     (pagination && pagination.perPage) || 10,
     (pagination && pagination.page) || 1,
     undefined,
-    // @ts-ignore
-    registeredWith ? registeredWith : undefined,
+    registeredWith ? [registeredWith] : undefined,
     undefined,
     {
       query: generateFilter(buildFilter(workloads, SID)),
     }
   );
 
-  // @ts-ignore
+  const results = getResultsFromResponse<SidResult>(response);
+  const count = getCountFromResponse(response);
+  const total = getTotalFromResponse(response);
+
   chromeStore.set(sidsAtom, (prev) => ({
     ...prev,
     isLoaded: true,
@@ -143,9 +218,9 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
       {
         id: 'sids-group',
         name: 'SAP IDs (SID)',
-        tags: ((response as any).data?.results || (response as any).results || [])
-          .filter((item: any) => item?.value && typeof item.value === 'string' && item.value.trim() !== '')
-          .map((item: any) => {
+        tags: results
+          .filter((item): item is SidResult => isSidResult(item) && !!item?.value && typeof item.value === 'string' && item.value.trim() !== '')
+          .map((item) => {
             const sidValue = item.value || '';
             return {
               tag: {
@@ -157,27 +232,24 @@ export async function getAllSIDs({ search, activeTags, registeredWith }: TagFilt
               count: item.count || 1,
             };
           })
-          .filter((item: any) => item.tag.key && item.tag.id), // Additional safety check
+          .filter((item) => item.tag.key && item.tag.id), // Additional safety check
       },
     ],
-    // @ts-ignore
-    count: (response as any).data?.count || (response as any).count,
-    // @ts-ignore
-    total: (response as any).data?.total || (response as any).total,
+    count,
+    total,
   }));
 }
 
-export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterOptions = {}) {
+export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterOptions = {}, pagination: TagPagination = {}) {
   const [workloads, SID, selectedTags] = flatTags(activeTags, false, true);
 
   const [SAP, AAP, MSSQL] = await Promise.all([
     sap.apiSystemProfileGetSapSystem(
       selectedTags,
-      1,
-      1,
+      (pagination && pagination.perPage) || 10,
+      (pagination && pagination.page) || 1,
       undefined,
-      // @ts-ignore
-      registeredWith ? registeredWith : undefined,
+      registeredWith ? [registeredWith] : undefined,
       undefined,
       {
         query: generateFilter(buildFilter(workloads, SID)),
@@ -191,14 +263,13 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       undefined,
-      1,
+      1, // number of items per page
       undefined,
       undefined,
       undefined,
       undefined,
       selectedTags,
-      // @ts-ignore
-      registeredWith ? registeredWith : undefined,
+      registeredWith ? [registeredWith] : undefined,
       undefined,
       undefined,
       {
@@ -219,8 +290,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       undefined,
       undefined,
       selectedTags,
-      // @ts-ignore
-      registeredWith ? registeredWith : undefined,
+      registeredWith ? [registeredWith] : undefined,
       undefined,
       undefined,
       {
@@ -229,16 +299,17 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
     ),
   ]);
 
+  // Safely extract data from responses
+  const sapResults = getResultsFromResponse<WorkloadResult>(SAP);
+  const aapTotal = getTotalFromResponse(AAP);
+  const mssqlTotal = getTotalFromResponse(MSSQL);
+
   // Create a list of available workloads based on the API results.
-  // @ts-ignore
   const availableWorkloads = [
-    // @ts-ignore
-    { label: 'SAP', value: 'SAP', count: (SAP as any)?.results?.[0]?.count || 0 },
-    // @ts-ignore
-    { label: 'Ansible Automation Platform', value: 'AAP', count: AAP.total },
-    // @ts-ignore
-    { label: 'Microsoft SQL', value: 'MSSQL', count: MSSQL.total },
-  ].filter(({ count }) => count > 0);
+    { label: 'SAP', value: 'SAP', count: sapResults[0]?.count || 0 },
+    { label: 'Ansible Automation Platform', value: 'AAP', count: aapTotal },
+    { label: 'Microsoft SQL', value: 'MSSQL', count: mssqlTotal },
+  ];
 
   chromeStore.set(workloadsAtom, (prev) => ({
     ...prev,
@@ -259,7 +330,7 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
             },
             count: item.count,
           }))
-          .filter((item: any) => item.tag.id), // Additional safety check
+          .filter((item) => item.tag.id), // Additional safety check
       },
     ],
     count: availableWorkloads.length,
