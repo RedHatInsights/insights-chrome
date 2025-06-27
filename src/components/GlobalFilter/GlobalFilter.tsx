@@ -19,6 +19,7 @@ import {
   setAllLoadingAtom,
 } from '../../state/atoms/globalFilterAtom';
 import { getAllSIDs, getAllTags, getAllWorkloads } from './tagsApi';
+import { FlagTagsFilter } from '../../@types/types';
 
 const useLoadTags = (hasAccess = false) => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const useLoadTags = (hasAccess = false) => {
   const setAllLoading = useSetAtom(setAllLoadingAtom);
 
   return useCallback(
-    debounce(async (activeTags: any, search: any) => {
+    debounce(async (activeTags: FlagTagsFilter, search: string) => {
       // Set loading state to false before fetching (single render)
       setAllLoading(false);
       try {
@@ -65,28 +66,41 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const { isLoaded, tags: tagsData, sids: sidsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
 
-  const filterData: AllTag[] = useMemo(
-    () => [
-      {
-        name: 'Workloads',
-        type: 'checkbox',
-        tags: (workloadsData.items || []).flatMap((group: any) =>
-          (group.tags || []).map((item: any) => ({
-            count: item.count,
-            tag: item.tag,
-          }))
-        ),
-      },
-      {
+  const filterData: AllTag[] = useMemo(() => {
+    const workloadsTags = (workloadsData.items || []).flatMap((group: any) =>
+      (group.tags || []).map((item: any) => ({
+        count: item.count,
+        tag: item.tag,
+      }))
+    );
+
+    const sidsTags = (sidsData.items || []).flatMap((group: any) =>
+      (group.tags || []).map((item: any) => ({
+        count: item.count,
+        tag: item.tag,
+      }))
+    );
+
+    const sections: AllTag[] = [];
+
+    // Always include Workloads section (even if empty)
+    sections.push({
+      name: 'Workloads',
+      type: 'checkbox',
+      tags: workloadsTags,
+    });
+
+    // Only include SAP IDs section if it has tags
+    if (sidsTags.length > 0) {
+      sections.push({
         name: 'SAP IDs (SID)',
         type: 'checkbox',
-        tags: (sidsData.items || []).flatMap((group: any) =>
-          (group.tags || []).map((item: any) => ({
-            count: item.count,
-            tag: item.tag,
-          }))
-        ),
-      },
+        tags: sidsTags,
+      });
+    }
+
+    return [
+      ...sections,
       // Create separate AllTag sections for each namespace to enable grouping
       ...(tagsData.items || []).reduce((acc: any[], group: any) => {
         // Group tags by namespace
@@ -113,9 +127,8 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 
         return acc;
       }, []),
-    ],
-    [tagsData.items, sidsData.items, workloadsData.items]
-  );
+    ];
+  }, [tagsData.items, sidsData.items, workloadsData.items]);
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
     // Using 'as any' to bypass complex external types
