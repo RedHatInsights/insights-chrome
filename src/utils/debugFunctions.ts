@@ -9,6 +9,7 @@ const debugFunctions = {
   invTags: () => functionBuilder('rhcs-tags', true),
   shortSession: () => functionBuilder('chrome:jwt:shortSession', true),
   jwtDebug: () => functionBuilder('chrome:auth:debug', true),
+  reduxDebug: () => () => {}, // No-op function for compatibility with external types
   forcePendo: () => functionBuilder('forcePendo', true),
   disableSegment: () => functionBuilder('chrome:segment:disable', true),
   disableAnalytics: () => functionBuilder('chrome:analytics:disable', true),
