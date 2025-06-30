@@ -1,14 +1,11 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
 import NavContext from './navContext';
 import ChromeNavExpandable from './ChromeNavExpandable';
 import componentMapper from './componentMapper';
 
 const NavContextWrapper = ({
-  store,
   providerValue = {
     onLinkClick: jest.fn(),
     componentMapper,
@@ -17,14 +14,13 @@ const NavContextWrapper = ({
   initialEntries,
 }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <Provider store={store}>
+    <div>
       <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
-    </Provider>
+    </div>
   </MemoryRouter>
 );
 
 describe('ChromeNavExpandable', () => {
-  const mockStore = createMockStore();
   const expandableTitle = 'Foo';
   const testProps = {
     appId: 'testModule',
@@ -33,19 +29,10 @@ describe('ChromeNavExpandable', () => {
     routes: [{ appId: 'bar', title: 'title', href: '/foo/bar' }],
     id: 'test-id',
   };
-  const store = mockStore({
-    chrome: {
-      activeModule: 'testModule',
-      moduleRoutes: [],
-      modules: {
-        testModule: {},
-      },
-    },
-  });
 
   test('should not render nav item expandable', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavExpandable isHidden {...testProps} />
       </NavContextWrapper>
     );
@@ -55,7 +42,7 @@ describe('ChromeNavExpandable', () => {
 
   test('should render nav item expandable', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavExpandable {...testProps} />
       </NavContextWrapper>
     );
@@ -65,7 +52,7 @@ describe('ChromeNavExpandable', () => {
 
   test('should render nav item expandable with items', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavExpandable
           {...testProps}
           routes={[

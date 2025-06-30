@@ -3,8 +3,7 @@ import React from 'react';
 import AllServicesDropdown from '../../../src/components/AllServicesDropdown/AllServicesDropdown';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
 import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
@@ -55,17 +54,6 @@ describe('<AllServicesDropdown />', () => {
         }),
       };
     });
-    const store = createStore(() => ({
-      chrome: {
-        moduleRoutes: [
-          {
-            path: '/test/link',
-            scope: 'foo',
-            module: 'bar',
-          },
-        ],
-      },
-    }));
     cy.mount(
       <ScalprumProvider
         config={{
@@ -78,13 +66,13 @@ describe('<AllServicesDropdown />', () => {
         {/* @ts-ignore */}
         <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
           <FeatureFlagsProvider>
-            <Provider store={store}>
+            <JotaiProvider>
               <BrowserRouter>
                 <IntlProvider locale="en">
                   <AllServicesDropdown />
                 </IntlProvider>
               </BrowserRouter>
-            </Provider>
+            </JotaiProvider>
           </FeatureFlagsProvider>
         </ChromeAuthContext.Provider>
       </ScalprumProvider>
@@ -121,17 +109,6 @@ describe('<AllServicesDropdown />', () => {
         }),
       };
     });
-    const store = createStore(() => ({
-      chrome: {
-        moduleRoutes: [
-          {
-            path: '/test/link',
-            scope: 'foo',
-            module: 'bar',
-          },
-        ],
-      },
-    }));
     cy.viewport(320, 568);
     cy.mount(
       <ScalprumProvider
@@ -142,7 +119,7 @@ describe('<AllServicesDropdown />', () => {
           },
         }}
       >
-        <Provider store={store}>
+        <JotaiProvider>
           {/* @ts-ignore */}
           <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
             <FeatureFlagsProvider>
@@ -153,7 +130,7 @@ describe('<AllServicesDropdown />', () => {
               </BrowserRouter>
             </FeatureFlagsProvider>
           </ChromeAuthContext.Provider>
-        </Provider>
+        </JotaiProvider>
       </ScalprumProvider>
     );
 

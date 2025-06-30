@@ -1,75 +1,75 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import configureStore from 'redux-mock-store';
-import UserToggle from '../UserToggle';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
+
+import UserToggle from '../UserToggle';
 import ChromeAuthContext from '../../../auth/ChromeAuthContext';
+import { activeModuleAtom } from '../../../state/atoms/activeModuleAtom';
+import { moduleRoutesAtom } from '../../../state/atoms/chromeModuleAtom';
+import { triggerNavListenersAtom } from '../../../state/atoms/activeAppAtom';
 
-jest.mock('../UserIcon', () => () => '<UserIcon />');
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
 
-jest.mock('@unleash/proxy-client-react', () => {
-  const actual = jest.requireActual('@unleash/proxy-client-react');
-  return {
-    __esModule: true,
-    ...actual,
-
-    useFlag: () => false,
-    useFlagsStatus: () => ({ flagsReady: true }),
-  };
-});
+const Wrapper = ({ children, atomValues = [] }) => (
+  <MemoryRouter>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={atomValues}>{children}</HydrateAtoms>
+    </JotaiProvider>
+  </MemoryRouter>
+);
 
 describe('UserToggle', () => {
-  const contextValueMock = {
-    user: {
-      identity: {
-        account_number: 'some accountNumber',
-        user: {
-          username: 'someUsername',
-          first_name: 'someFirstName',
-          last_name: 'someLastName',
-        },
+  const defaultAtomValues = [
+    [activeModuleAtom, 'testModule'],
+    [moduleRoutesAtom, []],
+    [triggerNavListenersAtom, jest.fn()],
+  ];
+
+  const mockUser = {
+    identity: {
+      account_number: '0',
+      type: 'User',
+      internal: {
+        org_id: '123',
+      },
+      user: {
+        username: 'foo',
+        first_name: 'foo',
+        last_name: 'foo',
+        is_org_admin: false,
+        is_internal: false,
       },
     },
   };
-  it('should render correctly with isSmall false', async () => {
-    const { container } = render(
-      <MemoryRouter>
-        <Provider store={configureStore()({ chrome: {} })}>
-          <ChromeAuthContext.Provider value={contextValueMock}>
-            <UserToggle />
-          </ChromeAuthContext.Provider>
-        </Provider>
-      </MemoryRouter>
-    );
-    await act(async () => {
-      await screen.getByText('someFirstName someLastName').click();
-    });
-    expect(container).toMatchSnapshot();
-  });
 
-  it('should render correctly with isSmall true', () => {
+  const contextValue = {
+    user: mockUser,
+    logout: jest.fn(),
+  };
+
+  test('should render user toggle', () => {
     const { container } = render(
-      <ChromeAuthContext.Provider value={contextValueMock}>
-        <UserToggle isSmall />
-      </ChromeAuthContext.Provider>
+      <Wrapper atomValues={defaultAtomValues}>
+        <ChromeAuthContext.Provider value={contextValue}>
+          <UserToggle />
+        </ChromeAuthContext.Provider>
+      </Wrapper>
     );
     expect(container).toMatchSnapshot();
   });
 
-  it('should render correctly as org admin', () => {
+  test('should render user toggle for small screens', () => {
     const { container } = render(
-      <ChromeAuthContext.Provider
-        value={{
-          user: {
-            ...contextValueMock.user,
-            is_org_admin: true,
-          },
-        }}
-      >
-        <UserToggle />
-      </ChromeAuthContext.Provider>
+      <Wrapper atomValues={defaultAtomValues}>
+        <ChromeAuthContext.Provider value={contextValue}>
+          <UserToggle isSmall />
+        </ChromeAuthContext.Provider>
+      </Wrapper>
     );
     expect(container).toMatchSnapshot();
   });

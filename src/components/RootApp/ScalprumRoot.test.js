@@ -2,13 +2,54 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ScalprumRoot from './ScalprumRoot';
 import { act, render, waitFor } from '@testing-library/react';
-import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
 import { Provider as JotaiProvider } from 'jotai';
 
 jest.mock('../Search/SearchInput', () => {
   return jest.fn().mockImplementation(() => <div />);
 });
+
+jest.mock('../../hooks/useAllServices', () => ({
+  __esModule: true,
+  default: () => ({
+    linkSections: [],
+    error: false,
+    ready: true,
+    availableSections: [],
+    filterValue: '',
+    setFilterValue: jest.fn(),
+  }),
+}));
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlagsStatus: () => ({ flagsReady: true, flagsError: false }),
+  useFlag: () => false,
+  useFlags: () => [],
+}));
+
+jest.mock('../../utils/fetchNavigationFiles', () => ({
+  __esModule: true,
+  default: () =>
+    Promise.resolve([
+      {
+        id: 'insights',
+        title: 'Insights',
+        navItems: [
+          {
+            title: 'Test Item',
+            href: '/insights/test',
+            appId: 'test',
+          },
+        ],
+      },
+    ]),
+  extractNavItemGroups: (navigation) => {
+    if (Array.isArray(navigation)) {
+      return navigation;
+    }
+    return navigation?.navItems || [];
+  },
+  isNavItems: (item) => Boolean(item?.navItems),
+}));
 
 jest.mock('../../utils/common', () => {
   const utils = jest.requireActual('../../utils/common');
@@ -17,6 +58,21 @@ jest.mock('../../utils/common', () => {
     ...utils,
     isBeta: jest.fn().mockReturnValue(false),
     getEnv: jest.fn().mockReturnValue('qa'),
+  };
+});
+
+jest.mock('axios', () => {
+  const actualAxios = jest.requireActual('axios');
+  return {
+    __esModule: true,
+    ...actualAxios,
+    default: {
+      ...actualAxios.default,
+      post: jest.fn().mockResolvedValue({ data: {} }),
+      get: jest.fn().mockResolvedValue({ data: {} }),
+    },
+    post: jest.fn().mockResolvedValue({ data: {} }),
+    get: jest.fn().mockResolvedValue({ data: {} }),
   };
 });
 
@@ -31,16 +87,33 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-jest.mock('@unleash/proxy-client-react', () => {
-  const unleash = jest.requireActual('@unleash/proxy-client-react');
-  return {
-    __esModule: true,
-    ...unleash,
-    useFlag: () => false,
-    useFlagsStatus: () => ({ flagsReady: true }),
-    useFlags: () => [],
-  };
-});
+jest.mock('../../utils/isNavItemVisible', () => ({
+  evaluateVisibility: jest.fn().mockImplementation((item) => Promise.resolve(item)),
+}));
+
+jest.mock('../../hooks/useFeoConfig', () => ({
+  __esModule: true,
+  default: () => true,
+}));
+
+jest.mock('../../utils/useNavigation', () => ({
+  __esModule: true,
+  default: () => ({
+    loaded: true,
+    schema: {
+      id: 'insights',
+      title: 'Insights',
+      navItems: [
+        {
+          title: 'Test Item',
+          href: '/insights/test',
+          appId: 'test',
+        },
+      ],
+    },
+    noNav: false,
+  }),
+}));
 
 window.ResizeObserver =
   window.ResizeObserver ||
@@ -57,6 +130,8 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { hidePreviewBannerAtom, isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
+import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
+import { navigationAtom } from '../../state/atoms/navigationAtom';
 
 const HydrateAtoms = ({ initialValues, children }) => {
   useHydrateAtoms(initialValues);
@@ -70,8 +145,6 @@ const JotaiTestProvider = ({ initialValues, children }) => (
 );
 
 describe('ScalprumRoot', () => {
-  let initialState;
-  let mockStore;
   let config;
   const chromeContextMockValue = {
     getToken() {
@@ -149,72 +222,44 @@ describe('ScalprumRoot', () => {
         appName: 'baz',
       },
     };
-    mockStore = configureStore();
-    initialState = {
-      chrome: {
-        user: {
-          identity: {
-            account_number: 'foo',
-            user: { username: 'foo', first_name: 'foo', last_name: 'foo', is_org_admin: false, is_internal: false },
-          },
-        },
-        notifications: { data: [] },
-        activeApp: 'some-app',
-        activeLocation: 'some-location',
-        appId: 'app-id',
-        quickstarts: {
-          quickstarts: {},
-        },
-        moduleRoutes: [],
-        navigation: {
-          '/': {
-            navItems: [],
-          },
-          insights: {
-            navItems: [],
-          },
-        },
-      },
-      globalFilter: {
-        tags: {},
-        sid: {},
-        workloads: {},
-      },
-    };
   });
+
+  const defaultAtomValues = [
+    [hidePreviewBannerAtom, false],
+    [isPreviewAtom, false],
+    [userConfigAtom, { data: {} }],
+    [selectedTagsAtom, {}],
+    [activeModuleAtom, 'foo'],
+    [
+      navigationAtom,
+      {
+        insights: {
+          id: 'insights',
+          title: 'Insights',
+          navItems: [
+            {
+              title: 'Test Item',
+              href: '/insights/test',
+              appId: 'test',
+            },
+          ],
+        },
+      },
+    ],
+  ];
 
   it('should render PageSidebar with SideNav component', async () => {
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
-    const store = mockStore({
-      globalFilter: { tags: {}, sid: {}, workloads: {} },
-      chrome: {
-        ...initialState.chrome,
-        user: {
-          identity: {
-            account_number: 'foo',
-            user: {},
-          },
-        },
-      },
-    });
     let getByLabelText;
     await act(async () => {
       const { getByLabelText: internalGetByLabelText } = await render(
-        <JotaiTestProvider
-          initialValues={[
-            [hidePreviewBannerAtom, false],
-            [isPreviewAtom, false],
-            [userConfigAtom, { data: {} }],
-          ]}
-        >
-          <Provider store={store}>
-            <ChromeAuthContext.Provider value={chromeContextMockValue}>
-              <MemoryRouter initialEntries={['/*']}>
-                <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
-              </MemoryRouter>
-            </ChromeAuthContext.Provider>
-          </Provider>
+        <JotaiTestProvider initialValues={defaultAtomValues}>
+          <ChromeAuthContext.Provider value={chromeContextMockValue}>
+            <MemoryRouter initialEntries={['/insights']}>
+              <ScalprumRoot globalFilterHidden config={config} {...initialProps} />
+            </MemoryRouter>
+          </ChromeAuthContext.Provider>
         </JotaiTestProvider>
       );
       getByLabelText = internalGetByLabelText;
@@ -240,23 +285,14 @@ describe('ScalprumRoot', () => {
         },
       },
     });
-    const store = mockStore({
-      ...initialState,
-      chrome: {
-        ...initialState.chrome,
-        activeLocation: 'insights',
-      },
-    });
 
     const { container } = await render(
-      <JotaiTestProvider initialValues={[[activeModuleAtom, 'foo']]}>
-        <Provider store={store}>
-          <ChromeAuthContext.Provider value={chromeContextMockValue}>
-            <MemoryRouter initialEntries={['/insights']}>
-              <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
-            </MemoryRouter>
-          </ChromeAuthContext.Provider>
-        </Provider>
+      <JotaiTestProvider initialValues={defaultAtomValues}>
+        <ChromeAuthContext.Provider value={chromeContextMockValue}>
+          <MemoryRouter initialEntries={['/insights']}>
+            <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
+          </MemoryRouter>
+        </ChromeAuthContext.Provider>
       </JotaiTestProvider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeTruthy());
@@ -283,23 +319,22 @@ describe('ScalprumRoot', () => {
         },
       },
     });
-    const store = mockStore({
-      ...initialState,
-      chrome: {
-        ...initialState.chrome,
-        activeLocation: 'insights',
-      },
-    });
+
+    const atomValuesWithoutModule = [
+      [hidePreviewBannerAtom, false],
+      [isPreviewAtom, false],
+      [userConfigAtom, { data: {} }],
+      [selectedTagsAtom, {}],
+      [activeModuleAtom, undefined],
+    ];
 
     const { container } = await render(
-      <JotaiTestProvider initialValues={[[activeModuleAtom, undefined]]}>
-        <Provider store={store}>
-          <ChromeAuthContext.Provider value={chromeContextMockValue}>
-            <MemoryRouter initialEntries={['/insights']}>
-              <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
-            </MemoryRouter>
-          </ChromeAuthContext.Provider>
-        </Provider>
+      <JotaiTestProvider initialValues={atomValuesWithoutModule}>
+        <ChromeAuthContext.Provider value={chromeContextMockValue}>
+          <MemoryRouter initialEntries={['/insights']}>
+            <ScalprumRoot config={config} globalFilterHidden={false} {...initialProps} />
+          </MemoryRouter>
+        </ChromeAuthContext.Provider>
       </JotaiTestProvider>
     );
     await waitFor(() => expect(container.querySelector('#global-filter')).toBeFalsy());

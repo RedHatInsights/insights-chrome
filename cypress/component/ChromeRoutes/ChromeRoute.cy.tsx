@@ -3,8 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ChromeRoute from '../../../src/components/ChromeRoute';
 import { initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import { ChromeUser } from '@redhat-cloud-services/types';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import ScalprumProvider from '@scalprum/react-core';
 import { initialize, removeScalprum } from '@scalprum/core';
@@ -77,13 +76,13 @@ const Wrapper = ({ children, getUser }: React.PropsWithChildren<{ getUser?: () =
   return (
     <IntlProvider locale="en">
       <ScalprumProvider scalprum={scalprum.current}>
-        <Provider store={createStore((state) => state)}>
+        <JotaiProvider>
           <BrowserRouter>
             <Routes>
               <Route path="*" element={children} />
             </Routes>
           </BrowserRouter>
-        </Provider>
+        </JotaiProvider>
       </ScalprumProvider>
     </IntlProvider>
   );

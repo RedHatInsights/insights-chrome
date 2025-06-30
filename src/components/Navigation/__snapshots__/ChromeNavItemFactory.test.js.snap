@@ -2,121 +2,127 @@
 
 exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
 <div>
-  <li
-    class="pf-v6-c-nav__item"
-    data-ouia-component-id="OUIA-Generated-NavExpandable-1"
-    data-ouia-component-type="PF6/NavExpandable"
-    data-ouia-safe="true"
-    data-quickstart-id="bar"
-  >
-    <button
-      aria-expanded="false"
-      class="pf-v6-c-nav__link"
-      id="test-id"
+  <div>
+    <li
+      class="pf-v6-c-nav__item"
+      data-ouia-component-id="OUIA-Generated-NavExpandable-1"
+      data-ouia-component-type="PF6/NavExpandable"
+      data-ouia-safe="true"
+      data-quickstart-id="bar"
     >
-      bar
-      <span
-        class="pf-v6-c-nav__toggle"
+      <button
+        aria-expanded="false"
+        class="pf-v6-c-nav__link"
+        id="test-id"
       >
+        bar
         <span
-          class="pf-v6-c-nav__toggle-icon"
+          class="pf-v6-c-nav__toggle"
         >
-          <svg
-            aria-hidden="true"
-            class="pf-v6-svg"
-            fill="currentColor"
-            height="1em"
-            role="img"
-            viewBox="0 0 256 512"
-            width="1em"
+          <span
+            class="pf-v6-c-nav__toggle-icon"
           >
-            <path
-              d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
-            />
-          </svg>
-        </span>
-      </span>
-    </button>
-    <section
-      aria-labelledby="test-id"
-      class="pf-v6-c-nav__subnav"
-      hidden=""
-    >
-      <ul
-        class="pf-v6-c-nav__list"
-        role="list"
-      >
-        <li
-          class="pf-v6-c-nav__item chr-c-navigation__item"
-          data-ouia-component-id="Foo"
-          data-ouia-component-type="PF6/NavItem"
-          data-ouia-safe="true"
-        >
-          <a
-            class="pf-v6-c-nav__link chr-c-navigation__item"
-            data-quickstart-id="foo"
-            data-testid="router-link"
-            href="/foo"
-            itemid="/foo"
-          >
-            <span
-              class="pf-v6-c-nav__link-text"
+            <svg
+              aria-hidden="true"
+              class="pf-v6-svg"
+              fill="currentColor"
+              height="1em"
+              role="img"
+              viewBox="0 0 256 512"
+              width="1em"
             >
-              Foo
-               
-            </span>
-          </a>
-        </li>
-      </ul>
-    </section>
-  </li>
+              <path
+                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+      <section
+        aria-labelledby="test-id"
+        class="pf-v6-c-nav__subnav"
+        hidden=""
+      >
+        <ul
+          class="pf-v6-c-nav__list"
+          role="list"
+        >
+          <li
+            class="pf-v6-c-nav__item chr-c-navigation__item"
+            data-ouia-component-id="Foo"
+            data-ouia-component-type="PF6/NavItem"
+            data-ouia-safe="true"
+          >
+            <a
+              class="pf-v6-c-nav__link chr-c-navigation__item"
+              data-quickstart-id="foo"
+              data-testid="router-link"
+              href="/foo"
+              itemid="/foo"
+            >
+              <span
+                class="pf-v6-c-nav__link-text"
+              >
+                Foo
+                 
+              </span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </li>
+  </div>
 </div>
 `;
 
 exports[`ChromeNavItemFactory should render chrome group nav item 1`] = `
 <div>
-  <section
-    aria-labelledby="group"
-    class="pf-v6-c-nav__section chr-c-section-nav"
-  >
-    <h2
-      class="pf-v6-c-nav__section-title"
-      id="group"
+  <div>
+    <section
+      aria-labelledby="group"
+      class="pf-v6-c-nav__section chr-c-section-nav"
     >
-      <div>
-        group
-      </div>
-    </h2>
-    <ul
-      class="pf-v6-c-nav__list chr-c-section-nav"
-      role="list"
-    />
-  </section>
+      <h2
+        class="pf-v6-c-nav__section-title"
+        id="group"
+      >
+        <div>
+          group
+        </div>
+      </h2>
+      <ul
+        class="pf-v6-c-nav__list chr-c-section-nav"
+        role="list"
+      />
+    </section>
+  </div>
 </div>
 `;
 
 exports[`ChromeNavItemFactory should render chrome nav item 1`] = `
 <div>
-  <li
-    class="pf-v6-c-nav__item chr-c-navigation__item"
-    data-ouia-component-id="Foo"
-    data-ouia-component-type="PF6/NavItem"
-    data-ouia-safe="true"
-  >
-    <a
-      class="pf-v6-c-nav__link chr-c-navigation__item"
-      data-quickstart-id="foo"
-      data-testid="router-link"
-      href="/foo"
-      itemid="/foo"
+  <div>
+    <li
+      class="pf-v6-c-nav__item chr-c-navigation__item"
+      data-ouia-component-id="Foo"
+      data-ouia-component-type="PF6/NavItem"
+      data-ouia-safe="true"
     >
-      <span
-        class="pf-v6-c-nav__link-text"
+      <a
+        class="pf-v6-c-nav__link chr-c-navigation__item"
+        data-quickstart-id="foo"
+        data-testid="router-link"
+        href="/foo"
+        itemid="/foo"
       >
-        Foo
-         
-      </span>
-    </a>
-  </li>
+        <span
+          class="pf-v6-c-nav__link-text"
+        >
+          Foo
+           
+        </span>
+      </a>
+    </li>
+  </div>
 </div>
 `;

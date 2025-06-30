@@ -4,7 +4,7 @@ import { ChromeAPI } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
 import { getSharedScope, initSharedScope } from '@scalprum/core';
-import { Store } from 'redux';
+
 import Feedback from '../../../src/components/Feedback';
 import { IntlProvider } from 'react-intl';
 import InternalChromeContext from '../../../src/utils/internalChromeContext';
@@ -90,10 +90,11 @@ describe('Feedback Modal', () => {
       quickstartsAPI: {} as ChromeAPI['quickStarts'],
       registerModule: () => {},
       setPageMetadata: () => {},
-      store: {
-        dispatch: () => {},
-      } as unknown as Store,
       useGlobalFilter: () => {},
+      isPreview: false,
+      addNavListener: () => {},
+      deleteNavListener: () => {},
+      addWsEventListener: () => {},
     });
     chromeContext = createContext(contextValue);
   });
