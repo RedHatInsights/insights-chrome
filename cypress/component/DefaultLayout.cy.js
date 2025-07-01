@@ -53,11 +53,15 @@ const chromeAuthContextValue = {
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-      <ScalprumProvider config={{virtualAssistant: {
-        name: 'virtualAssistant',
-        appId: 'virtualAssistant',
-        manifestLocation: '/foo/bar.json',
-      }}}>
+      <ScalprumProvider
+        config={{
+          virtualAssistant: {
+            name: 'virtualAssistant',
+            appId: 'virtualAssistant',
+            manifestLocation: '/foo/bar.json',
+          },
+        }}
+      >
         <Provider store={store}>
           <FeatureFlagsProvider>
             <BrowserRouter>{children}</BrowserRouter>

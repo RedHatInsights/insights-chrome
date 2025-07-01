@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, Suspense } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
