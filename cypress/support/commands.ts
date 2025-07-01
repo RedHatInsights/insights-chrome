@@ -55,7 +55,7 @@ Cypress.Commands.add('login', () => {
 
       cy.get('body').then((body) => {
         // Ephemeral login is different
-        if (body.find('#username').length > 0) {
+        if (body.find('#username :visible').length > 0) {
           // If the username field is present, it means we are on the SSO login page
           cy.get('#username').type(Cypress.env('E2E_USER'));
           cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
