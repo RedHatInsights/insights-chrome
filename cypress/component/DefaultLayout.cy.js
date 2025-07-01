@@ -53,7 +53,11 @@ const chromeAuthContextValue = {
 const Wrapper = ({ children, store }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-      <ScalprumProvider config={{}}>
+      <ScalprumProvider config={{virtualAssistant: {
+        name: 'virtualAssistant',
+        appId: 'virtualAssistant',
+        manifestLocation: '/foo/bar.json',
+      }}}>
         <Provider store={store}>
           <FeatureFlagsProvider>
             <BrowserRouter>{children}</BrowserRouter>
@@ -92,6 +96,21 @@ describe('<Default layout />', () => {
     });
     reduxRegistry.register(chromeReducer());
     store = reduxRegistry.getStore();
+    cy.intercept('GET', 'foo/bar.js*', {});
+    cy.intercept('GET', '/foo/bar.json', {
+      virtualAssistant: {
+        entry: ['/foo/bar.js'],
+      },
+    }).as('manifest');
+    cy.window().then((win) => {
+      win.virtualAssistant = {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        init: () => {},
+        get: () => () => ({
+          default: () => <div>Virtual Assistant</div>,
+        }),
+      };
+    });
     cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
       statusCode: 200,
     });

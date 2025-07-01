@@ -43,6 +43,11 @@ const initialScalprumConfig = {
     appId: 'TestApp',
     manifestLocation: '/foo/bar.json',
   },
+  virtualAssistant: {
+    name: 'virtualAssistant',
+    appId: 'virtualAssistant',
+    manifestLocation: '/foo/bar.json',
+  },
 };
 
 const initialModuleRoutes = [
@@ -51,6 +56,13 @@ const initialModuleRoutes = [
     path: '*',
     module: './TestApp',
     scope: 'TestApp',
+    manifestLocation: '/foo/bar.json',
+  },
+  {
+    absolute: true,
+    path: '*',
+    module: './AstroVirtualAssistant',
+    scope: 'virtualAssistant',
     manifestLocation: '/foo/bar.json',
   },
 ];
@@ -132,6 +144,9 @@ describe('HelpTopicManager', () => {
       TestApp: {
         entry: ['/foo/bar.js'],
       },
+      virtualAssistant: {
+        entry: ['/foo/bar.js'],
+      },
     }).as('manifest');
     cy.intercept('POST', '/api/featureflags/v0/client/metrics', {});
     cy.intercept('POST', 'https://api.segment.io/v1/*', {});
@@ -179,6 +194,12 @@ describe('HelpTopicManager', () => {
         init: () => {},
         get: () => () => ({
           default: TestComponent,
+        }),
+      };
+      win.virtualAssistant = {
+        init: () => {},
+        get: () => () => ({
+          default: () => <div>Virtual Assistant</div>,
         }),
       };
     });

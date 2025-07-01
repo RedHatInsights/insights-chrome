@@ -44,6 +44,7 @@ addMatchImageSnapshotCommand({
 declare global {
   interface Window {
     TestApp: any;
+    virtualAssistant: any;
   }
   namespace Cypress {
     interface Chainable {
