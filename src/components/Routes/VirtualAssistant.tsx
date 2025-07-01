@@ -7,7 +7,7 @@ import { useFlags } from '@unleash/proxy-client-react';
 import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
 
 import './virtual-assistant.scss';
-import ErrorBoundary from '../ErrorComponents/DefaultErrorComponent';
+import SilentErrorBoundary from './SilentErrorBoundary';
 
 const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.insights': '/openshift/insights/*' };
 
@@ -56,11 +56,11 @@ const VirtualAssistant = () => {
   };
 
   return (
-    <ErrorBoundary>
+    <SilentErrorBoundary>
       <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
         <ScalprumComponent {...virtualAssistantProps} />
       </div>
-    </ErrorBoundary>
+    </SilentErrorBoundary>
   );
 };
 
