@@ -1,5 +1,3 @@
-import get from 'lodash/get';
-import { Store } from 'redux';
 import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
@@ -130,26 +128,6 @@ export function pageRequiresAuthentication() {
   }
 
   return false;
-}
-
-/**
- * Creates a redux listener that watches the state on given path (e.g. chrome.appNav) and calls
- * the given function when the state on the given path changes.
- *
- * The function is called with two parameters: current state value on the path, store reference
- */
-export function createReduxListener(store: Store, path: string, fn: (current: any, store: Store) => void) {
-  let previous: any = undefined;
-
-  return () => {
-    const state = store.getState();
-    const current = get(state, path);
-
-    if (current !== previous) {
-      previous = current;
-      fn(current, store);
-    }
-  };
 }
 
 export function deleteLocalStorageItems(keys: string[]) {

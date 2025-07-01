@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { createStore as reduxCreateStore } from 'redux';
+
 import { removeScalprum } from '@scalprum/core';
 import type { AuthContextProps } from 'react-oidc-context';
 import { ChromeUser } from '@redhat-cloud-services/types';
@@ -32,7 +31,6 @@ const ErrorCatcher = ({ children }: { children: React.ReactNode }) => {
 };
 
 function createEnv(code: string, childNode: React.ReactNode) {
-  const reduxStore = reduxCreateStore(() => ({ chrome: {} }));
   const chromeStore = createStore();
   chromeStore.set(activeModuleAtom, undefined);
   chromeStore.set(gatewayErrorAtom, undefined);
@@ -51,13 +49,11 @@ function createEnv(code: string, childNode: React.ReactNode) {
     }
     return (
       <JotaiProvider store={chromeStore}>
-        <Provider store={reduxStore}>
-          <MemoryRouter initialEntries={['/']}>
-            <IntlProvider locale="en">
-              <ErrorCatcher>{childNode}</ErrorCatcher>
-            </IntlProvider>
-          </MemoryRouter>
-        </Provider>
+        <MemoryRouter initialEntries={['/']}>
+          <IntlProvider locale="en">
+            <ErrorCatcher>{childNode}</ErrorCatcher>
+          </IntlProvider>
+        </MemoryRouter>
       </JotaiProvider>
     );
   };
@@ -72,6 +68,7 @@ describe('Gateway errors', () => {
       },
       getToken: () => Promise.resolve('a.a'),
       getUserPermissions: () => Promise.resolve([]),
+      isPreview: false,
     });
   });
   after(() => {

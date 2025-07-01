@@ -2,8 +2,7 @@ import React from 'react';
 import Tools from '../Tools';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { act, render } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
@@ -47,9 +46,9 @@ describe('Tools', () => {
       container = render(
         <MemoryRouter>
           <ScalprumProvider config={{ notifications: { manifestLocation: '/apps/notifications/fed-mods.json' } }}>
-            <Provider store={createStore((state = { chrome: { user: {} } }) => state)}>
+            <JotaiProvider>
               <Tools onClick={mockClick} />
-            </Provider>
+            </JotaiProvider>
           </ScalprumProvider>
         </MemoryRouter>
       ).container;

@@ -114,7 +114,7 @@ export const generateFilter = () => {
 
   return {
     Workloads,
-    ...(SIDs && { [SID_KEY]: SIDs }),
+    ...(Object.keys(SIDs).length > 0 ? { [SID_KEY]: SIDs } : {}),
     ...tags,
   };
 };
@@ -124,9 +124,9 @@ export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
     const { Workloads, [SID_KEY]: SID, ...tags } = filter;
-    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
+    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) }), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
@@ -137,15 +137,10 @@ export const flatTags = memoize(
           }`;
         })
     );
-    return format
-      ? [
-          Workloads,
-          Object.entries<any>(SID || {})
-            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
-            .reduce<any>((acc, [key]) => [...acc, key], []),
-          mappedTags,
-        ]
-      : mappedTags;
+    const sidArray = Object.entries<any>(SID || {})
+      .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
+      .reduce<any>((acc, [key]) => [...acc, key], []);
+    return format ? [Workloads, sidArray, mappedTags] : mappedTags;
   },
   (filter = {}, encode, format) =>
     `${Object.entries(filter)

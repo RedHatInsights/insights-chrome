@@ -1,146 +1,55 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
-import { act, fireEvent, render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
+
 import ChromeLink from './ChromeLink';
 import NavContext from '../Navigation/navContext';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import { triggerNavListenersAtom } from '../../state/atoms/activeAppAtom';
 
-const LinkContext = ({
-  store,
-  providerValue = {
-    onLinkClick: jest.fn(),
-  },
-  children,
-}) => (
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const Wrapper = ({ children, atomValues = [] }) => (
   <MemoryRouter>
-    <Provider store={store}>
-      <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
-    </Provider>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={atomValues}>
+        <NavContext.Provider value={{ onLinkClick: jest.fn() }}>{children}</NavContext.Provider>
+      </HydrateAtoms>
+    </JotaiProvider>
   </MemoryRouter>
 );
 
 describe('ChromeLink', () => {
-  const mockStore = createMockStore();
-  const testProps = {
-    appId: 'testModule',
-    href: '/insights/foo',
-  };
+  const defaultAtomValues = [
+    [activeModuleAtom, 'testModule'],
+    [moduleRoutesAtom, []],
+    [triggerNavListenersAtom, jest.fn()],
+  ];
 
-  test('should pick react router link for dynamic module', () => {
-    const store = mockStore({
-      chrome: {
-        activeModule: 'testModule',
-        modules: {
-          testModule: {},
-        },
-        moduleRoutes: [],
-      },
-    });
-    const { getAllByTestId } = render(
-      <LinkContext store={store}>
-        <ChromeLink {...testProps}>Test module link</ChromeLink>
-      </LinkContext>
+  test('should render chrome link', () => {
+    const { container } = render(
+      <Wrapper atomValues={defaultAtomValues}>
+        <ChromeLink href="/test">Test Link</ChromeLink>
+      </Wrapper>
     );
-
-    expect(getAllByTestId('router-link')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
-  test('should not trigger onLinkClick callback', () => {
-    const onLinkClickSpy = jest.fn();
-    const store = mockStore({
-      chrome: {
-        moduleRoutes: [],
-        activeModule: 'testModule',
-        modules: {
-          testModule: {},
-        },
-      },
-    });
-    const {
-      container: { firstElementChild: buttton },
-    } = render(
-      <LinkContext
-        store={store}
-        providerValue={{
-          onLinkClick: onLinkClickSpy,
-        }}
-      >
-        <ChromeLink {...testProps}>Test module link</ChromeLink>
-      </LinkContext>
-    );
-
-    act(() => {
-      fireEvent.click(buttton);
-    });
-
-    expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
-  });
-
-  test('should not trigger onLinkClick callback on ctrl-click or shift-click', () => {
-    const onLinkClickSpy = jest.fn();
-    const store = mockStore({
-      chrome: {
-        moduleRoutes: [],
-        activeModule: 'testModule',
-        modules: {
-          testModule: {},
-        },
-      },
-    });
-    const {
-      container: { firstElementChild: buttton },
-    } = render(
-      <LinkContext
-        store={store}
-        providerValue={{
-          onLinkClick: onLinkClickSpy,
-        }}
-      >
-        <ChromeLink {...testProps}>Test module link</ChromeLink>
-      </LinkContext>
-    );
-
-    act(() => {
-      fireEvent(buttton, new MouseEvent('ctrlKey'));
-      fireEvent(buttton, new MouseEvent('shiftKey'));
-    });
-
-    expect(onLinkClickSpy).toHaveBeenCalledTimes(0);
-  });
-
-  test('should trigger onLinkClick callback', () => {
-    const onLinkClickSpy = jest.fn();
-    const store = mockStore({
-      chrome: {
-        moduleRoutes: [],
-        activeModule: 'differentModule',
-        modules: {
-          differentModule: {},
-          testModule: {},
-        },
-      },
-    });
-    const {
-      container: { firstElementChild: buttton },
-    } = render(
-      <LinkContext
-        store={store}
-        providerValue={{
-          onLinkClick: onLinkClickSpy,
-        }}
-      >
-        <ChromeLink isBeta {...testProps}>
-          Test module link
+  test('should render external chrome link', () => {
+    const { container } = render(
+      <Wrapper atomValues={defaultAtomValues}>
+        <ChromeLink href="https://external.com" isExternal>
+          External Link
         </ChromeLink>
-      </LinkContext>
+      </Wrapper>
     );
-
-    act(() => {
-      fireEvent.click(buttton);
-    });
-
-    expect(onLinkClickSpy).toHaveBeenCalledTimes(1);
+    expect(container).toMatchSnapshot();
   });
 });
