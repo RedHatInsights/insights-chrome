@@ -27,6 +27,7 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const InternalButton = () => (
   <Button
@@ -76,6 +77,7 @@ const Tools = () => {
   const enableIntegrations = useFlag('platform.sources.integrations');
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
+  const helpPanelEnabled = useFlag('platform.chrome.help-panel');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
@@ -158,50 +160,75 @@ const Tools = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
   };
 
+  const {
+    drawerActions: { toggleDrawerContent },
+  } = useContext(InternalChromeContext);
+
   /* list out the items for the about menu */
-  const aboutMenuDropdownItems = [
-    {
-      title: intl.formatMessage(messages.apiDocumentation),
-      onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
-      isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.statusPage),
-      onClick: () => window.open('https://status.redhat.com/', '_blank'),
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.supportOptions),
-      onClick: () => (window.location.href = supportOptionsUrl()),
-    },
-    {
-      title: intl.formatMessage(messages.insightsRhelDocumentation),
-      onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
-      isHidden: getSection() !== 'insights' || isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.demoMode),
-      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
-      isHidden: !isDemoAcc,
-    },
-    ...(enableGlobalLearningResourcesPage
-      ? [
-          {
-            title: intl.formatMessage(messages.globalLearningResourcesPage),
-            url: '/learning-resources',
-            isHidden: false,
-            appId: 'learningResources',
-            target: '_self',
+  const aboutMenuDropdownItems = helpPanelEnabled
+    ? [
+        {
+          title: intl.formatMessage(messages.helpPanel),
+          onClick: () => {
+            toggleDrawerContent({
+              scope: 'learningResources',
+              module: './HelpPanel',
+            });
           },
-        ]
-      : []),
-  ];
+        },
+        {
+          title: intl.formatMessage(messages.statusPage),
+          onClick: () => window.open('https://status.redhat.com/', '_blank'),
+          isHidden: isITLessEnv,
+        },
+        {
+          title: intl.formatMessage(messages.supportOptions),
+          onClick: () => (window.location.href = supportOptionsUrl()),
+        },
+      ]
+    : [
+        {
+          title: intl.formatMessage(messages.apiDocumentation),
+          onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
+          isHidden: isITLessEnv,
+        },
+        {
+          title: intl.formatMessage(messages.openSupportCase),
+          onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
+          isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
+          isHidden: isITLessEnv,
+        },
+        {
+          title: intl.formatMessage(messages.statusPage),
+          onClick: () => window.open('https://status.redhat.com/', '_blank'),
+          isHidden: isITLessEnv,
+        },
+        {
+          title: intl.formatMessage(messages.supportOptions),
+          onClick: () => (window.location.href = supportOptionsUrl()),
+        },
+        {
+          title: intl.formatMessage(messages.insightsRhelDocumentation),
+          onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
+          isHidden: getSection() !== 'insights' || isITLessEnv,
+        },
+        {
+          title: intl.formatMessage(messages.demoMode),
+          onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
+          isHidden: !isDemoAcc,
+        },
+        ...(enableGlobalLearningResourcesPage
+          ? [
+              {
+                title: intl.formatMessage(messages.globalLearningResourcesPage),
+                url: '/learning-resources',
+                isHidden: false,
+                appId: 'learningResources',
+                target: '_self',
+              },
+            ]
+          : []),
+      ];
 
   /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
@@ -303,23 +330,15 @@ const Tools = () => {
               <React.Fragment key={key}>
                 {action.title === 'separator' ? (
                   <Divider component="li" />
-                ) : (
-                  <DropdownItem
-                    {...(action.onClick
-                      ? {
-                          component: 'button',
-                          onClick: action.onClick,
-                        }
-                      : {
-                          href: action.url,
-                          component: 'a',
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                        })}
-                  >
+                ) : 'onClick' in action ? (
+                  <DropdownItem component="button" onClick={action.onClick}>
                     {action.title}
                   </DropdownItem>
-                )}
+                ) : 'url' in action ? (
+                  <DropdownItem href={action.url} component="a" target={action.target || '_blank'} rel="noopener noreferrer">
+                    {action.title}
+                  </DropdownItem>
+                ) : null}
               </React.Fragment>
             ))}
           />

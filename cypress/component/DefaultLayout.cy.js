@@ -11,6 +11,7 @@ import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import Footer from '../../src/components/Footer/Footer';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
 import chromeStore from '../../src/state/chromeStore';
+import InternalChromeContext from '../../src/utils/internalChromeContext';
 
 const testUser = {
   identity: {
@@ -49,16 +50,26 @@ const chromeAuthContextValue = {
   user: testUser,
 };
 
+const mockInternalChromeContext = {
+  drawerActions: {
+    toggleDrawerContent: () => {
+      console.log('mock: toggleDrawerContent called');
+    },
+  },
+};
+
 const Wrapper = ({ children }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-      <ScalprumProvider config={{}}>
-        <JotaiProvider store={chromeStore}>
-          <FeatureFlagsProvider>
-            <BrowserRouter>{children}</BrowserRouter>
-          </FeatureFlagsProvider>
-        </JotaiProvider>
-      </ScalprumProvider>
+      <InternalChromeContext.Provider value={mockInternalChromeContext}>
+        <ScalprumProvider config={{}}>
+          <JotaiProvider store={chromeStore}>
+            <FeatureFlagsProvider>
+              <BrowserRouter>{children}</BrowserRouter>
+            </FeatureFlagsProvider>
+          </JotaiProvider>
+        </ScalprumProvider>
+      </InternalChromeContext.Provider>
     </ChromeAuthContext.Provider>
   </IntlProvider>
 );

@@ -4,6 +4,7 @@ import { ScalprumProvider } from '@scalprum/react-core';
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import InternalChromeContext from '../../../utils/internalChromeContext';
 
 jest.mock('../UserToggle', () => () => '<UserToggle />');
 jest.mock('../ToolbarToggle', () => () => '<ToolbarToggle />');
@@ -26,6 +27,12 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
+const mockInternalChromeContext = {
+  drawerActions: {
+    toggleDrawerContent: jest.fn(),
+  },
+};
+
 beforeAll(() => {
   global.__webpack_init_sharing__ = () => undefined;
   global.__webpack_share_scopes__ = { default: {} };
@@ -47,7 +54,9 @@ describe('Tools', () => {
         <MemoryRouter>
           <ScalprumProvider config={{ notifications: { manifestLocation: '/apps/notifications/fed-mods.json' } }}>
             <JotaiProvider>
-              <Tools onClick={mockClick} />
+              <InternalChromeContext.Provider value={mockInternalChromeContext}>
+                <Tools onClick={mockClick} />
+              </InternalChromeContext.Provider>
             </JotaiProvider>
           </ScalprumProvider>
         </MemoryRouter>
