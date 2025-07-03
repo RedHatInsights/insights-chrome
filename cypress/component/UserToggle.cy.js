@@ -1,13 +1,12 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
-import chromeReducer, { chromeInitialState } from '../../src/redux';
-import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import { IntlProvider } from 'react-intl';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import UserToggle from '../../src/components/Header/UserToggle';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
+import chromeStore from '../../src/state/chromeStore';
 
 const testUser = {
   identity: {
@@ -46,33 +45,22 @@ const chromeAuthContextValue = {
   user: testUser,
 };
 
-const Wrapper = ({ children, store }) => (
+const Wrapper = ({ children }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
       <ScalprumProvider config={{}}>
-        <Provider store={store}>
+        <JotaiProvider store={chromeStore}>
           <FeatureFlagsProvider>
             <BrowserRouter>{children}</BrowserRouter>
           </FeatureFlagsProvider>
-        </Provider>
+        </JotaiProvider>
       </ScalprumProvider>
     </ChromeAuthContext.Provider>
   </IntlProvider>
 );
 
 describe('<UserToggle />', () => {
-  let store;
   beforeEach(() => {
-    const reduxRegistry = new ReducerRegistry({
-      ...chromeInitialState,
-      chrome: {
-        modules: {},
-        ...chromeInitialState.chrome,
-        user: testUser,
-      },
-    });
-    reduxRegistry.register(chromeReducer());
-    store = reduxRegistry.getStore();
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {
@@ -89,7 +77,7 @@ describe('<UserToggle />', () => {
     cy.viewport(1280, 720);
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <UserToggle />
         </Wrapper>
       )
@@ -100,7 +88,7 @@ describe('<UserToggle />', () => {
   it('should open toggle', () => {
     cy.viewport(1280, 720);
     cy.mount(
-      <Wrapper store={store}>
+      <Wrapper>
         <UserToggle />
       </Wrapper>
     ).get('html');

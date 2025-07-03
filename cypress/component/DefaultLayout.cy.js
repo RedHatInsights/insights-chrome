@@ -1,16 +1,17 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
-import chromeReducer, { chromeInitialState } from '../../src/redux';
 import DefaultLayout from '../../src/layouts/DefaultLayout';
-import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
-import { Nav, NavList } from '@patternfly/react-core';
+import { Nav } from '@patternfly/react-core/dist/dynamic/components/Nav';
+import { NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import ChromeNavItem from '../../src/components/Navigation/ChromeNavItem';
 import { IntlProvider } from 'react-intl';
 import { FeatureFlagsProvider } from '../../src/components/FeatureFlags';
 import Footer from '../../src/components/Footer/Footer';
 import ChromeAuthContext from '../../src/auth/ChromeAuthContext';
+import chromeStore from '../../src/state/chromeStore';
+import InternalChromeContext from '../../src/utils/internalChromeContext';
 
 const testUser = {
   identity: {
@@ -49,16 +50,26 @@ const chromeAuthContextValue = {
   user: testUser,
 };
 
-const Wrapper = ({ children, store }) => (
+const mockInternalChromeContext = {
+  drawerActions: {
+    toggleDrawerContent: () => {
+      console.log('mock: toggleDrawerContent called');
+    },
+  },
+};
+
+const Wrapper = ({ children }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-      <ScalprumProvider config={{}}>
-        <Provider store={store}>
-          <FeatureFlagsProvider>
-            <BrowserRouter>{children}</BrowserRouter>
-          </FeatureFlagsProvider>
-        </Provider>
-      </ScalprumProvider>
+      <InternalChromeContext.Provider value={mockInternalChromeContext}>
+        <ScalprumProvider config={{}}>
+          <JotaiProvider store={chromeStore}>
+            <FeatureFlagsProvider>
+              <BrowserRouter>{children}</BrowserRouter>
+            </FeatureFlagsProvider>
+          </JotaiProvider>
+        </ScalprumProvider>
+      </InternalChromeContext.Provider>
     </ChromeAuthContext.Provider>
   </IntlProvider>
 );
@@ -79,18 +90,10 @@ const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
 };
 
 describe('<Default layout />', () => {
-  let store;
   beforeEach(() => {
-    const reduxRegistry = new ReducerRegistry({
-      ...chromeInitialState,
-      chrome: {
-        modules: {},
-        ...chromeInitialState.chrome,
-        user: testUser,
-      },
+    cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
+      statusCode: 200,
     });
-    reduxRegistry.register(chromeReducer());
-    store = reduxRegistry.getStore();
     cy.intercept('GET', '/api/featureflags/*', {
       toggles: [
         {
@@ -107,6 +110,7 @@ describe('<Default layout />', () => {
     });
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
+    cy.intercept('GET', '/api/chrome-service/v1/static/search-index-generated.json', []);
   });
 
   it('render correctly with few nav items', () => {
@@ -120,7 +124,7 @@ describe('<Default layout />', () => {
     }).as('navRequest');
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <DefaultLayout Sidebar={SidebarMock} />
         </Wrapper>
       )
@@ -140,7 +144,7 @@ describe('<Default layout />', () => {
     }).as('navRequest');
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <DefaultLayout Sidebar={SidebarMock} />
         </Wrapper>
       )
@@ -160,7 +164,7 @@ describe('<Default layout />', () => {
     }).as('navRequest');
     const elem = cy
       .mount(
-        <Wrapper store={store}>
+        <Wrapper>
           <DefaultLayout Sidebar={SidebarMock} Footer={Footer} />
         </Wrapper>
       )

@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { act, render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
+import { useHydrateAtoms } from 'jotai/utils';
 import Navigation from './';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 jest.mock('@unleash/proxy-client-react', () => {
   const actual = jest.requireActual('@unleash/proxy-client-react');
@@ -17,42 +18,26 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
-const NavContextWrapper = ({ store, children, initialEntries = ['/insights/dashboard'] }) => (
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const NavContextWrapper = ({ initialValues, children, initialEntries = ['/insights/dashboard'] }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <Provider store={store}>{children}</Provider>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </JotaiProvider>
   </MemoryRouter>
 );
 
 describe('ChromeNavItem', () => {
-  const mockStore = createMockStore();
   const navTitle = 'Nav title';
-  const store = mockStore({
-    chrome: {
-      activeModule: 'insights',
-      modules: {
-        insights: {},
-      },
-      navigation: {
-        insights: {
-          title: navTitle,
-          navItems: [],
-        },
-      },
-    },
-  });
+  const defaultAtomValues = [[isPreviewAtom, false]];
 
   test('should render navigation loader if schema was not loaded', () => {
-    const store = mockStore({
-      chrome: {
-        activeModule: 'insights',
-        modules: {
-          insights: {},
-        },
-        navigation: {},
-      },
-    });
     const { container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper initialValues={defaultAtomValues}>
         <Navigation />
       </NavContextWrapper>
     );
@@ -65,7 +50,7 @@ describe('ChromeNavItem', () => {
     let container;
     await act(async () => {
       const { container: iContainer } = render(
-        <NavContextWrapper store={store}>
+        <NavContextWrapper initialValues={defaultAtomValues}>
           <Navigation loaded schema={{ navItems: [], title: navTitle }} />
         </NavContextWrapper>
       );

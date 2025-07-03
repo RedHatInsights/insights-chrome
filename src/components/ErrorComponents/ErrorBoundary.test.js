@@ -7,19 +7,12 @@ jest.mock('@sentry/browser', () => ({
 }));
 
 import ErrorBoundary from './ErrorBoundary';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { chromeInitialState } from '../../redux';
 
 const Throw = ({ undefinedProp }) => {
   // new Error('Expected error');
   return undefinedProp.map(() => <div key="foo">Foo</div>);
 };
-const DummyComponent = ({ shouldThrow = false }) => (
-  <Provider store={createStore(() => chromeInitialState)}>
-    <ErrorBoundary>{shouldThrow ? <Throw /> : <button></button>}</ErrorBoundary>;
-  </Provider>
-);
+const DummyComponent = ({ shouldThrow = false }) => <ErrorBoundary>{shouldThrow ? <Throw /> : <button></button>}</ErrorBoundary>;
 describe('ErrorBoundary', () => {
   test('should render component with no error', () => {
     const { container } = render(<DummyComponent />);

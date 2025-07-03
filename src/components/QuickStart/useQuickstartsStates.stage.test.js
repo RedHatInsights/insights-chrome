@@ -1,7 +1,6 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
+import { Provider as JotaiProvider } from 'jotai';
 import * as axios from 'axios';
 
 import useQuickstartsStates from './useQuickstartsStates';
@@ -38,10 +37,9 @@ const mockChromeContextValue = {
   ready: true,
 };
 
-const emptyStore = createStore(() => ({}));
-const WrapperComponent = ({ children, store = emptyStore, contextValue = mockChromeContextValue }) => (
+const WrapperComponent = ({ children, contextValue = mockChromeContextValue }) => (
   <ChromeAuthContext.Provider value={contextValue}>
-    <Provider store={store}>{children}</Provider>
+    <JotaiProvider>{children}</JotaiProvider>
   </ChromeAuthContext.Provider>
 );
 
@@ -69,7 +67,7 @@ describe('useQuickstartsStates stage', () => {
     const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
-      const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
+      const { result: resultInternal } = renderHook(() => useQuickstartsStates('123'), { wrapper });
       result = resultInternal;
     });
 
@@ -96,7 +94,7 @@ describe('useQuickstartsStates stage', () => {
     const wrapper = ({ children }) => <WrapperComponent>{children}</WrapperComponent>;
     let result;
     await act(async () => {
-      const { result: resultInternal } = renderHook(() => useQuickstartsStates(), { wrapper });
+      const { result: resultInternal } = renderHook(() => useQuickstartsStates('123'), { wrapper });
       result = resultInternal;
     });
 
