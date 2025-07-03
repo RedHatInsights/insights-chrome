@@ -8,7 +8,6 @@ exports[`Tools should render correctly 1`] = `
     style="display: contents;"
   >
     <button
-      aria-disabled="false"
       aria-expanded="false"
       aria-label="Settings menu"
       class="pf-v6-c-button pf-m-control tooltip-button-settings-cy"

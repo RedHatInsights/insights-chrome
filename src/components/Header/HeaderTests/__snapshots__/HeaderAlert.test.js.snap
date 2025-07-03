@@ -38,7 +38,6 @@ exports[`HeaderAlert should render correctly dismissable 1`] = `
     class="pf-v6-c-alert__action"
   >
     <button
-      aria-disabled="false"
       aria-label="Close Info alert: alert: test"
       class="pf-v6-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-2"
@@ -106,7 +105,6 @@ exports[`HeaderAlert should render correctly not dismissable 1`] = `
     class="pf-v6-c-alert__action"
   >
     <button
-      aria-disabled="false"
       aria-label="Close Info alert: alert: test"
       class="pf-v6-c-button pf-m-plain"
       data-ouia-component-id="OUIA-Generated-Button-plain-1"
