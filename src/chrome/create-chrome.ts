@@ -130,6 +130,14 @@ export const createChromeContext = ({
       // Add the callback to the listeners (cast to GenericCB for GLOBAL_FILTER_UPDATE)
       eventListeners.get('GLOBAL_FILTER_UPDATE')!.set(listenerId, callback as GenericCB);
 
+      // Dispatch current state to new listener immediately (on mount)
+      try {
+        const currentSelectedTags = chromeStore.get(selectedTagsAtom);
+        (callback as GenericCB)({ data: currentSelectedTags });
+      } catch (error) {
+        console.error('Error dispatching initial GLOBAL_FILTER_UPDATE state:', error);
+      }
+
       // Return unsubscribe function
       return () => {
         const listeners = eventListeners.get('GLOBAL_FILTER_UPDATE');

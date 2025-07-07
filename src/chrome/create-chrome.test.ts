@@ -148,4 +148,16 @@ describe('create chrome', () => {
     await getUserPermissions(promiseSpy as unknown as string);
     expect(promiseSpy).toHaveBeenCalledWith('mocked-user-permissions');
   });
+
+  it('should dispatch GLOBAL_FILTER_UPDATE event immediately when listener is added', () => {
+    const chrome = createChromeContext(chromeContextOptionsMock);
+    const mockCallback = jest.fn();
+
+    // Add a GLOBAL_FILTER_UPDATE listener
+    chrome.on('GLOBAL_FILTER_UPDATE', mockCallback);
+
+    // The callback should be called immediately with the current global filter state
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+    expect(mockCallback).toHaveBeenCalledWith({ data: {} });
+  });
 });
