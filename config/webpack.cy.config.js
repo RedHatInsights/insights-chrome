@@ -107,7 +107,6 @@ const JSConfig = {
         { react: { singleton: true, eager: true } },
         { 'react-dom': { singleton: true, eager: true } },
         { 'react-router-dom': { singleton: true } },
-        { 'react-redux': {} },
         { '@openshift/dynamic-plugin-sdk': { singleton: true } },
         { '@patternfly/react-core': {} },
         { '@patternfly/quickstarts': { singleton: true } },

@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChromeLink should render chrome link 1`] = `
+<div>
+  <a
+    class=""
+    data-quickstart-id="test"
+    data-testid="router-link"
+    href="/test"
+  >
+    Test Link
+  </a>
+</div>
+`;
+
+exports[`ChromeLink should render external chrome link 1`] = `
+<div>
+  <a
+    data-testid="native-link"
+    href="https://external.com"
+    rel="noreferrer noopener"
+    target="_blank"
+  >
+    External Link
+  </a>
+</div>
+`;

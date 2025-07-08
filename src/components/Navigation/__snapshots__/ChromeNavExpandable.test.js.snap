@@ -1,149 +1,157 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ChromeNavExpandable should not render nav item expandable 1`] = `<div />`;
+exports[`ChromeNavExpandable should not render nav item expandable 1`] = `
+<div>
+  <div />
+</div>
+`;
 
 exports[`ChromeNavExpandable should render nav item expandable 1`] = `
 <div>
-  <li
-    class="pf-v6-c-nav__item"
-    data-ouia-component-id="OUIA-Generated-NavExpandable-1"
-    data-ouia-component-type="PF6/NavExpandable"
-    data-ouia-safe="true"
-    data-quickstart-id="Foo"
-  >
-    <button
-      aria-expanded="false"
-      class="pf-v6-c-nav__link"
-      id="test-id"
+  <div>
+    <li
+      class="pf-v6-c-nav__item"
+      data-ouia-component-id="OUIA-Generated-NavExpandable-1"
+      data-ouia-component-type="PF6/NavExpandable"
+      data-ouia-safe="true"
+      data-quickstart-id="Foo"
     >
-      Foo
-      <span
-        class="pf-v6-c-nav__toggle"
+      <button
+        aria-expanded="false"
+        class="pf-v6-c-nav__link"
+        id="test-id"
       >
+        Foo
         <span
-          class="pf-v6-c-nav__toggle-icon"
+          class="pf-v6-c-nav__toggle"
         >
-          <svg
-            aria-hidden="true"
-            class="pf-v6-svg"
-            fill="currentColor"
-            height="1em"
-            role="img"
-            viewBox="0 0 256 512"
-            width="1em"
+          <span
+            class="pf-v6-c-nav__toggle-icon"
           >
-            <path
-              d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
-            />
-          </svg>
-        </span>
-      </span>
-    </button>
-    <section
-      aria-labelledby="test-id"
-      class="pf-v6-c-nav__subnav"
-      hidden=""
-    >
-      <ul
-        class="pf-v6-c-nav__list"
-        role="list"
-      >
-        <li
-          class="pf-v6-c-nav__item chr-c-navigation__item"
-          data-ouia-component-id="title"
-          data-ouia-component-type="PF6/NavItem"
-          data-ouia-safe="true"
-        >
-          <a
-            class="pf-v6-c-nav__link chr-c-navigation__item"
-            data-quickstart-id="foo_bar"
-            data-testid="router-link"
-            href="/foo/bar"
-            itemid="/foo/bar"
-          >
-            <span
-              class="pf-v6-c-nav__link-text"
+            <svg
+              aria-hidden="true"
+              class="pf-v6-svg"
+              fill="currentColor"
+              height="1em"
+              role="img"
+              viewBox="0 0 256 512"
+              width="1em"
             >
-              Title
-               
-            </span>
-          </a>
-        </li>
-      </ul>
-    </section>
-  </li>
+              <path
+                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+      <section
+        aria-labelledby="test-id"
+        class="pf-v6-c-nav__subnav"
+        hidden=""
+      >
+        <ul
+          class="pf-v6-c-nav__list"
+          role="list"
+        >
+          <li
+            class="pf-v6-c-nav__item chr-c-navigation__item"
+            data-ouia-component-id="title"
+            data-ouia-component-type="PF6/NavItem"
+            data-ouia-safe="true"
+          >
+            <a
+              class="pf-v6-c-nav__link chr-c-navigation__item"
+              data-quickstart-id="foo_bar"
+              data-testid="router-link"
+              href="/foo/bar"
+              itemid="/foo/bar"
+            >
+              <span
+                class="pf-v6-c-nav__link-text"
+              >
+                Title
+                 
+              </span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </li>
+  </div>
 </div>
 `;
 
 exports[`ChromeNavExpandable should render nav item expandable with items 1`] = `
 <div>
-  <li
-    class="pf-v6-c-nav__item"
-    data-ouia-component-id="OUIA-Generated-NavExpandable-2"
-    data-ouia-component-type="PF6/NavExpandable"
-    data-ouia-safe="true"
-    data-quickstart-id="Foo"
-  >
-    <button
-      aria-expanded="false"
-      class="pf-v6-c-nav__link"
-      id="test-id"
+  <div>
+    <li
+      class="pf-v6-c-nav__item"
+      data-ouia-component-id="OUIA-Generated-NavExpandable-2"
+      data-ouia-component-type="PF6/NavExpandable"
+      data-ouia-safe="true"
+      data-quickstart-id="Foo"
     >
-      Foo
-      <span
-        class="pf-v6-c-nav__toggle"
+      <button
+        aria-expanded="false"
+        class="pf-v6-c-nav__link"
+        id="test-id"
       >
+        Foo
         <span
-          class="pf-v6-c-nav__toggle-icon"
+          class="pf-v6-c-nav__toggle"
         >
-          <svg
-            aria-hidden="true"
-            class="pf-v6-svg"
-            fill="currentColor"
-            height="1em"
-            role="img"
-            viewBox="0 0 256 512"
-            width="1em"
+          <span
+            class="pf-v6-c-nav__toggle-icon"
           >
-            <path
-              d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
-            />
-          </svg>
-        </span>
-      </span>
-    </button>
-    <section
-      aria-labelledby="test-id"
-      class="pf-v6-c-nav__subnav"
-      hidden=""
-    >
-      <ul
-        class="pf-v6-c-nav__list"
-        role="list"
-      >
-        <li
-          class="pf-v6-c-nav__item chr-c-navigation__item"
-          data-ouia-component-id="Sub Item"
-          data-ouia-component-type="PF6/NavItem"
-          data-ouia-safe="true"
-        >
-          <a
-            class="pf-v6-c-nav__link chr-c-navigation__item"
-            data-quickstart-id="foo"
-            data-testid="router-link"
-            href="/foo"
-            itemid="/foo"
-          >
-            <span
-              class="pf-v6-c-nav__link-text"
+            <svg
+              aria-hidden="true"
+              class="pf-v6-svg"
+              fill="currentColor"
+              height="1em"
+              role="img"
+              viewBox="0 0 256 512"
+              width="1em"
             >
-              Sub Item
-               
-            </span>
-          </a>
-        </li>
-      </ul>
-    </section>
-  </li>
+              <path
+                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+              />
+            </svg>
+          </span>
+        </span>
+      </button>
+      <section
+        aria-labelledby="test-id"
+        class="pf-v6-c-nav__subnav"
+        hidden=""
+      >
+        <ul
+          class="pf-v6-c-nav__list"
+          role="list"
+        >
+          <li
+            class="pf-v6-c-nav__item chr-c-navigation__item"
+            data-ouia-component-id="Sub Item"
+            data-ouia-component-type="PF6/NavItem"
+            data-ouia-safe="true"
+          >
+            <a
+              class="pf-v6-c-nav__link chr-c-navigation__item"
+              data-quickstart-id="foo"
+              data-testid="router-link"
+              href="/foo"
+              itemid="/foo"
+            >
+              <span
+                class="pf-v6-c-nav__link-text"
+              >
+                Sub Item
+                 
+              </span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </li>
+  </div>
 </div>
 `;

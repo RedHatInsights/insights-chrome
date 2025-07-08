@@ -77,6 +77,11 @@ export default defineMessages({
     description: 'Status page',
     defaultMessage: 'Status page',
   },
+  helpPanel: {
+    id: 'helpPanel',
+    description: 'Help panel',
+    defaultMessage: 'Help panel',
+  },
   knownOutages: {
     id: 'knownOutages',
     description: 'for known outages.',

@@ -1,34 +1,28 @@
 import React from 'react';
-import UserIcon from '../UserIcon';
-import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 
-describe('<UserIcon />', () => {
-  let initialState;
-  let mockStore;
-  beforeEach(() => {
-    mockStore = configureStore();
-    initialState = {
-      chrome: {
-        user: {
-          identity: {
-            user: {
-              username: 'test-user',
-            },
-          },
-        },
-      },
-    };
-  });
+import UserIcon from '../UserIcon';
+import ChromeAuthContext from '../../../auth/ChromeAuthContext';
 
-  it('should render correctly with initial state', () => {
-    const store = mockStore(initialState);
+describe('UserIcon', () => {
+  const mockUser = {
+    identity: {
+      user: {
+        username: 'testuser',
+      },
+    },
+  };
+
+  const contextValue = {
+    user: mockUser,
+  };
+
+  test('should render user icon', () => {
     const { container } = render(
-      <Provider store={store}>
+      <ChromeAuthContext.Provider value={contextValue}>
         <UserIcon />
-      </Provider>
+      </ChromeAuthContext.Provider>
     );
-    expect(container.querySelector('img')).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });
