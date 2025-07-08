@@ -190,7 +190,7 @@ const Tools = () => {
     : [
         {
           title: intl.formatMessage(messages.askRedHat),
-          icon: <img className='pf-v6-c-button__icon' src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+          icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
           onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
           isHidden: askRedHatEnabled,
         },
