@@ -1,8 +1,9 @@
 import React, { Fragment, useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-import { useFlags } from '@unleash/proxy-client-react';
+import { useFlag, useFlags } from '@unleash/proxy-client-react';
 
 import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
 
@@ -19,6 +20,7 @@ const VirtualAssistant = () => {
   const { pathname } = useLocation();
   const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
 
+  const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
   const allFlags = useFlags();
   allFlags.forEach((flag) => {
     if (flaggedRoutes[flag.name] && flag.enabled) {
@@ -56,11 +58,29 @@ const VirtualAssistant = () => {
   };
 
   return (
-    <SilentErrorBoundary>
-      <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
-        <ScalprumComponent {...virtualAssistantProps} />
-      </div>
-    </SilentErrorBoundary>
+    <>
+      {isOpenConfig ? (
+        <SilentErrorBoundary>
+          <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
+            <ScalprumComponent {...virtualAssistantProps} />
+          </div>
+        </SilentErrorBoundary>
+      ) : (
+        <Routes>
+          {viableRoutes.map((route) => (
+            <Route
+              key={route}
+              path={route}
+              element={
+                <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
+                  <ScalprumComponent scope="virtualAssistant" module="./AstroVirtualAssistant" fallback={null} ErrorComponent={<Fragment />} />
+                </div>
+              }
+            />
+          ))}
+        </Routes>
+      )}
+    </>
   );
 };
 

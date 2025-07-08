@@ -8,9 +8,11 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 import './EmptySearchState.scss';
+import useFlag from '@unleash/proxy-client-react/dist/src/useFlag';
 
 const EmptySearchState = () => {
   const { openVA } = useVirtualAssistant();
+  const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
 
   return (
     <EmptyState
@@ -28,16 +30,22 @@ const EmptySearchState = () => {
           <Content component="p" className="pf-v6-u-text-color-subtle pf-v6-u-mb-0">
             No results match your criteria.
           </Content>
-          <Content component="p" className="pf-v6-u-text-color-subtle">
-            Try searching Hybrid Cloud help or start a conversation with our{' '}
-            <a
-              onClick={() => {
-                openVA('');
-              }}
+          {isOpenConfig ? (
+            <Content component="p" className="pf-v6-u-text-color-subtle">
+              Try searching Hybrid Cloud help or start a conversation with our{' '}
+              <a
+                onClick={() => {
+                  openVA('');
+                }}
             >
               Virtual Assistant.
             </a>
-          </Content>
+            </Content>
+          ) : (
+            <Content component="p" className="pf-v6-u-text-color-subtle">
+              Try searching Hybrid Cloud help or start a conversation with our Virtual Assistant.
+            </Content>
+          )}
         </Content>
       </EmptyStateBody>
     </EmptyState>
