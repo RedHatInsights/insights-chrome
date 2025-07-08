@@ -18,22 +18,23 @@ const NotFoundRoute = () => {
     setShowAssistant(true);
   }, [setShowAssistant]);
 
-  return (<>
-    {isOpenConfig ? (
-      <EmptyState id="not-found">
-        <EmptyStateBody>
-          <InvalidObject />
-          <Button
-            onClick={() => {
-              openVA(`Contact my org admin.`);
-            }}
-            className="pf-v6-c-button pf-m-link"
-          >
-            Contact your org admin with the Virtual Assistant.
-          </Button>
-        </EmptyStateBody>
-      </EmptyState>
-      ): (
+  return (
+    <>
+      {isOpenConfig ? (
+        <EmptyState id="not-found">
+          <EmptyStateBody>
+            <InvalidObject />
+            <Button
+              onClick={() => {
+                openVA(`Contact my org admin.`);
+              }}
+              className="pf-v6-c-button pf-m-link"
+            >
+              Contact your org admin with the Virtual Assistant.
+            </Button>
+          </EmptyStateBody>
+        </EmptyState>
+      ) : (
         <EmptyState id="not-found">
           <EmptyStateBody>
             <InvalidObject />

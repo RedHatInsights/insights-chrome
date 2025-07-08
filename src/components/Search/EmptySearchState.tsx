@@ -8,7 +8,7 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 import './EmptySearchState.scss';
-import useFlag from '@unleash/proxy-client-react/dist/src/useFlag';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const EmptySearchState = () => {
   const { openVA } = useVirtualAssistant();
@@ -37,9 +37,9 @@ const EmptySearchState = () => {
                 onClick={() => {
                   openVA('');
                 }}
-            >
-              Virtual Assistant.
-            </a>
+              >
+                Virtual Assistant.
+              </a>
             </Content>
           ) : (
             <Content component="p" className="pf-v6-u-text-color-subtle">

@@ -63,14 +63,14 @@ const Wrapper = ({ children }) => (
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
       <InternalChromeContext.Provider value={mockInternalChromeContext}>
         <ScalprumProvider
-        config={{
-          virtualAssistant: {
-            name: 'virtualAssistant',
-            appId: 'virtualAssistant',
-            manifestLocation: '/foo/bar.json',
-          },
-        }}
-      >
+          config={{
+            virtualAssistant: {
+              name: 'virtualAssistant',
+              appId: 'virtualAssistant',
+              manifestLocation: '/foo/bar.json',
+            },
+          }}
+        >
           <JotaiProvider store={chromeStore}>
             <FeatureFlagsProvider>
               <BrowserRouter>{children}</BrowserRouter>
@@ -98,17 +98,6 @@ const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
 };
 
 describe('<Default layout />', () => {
-  before(() => {
-    cy.window().then((win) => {
-      win.virtualAssistant = {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        init: () => {},
-        get: () => () => ({
-          default: () => <div>Virtual Assistant</div>,
-        }),
-      };
-    });
-  });
   beforeEach(() => {
     cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
       statusCode: 200,
@@ -130,7 +119,7 @@ describe('<Default layout />', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/search-index-generated.json', []);
-  
+
     cy.intercept('GET', 'foo/bar.js*', {});
     cy.intercept('GET', '/foo/bar.json', {
       TestApp: {
