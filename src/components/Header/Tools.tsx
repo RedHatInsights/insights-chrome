@@ -78,6 +78,7 @@ const Tools = () => {
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
@@ -187,6 +188,12 @@ const Tools = () => {
         },
       ]
     : [
+        {
+          title: intl.formatMessage(messages.askRedHat),
+          icon: <img className='pf-v6-c-button__icon' src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+          onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
+          isHidden: askRedHatEnabled,
+        },
         {
           title: intl.formatMessage(messages.apiDocumentation),
           onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),

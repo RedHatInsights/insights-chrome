@@ -584,4 +584,9 @@ export default defineMessages({
     description: 'Join mailing list',
     defaultMessage: 'Join mailing list',
   },
+  askRedHat: {
+    id: 'askRedHat',
+    description: 'Ask Red Hat',
+    defaultMessage: 'Ask Red Hat',
+  },
 });

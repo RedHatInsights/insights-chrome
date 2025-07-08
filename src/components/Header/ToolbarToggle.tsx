@@ -8,6 +8,7 @@ import ChromeLink from '../ChromeLink/ChromeLink';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 
 export type ToolbarToggleDropdownItem = {
+  icon?: React.ReactNode;
   url?: string;
   appId?: string;
   target?: string;
@@ -57,12 +58,13 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
 
   // Render the question mark icon items
   const dropdownItems = props.dropdownItems.map(
-    ({ url, appId, title, onClick, isHidden, isDisabled, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
+    ({ icon, url, appId, title, onClick, isHidden, isDisabled, target = '_blank', rel = 'noopener noreferrer', ...rest }) =>
       !isHidden ? (
         <DropdownItem
           key={title}
           ouiaId={title}
           isDisabled={isDisabled}
+          icon={icon}
           component={
             appId && url
               ? ({ className: itemClassName }) => (
