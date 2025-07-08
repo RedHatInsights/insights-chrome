@@ -168,6 +168,16 @@ const Tools = () => {
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = helpPanelEnabled
     ? [
+        ...(askRedHatEnabled
+          ? [
+              {
+                title: intl.formatMessage(messages.askRedHat),
+                icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+                onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
+                isHidden: false,
+              },
+            ]
+          : []),
         {
           title: intl.formatMessage(messages.helpPanel),
           onClick: () => {
@@ -188,12 +198,6 @@ const Tools = () => {
         },
       ]
     : [
-        {
-          title: intl.formatMessage(messages.askRedHat),
-          icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
-          onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
-          isHidden: !askRedHatEnabled,
-        },
         {
           title: intl.formatMessage(messages.apiDocumentation),
           onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
@@ -236,6 +240,8 @@ const Tools = () => {
             ]
           : []),
       ];
+
+  console.log('items: ', aboutMenuDropdownItems);
 
   /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
