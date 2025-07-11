@@ -78,6 +78,7 @@ const Tools = () => {
   const workspacesEnabled = useFlag('platform.rbac.workspaces');
   const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
   const helpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
@@ -165,70 +166,82 @@ const Tools = () => {
   } = useContext(InternalChromeContext);
 
   /* list out the items for the about menu */
-  const aboutMenuDropdownItems = helpPanelEnabled
-    ? [
-        {
-          title: intl.formatMessage(messages.helpPanel),
-          onClick: () => {
-            toggleDrawerContent({
-              scope: 'learningResources',
-              module: './HelpPanel',
-            });
+  const aboutMenuDropdownItems = [
+    ...(askRedHatEnabled
+      ? [
+          {
+            title: intl.formatMessage(messages.askRedHat),
+            icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+            onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
+            isHidden: false,
           },
-        },
-        {
-          title: intl.formatMessage(messages.statusPage),
-          onClick: () => window.open('https://status.redhat.com/', '_blank'),
-          isHidden: isITLessEnv,
-        },
-        {
-          title: intl.formatMessage(messages.supportOptions),
-          onClick: () => (window.location.href = supportOptionsUrl()),
-        },
-      ]
-    : [
-        {
-          title: intl.formatMessage(messages.apiDocumentation),
-          onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
-          isHidden: isITLessEnv,
-        },
-        {
-          title: intl.formatMessage(messages.openSupportCase),
-          onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
-          isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
-          isHidden: isITLessEnv,
-        },
-        {
-          title: intl.formatMessage(messages.statusPage),
-          onClick: () => window.open('https://status.redhat.com/', '_blank'),
-          isHidden: isITLessEnv,
-        },
-        {
-          title: intl.formatMessage(messages.supportOptions),
-          onClick: () => (window.location.href = supportOptionsUrl()),
-        },
-        {
-          title: intl.formatMessage(messages.insightsRhelDocumentation),
-          onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
-          isHidden: getSection() !== 'insights' || isITLessEnv,
-        },
-        {
-          title: intl.formatMessage(messages.demoMode),
-          onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
-          isHidden: !isDemoAcc,
-        },
-        ...(enableGlobalLearningResourcesPage
-          ? [
-              {
-                title: intl.formatMessage(messages.globalLearningResourcesPage),
-                url: '/learning-resources',
-                isHidden: false,
-                appId: 'learningResources',
-                target: '_self',
-              },
-            ]
-          : []),
-      ];
+        ]
+      : []),
+    ...(helpPanelEnabled
+      ? [
+          {
+            title: intl.formatMessage(messages.helpPanel),
+            onClick: () => {
+              toggleDrawerContent({
+                scope: 'learningResources',
+                module: './HelpPanel',
+              });
+            },
+          },
+          {
+            title: intl.formatMessage(messages.statusPage),
+            onClick: () => window.open('https://status.redhat.com/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.supportOptions),
+            onClick: () => (window.location.href = supportOptionsUrl()),
+          },
+        ]
+      : [
+          {
+            title: intl.formatMessage(messages.apiDocumentation),
+            onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.openSupportCase),
+            onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
+            isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.statusPage),
+            onClick: () => window.open('https://status.redhat.com/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.supportOptions),
+            onClick: () => (window.location.href = supportOptionsUrl()),
+          },
+          {
+            title: intl.formatMessage(messages.insightsRhelDocumentation),
+            onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
+            isHidden: getSection() !== 'insights' || isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.demoMode),
+            onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
+            isHidden: !isDemoAcc,
+          },
+          ...(enableGlobalLearningResourcesPage
+            ? [
+                {
+                  title: intl.formatMessage(messages.globalLearningResourcesPage),
+                  url: '/learning-resources',
+                  isHidden: false,
+                  appId: 'learningResources',
+                  target: '_self',
+                },
+              ]
+            : []),
+        ]),
+  ];
 
   /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
