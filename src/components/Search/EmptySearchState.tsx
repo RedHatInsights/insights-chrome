@@ -34,6 +34,7 @@ const EmptySearchState = () => {
             <Content component="p" className="pf-v6-u-text-color-subtle">
               Try searching Hybrid Cloud help or start a conversation with our{' '}
               <a
+                role="button"
                 onClick={() => {
                   openVA('');
                 }}
