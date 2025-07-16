@@ -81,9 +81,6 @@ const Wrapper = ({
   const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
   const setModuleRoutes = useSetAtom(moduleRoutesAtom);
   useEffect(() => {
-    console.log('Setting scalprum config and module routes in Wrapper');
-    console.log(config);
-    console.log(moduleRoutes);
     setModuleRoutes(moduleRoutes);
     setScalprumConfig(config);
   }, []);
