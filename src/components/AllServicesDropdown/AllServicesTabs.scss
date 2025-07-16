@@ -1,0 +1,13 @@
+.pf-v6-c-tabs.pf-m-vertical .pf-v6-c-tabs__list {
+  max-width: 100%;
+}
+
+.pf-v6-c-tabs__item.pf-m-current {
+  background: var(--pf-v5-global--BackgroundColor--200);
+  .pf-v6-c-tabs__item-text {
+    color: var(--pf-v5-global--BackgroundColor--dark-200);
+  }
+  .pf-v6-c-tabs__link {
+    background: none;
+  }
+}
