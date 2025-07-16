@@ -62,7 +62,15 @@ const Wrapper = ({ children }) => (
   <IntlProvider locale="en">
     <ChromeAuthContext.Provider value={chromeAuthContextValue}>
       <InternalChromeContext.Provider value={mockInternalChromeContext}>
-        <ScalprumProvider config={{}}>
+        <ScalprumProvider
+          config={{
+            virtualAssistant: {
+              name: 'virtualAssistant',
+              appId: 'virtualAssistant',
+              manifestLocation: '/foo/bar.json',
+            },
+          }}
+        >
           <JotaiProvider store={chromeStore}>
             <FeatureFlagsProvider>
               <BrowserRouter>{children}</BrowserRouter>
@@ -111,6 +119,16 @@ describe('<Default layout />', () => {
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/services/services-generated.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
     cy.intercept('GET', '/api/chrome-service/v1/static/search-index-generated.json', []);
+
+    cy.intercept('GET', 'foo/bar.js*', {});
+    cy.intercept('GET', '/foo/bar.json', {
+      TestApp: {
+        entry: ['/foo/bar.js'],
+      },
+      virtualAssistant: {
+        entry: ['/foo/bar.js'],
+      },
+    }).as('manifest');
   });
 
   it('render correctly with few nav items', () => {
