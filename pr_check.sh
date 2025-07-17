@@ -79,7 +79,7 @@ DEPLOY_FRONTENDS="true"
 source $CICD_ROOT/cji_smoke_test.sh
 
 
-# Stubbed out for now
+# Stubbed out forever
 mkdir -p $WORKSPACE/artifacts
 cat << EOF > $WORKSPACE/artifacts/junit-dummy.xml
 <testsuite tests="1">
