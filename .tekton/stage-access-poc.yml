@@ -1,80 +1,69 @@
 apiVersion: tekton.dev/v1beta1
-kind: Task
+kind: Pipeline
 metadata:
-  name: run-tests
+  name: e2e-tests
 spec:
   params:
-    - name: git-url
-      value: '{{source_url}}'
+    - name: repo_url
+      description: Git repository URL
+      type: string
+      default: '{{repo_url}}'
     - name: revision
-      value: '{{revision}}'
-    - name: E2E_URL
+      description: Git revision (branch, tag, sha)
       type: string
-    - name: E2E_USER
-      type: string
-    - name: E2E_PASSWORD
-      type: string
-  steps:
-    - name: clone-repository-oci-ta
-      params:
-      - name: url
-        value: $(params.git-url)
-      - name: revision
-        value: $(params.revision)
-      runAfter:
-      - init
+      default: '{{revision}}'
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        metadata:
+          creationTimestamp:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  tasks:
+    - name: clone-repository
       taskRef:
-        params:
-        - name: name
-          value: git-clone-oci-ta
-        - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:d35e5d501cb5f5f88369511f76249857cb5ac30250e1dcf086939321964ff6b9
-        - name: kind
-          value: task
-        resolver: bundles
-      when:
-      - input: $(tasks.init.results.build)
-        operator: in
-        values:
-        - "true"
+        name: git-clone-oci-ta
+        bundle: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:d35e5d501cb5f5f88369511f76249857cb5ac30250e1dcf086939321964ff6b9
+      params:
+        - name: url
+          value: $(params.repo_url)
+        - name: revision
+          value: $(params.revision)
       workspaces:
-      - name: basic-auth
-        workspace: git-auth
-    - name: run-tests
+        - name: output
+          workspace: source
+    - name: run-cypress-e2e
       runAfter:
-        - clone-repository-oci-ta
+        - clone-repository
       taskSpec:
-        metadata: {}
-        params:
-        - description: The Trusted Artifact URI pointing to the artifact with the
-            application source code.
-          name: SOURCE_ARTIFACT
-          type: string
-        spec: null
-        stepTemplate:
-          computeResources: {}
-          volumeMounts:
-          - mountPath: /var/workdir
-            name: workdir
+        workspaces:
+          - name: source
         steps:
-        - args:
-          - use
-          - $(params.SOURCE_ARTIFACT)=/var/workdir
-          computeResources: {}
-          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
-          name: use-trusted-artifact
-        - computeResources: {}
-          image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
-          env:
-            - name: E2E_URL
-              value: $(params.E2E_URL)
-            - name: E2E_USER
-              value: $(params.E2E_USER)
-            - name: E2E_PASSWORD
-              value: $(params.E2E_PASSWORD)
-          script: |
-            #!/bin/bash
-            set -ex
-
-            npm i
-            E2E_BASE=$E2E_URL E2E_USER=$E2E_USER E2E_PASSWORD=$E2E_PASSWORD npm run test:e2e
+          - name: run-cypress-e2e
+            image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
+            workingDir: /workspace/source
+            env:
+              - name: E2E_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: e2e-frontend-tests-secrets
+                    key: E2E_URL
+              - name: E2E_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: e2e-frontend-tests-secrets
+                    key: E2E_USER
+              - name: E2E_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: e2e-frontend-tests-secrets
+                    key: E2E_PASSWORD
+            script: |
+              #!/bin/bash
+              set -ex
+              npm i
+              E2E_BASE=$E2E_URL E2E_USER=$E2E_USER E2E_PASSWORD=$E2E_PASSWORD npm run test:e2e
