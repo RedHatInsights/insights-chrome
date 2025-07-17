@@ -47,6 +47,11 @@ const initialScalprumConfig = {
     appId: 'TestApp',
     manifestLocation: '/foo/bar.json',
   },
+  virtualAssistant: {
+    name: 'virtualAssistant',
+    appId: 'virtualAssistant',
+    manifestLocation: '/foo/bar.json',
+  },
 };
 
 const initialModuleRoutes = [
@@ -55,6 +60,13 @@ const initialModuleRoutes = [
     path: '*',
     module: './TestApp',
     scope: 'TestApp',
+    manifestLocation: '/foo/bar.json',
+  },
+  {
+    absolute: true,
+    path: '*',
+    module: './AstroVirtualAssistant',
+    scope: 'virtualAssistant',
     manifestLocation: '/foo/bar.json',
   },
 ];
@@ -114,6 +126,15 @@ describe('HelpTopicManager', () => {
       getUserPermissions: () => Promise.resolve([]),
       isPreview: false,
     });
+    cy.window().then((win) => {
+      win.virtualAssistant = {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        init: () => {},
+        get: () => () => ({
+          default: () => <div>Virtual Assistant</div>,
+        }),
+      };
+    });
   });
   beforeEach(() => {
     cy.intercept('GET', '/api/featureflags/*', {
@@ -122,6 +143,9 @@ describe('HelpTopicManager', () => {
     cy.intercept('GET', 'foo/bar.js*', {});
     cy.intercept('GET', '/foo/bar.json', {
       TestApp: {
+        entry: ['/foo/bar.js'],
+      },
+      virtualAssistant: {
         entry: ['/foo/bar.js'],
       },
     }).as('manifest');
