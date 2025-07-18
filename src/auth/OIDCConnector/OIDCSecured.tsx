@@ -19,7 +19,6 @@ import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
 import { useAtomValue } from 'jotai';
-import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
@@ -118,10 +117,26 @@ export function OIDCSecured({
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
-      const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-      if (shouldReAuth) {
-        login(authRef.current, reAuthScopes);
+      let scopes = [...requiredScopes, ...additionalScopes].flat();
+      if (authRef.current.user?.scope) {
+        scopes = scopes.concat(authRef.current.user.scope.split(' '));
       }
+      console.log('Re-authenticating with scopes:', scopes);
+      return auth
+        .signinSilent({
+          scope: scopes.join(' '),
+          prompt: 'none',
+          forceIframeAuth: true,
+        })
+        .then((user) => {
+          if (user === null) {
+            login(authRef.current, scopes);
+          }
+        })
+        .catch((error) => {
+          console.error('Error while re-authenticating user', error);
+          login(authRef.current, scopes);
+        });
     },
     loginSilent: async () => {
       await auth.signinSilent();
