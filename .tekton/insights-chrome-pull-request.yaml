@@ -15,7 +15,6 @@ metadata:
     pipelines.appstudio.openshift.io/type: build
   name: insights-chrome-on-pull-request
   namespace: hcc-platex-services-tenant
-spec:
   params:
   - name: git-url
     value: '{{source_url}}'
@@ -330,6 +329,68 @@ spec:
 
             npm install
             npm test
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - name: run-e2e-tests
+      description: Validates frontend end-to-end tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec:
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources: {}
+          image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
+          name: e2e-tests
+          env: # Define environment variables for this step
+          - name: CHROME_ACCOUNT # The name of the environment variable inside the container
+            valueFrom:
+              secretKeyRef:
+                name: chrome-frontend-e2e-credentials # The name of your Kubernetes Secret
+                key: CHROME_ACCOUNT # The specific key within the secret to use
+          - name: CHROME_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: chrome-frontend-e2e-credentials
+                key: CHROME_PASSWORD
+          - name: CI
+            value: "true"
+
+          script: |
+            #!/bin/bash
+            set -ex
+
+            cat /etc/hosts
+
+            curl https://console.stage.redhat.com
+
+            npm install
+            npm run test:e2e
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
@@ -670,6 +731,12 @@ spec:
       optional: true
   taskRunTemplate:
     serviceAccountName: build-pipeline-insights-chrome
+    podTemplate:
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "stage.foo.redhat.com"
+        - "prod.foo.redhat.com"
   workspaces:
   - name: workspace
     volumeClaimTemplate:
