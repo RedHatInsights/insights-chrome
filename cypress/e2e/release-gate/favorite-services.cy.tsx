@@ -4,9 +4,9 @@ const serviceName = 'Red Hat Insights';
 
 describe.skip('Favorite-services', () => {
   it('check and uncheck favorited services', () => {
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
     cy.login();
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 2435,
