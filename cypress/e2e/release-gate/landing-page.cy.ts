@@ -3,7 +3,7 @@ describe.skip('Landing page', () => {
   it('visit landing page', () => {
     cy.login();
 
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
     cy.wait(4000);
 
     // check if a favorites link exists on the page
@@ -13,7 +13,7 @@ describe.skip('Landing page', () => {
   it('tooltip is shown when hovering over the gear/question icon', () => {
     cy.login();
 
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
     cy.wait(4000);
     cy.get('.tooltip-button-settings-cy').invoke('show').trigger('mouseenter').wait(1000);
     cy.get('.tooltip-inner-settings-cy').should('be.visible').and('contain', 'Settings');
