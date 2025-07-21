@@ -1,7 +1,7 @@
 describe.skip('Navigation', () => {
   beforeEach('', () => {
     cy.login();
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
   });
 
   it('visit services', () => {
