@@ -20,8 +20,13 @@ async function runTests() {
     stdio: [process.stdout, process.stdout, process.stdout],
     detached: false,
   });
+  console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
-  execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npm run cypress run`, {
+  execSync('curl https://stage.foo.redhat.com:1337 -k', {
+    stdio: 'inherit',
+    encoding: 'utf-8',
+  });
+  execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`, {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
