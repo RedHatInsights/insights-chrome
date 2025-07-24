@@ -391,8 +391,10 @@ spec:
           script: |
             #!/usr/bin/env bash
             set -ex
-            # script_hostname=$(hostname)
-            # echo "hostname is ${script_hostname}"
+            echo "Here's the hosts file:"
+            cat /etc/hosts
+            # this won't work if the host doesn't have the cmd available
+            host stage.foo.redhat.com
             npm install
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
