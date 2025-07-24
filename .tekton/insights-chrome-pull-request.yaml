@@ -735,7 +735,7 @@ spec:
     serviceAccountName: build-pipeline-insights-chrome
     podTemplate:
       hostAliases:
-      - ip: "0.0.0.0"
+      - ip: "host.docker.internal"
         hostnames:
         - "stage.foo.redhat.com"
         - "prod.foo.redhat.com"
