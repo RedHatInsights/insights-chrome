@@ -137,8 +137,8 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
-      // host: '127.0.0.1',
       allowedHosts: 'all',
+      host: '::1',
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
