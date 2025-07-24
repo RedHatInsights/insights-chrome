@@ -3,8 +3,21 @@
 const { spawn, execSync } = require('child_process');
 const waitOn = require('wait-on');
 
+function execSyncWrapper(command) {
+  try {
+    const result = execSync(command, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+    console.log(`Output from command was:\n ${result}`);
+  } catch (e) {
+    console.log('Error while running command, output follows:');
+    console.log(e);
+  }
+}
+
 const options = {
-  resources: ['https://127.0.0.1:1337/webpack-dev-server'],
+  resources: ['https://stage.foo.redhat.com:1337/webpack-dev-server'],
   delay: 6000,
   interval: 3000, // wait for 3 sec
   validateStatus: function (status) {
@@ -18,22 +31,45 @@ async function runTests() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   child = spawn('npm', ['run', 'dev:beta'], {
     stdio: [process.stdout, process.stdout, process.stdout],
-    detached: false,
+    // try to prevent dev server from becoming a zombie
+    detached: true,
   });
+
+  child.on('close', (code) => {
+    console.log(`Dev server closed ${code}`);
+  });
+
+  child.on('exit', (code) => {
+    console.log(`Dev server exited ${code}`);
+  });
+
+  child.on('error', (err) => {
+    console.log(`Dev server error ${err}`);
+  });
+
+  child.on('disconnect', () => {
+    console.log('Dev server disconnect');
+  });
+
+  child.on('spawn', () => {
+    console.log('Dev server spawned');
+  });
+
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
-  execSync('curl https://stage.foo.redhat.com:1337 -k', {
-    stdio: 'inherit',
-    encoding: 'utf-8',
-  });
-  execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
+
+  // dev proxy server should be up and listening for requests
+  execSyncWrapper(`echo 'IPv4 connections:'; cat /proc/net/tcp`);
+  execSyncWrapper(`echo 'IPv6 connections:'; cat /proc/net/tcp6`);
+  execSyncWrapper(`echo 'First curl'; curl -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`echo 'Second curl'; curl -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`);
 }
 
+execSyncWrapper(`cat /etc/hosts`);
 runTests()
   .then(() => {
+    console.log('Post-test: Killing the child process');
     child.kill();
     process.exit(0);
   })
