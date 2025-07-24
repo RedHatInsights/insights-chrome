@@ -396,10 +396,11 @@ spec:
            
             npm install
             npm run dev &
-            sleep 10
+            sleep 50
             echo "Here are the open TCP ports:"
             cat /proc/net/tcp
-            curl -k https://stage.foo.redhat.com:1337
+            curl -v -k https://stage.foo.redhat.com:1337
+            curl -v -k https://stage.foo.redhat.com:1337/
             
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
