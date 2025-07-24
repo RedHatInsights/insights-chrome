@@ -393,11 +393,14 @@ spec:
             set -ex
             echo "Here's the hosts file:"
             cat /etc/hosts
-            curl https://stage.foo.redhat.com:1337
+           
             npm install
             npm run dev &
+            sleep 10
             echo "Here are the open TCP ports:"
             cat /proc/net/tcp
+            curl https://stage.foo.redhat.com:1337
+            
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
             CYPRESS_BASE_URL=$CYPRESS_BASE_URL npm run test:e2e
