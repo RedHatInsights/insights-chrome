@@ -385,14 +385,17 @@ spec:
             value: "true"
           - name: NO_PROXY
             value: "stage.foo.redhat.com,prod.foo.redhat.com"
+          - name: CYPRESS_BASE_URL
+            value: "host.docker.internal"
 
           script: |
-            #!/bin/bash
+            #!/usr/bin/env bash
             set -ex
 
             npm install
             npx playwright install
-            npm run test:e2e
+            echo "Cypress base url is ${CYPRESS_BASE_URL}"
+            CYPRESS_BASE_URL=$CYPRESS_BASE_URL npm run test:e2e
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
@@ -735,7 +738,7 @@ spec:
     serviceAccountName: build-pipeline-insights-chrome
     podTemplate:
       hostAliases:
-      - ip: "host.docker.internal"
+      - ip: "127.0.0.1"
         hostnames:
         - "stage.foo.redhat.com"
         - "prod.foo.redhat.com"
