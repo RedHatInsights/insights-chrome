@@ -34,7 +34,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    baseURL: 'https://host.docker.internal:1337',
+    baseURL: 'https://127.0.0.1:1337',
   },
 
   /* Configure projects for major browsers */

@@ -49,7 +49,7 @@ export default defineConfig({
   },
   e2e: {
     blockHosts: ['consent.trustarc.com'],
-    baseUrl: process.env.BASE || 'https://host.docker.internal:1337',
+    baseUrl: process.env.BASE || 'https://127.0.0.1:1337',
     env: {
       E2E_USER: process.env.E2E_USER,
       E2E_PASSWORD: process.env.E2E_PASSWORD,
