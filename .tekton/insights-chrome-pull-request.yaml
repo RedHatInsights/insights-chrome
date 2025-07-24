@@ -393,8 +393,7 @@ spec:
             set -ex
             echo "Here's the hosts file:"
             cat /etc/hosts
-            # this won't work if the host doesn't have the cmd available
-            host stage.foo.redhat.com
+            wget https://stage.foo.redhat.com:1337
             npm install
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
