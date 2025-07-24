@@ -391,7 +391,8 @@ spec:
           script: |
             #!/usr/bin/env bash
             set -ex
-
+            script_hostname=$(hostname)
+            echo "hostname is ${script_hostname}"
             npm install
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
