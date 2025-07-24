@@ -394,17 +394,21 @@ spec:
             echo "Here's the hosts file:"
             cat /etc/hosts
            
-            npm install
+            npm i
+            npx playwright install
+            
+            # Start local dev proxy and wait for it to be ready
             npm run dev &
-            sleep 50
+            # Sleep until the dev server is (hopefully) ready
+            sleep 120
+            
+            # Diagnostics
             echo "Here are the open TCP ports:"
             cat /proc/net/tcp
             curl -v -k https://stage.foo.redhat.com:1337
             curl -v -k https://stage.foo.redhat.com:1337/
             
-            npx playwright install
-            echo "Cypress base url is ${CYPRESS_BASE_URL}"
-            CYPRESS_BASE_URL=$CYPRESS_BASE_URL npm run test:e2e
+            npm run test:e2e
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
