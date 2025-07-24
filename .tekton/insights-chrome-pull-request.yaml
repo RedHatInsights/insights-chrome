@@ -350,7 +350,7 @@ spec:
         metadata: {}
         params:
         - description: The Trusted Artifact URI pointing to the artifact with the application source code.
-          name: SOURCE_ARTIFACT
+          name: SOURCE_ARTIFACT6
           type: string
         spec:
         stepTemplate:
@@ -393,7 +393,7 @@ spec:
             set -ex
             echo "Here's the hosts file:"
             cat /etc/hosts
-            wget https://stage.foo.redhat.com:1337
+            curl https://stage.foo.redhat.com:1337
             npm install
             npx playwright install
             echo "Cypress base url is ${CYPRESS_BASE_URL}"
