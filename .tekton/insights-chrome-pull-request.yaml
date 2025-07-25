@@ -405,7 +405,7 @@ spec:
             # Diagnostics
             echo "Here are the open TCP ports:"
             # 539 hex = 1337 dec
-            cat /proc/net/tcp | grep 593 
+            cat /proc/net/tcp
             curl -v -k https://stage.foo.redhat.com:1337
             curl -v -k https://stage.foo.redhat.com:1337/
             
