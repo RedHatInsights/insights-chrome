@@ -1,15 +1,46 @@
 import { expect, test } from '@playwright/test';
 import { execSync } from 'child_process';
 
+import { default as dns } from 'dns';
+
+async function getIP(hostname: string): Promise<string | undefined> {
+  try {
+    const result = await dns.promises.lookup(hostname);
+    return result.address;
+  } catch (error) {
+    console.error(`Error resolving hostname ${hostname}:`, error);
+    return undefined;
+  }
+}
+
 test('logs in', async ({ page, request }) => {
-  execSync(`cat /proc/net/tcp | grep 539`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
-  execSync(`curl -vvvvv -k https://stage.foo.redhat.com:1337`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
+  const testHost = 'stage.foo.redhat.com';
+  const resolvedIP = await getIP(testHost);
+  console.log(`Resolved IP for ${testHost} is ${resolvedIP}`);
+  try {
+    execSync(`cat /proc/net/tcp | grep 539`, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    execSync(`curl -vvvvv -k https://localhost:1337`, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    execSync(`curl -vvvvv -k https://stage.foo.redhat.com:1337`, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+  } catch (e) {
+    console.log(e);
+  }
 
   const response = await request.get('/');
   expect(response.ok()).toBeTruthy();
