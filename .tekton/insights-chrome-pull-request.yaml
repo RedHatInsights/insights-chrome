@@ -733,7 +733,7 @@ spec:
     serviceAccountName: build-pipeline-insights-chrome
     podTemplate:
       hostAliases:
-      - ip: "127.0.0.1"
+      - ip: "0.0.0.0"
         hostnames:
         - "stage.foo.redhat.com"
         - "prod.foo.redhat.com"
