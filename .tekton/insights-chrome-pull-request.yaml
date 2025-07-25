@@ -398,13 +398,14 @@ spec:
             npx playwright install
             
             # Start local dev proxy and wait for it to be ready
-            npm run dev &
+            NODE_TLS_REJECT_UNAUTHORIZED=0 npm run dev:beta &
             # Sleep until the dev server is (hopefully) ready
             sleep 120
             
             # Diagnostics
             echo "Here are the open TCP ports:"
-            cat /proc/net/tcp
+            # 539 hex = 1337 dec
+            cat /proc/net/tcp | grep 593 
             curl -v -k https://stage.foo.redhat.com:1337
             curl -v -k https://stage.foo.redhat.com:1337/
             

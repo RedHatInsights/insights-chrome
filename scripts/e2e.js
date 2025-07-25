@@ -16,12 +16,16 @@ const options = {
 let child;
 async function runTests() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  child = spawn('npm', ['run', 'dev:beta'], {
-    stdio: [process.stdout, process.stdout, process.stdout],
-    detached: false,
-  });
+  // child = spawn('npm', ['run', 'dev:beta'], {
+  //   stdio: [process.stdout, process.stdout, process.stdout],
+  //   detached: false,
+  // });
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
+  execSync('cat /proc/net/tcp', {
+    stdio: 'inherit',
+    encoding: 'utf-8',
+  });
   execSync('curl https://stage.foo.redhat.com:1337 -k', {
     stdio: 'inherit',
     encoding: 'utf-8',
