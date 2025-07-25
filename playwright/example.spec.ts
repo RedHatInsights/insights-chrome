@@ -1,6 +1,16 @@
 import { expect, test } from '@playwright/test';
+import { execSync } from 'child_process';
 
 test('logs in', async ({ page, request }) => {
+  execSync(`cat /proc/net/tcp | grep 539`, {
+    encoding: 'utf-8',
+    stdio: 'inherit',
+  });
+  execSync(`curl -k https://stage.foo.redhat.com:1337`, {
+    encoding: 'utf-8',
+    stdio: 'inherit',
+  });
+
   const response = await request.get('/');
   expect(response.ok()).toBeTruthy();
 

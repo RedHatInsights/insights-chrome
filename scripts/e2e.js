@@ -29,13 +29,17 @@ async function runTests() {
     console.log(`Dev server exited ${code}`);
   });
 
+  child.on('error', (err) => {
+    console.log(`Dev server error ${err}`);
+  });
+
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
   execSync(`cat /etc/hosts`, {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
-  execSync(`cat /proc/net/tcp`, {
+  execSync(`cat /proc/net/tcp | grep 539`, {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
