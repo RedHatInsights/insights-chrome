@@ -6,7 +6,7 @@ test('logs in', async ({ page, request }) => {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
-  execSync(`curl -k https://stage.foo.redhat.com:1337`, {
+  execSync(`curl -vvvvv -k https://stage.foo.redhat.com:1337`, {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
