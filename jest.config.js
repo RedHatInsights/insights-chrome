@@ -43,7 +43,7 @@ module.exports = {
     ],
   },
   roots: ['<rootDir>/src/'],
-  moduleFileExtensions: ['js', 'ts', 'tsx'],
+  moduleFileExtensions: ['js', 'ts', 'tsx', 'd.ts'],
   setupFiles: ['<rootDir>/config/setupTests.js'],
   setupFilesAfterEnv: ['<rootDir>/config/jest.scripts.js'],
   resolver,

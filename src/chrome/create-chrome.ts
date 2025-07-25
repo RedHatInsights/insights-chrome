@@ -27,6 +27,7 @@ import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { TagRegisteredWith, globalFilterHiddenAtom, globalFilterScopeAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
+import { createSearchAPI } from '../utils/searchAPI';
 
 // Global event listeners registry for PUBLIC_EVENTS
 const eventListeners = new Map<string, Map<string, GenericCB>>();
@@ -253,6 +254,10 @@ export const createChromeContext = ({
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,
     drawerActions,
-  };
+  } as ChromeAPI;
+
+  // Add the search API as an extension to the Chrome API
+  (api as any).search = createSearchAPI();
+
   return api;
 };
