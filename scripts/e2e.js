@@ -20,6 +20,15 @@ async function runTests() {
     stdio: [process.stdout, process.stdout, process.stdout],
     detached: false,
   });
+
+  child.on('close', () => {
+    console.error('Dev server closed.');
+  });
+
+  child.on('exit', () => {
+    console.error('Dev server exited');
+  });
+
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
   execSync(`cat /etc/hosts`, {

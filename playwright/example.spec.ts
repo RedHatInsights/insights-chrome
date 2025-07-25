@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-test('logs in', async ({ page }) => {
+test('logs in', async ({ page, request }) => {
+  const response = await request.get('/');
+  expect(response.ok()).toBeTruthy();
+
   await page.goto('/');
 
   await page.locator('id=username-verification').fill(process.env.CHROME_USER!);
