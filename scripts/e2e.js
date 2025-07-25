@@ -21,12 +21,12 @@ async function runTests() {
     detached: false,
   });
 
-  child.on('close', () => {
-    console.error('Dev server closed.');
+  child.on('close', (code) => {
+    console.log(`Dev server closed ${code}`);
   });
 
-  child.on('exit', () => {
-    console.error('Dev server exited');
+  child.on('exit', (code) => {
+    console.log(`Dev server exited ${code}`);
   });
 
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
