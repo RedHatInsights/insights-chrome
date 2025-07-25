@@ -737,10 +737,10 @@ spec:
         hostnames:
         - "stage.foo.redhat.com"
         - "prod.foo.redhat.com"
-      - ip: "::1"
-        hostnames:
-        - "stage.foo.redhat.com"
-        - "prod.foo.redhat.com"
+#      - ip: "::1"
+#        hostnames:
+#        - "stage.foo.redhat.com"
+#        - "prod.foo.redhat.com"
   workspaces:
   - name: workspace
     volumeClaimTemplate:
