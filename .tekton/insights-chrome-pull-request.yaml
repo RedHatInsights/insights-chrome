@@ -385,30 +385,11 @@ spec:
             value: "true"
           - name: NO_PROXY
             value: "stage.foo.redhat.com,prod.foo.redhat.com"
-          - name: CYPRESS_BASE_URL
-            value: "host.docker.internal"
-
           script: |
             #!/usr/bin/env bash
             set -ex
-            echo "Here's the hosts file:"
-            cat /etc/hosts
-           
             npm i
             npx playwright install
-            
-            # Start local dev proxy and wait for it to be ready
-            NODE_TLS_REJECT_UNAUTHORIZED=0 npm run dev:beta &
-            # Sleep until the dev server is (hopefully) ready
-            sleep 120
-            
-            # Diagnostics
-            echo "Here are the open TCP ports:"
-            # 539 hex = 1337 dec
-            cat /proc/net/tcp
-            curl -v -k https://stage.foo.redhat.com:1337
-            curl -v -k https://stage.foo.redhat.com:1337/
-            
             npm run test:e2e
           securityContext:
             runAsUser: 0
