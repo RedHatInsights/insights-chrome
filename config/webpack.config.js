@@ -149,7 +149,7 @@ const commonConfig = ({ dev }) => {
       https: true,
       port: 1337,
       // HMR flag
-      hot: true,
+      hot: false,
       client: {
         overlay: false,
       },
