@@ -31,6 +31,7 @@ test('logs in', async ({ page, request }) => {
   const resolvedIP = await getIP(testHost);
   console.log(`Resolved IP for ${testHost} is ${resolvedIP}`);
   execSyncWrapper(`cat /proc/net/tcp`);
+  execSyncWrapper(`cat /proc/net/tcp6`);
   execSyncWrapper(`echo 'curling internal'; curl -vvvvv -k https://localhost:1337`);
   execSyncWrapper(`echo 'curling localhost from within cypress session'; curl -vvvvv -k https://localhost:1337`);
   execSyncWrapper(`echo 'curling the dev server host'; curl -vvvvv -k https://stage.foo.redhat.com:1337`);
