@@ -388,8 +388,8 @@ spec:
           script: |
             #!/usr/bin/env bash
             set -ex
-            npm i
-            npx playwright install
+            npm i >/dev/null 2>&1
+            npx playwright install >/dev/null 2>&1
             npm run test:e2e
           securityContext:
             runAsUser: 0
