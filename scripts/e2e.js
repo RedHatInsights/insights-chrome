@@ -60,7 +60,7 @@ async function runTests() {
   // dev proxy server should be up and listening for requests
   execSyncWrapper(`echo 'IPv4 connections:'; cat /proc/net/tcp`);
   execSyncWrapper(`echo 'IPv6 connections:'; cat /proc/net/tcp6`);
-  execSyncWrapper(`echo 'First curl; curl -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`echo 'First curl'; curl -k https://stage.foo.redhat.com:1337`);
   execSyncWrapper(`echo 'Second curl'; curl -k https://stage.foo.redhat.com:1337`);
   execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`);
 }

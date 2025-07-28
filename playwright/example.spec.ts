@@ -32,9 +32,8 @@ test('logs in', async ({ page, request }) => {
   console.log(`Resolved IP for ${testHost} is ${resolvedIP}`);
   execSyncWrapper(`cat /proc/net/tcp`);
   execSyncWrapper(`cat /proc/net/tcp6`);
-  execSyncWrapper(`echo 'curling internal'; curl -vvvvv -k https://localhost:1337`);
-  execSyncWrapper(`echo 'curling localhost from within cypress session'; curl -vvvvv -k https://localhost:1337`);
-  execSyncWrapper(`echo 'curling the dev server host'; curl -vvvvv -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`echo 'Directly curling loopback'; curl -vvvvv -k https://[::1]:1337`);
+  execSyncWrapper(`echo 'curling the dev server hostname'; curl -vvvvv -k https://${testHost}:1337`);
 
   const response = await request.get('/');
   expect(response.ok()).toBeTruthy();
