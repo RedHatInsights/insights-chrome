@@ -137,8 +137,6 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
-      // explicitly bind to internal adapter for use within container (localhost is 2nd best option)
-      host: '0.0.0.0',
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
