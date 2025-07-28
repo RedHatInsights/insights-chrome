@@ -31,7 +31,8 @@ async function runTests() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   child = spawn('npm', ['run', 'dev:beta'], {
     stdio: [process.stdout, process.stdout, process.stdout],
-    detached: false,
+    // try to prevent dev server from becoming a zombie
+    detached: true,
   });
 
   child.on('close', (code) => {
