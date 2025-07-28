@@ -3,6 +3,19 @@
 const { spawn, execSync } = require('child_process');
 const waitOn = require('wait-on');
 
+function execSyncWrapper(command) {
+  try {
+    const result = execSync(command, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+    console.log(`Output from command was:\n ${result}`);
+  } catch (e) {
+    console.log('Error while running command, output follows:');
+    console.log(e);
+  }
+}
+
 const options = {
   resources: ['https://stage.foo.redhat.com:1337/webpack-dev-server'],
   delay: 6000,
@@ -45,28 +58,16 @@ async function runTests() {
   await waitOn(options);
 
   // dev proxy server should be up and listening for requests
-  execSync(`cat /proc/net/tcp`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
-  execSync(`curl -k https://stage.foo.redhat.com:1337`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
-
-  execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`, {
-    encoding: 'utf-8',
-    stdio: 'inherit',
-  });
+  execSyncWrapper(`cat /proc/net/tcp`);
+  execSyncWrapper(`echo 'First curl; curl -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`echo 'Second curl'; curl -k https://stage.foo.redhat.com:1337`);
+  execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`);
 }
 
-execSync(`cat /etc/hosts`, {
-  encoding: 'utf-8',
-  stdio: 'inherit',
-});
-
+execSyncWrapper(`cat /etc/hosts`);
 runTests()
   .then(() => {
+    console.log('Post-test: Killing the child process');
     child.kill();
     process.exit(0);
   })
