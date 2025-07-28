@@ -3,6 +3,8 @@ import { defineConfig } from 'cypress';
 const { addMatchImageSnapshotPlugin } = require('@simonsmith/cypress-image-snapshot/plugin');
 
 export default defineConfig({
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
   component: {
     specPattern: 'cypress/component/**/*.cy.{js,jsx,ts,tsx}',
     excludeSpecPattern: ['/snapshots/*', '/image_snapshots/*', '/src/*'],
@@ -17,6 +19,11 @@ export default defineConfig({
 
             return arg;
           });
+
+          if (browser.family === 'chromium') {
+            launchOptions.args.push('--js-flags="--max_old_space_size=3500"');
+          }
+
           // Needs the extra 139 because of the cypress toolbar, this is the size of the window! not size of the viewport
           launchOptions.args.push(`--window-size=1280,${720 + 139}`);
           // force screen to be non-retina
@@ -24,6 +31,11 @@ export default defineConfig({
           // force screen to be retina (2800x2400 size)
           // launchOptions.args.push('--force-device-scale-factor=2')
         }
+
+        // don't use shm because of OOM issues
+        // if (browser.name === 'chrome') {
+        //   launchOptions.args.push('--disable-dev-shm-usage');
+        // }
 
         if (browser.name === 'electron' && browser.isHeadless) {
           launchOptions.preferences.width = 1280;
