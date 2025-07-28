@@ -41,6 +41,14 @@ async function runTests() {
     console.log('Dev server spawned');
   });
 
+  execSync(`cat /proc/net/tcp`, {
+    encoding: 'utf-8',
+    stdio: 'inherit',
+  });
+  execSync(`curl -k https://stage.foo.redhat.com:1337`, {
+    encoding: 'utf-8',
+    stdio: 'inherit',
+  });
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
   execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`, {
@@ -50,14 +58,6 @@ async function runTests() {
 }
 
 execSync(`cat /etc/hosts`, {
-  encoding: 'utf-8',
-  stdio: 'inherit',
-});
-execSync(`cat /proc/net/tcp`, {
-  encoding: 'utf-8',
-  stdio: 'inherit',
-});
-execSync(`curl -k https://stage.foo.redhat.com:1337`, {
   encoding: 'utf-8',
   stdio: 'inherit',
 });
