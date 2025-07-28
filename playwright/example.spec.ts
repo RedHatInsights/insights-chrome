@@ -32,7 +32,7 @@ test('logs in', async ({ page, request }) => {
   console.log(`Resolved IP for ${testHost} is ${resolvedIP}`);
   execSyncWrapper(`cat /proc/net/tcp`);
   execSyncWrapper(`cat /proc/net/tcp6`);
-  execSyncWrapper(`ps -ef`);
+  execSyncWrapper(`ps -ef | grep "npm run dev:beta"`);
   execSyncWrapper(`echo 'Directly curling loopback'; curl -vvvvv -k https://[::1]:1337`);
   execSyncWrapper(`echo 'curling the dev server hostname'; curl -vvvvv -k https://${testHost}:1337`);
 

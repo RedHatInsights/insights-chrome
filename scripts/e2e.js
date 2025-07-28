@@ -5,11 +5,10 @@ const waitOn = require('wait-on');
 
 function execSyncWrapper(command) {
   try {
-    const result = execSync(command, {
+    execSync(command, {
       encoding: 'utf-8',
       stdio: 'inherit',
     });
-    console.log(`Output from command was:\n ${result}`);
   } catch (e) {
     console.log('Error while running command, output follows:');
     console.log(e);
@@ -57,13 +56,7 @@ async function runTests() {
 
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
-
-  // dev proxy server should be up and listening for requests
-  execSyncWrapper(`echo 'IPv4 connections:'; cat /proc/net/tcp`);
-  execSyncWrapper(`echo 'IPv6 connections:'; cat /proc/net/tcp6`);
-  execSyncWrapper(`echo 'First curl'; curl -k https://stage.foo.redhat.com:1337`);
-  execSyncWrapper(`echo 'Second curl'; curl -k https://stage.foo.redhat.com:1337`);
-  execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`);
+  execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx cypress run --e2e`);
 }
 
 execSyncWrapper(`cat /etc/hosts`);

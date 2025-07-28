@@ -354,10 +354,18 @@ spec:
           type: string
         spec:
         stepTemplate:
-          computeResources: {}
+          computeResources:
+            requests:
+              cpu: "4"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
           volumeMounts:
           - mountPath: /var/workdir
             name: workdir
+          - mountPath: /dev/shm
+            name: dshm
         steps:
         - args:
           - use
@@ -365,7 +373,13 @@ spec:
           computeResources: {}
           image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
           name: use-trusted-artifact
-        - computeResources: {}
+        - computeResources:
+            requests:
+              cpu: "4"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
           image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
           name: e2e-tests
           env: # Define environment variables for this step
@@ -389,20 +403,23 @@ spec:
             #!/usr/bin/env bash
             set -ex
             npm i >/dev/null 2>&1
-            npx playwright install >/dev/null 2>&1
             npm run dev:beta &
-            # TODO - replace this with a more intelligent bash waiting loop with curl
-            sleep 120
-            ps -ef
-            cat /proc/net/tcp
-            cat /proc/net/tcp6
-            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx playwright test
+            until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
+              echo "Waiting for dev server to be ready"
+              sleep 5
+            done
+            echo "Dev server ready!"
+            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --e2e
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
         volumes:
-        - emptyDir: {}
-          name: workdir
+          - name: dshm
+            emptyDir:
+              medium: Memory
+              sizeLimit: "4Gi" # Adjust this value as needed (e.g., "4Gi", "8Gi")
+          - emptyDir: {}
+            name: workdir
       workspaces:
       - name: basic-auth
         workspace: git-auth
@@ -739,11 +756,8 @@ spec:
     serviceAccountName: build-pipeline-insights-chrome
     podTemplate:
       hostAliases:
-#      - ip: "127.0.0.1"
-#        hostnames:
-#        - "stage.foo.redhat.com"
-#        - "prod.foo.redhat.com"
-      - ip: "::1"
+      # Webpack explicitly binds to this address; don't remove or change this without careful consideration
+      - ip: "127.0.0.1"
         hostnames:
         - "stage.foo.redhat.com"
         - "prod.foo.redhat.com"

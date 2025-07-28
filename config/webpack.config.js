@@ -138,7 +138,8 @@ const commonConfig = ({ dev }) => {
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
       allowedHosts: 'all',
-      host: '::1',
+      // This setting indirectly controls whether the server binds to IPv4 or IPv6.
+      host: '127.0.0.1',
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
