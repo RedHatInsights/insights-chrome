@@ -392,7 +392,7 @@ spec:
             npx playwright install >/dev/null 2>&1
             npm run test:e2e
           securityContext:
-            runAsUser: 1001
+            runAsUser: 0
           workingDir: /var/workdir
         volumes:
         - emptyDir: {}
