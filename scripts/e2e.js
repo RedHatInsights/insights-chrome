@@ -41,6 +41,10 @@ async function runTests() {
     console.log('Dev server spawned');
   });
 
+  console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
+  await waitOn(options);
+
+  // dev proxy server should be up and listening for requests
   execSync(`cat /proc/net/tcp`, {
     encoding: 'utf-8',
     stdio: 'inherit',
@@ -49,8 +53,7 @@ async function runTests() {
     encoding: 'utf-8',
     stdio: 'inherit',
   });
-  console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
-  await waitOn(options);
+
   execSync(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx playwright test`, {
     encoding: 'utf-8',
     stdio: 'inherit',
