@@ -391,11 +391,12 @@ spec:
             npm i >/dev/null 2>&1
             npx playwright install >/dev/null 2>&1
             npm run dev:beta &
+            # TODO - replace this with a more intelligent bash waiting loop with curl
             sleep 120
             ps -ef
             cat /proc/net/tcp
             cat /proc/net/tcp6
-            NO_COLOR=1 E2E_USER=$E2E_USER E2E_PASSWORD=$E2E_PASSWORD npx playwright test
+            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx playwright test
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
