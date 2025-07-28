@@ -13,34 +13,25 @@ async function getIP(hostname: string): Promise<string | undefined> {
   }
 }
 
+function execSyncWrapper(command: string) {
+  try {
+    execSync(command, {
+      encoding: 'utf-8',
+      stdio: 'inherit',
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 test('logs in', async ({ page, request }) => {
   const testHost = 'stage.foo.redhat.com';
   const resolvedIP = await getIP(testHost);
   console.log(`Resolved IP for ${testHost} is ${resolvedIP}`);
-  try {
-    execSync(`cat /proc/net/tcp | grep 539`, {
-      encoding: 'utf-8',
-      stdio: 'inherit',
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  try {
-    execSync(`curl -vvvvv -k https://localhost:1337`, {
-      encoding: 'utf-8',
-      stdio: 'inherit',
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  try {
-    execSync(`curl -vvvvv -k https://stage.foo.redhat.com:1337`, {
-      encoding: 'utf-8',
-      stdio: 'inherit',
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  execSyncWrapper(`cat /proc/net/tcp | grep 539`);
+  execSyncWrapper(`echo 'curling internal'; curl -vvvvv -k https://localhost:1337`);
+  execSyncWrapper(`echo 'curling localhost from within cypress session'; curl -vvvvv -k https://localhost:1337`);
+  execSyncWrapper(`echo 'curling the dev server host'; curl -vvvvv -k https://stage.foo.redhat.com:1337`);
 
   const response = await request.get('/');
   expect(response.ok()).toBeTruthy();
