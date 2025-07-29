@@ -45,7 +45,7 @@ Cypress.Commands.add('login', () => {
       // This JS file causes randomly an uncaught exception on login page which blocks the tests
       // Cannot read properties of undefined (reading 'setAttribute')
       cy.intercept({ url: 'https://sso.stage.redhat.com/auth/resources/0833r/login/rhd-theme/dist/pfelements/bundle.js' }, {});
-      cy.visit('/');
+      cy.visit('https://stage.foo.redhat.com:1337');
       // disable analytics integrations
       cy.setLocalStorage('chrome:analytics:disable', 'true');
       cy.setLocalStorage('chrome:segment:disable', 'true');
@@ -54,18 +54,10 @@ Cypress.Commands.add('login', () => {
       // login into the session
 
       cy.get('body').then((body) => {
-        // Ephemeral login is different
-        if (body.find('#username').length > 0) {
-          // If the username field is present, it means we are on the SSO login page
-          cy.get('#username').type(Cypress.env('E2E_USER'));
-          cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
-          cy.get('#kc-login').click();
-        } else {
-          cy.get('#username-verification').type(Cypress.env('E2E_USER'));
-          cy.get('#login-show-step2').click();
-          cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
-          cy.get('#rh-password-verification-submit-button').click();
-        }
+        cy.get('#username-verification').type(Cypress.env('E2E_USER'));
+        cy.get('#login-show-step2').click();
+        cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
+        cy.get('#rh-password-verification-submit-button').click();
       });
     },
     { cacheAcrossSpecs: true }

@@ -3,7 +3,7 @@ describe.skip('Auth', () => {
   it('should force refresh token', () => {
     cy.login();
     cy.intercept('POST', 'https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token').as('tokenRefresh');
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337');
     // initial token request
     cy.wait('@tokenRefresh');
 

@@ -5,7 +5,7 @@ describe.skip('OIDC State', () => {
     cy.login();
 
     // should pass normally
-    cy.visit('/');
+    cy.visit('https://stage.foo.redhat.com:1337/');
 
     cy.contains('Insights QA').should('exist');
 
