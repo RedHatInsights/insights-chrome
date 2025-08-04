@@ -1,10 +1,12 @@
+import { TEST_HOST } from '../../support/commands';
+
 // Landing page has changed
 describe('Auth', () => {
   // skipped because test is broken as of August 4, 2025
   it.skip('should force refresh token', () => {
     cy.login();
     cy.intercept('POST', 'https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token').as('tokenRefresh');
-    cy.visit('https://stage.foo.redhat.com:1337');
+    cy.visit(TEST_HOST);
     // initial token request
     cy.wait('@tokenRefresh');
 
