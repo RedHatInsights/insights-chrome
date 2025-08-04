@@ -26,6 +26,29 @@ const PFGenerator = asGenerator((item, ...rest) => {
 
 const target = 'https://console.stage.redhat.com';
 
+const EXCLUDED = ['/apps/chrome/js'];
+
+/**
+ * Only proxy everything _except_ the public JS bundle path.
+ */
+function shouldProxy(url) {
+  return !EXCLUDED.some(p => url.startsWith(p));
+}
+
+/**
+ * History‐API fallback: serve “/” for any non‐API, non‐asset HTML request.
+ */
+async function bypassHtml(req, res) {
+  const acceptHtml = req.headers.accept?.includes('text/html');
+  const isApi = /\/api\//.test(req.url);
+  const hasExt = /\./.test(req.url);
+
+  if (acceptHtml && !isApi && !hasExt) {
+    return '/';
+  }
+  return null;
+}
+
 const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
@@ -159,29 +182,9 @@ const commonConfig = ({ dev }) => {
           secure: false,
           changeOrigin: true,
           autoRewrite: true,
-          context: (url) => {
-            const shouldProxy = !['/apps/chrome/js'].find((u) => (typeof u === 'string' ? url.startsWith(u) : u.test(url)));
-            if (shouldProxy) {
-              console.log('proxy', url);
-
-              return true;
-            }
-
-            return false;
-          },
+          context: shouldProxy,
           target,
-          // agent,
-          bypass: async (req, res) => {
-            /**
-             * Bypass any HTML to the root URL
-             * Serves as a historyApiFallback when refreshing on any other URL than '/'
-             */
-            if (!req.url.match(/\/api\//) && !req.url.match(/\./) && req.headers.accept?.includes('text/html')) {
-              return '/';
-            }
-
-            return null;
-          },
+          bypass: bypassHtml,
         },
       ],
       // ...proxy({
