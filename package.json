@@ -18,6 +18,7 @@
     "cypress:run": "cypress run --browser electron",
     "dev": "DEV_SERVER=true webpack serve --config config/webpack.config.js --mode=development",
     "dev:beta": "BETA=true npm run dev",
+    "dev:ci": "DEV_SERVER=true BETA=true NODE_ENV=development webpack serve --watch --mode=development --config config/webpack.konflux.config.js",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint src cypress",
     "lint:js:fix": "eslint src cypress --fix",

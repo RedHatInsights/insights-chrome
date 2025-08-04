@@ -1,5 +1,3 @@
-import { TEST_HOST } from '../../support/commands';
-
 describe('last-visited-pages empty behavior', () => {
   beforeEach(() => {
     // Because of the user table relation, the data from /last-visited and /user must match to mock the db state correctly
@@ -40,12 +38,12 @@ describe('last-visited-pages empty behavior', () => {
   // test skipped because it's failing as of August 4, 2025
   it.skip('will initialize the local storage from the database and visit two pages', () => {
     cy.login();
-    cy.visit(TEST_HOST);
+    cy.visit('/');
 
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.getAllLocalStorage().then((result: any) => {
-      const localStore = result[TEST_HOST]['chrome:lastVisited'];
+      const localStore = result['/']['chrome:lastVisited'];
       expect(localStore).to.equal(
         // If you don't do this then Array(2) is the type and everything fails.
         JSON.stringify([
@@ -63,7 +61,7 @@ describe('last-visited-pages empty behavior', () => {
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
 
     cy.getAllLocalStorage().then((result: any) => {
-      const localStore = result[TEST_HOST]['chrome:lastVisited'];
+      const localStore = result['/']['chrome:lastVisited'];
       expect(localStore).to.equal(
         // If you don't do this then Array(2) is the type and everything fails.
         JSON.stringify([

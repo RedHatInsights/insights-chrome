@@ -6,7 +6,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { createJoinFunction, createJoinImplementation, asGenerator, defaultJoinGenerator } = require('resolve-url-loader');
 const searchIgnoredStyles = require('@redhat-cloud-services/frontend-components-config-utilities/search-ignored-styles');
-const proxy = require('@redhat-cloud-services/frontend-components-config-utilities/proxy');
 const imageNullLoader = require('./image-null-loader');
 
 // call default generator then pair different variations of uri with each base
@@ -24,6 +23,31 @@ const PFGenerator = asGenerator((item, ...rest) => {
   }
   return defaultTuples;
 });
+
+const target = 'https://console.stage.redhat.com';
+
+const EXCLUDED = ['/apps/chrome/js'];
+
+/**
+ * Only proxy everything _except_ the public JS bundle path.
+ */
+function shouldProxy(url) {
+  return !EXCLUDED.some((p) => url.startsWith(p));
+}
+
+/**
+ * History‐API fallback: serve “/” for any non‐API, non‐asset HTML request.
+ */
+async function bypassHtml(req, res) {
+  const acceptHtml = req.headers.accept?.includes('text/html');
+  const isApi = /\/api\//.test(req.url);
+  const hasExt = /\./.test(req.url);
+
+  if (acceptHtml && !isApi && !hasExt) {
+    return '/';
+  }
+  return null;
+}
 
 const publicPath = '/apps/chrome/js/';
 const commonConfig = ({ dev }) => {
@@ -137,6 +161,8 @@ const commonConfig = ({ dev }) => {
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
       allowedHosts: 'all',
+      // This setting indirectly controls whether the server binds to IPv4 or IPv6.
+      host: '127.0.0.1',
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
@@ -148,43 +174,57 @@ const commonConfig = ({ dev }) => {
       port: 1337,
       // HMR flag
       hot: true,
-      ...proxy({
-        env: 'stage-beta',
-        port: 1337,
-        appUrl: [/^\/*$/],
-        useProxy: true,
-        publicPath,
-        proxyVerbose: true,
-        isChrome: true,
-        frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
-        routes: {
-          ...(process.env.CHROME_SERVICE && {
-            // web sockets
-            '/wss/chrome-service/': {
-              target: `ws://localhost:${process.env.CHROME_SERVICE}`,
-              // To upgrade the connection
-              ws: true,
-            },
-            // REST API
-            '/api/chrome-service/v1/': {
-              host: `http://localhost:${process.env.CHROME_SERVICE}`,
-            },
-          }),
-          ...(process.env.CONFIG_PORT && {
-            '/beta/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-            '/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-          }),
-          ...(process.env.NAV_CONFIG && {
-            '/api/chrome-service/v1/static': {
-              host: `http://localhost:${process.env.NAV_CONFIG}`,
-            },
-          }),
+      client: {
+        overlay: false,
+      },
+      proxy: [
+        {
+          secure: false,
+          changeOrigin: true,
+          autoRewrite: true,
+          context: shouldProxy,
+          target,
+          bypass: bypassHtml,
         },
-      }),
+      ],
+      // ...proxy({
+      //   env: 'stage-beta',
+      //   port: 1337,
+      //   appUrl: [/^\/*$/],
+      //   useProxy: true,
+      //   publicPath,
+      //   proxyVerbose: true,
+      //   isChrome: true,
+      //   frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
+      //   useAgent: false,
+      //   routes: {
+      //     ...(process.env.CHROME_SERVICE && {
+      //       // web sockets
+      //       '/wss/chrome-service/': {
+      //         target: `ws://localhost:${process.env.CHROME_SERVICE}`,
+      //         // To upgrade the connection
+      //         ws: true,
+      //       },
+      //       // REST API
+      //       '/api/chrome-service/v1/': {
+      //         host: `http://localhost:${process.env.CHROME_SERVICE}`,
+      //       },
+      //     }),
+      //     ...(process.env.CONFIG_PORT && {
+      //       '/beta/config': {
+      //         host: `http://localhost:${process.env.CONFIG_PORT}`,
+      //       },
+      //       '/config': {
+      //         host: `http://localhost:${process.env.CONFIG_PORT}`,
+      //       },
+      //     }),
+      //     ...(process.env.NAV_CONFIG && {
+      //       '/api/chrome-service/v1/static': {
+      //         host: `http://localhost:${process.env.NAV_CONFIG}`,
+      //       },
+      //     }),
+      //   },
+      // }),
     },
   };
 };
