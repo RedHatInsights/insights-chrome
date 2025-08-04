@@ -403,7 +403,7 @@ spec:
             #!/usr/bin/env bash
             set -ex
             npm i >/dev/null 2>&1
-            npm run dev:beta &
+            npm run dev:ci &
             until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
               echo "Waiting for dev server to be ready"
               sleep 5
