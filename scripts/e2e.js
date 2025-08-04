@@ -59,7 +59,6 @@ async function runTests() {
   execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx cypress run --e2e`);
 }
 
-execSyncWrapper(`cat /etc/hosts`);
 runTests()
   .then(() => {
     console.log('Post-test: Killing the child process');
