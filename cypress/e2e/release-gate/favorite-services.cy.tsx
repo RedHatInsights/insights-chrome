@@ -1,13 +1,14 @@
 const service = '/application-services/api-management';
 let interceptionCounter = false;
 const serviceName = 'Red Hat Insights';
+import { TEST_HOST } from '../../support/commands';
 
 describe('Favorite-services', () => {
   // skipped because test is failing as of August 4, 2025
   it.skip('check and uncheck favorited services', () => {
-    cy.visit('https://stage.foo.redhat.com:1337');
+    cy.visit(TEST_HOST);
     cy.login();
-    cy.visit('https://stage.foo.redhat.com:1337');
+    cy.visit(TEST_HOST);
     cy.intercept('GET', '/api/chrome-service/v1/user', {
       data: {
         id: 2435,

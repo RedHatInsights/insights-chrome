@@ -1,7 +1,9 @@
+import { TEST_HOST } from '../../support/commands';
+
 describe('Navigation', () => {
   beforeEach('', () => {
     cy.login();
-    cy.visit('https://stage.foo.redhat.com:1337');
+    cy.visit(TEST_HOST);
   });
 
   it('visit services', () => {

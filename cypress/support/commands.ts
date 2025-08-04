@@ -36,6 +36,9 @@
 //   }
 // }
 
+// TODO: pull from config or env var?
+export const TEST_HOST = 'https://stage.foo.redhat.com:1337';
+
 Cypress.Commands.add('login', () => {
   cy.session(
     `login-${Cypress.env('E2E_USER')}`,
@@ -45,7 +48,7 @@ Cypress.Commands.add('login', () => {
       // This JS file causes randomly an uncaught exception on login page which blocks the tests
       // Cannot read properties of undefined (reading 'setAttribute')
       cy.intercept({ url: 'https://sso.stage.redhat.com/auth/resources/0833r/login/rhd-theme/dist/pfelements/bundle.js' }, {});
-      cy.visit('https://stage.foo.redhat.com:1337');
+      cy.visit(TEST_HOST);
       // disable analytics integrations
       cy.setLocalStorage('chrome:analytics:disable', 'true');
       cy.setLocalStorage('chrome:segment:disable', 'true');
@@ -53,7 +56,7 @@ Cypress.Commands.add('login', () => {
       cy.wait(1000);
       // login into the session
 
-      cy.get('body').then((body) => {
+      cy.get('body').then(() => {
         cy.get('#username-verification').type(Cypress.env('E2E_USER'));
         cy.get('#login-show-step2').click();
         cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
