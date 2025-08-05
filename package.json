@@ -128,7 +128,7 @@
     "@orama/orama": "^2.0.21",
     "@patternfly/patternfly": "^6.0.0",
     "pf-5-styles": "npm:@patternfly/patternfly@^5.4.0",
-    "@patternfly/quickstarts": "^6.0.0",
+    "@patternfly/quickstarts": "^6.3.1",
     "@patternfly/react-charts": "^8.0.0",
     "@patternfly/react-core": "^6.0.0",
     "@patternfly/react-icons": "^6.0.0",
