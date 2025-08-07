@@ -73,7 +73,9 @@ describe('Search API', () => {
     // Create fresh instance with test mode enabled
     searchAPI = createSearchAPI(true);
     // Reset the store state
-    searchAPI.reset?.();
+    const store = (searchAPI as any)._store;
+    store.databases.clear();
+    store.dataCache.clear();
   });
 
   const mockHelpDocs: SearchEntry[] = [

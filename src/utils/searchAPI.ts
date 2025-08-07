@@ -28,7 +28,7 @@ const searchSchema = {
   type: 'string',
 } as const;
 
-class SearchStore {
+export class SearchStore {
   private databases: Map<SearchDataType, Orama<typeof searchSchema>> = new Map();
   private dataCache: Map<SearchDataType, SearchEntry[]> = new Map();
 
@@ -148,12 +148,6 @@ class SearchStore {
   getCachedData(type: SearchDataType): SearchEntry[] | undefined {
     return this.dataCache.get(type);
   }
-
-  // For testing purposes
-  reset(): void {
-    this.databases.clear();
-    this.dataCache.clear();
-  }
 }
 
 const searchStore = new SearchStore();
@@ -164,7 +158,6 @@ export interface ChromeSearchAPI {
   getAvailableTypes: () => SearchDataType[];
   clearType: (type: SearchDataType) => Promise<void>;
   getCachedData: (type: SearchDataType) => SearchEntry[] | undefined;
-  reset?: () => void; // Only available in test environment
 }
 
 export const createSearchAPI = (isTest = false): ChromeSearchAPI => {
@@ -178,10 +171,7 @@ export const createSearchAPI = (isTest = false): ChromeSearchAPI => {
   };
 
   if (isTest) {
-    return {
-      ...api,
-      reset: () => searchStore.reset(),
-    };
+    (api as any)._store = searchStore;
   }
 
   return api;
