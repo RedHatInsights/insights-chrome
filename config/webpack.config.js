@@ -25,9 +25,96 @@ const PFGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
+const target = 'https://console.stage.redhat.com';
+
+const EXCLUDED = ['/apps/chrome/js'];
+
+/**
+ * Only proxy everything _except_ the public JS bundle path.
+ */
+function shouldProxy(url) {
+  return !EXCLUDED.some((p) => url.startsWith(p));
+}
+
+/**
+ * History‐API fallback: serve “/” for any non‐API, non‐asset HTML request.
+ */
+async function bypassHtml(req, res) {
+  const acceptHtml = req.headers.accept?.includes('text/html');
+  const isApi = /\/api\//.test(req.url);
+  const hasExt = /\./.test(req.url);
+
+  if (acceptHtml && !isApi && !hasExt) {
+    return '/';
+  }
+  return null;
+}
+
 const publicPath = '/apps/chrome/js/';
+
+//dev server proxy settings specific to running in Konflux CI
+const konfluxDevServerSettings = {
+  // This setting indirectly controls whether the server binds to IPv4 or IPv6.
+  host: '127.0.0.1',
+  client: {
+    overlay: false,
+  },
+  proxy: [
+    {
+      secure: false,
+      changeOrigin: true,
+      autoRewrite: true,
+      context: shouldProxy,
+      target,
+      bypass: bypassHtml,
+    },
+  ],
+};
+
+// dev server proxy config when not running in Konflux CI
+const nonKonfluxDevServerConfiguration = () => {
+  return proxy({
+    env: 'stage-beta',
+    port: 1337,
+    appUrl: [/^\/*$/],
+    useProxy: true,
+    publicPath,
+    proxyVerbose: true,
+    isChrome: true,
+    frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
+    routes: {
+      ...(process.env.CHROME_SERVICE && {
+        // web sockets
+        '/wss/chrome-service/': {
+          target: `ws://localhost:${process.env.CHROME_SERVICE}`,
+          // To upgrade the connection
+          ws: true,
+        },
+        // REST API
+        '/api/chrome-service/v1/': {
+          host: `http://localhost:${process.env.CHROME_SERVICE}`,
+        },
+      }),
+      ...(process.env.CONFIG_PORT && {
+        '/beta/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+        '/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+      }),
+      ...(process.env.NAV_CONFIG && {
+        '/api/chrome-service/v1/static': {
+          host: `http://localhost:${process.env.NAV_CONFIG}`,
+        },
+      }),
+    },
+  });
+};
+
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
+  const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
@@ -148,43 +235,7 @@ const commonConfig = ({ dev }) => {
       port: 1337,
       // HMR flag
       hot: true,
-      ...proxy({
-        env: 'stage-beta',
-        port: 1337,
-        appUrl: [/^\/*$/],
-        useProxy: true,
-        publicPath,
-        proxyVerbose: true,
-        isChrome: true,
-        frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
-        routes: {
-          ...(process.env.CHROME_SERVICE && {
-            // web sockets
-            '/wss/chrome-service/': {
-              target: `ws://localhost:${process.env.CHROME_SERVICE}`,
-              // To upgrade the connection
-              ws: true,
-            },
-            // REST API
-            '/api/chrome-service/v1/': {
-              host: `http://localhost:${process.env.CHROME_SERVICE}`,
-            },
-          }),
-          ...(process.env.CONFIG_PORT && {
-            '/beta/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-            '/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-          }),
-          ...(process.env.NAV_CONFIG && {
-            '/api/chrome-service/v1/static': {
-              host: `http://localhost:${process.env.NAV_CONFIG}`,
-            },
-          }),
-        },
-      }),
+      ...contextualConfigSettings,
     },
   };
 };

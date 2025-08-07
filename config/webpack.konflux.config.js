@@ -187,44 +187,6 @@ const commonConfig = ({ dev }) => {
           bypass: bypassHtml,
         },
       ],
-      // ...proxy({
-      //   env: 'stage-beta',
-      //   port: 1337,
-      //   appUrl: [/^\/*$/],
-      //   useProxy: true,
-      //   publicPath,
-      //   proxyVerbose: true,
-      //   isChrome: true,
-      //   frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
-      //   useAgent: false,
-      //   routes: {
-      //     ...(process.env.CHROME_SERVICE && {
-      //       // web sockets
-      //       '/wss/chrome-service/': {
-      //         target: `ws://localhost:${process.env.CHROME_SERVICE}`,
-      //         // To upgrade the connection
-      //         ws: true,
-      //       },
-      //       // REST API
-      //       '/api/chrome-service/v1/': {
-      //         host: `http://localhost:${process.env.CHROME_SERVICE}`,
-      //       },
-      //     }),
-      //     ...(process.env.CONFIG_PORT && {
-      //       '/beta/config': {
-      //         host: `http://localhost:${process.env.CONFIG_PORT}`,
-      //       },
-      //       '/config': {
-      //         host: `http://localhost:${process.env.CONFIG_PORT}`,
-      //       },
-      //     }),
-      //     ...(process.env.NAV_CONFIG && {
-      //       '/api/chrome-service/v1/static': {
-      //         host: `http://localhost:${process.env.NAV_CONFIG}`,
-      //       },
-      //     }),
-      //   },
-      // }),
     },
   };
 };

@@ -399,17 +399,19 @@ spec:
             value: "true"
           - name: NO_PROXY
             value: "stage.foo.redhat.com,prod.foo.redhat.com"
+          - name: KONFLUX_RUN
+            value: "true"
           script: |
             #!/usr/bin/env bash
             set -ex
             npm i >/dev/null 2>&1
-            npm run dev:ci &
+            KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
             until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
               echo "Waiting for dev server to be ready"
               sleep 5
             done
             echo "Dev server ready!"
-            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
+            KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
