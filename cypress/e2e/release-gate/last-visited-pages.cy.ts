@@ -57,7 +57,7 @@ describe('last-visited-pages empty behavior', () => {
       );
     });
 
-    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
+    cy.visit('/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
 
     cy.getAllLocalStorage().then((result: any) => {
@@ -101,7 +101,7 @@ describe('last-visited-pages empty behavior', () => {
       expect(req.body).to.equal(responseBody);
     });
     cy.login();
-    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
+    cy.visit('/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.clock();
@@ -135,7 +135,7 @@ describe('last-visited-pages empty behavior', () => {
       expect(req.body).to.equal(responseBody);
     });
     cy.login();
-    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
+    cy.visit('/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.clock();
@@ -182,7 +182,7 @@ describe.skip('last-visited-pages standard behavior', () => {
         },
       ])
     );
-    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
+    cy.visit('/settings/learning-resources');
 
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.getLocalStorage('chrome:lastVisited').should(
