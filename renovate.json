@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "github>konflux-ci/mintmaker//config/renovate/renovate.json"
+  ],
+  "ignorePaths": [
+    ".pre-commit-config.yaml"
+  ],
+  "baseBranches": ["master"],
+  "tekton": {
+    "enabled": true,
+    "packageRules": [
+      {
+        "matchUpdateTypes": [
+          "digest"
+        ],
+        "platformAutomerge": true,
+        "automerge": true
+      }
+    ]
+  }
+}
