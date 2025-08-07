@@ -409,7 +409,7 @@ spec:
               sleep 5
             done
             echo "Dev server ready!"
-            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --e2e
+            NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
