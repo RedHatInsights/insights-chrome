@@ -169,7 +169,6 @@
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "oidc-client-ts": "^2.4.0",
-    "pf-5-styles": "npm:@patternfly/patternfly@^5.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intl": "^6.7.0",
