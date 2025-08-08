@@ -1,5 +1,5 @@
 import { AuthContextProps } from 'react-oidc-context';
-import { ITLess, LOGIN_SCOPES_STORAGE_KEY, deleteLocalStorageItems, getEnv } from '../../utils/common';
+import { ITLess, LOGIN_SCOPES_STORAGE_KEY, deleteLocalStorageItems } from '../../utils/common';
 import { GLOBAL_FILTER_KEY, OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
 import Cookies from 'js-cookie';
 import logger from '../logger';
@@ -64,15 +64,12 @@ export function login(auth: AuthContextProps, requiredScopes: string[] = [], red
   // Redirect to login
   Cookies.set('cs_loggedOut', 'false');
   //FIX ME: Temp fix until scope is added in-boundary
-  let scope = ITLess() ? ['openid', ...requiredScopes] : ['openid', 'api.console', ...requiredScopes];
+  let scope = ITLess() ? ['openid', ...requiredScopes] : ['openid', 'api.console', 'api.ask_red_hat', ...requiredScopes];
   const partner = getPartnerScope(window.location.pathname);
   if (partner) {
     scope.push(partner);
   }
 
-  if (getEnv() === 'stage') {
-    scope.push('api.ask_red_hat');
-  }
   scope = Array.from(new Set(scope));
   localStorage.setItem(LOGIN_SCOPES_STORAGE_KEY, JSON.stringify(scope));
   // KC scopes are delimited by a space character, hence the join(' ')
