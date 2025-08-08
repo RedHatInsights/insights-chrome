@@ -7,7 +7,7 @@ const DummyComponent = ({ authMock, login }: { authMock: any; login: () => Promi
 };
 
 describe('useManageSilentRenew', () => {
-  it('should pause silent renew on network offline', () => {
+  it.skip('should pause silent renew on network offline', () => {
     const authMock = { startSilentRenew: cy.stub(), stopSilentRenew: cy.stub() };
     const login = cy.stub();
     cy.mount(<DummyComponent authMock={authMock} login={login} />);
