@@ -3,7 +3,6 @@ import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import type Intercom from '@types/intercom-web';
-
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
 import { FavorableIcons } from '../components/FavoriteServices/ServiceIcon';
 
@@ -138,15 +137,20 @@ export type RouteDefinition = {
   props?: any;
 };
 
-export type ModuleRoute =
-  | {
-      isFedramp?: boolean;
-      pathname: string;
-      exact?: boolean;
-      dynamic?: boolean;
-      props?: Record<string, unknown>;
-    }
-  | string;
+export type SupportCaseConfig = {
+  product: string;
+  version: string;
+};
+
+export type ModuleRoute = {
+  isFedramp?: boolean;
+  pathname: string;
+  exact?: boolean;
+  dynamic?: boolean;
+  props?: Record<string, unknown>;
+  supportCaseData?: SupportCaseConfig;
+  permissions?: NavItemPermission[];
+};
 
 export type RemoteModule = {
   module: string;
@@ -156,7 +160,9 @@ export type RemoteModule = {
 export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
+  cdnPath?: string;
   config?: {
+    supportCaseData?: SupportCaseConfig;
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
@@ -229,3 +235,8 @@ export type BundleNav = {
   title?: string;
   links: NavItem[];
 };
+
+export enum ReleaseEnv {
+  STABLE = 'STABLE',
+  PREVIEW = 'PREVIEW',
+}
