@@ -2,8 +2,9 @@ const service = '/application-services/api-management';
 let interceptionCounter = false;
 const serviceName = 'Red Hat Insights';
 
-describe.skip('Favorite-services', () => {
-  it('check and uncheck favorited services', () => {
+describe('Favorite-services', () => {
+  // skipped because test is failing as of August 4, 2025
+  it.skip('check and uncheck favorited services', () => {
     cy.visit('/');
     cy.login();
     cy.visit('/');
