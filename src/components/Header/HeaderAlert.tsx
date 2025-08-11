@@ -20,7 +20,7 @@ const HeaderAlert = ({
   dismissDelay = 5000,
 }: HeaderAlertProps) => {
   const [alertVisible, setAlertVisible] = useState(true);
-  const [timer, setTimer] = useState<NodeJS.Timer | null>(null);
+  const [timer, setTimer] = useState<number | null>(null);
 
   useEffect(() => {
     dismissable || createTimer();
@@ -38,7 +38,7 @@ const HeaderAlert = ({
           clearTimeout(timer);
         }
         onDismiss && onDismiss();
-      }, dismissDelay)
+      }, dismissDelay) as any
     );
   };
 

@@ -87,7 +87,13 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new webpack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(dev
+      ? [
+          new ReactRefreshWebpackPlugin({
+            overlay: false,
+          }),
+        ]
+      : []),
     // Put the Sentry Webpack plugin after all other plugins
     ...(process.env.ENABLE_SENTRY
       ? [

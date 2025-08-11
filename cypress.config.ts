@@ -3,6 +3,8 @@ import { defineConfig } from 'cypress';
 const { addMatchImageSnapshotPlugin } = require('@simonsmith/cypress-image-snapshot/plugin');
 
 export default defineConfig({
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
   component: {
     specPattern: 'cypress/component/**/*.cy.{js,jsx,ts,tsx}',
     excludeSpecPattern: ['/snapshots/*', '/image_snapshots/*', '/src/*'],
@@ -17,6 +19,7 @@ export default defineConfig({
 
             return arg;
           });
+
           // Needs the extra 139 because of the cypress toolbar, this is the size of the window! not size of the viewport
           launchOptions.args.push(`--window-size=1280,${720 + 139}`);
           // force screen to be non-retina
@@ -49,7 +52,7 @@ export default defineConfig({
   },
   e2e: {
     blockHosts: ['consent.trustarc.com'],
-    baseUrl: process.env.BASE || 'https://stage.foo.redhat.com:1337/',
+    baseUrl: process.env.BASE || 'https://stage.foo.redhat.com:1337',
     env: {
       E2E_USER: process.env.E2E_USER,
       E2E_PASSWORD: process.env.E2E_PASSWORD,

@@ -1,4 +1,4 @@
-describe.skip('Navigation', () => {
+describe('Navigation', () => {
   beforeEach('', () => {
     cy.login();
     cy.visit('/');
@@ -9,7 +9,7 @@ describe.skip('Navigation', () => {
     cy.get('.chr-c-link-service-toggle').click();
   });
 
-  it('Navigate to users', () => {
+  it.skip('Navigate to users', () => {
     // click on services button
     cy.get('.chr-c-link-service-toggle').click();
 

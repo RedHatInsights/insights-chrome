@@ -1,4 +1,4 @@
-describe.skip('last-visited-pages empty behavior', () => {
+describe('last-visited-pages empty behavior', () => {
   beforeEach(() => {
     // Because of the user table relation, the data from /last-visited and /user must match to mock the db state correctly
     cy.intercept('GET', '/api/chrome-service/v1/user', {
@@ -34,14 +34,16 @@ describe.skip('last-visited-pages empty behavior', () => {
     }).as('getLastVisited');
   });
 
-  it('will initialize the local storage from the database and visit two pages', () => {
+  // local storage is not an end-user facing feature, so testing it explicitly falls within integration/unit/component scope
+  // test skipped because it's failing as of August 4, 2025
+  it.skip('will initialize the local storage from the database and visit two pages', () => {
     cy.login();
     cy.visit('/');
 
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.getAllLocalStorage().then((result: any) => {
-      const localStore = result['https://stage.foo.redhat.com:1337']['chrome:lastVisited'];
+      const localStore = result['/']['chrome:lastVisited'];
       expect(localStore).to.equal(
         // If you don't do this then Array(2) is the type and everything fails.
         JSON.stringify([
@@ -55,11 +57,11 @@ describe.skip('last-visited-pages empty behavior', () => {
       );
     });
 
-    cy.visit('/settings/learning-resources');
+    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
 
     cy.getAllLocalStorage().then((result: any) => {
-      const localStore = result['https://stage.foo.redhat.com:1337']['chrome:lastVisited'];
+      const localStore = result['/']['chrome:lastVisited'];
       expect(localStore).to.equal(
         // If you don't do this then Array(2) is the type and everything fails.
         JSON.stringify([
@@ -99,7 +101,7 @@ describe.skip('last-visited-pages empty behavior', () => {
       expect(req.body).to.equal(responseBody);
     });
     cy.login();
-    cy.visit('/settings/learning-resources');
+    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.clock();
@@ -133,7 +135,7 @@ describe.skip('last-visited-pages empty behavior', () => {
       expect(req.body).to.equal(responseBody);
     });
     cy.login();
-    cy.visit('/settings/learning-resources');
+    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.wait('@getLastVisited').its('response.statusCode').should('equal', 200);
     cy.clock();
@@ -180,7 +182,7 @@ describe.skip('last-visited-pages standard behavior', () => {
         },
       ])
     );
-    cy.visit('/settings/learning-resources');
+    cy.visit('https://stage.foo.redhat.com:1337/settings/learning-resources');
 
     cy.wait('@getUser').its('response.statusCode').should('equal', 200);
     cy.getLocalStorage('chrome:lastVisited').should(

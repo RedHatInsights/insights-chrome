@@ -69,11 +69,11 @@ const useAccessRequestNotifier = (): [
     /**
      * register notifier only for org admin
      */
-    let interval: NodeJS.Timer | undefined = undefined;
+    let interval: number | undefined = undefined;
     if (user?.identity?.user?.is_org_admin && !interval) {
       try {
         notifier();
-        interval = setInterval(notifier, 20000);
+        interval = setInterval(notifier, 20000) as any;
       } catch (err) {
         console.error(err);
         if (interval) {
