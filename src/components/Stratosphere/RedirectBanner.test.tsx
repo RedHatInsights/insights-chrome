@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { InitialEntry } from 'history';
-import { Store } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 
 import RedirectBanner from './RedirectBanner';
 import { AWS_BANNER_NAME, AZURE_BANNER_NAME } from '../../hooks/useMarketplacePartner';
+import { activeProductAtom } from '../../state/atoms/activeProductAtom';
+
+const HydrateAtoms: React.FC<{ initialValues: any[]; children: React.ReactNode }> = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
 
 const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
   const { search, pathname, hash, state } = useLocation();
@@ -22,28 +27,28 @@ const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ ch
   return null;
 };
 
-const Wrapper: React.FC<React.PropsWithChildren<{ initialEntries?: InitialEntry[]; store: Store; changeSpy?: jest.Mock }>> = ({
+const Wrapper: React.FC<React.PropsWithChildren<{ initialEntries?: InitialEntry[]; changeSpy?: jest.Mock; atomValues?: any[] }>> = ({
   changeSpy = jest.fn(),
-  store,
   initialEntries,
   children,
+  atomValues = [],
 }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <LocationSpy changeSpy={changeSpy} />
-    <Provider store={store}>{children}</Provider>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={atomValues}>
+        <LocationSpy changeSpy={changeSpy} />
+        <div>{children}</div>
+      </HydrateAtoms>
+    </JotaiProvider>
   </MemoryRouter>
 );
 
 describe('<RedirectBanner>', () => {
-  const mockStore = configureStore();
-  let store: Store;
-  beforeEach(() => {
-    store = mockStore({ chrome: {} });
-  });
+  const defaultAtomValues = [[activeProductAtom, null]];
 
   test('should return null if required query param does not exist', () => {
     render(
-      <Wrapper store={store} initialEntries={['/foo/bar']}>
+      <Wrapper initialEntries={['/foo/bar']} atomValues={defaultAtomValues}>
         <RedirectBanner />
       </Wrapper>
     );
@@ -52,7 +57,7 @@ describe('<RedirectBanner>', () => {
 
   test('should return inline alert if AWS query param exists', () => {
     render(
-      <Wrapper store={store} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]}>
+      <Wrapper initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]} atomValues={defaultAtomValues}>
         <RedirectBanner />
       </Wrapper>
     );
@@ -61,7 +66,7 @@ describe('<RedirectBanner>', () => {
 
   test('should return inline alert if Azure query param exists', () => {
     render(
-      <Wrapper store={store} initialEntries={[`/foo/bar?${AZURE_BANNER_NAME}`]}>
+      <Wrapper initialEntries={[`/foo/bar?${AZURE_BANNER_NAME}`]} atomValues={defaultAtomValues}>
         <RedirectBanner />
       </Wrapper>
     );
@@ -71,7 +76,7 @@ describe('<RedirectBanner>', () => {
   test('should close inline alert if after clicking on close button', async () => {
     const locationSpy = jest.fn();
     render(
-      <Wrapper changeSpy={locationSpy} store={store} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]}>
+      <Wrapper changeSpy={locationSpy} initialEntries={[`/foo/bar?${AWS_BANNER_NAME}`]} atomValues={defaultAtomValues}>
         <RedirectBanner />
       </Wrapper>
     );

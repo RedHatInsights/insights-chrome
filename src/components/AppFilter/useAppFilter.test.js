@@ -1,47 +1,51 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { act, renderHook } from '@testing-library/react';
-import configureStore from 'redux-mock-store';
-import * as axios from 'axios';
+import axios from 'axios';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 
 import useAppFilter, { requiredBundles } from './useAppFilter';
+import { navigationAtom } from '../../state/atoms/navigationAtom';
+import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 
-jest.mock('axios', () => {
-  const axios = jest.requireActual('axios');
-  return {
-    __esModule: true,
-    ...axios,
-    default: {
-      ...axios.default,
-      get: () => Promise.resolve({ data: {} }),
-    },
-  };
-});
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(() => Promise.resolve({ data: { navItems: [] } })),
+  },
+}));
 
-const ContextWrapper = ({ store, children }) => (
-  <Provider store={store}>
-    <MemoryRouter>{children}</MemoryRouter>
-  </Provider>
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+const ContextWrapper = ({ children, atomValues = [] }) => (
+  <MemoryRouter>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={atomValues}>
+        <div>{children}</div>
+      </HydrateAtoms>
+    </JotaiProvider>
+  </MemoryRouter>
 );
 
 const TEST_ID = 'foo-id';
 const TEST_TITLE = 'foo-title';
 
 describe('useAppFilter', () => {
-  const mockStore = configureStore();
+  const defaultAtomValues = [
+    [navigationAtom, {}],
+    [chromeModulesAtom, {}],
+  ];
 
   test('should not create any API calls if the filter is not opened', async () => {
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -74,17 +78,12 @@ describe('useAppFilter', () => {
     const dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
       return 666;
     });
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy.mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -102,7 +101,7 @@ describe('useAppFilter', () => {
   });
 
   test('should flatten group navigation', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -126,15 +125,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -153,7 +146,7 @@ describe('useAppFilter', () => {
   });
 
   test('should create navigation from shallow item', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -172,15 +165,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -199,7 +186,7 @@ describe('useAppFilter', () => {
   });
 
   test('should preserver external links', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -219,15 +206,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -247,7 +228,7 @@ describe('useAppFilter', () => {
   });
 
   test('should create top level link for expandable items', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -272,15 +253,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -298,7 +273,7 @@ describe('useAppFilter', () => {
   });
 
   test('should extract cost and subscriptions links', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -333,15 +308,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -381,7 +350,7 @@ describe('useAppFilter', () => {
   });
 
   test('should prevent duplicate links in cost/subs group', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     const responseObject = {
       data: {
         id: TEST_ID,
@@ -406,15 +375,9 @@ describe('useAppFilter', () => {
       .mockImplementationOnce(() => Promise.resolve(responseObject))
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });
@@ -438,7 +401,7 @@ describe('useAppFilter', () => {
   });
 
   test('should filter items', async () => {
-    const axiosGetSpy = jest.spyOn(axios.default, 'get');
+    const axiosGetSpy = jest.spyOn(axios, 'get');
     axiosGetSpy
       .mockImplementationOnce(() =>
         Promise.resolve({
@@ -457,15 +420,9 @@ describe('useAppFilter', () => {
       )
       .mockImplementation(() => Promise.resolve({ data: { navItems: [] } }));
     let result;
-    const store = mockStore({
-      chrome: {
-        navigation: {},
-        modules: {},
-      },
-    });
     await act(async () => {
       const { result: r } = renderHook(() => useAppFilter(), {
-        wrapper: (props) => <ContextWrapper {...props} store={store} />,
+        wrapper: (props) => <ContextWrapper {...props} atomValues={defaultAtomValues} />,
       });
       result = r;
     });

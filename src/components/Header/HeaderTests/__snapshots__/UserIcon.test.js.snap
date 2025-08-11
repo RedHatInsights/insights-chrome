@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<UserIcon /> should render correctly with initial state 1`] = `
-<img
-  alt="User Avatar"
-  class="pf-v6-c-avatar pf-m-sm"
-  src="test-file-stub"
-/>
+exports[`UserIcon should render user icon 1`] = `
+<div>
+  <img
+    alt="User Avatar"
+    class="pf-v6-c-avatar pf-m-sm"
+    src="test-file-stub"
+  />
+</div>
 `;

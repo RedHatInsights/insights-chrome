@@ -1,15 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
 import NavContext from './navContext';
 import ChromeNavItemFactory from './ChromeNavItemFactory';
 import componentMapper from './componentMapper';
 
 const NavContextWrapper = ({
-  store,
   providerValue = {
     onLinkClick: jest.fn(),
     componentMapper,
@@ -17,14 +14,13 @@ const NavContextWrapper = ({
   children,
 }) => (
   <MemoryRouter>
-    <Provider store={store}>
+    <div>
       <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
-    </Provider>
+    </div>
   </MemoryRouter>
 );
 
 describe('ChromeNavItemFactory', () => {
-  const mockStore = createMockStore();
   const linkTitle = 'Foo';
   const expandableTitle = 'bar';
   const groupTitle = 'group';
@@ -46,19 +42,10 @@ describe('ChromeNavItemFactory', () => {
     title: groupTitle,
     navItems: [],
   };
-  const store = mockStore({
-    chrome: {
-      activeModule: 'testModule',
-      moduleRoutes: [],
-      modules: {
-        testModule: {},
-      },
-    },
-  });
 
   test('should render chrome nav item', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavItemFactory {...itemProps} />
       </NavContextWrapper>
     );
@@ -70,7 +57,7 @@ describe('ChromeNavItemFactory', () => {
 
   test('should render chrome expandable nav item', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavItemFactory {...expandableItemProps} />
       </NavContextWrapper>
     );
@@ -82,7 +69,7 @@ describe('ChromeNavItemFactory', () => {
 
   test('should render chrome group nav item', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavItemFactory {...groupItemProps} />
       </NavContextWrapper>
     );

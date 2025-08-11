@@ -46,7 +46,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
         { 'react-intl': { singleton: true, eager: true, requiredVersion: deps['react-intl'] } },
         { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
-        { 'react-redux': { requiredVersion: deps['react-redux'] } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },

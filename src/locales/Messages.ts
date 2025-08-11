@@ -77,6 +77,11 @@ export default defineMessages({
     description: 'Status page',
     defaultMessage: 'Status page',
   },
+  helpPanel: {
+    id: 'helpPanel',
+    description: 'Help panel',
+    defaultMessage: 'Help panel',
+  },
   knownOutages: {
     id: 'knownOutages',
     description: 'for known outages.',
@@ -578,5 +583,10 @@ export default defineMessages({
     id: 'joinMailingList',
     description: 'Join mailing list',
     defaultMessage: 'Join mailing list',
+  },
+  askRedHat: {
+    id: 'askRedHat',
+    description: 'Ask Red Hat',
+    defaultMessage: 'Ask Red Hat',
   },
 });

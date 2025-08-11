@@ -2,8 +2,7 @@ import React from 'react';
 import AllServices from '../../../src/layouts/AllServices';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import userFixture from '../../fixtures/testUser.json';
@@ -52,7 +51,6 @@ describe('<AllServices />', () => {
         ],
       },
     }));
-
     cy.mount(
       <ChromeAuthContext.Provider
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -74,11 +72,11 @@ describe('<AllServices />', () => {
         >
           <BrowserRouter>
             <FeatureFlagsProvider>
-              <Provider store={store}>
+              <JotaiProvider>
                 <IntlProvider locale="en">
                   <AllServices />
                 </IntlProvider>
-              </Provider>
+              </JotaiProvider>
             </FeatureFlagsProvider>
           </BrowserRouter>
         </ScalprumProvider>
