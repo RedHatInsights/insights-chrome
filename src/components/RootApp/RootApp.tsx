@@ -132,11 +132,11 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
 RootApp.displayName = 'MemoizedRootApp';
 
 const AuthRoot = () => {
-  const { user, login } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
+  const { user, reAuthWithScopes } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isDebuggerEnabled = useAtomValue(isDebuggerEnabledAtom);
 
-  // verify use loged in scopes
-  useUserSSOScopes(login);
+  // verify use logged in scopes
+  useUserSSOScopes(reAuthWithScopes);
   return (
     <>
       <Suspense fallback={null}>
