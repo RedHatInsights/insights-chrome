@@ -1,6 +1,15 @@
 @import '~@patternfly/patternfly/sass-utilities/scss-variables';
 
 .chr-c-link-service-toggle {
+  // Use minimal z-index to work above search but below dropdown menu
+  position: relative;
+  z-index: 1100;
+  // Add margin to prevent overlap with search input  
+  margin-right: var(--pf-t--global--spacer--xl);
+  // Limit max width to prevent overlap with search field
+  max-width: 240px;
+  // Ensure it doesn't shrink too much
+  flex-shrink: 0;
 
   // override menu toggle extra bottom border
   &.pf-v6-c-menu-toggle::after {
@@ -38,7 +47,7 @@
 
   // pos has to be important to override PF styles that get lazy loaded!
   position: absolute !important;
-  z-index: 1000;
+  z-index: 1500;
 
   .pf-v6-c-dropdown__menu::before {
     z-index: -1000;
