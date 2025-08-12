@@ -2,7 +2,7 @@ import React from 'react';
 import AllServices from '../../../src/layouts/AllServices';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider as JotaiProvider, createStore } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import userFixture from '../../fixtures/testUser.json';
