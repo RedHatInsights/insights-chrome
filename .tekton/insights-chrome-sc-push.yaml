@@ -109,11 +109,6 @@ spec:
       description: Path to a file with build arguments for buildah, see https://www.mankier.com/1/buildah-build#--build-arg-file
       name: build-args-file
       type: string
-    - default: "false"
-      description: Whether to enable privileged mode, should be used only with remote
-        VMs
-      name: privileged-nested
-      type: string
     results:
     - description: ""
       name: IMAGE_URL
@@ -151,10 +146,6 @@ spec:
         value: $(params.git-url)
       - name: revision
         value: $(params.revision)
-      - name: ociStorage
-        value: $(params.output-image).git
-      - name: ociArtifactExpiresAfter
-        value: $(params.image-expires-after)
       runAfter:
       - init
       taskRef:
@@ -277,6 +268,8 @@ spec:
         value: $(params.revision)
       - name: ociStorage
         value: $(params.output-image).git
+      - name: ociArtifactExpiresAfter
+        value: $(params.image-expires-after)
       runAfter:
       - init
       taskRef:
@@ -284,7 +277,7 @@ spec:
         - name: name
           value: git-clone-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta@sha256:0f4360ce144d46171ebd2e8f4d4575539a0600e02208ba5fc9beeb2c27ddfd4c
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:d35e5d501cb5f5f88369511f76249857cb5ac30250e1dcf086939321964ff6b9
         - name: kind
           value: task
         resolver: bundles
@@ -301,16 +294,19 @@ spec:
       params:
       - name: SOURCE_ARTIFACT
         value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      - name: ociStorage
+        value: $(params.output-image).prefetch
+      - name: ociArtifactExpiresAfter
+        value: $(params.image-expires-after)
       runAfter:
       - clone-repository-oci-ta
       taskSpec:
         metadata: {}
         params:
-        - description: The Trusted Artifact URI pointing to the artifact with the
-            application source code.
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
           name: SOURCE_ARTIFACT
           type: string
-        spec: null
+        spec:
         stepTemplate:
           computeResources: {}
           volumeMounts:
@@ -755,7 +751,7 @@ spec:
   - name: workspace
     volumeClaimTemplate:
       metadata:
-        creationTimestamp: null
+        creationTimestamp:
       spec:
         accessModes:
         - ReadWriteOnce
