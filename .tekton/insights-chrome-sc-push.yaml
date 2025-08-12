@@ -169,6 +169,8 @@ spec:
         values:
         - "true"
       workspaces:
+      - name: output
+        workspace: workspace
       - name: basic-auth
         workspace: git-auth
     - name: prefetch-dependencies
@@ -192,11 +194,150 @@ spec:
         - name: kind
           value: task
         resolver: bundles
+      when:
+      - input: $(params.prefetch-input)
+        operator: notin
+        values:
+        - ""
       workspaces:
+      - name: source
+        workspace: workspace
       - name: git-basic-auth
         workspace: git-auth
       - name: netrc
         workspace: netrc
+    - name: parse-build-deploy-script
+      params:
+      - name: path-context
+        value: $(params.path-context)
+      runAfter:
+      - clone-repository
+      taskRef:
+        params:
+        - name: url
+          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+        - name: revision
+          value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
+        - name: pathInRepo
+          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+        resolver: git
+      workspaces:
+      - name: source
+        workspace: workspace
+    - name: create-frontend-dockerfile
+      params:
+      - name: path-context
+        value: $(params.path-context)
+      - name: component
+        value: $(tasks.parse-build-deploy-script.results.component)
+      - name: image
+        value: $(tasks.parse-build-deploy-script.results.image)
+      - name: node-build-version
+        value: $(tasks.parse-build-deploy-script.results.node-build-version)
+      - name: quay-expire-time
+        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
+      - name: npm-build-script
+        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
+      - name: yarn-build-script
+        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
+      - name: route-path
+        value: $(tasks.parse-build-deploy-script.results.route-path)
+      - name: beta-route-path
+        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
+      - name: preview-route-path
+        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
+      - name: ci-root
+        value: $(tasks.parse-build-deploy-script.results.ci-root)
+      - name: server-name
+        value: $(tasks.parse-build-deploy-script.results.server-name)
+      - name: dist-folder
+        value: $(tasks.parse-build-deploy-script.results.dist-folder)
+      runAfter:
+      - parse-build-deploy-script
+      taskRef:
+        params:
+        - name: url
+          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+        - name: revision
+          value: e0b400ca6433f1ff05722c412ab837c4bd49a45a
+        - name: pathInRepo
+          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
+        resolver: git
+      workspaces:
+      - name: source
+        workspace: workspace
+    - name: clone-repository-oci-ta
+      params:
+      - name: url
+        value: $(params.git-url)
+      - name: revision
+        value: $(params.revision)
+      - name: ociStorage
+        value: $(params.output-image).git
+      runAfter:
+      - init
+      taskRef:
+        params:
+        - name: name
+          value: git-clone-oci-ta
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta@sha256:0f4360ce144d46171ebd2e8f4d4575539a0600e02208ba5fc9beeb2c27ddfd4c
+        - name: kind
+          value: task
+        resolver: bundles
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - description: Validates frontend unit tests
+      name: run-unit-tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the
+            application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec: null
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources: {}
+          image: registry.access.redhat.com/ubi8/nodejs-20
+          name: unit-tests
+          script: |
+            #!/bin/bash
+            set -ex
+
+            npm install
+            npm test
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
     - name: build-container
       params:
       - name: IMAGE
@@ -226,6 +367,7 @@ spec:
         value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
       runAfter:
       - prefetch-dependencies
+      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
@@ -240,6 +382,9 @@ spec:
         operator: in
         values:
         - "true"
+      workspaces:
+      - name: source
+        workspace: workspace
     - name: build-image-index
       params:
       - name: IMAGE
@@ -387,6 +532,9 @@ spec:
         operator: in
         values:
         - "false"
+      workspaces:
+      - name: workspace
+        workspace: workspace
     - name: clamav-scan
       params:
       - name: image-digest
@@ -567,6 +715,9 @@ spec:
         - name: kind
           value: task
         resolver: bundles
+      workspaces:
+      - name: workspace
+        workspace: workspace
     - name: rpms-signature-scan
       params:
       - name: image-url
@@ -590,6 +741,7 @@ spec:
         values:
         - "false"
     workspaces:
+    - name: workspace
     - name: git-auth
       optional: true
     - name: netrc
@@ -597,6 +749,17 @@ spec:
   taskRunTemplate:
     serviceAccountName: build-pipeline-insights-chrome-sc
   workspaces:
+  - name: workspace
+    volumeClaimTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+      status: {}
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
