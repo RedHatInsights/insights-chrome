@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { OIDCSecured } from '../../../src/auth/OIDCConnector/OIDCSecured';
-import { Provider } from 'react-redux';
-import { Store, createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { AuthContext, AuthContextProps, AuthProviderProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../../src/auth/ChromeAuthContext';
@@ -32,12 +31,11 @@ const ChildComponent = () => {
   );
 };
 
-const Wrapper: React.FC<React.PropsWithChildren<{ store: Store }>> = ({ children, store }) => {
-  return <Provider store={store}>{children}</Provider>;
+const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
+  return <JotaiProvider>{children}</JotaiProvider>;
 };
 
 describe('ODIC Secured', () => {
-  let store: Store;
   const testUser: User = {
     access_token: 'foo',
     expired: false,
@@ -78,7 +76,6 @@ describe('ODIC Secured', () => {
   const authContextValue: AuthContextProps = {
     clearStaleState: () => Promise.resolve(),
     settings: authContextSettings,
-    events: {} as AuthContextProps['events'],
     removeUser: () => Promise.resolve(),
     signinRedirect: () => Promise.resolve(),
     isAuthenticated: true,
@@ -94,18 +91,16 @@ describe('ODIC Secured', () => {
     startSilentRenew: () => Promise.resolve(),
     stopSilentRenew: () => Promise.resolve(),
     user: testUser,
+    events: {
+      addSilentRenewError: () => {},
+      removeSilentRenewError: () => {},
+    } as unknown as AuthContextProps['events'],
   };
-  beforeEach(() => {
-    store = createStore((state = { chrome: {} }) => {
-      return state;
-    });
-  });
-
   it('should block rendering children if OIDC auth did not finish', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
-        <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+        <Wrapper>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>
@@ -118,8 +113,8 @@ describe('ODIC Secured', () => {
   it('should render children if OIDC auth did finish', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
-        <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+        <Wrapper>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>
@@ -132,8 +127,8 @@ describe('ODIC Secured', () => {
   it('Chrome auth context methods should be initialized and called on click', () => {
     cy.mount(
       <AuthContext.Provider value={authContextValue}>
-        <Wrapper store={store}>
-          <OIDCSecured microFrontendConfig={{}} cookieElement={null} setCookieElement={() => undefined}>
+        <Wrapper>
+          <OIDCSecured ssoUrl="" microFrontendConfig={{}}>
             <ChildComponent />
           </OIDCSecured>
         </Wrapper>

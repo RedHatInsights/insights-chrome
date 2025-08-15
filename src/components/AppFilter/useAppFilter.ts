@@ -1,12 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { BundleNavigation, ChromeModule, NavItem } from '../../@types/types';
-import { ReduxState } from '../../redux/store';
-import { getChromeStaticPathname, isBeta, isProd } from '../../utils/common';
+import { getChromeStaticPathname } from '../../utils/common';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import { useAtomValue } from 'jotai';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
+import { navigationAtom } from '../../state/atoms/navigationAtom';
 
 export type AppFilterBucket = {
   id: string;
@@ -14,20 +13,7 @@ export type AppFilterBucket = {
   links: NavItem[];
 };
 
-const previewBundles = [''];
-
-export const requiredBundles = [
-  'application-services',
-  'openshift',
-  'insights',
-  'edge',
-  'ansible',
-  'settings',
-  'iam',
-  'quay',
-  'subscriptions',
-  ...(!isProd() ? previewBundles : isBeta() ? previewBundles : []),
-].filter(Boolean);
+export const requiredBundles = ['application-services', 'openshift', 'insights', 'edge', 'ansible', 'settings', 'iam', 'quay', 'subscriptions'];
 
 export const itLessBundles = ['openshift', 'insights', 'settings', 'iam'];
 
@@ -92,7 +78,6 @@ type AppFilterState = {
 };
 
 const useAppFilter = () => {
-  const isBetaEnv = isBeta();
   const [state, setState] = useState<AppFilterState>({
     isLoaded: false,
     isLoading: false,
@@ -111,7 +96,7 @@ const useAppFilter = () => {
       },
     },
   });
-  const existingSchemas = useSelector(({ chrome: { navigation } }: ReduxState) => navigation);
+  const existingSchemas = useAtomValue(navigationAtom);
   const modules = useAtomValue(chromeModulesAtom);
 
   const handleBundleData = async ({ data: { id, navItems, title } }: { data: BundleNavigation }) => {
@@ -193,7 +178,9 @@ const useAppFilter = () => {
         axios
           .get<BundleNavigation>(`${getChromeStaticPathname('navigation')}/${fragment}-navigation.json?ts=${Date.now()}`)
           // fallback static CSC for EE env
-          .catch(() => axios.get<BundleNavigation>(`${isBetaEnv ? '/beta' : ''}/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`))
+          .catch(() => {
+            return axios.get<BundleNavigation>(`$/config/chrome/${fragment}-navigation.json?ts=${Date.now()}`);
+          })
           .then(handleBundleData)
           .then(() => Object.values(existingSchemas).map((data) => handleBundleData({ data } as { data: BundleNavigation })))
           .catch((err) => {

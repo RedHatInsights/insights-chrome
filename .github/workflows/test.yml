@@ -98,6 +98,7 @@ jobs:
         with:
             component: true
             install-command: npm i
+            browser: chrome
   # build job
   build:
     needs: [install]
