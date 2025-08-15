@@ -35,8 +35,9 @@ function getAdobeVisitorId() {
 const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string, moduleAPIKeyDev?: string) => {
   // Use the appropriate key based on environment
   const envSpecificKey = env === 'dev' ? moduleAPIKeyDev : moduleAPIKey;
-  
-  return envSpecificKey ||
+
+  return (
+    envSpecificKey ||
     moduleAPIKey || // fallback to prod key if dev key not available
     {
       prod: {
@@ -50,7 +51,8 @@ const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKe
         openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
       },
     }[env]?.[module] ||
-    KEY_FALLBACK[env];
+    KEY_FALLBACK[env]
+  );
 };
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
