@@ -34,7 +34,7 @@ function getAdobeVisitorId() {
 
 const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string, moduleAPIKeyDev?: string) => {
   // Use the appropriate key based on environment
-  const envSpecificKey = env === 'dev' ? moduleAPIKeyDev : moduleAPIKey;
+  const envSpecificKey = env === 'prod' ? moduleAPIKey : moduleAPIKeyDev;
 
   return (
     envSpecificKey ||
