@@ -127,7 +127,7 @@ const DropdownItems = ({
         <DropdownItem
           key="Internal"
           component={({ className }) => (
-            <ChromeLink className={className} href="/internal" appId="internal">
+            <ChromeLink className={className} href="/internal/access-requests" appId="internal">
               {intl.formatMessage(messages.internal)}
             </ChromeLink>
           )}
