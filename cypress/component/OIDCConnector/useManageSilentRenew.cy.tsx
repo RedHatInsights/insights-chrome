@@ -7,6 +7,7 @@ const DummyComponent = ({ authMock, login }: { authMock: any; login: () => Promi
 };
 
 describe('useManageSilentRenew', () => {
+  // see https://issues.redhat.com/browse/RHCLOUD-41849
   it.skip('should pause silent renew on network offline', () => {
     const authMock = { startSilentRenew: cy.stub(), stopSilentRenew: cy.stub() };
     const login = cy.stub();
@@ -23,7 +24,8 @@ describe('useManageSilentRenew', () => {
     });
   });
 
-  it('should call the login function if silent renew is re-started and auth is expired', () => {
+  // see https://issues.redhat.com/browse/RHCLOUD-41849
+  it.skip('should call the login function if silent renew is re-started and auth is expired', () => {
     // The cy.clock does not work with React component testing
     // had to set the expires_at to -1 to simulate expired token
     // https://github.com/cypress-io/cypress/issues/9674
