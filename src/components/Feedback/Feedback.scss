@@ -88,7 +88,7 @@ button.pf-v6-c-button.chr-c-button-feedback {
   }
 }
 
-@media (max-height: 450px), (max-width: 700px) {
+@media (max-height: $pf-v6-global--breakpoint--sm), (max-width: $pf-v6-global--breakpoint--md) {
   .chr-c-feedback-buttons {
     margin-top: var(--pf-t--global--spacer--md);
     position: static;
