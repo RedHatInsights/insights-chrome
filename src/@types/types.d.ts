@@ -170,6 +170,7 @@ export type ChromeModule = {
   };
   analytics?: {
     APIKey?: string;
+    APIKeyDev?: string;
   };
   dynamic?: boolean;
   isFedramp?: boolean;
