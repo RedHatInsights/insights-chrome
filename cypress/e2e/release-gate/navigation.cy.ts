@@ -9,7 +9,7 @@ describe('Navigation', () => {
     cy.get('.chr-c-link-service-toggle').click();
   });
 
-  it.skip('Navigate to users', () => {
+  it('Navigate to users', () => {
     // click on services button
     cy.get('.chr-c-link-service-toggle').click();
 
