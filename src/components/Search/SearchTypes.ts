@@ -3,4 +3,5 @@ export type SearchItem = {
   bundleTitle: string;
   description: string;
   pathname: string;
+  isExternal?: boolean;
 };

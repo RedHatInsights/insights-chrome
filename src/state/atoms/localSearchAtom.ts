@@ -29,6 +29,7 @@ type SearchEntry = {
   bundleTitle: string;
   altTitle?: string[];
   type: 'legacy' | 'generated';
+  isExternal?: boolean;
 };
 
 type GeneratedSearchIndexResponse = {
@@ -73,10 +74,6 @@ const asyncSearchIndexAtom = atom(async () => {
         return;
       }
 
-      if (!entry.href.startsWith('/')) {
-        console.warn('External ink found in the index. Ignoring: ', entry.href);
-        return;
-      }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, []);
       const bundleTitle = getBundleTitle(entry.href);
@@ -90,6 +87,7 @@ const asyncSearchIndexAtom = atom(async () => {
         bundleTitle: bundleTitle,
         altTitle: entry.alt_title,
         type: 'generated',
+        isExternal: !entry.href.startsWith('/'),
       });
     });
   }
@@ -101,10 +99,6 @@ const asyncSearchIndexAtom = atom(async () => {
         return;
       }
 
-      if (!entry.relative_uri.startsWith('/')) {
-        console.warn('External ink found in the index. Ignoring: ', entry.relative_uri);
-        return;
-      }
       idSet.add(entry.id);
       SearchPermissions.set(entry.id, entry.permissions ?? []);
       searchIndex.push({
@@ -117,6 +111,7 @@ const asyncSearchIndexAtom = atom(async () => {
         bundleTitle: entry.bundleTitle[0],
         altTitle: entry.alt_title,
         type: 'legacy',
+        isExternal: !entry.relative_uri.startsWith('/'),
       });
     });
   }
@@ -132,6 +127,7 @@ const entrySchema = {
   bundleTitle: 'string',
   pathname: 'string',
   type: 'string',
+  isExternal: 'boolean',
 } as const;
 
 async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
@@ -144,6 +140,7 @@ async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
     bundleTitle: entry.bundleTitle,
     pathname: entry.pathname,
     type: entry.type,
+    isExternal: entry.isExternal ?? false,
   });
 }
 

@@ -21,6 +21,7 @@ type ResultItem = {
   bundleTitle: string;
   pathname: string;
   id: string;
+  isExternal?: boolean;
 };
 
 const resultCache: {
@@ -155,13 +156,14 @@ export const localQuery = async (db: any, term: string, env: ReleaseEnv = Releas
     }
     const validResults = await Promise.all(searches);
     for (let i = 0; i < Math.min(10, validResults.length); i += 1) {
-      const { title, description, bundleTitle, pathname, id } = validResults[i];
+      const { title, description, bundleTitle, pathname, id, isExternal } = validResults[i];
       results.push({
         title: highlightText(term, title, 'title'),
         description: highlightText(term, description, 'description'),
         bundleTitle,
         pathname,
         id,
+        isExternal,
       });
     }
 
