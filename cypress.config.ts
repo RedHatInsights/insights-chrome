@@ -2,6 +2,9 @@
 import { defineConfig } from 'cypress';
 const { addMatchImageSnapshotPlugin } = require('@simonsmith/cypress-image-snapshot/plugin');
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 export default defineConfig({
   numTestsKeptInMemory: 0,
   experimentalMemoryManagement: true,

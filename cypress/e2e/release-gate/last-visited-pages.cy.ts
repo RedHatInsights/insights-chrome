@@ -36,7 +36,7 @@ describe('last-visited-pages empty behavior', () => {
 
   // local storage is not an end-user facing feature, so testing it explicitly falls within integration/unit/component scope
   // test skipped because it's failing as of August 4, 2025
-  it.skip('will initialize the local storage from the database and visit two pages', () => {
+  it('will initialize the local storage from the database and visit two pages', () => {
     cy.login();
     cy.visit('/');
 
@@ -144,7 +144,7 @@ describe('last-visited-pages empty behavior', () => {
   });
 });
 
-describe.skip('last-visited-pages standard behavior', () => {
+describe('last-visited-pages standard behavior', () => {
   beforeEach(() => {
     // Because of the user table relation, the data from /last-visited and /user must match to mock the db state correctly
     cy.intercept('GET', '/api/chrome-service/v1/user', {

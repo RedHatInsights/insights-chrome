@@ -45,6 +45,7 @@ cypress/downloads
 
 # Sentry Config File
 .env.sentry-build-plugin
+.env
 
 # Playwright
 /test-results/
