@@ -1,0 +1,7 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranches": ["master"],
+  "tekton": {
+    "schedule": ["at any time"]
+  }
+}
