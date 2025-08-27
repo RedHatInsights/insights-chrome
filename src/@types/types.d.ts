@@ -241,3 +241,13 @@ export enum ReleaseEnv {
   STABLE = 'STABLE',
   PREVIEW = 'PREVIEW',
 }
+
+// Import search API types
+import { ChromeSearchAPI } from '../utils/searchAPI';
+
+// Extend the ChromeAPI interface to include the search property
+declare module '@redhat-cloud-services/types' {
+  interface ChromeAPI {
+    search?: ChromeSearchAPI;
+  }
+}
