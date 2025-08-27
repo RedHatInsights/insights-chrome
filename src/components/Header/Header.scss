@@ -74,7 +74,8 @@
       &:hover {--pf-v6-c-notification-badge--after--BackgroundColor: var(--pf-t--global--icon--color--status--danger--hover)}
     }
   }
-  .chr-c-menu-settings .pf-v6-c-menu__group:first-of-type > .pf-v6-c-menu__group-title {
-    display: none;
-  }
+}
+
+.chr-c-menu-settings .pf-v6-c-menu__group:first-of-type > .pf-v6-c-menu__group-title {
+  display: none;
 }
