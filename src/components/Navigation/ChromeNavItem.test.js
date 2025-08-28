@@ -1,48 +1,51 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import NavContext from './navContext';
 import ChromeNavItem from './ChromeNavItem';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { activeProductAtom } from '../../state/atoms/activeProductAtom';
+
+const HydrateAtoms = ({ initialValues, children }) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
 
 const NavContextWrapper = ({
-  store,
   providerValue = {
     onLinkClick: jest.fn(),
   },
   children,
   initialEntries,
+  atomValues = [],
 }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <Provider store={store}>
-      <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
-    </Provider>
+    <JotaiProvider>
+      <HydrateAtoms initialValues={atomValues}>
+        <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
+      </HydrateAtoms>
+    </JotaiProvider>
   </MemoryRouter>
 );
 
 describe('ChromeNavItem', () => {
-  const mockStore = createMockStore();
   const linkTitle = 'Foo';
   const testProps = {
     appId: 'testModule',
     href: '/foo',
     title: linkTitle,
   };
-  const store = mockStore({
-    chrome: {
-      activeModule: 'testModule',
-      moduleRoutes: [],
-      modules: {
-        testModule: {},
-      },
-    },
-  });
+  const defaultAtomValues = [
+    [isPreviewAtom, false],
+    [activeProductAtom, null],
+  ];
 
   test('should not render nav item', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper atomValues={defaultAtomValues}>
         <ChromeNavItem isHidden {...testProps} />
       </NavContextWrapper>
     );
@@ -52,7 +55,7 @@ describe('ChromeNavItem', () => {
 
   test('should render nav item', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper atomValues={defaultAtomValues}>
         <ChromeNavItem {...testProps} />
       </NavContextWrapper>
     );
@@ -63,7 +66,7 @@ describe('ChromeNavItem', () => {
 
   test('should render nav item with an external icon', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper atomValues={defaultAtomValues}>
         <ChromeNavItem {...testProps} isExternal />
       </NavContextWrapper>
     );
@@ -74,7 +77,7 @@ describe('ChromeNavItem', () => {
 
   test('should render nav item with a node title', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper atomValues={defaultAtomValues}>
         <ChromeNavItem {...testProps} title={<span data-testid="test-span">Node title</span>} />
       </NavContextWrapper>
     );
@@ -85,7 +88,7 @@ describe('ChromeNavItem', () => {
 
   test('should render nav item with beta badge', () => {
     const { container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper atomValues={defaultAtomValues}>
         <ChromeNavItem {...testProps} isBeta />
       </NavContextWrapper>
     );

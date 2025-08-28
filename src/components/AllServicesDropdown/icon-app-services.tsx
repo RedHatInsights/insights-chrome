@@ -2,7 +2,7 @@ import React from 'react';
 
 const AppServicesIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>{`.st0{fill:#EE0000;}.st1{fill:#FFFFFF;}`}</style>
       </defs>

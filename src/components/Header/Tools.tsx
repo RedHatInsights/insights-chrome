@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { memo, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { AlertActionLink, AlertVariant } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { NotificationBadge } from '@patternfly/react-core/dist/dynamic/components/NotificationBadge';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
@@ -13,69 +11,34 @@ import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/quest
 import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
-import ToolbarToggle, { ToolbarToggleDropdownItem } from './ToolbarToggle';
+import ToolbarToggle from './ToolbarToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
-import HeaderAlert from './HeaderAlert';
-import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
-import { ITLess, getRouterBasename, getSection, isBeta } from '../../utils/common';
+import { ITLess, getSection } from '../../utils/common';
 import { useIntl } from 'react-intl';
 import { useFlag } from '@unleash/proxy-client-react';
 import messages from '../../locales/Messages';
 import { createSupportCase } from '../../utils/createCase';
-import { ReduxState } from '../../redux/store';
-import BellIcon from '@patternfly/react-icons/dist/dynamic/icons/bell-icon';
-import { toggleNotificationsDrawer } from '../../redux/actions';
-import useWindowWidth from '../../hooks/useWindowWidth';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { isPreviewAtom } from '../../state/atoms/releaseAtom';
-import chromeStore from '../../state/chromeStore';
-
-const isITLessEnv = ITLess();
-
-export const switchRelease = (isBeta: boolean, pathname: string, previewEnabled: boolean) => {
-  cookie.set('cs_toggledRelease', 'true');
-  const previewFragment = getRouterBasename(pathname);
-  chromeStore.set(isPreviewAtom, !isBeta);
-
-  if (isBeta) {
-    return pathname.replace(previewFragment.includes('beta') ? /\/beta/ : /\/preview/, '');
-  } else {
-    return previewEnabled ? `/preview${pathname}` : `/beta${pathname}`;
-  }
-};
+import { isPreviewAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
+import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
+import useSupportCaseData from '../../hooks/useSupportCaseData';
+import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
+import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
+import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
+import InternalChromeContext from '../../utils/internalChromeContext';
 
 const InternalButton = () => (
   <Button
-    variant="plain"
+    icon={<RedhatIcon />}
+    variant="control"
     aria-label="Go to internal tools"
     widget-type="InternalButton"
-    className="chr-c-toolbar__button-internal"
+    className="chr-c-toolbar__button-internal pf-v6-u-align-items-center"
     href={`${document.baseURI}internal`}
     component="a"
-  >
-    <RedhatIcon />
-  </Button>
-);
-
-type SettingsButtonProps = {
-  settingsMenuDropdownItems: ToolbarToggleDropdownItem[];
-};
-
-const SettingsButton = ({ settingsMenuDropdownItems }: SettingsButtonProps) => (
-  <Tooltip aria="none" aria-live="polite" content={'Settings'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
-    <ToolbarToggle
-      key="Settings menu"
-      icon={() => <CogIcon />}
-      id="SettingsMenu"
-      ariaLabel="Settings menu"
-      ouiaId="chrome-settings"
-      hasToggleIndicator={null}
-      widget-type="SettingsMenu"
-      dropdownItems={settingsMenuDropdownItems}
-      className="tooltip-button-settings-cy"
-    />
-  </Tooltip>
+  />
 );
 
 type ExpandedSettingsButtonProps = {
@@ -98,42 +61,56 @@ const ExpandedSettingsButton = ({ settingsMenuDropdownGroups }: ExpandedSettings
   </Tooltip>
 );
 
+type NotificationBellProps = {
+  isNotificationDrawerExpanded: boolean;
+  toggleDrawer: () => void;
+};
+
 const Tools = () => {
   const [{ isDemoAcc, isInternal, isRhosakEntitled }, setState] = useState({
     isInternal: true,
     isRhosakEntitled: false,
     isDemoAcc: false,
   });
+  const isPreview = useAtomValue(isPreviewAtom);
+  const togglePreviewWithCheck = useSetAtom(togglePreviewWithCheckAtom);
   const enableIntegrations = useFlag('platform.sources.integrations');
-  const { xs } = useWindowWidth();
+  const workspacesEnabled = useFlag('platform.rbac.workspaces');
+  const workspacesListEnabled = useFlag('platform.rbac.workspaces-list');
+  const helpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
+  const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
+  const isITLessEnv = useFlag('platform.chrome.itless');
   const { user, token } = useContext(ChromeAuthContext);
-  const unreadNotifications = useSelector(({ chrome: { notifications } }: ReduxState) => notifications.data.some((item) => !item.read));
-  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
-  const dispatch = useDispatch();
   const intl = useIntl();
-  const location = useLocation();
+  const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = '/iam/user-access/users';
-  const betaSwitcherTitle = `${isBeta() ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
+  const identityAndAccessManagmentPath = isOrgAdmin
+    ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview`
+    : '/iam/my-user-access';
+  const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
 
-  const enableAuthDropdownOption = useFlag('platform.chrome.dropdown.authfactor');
-  const enableExpandedSettings = useFlag('platform.chrome.expanded-settings');
-  const previewEnabled = useFlag('platform.chrome.preview');
-  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-
-  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
-
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
+    {
+      items: [
+        {
+          ouiaId: 'PreviewSwitcher',
+          title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
+          url: '#',
+          onClick: () => togglePreviewWithCheck(),
+        },
+      ],
+    },
     {
       title: 'Settings',
       items: [
         {
           url: '/settings/integrations',
           title: 'Integrations',
+          isHidden: isITLessEnv,
         },
         {
           url: '/settings/notifications',
@@ -145,41 +122,28 @@ const Tools = () => {
       title: 'Identity and Access Management',
       items: [
         {
-          url: myUserAccessPath,
-          title: 'My User Access',
-        },
-        {
+          ouiaId: 'UserAccess',
           url: identityAndAccessManagmentPath,
-          title: 'User Access',
+          title: isOrgAdmin ? (workspacesEnabled ? 'Acess management' : 'User Access') : 'My User Access',
+          description:
+            workspacesEnabled || workspacesListEnabled ? (
+              <Label status="custom" color="teal" variant="outline" icon={<UsersIcon />} isCompact>
+                Workspaces model available
+              </Label>
+            ) : null,
         },
         {
           url: '/iam/authentication-policy/authentication-factors',
           title: 'Authentication Policy',
+          isHidden: isITLessEnv,
         },
         {
           url: '/iam/service-accounts',
           title: 'Service Accounts',
+          isHidden: isITLessEnv,
         },
       ],
     },
-  ];
-
-  // Old settings menu
-  const settingsMenuDropdownItems = [
-    {
-      url: settingsPath,
-      title: 'Settings',
-      appId: 'sources',
-    },
-    ...(enableAuthDropdownOption
-      ? [
-          {
-            url: identityAndAccessManagmentPath,
-            title: 'Identity & Access Management',
-            appId: 'iam',
-          },
-        ]
-      : []),
   ];
 
   useEffect(() => {
@@ -191,44 +155,92 @@ const Tools = () => {
       });
     }
   }, [user]);
+  const supportCaseData = useSupportCaseData();
 
   const supportOptionsUrl = () => {
     return isITLessEnv ? 'https://redhatgov.servicenowservices.com/css' : 'https://access.redhat.com/support';
   };
 
+  const {
+    drawerActions: { toggleDrawerContent },
+  } = useContext(InternalChromeContext);
+
   /* list out the items for the about menu */
   const aboutMenuDropdownItems = [
-    {
-      title: intl.formatMessage(messages.apiDocumentation),
-      onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token),
-      isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.statusPage),
-      onClick: () => window.open('https://status.redhat.com/', '_blank'),
-      isHidden: isITLessEnv,
-    },
-    {
-      title: intl.formatMessage(messages.supportOptions),
-      onClick: () => (window.location.href = supportOptionsUrl()),
-    },
-    {
-      title: intl.formatMessage(messages.insightsRhelDocumentation),
-      onClick: () => window.open('https://access.redhat.com/documentation/en-us/red_hat_insights', '_blank'),
-      isHidden: getSection() !== 'insights' || isITLessEnv,
-    },
-
-    {
-      title: intl.formatMessage(messages.demoMode),
-      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
-      isHidden: !isDemoAcc,
-    },
+    ...(askRedHatEnabled
+      ? [
+          {
+            title: intl.formatMessage(messages.askRedHat),
+            icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+            onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
+            isHidden: false,
+          },
+        ]
+      : []),
+    ...(helpPanelEnabled
+      ? [
+          {
+            title: intl.formatMessage(messages.helpPanel),
+            onClick: () => {
+              toggleDrawerContent({
+                scope: 'learningResources',
+                module: './HelpPanel',
+              });
+            },
+          },
+          {
+            title: intl.formatMessage(messages.statusPage),
+            onClick: () => window.open('https://status.redhat.com/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.supportOptions),
+            onClick: () => (window.location.href = supportOptionsUrl()),
+          },
+        ]
+      : [
+          {
+            title: intl.formatMessage(messages.apiDocumentation),
+            onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.openSupportCase),
+            onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
+            isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.statusPage),
+            onClick: () => window.open('https://status.redhat.com/', '_blank'),
+            isHidden: isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.supportOptions),
+            onClick: () => (window.location.href = supportOptionsUrl()),
+          },
+          {
+            title: intl.formatMessage(messages.insightsRhelDocumentation),
+            onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
+            isHidden: getSection() !== 'insights' || isITLessEnv,
+          },
+          {
+            title: intl.formatMessage(messages.demoMode),
+            onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
+            isHidden: !isDemoAcc,
+          },
+          ...(enableGlobalLearningResourcesPage
+            ? [
+                {
+                  title: intl.formatMessage(messages.globalLearningResourcesPage),
+                  url: '/learning-resources',
+                  isHidden: false,
+                  appId: 'learningResources',
+                  target: '_self',
+                },
+              ]
+            : []),
+        ]),
   ];
 
   /* Combine aboutMenuItems with a settings link on mobile */
@@ -241,7 +253,7 @@ const Tools = () => {
     },
     {
       title: betaSwitcherTitle,
-      onClick: () => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled)),
+      onClick: () => togglePreviewWithCheck(),
     },
     { title: 'separator' },
     ...aboutMenuDropdownItems,
@@ -263,21 +275,6 @@ const Tools = () => {
     </Tooltip>
   );
 
-  const BetaSwitcher = () => {
-    return (
-      <Switch
-        id="reversed-switch"
-        label="Preview on"
-        labelOff="Preview off"
-        aria-label="Preview switcher"
-        isChecked={isBeta()}
-        onChange={() => (window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled))}
-        isReversed
-        className="chr-c-beta-switcher"
-      />
-    );
-  };
-
   const ThemeToggle = () => {
     const [darkmode, setDarkmode] = useState(false);
     return (
@@ -295,56 +292,46 @@ const Tools = () => {
     );
   };
 
+  const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const [isNotificationDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
+  };
+  const drawerContent = useAtomValue(drawerPanelContentAtom);
+
+  const drawerBellProps: ScalprumComponentProps<Record<string, unknown>, NotificationBellProps> = {
+    scope: 'notifications',
+    module: './NotificationsDrawerBell',
+    fallback: null,
+    isNotificationDrawerExpanded: drawerContent?.scope === 'notifications' && isNotificationDrawerExpanded,
+    // Do not show the error component if module fails to load
+    // Prevents broken layout
+    ErrorComponent: <Fragment />,
+    toggleDrawer,
+  };
+
   return (
     <>
-      <ToolbarItem
-        className="pf-v5-u-mr-0"
-        {...(isNotificationsEnabled && {
-          spacer: {
-            default: 'spacerMd',
-          },
-        })}
-      >
-        {!xs && <BetaSwitcher />}
-      </ToolbarItem>
-      {isNotificationsEnabled && (
-        <ToolbarItem className="pf-v5-u-mr-0 pf-v5-u-ml-sm">
-          <Tooltip aria="none" aria-live="polite" content={'Notifications'} flipBehavior={['bottom']} className="tooltip-inner-settings-cy">
-            <NotificationBadge
-              className="chr-c-notification-badge"
-              variant={unreadNotifications ? 'unread' : 'read'}
-              onClick={() => dispatch(toggleNotificationsDrawer())}
-              aria-label="Notifications"
-              isExpanded={isDrawerExpanded}
-            >
-              <BellIcon />
-            </NotificationBadge>
-          </Tooltip>
-        </ToolbarItem>
-      )}
+      {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
       {localStorage.getItem('chrome:darkmode') === 'true' && (
         <ToolbarItem>
           <ThemeToggle />
         </ToolbarItem>
       )}
       {isInternal && !ITLess() && (
-        <ToolbarItem className="pf-v5-u-mr-0">
+        <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
             <InternalButton />
           </Tooltip>
         </ToolbarItem>
       )}
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
-        {enableExpandedSettings ? (
-          <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
-        ) : (
-          <SettingsButton settingsMenuDropdownItems={settingsMenuDropdownItems} />
-        )}
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+        <ExpandedSettingsButton settingsMenuDropdownGroups={settingsMenuDropdownGroups} />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', md: 'visible' }}>
         <AboutButton />
       </ToolbarItem>
-      <ToolbarItem className="pf-v5-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
+      <ToolbarItem className="pf-v6-u-mr-0" visibility={{ default: 'hidden', lg: 'visible' }}>
         <UserToggle />
       </ToolbarItem>
       {/* Collapse tools and user dropdown to kebab on small screens  */}
@@ -352,61 +339,24 @@ const Tools = () => {
       <ToolbarItem visibility={{ lg: 'hidden' }}>
         <Tooltip aria="none" aria-live="polite" content={'More options'} flipBehavior={['bottom']}>
           <UserToggle
-            isSmall
             extraItems={mobileDropdownItems.map((action, key) => (
               <React.Fragment key={key}>
                 {action.title === 'separator' ? (
                   <Divider component="li" />
-                ) : (
-                  <DropdownItem
-                    {...(action.onClick
-                      ? {
-                          component: 'button',
-                          onClick: action.onClick,
-                        }
-                      : {
-                          href: action.url,
-                          component: 'a',
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                        })}
-                  >
+                ) : 'onClick' in action ? (
+                  <DropdownItem component="button" onClick={action.onClick}>
                     {action.title}
                   </DropdownItem>
-                )}
+                ) : 'url' in action ? (
+                  <DropdownItem href={action.url} component="a" target={action.target || '_blank'} rel="noopener noreferrer">
+                    {action.title}
+                  </DropdownItem>
+                ) : null}
               </React.Fragment>
             ))}
           />
         </Tooltip>
       </ToolbarItem>
-      {cookie.get('cs_toggledRelease') === 'true' ? (
-        <HeaderAlert
-          className="chr-c-alert-preview"
-          title={`Preview has been ${isBeta() ? 'enabled' : 'disabled'}.`}
-          variant={AlertVariant.info}
-          actionLinks={
-            <React.Fragment>
-              <AlertActionLink
-                component="a"
-                href="https://access.redhat.com/support/policy/updates/hybridcloud-console/lifecycle"
-                target="_blank"
-                rel="noreferrer"
-                title="Learn more link"
-              >
-                Learn more
-              </AlertActionLink>
-              <AlertActionLink
-                onClick={() => {
-                  window.location.href = switchRelease(isBeta(), location.pathname, previewEnabled);
-                }}
-              >
-                {`${isBeta() ? 'Disable' : 'Enable'} preview`}
-              </AlertActionLink>
-            </React.Fragment>
-          }
-          onDismiss={() => cookie.set('cs_toggledRelease', 'false')}
-        />
-      ) : null}
     </>
   );
 };
