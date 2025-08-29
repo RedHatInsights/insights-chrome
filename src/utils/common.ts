@@ -2,6 +2,7 @@ import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
 import { Required } from 'utility-types';
+import { setupCache } from 'axios-cache-interceptor';
 import useBundle, { getUrl } from '../hooks/useBundle';
 
 export const DEFAULT_SSO_ROUTES = {
@@ -326,6 +327,12 @@ const fedModulesheaders = {
   Expires: '0',
 };
 
+const ssoConfigAxios = setupCache(axios.create(), {
+  ttl: 5 * 60 * 1000, // 5 minutes TTL
+  interpretHeader: false, // Ignore server cache headers for consistent client-side caching
+  storage: 'memory' // Use memory storage (like the let variable, but with better management)
+});
+
 // FIXME: Remove once qaprodauth is dealt with
 // can't use /beta because it will ge redirected by Akamai to /preview and we don't have any assets there\\
 // Always use stable
@@ -333,6 +340,59 @@ const loadCSCFedModules = () =>
   axios.get(`${window.location.origin}/config/chrome/fed-modules.json?ts=${Date.now()}`, {
     headers: fedModulesheaders,
   });
+
+// Resolve SSO URL based on current hostname and operator config
+export const resolveSSOUrl = (ssoConfig: any): string => {
+  if (!ssoConfig?.ssoUrl) {
+    return "https://sso.redhat.com/auth/";
+  }
+
+  const currentHostname = location.hostname;
+  
+  // Check if current hostname has a specific mapping
+  if (ssoConfig.ssoMapping && typeof ssoConfig.ssoMapping === 'object') {
+    for (const [pattern, ssoUrl] of Object.entries(ssoConfig.ssoMapping)) {
+      if (currentHostname.includes(pattern)) {
+        return ssoUrl as string;
+      }
+    }
+  }
+  
+  // Return default SSO URL
+  return ssoConfig.ssoUrl;
+};
+
+// Load SSO configuration from operator-generated config with automatic caching
+export const loadSSOConfig = async () => {
+  const ssoConfigPath = '/api/chrome-service/v1/static/sso-config-generated.json';
+  try {
+    const response = await ssoConfigAxios.get(ssoConfigPath, {
+      headers: fedModulesheaders,
+    });
+    
+    return response;
+  } catch (error) {
+    console.warn('Unable to load SSO config from operator, using default fallback', error);
+    
+    // Create fallback SSO config from DEFAULT_SSO_ROUTES
+    const currentEnvDetails = getEnvDetails();
+    
+    // Build ssoMapping from all environments in DEFAULT_SSO_ROUTES
+    const ssoMapping: Record<string, string> = {};
+    Object.entries(DEFAULT_SSO_ROUTES).forEach(([env, config]) => {
+      config.url.forEach(hostname => {
+        ssoMapping[hostname] = config.sso;
+      });
+    });
+    
+    const fallbackSsoConfig = {
+      ssoUrl: currentEnvDetails?.sso || 'https://sso.redhat.com/auth/',
+      ssoMapping: ssoMapping
+    };
+    
+    return { data: fallbackSsoConfig };
+  }
+};
 
 export const loadFedModules = async () => {
   const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';

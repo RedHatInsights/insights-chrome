@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { DEFAULT_SSO_ROUTES, ITLess, loadFedModules } from '../../utils/common';
+import { ITLess, loadFedModules, loadSSOConfig, resolveSSOUrl } from '../../utils/common';
 import { AuthProvider } from 'react-oidc-context';
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
-import platformUrl from '../platformUrl';
 import { OIDCSecured } from './OIDCSecured';
 import AppPlaceholder from '../../components/AppPlaceholder';
 import { postbackUrlSetup } from '../offline';
@@ -17,19 +16,26 @@ const OIDCProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     | undefined
   >(undefined);
   async function setupSSO() {
-    const {
-      // ignore $schema from the data as it is an spec ref
-      data: { $schema: ignore, ...data },
-    } = await loadFedModules();
+    // Load SSO configuration first
+    const ssoConfig = await loadSSOConfig();
+    const ssoUrl = resolveSSOUrl(ssoConfig);
+    
     try {
       const {
-        chrome: {
-          config: { ssoUrl },
-        },
-      } = data;
-      setState({ ssoUrl: platformUrl(DEFAULT_SSO_ROUTES, ssoUrl), microFrontendConfig: data });
+        // ignore $schema from the data as it is an spec ref
+        data: { $schema: ignore, ...data },
+      } = await loadFedModules();
+      
+      setState({ 
+        ssoUrl: ssoUrl, 
+        microFrontendConfig: data 
+      });
     } catch (error) {
-      setState({ ssoUrl: platformUrl(DEFAULT_SSO_ROUTES), microFrontendConfig: data });
+      console.error('Error loading fed-modules configuration:', error);
+      setState({ 
+        ssoUrl: ssoUrl,
+        microFrontendConfig: {}
+      });
     }
   }
   useEffect(() => {
