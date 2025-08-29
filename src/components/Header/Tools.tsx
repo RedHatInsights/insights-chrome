@@ -165,60 +165,79 @@ const Tools = () => {
     drawerActions: { toggleDrawerContent },
   } = useContext(InternalChromeContext);
 
-  /* list out the items for the about menu - only used when help panel is disabled */
-  const aboutMenuDropdownItems = [
-    ...(askRedHatEnabled
-      ? [
-          {
-            title: intl.formatMessage(messages.askRedHat),
-            icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
-            onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
-            isHidden: false,
-          },
-        ]
-      : []),
+  /* list out the items for the about menu */
+  const aboutMenuItemsConfig = [
     {
-      title: intl.formatMessage(messages.apiDocumentation),
-      onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
-      isHidden: isITLessEnv,
+      enabled: askRedHatEnabled,
+      item: {
+        title: intl.formatMessage(messages.askRedHat),
+        icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/ask-redhat/ask-redhat-icon.svg" />,
+        onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
+      },
     },
     {
-      title: intl.formatMessage(messages.openSupportCase),
-      onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
-      isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
-      isHidden: isITLessEnv,
+      enabled: !helpPanelEnabled,
+      item: {
+        title: intl.formatMessage(messages.apiDocumentation),
+        onClick: () => window.open('https://developers.redhat.com/api-catalog/', '_blank'),
+        isHidden: isITLessEnv,
+      },
     },
     {
-      title: intl.formatMessage(messages.statusPage),
-      onClick: () => window.open('https://status.redhat.com/', '_blank'),
-      isHidden: isITLessEnv,
+      enabled: !helpPanelEnabled && user?.identity && token,
+      item: {
+        title: intl.formatMessage(messages.openSupportCase),
+        onClick: () => createSupportCase(user.identity, token, isPreview, { supportCaseData }),
+        isDisabled: window.location.href.includes('/application-services') && !isRhosakEntitled,
+        isHidden: isITLessEnv,
+      },
     },
     {
-      title: intl.formatMessage(messages.supportOptions),
-      onClick: () => (window.location.href = supportOptionsUrl()),
+      enabled: true,
+      item: {
+        title: intl.formatMessage(messages.statusPage),
+        onClick: () => window.open('https://status.redhat.com/', '_blank'),
+        isHidden: isITLessEnv,
+      },
     },
     {
-      title: intl.formatMessage(messages.insightsRhelDocumentation),
-      onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
-      isHidden: getSection() !== 'insights' || isITLessEnv,
+      enabled: true,
+      item: {
+        title: intl.formatMessage(messages.supportOptions),
+        onClick: () => (window.location.href = supportOptionsUrl()),
+      },
     },
     {
-      title: intl.formatMessage(messages.demoMode),
-      onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
-      isHidden: !isDemoAcc,
+      enabled: !helpPanelEnabled,
+      item: {
+        title: intl.formatMessage(messages.insightsRhelDocumentation),
+        onClick: () => window.open('https://docs.redhat.com/en/documentation/red_hat_insights', '_blank'),
+        isHidden: getSection() !== 'insights' || isITLessEnv,
+      },
+    },
+    {
+      enabled: !helpPanelEnabled,
+      item: {
+        title: intl.formatMessage(messages.demoMode),
+        onClick: () => cookie.set('cs_demo', 'true') && window.location.reload(),
+        isHidden: !isDemoAcc,
+      },
     },
     ...(enableGlobalLearningResourcesPage
       ? [
           {
-            title: intl.formatMessage(messages.globalLearningResourcesPage),
-            url: '/learning-resources',
-            isHidden: false,
-            appId: 'learningResources',
-            target: '_self',
+            enabled: true,
+            item: {
+              title: intl.formatMessage(messages.globalLearningResourcesPage),
+              url: '/learning-resources',
+              appId: 'learningResources',
+              target: '_self',
+            },
           },
         ]
       : []),
   ];
+  const aboutMenuDropdownItems = aboutMenuItemsConfig.filter(({ enabled }) => enabled).map(({ item }) => item);
 
   /* Combine aboutMenuItems with a settings link on mobile */
   const mobileDropdownItems = [
@@ -233,7 +252,7 @@ const Tools = () => {
       onClick: () => togglePreviewWithCheck(),
     },
     { title: 'separator' },
-    ...(!helpPanelEnabled ? aboutMenuDropdownItems : []),
+    ...(helpPanelEnabled ? [] : aboutMenuDropdownItems),
   ];
 
   /* Help Panel Toggle Button */
