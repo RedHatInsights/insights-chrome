@@ -13,7 +13,7 @@ function transformScalprumManifest(manifest: PluginManifest, config: ScalprumCon
   }
   let baseUrl = manifest.baseURL;
   if (baseUrl === 'auto') {
-    baseUrl = '/';
+    baseUrl = `/apps/${manifest.name}/`;
   }
   const newManifest = {
     ...manifest,
