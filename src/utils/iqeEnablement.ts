@@ -21,7 +21,10 @@ const AUTH_ALLOWED_ORIGINS = [
   /https:\/\/api?\.aws?\.ap-southeast-1(?:\.[a-z]+)?\.openshift?\.com/,
   /https:\/\/console-service?\.[a-z]*-[a-z]*\.?(?:[a-z]*)\.aws?\.ansiblecloud?(?:\.redhat)?\.com\/api/,
 ];
-const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
+const AUTH_EXCLUDED_URLS = [
+  /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/,
+  /^https?:\/\/consent\.trustarc\.com\/analytics.*$/, // Causes CORS error
+];
 
 const isExcluded = (target: string) => {
   return AUTH_EXCLUDED_URLS.some((regex) => regex.test(target));
@@ -207,6 +210,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
 
 const qe = {
   init,
+  isExcluded,
   spreadAdditionalHeaders,
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);
