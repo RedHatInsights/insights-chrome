@@ -20,7 +20,6 @@ describe('iqeEnablement', () => {
 });
 
 describe('isExcluded', () => {
-
   // positive cases
   test.each([
     // OpenShift upgrades_info
@@ -33,7 +32,7 @@ describe('isExcluded', () => {
     'https://consent.trustarc.com/analytics?action=0',
     'https://consent.trustarc.com/analytics?action=0&domain=example.com',
     'http://consent.trustarc.com/analytics?test=1',
-  ])('excludes %s', url => {
+  ])('excludes %s', (url) => {
     expect(iqeEnablement.isExcluded(url)).toBe(true);
   });
 
@@ -50,7 +49,7 @@ describe('isExcluded', () => {
     'https://api.redhat.com/some/endpoint',
     'https://different-domain.com/analytics',
     'https://api.example.com/upgrades_info',
-  ])('does not exclude %s', url => {
+  ])('does not exclude %s', (url) => {
     expect(iqeEnablement.isExcluded(url)).toBe(false);
   });
 
@@ -64,4 +63,3 @@ describe('isExcluded', () => {
     expect(iqeEnablement.isExcluded(url)).toBe(expected);
   });
 });
-
