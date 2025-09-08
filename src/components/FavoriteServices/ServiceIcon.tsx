@@ -5,7 +5,6 @@ import ACSIcon from '../AllServicesDropdown/icon-acs';
 import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
 import AppServicesIcon from '../AllServicesDropdown/icon-app-services';
 import DataScienceIcon from '../AllServicesDropdown/icon-data-science';
-import EdgeIcon from '../AllServicesDropdown/icon-edge';
 import IAmIcon from '../AllServicesDropdown/icon-iam';
 import InsightsIcon from '../AllServicesDropdown/icon-insights';
 import OpenShiftIcon from '../AllServicesDropdown/icon-openshift';
@@ -41,7 +40,6 @@ export enum FavorableIcons {
   AppServicesIcon = 'AppServicesIcon',
   BrainIcon = 'BrainIcon',
   DataScienceIcon = 'DataScienceIcon',
-  EdgeIcon = 'EdgeIcon',
   IAmIcon = 'IAmIcon',
   InsightsIcon = 'InsightsIcon',
   OpenShiftIcon = 'OpenShiftIcon',
@@ -77,7 +75,6 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   AnsibleIcon,
   AppServicesIcon,
   DataScienceIcon,
-  EdgeIcon,
   IAmIcon,
   InsightsIcon,
   OpenShiftIcon,
