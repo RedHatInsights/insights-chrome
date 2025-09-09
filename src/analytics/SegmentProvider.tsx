@@ -32,21 +32,28 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string) =>
-  moduleAPIKey ||
-  {
-    prod: {
-      acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
-      hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
-      openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
-    },
-    dev: {
-      acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
-      hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
-      openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
-    },
-  }[env]?.[module] ||
-  KEY_FALLBACK[env];
+const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string, moduleAPIKeyDev?: string) => {
+  // Use the appropriate key based on environment
+  const envSpecificKey = env === 'prod' ? moduleAPIKey : moduleAPIKeyDev;
+
+  return (
+    envSpecificKey ||
+    moduleAPIKey || // fallback to prod key if dev key not available
+    {
+      prod: {
+        acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
+        hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
+        openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
+      },
+      dev: {
+        acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
+        hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
+        openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
+      },
+    }[env]?.[module] ||
+    KEY_FALLBACK[env]
+  );
+};
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
 
@@ -104,6 +111,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const activeModule = useAtomValue(activeModuleAtom);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
+  const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
   const { pathname, search } = useLocation();
   usePageEvent(analytics);
 
@@ -133,7 +141,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
-      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
+      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
       const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
         context: {
@@ -204,7 +212,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     analytics.current.load(
       {
         cdnURL: '/connections/cdn',
-        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey),
+        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev),
       },
       {
         initialPageview: false,
