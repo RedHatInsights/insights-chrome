@@ -48,7 +48,6 @@ exports[`ChromeNavExpandable should render nav item expandable 1`] = `
         aria-labelledby="test-id"
         class="pf-v6-c-nav__subnav"
         hidden=""
-        inert=""
       >
         <ul
           class="pf-v6-c-nav__list"
@@ -124,7 +123,6 @@ exports[`ChromeNavExpandable should render nav item expandable with items 1`] = 
         aria-labelledby="test-id"
         class="pf-v6-c-nav__subnav"
         hidden=""
-        inert=""
       >
         <ul
           class="pf-v6-c-nav__list"

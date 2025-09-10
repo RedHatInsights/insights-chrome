@@ -42,7 +42,6 @@ exports[`ChromeNavItemFactory should render chrome expandable nav item 1`] = `
         aria-labelledby="test-id"
         class="pf-v6-c-nav__subnav"
         hidden=""
-        inert=""
       >
         <ul
           class="pf-v6-c-nav__list"
