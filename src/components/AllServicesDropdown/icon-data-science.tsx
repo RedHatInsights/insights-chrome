@@ -2,7 +2,7 @@ import React from 'react';
 
 const DataScienceIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>
           {`.uuid-00fb0b47-b01e-49bb-a511-91a567727439{fill:#e00;}.uuid-f46e1c4f-4336-4ea3-9a78-d01849a9fd26{fill:#fff;}.uuid-21bbc327-fd19-43c3-8c74-cd12b6253304{fill:#4d4d4d;}`}

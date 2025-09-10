@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
-import { Menu, MenuContent, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { Menu, MenuContent, MenuFooter, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
 import { SearchInput as PFSearchInput, SearchInputProps } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 import { Popper } from '@patternfly/react-core/dist/dynamic/helpers/Popper/Popper';
@@ -17,6 +17,11 @@ import SearchDescription from './SearchDescription';
 import { useAtomValue } from 'jotai';
 import { asyncLocalOrama } from '../../state/atoms/localSearchAtom';
 import { localQuery } from '../../utils/localSearch';
+import { isPreviewAtom } from '../../state/atoms/releaseAtom';
+import { ReleaseEnv } from '../../@types/types.d';
+import type { SearchItem } from './SearchTypes';
+import SearchFeedback, { SearchFeedbackType } from './SearchFeedback';
+import useFeoConfig from '../../hooks/useFeoConfig';
 
 export type SearchInputprops = {
   isExpanded?: boolean;
@@ -33,13 +38,6 @@ const getMaxMenuHeight = (menuElement?: HTMLDivElement | null) => {
   return bodyHeight - menuTopOffset - 4;
 };
 
-type SearchItem = {
-  title: string;
-  bundleTitle: string;
-  description: string;
-  pathname: string;
-};
-
 type SearchInputListener = {
   onStateChange: (isOpen: boolean) => void;
 };
@@ -47,11 +45,14 @@ type SearchInputListener = {
 const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [currentFeedbackType, setcurrentFeedbackType] = useState<SearchFeedbackType>();
   const [isFetching, setIsFetching] = useState(false);
   const [searchItems, setSearchItems] = useState<SearchItem[]>([]);
+  const isPreview = useAtomValue(isPreviewAtom);
   const { ready, analytics } = useSegment();
   const blockCloseEvent = useRef(false);
   const asyncLocalOramaData = useAtomValue(asyncLocalOrama);
+  const useFeoGenerated = useFeoConfig();
 
   const debouncedTrack = useCallback(analytics ? debounce(analytics.track, 1000) : () => null, [analytics]);
 
@@ -62,6 +63,12 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const { md } = useWindowWidth();
 
   const resultCount = searchItems.length;
+
+  useEffect(() => {
+    if (currentFeedbackType) {
+      setcurrentFeedbackType(undefined);
+    }
+  }, [searchValue]);
 
   const handleMenuKeys = (event: KeyboardEvent) => {
     if (!isOpen) {
@@ -146,7 +153,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
   const handleChange: SearchInputProps['onChange'] = async (_e, value) => {
     setSearchValue(value);
     setIsFetching(true);
-    const results = await localQuery(asyncLocalOramaData, value);
+    const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, useFeoGenerated);
     setSearchItems(results ?? []);
     isMounted.current && setIsFetching(false);
     if (ready && analytics) {
@@ -181,25 +188,35 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
         setIsOpen(false);
         onStateChange(false);
       }}
-      {...(!md && {
+      {...{
         expandableInput: {
           isExpanded: willExpand(),
           onToggleExpand,
           toggleAriaLabel: 'Expandable search input toggle',
         },
-      })}
+      }}
       onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
       className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
     />
   );
+
+  let menuFooter;
+  if (searchItems.length > 0 && !isFetching) {
+    menuFooter = (
+      <MenuFooter className="pf-v6-u-px-md">
+        <SearchFeedback query={searchValue} results={searchItems} feedbackType={currentFeedbackType} onFeedbackSubmitted={setcurrentFeedbackType} />
+      </MenuFooter>
+    );
+  }
+
   const menu = (
-    <Menu ref={menuRef} className="pf-v5-u-pt-sm pf-v5-u-px-md chr-c-search__menu">
+    <Menu ref={menuRef} className="pf-v6-u-pt-sm chr-c-search__menu">
       <MenuContent>
         <MenuList>
           {isFetching ? (
-            <Bullseye className="pf-v5-u-p-md">
+            <Bullseye className="pf-v6-u-p-md">
               <Spinner size="xl" />
             </Bullseye>
           ) : (
@@ -219,10 +236,10 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
                       }
                     }}
                     key={index}
-                    className="pf-v5-u-mb-xs"
+                    className="pf-v6-u-mb-xs"
                     component={(props) => <ChromeLink {...props} href={item.pathname} />}
                   >
-                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} />
+                    <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" />
                     <SearchDescription description={item.description} />
                   </MenuItem>
                 ))}
@@ -232,11 +249,12 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
           {searchItems.length === 0 && !isFetching && <EmptySearchState />}
         </MenuList>
       </MenuContent>
+      {menuFooter}
     </Menu>
   );
 
   return (
-    <div ref={containerRef} className="chr-c-search__input pf-v5-c-search-input pf-v5-u-w-100">
+    <div ref={containerRef} className="pf-v6-c-search-input pf-v6-u-w-100 pf-v6-u-align-content-center">
       {!md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
       {md && <Popper trigger={toggle} popper={menu} appendTo={containerRef.current || undefined} isVisible={isOpen} />}
     </div>
