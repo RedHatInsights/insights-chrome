@@ -168,6 +168,10 @@ export type ChromeModule = {
     props?: Record<string, unknown>;
     ssoScopes?: string[];
   };
+  moduleConfig?: {
+    supportCaseData?: SupportCaseConfig;
+    ssoScopes?: string[];
+  };
   analytics?: {
     APIKey?: string;
     APIKeyDev?: string;
