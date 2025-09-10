@@ -10,7 +10,7 @@ import shouldReAuthScopes from '../auth/shouldReAuthScopes';
 const useUserSSOScopes = (login: ChromeLogin) => {
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
   // get scope module definition
-  const requiredScopes = activeModule?.config?.ssoScopes || [];
+  const requiredScopes = activeModule?.config?.ssoScopes || activeModule?.moduleConfig?.ssoScopes || [];
 
   useEffect(() => {
     const [shouldReAuth, newScopes] = shouldReAuthScopes(requiredScopes);

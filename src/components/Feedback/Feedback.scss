@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+
 button.pf-v6-c-button.chr-c-button-feedback {
   svg {
     margin-right: var(--pf-t--global--spacer--sm);
@@ -85,5 +87,13 @@ button.pf-v6-c-button.chr-c-button-feedback {
     padding-bottom: 4px;
     padding-top: 4px;
     border-bottom: 1px solid var(--pf-t--global--border--color--default);
+  }
+}
+
+@media (max-height: $pf-v6-global--breakpoint--sm), (max-width: $pf-v6-global--breakpoint--md) {
+  .chr-c-feedback-buttons {
+    margin-top: var(--pf-t--global--spacer--md);
+    position: static;
+    bottom: auto;
   }
 }
