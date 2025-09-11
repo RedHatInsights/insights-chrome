@@ -38,3 +38,11 @@
   }
 }
 
+// Shift VirtualAssistant when drawer is open
+.astro-wrapper-stack {
+  transition: right 0.25s;
+}
+
+body.drawer-open .astro-wrapper-stack {
+  right: 470px;
+}
