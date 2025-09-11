@@ -38,3 +38,12 @@
   }
 }
 
+// Shift VirtualAssistant when drawer is open
+.astro-wrapper-stack {
+  transition: right 0.25s;
+}
+
+// When drawer is open, shift the VA wrapper unless it contains chat UI
+body.drawer-open .astro-wrapper-stack {
+  right: 470px !important;
+}
