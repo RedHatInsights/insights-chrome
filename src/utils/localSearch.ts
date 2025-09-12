@@ -1,5 +1,5 @@
 import { Orama, search } from '@orama/orama';
-import { ReleaseEnv, type ResultItem } from '@redhat-cloud-services/types';
+import { ReleaseEnv, ResultItem } from '@redhat-cloud-services/types';
 import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
 import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
