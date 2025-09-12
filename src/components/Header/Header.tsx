@@ -57,7 +57,7 @@ const MemoizedHeader = memo(
     email: string;
     isInternal?: boolean;
   }) => {
-    const search = new URLSearchParams(window.location.search).keys().next().value;
+    const search = new URLSearchParams(window.location.search).keys().next().value ?? '';
     const isActivationPath = activationRequestURLs.includes(search);
     const { md } = useWindowWidth();
     const [searchOpen, setSearchOpen] = useState(false);
