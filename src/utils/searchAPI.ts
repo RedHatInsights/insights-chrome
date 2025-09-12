@@ -1,5 +1,5 @@
 import { localQuery } from './localSearch';
-import { ReleaseEnv } from '@redhat-cloud-services/types';
+import { ReleaseEnv } from '@redhat-cloud-services/types/index.js';
 import type { ChromeSearchAPI, SearchDataType, SearchEntry } from '@redhat-cloud-services/types';
 import { getDB, insertEntry } from '../state/atoms/localSearchAtom';
 

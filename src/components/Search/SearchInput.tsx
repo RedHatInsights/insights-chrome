@@ -18,7 +18,7 @@ import { useAtomValue } from 'jotai';
 import { asyncLocalOrama } from '../../state/atoms/localSearchAtom';
 import { localQuery } from '../../utils/localSearch';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
-import { ReleaseEnv } from '@redhat-cloud-services/types';
+import { ReleaseEnv } from '@redhat-cloud-services/types/index.js';
 import type { SearchItem } from './SearchTypes';
 import SearchFeedback, { SearchFeedbackType } from './SearchFeedback';
 
