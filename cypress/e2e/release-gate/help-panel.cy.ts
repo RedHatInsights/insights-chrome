@@ -1,6 +1,20 @@
 describe('HelpPanel', () => {
   beforeEach(() => {});
 
+  // tests for present functionality, inspired by IQE
+  it('allows the user to go directly to the API docs page', () => {
+    // log in
+    cy.login();
+    cy.visit('/');
+    // open the help menu
+    cy.get('#HelpMenu').click();
+    // confirm link points to https://developers.redhat.com/api-catalog/
+    cy.get('[data-ouia-component-id="API documentation"]').as('apidocs');
+    cy.get('@apidocs').should('have.text', 'API documentation').should('be.visible');
+    cy.intercept('GET', 'https://developers.redhat.com/api-catalog/').as('navigationRequest');
+    cy.wait('@navigationRequest').its('response.statusCode').should('eq', 200);
+  });
+
   // panel opens when clicked on and disappears when the 'X' is clicked
   it('opens and closes', () => {});
 
