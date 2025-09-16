@@ -21,21 +21,6 @@ import 'cypress-localstorage-commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-Cypress.on('uncaught:exception', () => {
-  // when running in Konflux CI, the overlay is not enabled, so we need to skip
-  if (!process.env.KONFLUX_RUN) {
-    // Find the iFrame that contains the overlay
-    cy.get('iframe[id="webpack-dev-server-client-overlay"]').then(($iframe) => {
-      const $body = $iframe.contents().find('body');
-      // Find and click the close button
-      cy.wrap($body).find('button[aria-label="Close"]').click({ force: true });
-    });
-  }
-
-  // Prevent Cypress from failing the test
-  return false;
-});
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
