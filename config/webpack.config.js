@@ -183,7 +183,7 @@ const commonConfig = ({ dev }) => {
       rules: [
         {
           test: /\.(js|ts)x?$/,
-          exclude: [/node_modules/, /\.d\.ts$/],
+          exclude: /node_modules/,
           use: {
             loader: 'swc-loader',
             options: {

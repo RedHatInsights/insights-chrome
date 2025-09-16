@@ -144,12 +144,12 @@ export const localQuery = async (
       const {
         document: { id },
       } = hit;
-      const res = await checkResultPermissions(id.toString(), ReleaseEnv.STABLE);
+      const res = await checkResultPermissions(id, ReleaseEnv.STABLE);
       // skip hidden items
       if (!res) {
         searches.push({
           ...hit.document,
-          id: hit.document.id.toString(),
+          id: hit.document.id,
         });
       }
     }
