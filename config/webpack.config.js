@@ -112,9 +112,30 @@ const nonKonfluxDevServerConfiguration = () => {
   });
 };
 
+//
+// This is unwieldy and hard-to-follow because we have multiple possibilities to choose from:
+//
+// 1. Running dev server locally for development with the error overlay ON
+// 2. Running dev server locally for E2E testing with the error overlay OFF
+// 3. Running the dev server in Konflux for E2E testing with the error overlay off
+//
+// When LOCAL_CI is set, we give that configuration precedence over the other two. This would be a lot
+// less confusing if we separated the dev server configuration per use case, even at the cost of duplicating
+// snippets of configuration.
+//
+const chooseConfig = () => {
+  if (process.env.KONFLUX_RUN) {
+    console.log('Using Konflux CI run configuration');
+    return konfluxDevServerSettings;
+  } else {
+    console.log('Using normal dev server configuration (for local tinkering)');
+    return nonKonfluxDevServerConfiguration();
+  }
+};
+
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
-  const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
+  const contextualConfigSettings = chooseConfig();
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
