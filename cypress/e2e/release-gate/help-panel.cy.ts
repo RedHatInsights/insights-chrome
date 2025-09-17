@@ -12,18 +12,21 @@ describe('HelpPanel', () => {
     cy.contains('turn on Preview mode').should('be.visible');
   };
 
-  beforeEach(() => {});
+  beforeEach(() => {
+    // 1080p
+    cy.viewport(1920, 1080);
+  });
 
   // tests for present functionality, inspired by IQE
   it('allows the user to go directly to the API docs page', () => {
-    cy.login();
-    cy.visit('/');
+    cy.login().visit('/');
     // ensure preview is off before doing element interactions
     disablePreview();
 
     // open the help menu
-    cy.get('#HelpMenu').click();
-    cy.get('[data-ouia-component-id="chrome-help"]')
+    cy.get('#HelpMenu')
+      .click()
+      .get('[data-ouia-component-id="chrome-help"]')
       .should('be.visible')
       .find('[data-ouia-component-id="API documentation"]')
       .should('have.text', 'API documentation')
