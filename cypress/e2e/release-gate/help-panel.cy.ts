@@ -1,18 +1,28 @@
 describe('HelpPanel', () => {
+  const disablePreview = () => {
+    cy.get("[data-ouia-component-id='preview-switcher']").as('previewSwitch');
+    cy.get('@previewSwitch').then(($el) => {
+      const elementText = $el.text();
+      if (elementText.includes('Preview mode')) {
+        cy.wrap($el).click();
+      }
+    });
+  };
+
   beforeEach(() => {});
 
   // tests for present functionality, inspired by IQE
   it('allows the user to go directly to the API docs page', () => {
     cy.login();
     cy.visit('/');
+    // ensure preview is off before doing element interactions
+    disablePreview();
     // open the help menu
     cy.get('#HelpMenu').click();
     // confirm link points to https://developers.redhat.com/api-catalog/
     cy.get('[data-ouia-component-id="API documentation"]').as('apidocs');
     cy.get('@apidocs').should('have.text', 'API documentation').should('be.visible');
-    // External links aren't easily verified with Cypress
-    // cy.intercept('GET', 'https://developers.redhat.com/api-catalog/').as('navigationRequest');
-    // cy.wait('@navigationRequest').its('response.statusCode').should('eq', 200);
+    // External links aren't easily verified with Cypress, train stops here
   });
 
   // panel opens when clicked on and disappears when the 'X' is clicked
