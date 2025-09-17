@@ -20,6 +20,15 @@ import 'cypress-localstorage-commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+Cypress.on('uncaught:exception', (err) => {
+  // Ignore error from stage
+  if (err.message.includes('permissions[require] is not a function')) {
+    return false;
+  }
+
+  // Allow other errors to fail the test
+  return true;
+});
 
 declare global {
   namespace NodeJS {
