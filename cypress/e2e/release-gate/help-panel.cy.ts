@@ -19,8 +19,11 @@ describe('HelpPanel', () => {
     disablePreview();
     // open the help menu
     cy.get('#HelpMenu').click();
-    // confirm link points to https://developers.redhat.com/api-catalog/
-    cy.get('[data-ouia-component-id="API documentation"]').should('have.text', 'API documentation').should('be.visible');
+    cy.get('[data-ouia-component-id="chrome-help"]')
+      .should('be.visible')
+      .find('[data-ouia-component-id="API documentation"]')
+      .should('have.text', 'API documentation')
+      .should('be.visible');
     // External links aren't easily verified with Cypress, train stops here
   });
 
