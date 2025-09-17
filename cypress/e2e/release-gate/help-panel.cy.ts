@@ -5,8 +5,11 @@ describe('HelpPanel', () => {
       const elementText = $el.text();
       if (elementText.includes('turn off Preview mode')) {
         cy.wrap($el).click();
+        cy.wait(5000);
+        console.log('Preview mode should be turned off now');
       }
     });
+    cy.contains('turn on Preview mode').should('be.visible');
   };
 
   beforeEach(() => {});
@@ -17,6 +20,7 @@ describe('HelpPanel', () => {
     cy.visit('/');
     // ensure preview is off before doing element interactions
     disablePreview();
+
     // open the help menu
     cy.get('#HelpMenu').click();
     cy.get('[data-ouia-component-id="chrome-help"]')
