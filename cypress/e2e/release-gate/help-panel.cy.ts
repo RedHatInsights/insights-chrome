@@ -1,6 +1,6 @@
 describe('HelpPanel', () => {
   const disablePreview = () => {
-    cy.get("[data-ouia-component-id='preview-switcher']").as('previewSwitch');
+    cy.get("[data-ouia-component-id='PreviewSwitcher']").as('previewSwitch');
     cy.get('@previewSwitch').then(($el) => {
       const elementText = $el.text();
       if (elementText.includes('Preview mode')) {
@@ -20,8 +20,7 @@ describe('HelpPanel', () => {
     // open the help menu
     cy.get('#HelpMenu').click();
     // confirm link points to https://developers.redhat.com/api-catalog/
-    cy.get('[data-ouia-component-id="API documentation"]').as('apidocs');
-    cy.get('@apidocs').should('have.text', 'API documentation').should('be.visible');
+    cy.get('[data-ouia-component-id="API documentation"]').should('have.text', 'API documentation').should('be.visible');
     // External links aren't easily verified with Cypress, train stops here
   });
 
