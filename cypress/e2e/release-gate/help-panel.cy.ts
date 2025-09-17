@@ -3,7 +3,7 @@ describe('HelpPanel', () => {
     cy.get("[data-ouia-component-id='PreviewSwitcher']").as('previewSwitch');
     cy.get('@previewSwitch').then(($el) => {
       const elementText = $el.text();
-      if (elementText.includes('Preview mode')) {
+      if (elementText.includes('turn off Preview mode')) {
         cy.wrap($el).click();
       }
     });
