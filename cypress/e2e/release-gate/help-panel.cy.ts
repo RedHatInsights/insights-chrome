@@ -18,20 +18,45 @@ describe('HelpPanel', () => {
   });
 
   // tests for present functionality, inspired by IQE
-  it('allows the user to go directly to the API docs page', () => {
+  it('has the expected links', () => {
     cy.login().visit('/');
     // ensure preview is off before doing element interactions
     disablePreview();
 
     // open the help menu
     cy.get('#HelpMenu')
+      .as('helpMenu')
       .click()
       .get('[data-ouia-component-id="chrome-help"]')
       .should('be.visible')
       .find('[data-ouia-component-id="API documentation"]')
       .should('have.text', 'API documentation')
       .should('be.visible');
-    // External links aren't easily verified with Cypress, train stops here
+
+    cy.get('@helpMenu')
+      .should('be.visible')
+      .get('[data-ouia-component-id="Open a support case"]')
+      .should('have.text', 'Open a support case')
+      .should('be.visible');
+
+    cy.get('@helpMenu')
+      .should('be.visible')
+      .get('[data-ouia-component-id="Support options"]')
+      .should('have.text', 'Support options')
+      .should('be.visible');
+
+    cy.get('@helpMenu').should('be.visible').get('[data-ouia-component-id="Ask Red Hat"]').should('have.text', 'Ask Red Hat').should('be.visible');
+
+    cy.get('@helpMenu').should('be.visible').get('[data-ouia-component-id="Status page"]').should('have.text', 'Status page').should('be.visible');
+
+    cy.get('@helpMenu')
+      .should('be.visible')
+      .get('[data-ouia-component-id="All learning resources"]')
+      .should('have.text', 'All learning resources')
+      .should('be.visible')
+      .click()
+      .url()
+      .should('contain', '/learning-resources');
   });
 
   // panel opens when clicked on and disappears when the 'X' is clicked
