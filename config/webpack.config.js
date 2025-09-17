@@ -113,15 +113,7 @@ const nonKonfluxDevServerConfiguration = () => {
 };
 
 //
-// This is unwieldy and hard-to-follow because we have multiple possibilities to choose from:
-//
-// 1. Running dev server locally for development with the error overlay ON
-// 2. Running dev server locally for E2E testing with the error overlay OFF
-// 3. Running the dev server in Konflux for E2E testing with the error overlay off
-//
-// When LOCAL_CI is set, we give that configuration precedence over the other two. This would be a lot
-// less confusing if we separated the dev server configuration per use case, even at the cost of duplicating
-// snippets of configuration.
+// Choose the appropriate webpack config based on our run-time environment, konflux or non-konflux
 //
 const chooseConfig = () => {
   if (process.env.KONFLUX_RUN) {
