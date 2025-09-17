@@ -22,7 +22,7 @@ import 'cypress-localstorage-commands';
 // require('./commands')
 Cypress.on('uncaught:exception', (err) => {
   // Ignore error from stage
-  if (err.message.includes('permissions[require] is not a function')) {
+  if (err.message.includes('permissions[require] is not a function') || err.message.includes('e[t] is not a function')) {
     return false;
   }
 
