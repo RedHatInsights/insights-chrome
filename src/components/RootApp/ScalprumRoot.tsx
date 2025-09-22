@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
+import { PluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
@@ -39,6 +40,9 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
+
+// Factory function to create stable transform function reference
+const createTransformFunction = (config: ScalprumConfig) => (manifest: PluginManifest) => transformScalprumManifest(manifest, config);
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
@@ -146,6 +150,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
 
   const { setActiveTopic } = useHelpTopicManager(helpTopicsAPI);
 
+  // Create stable reference to transform function using factory function
+  const transformManifest = useMemo(() => createTransformFunction(config), [config]);
+
   function isStringArray(arr: EnableTopicsArgs): arr is string[] {
     return typeof arr[0] === 'string';
   }
@@ -221,11 +228,11 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       pluginSDKOptions: {
         pluginLoaderOptions: {
           // sharedScope: scope,
-          transformPluginManifest: (manifest) => transformScalprumManifest(manifest, config),
+          transformPluginManifest: transformManifest,
         },
       },
     };
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, transformManifest]);
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>
