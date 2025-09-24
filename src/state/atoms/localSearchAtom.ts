@@ -137,7 +137,6 @@ export async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEn
 }
 
 const db: { current: Orama<typeof entrySchema> | undefined } = { current: undefined };
-export const oramaDBAtom = atom<typeof db>(db);
 export async function getDB() {
   if (!db.current) {
     db.current = await create({
