@@ -237,7 +237,7 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
                     }}
                     key={index}
                     className="pf-v6-u-mb-xs"
-                    component={(props) => <ChromeLink {...props} href={item.pathname} />}
+                    component={(props) => <ChromeLink {...props} href={item.pathname} isExternal={item.isExternal} />}
                   >
                     <SearchTitle title={item.title} bundleTitle={item.bundleTitle.replace(/(\[|\])/gm, '')} className="pf-v6-u-mb-xs" />
                     <SearchDescription description={item.description} />
