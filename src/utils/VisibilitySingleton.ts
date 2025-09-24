@@ -40,7 +40,7 @@ const initialize = ({
    */
   const checkPermissions = async (permissions: string[] = [], require: 'every' | 'some' = 'every') => {
     const userPermissions = await getUserPermissions();
-    return userPermissions && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
+    return userPermissions && permissions[require] && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
   };
 
   const visibilityFunctions = {
