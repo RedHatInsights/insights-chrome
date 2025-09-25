@@ -10,6 +10,7 @@ objects:
     metadata:
       name: chrome
     spec:
+      feoConfigEnabled: true
       envName: ${ENV_NAME}
       deploymentRepo: https://github.com/RedHatInsights/insights-chrome
       title: Chrome
