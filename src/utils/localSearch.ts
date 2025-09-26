@@ -1,6 +1,6 @@
-import { search } from '@orama/orama';
-import { ReleaseEnv } from '../@types/types.d';
-import { SearchPermissions, SearchPermissionsCache } from '../state/atoms/localSearchAtom';
+import { Orama, search } from '@orama/orama';
+import { ReleaseEnv, ResultItem, SearchDataType } from '@redhat-cloud-services/types/index.js';
+import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
 import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
 
@@ -13,14 +13,6 @@ const matchCache: {
 } = {
   title: {},
   description: {},
-};
-
-type ResultItem = {
-  title: string;
-  description: string;
-  bundleTitle: string;
-  pathname: string;
-  id: string;
 };
 
 const resultCache: {
@@ -115,9 +107,14 @@ async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.S
   return result;
 }
 
-export const localQuery = async (db: any, term: string, env: ReleaseEnv = ReleaseEnv.STABLE, useGenerated = false) => {
+export const localQuery = async (
+  db: Orama<typeof entrySchema>,
+  term: string,
+  env: ReleaseEnv = ReleaseEnv.STABLE,
+  mode: SearchDataType | string = 'services'
+) => {
   try {
-    const cacheKey = `${env}-${term}`;
+    const cacheKey = `${env}-${term}-${mode}`;
     let results: ResultItem[] | undefined = resultCache[cacheKey];
     if (results) {
       return results;
@@ -130,7 +127,7 @@ export const localQuery = async (db: any, term: string, env: ReleaseEnv = Releas
       tolerance: 1.5,
       properties: ['title', 'description', 'altTitle'],
       where: {
-        type: useGenerated ? ['legacy', 'generated'] : 'legacy',
+        type: mode,
       },
       boost: {
         title: 10,
@@ -139,7 +136,7 @@ export const localQuery = async (db: any, term: string, env: ReleaseEnv = Releas
       },
     });
 
-    const searches: Promise<ResultItem>[] = [];
+    const searches: ResultItem[] = [];
     for (const hit of r.hits) {
       if (searches.length === 10) {
         break;
@@ -147,10 +144,13 @@ export const localQuery = async (db: any, term: string, env: ReleaseEnv = Releas
       const {
         document: { id },
       } = hit;
-      const res = await checkResultPermissions(id);
+      const res = await checkResultPermissions(String(id), ReleaseEnv.STABLE);
       // skip hidden items
       if (!res) {
-        searches.push(hit.document);
+        searches.push({
+          ...hit.document,
+          id: String(hit.document.id),
+        });
       }
     }
     const validResults = await Promise.all(searches);
