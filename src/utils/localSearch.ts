@@ -1,5 +1,5 @@
 import { Orama, search } from '@orama/orama';
-import { ReleaseEnv, ResultItem } from '@redhat-cloud-services/types/index.js';
+import { ReleaseEnv, ResultItem, SearchDataType } from '@redhat-cloud-services/types/index.js';
 import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
 import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
@@ -111,7 +111,7 @@ export const localQuery = async (
   db: Orama<typeof entrySchema>,
   term: string,
   env: ReleaseEnv = ReleaseEnv.STABLE,
-  mode: 'services' | 'quickstarts' = 'services'
+  mode: SearchDataType | string = 'services'
 ) => {
   try {
     const cacheKey = `${env}-${term}-${mode}`;

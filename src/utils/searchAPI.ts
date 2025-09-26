@@ -4,7 +4,7 @@ import type { ChromeSearchAPI, SearchDataType, SearchEntry } from '@redhat-cloud
 import { getDB, insertEntry } from '../state/atoms/localSearchAtom';
 
 export const searchAPI: ChromeSearchAPI = {
-  async query(term: string, type: SearchDataType, env: ReleaseEnv = ReleaseEnv.STABLE) {
+  async query(term: string, type: SearchDataType | string, env: ReleaseEnv = ReleaseEnv.STABLE) {
     const db = await getDB();
     return localQuery(db, term, env, type);
   },

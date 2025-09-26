@@ -92,9 +92,50 @@ devServer: {
 ```
 3. Run insights-chrome with `npm run dev`.
 
-## Local search development
+## Local Search Feature
 
-See [local search development documentation](./docs/localSearchDevelopment.md).
+The Insights Chrome platform provides a local search functionality that allows applications to search through various types of content including services, quickstarts, and custom content types.
+
+### Using the Search API
+
+Applications can use the search functionality through the Chrome API:
+
+```javascript
+// Search for services (default)
+const serviceResults = await chrome.search.query('insights', 'services');
+
+// Search for quickstarts
+const quickstartResults = await chrome.search.query('getting started', 'quickstarts');
+
+// Search for custom content types
+const customResults = await chrome.search.query('term', 'documentation');
+```
+
+### Adding Custom Search Content
+
+Applications can register their own searchable content:
+
+```javascript
+// Register a new search entry
+await chrome.search.insert({
+  id: 'my-custom-entry',
+  title: 'Custom Documentation', 
+  description: 'Helpful documentation for users',
+  pathname: '/my-app/docs',
+  bundleTitle: 'My Application',
+  type: 'documentation' // Custom type
+});
+```
+
+### Supported Search Types
+
+- **services**: Application services and tools (predefined)
+- **quickstarts**: Interactive getting-started guides (predefined) 
+- **custom types**: Applications can define their own search categories
+
+### Local Search Development
+
+See [local search development documentation](./docs/localSearchDevelopment.md) for implementation details.
 
 ## LocalStorage Debugging
 
