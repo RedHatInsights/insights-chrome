@@ -133,8 +133,13 @@ const Tools = () => {
             ) : null,
         },
         {
+          url: '/iam/authentication-policy/identity-provider-integration',
+          title: 'Identity Provider Integration',
+          isHidden: isITLessEnv,
+        },
+        {
           url: '/iam/authentication-policy/authentication-factors',
-          title: 'Authentication Policy',
+          title: 'Authentication Factors',
           isHidden: isITLessEnv,
         },
         {
