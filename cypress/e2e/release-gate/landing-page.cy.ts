@@ -1,5 +1,5 @@
 // Landing page has changed
-describe.skip('Landing page', () => {
+describe('Landing page', () => {
   it('visit landing page', () => {
     cy.login();
 
