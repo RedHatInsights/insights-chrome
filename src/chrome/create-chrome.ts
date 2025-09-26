@@ -27,6 +27,7 @@ import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { TagRegisteredWith, globalFilterHiddenAtom, globalFilterScopeAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
+import useVirtualAssistant from '../hooks/useVirtualAssistant';
 
 // Global event listeners registry for PUBLIC_EVENTS
 const eventListeners = new Map<string, Map<string, GenericCB>>();
@@ -236,6 +237,7 @@ export const createChromeContext = ({
     analytics: analytics! as any,
     // FIXME: Update types once merged
     useGlobalFilter: useGlobalFilter as unknown as ChromeAPI['useGlobalFilter'],
+    useVirtualAssistant: useVirtualAssistant,
     init: () => {
       console.error(
         `Calling deprecated "chrome.init function"! Please remove the function call from your code. Functions "on" and "updateDocumentTitle" are directly accessible from "useChrome" hook.`
