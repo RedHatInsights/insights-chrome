@@ -135,8 +135,8 @@ export function OIDCSecured({
     setScalprumConfigAtom(microFrontendConfig);
 
     const initialModuleScope = getInitialScope(routes, window.location.pathname);
-
-    const initialModuleConfig = initialModuleScope && microFrontendConfig[initialModuleScope]?.config;
+    const initialModuleConfig =
+      initialModuleScope && (microFrontendConfig[initialModuleScope]?.config || microFrontendConfig[initialModuleScope]?.moduleConfig);
     initializeAccessRequestCookies();
 
     if (!hasAuthParams() && !auth.activeNavigator && !auth.isLoading && !auth.isAuthenticated) {

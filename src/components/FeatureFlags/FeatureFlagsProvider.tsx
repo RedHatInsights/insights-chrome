@@ -7,6 +7,7 @@ import { useAtomValue } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { UNLEASH_ERROR_KEY, getUnleashClient, setUnleashClient } from './unleashClient';
+import { getEnv } from '../../utils/common';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -64,6 +65,9 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         'platform.chrome.ui.preview': isPreview,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        'platform.chrome.ui.env': getEnv(),
         userId: user?.identity.internal?.account_id,
         orgId: user?.identity.internal?.org_id,
         accountNumber: user?.identity.account_number,
