@@ -123,6 +123,10 @@ spec:
       description: Path to a file with build arguments for buildah, see https://www.mankier.com/1/buildah-build#--build-arg-file
       name: build-args-file
       type: string
+    - name: buildah-format
+      default: docker
+      type: string
+      description: The format for the resulting image's mediaType. Valid values are oci or docker.
     results:
     - description: ''
       name: IMAGE_URL
@@ -150,7 +154,7 @@ spec:
         - name: name
           value: init
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-init:0.2@sha256:ec962d0be18f36ca7d331c99bf243800f569fc0a2ea6f8c8c3d3a574b71c44dc
+          value: quay.io/konflux-ci/tekton-catalog/task-init:0.2@sha256:abf231cfc5a68b56f68a8ac9bb26dca3c3e434c88dd9627c72bdec0b8c335c67
         - name: kind
           value: task
         resolver: bundles
@@ -382,12 +386,12 @@ spec:
               memory: "8Gi"
           image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
           name: e2e-tests
-          env: # Define environment variables for this step
-          - name: CHROME_ACCOUNT # The name of the environment variable inside the container
+          env:   # Define environment variables for this step
+          - name: CHROME_ACCOUNT     # The name of the environment variable inside the container
             valueFrom:
               secretKeyRef:
-                name: chrome-frontend-e2e-credentials # The name of your Kubernetes Secret
-                key: CHROME_ACCOUNT # The specific key within the secret to use
+                name: chrome-frontend-e2e-credentials     # The name of your Kubernetes Secret
+                key: CHROME_ACCOUNT     # The specific key within the secret to use
           - name: CHROME_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -416,12 +420,12 @@ spec:
             runAsUser: 0
           workingDir: /var/workdir
         volumes:
-          - name: dshm
-            emptyDir:
-              medium: Memory
-              sizeLimit: "4Gi" # Adjust this value as needed (e.g., "4Gi", "8Gi")
-          - emptyDir: {}
-            name: workdir
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: "4Gi"   # Adjust this value as needed (e.g., "4Gi", "8Gi")
+        - emptyDir: {}
+          name: workdir
       workspaces:
       - name: basic-auth
         workspace: git-auth
@@ -446,6 +450,8 @@ spec:
         - $(params.build-args[*])
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
+      - name: BUILDAH_FORMAT
+        value: $(params.buildah-format)
       runAfter:
       - prefetch-dependencies
       - create-frontend-dockerfile
@@ -479,6 +485,8 @@ spec:
       - name: IMAGES
         value:
         - $(tasks.build-container.results.IMAGE_URL)@$(tasks.build-container.results.IMAGE_DIGEST)
+      - name: BUILDAH_FORMAT
+        value: $(params.buildah-format)
       runAfter:
       - build-container
       taskRef:
