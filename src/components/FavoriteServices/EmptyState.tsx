@@ -14,7 +14,7 @@ const EmptyState = () => (
       <Stack className="pf-v6-u-justify-content-center">
         <StackItem className="pf-v6-u-text-align-center">
           <img
-            src="https://console.redhat.com/apps/frontend-assets/favoritedservices/favoriting-emptystate.svg"
+            src="https://console.redhat.com/apps/frontend-assets/background-images/favoriting-emptystate.svg"
             className="chr-c-empty-state-favorites"
             alt="favoriting image"
           />
