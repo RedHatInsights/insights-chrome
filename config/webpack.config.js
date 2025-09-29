@@ -112,9 +112,22 @@ const nonKonfluxDevServerConfiguration = () => {
   });
 };
 
+//
+// Choose the appropriate webpack config based on our run-time environment, konflux or non-konflux
+//
+const chooseConfig = () => {
+  if (process.env.KONFLUX_RUN) {
+    console.log('Using Konflux CI run configuration');
+    return konfluxDevServerSettings;
+  } else {
+    console.log('Using normal dev server configuration (for local tinkering)');
+    return nonKonfluxDevServerConfiguration();
+  }
+};
+
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
-  const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
+  const contextualConfigSettings = chooseConfig();
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
