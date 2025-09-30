@@ -3,7 +3,8 @@
 
 .chr-c-masthead {
   --pf-v6-c-masthead__content--MinHeight: 48px !important;
-  --pf-v6-c-masthead__main--before--Right: 0;
+  --pf-v6-c-masthead__main--ColumnGap: 0 !important;
+  --pf-v6-c-masthead__main--before--Right: 0; // close gap between hamburger and logo
   .chr-c-brand {
     width: 30px;
   }
