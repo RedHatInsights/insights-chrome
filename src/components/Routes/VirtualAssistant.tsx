@@ -18,7 +18,15 @@ const VirtualAssistant = () => {
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
-  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
+  const viableRoutes = [
+    '/',
+    '/insights/*',
+    '/settings/*',
+    '/subscriptions/overview/*',
+    '/subscriptions/inventory/*',
+    '/subscriptions/usage/*',
+    '/openshift/assisted-installer/*',
+  ];
 
   const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
   const allFlags = useFlags();
