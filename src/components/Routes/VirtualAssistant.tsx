@@ -10,7 +10,10 @@ import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAss
 import './virtual-assistant.scss';
 import SilentErrorBoundary from './SilentErrorBoundary';
 
-const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.insights': '/openshift/insights/*' };
+const flaggedRoutes: { [flagName: string]: string } = {
+  'platform.va.openshift.insights': '/openshift/insights/*',
+  'platform.arh.enabled': '/openshift/assisted-installer/*',
+};
 
 const VirtualAssistant = () => {
   const [isOpen, setOpen] = useAtom(virtualAssistantOpenAtom);
@@ -18,15 +21,7 @@ const VirtualAssistant = () => {
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
-  const viableRoutes = [
-    '/',
-    '/insights/*',
-    '/settings/*',
-    '/subscriptions/overview/*',
-    '/subscriptions/inventory/*',
-    '/subscriptions/usage/*',
-    '/openshift/assisted-installer/*',
-  ];
+  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
 
   const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
   const allFlags = useFlags();
