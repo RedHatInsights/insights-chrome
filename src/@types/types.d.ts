@@ -240,8 +240,3 @@ export type BundleNav = {
   title?: string;
   links: NavItem[];
 };
-
-export enum ReleaseEnv {
-  STABLE = 'STABLE',
-  PREVIEW = 'PREVIEW',
-}

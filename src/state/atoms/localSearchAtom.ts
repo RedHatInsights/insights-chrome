@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { Orama, create, insert } from '@orama/orama';
+import type { SearchDataType, SearchEntry } from '@redhat-cloud-services/types';
 
 import { getChromeStaticPathname } from '../../utils/common';
 import axios, { AxiosResponse } from 'axios';
@@ -19,18 +20,6 @@ type IndexEntry = {
   permissions?: NavItemPermission[];
 };
 
-type SearchEntry = {
-  title: string;
-  uri: string;
-  pathname: string;
-  description: string;
-  icon?: string;
-  id: string;
-  bundleTitle: string;
-  altTitle?: string[];
-  type: 'legacy' | 'generated';
-};
-
 type GeneratedSearchIndexResponse = {
   alt_title?: string[];
   id: string;
@@ -39,7 +28,7 @@ type GeneratedSearchIndexResponse = {
   description?: string;
 };
 
-export const SearchPermissions = new Map<string, NavItemPermission[]>();
+export const SearchPermissions = new Map<string | number, NavItemPermission[]>();
 export const SearchPermissionsCache = new Map<string, boolean>();
 
 const bundleCache = new Map<string, string>();
@@ -89,7 +78,7 @@ const asyncSearchIndexAtom = atom(async () => {
         id: entry.id,
         bundleTitle: bundleTitle,
         altTitle: entry.alt_title,
-        type: 'generated',
+        type: 'services' as SearchDataType,
       });
     });
   }
@@ -116,7 +105,7 @@ const asyncSearchIndexAtom = atom(async () => {
         id: entry.id,
         bundleTitle: entry.bundleTitle[0],
         altTitle: entry.alt_title,
-        type: 'legacy',
+        type: 'services' as SearchDataType,
       });
     });
   }
@@ -124,7 +113,7 @@ const asyncSearchIndexAtom = atom(async () => {
   return searchIndex;
 });
 
-const entrySchema = {
+export const entrySchema = {
   title: 'string',
   description: 'string',
   altTitle: 'string[]',
@@ -134,7 +123,7 @@ const entrySchema = {
   type: 'string',
 } as const;
 
-async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
+export async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
   return insert(db, {
     id: entry.id,
     title: entry.title,
@@ -147,10 +136,19 @@ async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
   });
 }
 
+const db: { current: Orama<typeof entrySchema> | undefined } = { current: undefined };
+export async function getDB() {
+  if (!db.current) {
+    db.current = await create({
+      schema: entrySchema,
+    });
+  }
+
+  return db.current;
+}
+
 export const asyncLocalOrama = atom(async (get) => {
-  const db: Orama<typeof entrySchema> = await create({
-    schema: entrySchema,
-  });
+  const db = await getDB();
 
   const insertCommands = (await get(asyncSearchIndexAtom)).map(async (entry) => {
     return insertEntry(db, entry);

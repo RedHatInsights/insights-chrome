@@ -125,52 +125,72 @@ const useAllServices = () => {
   const useFeoGenerated = useFeoConfig();
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
-  const fetchSections = useCallback(async () => {
-    const query = useFeoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
-    let request = allServicesFetchCache[query];
-    if (!request) {
-      request = axios.get<
-        (Omit<AllServicesSection, 'links'> & {
-          links: (AllServicesLink | AllServicesGroup)[];
-        })[]
-      >(query);
-      allServicesFetchCache[query] = request;
-    }
+  const fetchSections = useCallback(
+    async (abortSignal: AbortSignal) => {
+      const query = useFeoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
+      let request = allServicesFetchCache[query];
+      if (!request) {
+        request = axios.get<
+          (Omit<AllServicesSection, 'links'> & {
+            links: (AllServicesLink | AllServicesGroup)[];
+          })[]
+        >(query, {
+          signal: abortSignal,
+        });
+        allServicesFetchCache[query] = request;
+      }
 
-    const response = await request;
-    // clear the cache
-    delete allServicesFetchCache[query];
+      const response = await request;
+      // clear the cache
+      delete allServicesFetchCache[query];
 
-    return evaluateLinksVisibility(response.data);
-  }, [useFeoGenerated]);
+      return evaluateLinksVisibility(response.data);
+    },
+    [useFeoGenerated]
+  );
 
-  const setNavigation = useCallback(async () => {
-    const sections = await fetchSections();
-    if (isMounted.current) {
-      const availableSections = sections.filter(({ links }: AllServicesSection) => {
-        if (links?.length === 0) {
-          return false;
+  const setNavigation = useCallback(
+    async (abortSignal: AbortSignal) => {
+      try {
+        const sections = await fetchSections(abortSignal);
+        if (isMounted.current) {
+          const availableSections = sections.filter(({ links }: AllServicesSection) => {
+            if (links?.length === 0) {
+              return false;
+            }
+
+            return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
+          });
+
+          setState((prev) => ({
+            ...prev,
+            availableSections,
+            ready: true,
+          }));
         }
-
-        return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
-      });
-
-      setState((prev) => ({
-        ...prev,
-        availableSections,
-        ready: true,
-      }));
-    }
-  }, [fetchSections, useFeoGenerated]);
+      } catch (error) {
+        // ignore abort errors
+        if (!axios.isCancel(error)) {
+          throw error;
+        }
+      }
+    },
+    [fetchSections, useFeoGenerated]
+  );
   useEffect(() => {
+    const abortCtrl = new AbortController();
     isMounted.current = true;
-    setNavigation();
+    setNavigation(abortCtrl.signal);
     return () => {
       isMounted.current = false;
+      abortCtrl.abort();
     };
   }, [setNavigation, useFeoGenerated]);
 
-  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue, useFeoGenerated]);
+  const linkSections = useMemo(
+    () => filterAllServicesSections(availableSections, filterValue),
+    [ready, filterValue, useFeoGenerated, availableSections]
+  );
 
   return {
     linkSections,
