@@ -9,6 +9,7 @@ import { flatTags } from '../components/GlobalFilter/globalFilterApi';
 import { PUBLIC_EVENTS } from '../utils/consts';
 import { clearAnsibleTrialFlag, isAnsibleTrialFlagActive, setAnsibleTrialFlag } from '../utils/isAnsibleTrialFlagActive';
 import chromeHistory from '../utils/chromeHistory';
+import { searchAPI } from '../utils/searchAPI';
 import { FlagTagsFilter } from '../@types/types';
 import useBundle, { bundleMapping, getUrl } from '../hooks/useBundle';
 import { warnDuplicatePkg } from './warnDuplicatePackages';
@@ -253,6 +254,8 @@ export const createChromeContext = ({
     enablePackagesDebug: () => warnDuplicatePkg(),
     requestPdf,
     drawerActions,
+    search: searchAPI,
   };
+
   return api;
 };

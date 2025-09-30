@@ -155,7 +155,12 @@ describe('VisibilitySingleton', () => {
     };
 
     expect(visibilityFunctions.isProd()).toBe(true);
-    window.location = location;
+
+    // Properly restore the original location
+    Object.defineProperty(window, 'location', {
+      value: location,
+      writable: true,
+    });
   });
 
   test('isProd - false', async () => {
