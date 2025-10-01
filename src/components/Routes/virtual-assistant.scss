@@ -8,3 +8,13 @@
     right: 0;
   }
 }
+
+// Base transition class - always present for smooth animations
+.astro-va-transition {
+  transition: right 0.25s;
+}
+
+// Shift Virtual Assistant when drawer is open
+.astro-va-shifted {
+  right: 470px !important;
+}

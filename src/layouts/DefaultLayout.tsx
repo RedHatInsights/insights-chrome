@@ -15,7 +15,7 @@ import isEqual from 'lodash/isEqual';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
@@ -30,7 +30,6 @@ import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import VirtualAssistant from '../components/Routes/VirtualAssistant';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
-import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ITLess } from '../utils/common';
 import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
@@ -72,23 +71,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
   const { loaded, schema, noNav } = useNavigation();
 
   const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
-  const drawerContent = useAtomValue(drawerPanelContentAtom);
-  const isHelpPanelOpen = drawerContent?.scope === 'learningResources' && isNotificationsDrawerExpanded;
-  const isNotificationsDrawerOpen = drawerContent?.scope === 'notifications' && isNotificationsDrawerExpanded;
-  const shouldShiftVA = isHelpPanelOpen || isNotificationsDrawerOpen;
-
-  React.useEffect(() => {
-    const VAShiftClass = 'drawer-open';
-    if (shouldShiftVA) {
-      document.body.classList.add(VAShiftClass);
-    } else {
-      document.body.classList.remove(VAShiftClass);
-    }
-
-    return () => {
-      document.body.classList.remove(VAShiftClass);
-    };
-  }, [shouldShiftVA]);
 
   const toggleDrawer = () => {
     setIsNotificationsDrawerExpanded((prev) => !prev);
