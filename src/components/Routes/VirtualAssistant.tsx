@@ -12,7 +12,10 @@ import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom
 import './virtual-assistant.scss';
 import SilentErrorBoundary from './SilentErrorBoundary';
 
-const flaggedRoutes: { [flagName: string]: string } = { 'platform.va.openshift.insights': '/openshift/insights/*' };
+const flaggedRoutes: { [flagName: string]: string } = {
+  'platform.va.openshift.insights': '/openshift/insights/*',
+  'platform.arh.enabled': '/openshift/assisted-installer/*',
+};
 
 const VirtualAssistant = () => {
   const [isOpen, setOpen] = useAtom(virtualAssistantOpenAtom);
