@@ -27,7 +27,7 @@ const FeedbackRoute = () => {
   const paths =
     localStorage.getItem('chrome:experimental:feedback') === 'true'
       ? ['*']
-      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'edge/*', 'subscriptions/*', 'iam/*'];
+      : ['/', 'insights/*', 'settings/*', 'openshift/*', 'application-services/*', 'ansible/*', 'subscriptions/*', 'iam/*'];
   return (
     <Routes>
       {paths.map((path) => (
@@ -110,7 +110,7 @@ const MemoizedHeader = memo(
                 )}
               </ToolbarGroup>
               <ToolbarGroup className="pf-v6-u-flex-grow-1" variant="filter-group" gap={{ default: 'gapNone' }}>
-                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm" variant="filter-group">
+                <ToolbarGroup className="pf-v6-u-flex-grow-1 pf-v6-u-mr-sm pf-v6-u-ml-xl" variant="filter-group">
                   <Suspense fallback={null}>
                     <SearchInput onStateChange={hideAllServices} />
                   </Suspense>

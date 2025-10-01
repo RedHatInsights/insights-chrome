@@ -12,31 +12,31 @@ import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 describe('<AllServices />', () => {
   beforeEach(() => {
-    // mock chrome and scalprum generic requests
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', {
       status: 200,
       fixture: 'services.json',
-    });
-    cy.intercept('http://localhost:8080/entry?cacheBuster=*', '');
+    }).as('getServices');
+
+    cy.intercept('http://localhost:8080/entry?cacheBuster=*', '').as('getEntry');
     cy.intercept('http://localhost:8080/foo/bar.json', {
       foo: {
         entry: ['/entry'],
       },
-    });
+    }).as('getFooBar');
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/navigation/settings-navigation.json?ts=*', {
       status: 200,
       fixture: 'settings-navigation.json',
-    });
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/search-index-generated.json', []);
+    }).as('getSettingsNav');
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json').as('getSearchIndexStage');
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/search-index-generated.json').as('getSearchIndexGenerated');
   });
 
-  it('should filter by service category title', () => {
+  beforeEach(() => {
     initializeVisibilityFunctions({
       isPreview: false,
-      getToken: () => Promise.resolve(''),
+      getToken: () => Promise.resolve('mock-token-from-visibility'),
       getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
-      getUserPermissions: () => Promise.resolve([]),
+      getUserPermissions: () => Promise.resolve([]), // Ensure it's an array
     });
     const visibilityFunctions = getVisibilityFunctions();
     cy.mount(
@@ -52,6 +52,9 @@ describe('<AllServices />', () => {
           api={{
             chrome: {
               visibilityFunctions,
+              auth: {
+                getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
+              },
             },
           }}
         >
@@ -67,8 +70,20 @@ describe('<AllServices />', () => {
         </ScalprumProvider>
       </ChromeAuthContext.Provider>
     );
+  });
 
-    cy.get('.pf-v6-c-text-input-group__text-input').type('consoleset');
-    cy.contains('Console Settings').should('exist');
+  it('should filter by service category title', () => {
+    cy.get('.pf-v6-c-text-input-group__text-input').type('advi');
+    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'advi');
+    cy.contains('Advisor').should('exist');
+    cy.get('.pf-v6-c-card').should('have.length.greaterThan', 1); // Asserts that more than one item is found
+  });
+
+  it('shows empty state when no services match filter', () => {
+    cy.get('.pf-v6-c-text-input-group__text-input').clear().type('zzzzxyz');
+    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'zzzzxyz');
+
+    cy.contains('No results found', { timeout: 2000 }).should('be.visible');
+    cy.contains('Clear all filters').should('be.visible');
   });
 });

@@ -33,9 +33,7 @@ const VirtualAssistant = () => {
       viableRoutes.map((route) => ({ path: route })),
       pathname
     );
-    if (match != null) {
-      setShowAssistant(true);
-    }
+    setShowAssistant(match != null);
   }, [pathname, setShowAssistant, viableRoutes]);
 
   type VirtualAssistantProps = {

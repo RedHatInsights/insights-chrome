@@ -1,6 +1,7 @@
 // Landing page has changed
-describe.skip('Auth', () => {
-  it('should force refresh token', () => {
+describe('Auth', () => {
+  // skipped because test is broken as of August 4, 2025
+  it.skip('should force refresh token', () => {
     cy.login();
     cy.intercept('POST', 'https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token').as('tokenRefresh');
     cy.visit('/');

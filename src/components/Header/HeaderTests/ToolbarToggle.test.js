@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ToolbarToggle from '../ToolbarToggle';
 
 describe('ToolbarToggle', () => {
@@ -62,7 +62,7 @@ describe('ToolbarToggle', () => {
     });
 
     // wait for async actions on toggle to complete
-    await act(async () => {
+    await waitFor(async () => {
       await Promise.resolve();
     });
     for (const item of expectedTexts) {

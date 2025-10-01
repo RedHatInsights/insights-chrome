@@ -17,7 +17,6 @@ export const bundleMapping: {
   openshift: 'OpenShift',
   ansible: 'Ansible Automation Platform',
   insights: 'RHEL',
-  edge: 'Edge management',
   settings: 'Settings',
   landing: 'Home',
   allservices: 'Home',
