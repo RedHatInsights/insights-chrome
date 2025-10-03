@@ -171,7 +171,7 @@ const Tools = () => {
       enabled: askRedHatEnabled,
       item: {
         title: intl.formatMessage(messages.askRedHat),
-        icon: <img className="pf-v6-c-button__icon" src="/apps/frontend-assets/technology-icons/ai-chat-ask-redhat.svg" />,
+        icon: <img className="pf-v6-c-button__icon" height="26" width="26" src="/apps/frontend-assets/technology-icons/ai-chat-ask-redhat.svg" />,
         onClick: () => window.open('https://access.redhat.com/ask', '_blank'),
       },
     },

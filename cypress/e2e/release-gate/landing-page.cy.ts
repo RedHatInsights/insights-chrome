@@ -4,7 +4,6 @@ describe('Landing page', () => {
     cy.login();
 
     cy.visit('/');
-    cy.wait(4000);
 
     // check if a favorites link exists on the page
     cy.contains('My favorite services').should('exist');
@@ -14,11 +13,12 @@ describe('Landing page', () => {
     cy.login();
 
     cy.visit('/');
-    cy.wait(4000);
-    cy.get('.tooltip-button-settings-cy').invoke('show').trigger('mouseenter').wait(1000);
+
+    // Wait for the settings tooltip button to be present before interacting
+    cy.get('.tooltip-button-settings-cy').should('exist').invoke('show').trigger('mouseenter');
     cy.get('.tooltip-inner-settings-cy').should('be.visible').and('contain', 'Settings');
 
-    cy.get('.tooltip-button-help-cy').invoke('show').trigger('mouseenter').wait(1000);
+    cy.get('.tooltip-button-help-cy').should('exist').invoke('show').trigger('mouseenter');
     cy.get('.tooltip-inner-help-cy').should('be.visible').and('contain', 'Help');
   });
 });
