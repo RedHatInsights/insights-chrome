@@ -5,6 +5,9 @@ import { getVisibilityFunctions } from './VisibilitySingleton';
 const visibilityHandler = async ({ method, args }: NavItemPermission) => {
   const visibilityFunctions = getVisibilityFunctions();
   // (null, undefined, true) !== false
+  if (!visibilityFunctions[method]) {
+    return false;
+  }
   return (await visibilityFunctions[method]?.(...(args || []))) !== false;
 };
 
