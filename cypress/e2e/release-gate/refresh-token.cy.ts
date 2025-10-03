@@ -1,7 +1,7 @@
 // Landing page has changed
 describe('Auth', () => {
   // skipped because test is broken as of August 4, 2025
-  it.skip('should force refresh token', () => {
+  it('should force refresh token', () => {
     cy.login();
     cy.intercept('POST', 'https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token').as('tokenRefresh');
     cy.visit('/');
@@ -9,7 +9,7 @@ describe('Auth', () => {
     cy.wait('@tokenRefresh');
 
     // wait for chrome to init
-    cy.contains('Services').should('be.visible');
+    cy.contains('h2', 'Welcome to your Hybrid Cloud Console').should('be.visible');
     // intercept it after initial load
     // force token refresh
     cy.wait(1000);
