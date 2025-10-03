@@ -1,7 +1,7 @@
 .astro__virtual-assistant {
   position: fixed;
-  bottom: var(--pf-global--spacer--lg);
-  right: var(--pf-global--spacer--lg);
+  bottom: var(--pf-t--global--spacer--lg);
+  right: var(--pf-t--global--spacer--lg);
   z-index: 1000;
   @media screen and (max-width: 768px) {
     bottom: 0;
