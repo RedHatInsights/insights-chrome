@@ -386,17 +386,17 @@ spec:
               memory: "8Gi"
           image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
           name: e2e-tests
-          env:   # Define environment variables for this step
-          - name: CHROME_ACCOUNT     # The name of the environment variable inside the container
+          env:  
+          - name: CHROME_ACCOUNT    
             valueFrom:
               secretKeyRef:
-                name: chrome-frontend-e2e-credentials     # The name of your Kubernetes Secret
-                key: CHROME_ACCOUNT     # The specific key within the secret to use
+                name: insights-chrome-test     
+                key: username     
           - name: CHROME_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: chrome-frontend-e2e-credentials
-                key: CHROME_PASSWORD
+                name: insights-chrome-test
+                key: password
           - name: NODE_TLS_REJECT_UNAUTHORIZED
             value: "0"
           - name: CI

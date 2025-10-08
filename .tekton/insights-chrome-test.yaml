@@ -1,0 +1,22 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: insights-chrome-test
+  namespace: hcc-platex-services-tenant
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: appsre-stonesoup-vault
+    kind: ClusterSecretStore
+  target:
+    name: insights-chrome-test
+    creationPolicy: Owner
+  data:
+    - secretKey: username 
+      remoteRef:
+        key: insights-dev/platform-experience-dev/insights-chrome
+        property: CHROME_E2E_USERNAME
+    - secretKey: password 
+      remoteRef:
+        key: insights-dev/platform-experience-dev/insights-chrome
+        property: CHROME_E2E_PASSWORD
