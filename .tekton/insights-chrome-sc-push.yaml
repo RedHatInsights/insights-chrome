@@ -5,15 +5,16 @@ metadata:
     build.appstudio.openshift.io/repo: https://github.com/RedHatInsights/insights-chrome?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
-    pipelinesascode.tekton.dev/cancel-in-progress: 'false'
-    pipelinesascode.tekton.dev/max-keep-runs: '3'
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "master"
-  creationTimestamp:
+    pipelinesascode.tekton.dev/cancel-in-progress: "false"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
+      == "security-compliance"
+  creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: chrome-frontend
-    appstudio.openshift.io/component: insights-chrome-dev
+    appstudio.openshift.io/application: chrome-frontend-sc
+    appstudio.openshift.io/component: insights-chrome-sc
     pipelines.appstudio.openshift.io/type: build
-  name: insights-chrome-dev-on-push
+  name: insights-chrome-sc-on-push
   namespace: hcc-platex-services-tenant
 spec:
   params:
@@ -22,9 +23,11 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/insights-chrome-dev:{{revision}}
+    value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/chrome-frontend-sc/insights-chrome-sc:{{revision}}
   - name: dockerfile
-    value: ./Dockerfile
+    value: Dockerfile
+  - name: path-context
+    value: .
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
@@ -71,7 +74,7 @@ spec:
     - description: Source Repository URL
       name: git-url
       type: string
-    - default: ''
+    - default: ""
       description: Revision of the Source Repository
       name: revision
       type: string
@@ -79,37 +82,40 @@ spec:
       name: output-image
       type: string
     - default: .
-      description: Path to the source code of an application's component from where to build image.
+      description: Path to the source code of an application's component from where
+        to build image.
       name: path-context
       type: string
     - default: Dockerfile
-      description: Path to the Dockerfile inside the context specified by parameter path-context
+      description: Path to the Dockerfile inside the context specified by parameter
+        path-context
       name: dockerfile
       type: string
-    - default: 'false'
+    - default: "false"
       description: Force rebuild image
       name: rebuild
       type: string
-    - default: 'false'
+    - default: "false"
       description: Skip checks against built image
       name: skip-checks
       type: string
-    - default: 'false'
+    - default: "false"
       description: Execute the build with network isolation
       name: hermetic
       type: string
-    - default: ''
+    - default: ""
       description: Build dependencies to be prefetched by Cachi2
       name: prefetch-input
       type: string
-    - default: ''
-      description: Image tag expiration time, time values could be something like 1h, 2d, 3w for hours, days, and weeks, respectively.
+    - default: ""
+      description: Image tag expiration time, time values could be something like
+        1h, 2d, 3w for hours, days, and weeks, respectively.
       name: image-expires-after
-    - default: 'false'
+    - default: "false"
       description: Build a source image.
       name: build-source-image
       type: string
-    - default: 'false'
+    - default: "false"
       description: Add built image into an OCI image index
       name: build-image-index
       type: string
@@ -117,7 +123,7 @@ spec:
       description: Array of --build-arg values ("arg=value" strings) for buildah
       name: build-args
       type: array
-    - default: ''
+    - default: ""
       description: Path to a file with build arguments for buildah, see https://www.mankier.com/1/buildah-build#--build-arg-file
       name: build-args-file
       type: string
@@ -126,16 +132,16 @@ spec:
       type: string
       description: The format for the resulting image's mediaType. Valid values are oci or docker.
     results:
-    - description: ''
+    - description: ""
       name: IMAGE_URL
       value: $(tasks.build-image-index.results.IMAGE_URL)
-    - description: ''
+    - description: ""
       name: IMAGE_DIGEST
       value: $(tasks.build-image-index.results.IMAGE_DIGEST)
-    - description: ''
+    - description: ""
       name: CHAINS-GIT_URL
       value: $(tasks.clone-repository.results.url)
-    - description: ''
+    - description: ""
       name: CHAINS-GIT_COMMIT
       value: $(tasks.clone-repository.results.commit)
     tasks:
@@ -177,7 +183,7 @@ spec:
       - input: $(tasks.init.results.build)
         operator: in
         values:
-        - 'true'
+        - "true"
       workspaces:
       - name: output
         workspace: workspace
@@ -202,7 +208,7 @@ spec:
       - input: $(params.prefetch-input)
         operator: notin
         values:
-        - ''
+        - ""
       workspaces:
       - name: source
         workspace: workspace
@@ -241,7 +247,7 @@ spec:
       - name: quay-expire-time
         value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
       - name: npm-build-script
-        value: build:dev
+        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
       - name: yarn-build-script
         value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
       - name: route-path
@@ -297,6 +303,50 @@ spec:
       workspaces:
       - name: basic-auth
         workspace: git-auth
+    - description: Validates frontend unit tests
+      name: run-unit-tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec:
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources: {}
+          image: registry.access.redhat.com/ubi8/nodejs-20
+          name: unit-tests
+          script: |
+            #!/bin/bash
+            set -ex
+
+            npm install
+            npm test
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
     - name: build-container
       params:
       - name: IMAGE
@@ -336,7 +386,7 @@ spec:
       - input: $(tasks.init.results.build)
         operator: in
         values:
-        - 'true'
+        - "true"
       workspaces:
       - name: source
         workspace: workspace
@@ -370,7 +420,7 @@ spec:
       - input: $(tasks.init.results.build)
         operator: in
         values:
-        - 'true'
+        - "true"
     - name: build-source-image
       params:
       - name: BINARY_IMAGE
@@ -392,11 +442,11 @@ spec:
       - input: $(tasks.init.results.build)
         operator: in
         values:
-        - 'true'
+        - "true"
       - input: $(params.build-source-image)
         operator: in
         values:
-        - 'true'
+        - "true"
       workspaces:
       - name: workspace
         workspace: workspace
@@ -623,7 +673,7 @@ spec:
       - input: $(params.skip-checks)
         operator: in
         values:
-        - 'false'
+        - "false"
     workspaces:
     - name: workspace
     - name: git-auth
@@ -631,12 +681,12 @@ spec:
     - name: netrc
       optional: true
   taskRunTemplate:
-    serviceAccountName: build-pipeline-insights-chrome-dev
+    serviceAccountName: build-pipeline-insights-chrome-sc
   workspaces:
   - name: workspace
     volumeClaimTemplate:
       metadata:
-        creationTimestamp:
+        creationTimestamp: null
       spec:
         accessModes:
         - ReadWriteOnce
