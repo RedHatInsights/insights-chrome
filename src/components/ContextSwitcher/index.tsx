@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client';
+import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client/types';
 
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';

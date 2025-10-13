@@ -24,6 +24,7 @@ import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAt
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
+import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -31,9 +32,10 @@ const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
+function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
   return {
-    entitlements,
+    // The client is missing the trial type on the response
+    entitlements: entitlements as Record<string, Entitlement>,
     identity: {
       org_id: user.profile?.org_id as any,
       type: user.profile?.type as any,
@@ -58,10 +60,10 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 async function fetchEntitlements(user: User) {
-  let entitlements: { [entitlement: string]: Entitlement } = {};
+  let entitlements: ServicesGetReturnType = {};
   try {
     if (user.profile.org_id) {
-      entitlements = (await serviceAPI.servicesGet()) as unknown as typeof entitlements;
+      entitlements = (await serviceAPI.servicesGet({})).data;
       return entitlements;
     } else {
       console.log('Cannot call entitlements API, no account number');
