@@ -133,6 +133,36 @@ await chrome.search.insert({
 - **quickstarts**: Interactive getting-started guides (predefined) 
 - **custom types**: Applications can define their own search categories
 
+### Using Search as a Remote Hook
+
+Applications can also consume the search functionality using Module Federation via `@scalprum/react-core`:
+
+```javascript
+import { useRemoteHook } from '@scalprum/react-core';
+
+function MyComponent() {
+  const { hookResult, loading, error } = useRemoteHook({
+    scope: 'chrome',
+    module: './search/useSearch'
+  });
+
+  const handleSearch = async () => {
+    if (!hookResult) return;
+    const results = await hookResult.query('kubernetes', 'services');
+    // Process results...
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading search</div>;
+
+  return (
+    // Your component JSX
+  );
+}
+```
+
+This approach allows applications to use search functionality without directly depending on the `useChrome` hook. See the [search hook documentation](./docs/searchHook.md) for detailed usage examples.
+
 ### Local Search Development
 
 See [local search development documentation](./docs/localSearchDevelopment.md) for implementation details.
