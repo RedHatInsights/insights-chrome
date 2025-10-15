@@ -328,11 +328,11 @@ spec:
         - name: unit-tests
           computeResources:
             requests:
-              cpu: "4"
-              memory: "4Gi"
+              cpu: "2"
+              memory: "2Gi"
             limits:
-              cpu: "4"
-              memory: "8Gi"
+              cpu: "2"
+              memory: "4Gi"
           image: registry.access.redhat.com/ubi8/nodejs-20
           script: |
             #!/bin/bash
