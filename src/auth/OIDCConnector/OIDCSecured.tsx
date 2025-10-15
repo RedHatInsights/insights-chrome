@@ -14,7 +14,7 @@ import logger from '../logger';
 import { login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
-import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
@@ -205,6 +205,10 @@ export function OIDCSecured({
   useEffect(() => {
     authRef.current = auth;
     setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
+    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
+    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
+      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
+    }
   }, [auth]);
 
   useManageSilentRenew(auth, state.login);
