@@ -322,9 +322,15 @@ spec:
           computeResources: {}
           image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
           name: use-trusted-artifact
-        - computeResources: {}
+        - name: unit-tests
+          computeResources:
+            requests:
+              cpu: "2"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
           image: registry.access.redhat.com/ubi8/nodejs-20
-          name: unit-tests
           script: |
             #!/bin/bash
             set -ex
