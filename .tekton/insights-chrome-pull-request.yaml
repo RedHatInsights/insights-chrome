@@ -415,7 +415,15 @@ spec:
             #!/usr/bin/env bash
             set -ex
             npm i >/dev/null 2>&1
-            KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
+            # Start dev server and redirect its output to a log file
+            KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &> dev_server.log &
+            # Give the server a few seconds to start up or fail
+            sleep 15
+            # Print the dev server's log file so we can see the error
+            echo "--- DEV SERVER LOGS ---"
+            cat dev_server.log || echo "dev_server.log not found"
+            echo "-----------------------"
+            # Now, check if the server is running
             until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
               echo "Waiting for dev server to be ready"
               sleep 5
