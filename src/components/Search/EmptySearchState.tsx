@@ -1,21 +1,53 @@
 import React from 'react';
-import { EmptyState, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
+import useVirtualAssistant from '../../hooks/useVirtualAssistant';
+
+import { EmptyState, EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
+import './EmptySearchState.scss';
+import { useFlag } from '@unleash/proxy-client-react';
+
 const EmptySearchState = () => {
+  const { openVA } = useVirtualAssistant();
+  const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
+
   return (
-    <EmptyState className="chr-c-search__empty-state" variant="xs">
-      <EmptyStateIcon className="pf-v5-u-mb-xl" icon={SearchIcon} />
-      <Title headingLevel="h2" size="lg">
-        No results found
-      </Title>
+    <EmptyState
+      titleText={
+        <Title headingLevel="h2" size="lg" className="pf-v6-u-mb-sm">
+          No results found
+        </Title>
+      }
+      icon={SearchIcon}
+      className="chr-c-search__empty-state pf-v6-u-pt-md"
+      variant="xs"
+    >
       <EmptyStateBody>
-        <TextContent>
-          <Text>No results match your criteria. Clear the search field and try again.</Text>
-        </TextContent>
+        <Content>
+          <Content component="p" className="pf-v6-u-text-color-subtle pf-v6-u-mb-0">
+            No results match your criteria.
+          </Content>
+          {isOpenConfig ? (
+            <Content component="p" className="pf-v6-u-text-color-subtle">
+              Try searching Hybrid Cloud help or start a conversation with our{' '}
+              <a
+                role="button"
+                onClick={() => {
+                  openVA('');
+                }}
+              >
+                Virtual Assistant.
+              </a>
+            </Content>
+          ) : (
+            <Content component="p" className="pf-v6-u-text-color-subtle">
+              Try searching Hybrid Cloud help or start a conversation with our Virtual Assistant.
+            </Content>
+          )}
+        </Content>
       </EmptyStateBody>
     </EmptyState>
   );

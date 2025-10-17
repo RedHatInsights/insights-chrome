@@ -85,7 +85,7 @@
           "title": "Application Services",
           "links": [
             "application-services.trustedContentOverview",
-            "application-services.apiManagement"
+            "application-services.trustedArtifactSignerOverview"
           ]
         }
       ]
@@ -108,18 +108,6 @@
           "title": "Quay.io",
           "links": [
             "quay.quayRepositories"
-          ]
-        },
-        {
-          "isGroup": true,
-          "title": "Edge",
-          "links": [
-            {
-              "title": "Images",
-              "href": "/edge/manage-images",
-              "icon": "EdgeIcon",
-              "description": "Manage the lifecycle and enhance security of your RHEL systems at the edge."
-            }
           ]
         }
       ]
@@ -373,7 +361,6 @@
           "isGroup": true,
           "title": "Application Services",
           "links": [
-            "application-services.trustedContentOverview",
            {
              "title": "Advanced Cluster Security",
              "href": "/application-services/acs/overview",

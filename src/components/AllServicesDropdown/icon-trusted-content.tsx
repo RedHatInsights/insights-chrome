@@ -2,7 +2,7 @@ import React from 'react';
 
 const TrustedContentIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>
           {`.uuid-d17ab8ef-2669-408a-93d8-60828bdd8082{fill:#e00;}.uuid-c4741b83-a3db-4b6d-858c-b3ae14c63c56{fill:#fff;}.uuid-83ce5ebd-b119-4710-9c52-7f345a2ee75e{fill:#4d4d4d;}`}

@@ -1,0 +1,87 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-tests
+spec:
+  params:
+    - name: git-url
+      value: '{{source_url}}'
+    - name: revision
+      value: '{{revision}}'
+    - name: EPHEMERAL_ENV_PROVIDER_SECRET
+      type: string
+      default: ephemeral-env-provider
+      description: "Secret for connecting to ephemeral env provider cluster"
+    - name: EPHEMERAL_ENV_URL
+      type: string
+      description: "Url for accessing the UI deployed in the ephemeral environment"
+    - name: EPHEMERAL_ENV_PASSWORD
+      type: string
+      description: "Password for login to your ephemeral environment UI"
+    - name: EPHEMERAL_ENV_USERNAME
+      type: string
+      description: "Username for login to your ephemeral environment UI"
+  steps:
+    - name: clone-repository-oci-ta
+      params:
+      - name: url
+        value: $(params.git-url)
+      - name: revision
+        value: $(params.revision)
+      runAfter:
+      - init
+      taskRef:
+        params:
+        - name: name
+          value: git-clone-oci-ta
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:d35e5d501cb5f5f88369511f76249857cb5ac30250e1dcf086939321964ff6b9
+        - name: kind
+          value: task
+        resolver: bundles
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - name: run-tests
+      runAfter:
+        - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the
+            application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec: null
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources: {}
+          image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
+          env:
+            - name: EE_HOSTNAME
+              value: $(params.EPHEMERAL_ENV_URL)
+            - name: EE_USERNAME
+              value: $(params.EPHEMERAL_ENV_USERNAME)
+            - name: EE_PASSWORD
+              value: $(params.EPHEMERAL_ENV_PASSWORD)
+          script: |
+            #!/bin/bash
+            set -ex
+
+            npm i
+            E2E_BASE=$EE_HOSTNAME E2E_USER=$EE_USERNAME E2E_PASSWORD=$EE_PASSWORD npm run test:e2e

@@ -1,0 +1,8 @@
+.chr-search-title-content {
+  color: var(--pf-t--global--text--color--link--default);
+}
+
+.chr-search-title-content small {
+  // Value stolen from Patternfly TextContent, but the appropriate variable isn't available here.
+  font-size: 0.875rem;
+}
