@@ -4,6 +4,11 @@ import { QuickStart, QuickStartState } from '@patternfly/quickstarts';
 import { useSetAtom } from 'jotai';
 import { populateQuickstartsAppAtom } from '../../state/atoms/quickstartsAtom';
 
+// API response types
+interface QuickStartAPIResponse {
+  data: { content: QuickStart }[];
+}
+
 const useQuickstartsStates = (accountId?: string) => {
   const populateQuickstarts = useSetAtom(populateQuickstartsAppAtom);
 
@@ -66,16 +71,42 @@ const useQuickstartsStates = (accountId?: string) => {
   const activateQuickstart = useCallback(
     async (name: string) => {
       try {
+        // 1. Fetch main quickstart
         const {
           data: { data },
-        } = await axios.get<{ data: { content: QuickStart }[] }>('/api/quickstarts/v1/quickstarts', {
+        } = await axios.get<QuickStartAPIResponse>('/api/quickstarts/v1/quickstarts', {
           params: {
             name,
           },
         });
+        const mainQuickstarts = data.map(({ content }) => content);
+
+        // 2. Extract nextQuickStart references
+        const nextQuickStartNames = mainQuickstarts
+          .flatMap((qs) => qs.spec.nextQuickStart || [])
+          .filter((name, index, arr) => arr.indexOf(name) === index); // Remove duplicates
+
+        // 3. Fetch referenced quickstarts
+        let nextQuickstarts: QuickStart[] = [];
+        if (nextQuickStartNames.length > 0) {
+          try {
+            const promises = nextQuickStartNames.map((nextName) =>
+              axios.get<QuickStartAPIResponse>('/api/quickstarts/v1/quickstarts', {
+                params: { name: nextName },
+              })
+            );
+            const responses = await Promise.all(promises);
+            nextQuickstarts = responses.flatMap((r) => r.data.data.map(({ content }) => content));
+          } catch (error) {
+            console.warn('Some referenced quickstarts could not be fetched:', error);
+            // Continue without the referenced quickstarts
+          }
+        }
+
+        // 4. Populate both main and referenced quickstarts
         populateQuickstarts({
           app: 'default',
-          quickstarts: data.map(({ content }) => content),
+          quickstarts: [...mainQuickstarts, ...nextQuickstarts],
         });
 
         setActiveQuickStartID(name);
