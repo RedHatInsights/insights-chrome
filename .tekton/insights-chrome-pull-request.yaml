@@ -416,10 +416,11 @@ spec:
             set -ex
             npm i >/dev/null 2>&1
             KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
-            until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
+            timeout 120s bash -c 'until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
               echo "Waiting for dev server to be ready"
               sleep 5
             done
+            '
             echo "Dev server ready!"
             KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
           securityContext:
