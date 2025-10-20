@@ -76,6 +76,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
     setIsNotificationsDrawerExpanded((prev) => !prev);
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
   const { pathname } = useLocation();
   const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
   return (
@@ -96,7 +98,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           />
         </Masthead>
       }
-      {...(isNotificationsEnabled && {
+      {...(isDrawerEnabled && {
         onNotificationDrawerExpand: focusDrawer,
         notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
         isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
