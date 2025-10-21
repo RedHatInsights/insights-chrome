@@ -1,5 +1,5 @@
 import { HelpTopic } from '@patternfly/quickstarts';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import axios from 'axios';
 import { Reducer, useReducer } from 'react';
 
 export type AddHelpTopic = (topics: HelpTopic[], enabled?: boolean) => void;
@@ -98,7 +98,7 @@ const useHelpTopicState = (initialState: Partial<HelpTopicsState> = { activeTopi
     params = appendQueryArray(params, 'name', names);
 
     try {
-      const { data } = await instance.get<{ content: HelpTopic }[]>(`/api/quickstarts/v1/helptopics?${params.toString()}`);
+      const { data } = await axios.get<{ content: HelpTopic }[]>(`/api/quickstarts/v1/helptopics?${params.toString()}`);
       const content = data.map(({ content }) => content);
       addHelpTopics(content, enabled);
       return content;

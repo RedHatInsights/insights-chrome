@@ -6,7 +6,7 @@ jest.mock('./rbac', () => () => {
   return {
     getPrincipalAccess: () => {
       global.rbacApiCalled++;
-      return Promise.resolve(mockedRbac);
+      return Promise.resolve({ data: mockedRbac });
     },
   };
 });
