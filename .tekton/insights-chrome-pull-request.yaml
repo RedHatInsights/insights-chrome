@@ -396,13 +396,13 @@ spec:
           - name: CHROME_ACCOUNT     # The name of the environment variable inside the container
             valueFrom:
               secretKeyRef:
-                name: chrome-frontend-e2e-credentials     # The name of your Kubernetes Secret
-                key: CHROME_ACCOUNT     # The specific key within the secret to use
+                name: chrome-credentials-secret     # The name of your Kubernetes Secret
+                key: username     # The specific key within the secret to use
           - name: CHROME_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: chrome-frontend-e2e-credentials
-                key: CHROME_PASSWORD
+                name: chrome-credentials-secret
+                key: password
           - name: NODE_TLS_REJECT_UNAUTHORIZED
             value: "0"
           - name: CI
