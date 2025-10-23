@@ -1,4 +1,5 @@
 module.exports = {
-  ...require("@redhat-cloud-services/eslint-config-redhat-cloud-services/prettier.config.js"),
+  printWidth: 160,
+  trailingComma: 'es5',
   // For more configuration options visit: https://prettier.io/
 };

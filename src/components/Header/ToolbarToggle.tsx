@@ -73,21 +73,21 @@ const ToolbarToggle = (props: ToolbarToggleProps) => {
                   </ChromeLink>
                 )
               : url
-              ? 'a'
-              : 'button'
+                ? 'a'
+                : 'button'
           }
           // Because the urls are using 'a', don't use onClick for accessibility
           // If it is a button, use the onClick prop
           {...(appId
             ? {}
             : url
-            ? {
-                href: url,
-                target,
-                rel,
-                ...rest,
-              }
-            : { onClick: (ev) => onClickInternal(ev, url, onClick) })}
+              ? {
+                  href: url,
+                  target,
+                  rel,
+                  ...rest,
+                }
+              : { onClick: (ev) => onClickInternal(ev, url, onClick) })}
         >
           {title}
         </DropdownItem>

@@ -112,7 +112,6 @@ LinkWrapper.displayName = 'MemoizedLinkWrapper';
 
 const basepath = document.baseURI;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {

@@ -31,9 +31,7 @@ const Breadcrumbs = () => {
             {segments.map(({ title, href }, index) => (
               <BreadcrumbItem
                 to={href}
-                component={(props) => (
-                  <ChromeLink {...props} className={classNames(props.className, 'chr-c-breadcrumbs__link')} title={title} href={href} />
-                )}
+                component={(props) => <ChromeLink {...props} className={classNames(props.className, 'chr-c-breadcrumbs__link')} title={title} href={href} />}
                 key={index}
                 isActive={segments.length - 1 === index}
                 className="pf-v6-u-pb-sm"
@@ -45,11 +43,7 @@ const Breadcrumbs = () => {
         </FlexItem>
         {leafHref && (
           <FlexItem alignSelf={{ default: 'alignSelfFlexEnd' }}>
-            <BreadcrumbsFavorites
-              favoritePage={() => favoritePage(leafHref)}
-              unfavoritePage={() => unfavoritePage(leafHref)}
-              isFavorited={!!isFavorited}
-            />
+            <BreadcrumbsFavorites favoritePage={() => favoritePage(leafHref)} unfavoritePage={() => unfavoritePage(leafHref)} isFavorited={!!isFavorited} />
           </FlexItem>
         )}
       </div>

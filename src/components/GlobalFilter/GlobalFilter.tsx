@@ -137,7 +137,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
     total - count,
     (_e: React.MouseEvent, closeFn: () => void) => {
       setIsOpen(true);
-      closeFn && closeFn();
+      closeFn?.();
     },
     undefined,
     'system',

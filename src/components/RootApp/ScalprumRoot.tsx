@@ -229,11 +229,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
 
   return (
     <InternalChromeContext.Provider value={mutableChromeApi.current}>
-      <ScalprumProvider
-        config={scalprumProviderProps.config}
-        api={scalprumProviderProps.api}
-        pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}
-      >
+      <ScalprumProvider config={scalprumProviderProps.config} api={scalprumProviderProps.api} pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}>
         <ScalprumRoot />
       </ScalprumProvider>
     </InternalChromeContext.Provider>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SearchFeedback, { SEARCH_FEEDBACK_NEGATIVE, SEARCH_FEEDBACK_POSITIVE } from './SearchFeedback';

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { getSharedScope, initSharedScope } from '@scalprum/core';
 import { LinkProps, NavLinkProps, NavigateOptions, NavigateProps, Path, To } from 'react-router-dom';
 import preloadModule from './preload-ui-module';

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { act, renderHook } from '@testing-library/react';
@@ -92,9 +91,7 @@ describe('useAppFilter', () => {
     });
     expect(axiosGetSpy).toHaveBeenCalledTimes(8);
     for (let index = 0; index < 7; index++) {
-      expect(axiosGetSpy.mock.calls[index]).toEqual([
-        `/api/chrome-service/v1/static/stable/stage/navigation/${requiredBundles[index]}-navigation.json?ts=666`,
-      ]);
+      expect(axiosGetSpy.mock.calls[index]).toEqual([`/api/chrome-service/v1/static/stable/stage/navigation/${requiredBundles[index]}-navigation.json?ts=666`]);
     }
     axiosGetSpy.mockReset();
     dateSpy.mockRestore();

@@ -38,7 +38,11 @@ const useQuickstartsStates = (accountId?: string) => {
 
   const setActiveQuickStartID = useCallback(
     (id: string) => {
-      id !== '' && typeof id !== 'function' ? document.body.classList.add('quickstarts-open') : document.body.classList.remove('quickstarts-open');
+      if (id !== '' && typeof id !== 'function') {
+        document.body.classList.add('quickstarts-open');
+      } else {
+        document.body.classList.remove('quickstarts-open');
+      }
       setActiveQuickStartIDInternal(id);
     },
     [setActiveQuickStartIDInternal]
@@ -82,9 +86,7 @@ const useQuickstartsStates = (accountId?: string) => {
         const mainQuickstarts = data.map(({ content }) => content);
 
         // 2. Extract nextQuickStart references
-        const nextQuickStartNames = mainQuickstarts
-          .flatMap((qs) => qs.spec.nextQuickStart || [])
-          .filter((name, index, arr) => arr.indexOf(name) === index); // Remove duplicates
+        const nextQuickStartNames = mainQuickstarts.flatMap((qs) => qs.spec.nextQuickStart || []).filter((name, index, arr) => arr.indexOf(name) === index); // Remove duplicates
 
         // 3. Fetch referenced quickstarts
         let nextQuickstarts: QuickStart[] = [];

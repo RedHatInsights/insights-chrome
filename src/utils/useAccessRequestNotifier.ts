@@ -18,7 +18,7 @@ const useAccessRequestNotifier = (): [
     hasUnseen: boolean;
     accessRequestCount: number;
   },
-  (id: string | number) => void
+  (id: string | number) => void,
 ] => {
   const { user } = useContext(ChromeAuthContext);
   const isMounted = useRef(false);

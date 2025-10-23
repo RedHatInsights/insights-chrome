@@ -282,7 +282,6 @@ export const levelArray = (navItems: NavItem[]): string[] => {
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 export function noop() {}
 
 export const trustarcScriptSetup = () => {

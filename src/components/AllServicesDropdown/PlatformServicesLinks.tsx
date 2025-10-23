@@ -34,11 +34,7 @@ const PlatformServiceslinks = () => {
           <OpenShiftIcon />
         </SplitItem>
         <SplitItem className="pf-v6-u-pt-xs">
-          <ChromeLink
-            href="/openshift/overview"
-            data-ouia-component-id="AllServices-Dropdown-Openshift"
-            className="pf-v6-u-pl-sm pf-v6-u-pt-xs chr-m-plain"
-          >
+          <ChromeLink href="/openshift/overview" data-ouia-component-id="AllServices-Dropdown-Openshift" className="pf-v6-u-pl-sm pf-v6-u-pt-xs chr-m-plain">
             Red Hat OpenShift
           </ChromeLink>
         </SplitItem>

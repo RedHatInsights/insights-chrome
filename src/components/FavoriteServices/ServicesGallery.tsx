@@ -36,8 +36,7 @@ const FavoriteServicesGallery = ({ favoritedServices }: { favoritedServices: Ser
             <ServiceTile {...props} key={`${props.bundleName}-${index}`} />
           ))}
           <Alert variant="info" title="Want to add more favorites?" className="pf-v6-u-m-md" isInline>
-            Get quick access to your favorite services. To add more services to your favorites,{' '}
-            <ChromeLink href="/allservices">View all services</ChromeLink>
+            Get quick access to your favorite services. To add more services to your favorites, <ChromeLink href="/allservices">View all services</ChromeLink>
           </Alert>
         </>
       )}

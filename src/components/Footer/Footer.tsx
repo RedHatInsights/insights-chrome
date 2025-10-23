@@ -34,10 +34,10 @@ const ChromeFooter = () => {
       <Dialog trigger="browser-support-link" variant="small">
         <h3 slot="header">Browser Support</h3>
         <p>
-          Red Hat captures and regularly reviews statistical data from our actual web visitors and registered users, rather than generic industry
-          data, to identify the browsers we need to support in alignment with our customers’ needs. Additionally, to safeguard customer data, only
-          browsers which receive security updates from the browser manufacturer are considered for support. We have implemented this policy to ensure
-          that we can provide an excellent experience to a wide user base.
+          Red Hat captures and regularly reviews statistical data from our actual web visitors and registered users, rather than generic industry data, to
+          identify the browsers we need to support in alignment with our customers’ needs. Additionally, to safeguard customer data, only browsers which receive
+          security updates from the browser manufacturer are considered for support. We have implemented this policy to ensure that we can provide an excellent
+          experience to a wide user base.
         </p>
         <h4>Cookies and Javascript </h4>
         <p>To successfully interact with our websites and services, your browser must meet the following feature requirements:</p>
@@ -149,9 +149,8 @@ const ChromeFooter = () => {
           <h3 slot="header">About Red Hat</h3>
           <p>
             {' '}
-            We’re the world’s leading provider of enterprise open source solutions—including Linux, cloud, container, and Kubernetes. We deliver
-            hardened solutions that make it easier for enterprises to work across platforms and environments, from the core datacenter to the network
-            edge.
+            We’re the world’s leading provider of enterprise open source solutions—including Linux, cloud, container, and Kubernetes. We deliver hardened
+            solutions that make it easier for enterprises to work across platforms and environments, from the core datacenter to the network edge.
           </p>
         </FooterBlock>
         <FooterBlock slot="main-secondary">

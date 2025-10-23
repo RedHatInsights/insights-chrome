@@ -115,11 +115,7 @@ const MemoizedHeader = memo(
                     <SearchInput onStateChange={hideAllServices} />
                   </Suspense>
                 </ToolbarGroup>
-                <ToolbarGroup
-                  className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0"
-                  widget-type="InsightsToolbar"
-                  gap={{ default: 'gapSm' }}
-                >
+                <ToolbarGroup className="pf-v6-m-icon-button-group pf-v6-u-ml-auto pf-v6-u-mr-0" widget-type="InsightsToolbar" gap={{ default: 'gapSm' }}>
                   <HeaderTools />
                 </ToolbarGroup>
               </ToolbarGroup>

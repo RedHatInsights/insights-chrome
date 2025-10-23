@@ -12,14 +12,12 @@ jest.mock('@scalprum/core', () => {
 
 const userMock: ChromeUser = {
   identity: {
-    // eslint-disable-next-line camelcase
     account_number: '0',
     type: 'User',
     org_id: '123',
   },
   entitlements: {
     insights: {
-      // eslint-disable-next-line camelcase
       is_entitled: true,
       is_trial: false,
     },
