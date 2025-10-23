@@ -108,7 +108,7 @@
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.4",
     "swc-loader": "^0.2.6",
-    "swc-plugin-coverage-instrument": "^0.0.21",
+    "swc-plugin-coverage-instrument": "^0.0.31",
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "^5.5.2",
     "url": "^0.11.3",
