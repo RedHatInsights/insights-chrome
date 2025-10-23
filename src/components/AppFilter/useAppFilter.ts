@@ -154,10 +154,7 @@ const useAppFilter = () => {
         },
         'cost-management': {
           ...prev.data['cost-management'],
-          links: [
-            ...prev.data['cost-management'].links,
-            ...extraLinks.cost.filter((item) => !isDuplicate(prev.data['cost-management'].links, item.href)),
-          ],
+          links: [...prev.data['cost-management'].links, ...extraLinks.cost.filter((item) => !isDuplicate(prev.data['cost-management'].links, item.href))],
         },
         subscriptions: {
           ...prev.data.subscriptions,

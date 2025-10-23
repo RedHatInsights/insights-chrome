@@ -77,11 +77,7 @@ const FeedbackModal = memo(() => {
                 <CardTitle className="pf-v6-u-primary-color-100">{intl.formatMessage(messages.reportABug)}</CardTitle>
                 <CardBody>{intl.formatMessage(messages.describeBugUrgentCases)}</CardBody>
               </Card>
-              <Card
-                className="pf-v6-u-mb-lg"
-                isCompact
-                onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}
-              >
+              <Card className="pf-v6-u-mb-lg" isCompact onClick={() => createSupportCase(user.identity, chromeAuth.token, isPreview, { supportCaseData })}>
                 <CardTitle className="pf-v6-u-primary-color-100">
                   <Content component="p">
                     {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
@@ -130,11 +126,7 @@ const FeedbackModal = memo(() => {
             modalDescription={
               <Content component="p">
                 {intl.formatMessage(messages.describeReportBug)}{' '}
-                <Content
-                  component="a"
-                  href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console"
-                  target="_blank"
-                >
+                <Content component="a" href="https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&source=console" target="_blank">
                   {intl.formatMessage(messages.openSupportCase)} <ExternalLinkAltIcon />
                 </Content>
               </Content>
@@ -214,13 +206,7 @@ const FeedbackModal = memo(() => {
       >
         {intl.formatMessage(messages.feedback)}
       </Button>
-      <Modal
-        aria-label="Feedback modal"
-        isOpen={isModalOpen}
-        className="chr-c-feedback-modal"
-        variant={ModalVariant.large}
-        onClose={handleCloseModal}
-      >
+      <Modal aria-label="Feedback modal" isOpen={isModalOpen} className="chr-c-feedback-modal" variant={ModalVariant.large} onClose={handleCloseModal}>
         <Grid>
           <GridItem span={8} rowSpan={12}>
             <ModalDescription modalPage={modalPage} />

@@ -46,13 +46,7 @@ const DebuggerModal = ({ user }: DebuggerModalProps) => {
           setIsModalOpen(true);
         }}
       ></Button>
-      <Modal
-        aria-label="Debugger modal"
-        isOpen={isOpen}
-        className="chr-c-debugger-modal"
-        variant={ModalVariant.medium}
-        onClose={() => setIsModalOpen(false)}
-      >
+      <Modal aria-label="Debugger modal" isOpen={isOpen} className="chr-c-debugger-modal" variant={ModalVariant.medium} onClose={() => setIsModalOpen(false)}>
         <div className="chr-c-debugger-content">
           <Content>
             <h1>Chrome Debugger</h1>

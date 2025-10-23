@@ -63,7 +63,7 @@ const ChromeRoute = memo(
        * TODO: Discuss default close feature of topics
        * Topics drawer has no close button, therefore there might be an issue with opened topics after user changes route and does not clear the active topic trough the now non existing elements.
        */
-      setActiveHelpTopicByName && setActiveHelpTopicByName('');
+      setActiveHelpTopicByName?.('');
 
       // reset visibility function
       setIsHidden(null);

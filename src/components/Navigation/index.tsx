@@ -74,7 +74,11 @@ const Navigation: React.FC<NavigationProps> = ({ loaded, schema }) => {
             const [origEvent, href] = deferedOnClickArgs.current;
             const isMetaKey = event.ctrlKey || event.metaKey || origEvent?.ctrlKey || origEvent?.metaKey;
             const url = `${document.baseURI}beta${href}`;
-            isMetaKey ? window.open(url) : (window.location.href = url);
+            if (isMetaKey) {
+              window.open(url);
+            } else {
+              window.location.href = url;
+            }
           }
         }}
         onCancel={() => setShowBetaModal(false)}

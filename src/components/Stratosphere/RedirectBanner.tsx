@@ -39,13 +39,13 @@ const RedirectBanner = () => {
       <Content>
         {partnerId === 'from-azure' ? (
           <Content component="p">
-            It may take up to two days for all subscription information between Red Hat and Microsoft to synchronize. If any subscription services are
-            needed in the meantime, like technical support, simply note this in your request to receive the full benefit of your new subscription.
+            It may take up to two days for all subscription information between Red Hat and Microsoft to synchronize. If any subscription services are needed in
+            the meantime, like technical support, simply note this in your request to receive the full benefit of your new subscription.
           </Content>
         ) : (
           <Content component="p">
-            Welcome to the Red Hat Hybrid Cloud Console. If you cannot access production tools for a subscription that you have purchased, please wait
-            5 minutes and and confirm your subscription at subscription inventory. {product ? `Here you can configure or manage ${product}.` : ''}
+            Welcome to the Red Hat Hybrid Cloud Console. If you cannot access production tools for a subscription that you have purchased, please wait 5 minutes
+            and and confirm your subscription at subscription inventory. {product ? `Here you can configure or manage ${product}.` : ''}
           </Content>
         )}
         <a href="#">View subscription inventory</a>

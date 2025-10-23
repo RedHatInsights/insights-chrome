@@ -1,13 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NavItem } from '../@types/types';
-import {
-  AllServicesGroup,
-  AllServicesLink,
-  AllServicesSection,
-  isAllServicesGroup,
-  isAllServicesLink,
-} from '../components/AllServices/allServicesLinks';
+import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup, isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import { getChromeStaticPathname } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 import useFeoConfig from './useFeoConfig';
@@ -187,10 +181,7 @@ const useAllServices = () => {
     };
   }, [setNavigation, useFeoGenerated]);
 
-  const linkSections = useMemo(
-    () => filterAllServicesSections(availableSections, filterValue),
-    [ready, filterValue, useFeoGenerated, availableSections]
-  );
+  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue, useFeoGenerated, availableSections]);
 
   return {
     linkSections,

@@ -1,5 +1,7 @@
 const functionBuilder = (key: string, value: boolean | number | string) => {
-  window.localStorage && window.localStorage.setItem(key, value.toString());
+  if (window.localStorage) {
+    window.localStorage.setItem(key, value.toString());
+  }
   return () => window.localStorage && window.localStorage.removeItem(key);
 };
 

@@ -79,8 +79,7 @@ const initialize = ({
       const { entitlements } = data || { entitlements: baseEntitlements };
       return data?.entitlements && appName
         ? Boolean(entitlements[appName] && entitlements[appName].is_entitled)
-        : // eslint-disable-next-line camelcase
-          Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
+        : Object.entries(entitlements || {}).reduce((acc, [key, { is_entitled }]) => ({ ...acc, [key]: is_entitled }), {});
     },
     isProd: () => isProd(),
     /**
@@ -131,8 +130,7 @@ const initialize = ({
         return false;
       }
     },
-    featureFlag: (flagName: string, expectedValue: boolean) =>
-      getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
+    featureFlag: (flagName: string, expectedValue: boolean) => getFeatureFlagsError() !== true && getUnleashClient()?.isEnabled(flagName) === expectedValue,
   };
 
   // in order to properly distribute the module, it has be added to the webpack share scope to avoid reference issues if these functions are called from chrome shared modules

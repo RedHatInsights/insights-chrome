@@ -158,11 +158,7 @@ const ContextSwitcher = ({ accountNumber, className, isInternal }: ContextSwitch
         <MenuSearchInput>
           <InputGroup>
             <InputGroupItem isFill>
-              <SearchInput
-                value={searchValue}
-                onChange={(_event, val) => setSearchValue(val)}
-                placeholder={intl.formatMessage(messages.searchAccount)}
-              />
+              <SearchInput value={searchValue} onChange={(_event, val) => setSearchValue(val)} placeholder={intl.formatMessage(messages.searchAccount)} />
             </InputGroupItem>
           </InputGroup>
         </MenuSearchInput>

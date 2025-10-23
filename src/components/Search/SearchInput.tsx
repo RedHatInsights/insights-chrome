@@ -113,7 +113,9 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
 
     if (isOpen && ev.key === 'ArrowDown' && menuRef.current) {
       const firstElement = menuRef.current.querySelector('li > button:not(:disabled), li > a:not(:disabled)');
-      firstElement && (firstElement as HTMLElement).focus();
+      if (firstElement) {
+        (firstElement as HTMLElement).focus();
+      }
     } else if (isOpen && ev.key === 'Escape') {
       setIsOpen(false);
       onStateChange(false);
@@ -153,7 +155,9 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
     setIsFetching(true);
     const results = await localQuery(asyncLocalOramaData, value, isPreview ? ReleaseEnv.PREVIEW : ReleaseEnv.STABLE, 'services');
     setSearchItems(results ?? []);
-    isMounted.current && setIsFetching(false);
+    if (isMounted.current) {
+      setIsFetching(false);
+    }
     if (ready && analytics) {
       debouncedTrack('chrome.search-query', { query: value });
     }

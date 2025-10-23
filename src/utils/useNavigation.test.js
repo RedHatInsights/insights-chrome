@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import React, { Fragment, useEffect } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
@@ -41,7 +40,6 @@ jest.mock('@unleash/proxy-client-react', () => {
   };
 });
 
-// eslint-disable-next-line react/prop-types
 const RouteDummy = ({ path, children }) => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -83,7 +81,6 @@ const TestProvider = ({ initialValues, children, store }) => {
   );
 };
 
-// eslint-disable-next-line react/prop-types
 const RouterDummy = ({ children, path, initialValues, store }) => (
   <MemoryRouter>
     <FlagProvider unleashClient={testClient} startClient={false}>

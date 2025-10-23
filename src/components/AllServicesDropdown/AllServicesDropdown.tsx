@@ -89,13 +89,7 @@ const AllServicesDropdown = () => {
       popper={
         <>
           {ready ? (
-            <AllServicesPortal
-              favoritedServices={favoritedServices}
-              linkSections={linkSections}
-              menuRef={menuRef}
-              setIsOpen={setIsOpen}
-              isOpen={isOpen}
-            />
+            <AllServicesPortal favoritedServices={favoritedServices} linkSections={linkSections} menuRef={menuRef} setIsOpen={setIsOpen} isOpen={isOpen} />
           ) : (
             <div ref={menuRef} className="pf-v6-c-dropdown chr-c-page__services-nav-dropdown-menu" data-testid="chr-c__find-app-service">
               <Backdrop>

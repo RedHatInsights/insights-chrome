@@ -10,40 +10,38 @@ export interface HeaderAlertProps extends AlertProps {
   dismissDelay?: number;
 }
 
-const HeaderAlert = ({
-  className,
-  title,
-  variant = AlertVariant.info,
-  actionLinks,
-  onDismiss,
-  dismissable = false,
-  dismissDelay = 5000,
-}: HeaderAlertProps) => {
+const HeaderAlert = ({ className, title, variant = AlertVariant.info, actionLinks, onDismiss, dismissable = false, dismissDelay = 5000 }: HeaderAlertProps) => {
   const [alertVisible, setAlertVisible] = useState(true);
   const [timer, setTimer] = useState<number | null>(null);
 
   useEffect(() => {
-    dismissable || createTimer();
+    if (dismissable) {
+      createTimer();
+    }
     return () => {
-      timer && clearTimeout(timer);
+      if (timer) {
+        clearTimeout(timer);
+      }
     };
   }, []);
 
   const createTimer = () => {
-    timer !== null && clearTimeout(timer);
+    if (timer !== null) {
+      clearTimeout(timer);
+    }
     setTimer(
       setTimeout(() => {
         setAlertVisible(false);
         if (timer) {
           clearTimeout(timer);
         }
-        onDismiss && onDismiss();
+        onDismiss?.();
       }, dismissDelay) as any
     );
   };
 
   const onClose = () => {
-    onDismiss && onDismiss();
+    onDismiss?.();
     setAlertVisible(false);
     if (timer) {
       clearTimeout(timer);

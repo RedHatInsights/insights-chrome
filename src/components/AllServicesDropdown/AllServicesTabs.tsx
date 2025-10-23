@@ -44,7 +44,9 @@ const TabWrapper = (props: TabWrapper) => {
     const timeout = setTimeout(() => {
       // should be available only in preview
       // use refs to supply the required tab events
-      isPreview && tabRef.current?.click();
+      if (isPreview) {
+        tabRef.current?.click();
+      }
     }, 300);
     hoverTimer.current = timeout;
   };

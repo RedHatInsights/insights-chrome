@@ -75,11 +75,7 @@ async function fetchEntitlements(user: User) {
   }
 }
 
-export function OIDCSecured({
-  children,
-  microFrontendConfig,
-  ssoUrl,
-}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
+export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);

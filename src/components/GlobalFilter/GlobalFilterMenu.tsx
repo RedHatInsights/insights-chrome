@@ -171,14 +171,11 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
           }}
           onApplyTags={(selected: CommonSelectedTag[], sidSelected: CommonSelectedTag[]) => {
             setValue(() =>
-              [...(selected || []), ...(sidSelected || [])].reduce<FlagTagsFilter>(
-                (acc: FlagTagsFilter, { key, value, namespace }: CommonSelectedTag) => {
-                  return updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value as string, true, {
-                    item: { tagKey: key },
-                  });
-                },
-                selectedTags
-              )
+              [...(selected || []), ...(sidSelected || [])].reduce<FlagTagsFilter>((acc: FlagTagsFilter, { key, value, namespace }: CommonSelectedTag) => {
+                return updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value as string, true, {
+                  item: { tagKey: key },
+                });
+              }, selectedTags)
             );
           }}
         />

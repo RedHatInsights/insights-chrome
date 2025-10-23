@@ -71,13 +71,7 @@ const initialModuleRoutes = [
   },
 ];
 
-const Wrapper = ({
-  config = initialScalprumConfig,
-  moduleRoutes = initialModuleRoutes,
-}: {
-  config?: ScalprumConfig;
-  moduleRoutes?: RouteDefinition[];
-}) => {
+const Wrapper = ({ config = initialScalprumConfig, moduleRoutes = initialModuleRoutes }: { config?: ScalprumConfig; moduleRoutes?: RouteDefinition[] }) => {
   const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
   const setModuleRoutes = useSetAtom(moduleRoutesAtom);
   useEffect(() => {
@@ -128,7 +122,6 @@ describe('HelpTopicManager', () => {
     });
     cy.window().then((win) => {
       win.virtualAssistant = {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         init: () => {},
         get: () => () => ({
           default: () => <div>Virtual Assistant</div>,

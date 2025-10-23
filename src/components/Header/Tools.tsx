@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
@@ -85,9 +84,7 @@ const Tools = () => {
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = isOrgAdmin
-    ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview`
-    : '/iam/my-user-access';
+  const identityAndAccessManagmentPath = isOrgAdmin ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview` : '/iam/my-user-access';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
@@ -312,9 +309,11 @@ const Tools = () => {
         aria-label="Dark mode switch"
         onChange={() => {
           setDarkmode(!darkmode);
-          document.body.classList.contains('pf-theme-dark')
-            ? document.body.classList.remove('pf-theme-dark')
-            : document.body.classList.add('pf-theme-dark');
+          if (document.body.classList.contains('pf-theme-dark')) {
+            document.body.classList.remove('pf-theme-dark');
+          } else {
+            document.body.classList.add('pf-theme-dark');
+          }
         }}
       />
     );

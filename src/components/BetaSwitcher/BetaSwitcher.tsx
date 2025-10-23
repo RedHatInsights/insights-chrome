@@ -5,13 +5,7 @@ import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { Content, ContentVariants } from '@patternfly/react-core/dist/dynamic/components/Content';
 import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Split';
-import {
-  hidePreviewBannerAtom,
-  isPreviewAtom,
-  previewModalOpenAtom,
-  setPreviewSeenAtom,
-  togglePreviewWithCheckAtom,
-} from '../../state/atoms/releaseAtom';
+import { hidePreviewBannerAtom, isPreviewAtom, previewModalOpenAtom, setPreviewSeenAtom, togglePreviewWithCheckAtom } from '../../state/atoms/releaseAtom';
 import BetaInfoModal from './BetaInfoModal';
 import { userConfigAtom } from '../../state/atoms/userConfigAtom';
 import BetaSwitcherDropdown from './BetaSwitcherDropdown';

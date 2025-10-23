@@ -28,7 +28,9 @@ function getUrl(type?: string, isPreview = false) {
     return type === 'bundle' ? sections[0] : sections[1];
   }
 
-  isPreview && sections.shift();
+  if (isPreview) {
+    sections.shift();
+  }
   return [isPreview, ...sections];
 }
 
@@ -45,12 +47,12 @@ export function getPendoConf(data: DeepRequired<ChromeUser>, isPreview: boolean)
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements: Record<string, boolean> = {};
-
-  data.entitlements &&
+  if (data.entitlements) {
     Object.entries(data.entitlements).forEach(([key, value]) => {
       entitlements[`entitlements_${key}`] = value.is_entitled;
       entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
+  }
 
   const [isBeta, currentBundle, currentApp, ...rest] = getUrl(undefined, isPreview);
 

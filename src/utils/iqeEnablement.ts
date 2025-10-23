@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable prefer-rest-params */
+
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
 import { createStore } from 'jotai';
@@ -94,7 +94,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
 
   if (iqeEnabled) {
-    console.log('[iqe] initialized'); // eslint-disable-line no-console
+    console.log('[iqe] initialized');
   }
 
   // must use function here because arrows dont "this" like functions
@@ -128,7 +128,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
     if (shouldInjectUIHeader((this as XMLHttpRequest & { _url: string })._url)) {
       this.setRequestHeader(FE_ORIGIN_HEADER_NAME, 'hcc');
     }
-    // eslint-disable-line func-names
+
     if (iqeEnabled) {
       xhrResults.push(this);
     }

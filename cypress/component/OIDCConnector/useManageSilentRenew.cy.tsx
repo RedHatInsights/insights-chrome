@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from 'react';
 import useManageSilentRenew from '../../../src/auth/OIDCConnector/useManageSilentRenew';
 
