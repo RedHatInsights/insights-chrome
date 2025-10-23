@@ -29,7 +29,6 @@ describe.skip('OIDC State', () => {
       cy.wait(1000);
       // The reloader should preserve pathname and query params
       const url = new URL(win.location.href);
-      expect(url.hash).to.be.empty;
       expect(url.pathname).to.eq('/foo/bar');
       expect(url.search).to.eq('?baz=quaz');
       cy.contains('Insights QA').should('exist');

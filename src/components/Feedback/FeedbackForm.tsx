@@ -72,7 +72,7 @@ const FeedbackForm = ({
           body: JSON.stringify({
             description: `${feedbackType} ${textAreaValue}, Username: ${user.identity.user.username}, Account ID: ${
               user.identity.account_number
-            }, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`, //eslint-disable-line
+            }, Email: ${checked ? user.identity.user.email : ''}, URL: ${window.location.href}`,
             summary: `${addFeedbackTag()} App Feedback`,
             labels: [app, bundle],
           }),

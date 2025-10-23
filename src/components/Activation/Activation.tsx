@@ -37,7 +37,7 @@ const Activation = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          description: `Username: ${user.username}, Account ID: ${user.accountNumber}, Email: ${user.email}`, //eslint-disable-line
+          description: `Username: ${user.username}, Account ID: ${user.accountNumber}, Email: ${user.email}`,
           summary: `Activation Request - for cloud-marketplace-enablement team`,
           labels: [request],
         }),
@@ -54,7 +54,9 @@ const Activation = ({
   };
 
   useEffect(() => {
-    user && handleActivationRequest();
+    if (user) {
+      handleActivationRequest();
+    }
   }, []);
 
   return (

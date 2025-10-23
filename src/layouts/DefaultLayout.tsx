@@ -124,9 +124,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
         {selectedAccountNumber && (
-          <div className="chr-viewing-as sentry-mask data-hj-suppress">
-            {intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}
-          </div>
+          <div className="chr-viewing-as sentry-mask data-hj-suppress">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>
         )}
         <RedirectBanner />
         {ITLess() ? null : <VirtualAssistant />}

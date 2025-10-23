@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
@@ -517,8 +516,7 @@ export default defineMessages({
   },
   describeReportBug: {
     id: 'describeReportBug',
-    description:
-      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+    description: 'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
     defaultMessage:
       'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
   },

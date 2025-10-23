@@ -1,11 +1,6 @@
 import { AAP_KEY, INVENTORY_API_BASE, MSSQL_KEY, SID_KEY, flatTags } from './globalFilterApi';
 import { APIFactory } from '@redhat-cloud-services/javascript-clients-shared';
-import {
-  apiHostGetHostList,
-  apiSystemProfileGetSapSids,
-  apiSystemProfileGetSapSystem,
-  apiTagGetTags,
-} from '@redhat-cloud-services/host-inventory-client';
+import { apiHostGetHostList, apiSystemProfileGetSapSids, apiSystemProfileGetSapSystem, apiTagGetTags } from '@redhat-cloud-services/host-inventory-client';
 import { FlagTagsFilter } from '../../@types/types';
 import { TagRegisteredWith, sidsAtom, tagsAtom, workloadsAtom } from '../../state/atoms/globalFilterAtom';
 import chromeStore from '../../state/chromeStore';
@@ -121,11 +116,7 @@ type GenerateFilterData = ReturnType<typeof buildFilter> | string | boolean | st
 /**
  * This has to be pulled out of FEC for a while until we split react and non react helper functions
  */
-const generateFilter = (
-  data: GenerateFilterData,
-  path = 'filter',
-  options?: { arrayEnhancer?: string }
-): { [key: string]: SystemProfileNestedObjectValue } =>
+const generateFilter = (data: GenerateFilterData, path = 'filter', options?: { arrayEnhancer?: string }): { [key: string]: SystemProfileNestedObjectValue } =>
   Object.entries(data || {}).reduce<{ [key: string]: SystemProfileNestedObjectValue }>((acc, [key, value]) => {
     const newPath = `${path || ''}[${key}]${Array.isArray(value) ? `${options?.arrayEnhancer ? `[${options.arrayEnhancer}]` : ''}[]` : ''}`;
     if (value instanceof Function || value instanceof Date) {
@@ -170,8 +161,7 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
         name: 'Tags',
         tags: results
           .filter(
-            (result): result is TagResult =>
-              isTagResult(result) && !!result?.tag?.key && typeof result.tag.key === 'string' && result.tag.key.trim() !== ''
+            (result): result is TagResult => isTagResult(result) && !!result?.tag?.key && typeof result.tag.key === 'string' && result.tag.key.trim() !== ''
           )
           .map((result) => {
             const namespace = result.tag?.namespace || '';

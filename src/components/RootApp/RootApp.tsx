@@ -27,8 +27,7 @@ const Debugger = lazy(() => import('../Debugger'));
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
   const quickstartLinkStore = useQuickstartLinkStore();
   const config = useAtomValue(scalprumConfigAtom);
-  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } =
-    useQuickstartsStates(accountId);
+  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates(accountId);
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const activeModule = useAtomValue(activeModuleAtom);
   const quickstartsData = useAtomValue(quickstartsAtom);

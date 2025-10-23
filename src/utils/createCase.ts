@@ -38,8 +38,7 @@ function getLocation() {
 function registerProduct() {
   const currentLocation = getLocation();
 
-  const product =
-    BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentLocation.bundle) || APP_PRODUCTS.find((app) => app.id === currentLocation.app);
+  const product = BUNDLE_PRODUCTS.find((bundle) => bundle.id === currentLocation.bundle) || APP_PRODUCTS.find((app) => app.id === currentLocation.app);
 
   return product?.name;
 }
@@ -117,9 +116,7 @@ export async function createSupportCase(
       if (data) {
         // FIXME: Use the URLSearchParams API instead of URI.js
         const query = URI(
-          `?seSessionId=${data.session.id}&product=${supportCaseData?.product ?? data.sessionDetails.product}&version=${
-            supportCaseData?.version ?? src_hash
-          }`
+          `?seSessionId=${data.session.id}&product=${supportCaseData?.product ?? data.sessionDetails.product}&version=${supportCaseData?.version ?? src_hash}`
         ).normalize();
         window.open(`${portalUrl}/support/cases/#/case/new/open-case/describe-issue${query.readable()}`);
         return createSupportSentry(data.session.id, fields);

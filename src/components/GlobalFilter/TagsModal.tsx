@@ -54,13 +54,7 @@ const usePagination = (loaded: boolean | unknown, perPage?: number, page?: numbe
   }, [loaded, perPage, page, count]);
 };
 
-const useRow = (
-  resource: SID[] | GlobalFilterTag[],
-  loaded: boolean | unknown,
-  idMapper: IDMapper,
-  cellsMapper: CellsMapper,
-  selected?: GlobalFilterTag[]
-) => {
+const useRow = (resource: SID[] | GlobalFilterTag[], loaded: boolean | unknown, idMapper: IDMapper, cellsMapper: CellsMapper, selected?: GlobalFilterTag[]) => {
   return useMemo(() => {
     if (loaded) {
       return flatMap(resource, ({ tags }) =>
@@ -95,13 +89,7 @@ const useDebounce = (callback: DebounceCallback, perPage: number, activeTags?: F
   );
 };
 
-const TagsModal = ({
-  isOpen = false,
-  filterTagsBy,
-  onApplyTags = () => undefined,
-  toggleModal = () => undefined,
-  selectedTags = {},
-}: TagsModalProps) => {
+const TagsModal = ({ isOpen = false, filterTagsBy, onApplyTags = () => undefined, toggleModal = () => undefined, selectedTags = {} }: TagsModalProps) => {
   const intl = useIntl();
   const [tagsSelected, setTagsSelected] = useState<CommonSelectedTag[]>([]);
   const [sidsSelected, setSidsSelected] = useState<CommonSelectedTag[]>([]);
@@ -219,10 +207,7 @@ const TagsModal = ({
         [{ title: `${intl.formatMessage(messages.value)}` }],
       ]}
       onSelect={
-        [
-          (selected) => setTagsSelected(selected as CommonSelectedTag[]),
-          (selected) => setSidsSelected(selected as CommonSelectedTag[]),
-        ] as OnSelectRow[]
+        [(selected) => setTagsSelected(selected as CommonSelectedTag[]), (selected) => setSidsSelected(selected as CommonSelectedTag[])] as OnSelectRow[]
       }
       selected={[tagsSelected, sidsSelected]}
       onApply={() => onApplyTags(tagsSelected, sidsSelected)}

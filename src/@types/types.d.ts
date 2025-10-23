@@ -226,12 +226,7 @@ export type ChromeNavGroupProps = {
 
 export type DynamicNavProps = ChromeNavItemProps & {
   dynamicNav: string;
-  useNavigation: (config: {
-    schema?: Navigation | NavItem[];
-    dynamicNav: string;
-    currentNamespace: string;
-    currNav?: NavItem[];
-  }) => NavItem | NavItem[];
+  useNavigation: (config: { schema?: Navigation | NavItem[]; dynamicNav: string; currentNamespace: string; currNav?: NavItem[] }) => NavItem | NavItem[];
   pathname: string;
 };
 

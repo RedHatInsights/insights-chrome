@@ -409,9 +409,7 @@ const columnsRegistry: {
       'Last check-in',
       {
         columnData: hosts.map((host) =>
-          host.per_reporter_staleness.puptoo?.last_check_in ? (
-            <DateFormat key={host.id} date={host.per_reporter_staleness.puptoo?.last_check_in} />
-          ) : null
+          host.per_reporter_staleness.puptoo?.last_check_in ? <DateFormat key={host.id} date={host.per_reporter_staleness.puptoo?.last_check_in} /> : null
         ),
       },
       {
@@ -483,7 +481,7 @@ const ModularInventoryRoute = () => {
       <ColumnEnabler enabledColumns={enabledColumns} handleCheckboxChange={handleCheckboxChange} />
       <FilterToolbar onPerPageSelect={onPerPageSelect} onSetPage={onSetPage} {...filterState} />
       <ModularInventory
-        sortBy={filterState.orderBy ? columnIds.indexOf(filterState.orderBy) ?? 0 : 0}
+        sortBy={filterState.orderBy ? (columnIds.indexOf(filterState.orderBy) ?? 0) : 0}
         sortDirection={filterState.orderHow?.toLocaleLowerCase() as 'asc' | 'desc'}
         onSort={(index, direction) => {
           console.log(index, direction);

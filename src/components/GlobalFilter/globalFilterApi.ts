@@ -52,10 +52,7 @@ export const updateSelected: UpdateSelected = (original, namespace, key, value, 
 
 export const createTagsFilter = (tags: string[] = []) =>
   tags.reduce<
-    Record<
-      string,
-      Record<string, { isSelected?: boolean; item: { tagValue: string; tagKey: string; group?: { value: string; label: string; type: string } } }>
-    >
+    Record<string, Record<string, { isSelected?: boolean; item: { tagValue: string; tagKey: string; group?: { value: string; label: string; type: string } } }>>
   >((acc, curr) => {
     const [namespace, tag] = curr.split('/');
     const [tagKey, tagValue] = tag?.split('=') || [];
@@ -130,11 +127,7 @@ export const flatTags = memoize(
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
-          }${
-            item?.tagValue || tagValue
-              ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}`
-              : ''
-          }`;
+          }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}` : ''}`;
         })
     );
     const sidArray = Object.entries<any>(SID || {})

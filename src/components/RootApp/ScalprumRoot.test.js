@@ -199,7 +199,7 @@ describe('ScalprumRoot', () => {
       version: 1,
       set: jest.fn(),
       toggle: jest.fn(),
-      // eslint-disable-next-line react/display-name
+
       Catalog: () => <div></div>,
       activateQuickstart: jest.fn(),
     },
