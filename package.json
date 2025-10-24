@@ -139,7 +139,7 @@
     "@redhat-cloud-services/chrome": "^2.0.1",
     "@redhat-cloud-services/entitlements-client": "1.2.0",
     "@redhat-cloud-services/frontend-components": "^6.1.0",
-    "@redhat-cloud-services/frontend-components-notifications": "^5.0.2",
+    "@redhat-cloud-services/frontend-components-notifications": "^6.0.0",
     "@redhat-cloud-services/frontend-components-pdf-generator": "^4.0.7",
     "@redhat-cloud-services/frontend-components-utilities": "^6.1.0",
     "@redhat-cloud-services/host-inventory-client": "1.2.0",
