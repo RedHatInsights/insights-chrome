@@ -156,7 +156,7 @@
     "@unleash/proxy-client-react": "^3.6.0",
     "abortcontroller-polyfill": "^1.7.5",
     "axios": "^0.28.1",
-    "axios-cache-interceptor": "^0.10.7",
+    "axios-cache-interceptor": "^1.0.0",
     "axios-mock-adapter": "^1.22.0",
     "broadcast-channel": "7.0.0",
     "classnames": "^2.5.1",
