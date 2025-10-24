@@ -127,7 +127,7 @@
     "@formatjs/cli": "6.2.12",
     "@lit/react": "^1.0.5",
     "@openshift/dynamic-plugin-sdk": "^5.0.1",
-    "@orama/orama": "^2.0.21",
+    "@orama/orama": "^3.0.0",
     "@patternfly/patternfly": "^6.2.3",
     "pf-5-styles": "npm:@patternfly/patternfly@^5.4.0",
     "@patternfly/quickstarts": "6.3.0-prerelease.10",
