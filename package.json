@@ -151,7 +151,7 @@
     "@segment/analytics-next": "^1.73.0",
     "@sentry/browser": "^8.33.0",
     "@sentry/react": "^8.33.0",
-    "@sentry/webpack-plugin": "^2.22.5",
+    "@sentry/webpack-plugin": "^4.0.0",
     "@types/intercom-web": "^2.8.26",
     "@unleash/proxy-client-react": "^3.6.0",
     "abortcontroller-polyfill": "^1.7.5",
