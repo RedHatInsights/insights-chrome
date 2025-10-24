@@ -103,7 +103,7 @@
     "rimraf": "^4.4.1",
     "sass": "^1.93.2",
     "sass-loader": "^13.3.3",
-    "source-map-loader": "^4.0.2",
+    "source-map-loader": "^5.0.0",
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.4",
     "swc-loader": "^0.2.6",
