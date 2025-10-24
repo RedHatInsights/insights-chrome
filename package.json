@@ -106,7 +106,7 @@
     "sass-loader": "^13.3.3",
     "source-map-loader": "^4.0.2",
     "stream-browserify": "^3.0.0",
-    "style-loader": "^3.3.4",
+    "style-loader": "^4.0.0",
     "swc-loader": "^0.2.6",
     "swc-plugin-coverage-instrument": "^0.0.21",
     "terser-webpack-plugin": "^5.3.10",
