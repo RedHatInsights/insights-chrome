@@ -93,7 +93,7 @@
     "jest-mock-axios": "^4.7.3",
     "jsdom": "^21.1.2",
     "jws": "^4.0.0",
-    "madge": "^6.1.0",
+    "madge": "^8.0.0",
     "mini-css-extract-plugin": "^2.9.0",
     "npm-run-all2": "^5.0.0",
     "path-browserify": "^1.0.1",
