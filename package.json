@@ -55,7 +55,7 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.0",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.4",
     "@redhat-cloud-services/frontend-components-config-utilities": "^4.4.1",
     "@redhat-cloud-services/types": "^2.0.3",
