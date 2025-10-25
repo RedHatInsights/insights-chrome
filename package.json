@@ -157,7 +157,7 @@
     "abortcontroller-polyfill": "^1.7.5",
     "axios": "^0.28.1",
     "axios-cache-interceptor": "^0.10.7",
-    "axios-mock-adapter": "^1.22.0",
+    "axios-mock-adapter": "^2.0.0",
     "broadcast-channel": "7.0.0",
     "classnames": "^2.5.1",
     "commander": "^10.0.1",
