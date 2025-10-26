@@ -176,7 +176,7 @@
     "react-router-dom": "^6.24.0",
     "remark-gfm": "^4.0.0",
     "sanitize-html": "^2.13.0",
-    "title-case": "^3.0.3",
+    "title-case": "^4.0.0",
     "unleash-proxy-client": "^2.5.0",
     "urijs": "^1.19.11"
   },
