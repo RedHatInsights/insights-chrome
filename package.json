@@ -177,7 +177,7 @@
     "remark-gfm": "^4.0.0",
     "sanitize-html": "^2.13.0",
     "title-case": "^3.0.3",
-    "unleash-proxy-client": "^2.5.0",
+    "unleash-proxy-client": "^3.0.0",
     "urijs": "^1.19.11"
   },
   "insights": {
