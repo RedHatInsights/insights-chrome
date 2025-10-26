@@ -173,7 +173,7 @@
     "react-intl": "^6.7.0",
     "react-markdown": "^9.0.1",
     "react-oidc-context": "^2.3.1",
-    "react-router-dom": "^6.24.0",
+    "react-router-dom": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "sanitize-html": "^2.13.0",
     "title-case": "^3.0.3",
