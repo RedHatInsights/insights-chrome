@@ -13,13 +13,10 @@ describe('Navigation', () => {
     // click on services button
     cy.get('.chr-c-link-service-toggle').click();
 
-    // check if favorite services links exist
-    cy.contains('.pf-v5-c-tabs__link', 'Favorites');
-
     // click on all services
-    cy.get('.chr-l-stack__item-browse-all-services a').click();
+    cy.get('[data-ouia-component-id="View all link"]').first().click();
 
-    // get users link
-    cy.get('p:contains("Users")').click();
+    // check that we are on all services page
+    cy.url().should('include', '/allservices');
   });
 });

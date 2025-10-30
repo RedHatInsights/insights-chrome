@@ -1,14 +1,13 @@
 import React, { memo, useContext, useMemo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { preloadModule } from '@scalprum/core';
 
-import { appNavClick } from '../../redux/actions';
 import NavContext, { OnLinkClick } from '../Navigation/navContext';
 import { NavDOMEvent } from '../../@types/types';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { moduleRoutesAtom } from '../../state/atoms/chromeModuleAtom';
+import { triggerNavListenersAtom } from '../../state/atoms/activeAppAtom';
 
 interface RefreshLinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
   isExternal?: boolean;
@@ -29,9 +28,10 @@ export interface LinkWrapperProps extends RefreshLinkProps {
 }
 
 const LinkWrapper: React.FC<LinkWrapperProps> = memo(
-  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, ...props }) => {
+  ({ href = '', isBeta, onLinkClick, className, currAppId, appId, children, tabIndex, isExternal, ...props }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const moduleRoutes = useAtomValue(moduleRoutesAtom);
+    const triggerNavListener = useSetAtom(triggerNavListenersAtom);
     const moduleEntry = useMemo(() => moduleRoutes?.find((route) => href?.includes(route.path)), [href, appId]);
     const preloadTimeout = useRef<NodeJS.Timeout>();
     let actionId = href.split('/').slice(2).join('/');
@@ -57,7 +57,6 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
        */
       type: 'click',
     };
-    const dispatch = useDispatch();
     const onClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
       if (event.ctrlKey || event.shiftKey) {
         return false;
@@ -72,7 +71,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
        * Add reference to the DOM link element
        */
       domEvent.target = linkRef.current;
-      dispatch(appNavClick({ id: actionId }, domEvent));
+      triggerNavListener({ navId: actionId, domEvent });
     };
 
     // turns /settings/rbac/roles -> settings_rbac_roles
@@ -113,7 +112,6 @@ LinkWrapper.displayName = 'MemoizedLinkWrapper';
 
 const basepath = document.baseURI;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cleanRefreshLinkProps = ({ active, onClick, appId, currAppId, ...rest }: RefreshLinkProps) => rest;
 
 const RefreshLink: React.FC<RefreshLinkProps> = (props) => {

@@ -1,39 +1,52 @@
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { QuickStart, QuickStartState } from '@patternfly/quickstarts';
-import { populateQuickstartsCatalog } from '../../redux/actions';
-import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { useSetAtom } from 'jotai';
+import { populateQuickstartsAppAtom } from '../../state/atoms/quickstartsAtom';
 
-const useQuickstartsStates = () => {
-  const dispatch = useDispatch();
-  const auth = useContext(ChromeAuthContext);
-  const accountId = auth.user.identity?.internal?.account_id;
+// API response types
+interface QuickStartAPIResponse {
+  data: { content: QuickStart }[];
+}
+
+const useQuickstartsStates = (accountId?: string) => {
+  const populateQuickstarts = useSetAtom(populateQuickstartsAppAtom);
+
   const [allQuickStartStates, setAllQuickStartStatesInternal] = useState<{ [key: string | number]: QuickStartState }>({});
   const [activeQuickStartID, setActiveQuickStartIDInternal] = useState('');
 
-  function setAllQuickStartStates(value: QuickStartState | ((states: typeof allQuickStartStates) => QuickStartState)) {
-    const valueToStore = typeof value === 'function' ? value(allQuickStartStates) : value;
-    const activeState = valueToStore[activeQuickStartID];
+  const setAllQuickStartStates = useCallback(
+    (value: QuickStartState | ((states: typeof allQuickStartStates) => QuickStartState)) => {
+      const valueToStore = typeof value === 'function' ? value(allQuickStartStates) : value;
+      const activeState = valueToStore[activeQuickStartID];
 
-    if (typeof activeState === 'object') {
-      axios
-        .post('/api/quickstarts/v1/progress', {
-          quickstartName: activeQuickStartID,
-          accountId: parseInt(accountId!),
-          progress: activeState,
-        })
-        .catch((err) => {
-          console.error(`Unable to persis quickstart progress! ${activeQuickStartID}`, err);
-        });
-    }
-    setAllQuickStartStatesInternal(value as unknown as typeof allQuickStartStates);
-  }
+      if (typeof activeState === 'object') {
+        axios
+          .post('/api/quickstarts/v1/progress', {
+            quickstartName: activeQuickStartID,
+            accountId: parseInt(accountId!),
+            progress: activeState,
+          })
+          .catch((err) => {
+            console.error(`Unable to persis quickstart progress! ${activeQuickStartID}`, err);
+          });
+      }
+      setAllQuickStartStatesInternal(value as unknown as typeof allQuickStartStates);
+    },
+    [setAllQuickStartStatesInternal, activeQuickStartID, accountId]
+  );
 
-  function setActiveQuickStartID(id: string) {
-    id !== '' && typeof id !== 'function' ? document.body.classList.add('quickstarts-open') : document.body.classList.remove('quickstarts-open');
-    setActiveQuickStartIDInternal(id);
-  }
+  const setActiveQuickStartID = useCallback(
+    (id: string) => {
+      if (id !== '' && typeof id !== 'function') {
+        document.body.classList.add('quickstarts-open');
+      } else {
+        document.body.classList.remove('quickstarts-open');
+      }
+      setActiveQuickStartIDInternal(id);
+    },
+    [setActiveQuickStartIDInternal]
+  );
 
   useEffect(() => {
     if (accountId) {
@@ -59,27 +72,52 @@ const useQuickstartsStates = () => {
     }
   }, [accountId]);
 
-  async function activateQuickstart(name: string) {
-    try {
-      const {
-        data: { data },
-      } = await axios.get<{ data: { content: QuickStart }[] }>('/api/quickstarts/v1/quickstarts', {
-        params: {
-          name,
-        },
-      });
-      dispatch(
-        populateQuickstartsCatalog(
-          'default',
-          data.map(({ content }) => content)
-        )
-      );
+  const activateQuickstart = useCallback(
+    async (name: string) => {
+      try {
+        // 1. Fetch main quickstart
+        const {
+          data: { data },
+        } = await axios.get<QuickStartAPIResponse>('/api/quickstarts/v1/quickstarts', {
+          params: {
+            name,
+          },
+        });
+        const mainQuickstarts = data.map(({ content }) => content);
 
-      setActiveQuickStartID(name);
-    } catch (error) {
-      console.error('Unable to active quickstarts called: ', name, error);
-    }
-  }
+        // 2. Extract nextQuickStart references
+        const nextQuickStartNames = mainQuickstarts.flatMap((qs) => qs.spec.nextQuickStart || []).filter((name, index, arr) => arr.indexOf(name) === index); // Remove duplicates
+
+        // 3. Fetch referenced quickstarts
+        let nextQuickstarts: QuickStart[] = [];
+        if (nextQuickStartNames.length > 0) {
+          try {
+            const promises = nextQuickStartNames.map((nextName) =>
+              axios.get<QuickStartAPIResponse>('/api/quickstarts/v1/quickstarts', {
+                params: { name: nextName },
+              })
+            );
+            const responses = await Promise.all(promises);
+            nextQuickstarts = responses.flatMap((r) => r.data.data.map(({ content }) => content));
+          } catch (error) {
+            console.warn('Some referenced quickstarts could not be fetched:', error);
+            // Continue without the referenced quickstarts
+          }
+        }
+
+        // 4. Populate both main and referenced quickstarts
+        populateQuickstarts({
+          app: 'default',
+          quickstarts: [...mainQuickstarts, ...nextQuickstarts],
+        });
+
+        setActiveQuickStartID(name);
+      } catch (error) {
+        console.error('Unable to active quickstarts called: ', name, error);
+      }
+    },
+    [populateQuickstarts, setActiveQuickStartID]
+  );
 
   useEffect(() => {
     // this hook is above the router node this the window location usage
@@ -91,13 +129,19 @@ const useQuickstartsStates = () => {
     }
   }, []);
 
-  return {
-    activateQuickstart,
-    allQuickStartStates,
-    setAllQuickStartStates,
-    activeQuickStartID,
-    setActiveQuickStartID,
-  };
+  // make sure the API is not created on every render
+  const quickstartState = useMemo(
+    () => ({
+      activateQuickstart,
+      allQuickStartStates,
+      setAllQuickStartStates,
+      activeQuickStartID,
+      setActiveQuickStartID,
+    }),
+    [activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID]
+  );
+
+  return quickstartState;
 };
 
 export default useQuickstartsStates;
