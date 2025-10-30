@@ -11,11 +11,19 @@ function transformScalprumManifest(manifest: PluginManifest, config: ScalprumCon
       loadScripts: [],
     };
   }
+  let baseUrl = manifest.baseURL;
+  if (baseUrl == 'auto'){
+    baseUrl = '/apps/${manifest.name}/';
+  }
   const newManifest = {
     ...manifest,
     // Compatibility required for bot pure SDK plugins, HCC plugins and sdk v1/v2 plugins until all are on the same system.
     baseURL: manifest.name.includes('hac-') && !manifest.baseURL ? `/api/plugins/${manifest.name}/` : '/',
+<<<<<<< HEAD
     loadScripts: manifest.loadScripts?.map((script) => `${manifest.baseURL}${script}`.replace(/\/\//, '/')) ?? [`${manifest.baseURL ?? ''}plugin-entry.js`],
+=======
+    loadScripts: manifest.loadScripts?.map((script) => `${baseUrl}${script}`.replace(/\/\//, '/')) ?? [`${baseUrl ?? ''}plugin-entry.js`],
+>>>>>>> 586123c7 ([FEO Temp Fix] Workaround for FEO until it is fully implemented in itless)
     registrationMethod: manifest.registrationMethod ?? 'callback',
   };
 
