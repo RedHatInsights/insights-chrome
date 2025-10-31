@@ -33,7 +33,9 @@ export const isPreviewAtom = atomWithToggle(undefined, async (isPreview) => {
   }
 
   // make sure the banner shows after preview is toggled
-  localStorage.removeItem(HIDE_PREVIEW_BANNER_KEY);
+  if (isPreview) {
+    localStorage.removeItem(HIDE_PREVIEW_BANNER_KEY);
+  }
 });
 
 export const togglePreviewWithCheckAtom = atom(null, (get, set, update?: boolean) => {
