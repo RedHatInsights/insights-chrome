@@ -362,6 +362,7 @@ spec:
         - description: The Trusted Artifact URI pointing to the artifact with the application source code.
           name: SOURCE_ARTIFACT
           type: string
+        timeout: 15m
         spec:
         stepTemplate:
           computeResources:
@@ -392,12 +393,12 @@ spec:
               memory: "8Gi"
           image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
           name: e2e-tests
-          env:   # Define environment variables for this step
-          - name: CHROME_ACCOUNT     # The name of the environment variable inside the container
+          env:
+          - name: CHROME_ACCOUNT
             valueFrom:
               secretKeyRef:
-                name: chrome-credentials-secret     # The name of your Kubernetes Secret
-                key: username     # The specific key within the secret to use
+                name: chrome-credentials-secret
+                key: username
           - name: CHROME_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -415,14 +416,18 @@ spec:
             #!/usr/bin/env bash
             set -ex
             npm i >/dev/null 2>&1
+            echo "Starting dev server in background..."
             KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
-            timeout 120s bash -c 'until curl -k 'https://stage.foo.redhat.com:1337' > /dev/null 2>&1; do
-              echo "Waiting for dev server to be ready"
+            DEV_SERVER_PID=$!
+            echo "Waiting for dev server to respond..."
+            timeout 600s bash -c 'until curl -k https://stage.foo.redhat.com:1337 > /dev/null 2>&1; do
+              echo "Waiting for dev server..."
               sleep 5
-            done
-            '
-            echo "Dev server ready!"
+            done'
+            echo "Dev server is ready! Running tests."
             KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
+            echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
+            kill $DEV_SERVER_PID
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
@@ -430,7 +435,7 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
-            sizeLimit: "4Gi"   # Adjust this value as needed (e.g., "4Gi", "8Gi")
+            sizeLimit: "4Gi"
         - emptyDir: {}
           name: workdir
       workspaces:
