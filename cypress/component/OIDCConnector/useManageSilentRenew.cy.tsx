@@ -20,7 +20,7 @@ describe('useManageSilentRenew', () => {
       expect(authMock.stopSilentRenew).to.be.called;
 
       win.dispatchEvent(new Event('online'));
-      expect(authMock.startSilentRenew).to.be.called;
+      cy.wrap(authMock.startSilentRenew).should('be.called');
     });
   });
 
