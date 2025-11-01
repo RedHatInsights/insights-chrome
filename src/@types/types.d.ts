@@ -85,6 +85,12 @@ declare global {
       groupId?: string;
       pageOptions?: Record<string, unknown>;
     };
+    // TODO pull from amplitude types?
+    engagement?: {
+      boot: (unknown) => void;
+      forwardEvent: (unknown) => void;
+      shutdown: () => void;
+    };
     s?: {
       visitor?: {
         getMarketingCloudVisitorID: () => string;

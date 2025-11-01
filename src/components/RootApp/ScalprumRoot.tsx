@@ -37,6 +37,7 @@ import transformScalprumManifest from './transformScalprumManifest';
 import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom';
 import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
+import useAmplitude from '../../analytics/useAmplitude';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -128,6 +129,8 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   useTabName();
   // initialize adobe analytics
   useDPAL();
+  // initialize amplitude analytics
+  useAmplitude();
 
   useEffect(() => {
     // prepare webpack module sharing scope overrides
