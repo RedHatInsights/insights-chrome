@@ -14,14 +14,26 @@ function useAmplitude() {
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
   const { analytics, ready } = useSegment();
   const navigate = useNavigate();
+  const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
 
-  const amplitudeKeyProd = activeModuleDefinition?.analytics?.amplitude?.APIKey;
-  const amplitudeKeyDev = activeModuleDefinition?.analytics?.amplitude?.APIKeyDev;
-  const amplitudeKey = isProd() ? amplitudeKeyProd : amplitudeKeyDev;
-  const amplitudeKeyFallback = isProd() ? AMPLITUDE_KEY_FALLBACK_PROD : AMPLITUDE_KEY_FALLBACK_DEV;
+  const moduleKeyProd = activeModuleDefinition?.analytics?.amplitude?.APIKey;
+  const moduleKeyDev = activeModuleDefinition?.analytics?.amplitude?.APIKeyDev;
+  const moduleKey = isProd() ? moduleKeyProd : moduleKeyDev;
+  const keyFallback = isProd() ? AMPLITUDE_KEY_FALLBACK_PROD : AMPLITUDE_KEY_FALLBACK_DEV;
+  const keyToUse = moduleKey || keyFallback;
 
-  function initializeAmplitude() {
+  const detachAnalyticsHandlers = function () {
+    if (typeof analytics?.off === 'function') {
+      if (forwardHandlerRef.current) {
+        analytics.off('track', forwardHandlerRef.current);
+        analytics.off('page', forwardHandlerRef.current);
+        forwardHandlerRef.current = null;
+      }
+    }
+  };
+
+  const initializeAmplitude = function () {
     return analytics
       ?.ready(() => {
         return analytics.user().then((user) => {
@@ -41,12 +53,13 @@ function useAmplitude() {
               },
             ],
           });
-          analytics.on('track', (event, properties) => {
+          detachAnalyticsHandlers();
+          const forwardHandler = (event: string, properties: Record<string, unknown>) => {
             window.engagement?.forwardEvent({ event_type: event, event_properties: properties });
-          });
-          analytics.on('page', (event, properties) => {
-            window.engagement?.forwardEvent({ event_type: event, event_properties: properties });
-          });
+          };
+          forwardHandlerRef.current = forwardHandler;
+          analytics.on('track', forwardHandler);
+          analytics.on('page', forwardHandler);
           window.engagement?.setRouter((newUrl: string) => {
             navigate(newUrl);
           });
@@ -55,9 +68,9 @@ function useAmplitude() {
       .catch((error) => {
         console.error('Error initializing Amplitude', error);
       });
-  }
+  };
 
-  function addAmplitudeScript() {
+  const addAmplitudeScript = function () {
     if (!enableAmplitude || !ready) {
       return;
     }
@@ -65,8 +78,12 @@ function useAmplitude() {
       initializeAmplitude();
       return;
     }
+    if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
+      console.error('Amplitude key is missing or malformed:', keyToUse);
+      return;
+    }
     const amplitudeScript = document.createElement('script');
-    amplitudeScript.src = `https://cdn.amplitude.com/script/${amplitudeKey || amplitudeKeyFallback}.engagement.js`;
+    amplitudeScript.src = `https://cdn.amplitude.com/script/${keyToUse}.engagement.js`;
     amplitudeScript.type = 'text/javascript';
     amplitudeScript.id = 'amplitude-script';
     amplitudeScript.onload = () => {
@@ -83,11 +100,14 @@ function useAmplitude() {
     if (!document.getElementById(amplitudeScript.id)) {
       document.body.appendChild(amplitudeScript);
     }
-  }
+  };
 
   useEffect(() => {
     addAmplitudeScript();
-  }, [enableAmplitude, ready, navigate]);
+    return () => {
+      detachAnalyticsHandlers();
+    };
+  }, [enableAmplitude, ready, navigate, analytics, keyToUse]);
 }
 
 export default useAmplitude;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
+import { useAtomValue } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
 
 jest.mock('@unleash/proxy-client-react', () => ({ useFlag: jest.fn(() => true) }));
@@ -8,7 +9,7 @@ jest.mock('../utils/common', () => ({ isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
   activeModuleDefinitionReadAtom: {},
 }));
-jest.mock('jotai', () => ({ useAtomValue: () => ({ analytics: { amplitude: { APIKeyDev: 'DEVKEY' } } }) }));
+jest.mock('jotai', () => ({ useAtomValue: jest.fn(() => ({ analytics: { amplitude: { APIKeyDev: 'DEVKEY' } } })) }));
 jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
 
 const onHandlers: Record<string, Array<(...args: unknown[]) => void>> = {};
@@ -24,6 +25,7 @@ const analyticsMock = {
     onHandlers[event] = onHandlers[event] || [];
     onHandlers[event].push(handler);
   },
+  off: jest.fn(),
 };
 
 import useAmplitude from './useAmplitude';
@@ -129,5 +131,49 @@ describe('useAmplitude', () => {
     // restore
     analyticsMock.user = originalUser;
     errorSpy.mockRestore();
+  });
+
+  it('detaches handlers on unmount', async () => {
+    // Prepare engagement
+    window.engagement = {
+      boot: jest.fn(),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    } as unknown as typeof window.engagement;
+
+    const { unmount } = render(<TestComponent />);
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+    await waitFor(() => expect(window.engagement?.boot).toHaveBeenCalled());
+
+    // Ensure handlers registered
+    expect(onHandlers['track']?.length).toBeGreaterThan(0);
+    expect(onHandlers['page']?.length).toBeGreaterThan(0);
+
+    // Unmount and verify off called for both events with same handler ref
+    unmount();
+    await waitFor(() => expect(analyticsMock.off).toHaveBeenCalled());
+    const calls = (analyticsMock.off as jest.Mock).mock.calls;
+    const events = calls.map((c: unknown[]) => c[0]);
+    expect(events).toEqual(expect.arrayContaining(['track', 'page']));
+    const handlerArgs = calls.map((c: unknown[]) => c[1]);
+    expect(handlerArgs[0]).toBe(handlerArgs[1]);
+    expect(typeof handlerArgs[0]).toBe('function');
+  });
+
+  it('warns when amplitude key is malformed (non-string)', async () => {
+    // Make module provide a non-string key so it overrides fallback and triggers guard
+    (useAtomValue as unknown as jest.Mock).mockReturnValueOnce({
+      analytics: { amplitude: { APIKeyDev: {} } },
+    });
+    const warnSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    render(<TestComponent />);
+    await waitFor(() => expect(warnSpy).toHaveBeenCalled());
+    // No script should be injected
+    expect(document.getElementById('amplitude-script')).toBeFalsy();
+    warnSpy.mockRestore();
   });
 });
