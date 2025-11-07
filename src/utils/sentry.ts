@@ -118,6 +118,11 @@ function initSentry() {
         dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
         project: 'image-builder-rhel',
       },
+      {
+        appName: 'content-sources',
+        dsn: 'https://2578944726a33e0e2e3971c976a87e08@o490301.ingest.us.sentry.io/4510123991171072',
+        project: 'content-sources',
+      },
     ],
     openshift: [
       {
