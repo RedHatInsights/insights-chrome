@@ -8,41 +8,31 @@ const DummyComponent = ({ authMock, login }: { authMock: any; login: () => Promi
 };
 
 describe('useManageSilentRenew', () => {
+  function dispatchEventWithRetries(win: Window, eventName: string, isSatisfied: () => boolean, maxAttempts = 3, intervalMs = 1000): Promise<void> {
+    return new Promise<void>((resolve) => {
+      let attempts = 0;
+      const fire = () => {
+        win.dispatchEvent(new Event(eventName));
+        if (isSatisfied() || attempts >= maxAttempts) {
+          resolve();
+          return;
+        }
+        attempts++;
+        setTimeout(fire, intervalMs);
+      };
+      requestAnimationFrame(fire);
+    });
+  }
+
   it('should pause silent renew on network offline', () => {
     const authMock = { startSilentRenew: cy.stub(), stopSilentRenew: cy.stub() };
     const login = cy.stub();
     cy.mount(<DummyComponent authMock={authMock} login={login} />);
-    cy.window().then(
-      (win) =>
-        new Promise<void>((resolve) => {
-          const fireOffline = () => {
-            win.dispatchEvent(new Event('offline'));
-            if (!authMock.stopSilentRenew.called) {
-              setTimeout(fireOffline, 50);
-            } else {
-              resolve();
-            }
-          };
-          requestAnimationFrame(fireOffline);
-        })
-    );
-    cy.wrap(authMock.stopSilentRenew, { timeout: 8000 }).should('have.been.called');
+    cy.window().then((win) => dispatchEventWithRetries(win, 'offline', () => authMock.stopSilentRenew.called));
+    cy.wrap(authMock.stopSilentRenew).should('have.been.called');
     cy.wrap(authMock.startSilentRenew).should('not.have.been.called');
-    cy.window().then(
-      (win) =>
-        new Promise<void>((resolve) => {
-          const fireOnline = () => {
-            win.dispatchEvent(new Event('online'));
-            if (!authMock.startSilentRenew.called) {
-              setTimeout(fireOnline, 50);
-            } else {
-              resolve();
-            }
-          };
-          requestAnimationFrame(fireOnline);
-        })
-    );
-    cy.wrap(authMock.startSilentRenew, { timeout: 8000 }).should('have.been.called');
+    cy.window().then((win) => dispatchEventWithRetries(win, 'online', () => authMock.startSilentRenew.called));
+    cy.wrap(authMock.startSilentRenew).should('have.been.called');
   });
 
   it('should call the login function if silent renew is re-started and auth is expired', () => {
