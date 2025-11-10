@@ -22,7 +22,6 @@ chromeStore.set(isPreviewAtom, false);
 chromeStore.set(gatewayErrorAtom, undefined);
 chromeStore.set(isFeedbackModalOpenAtom, false);
 // is set in bootstrap
-chromeStore.set(isPreviewAtom, false);
 chromeStore.set(activeAppAtom, undefined);
 chromeStore.set(isDebuggerEnabledAtom, false);
 // page actions
