@@ -12,16 +12,34 @@ describe('useManageSilentRenew', () => {
     const authMock = { startSilentRenew: cy.stub(), stopSilentRenew: cy.stub() };
     const login = cy.stub();
     cy.mount(<DummyComponent authMock={authMock} login={login} />);
-    cy.window().then((win) => {
-      expect(authMock.startSilentRenew).to.not.be.called;
-      expect(authMock.stopSilentRenew).to.not.be.called;
-      win.dispatchEvent(new Event('offline'));
-      expect(authMock.startSilentRenew).not.to.be.called;
-      expect(authMock.stopSilentRenew).to.be.called;
-
-      win.dispatchEvent(new Event('online'));
-      expect(authMock.startSilentRenew).to.be.called;
-    });
+    cy.window()
+      .then(
+        (win) =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => {
+              win.dispatchEvent(new Event('offline'));
+              resolve();
+            })
+          )
+      )
+      .then(() => {
+        cy.wrap(authMock.stopSilentRenew).should('have.been.called');
+        cy.wrap(authMock.startSilentRenew).should('not.have.been.called');
+      })
+      .then(() =>
+        cy.window().then(
+          (win) =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() => {
+                win.dispatchEvent(new Event('online'));
+                resolve();
+              })
+            )
+        )
+      )
+      .then(() => {
+        cy.wrap(authMock.startSilentRenew).should('have.been.called');
+      });
   });
 
   it('should call the login function if silent renew is re-started and auth is expired', () => {
