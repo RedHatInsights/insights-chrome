@@ -81,6 +81,11 @@ export default defineMessages({
     description: 'Help panel',
     defaultMessage: 'Help panel',
   },
+  helpPanelTooltip: {
+    id: 'helpPanelTooltip',
+    description: 'Help panel tooltip describing available resources',
+    defaultMessage: 'Learning resources, API documentation, Support Case Management, Ask Red Hat assistant, and more.',
+  },
   knownOutages: {
     id: 'knownOutages',
     description: 'for known outages.',

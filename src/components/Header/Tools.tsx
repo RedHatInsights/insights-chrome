@@ -269,7 +269,13 @@ const Tools = () => {
     };
 
     return (
-      <Tooltip aria="none" aria-live="polite" content={'Help panel'} flipBehavior={['bottom']} className="tooltip-inner-help-cy">
+      <Tooltip
+        aria="none"
+        aria-live="polite"
+        content={intl.formatMessage(messages.helpPanelTooltip)}
+        flipBehavior={['bottom']}
+        className="tooltip-inner-help-cy"
+      >
         <Button
           variant="control"
           icon={<QuestionCircleIcon />}
@@ -279,7 +285,9 @@ const Tools = () => {
           onClick={handleToggle}
           isClicked={isHelpPanelOpen}
           className="tooltip-button-help-cy"
-        />
+        >
+          Help
+        </Button>
       </Tooltip>
     );
   };

@@ -19,6 +19,8 @@ describe('Landing page', () => {
     cy.get('.tooltip-inner-settings-cy').should('be.visible').and('contain', 'Settings');
 
     cy.get('.tooltip-button-help-cy').should('exist').invoke('show').trigger('mouseenter');
-    cy.get('.tooltip-inner-help-cy').should('be.visible').and('contain', 'Help');
+    cy.get('.tooltip-inner-help-cy')
+      .should('be.visible')
+      .and('contain', 'Learning resources, API documentation, Support Case Management, Ask Red Hat assistant, and more.');
   });
 });
