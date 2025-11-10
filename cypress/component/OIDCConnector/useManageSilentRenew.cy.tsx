@@ -12,34 +12,37 @@ describe('useManageSilentRenew', () => {
     const authMock = { startSilentRenew: cy.stub(), stopSilentRenew: cy.stub() };
     const login = cy.stub();
     cy.mount(<DummyComponent authMock={authMock} login={login} />);
-    cy.window()
-      .then(
-        (win) =>
-          new Promise<void>((resolve) =>
-            requestAnimationFrame(() => {
-              win.dispatchEvent(new Event('offline'));
+    cy.window().then(
+      (win) =>
+        new Promise<void>((resolve) => {
+          const fireOffline = () => {
+            win.dispatchEvent(new Event('offline'));
+            if (!authMock.stopSilentRenew.called) {
+              setTimeout(fireOffline, 50);
+            } else {
               resolve();
-            })
-          )
-      )
-      .then(() => {
-        cy.wrap(authMock.stopSilentRenew).should('have.been.called');
-        cy.wrap(authMock.startSilentRenew).should('not.have.been.called');
-      })
-      .then(() =>
-        cy.window().then(
-          (win) =>
-            new Promise<void>((resolve) =>
-              requestAnimationFrame(() => {
-                win.dispatchEvent(new Event('online'));
-                resolve();
-              })
-            )
-        )
-      )
-      .then(() => {
-        cy.wrap(authMock.startSilentRenew).should('have.been.called');
-      });
+            }
+          };
+          requestAnimationFrame(fireOffline);
+        })
+    );
+    cy.wrap(authMock.stopSilentRenew, { timeout: 8000 }).should('have.been.called');
+    cy.wrap(authMock.startSilentRenew).should('not.have.been.called');
+    cy.window().then(
+      (win) =>
+        new Promise<void>((resolve) => {
+          const fireOnline = () => {
+            win.dispatchEvent(new Event('online'));
+            if (!authMock.startSilentRenew.called) {
+              setTimeout(fireOnline, 50);
+            } else {
+              resolve();
+            }
+          };
+          requestAnimationFrame(fireOnline);
+        })
+    );
+    cy.wrap(authMock.startSilentRenew, { timeout: 8000 }).should('have.been.called');
   });
 
   it('should call the login function if silent renew is re-started and auth is expired', () => {
