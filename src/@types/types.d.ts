@@ -85,6 +85,12 @@ declare global {
       groupId?: string;
       pageOptions?: Record<string, unknown>;
     };
+    engagement?: {
+      boot: (unknown) => void;
+      forwardEvent: (unknown) => void;
+      shutdown: () => void;
+      setRouter: (router: (newUrl: string) => void) => void;
+    };
     s?: {
       visitor?: {
         getMarketingCloudVisitorID: () => string;
@@ -175,6 +181,10 @@ export type ChromeModule = {
   analytics?: {
     APIKey?: string;
     APIKeyDev?: string;
+    amplitude?: {
+      APIKey?: string;
+      APIKeyDev?: string;
+    };
   };
   dynamic?: boolean;
   isFedramp?: boolean;
