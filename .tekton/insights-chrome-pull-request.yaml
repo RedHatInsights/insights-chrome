@@ -441,6 +441,56 @@ spec:
       workspaces:
       - name: basic-auth
         workspace: git-auth
+    - description: Validates Caddy configuration
+      name: run-caddyfile-tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec:
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - name: caddy-config-tests
+          computeResources: {}
+          image: caddy:2-alpine
+          script: |
+            #!/bin/sh
+            set -ex
+            
+            # Install curl and bash for testing (caddy is already included in caddy:2-alpine)
+            apk add --no-cache curl bash
+            
+            # Make test script executable
+            chmod +x ./test-caddyfile.sh
+            
+            # Run Caddy configuration tests
+            CADDYFILE_SOURCE=./Caddyfile ./test-caddyfile.sh
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
     - name: build-container
       params:
       - name: IMAGE
