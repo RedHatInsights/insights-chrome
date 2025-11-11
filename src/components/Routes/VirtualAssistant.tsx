@@ -22,7 +22,7 @@ const VirtualAssistant = () => {
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
-  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*'];
+  const viableRoutes = ['/', '/insights/*', '/settings/*', '/subscriptions/overview/*', '/subscriptions/inventory/*', '/subscriptions/usage/*', '/iam/*'];
   const isNotificationsDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
   const drawerContent = useAtomValue(drawerPanelContentAtom);
   const isHelpPanelOpen = drawerContent?.scope === 'learningResources' && isNotificationsDrawerExpanded;
