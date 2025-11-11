@@ -2,7 +2,7 @@ describe('Favorite Services (E2E User Flow)', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
-    cy.get('button').contains('Insights QA').should('be.visible');
+    cy.get('button').contains('first_name last_name').should('be.visible');
   });
 
   it('should favorite on the page and unfavorite from the header dropdown', () => {
