@@ -65,7 +65,7 @@ const ChromeFooter = () => {
           <a href="https://www.youtube.com/user/RedHatVideos">YouTube</a>
         </FooterSocialLink>
         <FooterSocialLink slot="social-links" icon="facebook">
-          <a href="https://www.facebook.com/redhatinc">Facebook</a>
+          <a href="https://www.facebook.com/RedHat/">Facebook</a>
         </FooterSocialLink>
         <FooterSocialLink slot="social-links" icon="x">
           <a href="https://twitter.com/RedHat">X/Twitter</a>
