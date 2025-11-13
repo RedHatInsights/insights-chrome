@@ -1,12 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:recommended"],
   "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "rangeStrategy": "bump"
+    },
     {
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "npm minor and patch dependencies",
-      "rangeStrategy": "bump",
       "enabled": true
     },
     {
@@ -14,7 +17,5 @@
       "matchUpdateTypes": ["major"],
       "enabled": false
     }
-  ],
-  "semanticCommits": "enabled"
+  ]
 }
-
