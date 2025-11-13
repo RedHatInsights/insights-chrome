@@ -47,7 +47,6 @@ EOF
     
     # Create additional test files
     echo "stable-app.js" > "$TEST_DIR/srv/dist/stable/app.js"
-    echo "config.json" > "$TEST_DIR/srv/dist/stable/config.json"
     
     # Create a test SVG image file
     cat > "$TEST_DIR/srv/dist/stable/image.svg" << 'EOF'
@@ -132,10 +131,7 @@ run_tests() {
     
     # Test static asset serving - SVG image
     test_route "/apps/chrome/image.svg" "200" "<svg xmlns=" "Chrome app SVG image" || ((failed++))
-    
-    # Test config endpoint
-    test_route "/config/index.html" "200" "Chrome Application - Stable Build" "Config endpoint" || ((failed++))
-    
+
     # Test non-existent app (should return 404)
     test_route "/apps/doesnt-exist/file.js" "404" "Not found" "Non-existent app file (404 test)" || ((failed++))
     

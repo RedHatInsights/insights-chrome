@@ -23,18 +23,6 @@
 		}
 	}
 
-	@config_match {
-		path /config*
-	}
-	handle @config_match {
-		uri strip_prefix /config
-		file_server * {
-			root /srv/dist/stable
-			index /srv/dist/stable/index.html
-			browse
-		}
-	}
-
 	# Return 404 for /apps requests that are not chrome
 	@non_chrome_apps_match {
 		path /apps*
