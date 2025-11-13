@@ -34,11 +34,10 @@ setup_test_files() {
     echo -e "${YELLOW}Setting up test files...${NC}"
     
     # Create the exact directory structure expected by the real Caddyfile
-    mkdir -p "$TEST_DIR/opt/app-root/src/build/stable"
-    mkdir -p "$TEST_DIR/opt/app-root/src/build"
+    mkdir -p "$TEST_DIR/srv/dist/stable"
     
     # Create test files matching what the real Caddyfile expects
-    cat > "$TEST_DIR/opt/app-root/src/build/stable/index.html" << EOF
+    cat > "$TEST_DIR/srv/dist/stable/index.html" << EOF
 <!DOCTYPE html>
 <html>
 <head><title>Chrome App - Stable</title></head>
@@ -46,20 +45,12 @@ setup_test_files() {
 </html>
 EOF
     
-    cat > "$TEST_DIR/opt/app-root/src/build/index.html" << EOF
-<!DOCTYPE html>
-<html>
-<head><title>Configuration</title></head>
-<body><h1>Configuration Page</h1></body>
-</html>
-EOF
-    
     # Create additional test files
-    echo "stable-app.js" > "$TEST_DIR/opt/app-root/src/build/stable/app.js"
-    echo "config.json" > "$TEST_DIR/opt/app-root/src/build/config.json"
+    echo "stable-app.js" > "$TEST_DIR/srv/dist/stable/app.js"
+    echo "config.json" > "$TEST_DIR/srv/dist/stable/config.json"
     
     # Create a test SVG image file
-    cat > "$TEST_DIR/opt/app-root/src/build/stable/image.svg" << 'EOF'
+    cat > "$TEST_DIR/srv/dist/stable/image.svg" << 'EOF'
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
   <text x="50" y="55" text-anchor="middle" font-family="Arial" font-size="14" fill="white">Test</text>
@@ -76,7 +67,7 @@ start_caddy() {
     cp "$CADDYFILE_ABS_PATH" .
     
     # Replace absolute paths in Caddyfile with our test directory paths
-    sed -i "s|/opt/app-root/src/build|$TEST_DIR/opt/app-root/src/build|g" Caddyfile
+    sed -i "s|/srv/dist|$TEST_DIR/srv/dist|g" Caddyfile
     
     # Set environment variables to disable TLS for testing
     export CADDY_TLS_MODE=""
@@ -141,6 +132,9 @@ run_tests() {
     
     # Test static asset serving - SVG image
     test_route "/apps/chrome/image.svg" "200" "<svg xmlns=" "Chrome app SVG image" || ((failed++))
+    
+    # Test config endpoint
+    test_route "/config/index.html" "200" "Chrome Application - Stable Build" "Config endpoint" || ((failed++))
     
     # Test non-existent app (should return 404)
     test_route "/apps/doesnt-exist/file.js" "404" "Not found" "Non-existent app file (404 test)" || ((failed++))
