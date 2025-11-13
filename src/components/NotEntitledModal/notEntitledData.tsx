@@ -25,7 +25,7 @@ const notEntitledData: EntitlementData[] = [
   {
     entitlement: 'ansible',
     title: 'Ansible Automation',
-    image: 'https://console.redhat.com/apps/frontend-assets/background-images/collage-anisble-ai-sparkles.svg',
+    image: '/apps/frontend-assets/background-images/collage-anisble-ai-sparkles.svg',
     emptyTitle: 'Get started with Red Hat Ansible Automation Platform',
     emptyText: [
       'Red Hat Ansible Automation Platform simplifies the development and operation of automation workloads across diverse hybrid environments using Ansible Automation Controller, certified and supported content collections, and the hosted services on cloud.redhat.com.',
@@ -46,7 +46,7 @@ const notEntitledData: EntitlementData[] = [
   },
   {
     entitlement: 'insights',
-    image: 'https://console.redhat.com/apps/frontend-assets/background-images/collage-rhel-icon-sparkles.svg',
+    image: '/apps/frontend-assets/background-images/collage-rhel-icon-sparkles.svg',
     title: 'Insights',
     emptyTitle: 'Red Hat Insights is included with your Red Hat Enterprise Linux subscription.',
     emptyText: [
@@ -75,7 +75,7 @@ const notEntitledData: EntitlementData[] = [
   },
   {
     entitlement: 'subscriptions',
-    image: 'https://console.redhat.com/apps/frontend-assets/background-images/collage-ai-inference-time-purple.svg',
+    image: '/apps/frontend-assets/background-images/collage-ai-inference-time-purple.svg',
     title: 'Subscriptions',
     emptyTitle: 'Subscriptions',
     emptyID: 'subscription-watch',
@@ -97,7 +97,7 @@ const notEntitledData: EntitlementData[] = [
   },
   {
     entitlement: 'cost_management',
-    image: 'https://console.redhat.com/apps/frontend-assets/background-images/collage-openshift-virt-server-white.svg',
+    image: '/apps/frontend-assets/background-images/collage-openshift-virt-server-white.svg',
     emptyTitle: 'Cost Management for OpenShift',
     emptyID: 'cost-management',
     emptyText:
