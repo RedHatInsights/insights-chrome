@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AllTag, useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import debounce from 'lodash/debounce';
 import { generateFilter } from './globalFilterApi';
@@ -64,7 +64,9 @@ const useLoadTags = (hasAccess = false) => {
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoaded, tags: tagsData, sids: sidsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
+  const persistedSelectedTags = useAtomValue(selectedTagsAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
+  const isInitialized = useRef(false);
 
   const filterData: AllTag[] = useMemo(() => {
     const workloadsTags = (workloadsData.items || []).flatMap((group: any) =>
@@ -146,16 +148,62 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 
   const loadTags = useLoadTags(hasAccess);
 
-  // Update the atom when selectedTags from hook changes
+  // This effect syncs the hook's state to the persistent atom
   useEffect(() => {
-    setSelectedTags(selectedTags);
-  }, [selectedTags, setSelectedTags]);
-
-  useEffect(() => {
-    if (setValue) {
-      setValue(generateFilter());
+    if (isInitialized.current) {
+      try {
+        // Use a custom replacer to handle circular references
+        const seen = new WeakSet();
+        const sanitized = JSON.parse(
+          JSON.stringify(selectedTags, (key, value) => {
+            // Skip React internal keys
+            if (key.startsWith('_') || key.startsWith('__react')) {
+              return undefined;
+            }
+            // Handle circular references
+            if (typeof value === 'object' && value !== null) {
+              // Skip DOM nodes
+              if (value instanceof HTMLElement) {
+                return undefined;
+              }
+              // Skip circular references
+              if (seen.has(value)) {
+                return undefined;
+              }
+              seen.add(value);
+            }
+            return value;
+          })
+        );
+        setSelectedTags(sanitized);
+      } catch (error) {
+        console.error('[GlobalFilter] Failed to sanitize selectedTags:', error);
+        // Fallback: just set the original value and let atomWithStorage handle it
+        setSelectedTags(selectedTags);
+      }
     }
-  }, [setValue]); // Only depend on setValue, not on every change
+  }, [selectedTags]);
+
+  // This effect initializes the hook's state FROM the atom or URL
+  useEffect(() => {
+    // Wait until data is loaded before initializing
+    if (setValue && !isInitialized.current && isLoaded) {
+      const urlFilter = generateFilter();
+      // Check if URL has actual selections (not just empty objects)
+      const hasUrlParams = Object.keys(urlFilter).some((key) => {
+        const value = (urlFilter as any)[key];
+        return value && typeof value === 'object' && Object.keys(value).length > 0;
+      });
+      if (hasUrlParams) {
+        // URL params exist with actual selections - use them
+        setValue(urlFilter);
+      } else {
+        // No URL params with selections - initialize hook with persisted sessionStorage value
+        setValue(persistedSelectedTags);
+      }
+      isInitialized.current = true;
+    }
+  }, [setValue, persistedSelectedTags, isLoaded]);
 
   useEffect(() => {
     if (hasAccess) {
