@@ -12,11 +12,7 @@ function Unauthed() {
     <Fragment>
       <Login />
       {cookie.get('cs_loggedOut') === 'true' ? (
-        <HeaderAlert
-          variant={AlertVariant.success}
-          title={intl.formatMessage(messages.loggedOut)}
-          onDismiss={() => cookie.set('cs_loggedOut', 'false')}
-        />
+        <HeaderAlert variant={AlertVariant.success} title={intl.formatMessage(messages.loggedOut)} onDismiss={() => cookie.set('cs_loggedOut', 'false')} />
       ) : null}
     </Fragment>
   );

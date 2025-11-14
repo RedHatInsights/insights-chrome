@@ -12,8 +12,8 @@ const ACCOUNT_TIMEOUT_ID = 'account_timeout';
 
 const CrossRequestNotifier = () => {
   const [, forceRender] = useReducer((state) => state + 1, 0);
-  const [{ data }, markRead] = useAccessRequestNotifier();
-  const crossAccountNotifications = data.filter(({ seen }) => !seen);
+  const [{ accessRequestData }, markRead] = useAccessRequestNotifier();
+  const crossAccountNotifications = accessRequestData.filter(({ seen }) => !seen);
 
   const intl = useIntl();
 
@@ -37,7 +37,7 @@ const CrossRequestNotifier = () => {
     autoDismiss: false,
   });
 
-  const DescriptionComponent = ({ id, markRead }: { id: string; markRead: (id: string) => void }) => (
+  const DescriptionComponent = ({ id, markRead }: { id: string | number; markRead: (id: string | number) => void }) => (
     <span onClick={() => markRead(id)}>
       <ChromeLink href={id === 'mark-all' ? '/iam/user-access/access-requests' : `/iam/user-access/access-requests/${id}`} appId="rbac">
         {intl.formatMessage(messages.viewRequest)}

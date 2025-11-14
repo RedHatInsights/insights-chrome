@@ -6,10 +6,8 @@ import React, { useMemo } from 'react';
 
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
-import './Breadcrumbs.scss';
 import classNames from 'classnames';
 import BreadcrumbsFavorites from './BreadcrumbsFavorites';
-import MastheadMenuToggle from '../Header/MastheadMenuToggle';
 import useFavoritePagesWrapper from '../../hooks/useFavoritePagesWrapper';
 
 export type Breadcrumbsprops = {
@@ -18,7 +16,7 @@ export type Breadcrumbsprops = {
   setIsNavOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => {
+const Breadcrumbs = () => {
   const segments = useBreadcrumbsLinks();
   const { favoritePages, favoritePage, unfavoritePage } = useFavoritePagesWrapper();
 
@@ -26,20 +24,17 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
 
   return (
-    <PageBreadcrumb className="chr-c-breadcrumbs pf-v5-u-p-0">
-      <div className="pf-v5-u-display-flex pf-v5-u-justify-content-space-between pf-v5-u-pt-sm pf-v5-u-pb-0 pf-v5-u-pl-md">
-        <FlexItem>{!hideNav && <MastheadMenuToggle setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />}</FlexItem>
-        <FlexItem className="pf-v5-u-flex-grow-1">
-          <Breadcrumb className="pf-v5-u-pt-sm">
+    <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0 pf-v6-u-w-100">
+      <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-lg">
+        <FlexItem className="pf-v6-u-flex-grow-1">
+          <Breadcrumb className="pf-v6-u-pt-sm">
             {segments.map(({ title, href }, index) => (
               <BreadcrumbItem
                 to={href}
-                component={(props) => (
-                  <ChromeLink {...props} className={classNames(props.className, 'chr-c-breadcrumbs__link')} title={title} href={href} />
-                )}
+                component={(props) => <ChromeLink {...props} className={classNames(props.className, 'chr-c-breadcrumbs__link')} title={title} href={href} />}
                 key={index}
                 isActive={segments.length - 1 === index}
-                className="pf-v5-u-pb-sm"
+                className="pf-v6-u-pb-sm"
               >
                 {title}
               </BreadcrumbItem>
@@ -47,12 +42,8 @@ const Breadcrumbs = ({ hideNav, isNavOpen, setIsNavOpen }: Breadcrumbsprops) => 
           </Breadcrumb>
         </FlexItem>
         {leafHref && (
-          <FlexItem>
-            <BreadcrumbsFavorites
-              favoritePage={() => favoritePage(leafHref)}
-              unfavoritePage={() => unfavoritePage(leafHref)}
-              isFavorited={!!isFavorited}
-            />
+          <FlexItem alignSelf={{ default: 'alignSelfFlexEnd' }}>
+            <BreadcrumbsFavorites favoritePage={() => favoritePage(leafHref)} unfavoritePage={() => unfavoritePage(leafHref)} isFavorited={!!isFavorited} />
           </FlexItem>
         )}
       </div>

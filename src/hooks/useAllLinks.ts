@@ -3,6 +3,7 @@ import { BundleNav, BundleNavigation, NavItem } from '../@types/types';
 import fetchNavigationFiles from '../utils/fetchNavigationFiles';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
 import { isExpandableNav } from '../utils/common';
+import useFeoConfig from './useFeoConfig';
 
 const getFirstChildRoute = (routes: NavItem[] = []): NavItem | undefined => {
   const firstLeaf = routes.find((item) => !item.expandable && item.href);
@@ -81,8 +82,8 @@ const getNavLinks = (navItems: NavItem[]): NavItem[] => {
   return links;
 };
 
-const fetchNavigation = async () => {
-  const bundlesNavigation = await fetchNavigationFiles().then((data) => data.map(handleBundleResponse));
+const fetchNavigation = async (feoGenerated = false) => {
+  const bundlesNavigation = await fetchNavigationFiles(feoGenerated).then((data) => data.map(handleBundleResponse));
   const parsedBundles = await Promise.all(
     bundlesNavigation.map(async (bundleNav) => ({
       ...bundleNav,
@@ -93,11 +94,32 @@ const fetchNavigation = async () => {
   return allLinks;
 };
 
+const filterItem = async (navItems: NavItem[]): Promise<NavItem & { isHidden?: boolean }[]> => {
+  return Promise.all(
+    navItems.map(async (navItem) => ({
+      ...(await evaluateVisibility(navItem)),
+      ...(navItem.routes ? { routes: ((await filterItem(navItem.routes)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
+      ...(navItem.navItems ? { navItems: ((await filterItem(navItem.navItems)) as NavItem[]).filter(({ isHidden }) => !isHidden) } : {}),
+    }))
+  );
+};
+
+export const fetchBundles = async (feoGenerated = false) => {
+  const bundlesNavigation = await fetchNavigationFiles(feoGenerated);
+  return await Promise.all(
+    bundlesNavigation.map(async (bundleNav) => ({
+      ...bundleNav,
+      navItems: (await filterItem(bundleNav.navItems)).filter(({ isHidden }) => !isHidden),
+    }))
+  );
+};
+
 const useAllLinks = () => {
+  const useFeoGenerated = useFeoConfig();
   const [allLinks, setAllLinks] = useState<NavItem[]>([]);
   useEffect(() => {
-    fetchNavigation().then(setAllLinks);
-  }, []);
+    fetchNavigation(useFeoGenerated).then(setAllLinks);
+  }, [useFeoGenerated]);
   return allLinks;
 };
 
