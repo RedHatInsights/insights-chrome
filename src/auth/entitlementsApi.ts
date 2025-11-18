@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ServicesApi } from '@redhat-cloud-services/entitlements-client';
+import { APIFactory } from '@redhat-cloud-services/javascript-clients-shared';
+import { servicesGet } from '@redhat-cloud-services/entitlements-client';
 import { setupCache } from 'axios-cache-interceptor';
 import { deleteLocalStorageItems, lastActive } from '../utils/common';
 
@@ -16,7 +17,16 @@ export default () => {
       deleteLocalStorageItems(keys);
     }
 
-    return response.data || response;
+    return response;
   });
-  return new ServicesApi(undefined, BASE_PATH, instance as any);
+  const ServicesApi = APIFactory(
+    BASE_PATH,
+    {
+      servicesGet,
+    },
+    {
+      axios: instance,
+    }
+  );
+  return ServicesApi;
 };

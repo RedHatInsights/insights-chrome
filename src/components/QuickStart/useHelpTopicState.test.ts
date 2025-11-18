@@ -2,11 +2,10 @@ import { act, renderHook } from '@testing-library/react';
 
 import helpTopicDataMock from './helpTopicDataMock';
 import useHelpTopicState from './useHelpTopicState';
+import axios from 'axios';
 
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
-
-jest.mock('@redhat-cloud-services/frontend-components-utilities/interceptors', () => {
-  const instance = jest.requireActual('@redhat-cloud-services/frontend-components-utilities/interceptors');
+jest.mock('axios', () => {
+  const instance = jest.requireActual('axios');
   return {
     __esModule: true,
     ...instance,
@@ -26,7 +25,7 @@ jest.mock('@redhat-cloud-services/frontend-components-utilities/interceptors', (
 });
 
 describe('useHelpTopicState', () => {
-  const getSpy = jest.spyOn(instance, 'get');
+  const getSpy = jest.spyOn(axios, 'get');
 
   const initialTopics = helpTopicDataMock.reduce(
     (acc, curr) => ({

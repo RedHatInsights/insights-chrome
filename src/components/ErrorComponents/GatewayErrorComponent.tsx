@@ -1,19 +1,19 @@
 import React, { Fragment } from 'react';
 import NotAuthorized from '@redhat-cloud-services/frontend-components/NotAuthorized';
-import { useSelector } from 'react-redux';
 import sanitizeHtml from 'sanitize-html';
+import { useAtomValue } from 'jotai';
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 
-import type { ReduxState } from '../../redux/store';
 import ChromeLink from '../ChromeLink/ChromeLink';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
 import { useIntl } from 'react-intl';
 import Messages from '../../locales/Messages';
 import { ThreeScaleError } from '../../utils/responseInterceptors';
-import { useAtomValue } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { activeProductAtom } from '../../state/atoms/activeProductAtom';
 
 export type GatewayErrorComponentProps = {
   error: ThreeScaleError;
+  serviceName?: string;
 };
 
 const MuaLink = (chunks: React.ReactNode) => (
@@ -36,25 +36,29 @@ const Description = ({ detail, complianceError }: DescriptionProps) => {
     message: detail || '',
   });
   return (
-    <TextContent>
+    <Content>
       {detail && complianceError ? (
-        <Text dangerouslySetInnerHTML={{ __html: sanitizeHtml(detail) }}></Text>
+        <Content component="p" dangerouslySetInnerHTML={{ __html: sanitizeHtml(detail) }}></Content>
       ) : (
         <Fragment>
-          <Text>{description}</Text>
-          {detail && <Text>{errorDetail}</Text>}
+          <Content component="p">{description}</Content>
+          {detail && <Content component="p">{errorDetail}</Content>}
         </Fragment>
       )}
-    </TextContent>
+    </Content>
   );
 };
 
-const GatewayErrorComponent = ({ error }: GatewayErrorComponentProps) => {
+const GatewayErrorComponent = ({ error, serviceName }: GatewayErrorComponentProps) => {
   const activeModule = useAtomValue(activeModuleAtom);
-  const activeProduct = useSelector((state: ReduxState) => state.chrome.activeProduct);
-  // get active product, fallback to module name if product is not defined
-  const serviceName = activeProduct || activeModule;
-  return <NotAuthorized description={<Description complianceError={error.complianceError} detail={error.detail} />} serviceName={serviceName} />;
+  const activeProduct = useAtomValue(activeProductAtom);
+
+  return (
+    <NotAuthorized
+      bodyText={<Description complianceError={error.complianceError} detail={error.detail} />}
+      serviceName={activeProduct || activeModule || serviceName}
+    />
+  );
 };
 
 export default GatewayErrorComponent;
