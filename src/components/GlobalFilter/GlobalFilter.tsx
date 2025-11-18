@@ -5,6 +5,8 @@ import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
+import { sanitizeSelectedTags } from './sanitizeSelectedTags';
+import { getInitialFilterState } from './getInitialFilterState';
 
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
@@ -151,56 +153,18 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   // This effect syncs the hook's state to the persistent atom
   useEffect(() => {
     if (isInitialized.current) {
-      try {
-        // Use a custom replacer to handle circular references
-        const seen = new WeakSet();
-        const sanitized = JSON.parse(
-          JSON.stringify(selectedTags, (key, value) => {
-            // Skip React internal keys
-            if (key.startsWith('_') || key.startsWith('__react')) {
-              return undefined;
-            }
-            // Handle circular references
-            if (typeof value === 'object' && value !== null) {
-              // Skip DOM nodes
-              if (value instanceof HTMLElement) {
-                return undefined;
-              }
-              // Skip circular references
-              if (seen.has(value)) {
-                return undefined;
-              }
-              seen.add(value);
-            }
-            return value;
-          })
-        );
-        setSelectedTags(sanitized);
-      } catch (error) {
-        console.error('[GlobalFilter] Failed to sanitize selectedTags:', error);
-        // Fallback: just set the original value and let atomWithStorage handle it
-        setSelectedTags(selectedTags);
-      }
+      const sanitized = sanitizeSelectedTags(selectedTags);
+      setSelectedTags(sanitized);
     }
-  }, [selectedTags]);
+  }, [selectedTags, setSelectedTags]);
 
   // This effect initializes the hook's state FROM the atom or URL
   useEffect(() => {
     // Wait until data is loaded before initializing
     if (setValue && !isInitialized.current && isLoaded) {
       const urlFilter = generateFilter();
-      // Check if URL has actual selections (not just empty objects)
-      const hasUrlParams = Object.keys(urlFilter).some((key) => {
-        const value = (urlFilter as any)[key];
-        return value && typeof value === 'object' && Object.keys(value).length > 0;
-      });
-      if (hasUrlParams) {
-        // URL params exist with actual selections - use them
-        setValue(urlFilter);
-      } else {
-        // No URL params with selections - initialize hook with persisted sessionStorage value
-        setValue(persistedSelectedTags);
-      }
+      const initialState = getInitialFilterState(urlFilter, persistedSelectedTags);
+      setValue(initialState);
       isInitialized.current = true;
     }
   }, [setValue, persistedSelectedTags, isLoaded]);

@@ -28,8 +28,19 @@ const createSafeStorage = <T>() => ({
   setItem: (key: string, value: T): void => {
     try {
       sessionStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`[globalFilterAtom] Failed to save to sessionStorage for key "${key}":`, error);
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && ('name' in error || 'code' in error)) {
+        const err = error as { name?: string; code?: number };
+        if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
+          // Quota exceeded: notify user
+          console.error(`[globalFilterAtom] Quota exceeded when setting sessionStorage for key "${key}".`, error);
+          // User can continue without persistence
+        } else {
+          console.error(`[globalFilterAtom] Failed to set sessionStorage for key "${key}":`, error);
+        }
+      } else {
+        console.error(`[globalFilterAtom] Failed to set sessionStorage for key "${key}":`, error);
+      }
     }
   },
   removeItem: (key: string): void => {
