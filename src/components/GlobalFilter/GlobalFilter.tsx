@@ -69,6 +69,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const persistedSelectedTags = useAtomValue(selectedTagsAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
   const isInitialized = useRef(false);
+  // Force CI rebuild
 
   const filterData: AllTag[] = useMemo(() => {
     const workloadsTags = (workloadsData.items || []).flatMap((group: any) =>
