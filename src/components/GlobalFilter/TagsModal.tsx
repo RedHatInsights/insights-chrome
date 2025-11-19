@@ -8,14 +8,7 @@ import { TableWithFilterPagination } from '@redhat-cloud-services/frontend-compo
 import { OnSelectRow, OnUpdateData } from '@redhat-cloud-services/frontend-components/TagModal/TagModal';
 import messages from '../../locales/Messages';
 import { FlagTagsFilter } from '../../@types/types';
-import {
-  CommonSelectedTag,
-  CommonTag,
-  GlobalFilterTag,
-  globalFilterScopeAtom,
-  tagsAtom,
-  workloadsAtom,
-} from '../../state/atoms/globalFilterAtom';
+import { CommonSelectedTag, CommonTag, GlobalFilterTag, globalFilterScopeAtom, tagsAtom, workloadsAtom } from '../../state/atoms/globalFilterAtom';
 import { useAtomValue } from 'jotai';
 
 export type TagsModalProps = {
@@ -161,9 +154,7 @@ const TagsModal = ({ isOpen = false, filterTagsBy, onApplyTags = () => undefined
           { title: `${intl.formatMessage(messages.tagSources)}` },
         ],
       ]}
-      onSelect={
-        [(selected) => setTagsSelected(selected as CommonSelectedTag[])] as OnSelectRow[]
-      }
+      onSelect={[(selected) => setTagsSelected(selected as CommonSelectedTag[])] as OnSelectRow[]}
       selected={[tagsSelected]}
       onApply={() => onApplyTags(tagsSelected)}
       title={intl.formatMessage(messages.selectTagsOrSIDs)}
