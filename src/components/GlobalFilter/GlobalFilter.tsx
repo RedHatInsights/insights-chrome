@@ -18,7 +18,7 @@ import {
   selectedTagsAtom,
   setAllLoadingAtom,
 } from '../../state/atoms/globalFilterAtom';
-import { getAllSIDs, getAllTags, getAllWorkloads } from './tagsApi';
+import { getAllTags, getAllWorkloads } from './tagsApi';
 import { FlagTagsFilter } from '../../@types/types';
 
 const useLoadTags = (hasAccess = false) => {
@@ -35,11 +35,6 @@ const useLoadTags = (hasAccess = false) => {
         storeFilter(activeTags, hasAccess && !isGlobalFilterDisabled, navigate);
         await Promise.all([
           getAllTags({
-            registeredWith,
-            activeTags,
-            search,
-          }),
-          getAllSIDs({
             registeredWith,
             activeTags,
             search,
@@ -63,18 +58,11 @@ const useLoadTags = (hasAccess = false) => {
 
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoaded, tags: tagsData, sids: sidsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
+  const { isLoaded, tags: tagsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
 
   const filterData: AllTag[] = useMemo(() => {
     const workloadsTags = (workloadsData.items || []).flatMap((group: any) =>
-      (group.tags || []).map((item: any) => ({
-        count: item.count,
-        tag: item.tag,
-      }))
-    );
-
-    const sidsTags = (sidsData.items || []).flatMap((group: any) =>
       (group.tags || []).map((item: any) => ({
         count: item.count,
         tag: item.tag,
@@ -89,15 +77,6 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
       type: 'checkbox',
       tags: workloadsTags,
     });
-
-    // Only include SAP IDs section if it has tags
-    if (sidsTags.length > 0) {
-      sections.push({
-        name: 'SAP IDs (SID)',
-        type: 'checkbox',
-        tags: sidsTags,
-      });
-    }
 
     return [
       ...sections,
@@ -128,7 +107,7 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
         return acc;
       }, []),
     ];
-  }, [tagsData.items, sidsData.items, workloadsData.items]);
+  }, [tagsData.items, workloadsData.items]);
 
   const { filter, chips, selectedTags, setValue, filterTagsBy } = (useTagsFilter as any)(
     // Using 'as any' to bypass complex external types
