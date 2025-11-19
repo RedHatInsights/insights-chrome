@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const plugins = require('./webpack.plugins.js');
@@ -107,9 +108,6 @@ const nonKonfluxDevServerConfiguration = () => {
           host: `http://localhost:${process.env.NAV_CONFIG}`,
         },
       }),
-      '/apps/inventory': {
-        host: 'http://0.0.0.0:8003',
-      },
     },
   });
 };
@@ -151,7 +149,10 @@ const commonConfig = ({ dev }) => {
         ...searchIgnoredStyles(path.resolve(__dirname, '../')),
         ...imageNullLoader(),
         // charts override for the PDF renderer
-        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(__dirname, '../src/moduleOverrides/chart-utils-override.js'),
+        '@patternfly/react-charts/dist/js/components/ChartUtils/chart-theme': path.resolve(
+          __dirname,
+          '../src/moduleOverrides/chart-utils-override.js'
+        ),
         // do not consume unfetch from nested dependencies
         unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
