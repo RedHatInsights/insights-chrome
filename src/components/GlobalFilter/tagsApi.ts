@@ -181,73 +181,41 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
 export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterOptions = {}) {
   const [workloads, , selectedTags] = flatTags(activeTags, false, true);
 
-  // When any workload is selected, it should affect the total of systems for every workload,
-  // same as tags affecting them. This ensures each workload shows the count of systems that
-  // have the selected tags AND the required workload AND any other selected workloads.
-  // Filter to only include selected workloads
-  const selectedWorkloads = workloads
-    ? Object.entries(workloads).reduce<{ [key: string]: Workload }>((acc, [key, workload]) => {
-        const workloadItem = workload as GroupItem;
-        if (workloadItem?.isSelected) {
-          acc[key] = { isSelected: true };
-        }
-        return acc;
-      }, {})
-    : {};
+  const selectedWorkloads = Object.entries(workloads || {}).reduce<typeof workloads>((acc, [k, w]) => {
+    if ((w as GroupItem)?.isSelected) {
+      acc[k] = { isSelected: true };
+    }
+    return acc;
+  }, {});
 
-  const sapFilterObj = buildFilter({ SAP: { isSelected: true }, ...selectedWorkloads });
-  const aapFilterObj = buildFilter({ [AAP_KEY]: { isSelected: true }, ...selectedWorkloads });
-  const mssqlFilterObj = buildFilter({ [MSSQL_KEY]: { isSelected: true }, ...selectedWorkloads });
+  const keys = ['SAP', AAP_KEY, MSSQL_KEY] as const;
+  const labels: Record<(typeof keys)[number], string> = {
+    SAP: 'SAP',
+    [AAP_KEY]: 'Ansible Automation Platform',
+    [MSSQL_KEY]: 'Microsoft SQL',
+  };
 
-  const sapFilterParams = generateFilter(sapFilterObj);
-  const aapFilterParams = generateFilter(aapFilterObj);
-  const mssqlFilterParams = generateFilter(mssqlFilterObj);
+  const totals = await Promise.all(
+    keys.map((key) => {
+      const filterObj = buildFilter({ [key]: { isSelected: true }, ...selectedWorkloads });
+      const params = generateFilter(filterObj);
+      return tagsApi
+        .apiHostGetHostList({
+          registeredWith: registeredWith ? [registeredWith] : undefined,
+          tags: selectedTags?.length ? selectedTags : undefined,
+          perPage: 1,
+          page: 1,
+          options: { params },
+        })
+        .then((res) => getTotalFromResponse(res.data));
+    })
+  );
 
-  const [SAP, AAP, MSSQL] = await Promise.all([
-    tagsApi
-      .apiHostGetHostList({
-        registeredWith: registeredWith ? [registeredWith] : undefined,
-        tags: selectedTags?.length ? selectedTags : undefined,
-        perPage: 1,
-        page: 1,
-        options: {
-          params: sapFilterParams,
-        },
-      })
-      .then((res) => res.data),
-    tagsApi
-      .apiHostGetHostList({
-        registeredWith: registeredWith ? [registeredWith] : undefined,
-        tags: selectedTags?.length ? selectedTags : undefined,
-        perPage: 1,
-        page: 1,
-        options: {
-          params: aapFilterParams,
-        },
-      })
-      .then((res) => res.data),
-    tagsApi
-      .apiHostGetHostList({
-        registeredWith: registeredWith ? [registeredWith] : undefined,
-        tags: selectedTags?.length ? selectedTags : undefined,
-        perPage: 1,
-        page: 1,
-        options: {
-          params: mssqlFilterParams,
-        },
-      })
-      .then((res) => res.data),
-  ]);
-
-  const sapTotal = getTotalFromResponse(SAP);
-  const aapTotal = getTotalFromResponse(AAP);
-  const mssqlTotal = getTotalFromResponse(MSSQL);
-
-  const availableWorkloads = [
-    { label: 'SAP', value: 'SAP', count: sapTotal },
-    { label: 'Ansible Automation Platform', value: 'AAP', count: aapTotal },
-    { label: 'Microsoft SQL', value: 'MSSQL', count: mssqlTotal },
-  ];
+  const availableWorkloads = keys.map((value, i) => ({
+    label: labels[value],
+    value,
+    count: totals[i],
+  }));
 
   chromeStore.set(workloadsAtom, (prev) => ({
     ...prev,
@@ -256,14 +224,9 @@ export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterO
       {
         id: 'workloads-group',
         name: 'Workloads',
-        tags: availableWorkloads.map((item) => ({
-          tag: {
-            id: item.value,
-            key: item.label,
-            value: '',
-            namespace: '',
-          },
-          count: item.count,
+        tags: availableWorkloads.map(({ label, value, count }) => ({
+          tag: { id: value, key: label, value: '', namespace: '' },
+          count,
         })),
       },
     ],
