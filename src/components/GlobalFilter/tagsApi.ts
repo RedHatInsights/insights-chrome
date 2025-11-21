@@ -123,7 +123,7 @@ const generateFilter = (data: GenerateFilterData, path = 'filter', options?: { a
   }, {});
 
 export async function getAllTags({ search, activeTags, registeredWith }: TagFilterOptions = {}, pagination?: TagPagination) {
-  const [workloads, , selectedTags] = flatTags(activeTags, false, true);
+  const [workloads, , selectedTags] = flatTags(activeTags, false, true) as [Record<string, Workload>, unknown[], string[]];
   const response = await tagsApi
     .apiTagGetTags({
       tags: selectedTags,
@@ -179,7 +179,7 @@ export async function getAllTags({ search, activeTags, registeredWith }: TagFilt
 }
 
 export async function getAllWorkloads({ activeTags, registeredWith }: TagFilterOptions = {}) {
-  const [workloads, , selectedTags] = flatTags(activeTags, false, true);
+  const [workloads, , selectedTags] = flatTags(activeTags, false, true) as [Record<string, Workload>, unknown[], string[]];
 
   const selectedWorkloads = Object.entries(workloads || {}).reduce<typeof workloads>((acc, [k, w]) => {
     if ((w as GroupItem)?.isSelected) {
