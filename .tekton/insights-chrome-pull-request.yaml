@@ -425,7 +425,8 @@ spec:
               sleep 5
             done'
             echo "Dev server is ready! Running tests."
-            KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
+            npx playwright install
+            E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx playwright test
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
             kill $DEV_SERVER_PID
           securityContext:
