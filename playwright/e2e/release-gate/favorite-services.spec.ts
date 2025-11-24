@@ -27,7 +27,7 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     const sidebar = page.locator('.pf-v6-c-sidebar__content');
     await expect(sidebar).toBeVisible();
 
-    const favoriteItem = sidebar.locator(quickstartIdSelector);
+    const favoriteItem = page.locator(`${quickstartIdSelector}:visible`);
     await expect(favoriteItem).toBeVisible();
     await expect(favoriteItem.locator('.chr-c-icon-star')).toBeVisible();
 
