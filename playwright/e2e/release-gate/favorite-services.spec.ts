@@ -17,6 +17,8 @@ test.describe('Favorite Services (E2E User Flow)', () => {
 
     // 3. Favorite a specific service on the page
     await page.getByLabel(`Favorite ${serviceToTest}`).click();
+    // stage can be slow in konflux pipelines
+    await page.waitForTimeout(3000);
 
     // 4. Open the All Services drop-down menu
     await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();
