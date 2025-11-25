@@ -1,4 +1,5 @@
 import React, { Fragment, useContext, useMemo } from 'react';
+import classNames from 'classnames';
 import { Group, GroupType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
@@ -122,7 +123,13 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
             {chips?.length > 0 && (
               <Fragment>
                 {chips.map(({ category, chips }, key) => (
-                  <ChipGroup key={key} categoryName={category} className={category === 'Workloads' ? 'chr-c-chip' : ''}>
+                  <ChipGroup
+                    key={key}
+                    categoryName={category}
+                    className={classNames({
+                      'chr-c-chip': category === 'Workloads',
+                    })}
+                  >
                     {chips?.map(({ key: chipName, tagKey, value }, chipKey) => (
                       <Chip
                         key={chipKey}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Menu, MenuContent, MenuFooter, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core/dist/dynamic/components/Menu';
@@ -200,7 +201,10 @@ const SearchInput = ({ onStateChange }: SearchInputListener) => {
       onClick={onInputClick}
       ref={toggleRef}
       onKeyDown={onToggleKeyDown}
-      className={isExpanded ? 'pf-u-flex-grow-1' : 'chr-c-search__collapsed'}
+      className={classNames({
+        'pf-v6-u-flex-grow-1': isExpanded,
+        'pf-v6-u-justify-content-flex-end': !isExpanded,
+      })}
     />
   );
 
