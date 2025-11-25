@@ -1,0 +1,39 @@
+.chr-c-toolbar__button-intercom {
+  border-radius: 30px;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: #ffffff;
+  border: 2px solid #0066cc;
+  // in pf6 there seem to some default transition
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #0066cc;
+
+    .chr-c-toolbar__icon-intercom {
+      color: #ffffff;
+    }
+  }
+  
+  &:active,
+  &.expanded {
+    background-color: #004499;
+
+    .chr-c-toolbar__icon-intercom {
+      color: #ffffff;
+    }
+  }
+  
+  .chr-c-toolbar__icon-intercom {
+    padding-top: 7px;
+    padding-right: 2px;
+    width: 25px;
+    height: 25px;
+    color: #0066cc;
+    transition: color 0.2s ease;
+  }
+}
