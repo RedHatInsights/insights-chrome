@@ -16,7 +16,7 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     // 3. Favorite a specific service on the page
     await page.getByLabel(`Favorite ${serviceToTest}`).click();
     // stage can be slow in konflux pipelines
-    await page.waitForTimeout(3000);
+    await page.waitForLoadState('load');
 
     // 4. Open the All Services drop-down menu
     await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();
@@ -25,11 +25,13 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     const sidebar = page.locator('.pf-v6-c-sidebar__content');
     await expect(sidebar).toBeVisible();
 
-    const favoriteItem = page.locator(`${quickstartIdSelector}:visible`);
+    // Occasionally the test finds two instances because the ID isn't unique; choose the first as a work-around
+    const favoriteItem = page.locator(`${quickstartIdSelector}:visible`).first();
     await expect(favoriteItem).toBeVisible();
 
     // 6. Un-favorite the service from the All Services drop-down
     await page.locator(`xpath=//*[@data-quickstart-id='openshift_acs_instances']//button`).click();
+    await page.waitForLoadState('load');
 
     // Assert that the service is no longer in the favorites dropdown
     await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();

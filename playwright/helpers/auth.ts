@@ -31,6 +31,8 @@ export async function login(page: Page) {
 
   // Verify we're logged in by checking for user menu toggle
   await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible({ timeout: 60000 });
+
   // accept all cookies to prevent test errors
-  await page.getByRole('button', { name: 'Accept All' }).click();
+  // Sometimes the button is "Accept all" and other times it's "Accept all"
+  await page.getByRole('button', { name: 'Accept all', exact: false }).click();
 }
