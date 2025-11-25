@@ -4,9 +4,29 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import RocketIcon from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
 
-import { openShiftIntercomExpandedAtom, toggleOpenShiftIntercomAtom } from '../../state/atoms/openShiftIntercomAtom';
+import { openShiftIntercomExpandedAtom, intercomModuleManagerAtom, intercomModuleActionAtom } from '../../state/atoms/openShiftIntercomAtom';
 import './OpenShiftIntercom.scss';
 import { useFlag } from '@unleash/proxy-client-react';
+
+// Intercom positioning constants
+const INTERCOM_CONFIG = {
+  DEFAULT_PADDING: 20,
+  MIN_PADDING: 20,
+} as const;
+
+/**
+ * Calculates safe positioning for Intercom widget relative to a button element.
+ * Ensures the widget doesn't overlap with the button or go outside screen bounds.
+ */
+const calculateSafeIntercomPadding = (buttonRect: DOMRect, windowDimensions: { width: number; height: number }) => {
+  const paddingFromBottom = windowDimensions.height - buttonRect.bottom;
+  const paddingFromRight = windowDimensions.width - buttonRect.right;
+  
+  return {
+    vertical: Math.max(INTERCOM_CONFIG.MIN_PADDING, Math.min(windowDimensions.height, paddingFromBottom)),
+    horizontal: Math.max(INTERCOM_CONFIG.MIN_PADDING, Math.min(windowDimensions.width, paddingFromRight)),
+  };
+};
 
 export type OpenShiftIntercomModuleProps = {
   className?: string;
@@ -15,65 +35,85 @@ export type OpenShiftIntercomModuleProps = {
 const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
   className,
 }) => {
-  // Use internal state management
+  // Initialize atom-based state management
   const isExpanded = useAtomValue(openShiftIntercomExpandedAtom);
-  const toggleIntercom = useSetAtom(toggleOpenShiftIntercomAtom);
+  const initializeIntercomManager = useSetAtom(intercomModuleManagerAtom);
+  const intercomAction = useSetAtom(intercomModuleActionAtom);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  
   const displayModule = useFlag('platform.chrome.openshift-intercom');
 
-  const updateIntercomPosition = useCallback(() => {
-    if (!displayModule) {
-      return;
-    }
-
-    if (window.Intercom && buttonRef.current) {
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const windowWidth = window.innerWidth;
-      
-      // Calculate vertical padding from bottom of screen
-      const paddingFromBottom = windowHeight - buttonRect.bottom;
-      const verticalPadding = Math.max(20, Math.min(windowHeight, paddingFromBottom));
-      
-      // Calculate horizontal padding from right of screen
-      const paddingFromRight = windowWidth - buttonRect.right;
-      const horizontalPadding = Math.max(20, Math.min(windowWidth, paddingFromRight));
-      
+  /**
+   * Positions Intercom widget in the default bottom-right corner with standard padding.
+   * Used when the chat is opened to ensure proper placement away from the button.
+   */
+  const updatePositionToDefault = useCallback(() => {
+    if (window.Intercom) {
       window.Intercom('update', {
-        vertical_padding: verticalPadding,
-        horizontal_padding: horizontalPadding,
+        vertical_padding: INTERCOM_CONFIG.DEFAULT_PADDING,
+        horizontal_padding: INTERCOM_CONFIG.DEFAULT_PADDING,
         hide_default_launcher: true
       });
     }
   }, []);
 
-  useEffect(() => {
-    updateIntercomPosition();
+  /**
+   * Dynamically positions Intercom widget relative to the button position.
+   * Prevents notifications from appearing next to the button by calculating
+   * appropriate padding based on button location and screen dimensions.
+   */
+  const updatePositionRelativeToButton = useCallback(() => {
+    if (!displayModule || !window.Intercom || !buttonRef.current) {
+      return;
+    }
+
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const windowDimensions = { 
+      width: window.innerWidth, 
+      height: window.innerHeight 
+    };
     
-    // Update position on window resize or scroll
-    const handleUpdate = () => updateIntercomPosition();
-    window.addEventListener('resize', handleUpdate);
-    window.addEventListener('scroll', handleUpdate);
+    const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
+    
+    window.Intercom('update', {
+      vertical_padding: vertical,
+      horizontal_padding: horizontal,
+      hide_default_launcher: true
+    });
+  }, [displayModule]);
+
+  // Set up dynamic positioning that responds to layout changes
+  useEffect(() => {
+    updatePositionRelativeToButton();
+
+    // Update widget position on window resize or scroll to maintain proper spacing
+    const handleLayoutChange = () => updatePositionRelativeToButton();
+    window.addEventListener('resize', handleLayoutChange);
+    window.addEventListener('scroll', handleLayoutChange);
     
     return () => {
-      window.removeEventListener('resize', handleUpdate);
-      window.removeEventListener('scroll', handleUpdate);
+      window.removeEventListener('resize', handleLayoutChange);
+      window.removeEventListener('scroll', handleLayoutChange);
     };
-  }, [updateIntercomPosition]);
+  }, [updatePositionRelativeToButton, buttonRef]);
+
+  // Initialize Intercom event listeners for automatic state synchronization
+  useEffect(() => {
+    initializeIntercomManager({ 
+      updatePositionCallback: updatePositionRelativeToButton 
+    });
+  }, [initializeIntercomManager, updatePositionRelativeToButton]);
 
   const handleToggle = useCallback(() => {
-    if (window.Intercom) {
-      toggleIntercom();
-      // Toggle based on current state
-      if (isExpanded) {
-        window.Intercom('hide');
-      } else {
-        window.Intercom('show');
-      }
+    if (isExpanded) {
+      intercomAction({ action: 'hide' });
     } else {
-      console.warn('Intercom widget not available. Using fallback toggle.');
+      intercomAction({ 
+        action: 'show', 
+        updatePositionCallback: updatePositionToDefault 
+      });
     }
-  }, [isExpanded, toggleIntercom]);
+  }, [isExpanded, intercomAction, updatePositionToDefault]);
 
   return displayModule ? (
     <Tooltip
