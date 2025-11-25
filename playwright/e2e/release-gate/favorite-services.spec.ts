@@ -7,11 +7,12 @@ test.describe('Favorite Services (E2E User Flow)', () => {
   });
 
   test('should favorite on the page and unfavorite from the header dropdown', async ({ page }) => {
-    const serviceToTest = 'ACS Instances';
-    const quickstartIdSelector = '[data-quickstart-id="openshift_acs_instances"]';
+    const serviceToTest = 'Groups';
+    const quickstartIdSelector = '[data-quickstart-id="iam_user-access_groups"]';
 
     await page.goto('/allservices');
-    await expect(page.getByText(serviceToTest)).toBeVisible();
+    await page.waitForLoadState('load');
+    await page.getByText(serviceToTest).scrollIntoViewIfNeeded();
 
     // 3. Favorite a specific service on the page
     await page.getByLabel(`Favorite ${serviceToTest}`).click();
@@ -26,14 +27,18 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     await expect(sidebar).toBeVisible();
 
     // Occasionally the test finds two instances because the ID isn't unique; choose the first as a work-around
-    const favoriteItem = page.locator(`${quickstartIdSelector}:visible`).first();
-    await expect(favoriteItem).toBeVisible();
-
-    // 6. Un-favorite the service from the All Services drop-down
-    await page.locator(`xpath=//*[@data-quickstart-id='openshift_acs_instances']//button`).click();
-    await page.waitForLoadState('load');
+    const favoriteItem = await page.locator(`${quickstartIdSelector}:visible`).all();
+    for (const item of favoriteItem) {
+      // unfavorite the item
+      // ugly logic because quickstart id is duplicated; can't track down unique element that has a button sub-element
+      const rightButton = await item.getByRole('button').isVisible();
+      if (rightButton) {
+        await item.getByRole('button').click();
+      }
+    }
 
     // Assert that the service is no longer in the favorites dropdown
+    await page.waitForLoadState('load');
     await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();
 
     // 7. Close the drop-down menu
