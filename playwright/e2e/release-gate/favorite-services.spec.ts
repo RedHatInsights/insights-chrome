@@ -29,7 +29,7 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     await expect(favoriteItem).toBeVisible();
 
     // 6. Un-favorite the service from the All Services drop-down
-    await page.locator(`${quickstartIdSelector}:visible`).getByRole('button').click();
+    await page.locator(`${quickstartIdSelector}:visible`).first().getByRole('button').click();
 
     // Assert that the service is no longer in the favorites dropdown
     await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();
