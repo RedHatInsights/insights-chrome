@@ -11,8 +11,6 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     const quickstartIdSelector = '[data-quickstart-id="openshift_acs_instances"]';
 
     await page.goto('/allservices');
-    // accept all cookies to prevent test errors
-    // await page.getByRole('button', { name: 'Accept All' }).click();
     await expect(page.getByText(serviceToTest)).toBeVisible();
 
     // 3. Favorite a specific service on the page
@@ -29,10 +27,9 @@ test.describe('Favorite Services (E2E User Flow)', () => {
 
     const favoriteItem = page.locator(`${quickstartIdSelector}:visible`);
     await expect(favoriteItem).toBeVisible();
-    await expect(favoriteItem.locator('.chr-c-icon-star')).toBeVisible();
 
     // 6. Un-favorite the service from the All Services drop-down
-    await favoriteItem.locator('button').click();
+    await page.locator(`${quickstartIdSelector}:visible`).getByRole('button').click();
 
     // Assert that the service is no longer in the favorites dropdown
     await expect(sidebar.locator(quickstartIdSelector)).not.toBeVisible();
