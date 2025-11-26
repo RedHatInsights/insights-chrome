@@ -1,8 +1,58 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { activeModuleAtom } from './activeModuleAtom';
 import { FlagTagsFilter } from '../../@types/types';
 
-export const selectedTagsAtom = atom<FlagTagsFilter>({});
+// Create a safe sessionStorage wrapper with error handling
+const createSafeStorage = <T>() => ({
+  getItem: (key: string, initialValue: T): T => {
+    try {
+      const item = sessionStorage.getItem(key);
+      if (item === null) {
+        return initialValue;
+      }
+      const parsed = JSON.parse(item);
+      return parsed as T;
+    } catch (error) {
+      console.warn(`[globalFilterAtom] Failed to parse sessionStorage item "${key}":`, error);
+      console.warn(`[globalFilterAtom] Returning initial value instead`);
+      // Clear the corrupted item
+      try {
+        sessionStorage.removeItem(key);
+      } catch (e) {
+        console.warn(`[globalFilterAtom] Failed to remove corrupted item:`, e);
+      }
+      return initialValue;
+    }
+  },
+  setItem: (key: string, value: T): void => {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && ('name' in error || 'code' in error)) {
+        const err = error as { name?: string; code?: number };
+        if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
+          // Quota exceeded: notify user
+          console.error(`[globalFilterAtom] Quota exceeded when setting sessionStorage for key "${key}".`, error);
+          // User can continue without persistence
+        } else {
+          console.error(`[globalFilterAtom] Failed to set sessionStorage for key "${key}":`, error);
+        }
+      } else {
+        console.error(`[globalFilterAtom] Failed to set sessionStorage for key "${key}":`, error);
+      }
+    }
+  },
+  removeItem: (key: string): void => {
+    try {
+      sessionStorage.removeItem(key);
+    } catch (error) {
+      console.error(`[globalFilterAtom] Failed to remove from sessionStorage for key "${key}":`, error);
+    }
+  },
+});
+
+export const selectedTagsAtom = atomWithStorage<FlagTagsFilter>('insights-filter-selected', {}, createSafeStorage<FlagTagsFilter>());
 export const isLoadedAtom = atom<boolean>((get) => {
   const tags = get(tagsAtom);
   const sid = get(sidsAtom);
