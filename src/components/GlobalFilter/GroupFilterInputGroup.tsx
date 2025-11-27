@@ -65,7 +65,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
               </a>
               {intl.formatMessage(messages.filterByTagsPopoverContent2)}{' '}
               <a
-                href="https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html-single/client_configuration_guide_for_red_hat_insights/index#proc-insights-creating-custom-group-tags-yaml-file_insights-cg-adding-tags"
+                href="https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/client_configuration_guide_for_red_hat_lightspeed/index#proc-lightspeed-creating-custom-group-tags-yaml-file_lightspeed-cg-adding-tags"
                 target="_blank"
                 rel="noreferrer"
               >
