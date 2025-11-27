@@ -228,8 +228,8 @@ export default defineMessages({
   },
   selectTagsOrSIDs: {
     id: 'selectTagsOrSIDs',
-    description: 'Select one or more tags',
-    defaultMessage: 'Select one or more tags',
+    description: 'Select one or more tags/SAP IDs (SID)',
+    defaultMessage: 'Select one or more tags/SAP IDs (SID)',
   },
   name: {
     id: 'name',

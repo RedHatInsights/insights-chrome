@@ -14,6 +14,9 @@ describe('flatTags', () => {
     Workloads: {
       SAP: { isSelected: true },
     },
+    'SAP ID (SID)': {
+      SOMEVAL: { isSelected: true },
+    },
     'someTag/slash': {
       someKey: {
         isSelected: true,
@@ -47,10 +50,11 @@ describe('flatTags', () => {
   });
 
   it('should return multiple values', () => {
-    const [workloads, tags] = flatTags(globalFilter, false, true);
+    const [workloads, SID, tags] = flatTags(globalFilter, false, true);
     expect(tags.length).toBe(1);
     expect(tags).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]']);
     expect(workloads.SAP.isSelected).toBe(true);
+    expect(SID).toMatchObject(['SOMEVAL']);
   });
 });
 
@@ -87,7 +91,7 @@ describe('updateSelected', () => {
 
 describe('storeFilter', () => {
   describe('global hash', () => {
-    it('should add workloads', (done) => {
+    it('should add workloads and empty SID', (done) => {
       expect.assertions(1);
       const navigate = jest.fn();
       storeFilter(
@@ -102,7 +106,27 @@ describe('storeFilter', () => {
         navigate
       );
       setTimeout(() => {
-        expect(navigate).toHaveBeenCalledWith({ hash: 'workloads=something&tags=', pathname: '/', search: '' });
+        expect(navigate).toHaveBeenCalledWith({ hash: 'workloads=something&SIDs=&tags=', pathname: '/', search: '' });
+        done();
+      });
+    });
+
+    it('should add SIDs', (done) => {
+      expect.assertions(1);
+      const navigate = jest.fn();
+      storeFilter(
+        {
+          'SAP ID (SID)': {
+            something: {
+              isSelected: true,
+            },
+          },
+        },
+        true,
+        navigate
+      );
+      setTimeout(() => {
+        expect(navigate).toHaveBeenCalledWith({ hash: 'SIDs=something&tags=', pathname: '/', search: '' });
         done();
       });
     });
@@ -134,7 +158,7 @@ describe('storeFilter', () => {
       );
       setTimeout(() => {
         expect(navigate).toHaveBeenCalledWith({
-          hash: 'tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+          hash: 'SIDs=&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
           pathname: '/',
           search: '',
         });
@@ -148,6 +172,11 @@ describe('storeFilter', () => {
       storeFilter(
         {
           Workloads: {
+            something: {
+              isSelected: true,
+            },
+          },
+          'SAP ID (SID)': {
             something: {
               isSelected: true,
             },
@@ -174,7 +203,7 @@ describe('storeFilter', () => {
       );
       setTimeout(() => {
         expect(navigate).toHaveBeenCalledWith({
-          hash: 'workloads=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
+          hash: 'workloads=something&SIDs=something&tags=bridges%2Fporter%3Dsam%2Cfragile%2Ftag%3Dsam%2Cfragile%2Ftag2%3Dsam',
           pathname: '/',
           search: '',
         });

@@ -55,14 +55,24 @@ const createSafeStorage = <T>() => ({
 export const selectedTagsAtom = atomWithStorage<FlagTagsFilter>('insights-filter-selected', {}, createSafeStorage<FlagTagsFilter>());
 export const isLoadedAtom = atom<boolean>((get) => {
   const tags = get(tagsAtom);
+  const sid = get(sidsAtom);
   const workloads = get(workloadsAtom);
 
-  return tags.isLoaded && workloads.isLoaded;
+  return tags.isLoaded && sid.isLoaded && workloads.isLoaded;
 });
 export const globalFilterHiddenAtom = atom<boolean>(false);
 export const globalFilterScopeAtom = atom<TagRegisteredWith[number] | undefined>(undefined);
 export const isGlobalFilterDisabledAtom = atom<boolean>((get) => get(globalFilterHiddenAtom) || !get(activeModuleAtom));
 export const tagsAtom = atom<GlobalFilterTags>({
+  isLoaded: false,
+  items: [],
+  total: 0,
+  count: 0,
+  page: 1,
+  perPage: 10,
+});
+
+export const sidsAtom = atom<GlobalFilterSIDs>({
   isLoaded: false,
   items: [],
   total: 0,
@@ -84,21 +94,24 @@ export const workloadsAtom = atom<GlobalFilterWorkloads>({
 // Write atom to set loading state for all global filter atoms at once
 export const setAllLoadingAtom = atom(null, (get, set, isLoaded: boolean) => {
   set(tagsAtom, (prev) => ({ ...prev, isLoaded }));
+  set(sidsAtom, (prev) => ({ ...prev, isLoaded }));
   set(workloadsAtom, (prev) => ({ ...prev, isLoaded }));
 });
 
 // Read atom that combines all global filter data into a single object
 export const globalFilterDataAtom = atom((get) => {
   const tags = get(tagsAtom);
+  const sids = get(sidsAtom);
   const workloads = get(workloadsAtom);
-  const isLoaded = tags.isLoaded && workloads.isLoaded;
+  const isLoaded = tags.isLoaded && sids.isLoaded && workloads.isLoaded;
 
   return {
     isLoaded,
     tags,
+    sids,
     workloads,
-    count: (tags.count || 0) + (workloads.count || 0),
-    total: (tags.total || 0) + (workloads.total || 0),
+    count: (tags.count || 0) + (sids.count || 0) + (workloads.count || 0),
+    total: (tags.total || 0) + (sids.total || 0) + (workloads.total || 0),
   };
 });
 
@@ -130,8 +143,17 @@ export type GlobalFilterTag = {
   }[];
 };
 
+export type SID = {
+  id?: string;
+  name?: string;
+  tags?: {
+    tag: CommonTag;
+  }[];
+};
+
 // Specific type aliases using the generic base
 export type GlobalFilterTags = GlobalFilterBase<GlobalFilterTag>;
+export type GlobalFilterSIDs = GlobalFilterBase<SID>;
 
 // Workloads extends the base type with additional properties
 export type GlobalFilterWorkloads = GlobalFilterBase & {
