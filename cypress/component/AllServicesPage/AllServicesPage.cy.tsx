@@ -2,71 +2,88 @@ import React from 'react';
 import AllServices from '../../../src/layouts/AllServices';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from '../../../src/utils/VisibilitySingleton';
 import userFixture from '../../fixtures/testUser.json';
 import { ChromeUser } from '@redhat-cloud-services/types';
+import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
+import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 describe('<AllServices />', () => {
   beforeEach(() => {
-    // mock chrome and scalprum generic requests
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', {
       status: 200,
       fixture: 'services.json',
-    });
-    cy.intercept('http://localhost:8080/entry?cacheBuster=*', '');
+    }).as('getServices');
+
+    cy.intercept('http://localhost:8080/entry?cacheBuster=*', '').as('getEntry');
     cy.intercept('http://localhost:8080/foo/bar.json', {
       foo: {
         entry: ['/entry'],
       },
-    });
+    }).as('getFooBar');
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/navigation/settings-navigation.json?ts=*', {
       status: 200,
       fixture: 'settings-navigation.json',
+    }).as('getSettingsNav');
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json').as('getSearchIndexStage');
+    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/search-index-generated.json').as('getSearchIndexGenerated');
+  });
+
+  beforeEach(() => {
+    initializeVisibilityFunctions({
+      isPreview: false,
+      getToken: () => Promise.resolve('mock-token-from-visibility'),
+      getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
+      getUserPermissions: () => Promise.resolve([]), // Ensure it's an array
     });
-    cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/search/search-index.json', []);
+    const visibilityFunctions = getVisibilityFunctions();
+    cy.mount(
+      <ChromeAuthContext.Provider
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        value={{
+          user: userFixture as unknown as ChromeUser,
+        }}
+      >
+        <ScalprumProvider
+          config={{}}
+          api={{
+            chrome: {
+              visibilityFunctions,
+              auth: {
+                getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
+              },
+            },
+          }}
+        >
+          <BrowserRouter>
+            <FeatureFlagsProvider>
+              <JotaiProvider>
+                <IntlProvider locale="en">
+                  <AllServices />
+                </IntlProvider>
+              </JotaiProvider>
+            </FeatureFlagsProvider>
+          </BrowserRouter>
+        </ScalprumProvider>
+      </ChromeAuthContext.Provider>
+    );
   });
 
   it('should filter by service category title', () => {
-    initializeVisibilityFunctions({
-      getToken: () => Promise.resolve(''),
-      getUser: () => Promise.resolve(userFixture as unknown as ChromeUser),
-      getUserPermissions: () => Promise.resolve([]),
-    });
-    const visibilityFunctions = getVisibilityFunctions();
-    const store = createStore(() => ({
-      chrome: {
-        moduleRoutes: [
-          {
-            path: '/test/link',
-            scope: 'foo',
-            module: 'bar',
-          },
-        ],
-      },
-    }));
-    cy.mount(
-      <ScalprumProvider
-        config={{}}
-        api={{
-          chrome: {
-            visibilityFunctions,
-          },
-        }}
-      >
-        <BrowserRouter>
-          <Provider store={store}>
-            <IntlProvider locale="en">
-              <AllServices />
-            </IntlProvider>
-          </Provider>
-        </BrowserRouter>
-      </ScalprumProvider>
-    );
+    cy.get('.pf-v6-c-text-input-group__text-input').type('advi');
+    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'advi');
+    cy.contains('Advisor').should('exist');
+    cy.get('.pf-v6-c-card').should('have.length.greaterThan', 1); // Asserts that more than one item is found
+  });
 
-    cy.get('.pf-v5-c-text-input-group__text-input').type('consoleset');
-    cy.contains('Console Settings').should('exist');
+  it('shows empty state when no services match filter', () => {
+    cy.get('.pf-v6-c-text-input-group__text-input').clear().type('zzzzxyz');
+    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'zzzzxyz');
+
+    cy.contains('No results found', { timeout: 2000 }).should('be.visible');
+    cy.contains('Clear all filters').should('be.visible');
   });
 });

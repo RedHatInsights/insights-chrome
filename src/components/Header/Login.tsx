@@ -8,13 +8,7 @@ const Login = () => {
   const intl = useIntl();
   const { login } = useContext(ChromeAuthContext);
   return (
-    <Button
-      ouiaId="top-right-login-button"
-      variant="tertiary"
-      aria-label="Toggle primary navigation"
-      widget-type="InsightsNavToggle"
-      onClick={() => login()}
-    >
+    <Button ouiaId="top-right-login-button" variant="tertiary" aria-label="Toggle primary navigation" widget-type="InsightsNavToggle" onClick={() => login()}>
       {intl.formatMessage(messages.login)}
     </Button>
   );
