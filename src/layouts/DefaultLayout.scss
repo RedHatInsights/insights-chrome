@@ -2,7 +2,6 @@
   left: 0;
   top: 76px;
   width: 100%;
-  padding: 2px 0 2px 20px;
   font-size: 10px;
   background-color: var(--pf-t--global--color--nonstatus--blue--default);
   color: var(--pf-t--global--text--color--nonstatus--on-blue--default);
@@ -26,11 +25,6 @@
   }
 }
 
-.chr-scope__default-layout {
-  flex-grow: 1;
-  display: inherit;
-  flex-direction: inherit;
-}
 
 .pf-v6-c-page__drawer {
   .pf-v6-c-drawer__content {
