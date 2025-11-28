@@ -326,8 +326,8 @@
     "description": "Context used outside of its Provider!"
   },
   "selectTagsOrSIDs": {
-    "defaultMessage": "Select one or more tags",
-    "description": "Select one or more tags"
+    "defaultMessage": "Select one or more tags/SAP IDs (SID)",
+    "description": "Select one or more tags/SAP IDs (SID)"
   },
   "shareFeedback": {
     "defaultMessage": "Share feedback",

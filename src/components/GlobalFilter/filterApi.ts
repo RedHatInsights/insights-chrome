@@ -5,7 +5,7 @@ import { flatTags } from './globalFilterApi';
 export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: NavigateFunction) => {
   if (isEnabled) {
     const searchParams = new URLSearchParams();
-    const [, mappedTags] = flatTags(tags, false, true) as [Record<string, GroupItem>, string[]];
+    const [, SIDs, mappedTags] = flatTags(tags, false, true);
 
     if (tags?.Workloads) {
       const currWorkloads = Object.entries(tags?.Workloads || {})?.find(([, workload]) => (workload as GroupItem).isSelected)?.[0];
@@ -13,6 +13,8 @@ export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: 
         searchParams.append('workloads', currWorkloads);
       }
     }
+
+    searchParams.append('SIDs', SIDs && SIDs.length > 0 ? SIDs.join(',') : '');
 
     searchParams.append('tags', mappedTags && mappedTags.length > 0 ? mappedTags.join(',') : '');
 
