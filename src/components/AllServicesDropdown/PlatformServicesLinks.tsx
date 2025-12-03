@@ -5,11 +5,14 @@ import { Split, SplitItem } from '@patternfly/react-core/dist/dynamic/layouts/Sp
 import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
 import OpenShiftIcon from '../AllServicesDropdown/icon-openshift';
 import RhelIcon from '../AllServicesDropdown/icon-rhel';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const PlatformServiceslinks = () => {
+  const isITLess = useFlag('platform.chrome.itless');
+
   return (
     <>
-      <Split className="pf-v6-u-px-lg pf-v6-u-mb-0">
+      {isITLess ? null : <Split className="pf-v6-u-px-lg pf-v6-u-mb-0">
         <SplitItem>
           <AnsibleIcon />
         </SplitItem>
@@ -18,7 +21,7 @@ const PlatformServiceslinks = () => {
             Red Hat Ansible Automation Platform
           </ChromeLink>
         </SplitItem>
-      </Split>
+      </Split>}
       <Split className="pf-v6-u-pl-lg pf-v6-u-mb-0">
         <SplitItem>
           <RhelIcon />
