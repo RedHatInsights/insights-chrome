@@ -124,11 +124,13 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
         {selectedAccountNumber && (
-          <div className="chr-viewing-as sentry-mask data-hj-suppress">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>
+          <div className="chr-viewing-as sentry-mask data-hj-suppress pf-v6-u-py-xs pf-v6-u-pl-md">
+            {intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}
+          </div>
         )}
         <RedirectBanner />
         {ITLess() ? null : <VirtualAssistant />}
-        <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
+        <ChromeRoutes routesProps={{ scopeClass: 'pf-v6-u-flex-grow-1 pf-v6-u-display-inherit pf-v6-u-flex-direction-inherit' }} />
         {Footer}
       </div>
     </Page>
