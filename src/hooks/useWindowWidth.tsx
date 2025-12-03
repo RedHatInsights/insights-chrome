@@ -12,7 +12,9 @@ const useWindowWidth = () => {
       setXs(window.innerWidth < 520);
     };
     window.addEventListener('resize', handleResize);
-    () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return { xs, md, lg };
