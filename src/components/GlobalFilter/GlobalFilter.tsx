@@ -1,10 +1,12 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AllTag, useTagsFilter } from '@redhat-cloud-services/frontend-components/FilterHooks';
 import debounce from 'lodash/debounce';
 import { generateFilter } from './globalFilterApi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GlobalFilterDropdown } from './GlobalFilterMenu';
 import { storeFilter } from './filterApi';
+import { sanitizeSelectedTags } from './sanitizeSelectedTags';
+import { getInitialFilterState } from './getInitialFilterState';
 
 import { isGlobalFilterAllowed } from '../../utils/common';
 import InternalChromeContext from '../../utils/internalChromeContext';
@@ -64,7 +66,10 @@ const useLoadTags = (hasAccess = false) => {
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoaded, tags: tagsData, sids: sidsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
+  const persistedSelectedTags = useAtomValue(selectedTagsAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
+  const isInitialized = useRef(false);
+  // Force CI rebuild
 
   const filterData: AllTag[] = useMemo(() => {
     const workloadsTags = (workloadsData.items || []).flatMap((group: any) =>
@@ -146,16 +151,24 @@ const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
 
   const loadTags = useLoadTags(hasAccess);
 
-  // Update the atom when selectedTags from hook changes
+  // This effect syncs the hook's state to the persistent atom
   useEffect(() => {
-    setSelectedTags(selectedTags);
+    if (isInitialized.current) {
+      const sanitized = sanitizeSelectedTags(selectedTags);
+      setSelectedTags(sanitized);
+    }
   }, [selectedTags, setSelectedTags]);
 
+  // This effect initializes the hook's state FROM the atom or URL
   useEffect(() => {
-    if (setValue) {
-      setValue(generateFilter());
+    // Wait until data is loaded before initializing
+    if (setValue && !isInitialized.current && isLoaded) {
+      const urlFilter = generateFilter();
+      const initialState = getInitialFilterState(urlFilter, persistedSelectedTags);
+      setValue(initialState);
+      isInitialized.current = true;
     }
-  }, [setValue]); // Only depend on setValue, not on every change
+  }, [setValue, persistedSelectedTags, isLoaded]);
 
   useEffect(() => {
     if (hasAccess) {
