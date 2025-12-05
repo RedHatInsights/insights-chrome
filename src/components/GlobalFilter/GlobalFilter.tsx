@@ -61,6 +61,7 @@ const useLoadTags = (hasAccess = false) => {
 const GlobalFilter = ({ hasAccess }: { hasAccess: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoaded, tags: tagsData, workloads: workloadsData, count, total } = useAtomValue(globalFilterDataAtom);
+  const persistedSelectedTags = useAtomValue(selectedTagsAtom);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
   const isInitialized = useRef(false);
   // Force CI rebuild
