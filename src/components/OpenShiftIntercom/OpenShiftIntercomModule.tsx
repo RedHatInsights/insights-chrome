@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
-import RocketIcon from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
+import RocketIconLight from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
 
-import { openShiftIntercomExpandedAtom, intercomModuleManagerAtom, intercomModuleActionAtom } from '../../state/atoms/openShiftIntercomAtom';
+import { getOpenShiftIntercomStore, useOpenShiftIntercomStore } from '../../state/stores/openShiftIntercomStore';
 import './OpenShiftIntercom.scss';
 import { useFlag } from '@unleash/proxy-client-react';
 
@@ -21,7 +20,7 @@ const INTERCOM_CONFIG = {
 const calculateSafeIntercomPadding = (buttonRect: DOMRect, windowDimensions: { width: number; height: number }) => {
   const paddingFromBottom = windowDimensions.height - buttonRect.bottom;
   const paddingFromRight = windowDimensions.width - buttonRect.right;
-  
+
   return {
     vertical: Math.max(INTERCOM_CONFIG.MIN_PADDING, Math.min(windowDimensions.height, paddingFromBottom)),
     horizontal: Math.max(INTERCOM_CONFIG.MIN_PADDING, Math.min(windowDimensions.width, paddingFromRight)),
@@ -32,16 +31,12 @@ export type OpenShiftIntercomModuleProps = {
   className?: string;
 };
 
-const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
-  className,
-}) => {
-  // Initialize atom-based state management
-  const isExpanded = useAtomValue(openShiftIntercomExpandedAtom);
-  const initializeIntercomManager = useSetAtom(intercomModuleManagerAtom);
-  const intercomAction = useSetAtom(intercomModuleActionAtom);
+const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ className }) => {
+  const { isExpanded } = useOpenShiftIntercomStore();
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
-  const displayModule = useFlag('platform.chrome.openshift-intercom');
+
+  // const displayModule = useFlag('platform.chrome.openshift-intercom');
+  const displayModule = true;
 
   /**
    * Positions Intercom widget in the default bottom-right corner with standard padding.
@@ -52,7 +47,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
       window.Intercom('update', {
         vertical_padding: INTERCOM_CONFIG.DEFAULT_PADDING,
         horizontal_padding: INTERCOM_CONFIG.DEFAULT_PADDING,
-        hide_default_launcher: true
+        hide_default_launcher: true,
       });
     }
   }, []);
@@ -68,17 +63,17 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
     }
 
     const buttonRect = buttonRef.current.getBoundingClientRect();
-    const windowDimensions = { 
-      width: window.innerWidth, 
-      height: window.innerHeight 
+    const windowDimensions = {
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
-    
+
     const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
-    
+
     window.Intercom('update', {
       vertical_padding: vertical,
       horizontal_padding: horizontal,
-      hide_default_launcher: true
+      hide_default_launcher: true,
     });
   }, [displayModule]);
 
@@ -90,35 +85,45 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
     const handleLayoutChange = () => updatePositionRelativeToButton();
     window.addEventListener('resize', handleLayoutChange);
     window.addEventListener('scroll', handleLayoutChange);
-    
+
     return () => {
       window.removeEventListener('resize', handleLayoutChange);
       window.removeEventListener('scroll', handleLayoutChange);
     };
   }, [updatePositionRelativeToButton, buttonRef]);
 
-  // Initialize Intercom event listeners for automatic state synchronization
   useEffect(() => {
-    initializeIntercomManager({ 
-      updatePositionCallback: updatePositionRelativeToButton 
-    });
-  }, [initializeIntercomManager, updatePositionRelativeToButton]);
+    const setupHandlers = async () => {
+      const store = getOpenShiftIntercomStore();
+      
+      // Wait for Intercom to be available
+      while (!window.Intercom) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      
+      // Register handlers
+      window.Intercom('onHide', () => store.updateState('HIDE'));
+      window.Intercom('onShow', () => store.updateState('SHOW'));
+    };
+
+    setupHandlers().catch(error => console.error('Failed to setup Intercom handlers:', error));
+  }, []);
 
   const handleToggle = useCallback(() => {
+    if (!window.Intercom) return;
+
     if (isExpanded) {
-      intercomAction({ action: 'hide' });
+      // Hide Intercom - this will trigger onHide which updates the store
+      window.Intercom('hide');
     } else {
-      intercomAction({ 
-        action: 'show', 
-        updatePositionCallback: updatePositionToDefault 
-      });
+      // Show Intercom with proper positioning
+      updatePositionToDefault();
+      window.Intercom('show');
     }
-  }, [isExpanded, intercomAction, updatePositionToDefault]);
+  }, [isExpanded, updatePositionToDefault]);
 
   return displayModule ? (
-    <Tooltip
-      content={<div>Customer Success</div>}
-    >
+    <Tooltip content={<div>Customer Success</div>}>
       <Button
         ref={buttonRef}
         variant="primary"
@@ -127,7 +132,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({
         className={`chr-c-toolbar__button-intercom ${isExpanded ? 'expanded' : ''}`}
         widget-type="OpenShiftIntercom"
       >
-        <RocketIcon className="chr-c-toolbar__icon-intercom" />
+        <RocketIconLight className="chr-c-toolbar__icon-intercom fa_light" />
       </Button>
     </Tooltip>
   ) : null;

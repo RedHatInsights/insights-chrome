@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from 'react';
 import { Provider } from 'jotai';
 import OpenShiftIntercomModule, { OpenShiftIntercomModuleProps } from '../../src/components/OpenShiftIntercom/OpenShiftIntercomModule';
@@ -11,7 +10,7 @@ describe('OpenShiftIntercomModule', () => {
   beforeEach(() => {
     // Clean up any existing Intercom
     delete (window as any).Intercom;
-    
+
     // Set up console spies
     cy.window().then((win) => {
       cy.stub(win.console, 'error').as('consoleError');
@@ -25,7 +24,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('[aria-label="Customer Success"]')
       .should('exist')
       .should('have.attr', 'widget-type', 'OpenShiftIntercom')
@@ -38,7 +37,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('[aria-label="Customer Success"]').trigger('mouseenter');
     cy.contains('Customer Success').should('be.visible');
   });
@@ -49,7 +48,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} className="custom-class" />
       </Provider>
     );
-    
+
     cy.get('.custom-class').should('exist');
   });
 
@@ -64,7 +63,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('[aria-label="Customer Success"]').click();
     cy.get('@intercom').should('have.been.calledWith', 'show');
   });
@@ -80,11 +79,11 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     // First click - should show (internal state starts as false)
     cy.get('[aria-label="Customer Success"]').click();
     cy.get('@intercom').should('have.been.calledWith', 'show');
-    
+
     // Second click - should hide (internal state is now true)
     cy.get('[aria-label="Customer Success"]').click();
     cy.get('@intercom').should('have.been.calledWith', 'hide');
@@ -96,7 +95,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('[aria-label="Customer Success"]').click();
     cy.get('@consoleWarn').should('have.been.calledWith', 'Intercom widget not available. Using fallback toggle.');
   });
@@ -111,7 +110,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('[aria-label="Customer Success"]').click();
     cy.get('@consoleWarn').should('have.been.calledWith', 'Intercom widget not available. Using fallback toggle.');
   });
@@ -122,10 +121,8 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
-    cy.get('[aria-label="Customer Success"]')
-      .should('have.attr', 'aria-label', 'Customer Success')
-      .should('have.attr', 'widget-type', 'OpenShiftIntercom');
+
+    cy.get('[aria-label="Customer Success"]').should('have.attr', 'aria-label', 'Customer Success').should('have.attr', 'widget-type', 'OpenShiftIntercom');
   });
 
   it('renders rocket icon', () => {
@@ -134,7 +131,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('svg').should('exist');
   });
 
@@ -144,7 +141,7 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </Provider>
     );
-    
+
     cy.get('button').should('have.class', 'pf-m-primary');
   });
 
@@ -159,12 +156,9 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule className="self-contained-test" />
       </Provider>
     );
-    
-    cy.get('[aria-label="Customer Success"]')
-      .should('exist')
-      .should('have.class', 'chr-c-toolbar__button-intercom')
-      .click();
-      
+
+    cy.get('[aria-label="Customer Success"]').should('exist').should('have.class', 'chr-c-toolbar__button-intercom').click();
+
     // Should call Intercom('show') on first click since internal state starts as false
     cy.get('@intercom').should('have.been.calledWith', 'show');
   });
