@@ -2,7 +2,7 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/
 import { PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { OpenShiftIntercomModule } from '../OpenShiftIntercom';
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';

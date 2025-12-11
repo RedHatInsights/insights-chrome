@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import RocketIconLight from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
+import { useRemoteHook } from '@scalprum/react-core';
 
 import { getOpenShiftIntercomStore, useOpenShiftIntercomStore } from '../../state/stores/openShiftIntercomStore';
 import './OpenShiftIntercom.scss';
@@ -34,8 +35,14 @@ export type OpenShiftIntercomModuleProps = {
 const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ className }) => {
   const { isExpanded } = useOpenShiftIntercomStore();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   const displayModule = useFlag('platform.chrome.openshift-intercom');
+
+  const { hookResult } = useRemoteHook<[boolean, Dispatch<SetStateAction<boolean>>]>({
+    scope: 'virtualAssistant',
+    module: './state/globalState',
+    importName: 'useIsOpen',
+  });
+  const [isVAOpen, setIsVAOpen] = hookResult || [false, () => {}];
 
   /**
    * Positions Intercom widget in the default bottom-right corner with standard padding.
@@ -115,11 +122,11 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
       // Hide Intercom - this will trigger onHide which updates the store
       window.Intercom('hide');
     } else {
-      // Show Intercom with proper positioning
+      if (isVAOpen) setIsVAOpen(false);
       updatePositionToDefault();
       window.Intercom('show');
     }
-  }, [isExpanded, updatePositionToDefault]);
+  }, [isExpanded, updatePositionToDefault, isVAOpen, setIsVAOpen]);
 
   return displayModule ? (
     <Tooltip content={<div>Customer Success</div>}>
@@ -128,7 +135,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
         variant="primary"
         aria-label="Customer Success"
         onClick={handleToggle}
-        className={`chr-button-intercom ${isExpanded ? 'expanded' : ''}`}
+        className={`${className} chr-button-intercom ${isExpanded ? 'expanded' : ''}`}
         widget-type="OpenShiftIntercom"
         icon={<RocketIconLight className={'chr-icon-intercom'} />}
       />
