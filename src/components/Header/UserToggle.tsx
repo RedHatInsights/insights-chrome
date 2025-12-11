@@ -168,7 +168,6 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
     <Dropdown
       popperProps={{
         position: 'right',
-        appendTo: 'inline',
       }}
       aria-label="Overflow actions"
       ouiaId="chrome-user-menu"
