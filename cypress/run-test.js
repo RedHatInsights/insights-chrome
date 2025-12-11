@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).argv;
@@ -9,7 +10,7 @@ const defaultOptions = {
   updateSnapshots: false,
 };
 
-const defaultCommand = 'npm run cypress run -- --component --browser electron';
+const defaultCommand = 'npm run cypress run -- --component --browser chrome';
 
 if (argv.u || argv.update) {
   defaultOptions.updateSnapshots = true;

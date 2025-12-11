@@ -4,7 +4,7 @@ import ChromeNavItemFactory from './ChromeNavItemFactory';
 import { ChromeNavExpandableProps } from '../../@types/types';
 
 const ChromeNavExpandable = ({ title, routes, active, isHidden, id }: ChromeNavExpandableProps) => {
-  if (isHidden || routes.filter(({ appId, expandable }) => expandable || !!appId).length === 0) {
+  if (isHidden || routes.length === 0) {
     return null;
   }
 
