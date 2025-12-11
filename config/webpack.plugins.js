@@ -41,7 +41,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
         './ModularInventory': resolve(__dirname, '../src/inventoryPoc/index.ts'),
         './search/useSearch': resolve(__dirname, '../src/hooks/useSearch.ts'),
-        './analytics/intercom/OpenShift': resolve(__dirname, '../src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx'),
+        './analytics/intercom/OpenShiftItercom': resolve(__dirname, '../src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx'),
         './analytics/intercom/useOpenShiftIntercomStore': resolve(__dirname, '../src/state/stores/openShiftIntercomStore.ts'),
       },
       shared: [

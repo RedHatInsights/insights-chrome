@@ -35,8 +35,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
   const { isExpanded } = useOpenShiftIntercomStore();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // const displayModule = useFlag('platform.chrome.openshift-intercom');
-  const displayModule = true;
+  const displayModule = useFlag('platform.chrome.openshift-intercom');
 
   /**
    * Positions Intercom widget in the default bottom-right corner with standard padding.
@@ -95,18 +94,18 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
   useEffect(() => {
     const setupHandlers = async () => {
       const store = getOpenShiftIntercomStore();
-      
+
       // Wait for Intercom to be available
       while (!window.Intercom) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
-      
+
       // Register handlers
       window.Intercom('onHide', () => store.updateState('HIDE'));
       window.Intercom('onShow', () => store.updateState('SHOW'));
     };
 
-    setupHandlers().catch(error => console.error('Failed to setup Intercom handlers:', error));
+    setupHandlers().catch((error) => console.error('Failed to setup Intercom handlers:', error));
   }, []);
 
   const handleToggle = useCallback(() => {
@@ -129,11 +128,10 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
         variant="primary"
         aria-label="Customer Success"
         onClick={handleToggle}
-        className={`chr-c-toolbar__button-intercom ${isExpanded ? 'expanded' : ''}`}
+        className={`chr-button-intercom ${isExpanded ? 'expanded' : ''}`}
         widget-type="OpenShiftIntercom"
-      >
-        <RocketIconLight className="chr-c-toolbar__icon-intercom fa_light" />
-      </Button>
+        icon={<RocketIconLight className={'chr-icon-intercom'} />}
+      />
     </Tooltip>
   ) : null;
 };
