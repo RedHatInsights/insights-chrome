@@ -72,10 +72,11 @@ describe('<AllServices />', () => {
     );
   });
 
+  // TODO this is a bad test - we should not couple the tests to the data rendered in the all services page
   it('should filter by service category title', () => {
-    cy.get('.pf-v6-c-text-input-group__text-input').type('advi');
-    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'advi');
-    cy.contains('Advisor').should('exist');
+    cy.get('.pf-v6-c-text-input-group__text-input').type('applicat');
+    cy.get('.pf-v6-c-text-input-group__text-input').should('have.value', 'applicat');
+    cy.contains('Application Services').should('exist');
     cy.get('.pf-v6-c-card').should('have.length.greaterThan', 1); // Asserts that more than one item is found
   });
 

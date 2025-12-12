@@ -74,11 +74,6 @@ function initSentry() {
         project: 'dashboard-rhel',
       },
       {
-        appName: 'policies',
-        dsn: 'https://a9410934c7cf8b0a63576ded76dd6707@o490301.ingest.us.sentry.io/4508683264262144',
-        project: 'policies-rhel',
-      },
-      {
         appName: 'vulnerability',
         dsn: 'https://cb035c73625db2cf00141494a95bdedb@o490301.ingest.us.sentry.io/4508683271077888',
         project: 'vulnerability-rhel',
