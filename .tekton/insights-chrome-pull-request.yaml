@@ -417,7 +417,7 @@ spec:
             set -ex
             npm i >/dev/null 2>&1
             echo "Starting dev server in background..."
-            KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
+            KONFLUX_RUN=$KONFLUX_RUN DISABLE_CLIENT_OVERLAY=true npm run dev:beta &
             DEV_SERVER_PID=$!
             echo "Waiting for dev server to respond..."
             timeout 600s bash -c 'until curl -k https://stage.foo.redhat.com:1337 > /dev/null 2>&1; do
