@@ -2,8 +2,8 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core/dist/dynamic/
 import { PageBreadcrumb } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 
-import React, { useMemo } from 'react';
-
+import React, { useEffect, useMemo, useState } from 'react';
+import { OpenShiftIntercomModule } from '../OpenShiftIntercom';
 import useBreadcrumbsLinks from '../../hooks/useBreadcrumbsLinks';
 import ChromeLink from '../ChromeLink/ChromeLink';
 import classNames from 'classnames';
@@ -23,6 +23,11 @@ const Breadcrumbs = () => {
   const leafHref = segments[segments.length - 1]?.href;
   const isFavorited = useMemo(() => favoritePages.find(({ pathname, favorite }) => favorite && pathname === leafHref), [favoritePages, leafHref]);
 
+  useEffect(() => {
+    setisOpenshift(segments[0] && segments[0].title === 'OpenShift');
+  }, [segments]);
+  const [isOpenshift, setisOpenshift] = useState(false);
+
   return (
     <PageBreadcrumb hasBodyWrapper={false} className="chr-c-breadcrumbs pf-v6-u-p-0 pf-v6-u-w-100">
       <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-pt-sm pf-v6-u-pb-0 pf-v6-u-pl-lg">
@@ -41,6 +46,11 @@ const Breadcrumbs = () => {
             ))}
           </Breadcrumb>
         </FlexItem>
+        {isOpenshift && (
+          <FlexItem>
+            <OpenShiftIntercomModule />
+          </FlexItem>
+        )}
         {leafHref && (
           <FlexItem alignSelf={{ default: 'alignSelfFlexEnd' }}>
             <BreadcrumbsFavorites favoritePage={() => favoritePage(leafHref)} unfavoritePage={() => unfavoritePage(leafHref)} isFavorited={!!isFavorited} />
