@@ -28,6 +28,7 @@ const options = {
 let child;
 async function runTests() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  process.env.DISABLE_CLIENT_OVERLAY = 'true';
   child = spawn('npm', ['run', 'dev:beta'], {
     stdio: [process.stdout, process.stdout, process.stdout],
     // try to prevent dev server from becoming a zombie
