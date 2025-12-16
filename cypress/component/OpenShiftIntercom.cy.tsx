@@ -149,9 +149,10 @@ describe('OpenShiftIntercomModule', () => {
     cy.get('@intercom').should('have.been.calledWith', 'show');
   });
 
-  it('does not error when Intercom is not available', () => {
+  it('does not render when Intercom is not available', () => {
     cy.window().then((win) => {
-      cy.stub(win.console, 'error').as('consoleError');
+      // Ensure Intercom is not available
+      delete (win as any).Intercom;
     });
 
     cy.mount(
@@ -160,11 +161,8 @@ describe('OpenShiftIntercomModule', () => {
       </TestWrapper>
     );
 
-    // Cypress will automatically retry these queries until they succeed
-    cy.get('[aria-label="Customer Success"]').should('exist');
-    // Click should not cause errors
-    cy.get('[aria-label="Customer Success"]').click({ force: true });
-    cy.get('@consoleError').should('not.have.been.called');
+    // Button should not render at all when Intercom is unavailable
+    cy.get('[aria-label="Customer Success"]').should('not.exist');
   });
 
   it('registers Intercom event handlers when Intercom becomes available', () => {

@@ -36,6 +36,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
   const { isExpanded } = useOpenShiftIntercomStore();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const displayModule = useFlag('platform.chrome.openshift-intercom');
+  const isIntercomAvailable = typeof window !== 'undefined' && window.Intercom;
 
   const { hookResult } = useRemoteHook<[boolean, Dispatch<SetStateAction<boolean>>]>({
     scope: 'virtualAssistant',
@@ -128,7 +129,8 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     }
   }, [isExpanded, updatePositionToDefault, isVAOpen, setIsVAOpen]);
 
-  return displayModule ? (
+  // Only render if feature flag is enabled AND Intercom is available
+  return displayModule && isIntercomAvailable ? (
     <Tooltip content={<div>Customer Success</div>}>
       <Button
         ref={buttonRef}
