@@ -223,6 +223,9 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
+      client: {
+        overlay: process.env.DISABLE_CLIENT_OVERLAY === 'true' ? false : true,
+      },
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
