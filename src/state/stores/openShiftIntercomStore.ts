@@ -20,9 +20,6 @@ export const getOpenShiftIntercomStore = () => {
             return { isExpanded: false };
           case 'TOGGLE':
             return { isExpanded: !state.isExpanded };
-          case 'INITIALIZE':
-            // Re-initialize without changing state
-            return state;
           default:
             return state;
         }
