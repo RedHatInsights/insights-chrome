@@ -28,17 +28,15 @@ const VirtualAssistant = () => {
 
   const flags = useFlags();
   useEffect(() => {
-    const enabledFlaggedRoutes = flags
-      .filter(flag => flaggedRoutes[flag.name] && flag.enabled)
-      .map(flag => flaggedRoutes[flag.name]);
-    
+    const enabledFlaggedRoutes = flags.filter((flag) => flaggedRoutes[flag.name] && flag.enabled).map((flag) => flaggedRoutes[flag.name]);
+
     const allViableRoutes = [...viableRoutes, ...enabledFlaggedRoutes];
-    
+
     const match = matchRoutes(
       allViableRoutes.map((route) => ({ path: route })),
       pathname
     );
-    
+
     // Only set to true when route matches, don't force to false
     // This allows other components (like NotFoundRoute) to manually enable VA
     if (match != null) {

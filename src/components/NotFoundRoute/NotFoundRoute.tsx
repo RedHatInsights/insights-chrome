@@ -5,7 +5,7 @@ import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { EmptyState, EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 
-import { useRemoteHook, useLoadModule } from '@scalprum/react-core';
+import { useLoadModule, useRemoteHook } from '@scalprum/react-core';
 import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 
 export type ModelsType = {

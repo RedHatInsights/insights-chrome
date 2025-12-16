@@ -119,16 +119,20 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     <IntlProvider locale="en">
       <ScalprumProvider scalprum={scalprum.current}>
         <JotaiProvider store={chromeStore}>
-          <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-            {children}
-          </ChromeAuthContext.Provider>
+          <ChromeAuthContext.Provider value={chromeAuthContextValue}>{children}</ChromeAuthContext.Provider>
         </JotaiProvider>
       </ScalprumProvider>
     </IntlProvider>
   );
 };
 
-const WrapperWithAtoms = ({ config = initialScalprumConfig, moduleRoutes = initialModuleRoutes }: { config?: ScalprumConfig; moduleRoutes?: RouteDefinition[] }) => {
+const WrapperWithAtoms = ({
+  config = initialScalprumConfig,
+  moduleRoutes = initialModuleRoutes,
+}: {
+  config?: ScalprumConfig;
+  moduleRoutes?: RouteDefinition[];
+}) => {
   return (
     <IntlProvider locale="en">
       <JotaiProvider store={chromeStore}>
@@ -141,12 +145,12 @@ const WrapperWithAtoms = ({ config = initialScalprumConfig, moduleRoutes = initi
 const AtomSetter = ({ config, moduleRoutes }: { config: ScalprumConfig; moduleRoutes: RouteDefinition[] }) => {
   const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
   const setModuleRoutes = useSetAtom(moduleRoutesAtom);
-  
+
   useEffect(() => {
     setModuleRoutes(moduleRoutes);
     setScalprumConfig(config);
   }, [config, moduleRoutes, setModuleRoutes, setScalprumConfig]);
-  
+
   if (Object.keys(scalprumConfig).length === 0) {
     return null;
   }

@@ -65,9 +65,7 @@ describe('VirtualAssistant showAssistant prop passing', () => {
 
   describe('component rendering', () => {
     it('should always render the component container', () => {
-      const atomValues = [
-        [virtualAssistantShowAssistantAtom, false],
-      ];
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
         // @ts-ignore
@@ -128,9 +126,7 @@ describe('VirtualAssistant showAssistant prop passing', () => {
     });
 
     it('should pass className based on drawer state', () => {
-      const atomValues = [
-        [virtualAssistantShowAssistantAtom, true],
-      ];
+      const atomValues = [[virtualAssistantShowAssistantAtom, true]];
 
       render(
         // @ts-ignore

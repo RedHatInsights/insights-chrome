@@ -8,7 +8,6 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 import './EmptySearchState.scss';
-import { useFlag } from '@unleash/proxy-client-react';
 
 export type ModelsType = {
   VA: string;
@@ -27,16 +26,16 @@ const EmptySearchState = () => {
     importName: 'useVirtualAssistant',
   });
   const [module] = useLoadModule(
-      {
-        scope: 'virtualAssistant',
-        module: './state/globalState',
-        importName: 'Models',
-      },
-      {}
-    );
-  
-    const Models = module as ModelsType;
-    const [, setState] = useVirtualAssistant || [null, null];
+    {
+      scope: 'virtualAssistant',
+      module: './state/globalState',
+      importName: 'Models',
+    },
+    {}
+  );
+
+  const Models = module as ModelsType;
+  const [, setState] = useVirtualAssistant || [null, null];
   return (
     <EmptyState
       titleText={

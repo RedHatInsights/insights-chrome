@@ -80,8 +80,8 @@ const Wrapper = ({ children }) => {
     // Mock the state/globalState module (without ./ prefix)
     scalprum.current.exposedModules['virtualAssistant#state/globalState'] = {
       default: { foo: 'bar' },
-      useVirtualAssistant: () => ([]),
-      Models: {}
+      useVirtualAssistant: () => [],
+      Models: {},
     };
 
     setIsReady(true);
@@ -130,7 +130,7 @@ describe('<Default layout />', () => {
   before(() => {
     cy.window().then((win) => {
       win.virtualAssistant = {
-        init: () => { },
+        init: () => {},
         get: () => () => ({
           default: () => <div>Virtual Assistant</div>,
         }),
