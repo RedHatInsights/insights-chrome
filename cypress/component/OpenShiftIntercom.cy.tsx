@@ -73,7 +73,6 @@ describe('OpenShiftIntercomModule', () => {
       </TestWrapper>
     );
 
-
     cy.get('[aria-label="Customer Success"]')
       .should('have.attr', 'widget-type', 'OpenShiftIntercom')
       .should('have.class', 'chr-button-intercom')
@@ -90,7 +89,6 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule className="custom-class" />
       </TestWrapper>
     );
-
 
     cy.get('[aria-label="Customer Success"]').should('have.class', 'custom-class');
   });
@@ -122,7 +120,6 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </TestWrapper>
     );
-
 
     cy.get('svg').should('exist');
     cy.get('.chr-icon-intercom').should('exist');
@@ -226,7 +223,6 @@ describe('OpenShiftIntercomModule', () => {
       </TestWrapper>
     );
 
-
     // Initially should not have expanded class
     cy.get('[aria-label="Customer Success"]').should('not.have.class', 'expanded');
   });
@@ -241,7 +237,6 @@ describe('OpenShiftIntercomModule', () => {
         <OpenShiftIntercomModule {...defaultProps} />
       </TestWrapper>
     );
-
 
     cy.get('[aria-label="Customer Success"]')
       .should('have.attr', 'aria-label', 'Customer Success')
