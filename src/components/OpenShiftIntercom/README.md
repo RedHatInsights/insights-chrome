@@ -51,27 +51,36 @@ The component includes custom styles for hover, focus, and clicked states that f
 4. **Error Boundaries**: Component includes error handling to prevent layout breakage
 
 ## Example Implementation
+
 ```typescript
-const isOpenShiftIntercomEnabled = useFlag('platform.chrome.openshift-intercom');
-const [isOpenShiftIntercomExpanded, setIsOpenShiftIntercomExpanded] = useAtom(openShiftIntercomExpandedAtom);
+import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
 
-const toggleIntercom = () => {
-  setIsOpenShiftIntercomExpanded((prev) => !prev);
-};
-
-const OpenShiftIntercomModuleProps: ScalprumComponentProps<Record<string, unknown>, OpenShiftIntercomModuleProps> = {
+// The module is self-contained and handles its own state management
+const OpenShiftIntercomModuleProps: ScalprumComponentProps = {
   scope: 'chrome',
   module: './OpenShiftIntercomModule',
   fallback: null,
-  isExpanded: isOpenShiftIntercomExpanded,
   ErrorComponent: <Fragment />, // Prevents broken layout
-  toggleIntercom,
 };
 
 return (
   <>
-    {isOpenShiftIntercomEnabled && <ScalprumComponent {...OpenShiftIntercomModuleProps} />}
+    <ScalprumComponent {...OpenShiftIntercomModuleProps} />
     {/* Other header components */}
+  </>
+);
+```
+
+### How It Works
+
+1. **State Management**: Uses Scalprum shared store (`openShiftIntercomStore`) to manage expanded state
+2. **Virtual Assistant Integration**: Automatically loads and closes the VA when Intercom opens (with retry logic)
+3. **Intercom Widget**: Integrates directly with the Intercom widget API for open/close/positioning
+4. **Button Icon**: Displays a rocket icon that changes color based on state:
+   - Default: Corporate blue
+   - Hover: Blue background appears
+   - Expanded: Darker blue background
+ponents */}
   </>
 );
 ```
