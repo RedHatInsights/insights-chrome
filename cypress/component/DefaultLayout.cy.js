@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
+import { initialize, removeScalprum } from '@scalprum/core';
 import DefaultLayout from '../../src/layouts/DefaultLayout';
 import { Nav } from '@patternfly/react-core/dist/dynamic/components/Nav';
 import { NavList } from '@patternfly/react-core/dist/dynamic/components/Nav';
@@ -58,29 +59,57 @@ const mockInternalChromeContext = {
   },
 };
 
-const Wrapper = ({ children }) => (
-  <IntlProvider locale="en">
-    <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-      <InternalChromeContext.Provider value={mockInternalChromeContext}>
-        <ScalprumProvider
-          config={{
-            virtualAssistant: {
-              name: 'virtualAssistant',
-              appId: 'virtualAssistant',
-              manifestLocation: '/foo/bar.json',
-            },
-          }}
-        >
-          <JotaiProvider store={chromeStore}>
-            <FeatureFlagsProvider>
-              <BrowserRouter>{children}</BrowserRouter>
-            </FeatureFlagsProvider>
-          </JotaiProvider>
-        </ScalprumProvider>
-      </InternalChromeContext.Provider>
-    </ChromeAuthContext.Provider>
-  </IntlProvider>
-);
+const Wrapper = ({ children }) => {
+  const [isReady, setIsReady] = useState(false);
+  const scalprum = useRef(
+    initialize({
+      appsConfig: {
+        virtualAssistant: {
+          name: 'virtualAssistant',
+          manifestLocation: '/foo/bar.json',
+        },
+      },
+    })
+  );
+
+  useEffect(() => {
+    scalprum.current.exposedModules['virtualAssistant#./AstroVirtualAssistant'] = {
+      default: () => <div id="virtual-assistant">Virtual Assistant</div>,
+    };
+
+    // Mock the state/globalState module (without ./ prefix)
+    scalprum.current.exposedModules['virtualAssistant#state/globalState'] = {
+      default: { foo: 'bar' },
+      useVirtualAssistant: () => [],
+      Models: {},
+    };
+
+    setIsReady(true);
+    return () => {
+      removeScalprum();
+    };
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
+
+  return (
+    <IntlProvider locale="en">
+      <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+        <InternalChromeContext.Provider value={mockInternalChromeContext}>
+          <ScalprumProvider scalprum={scalprum.current}>
+            <JotaiProvider store={chromeStore}>
+              <FeatureFlagsProvider>
+                <BrowserRouter>{children}</BrowserRouter>
+              </FeatureFlagsProvider>
+            </JotaiProvider>
+          </ScalprumProvider>
+        </InternalChromeContext.Provider>
+      </ChromeAuthContext.Provider>
+    </IntlProvider>
+  );
+};
 
 const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
   if (!loaded) {
@@ -98,6 +127,17 @@ const SidebarMock = ({ loaded, schema: { navItems: items } = {} }) => {
 };
 
 describe('<Default layout />', () => {
+  before(() => {
+    cy.window().then((win) => {
+      win.virtualAssistant = {
+        init: () => {},
+        get: () => () => ({
+          default: () => <div>Virtual Assistant</div>,
+        }),
+      };
+    });
+  });
+
   beforeEach(() => {
     cy.intercept('PUT', 'http://localhost:8080/api/notifications/v1/notifications/drawer/read', {
       statusCode: 200,
