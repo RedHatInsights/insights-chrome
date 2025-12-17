@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
 import { matchRoutes, useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core';
-import { useFlag, useFlags } from '@unleash/proxy-client-react';
+import { useFlags } from '@unleash/proxy-client-react';
 
-import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
+import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import './virtual-assistant.scss';
@@ -17,8 +16,6 @@ const flaggedRoutes: { [flagName: string]: string } = {
 };
 
 const VirtualAssistant = () => {
-  const [isOpen, setOpen] = useAtom(virtualAssistantOpenAtom);
-  const [startInput, setStartInput] = useAtom(virtualAssistantStartInputAtom);
   const [showAssistant, setShowAssistant] = useAtom(virtualAssistantShowAssistantAtom);
 
   const { pathname } = useLocation();
@@ -29,28 +26,26 @@ const VirtualAssistant = () => {
   const isNotificationsDrawerOpen = drawerContent?.scope === 'notifications' && isNotificationsDrawerExpanded;
   const shouldShiftVA = isHelpPanelOpen || isNotificationsDrawerOpen;
 
-  const isOpenConfig = useFlag('platform.virtual-assistant.is-open-config');
-  const allFlags = useFlags();
-  allFlags.forEach((flag) => {
-    if (flaggedRoutes[flag.name] && flag.enabled) {
-      viableRoutes.push(flaggedRoutes[flag.name]);
-    }
-  });
-
+  const flags = useFlags();
   useEffect(() => {
+    const enabledFlaggedRoutes = flags.filter((flag) => flaggedRoutes[flag.name] && flag.enabled).map((flag) => flaggedRoutes[flag.name]);
+
+    const allViableRoutes = [...viableRoutes, ...enabledFlaggedRoutes];
+
     const match = matchRoutes(
-      viableRoutes.map((route) => ({ path: route })),
+      allViableRoutes.map((route) => ({ path: route })),
       pathname
     );
-    setShowAssistant(match != null);
-  }, [pathname, setShowAssistant, viableRoutes]);
+
+    // Only set to true when route matches, don't force to false
+    // This allows other components (like NotFoundRoute) to manually enable VA
+    if (match != null) {
+      setShowAssistant(true);
+    }
+  }, [flags, pathname, viableRoutes, setShowAssistant]);
 
   type VirtualAssistantProps = {
     showAssistant: boolean;
-    isOpen: boolean;
-    setOpen: (open: boolean) => void;
-    startInput?: string;
-    setStartInput?: (message: string) => void;
     className?: string;
   };
   const virtualAssistantProps: ScalprumComponentProps & VirtualAssistantProps = {
@@ -59,37 +54,15 @@ const VirtualAssistant = () => {
     fallback: null,
     ErrorComponent: <Fragment />,
     showAssistant: showAssistant,
-    isOpen: isOpen,
-    setOpen: setOpen,
-    startInput: startInput,
-    setStartInput: setStartInput,
     className: shouldShiftVA ? 'astro-va-drawer-open' : 'astro-va-drawer-closed',
   };
 
   return (
-    <>
-      {isOpenConfig ? (
-        <SilentErrorBoundary>
-          <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
-            <ScalprumComponent {...virtualAssistantProps} />
-          </div>
-        </SilentErrorBoundary>
-      ) : (
-        <Routes>
-          {viableRoutes.map((route) => (
-            <Route
-              key={route}
-              path={route}
-              element={
-                <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
-                  <ScalprumComponent scope="virtualAssistant" module="./AstroVirtualAssistant" fallback={null} ErrorComponent={<Fragment />} />
-                </div>
-              }
-            />
-          ))}
-        </Routes>
-      )}
-    </>
+    <SilentErrorBoundary>
+      <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
+        <ScalprumComponent {...virtualAssistantProps} />
+      </div>
+    </SilentErrorBoundary>
   );
 };
 

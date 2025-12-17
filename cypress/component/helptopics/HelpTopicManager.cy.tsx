@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 
@@ -17,6 +17,8 @@ import { useAtom, useSetAtom } from 'jotai';
 import { ScalprumConfig, scalprumConfigAtom } from '../../../src/state/atoms/scalprumConfigAtom';
 import { moduleRoutesAtom } from '../../../src/state/atoms/chromeModuleAtom';
 import { RouteDefinition } from '../../../src/@types/types';
+import ScalprumProvider from '@scalprum/react-core';
+import { initialize, removeScalprum } from '@scalprum/core';
 
 const chromeUser: ChromeUser = testUser as unknown as ChromeUser;
 
@@ -71,25 +73,92 @@ const initialModuleRoutes = [
   },
 ];
 
-const Wrapper = ({ config = initialScalprumConfig, moduleRoutes = initialModuleRoutes }: { config?: ScalprumConfig; moduleRoutes?: RouteDefinition[] }) => {
-  const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
-  const setModuleRoutes = useSetAtom(moduleRoutesAtom);
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  const [isReady, setIsReady] = useState(false);
+  const scalprum = useRef(
+    initialize({
+      appsConfig: {
+        virtualAssistant: {
+          name: 'virtualAssistant',
+          manifestLocation: '/foo/bar.json',
+        },
+        TestApp: {
+          name: 'TestApp',
+          manifestLocation: '/foo/bar.json',
+        },
+      },
+    })
+  );
+
   useEffect(() => {
-    setModuleRoutes(moduleRoutes);
-    setScalprumConfig(config);
+    scalprum.current.exposedModules['virtualAssistant#AstroVirtualAssistant'] = {
+      default: () => <div id="virtual-assistant">Virtual Assistant</div>,
+    };
+
+    scalprum.current.exposedModules['virtualAssistant#state/globalState'] = {
+      default: { foo: 'bar' },
+      useVirtualAssistant: () => [],
+      Models: {},
+    };
+
+    scalprum.current.exposedModules['TestApp#TestApp'] = {
+      default: () => <div id="test-app">Test App</div>,
+    };
+
+    setIsReady(true);
+    return () => {
+      removeScalprum();
+    };
   }, []);
-  if (Object.keys(scalprumConfig).length === 0) {
+
+  if (!isReady) {
     return null;
   }
 
   return (
     <IntlProvider locale="en">
+      <ScalprumProvider scalprum={scalprum.current}>
+        <JotaiProvider store={chromeStore}>
+          <ChromeAuthContext.Provider value={chromeAuthContextValue}>{children}</ChromeAuthContext.Provider>
+        </JotaiProvider>
+      </ScalprumProvider>
+    </IntlProvider>
+  );
+};
+
+const WrapperWithAtoms = ({
+  config = initialScalprumConfig,
+  moduleRoutes = initialModuleRoutes,
+}: {
+  config?: ScalprumConfig;
+  moduleRoutes?: RouteDefinition[];
+}) => {
+  return (
+    <IntlProvider locale="en">
       <JotaiProvider store={chromeStore}>
-        <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-          <RootApp />
-        </ChromeAuthContext.Provider>
+        <AtomSetter config={config} moduleRoutes={moduleRoutes} />
       </JotaiProvider>
     </IntlProvider>
+  );
+};
+
+const AtomSetter = ({ config, moduleRoutes }: { config: ScalprumConfig; moduleRoutes: RouteDefinition[] }) => {
+  const [scalprumConfig, setScalprumConfig] = useAtom(scalprumConfigAtom);
+  const setModuleRoutes = useSetAtom(moduleRoutesAtom);
+
+  useEffect(() => {
+    setModuleRoutes(moduleRoutes);
+    setScalprumConfig(config);
+  }, [config, moduleRoutes, setModuleRoutes, setScalprumConfig]);
+
+  if (Object.keys(scalprumConfig).length === 0) {
+    return null;
+  }
+
+  return (
+    <ChromeAuthContext.Provider value={chromeAuthContextValue}>
+      <RootApp />
+    </ChromeAuthContext.Provider>
   );
 };
 
@@ -123,9 +192,35 @@ describe('HelpTopicManager', () => {
     cy.window().then((win) => {
       win.virtualAssistant = {
         init: () => {},
-        get: () => () => ({
-          default: () => <div>Virtual Assistant</div>,
-        }),
+        get: (module) => {
+          return () => {
+            if (module === './AstroVirtualAssistant') {
+              return {
+                default: () => <div>Virtual Assistant</div>,
+              };
+            }
+            if (module === './state/globalState') {
+              return {
+                useVirtualAssistant: () => [],
+                Models: {},
+              };
+            }
+            return {};
+          };
+        },
+      };
+      win.TestApp = {
+        init: () => {},
+        get: (module) => {
+          return () => {
+            if (module === './TestApp') {
+              return {
+                default: () => <div>Test App</div>,
+              };
+            }
+            return {};
+          };
+        },
       };
     });
   });
@@ -271,15 +366,11 @@ describe('HelpTopicManager', () => {
 
     // Mount the TestComponent with InternalChromeContext that provides the mocked chrome API
     cy.mount(
-      <IntlProvider locale="en">
-        <JotaiProvider store={chromeStore}>
-          <ChromeAuthContext.Provider value={chromeAuthContextValue}>
-            <InternalChromeContext.Provider value={mockChromeAPI}>
-              <TestComponent />
-            </InternalChromeContext.Provider>
-          </ChromeAuthContext.Provider>
-        </JotaiProvider>
-      </IntlProvider>
+      <Wrapper>
+        <InternalChromeContext.Provider value={mockChromeAPI}>
+          <TestComponent />
+        </InternalChromeContext.Provider>
+      </Wrapper>
     );
 
     // Verify the TestComponent buttons are rendered
@@ -299,7 +390,7 @@ describe('HelpTopicManager', () => {
 
   it('should test Jotai atoms setup', () => {
     // Test the Jotai atoms configuration
-    cy.mount(<Wrapper />);
+    cy.mount(<WrapperWithAtoms />);
 
     // The Wrapper component tests:
     // - scalprumConfigAtom (useAtom)
