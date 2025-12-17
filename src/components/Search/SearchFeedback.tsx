@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
 import './SearchFeedback.scss';
 
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
@@ -64,12 +65,22 @@ const SearchFeedback = ({ query, results, feedbackType, onFeedbackSubmitted }: S
     <MenuGroup className="chr-c-search-feedback pf-v6-u-px-md" label={label}>
       <MenuItem className="pf-v6-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_POSITIVE)}>
         <Icon isInline>
-          <OutlinedThumbsUpIcon className={currentFeedbackType === SEARCH_FEEDBACK_POSITIVE ? 'pf-v6-u-active-color-100' : 'pf-v6-u-color-200'} />
+          <OutlinedThumbsUpIcon
+            className={classNames({
+              'pf-v6-u-active-color-100': currentFeedbackType === SEARCH_FEEDBACK_POSITIVE,
+              'pf-v6-u-color-200': currentFeedbackType !== SEARCH_FEEDBACK_POSITIVE,
+            })}
+          />
         </Icon>
       </MenuItem>
       <MenuItem className="pf-v6-u-px-xs" isDisabled={!!currentFeedbackType} onClick={() => trackFeedback(SEARCH_FEEDBACK_NEGATIVE)}>
         <Icon isInline>
-          <OutlinedThumbsDownIcon className={currentFeedbackType === SEARCH_FEEDBACK_NEGATIVE ? 'pf-v6-u-active-color-100' : 'pf-v6-u-color-200'} />
+          <OutlinedThumbsDownIcon
+            className={classNames({
+              'pf-v6-u-active-color-100': currentFeedbackType === SEARCH_FEEDBACK_NEGATIVE,
+              'pf-v6-u-color-200': currentFeedbackType !== SEARCH_FEEDBACK_NEGATIVE,
+            })}
+          />
         </Icon>
       </MenuItem>
     </MenuGroup>
