@@ -58,7 +58,7 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 // The module is self-contained and handles its own state management
 const OpenShiftIntercomModuleProps: ScalprumComponentProps = {
   scope: 'chrome',
-  module: './OpenShiftIntercomModule',
+  module: './analytics/intercom/OpenShiftItercom',
   fallback: null,
   ErrorComponent: <Fragment />, // Prevents broken layout
 };
