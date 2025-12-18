@@ -14,10 +14,15 @@ test.describe('Favorite Services (E2E User Flow)', () => {
     await page.waitForLoadState('load');
     await page.getByText(serviceToTest).scrollIntoViewIfNeeded();
 
-    // 3. Favorite a specific service on the page
-    await page.getByLabel(`Favorite ${serviceToTest}`).click();
-    // stage can be slow in konflux pipelines
-    await page.waitForLoadState('load');
+    // 3. Favorite a specific service on the page (if not already favorited)
+    const favoriteButton = page.getByLabel(`Favorite ${serviceToTest}`);
+    const isFavorited = await favoriteButton.evaluate((el) => el.classList.contains('chr-c-icon-favorited'));
+
+    if (!isFavorited) {
+      await favoriteButton.click();
+      // stage can be slow in konflux pipelines
+      await page.waitForLoadState('load');
+    }
 
     // 4. Open the All Services drop-down menu
     await page.getByRole('button', { name: 'Red Hat Hybrid Cloud Console' }).click();
