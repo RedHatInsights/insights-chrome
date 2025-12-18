@@ -24,7 +24,7 @@ spec:
   - name: output-image
     value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/insights-chrome-dev:{{revision}}
   - name: dockerfile
-    value: ./Dockerfile
+    value: build-tools/Dockerfile
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
