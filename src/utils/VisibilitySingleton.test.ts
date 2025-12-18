@@ -12,14 +12,12 @@ jest.mock('@scalprum/core', () => {
 
 const userMock: ChromeUser = {
   identity: {
-    // eslint-disable-next-line camelcase
     account_number: '0',
     type: 'User',
     org_id: '123',
   },
   entitlements: {
     insights: {
-      // eslint-disable-next-line camelcase
       is_entitled: true,
       is_trial: false,
     },
@@ -32,11 +30,12 @@ describe('VisibilitySingleton', () => {
   const getUserPermissions = jest.fn();
   let visibilityFunctions: VisibilityFunctions;
 
-  beforeAll(() => {
+  beforeEach(() => {
     initializeVisibilityFunctions({
       getUser,
       getToken,
       getUserPermissions,
+      isPreview: false,
     });
     visibilityFunctions = getVisibilityFunctions();
   });
@@ -154,7 +153,12 @@ describe('VisibilitySingleton', () => {
     };
 
     expect(visibilityFunctions.isProd()).toBe(true);
-    window.location = location;
+
+    // Properly restore the original location
+    Object.defineProperty(window, 'location', {
+      value: location,
+      writable: true,
+    });
   });
 
   test('isProd - false', async () => {
@@ -162,16 +166,14 @@ describe('VisibilitySingleton', () => {
   });
 
   test('isBeta', async () => {
-    const { location } = window;
-    // @ts-ignore
-    delete window.location;
-    // @ts-ignore
-    window.location = {
-      pathname: '/beta/insights/foo',
-    };
-
+    initializeVisibilityFunctions({
+      getUser,
+      getToken,
+      getUserPermissions,
+      isPreview: true,
+    });
+    visibilityFunctions = getVisibilityFunctions();
     expect(visibilityFunctions.isBeta()).toBe(true);
-    window.location = location;
   });
 
   test('isProd - false', async () => {

@@ -1,5 +1,3 @@
-import get from 'lodash/get';
-import { Store } from 'redux';
 import flatMap from 'lodash/flatMap';
 import { ChromeModule, NavItem, RouteDefinition } from '../@types/types';
 import axios from 'axios';
@@ -92,25 +90,16 @@ export function pageAllowsUnentitled() {
   const pathname = getWindow().location.pathname;
   if (
     pathname === '/' ||
-    pathname === '/beta' ||
-    pathname === '/beta/' ||
-    pathname === '/preview' ||
-    pathname === '/preview/' ||
     pathname.indexOf('/openshift') === 0 ||
     pathname.indexOf('/beta/openshift') === 0 ||
-    pathname.indexOf('/preview/openshift') === 0 ||
     pathname.indexOf('/security') === 0 ||
     pathname.indexOf('/beta/security') === 0 ||
-    pathname.indexOf('/preview/security') === 0 ||
     pathname.indexOf('/application-services') === 0 ||
     pathname.indexOf('/beta/application-services') === 0 ||
-    pathname.indexOf('/preview/application-services') === 0 ||
     pathname.indexOf('/hac') === 0 ||
     pathname.indexOf('/beta/hac') === 0 ||
-    pathname.indexOf('/preview/hac') === 0 ||
     pathname.indexOf('/ansible/ansible-dashboard/trial') === 0 ||
     pathname.indexOf('/beta/ansible/ansible-dashboard/trial') === 0 ||
-    pathname.indexOf('/preview/ansible/ansible-dashboard/trial') === 0 ||
     // allow tenants with no account numbers: RHCLOUD-21396
     pathname.match(/\/connect\//)
   ) {
@@ -139,26 +128,6 @@ export function pageRequiresAuthentication() {
   }
 
   return false;
-}
-
-/**
- * Creates a redux listener that watches the state on given path (e.g. chrome.appNav) and calls
- * the given function when the state on the given path changes.
- *
- * The function is called with two parameters: current state value on the path, store reference
- */
-export function createReduxListener(store: Store, path: string, fn: (current: any, store: Store) => void) {
-  let previous: any = undefined;
-
-  return () => {
-    const state = store.getState();
-    const current = get(state, path);
-
-    if (current !== previous) {
-      previous = current;
-      fn(current, store);
-    }
-  };
 }
 
 export function deleteLocalStorageItems(keys: string[]) {
@@ -198,16 +167,6 @@ export function getEnvDetails() {
 
 export function isProd() {
   return location.host === 'cloud.redhat.com' || location.host === 'console.redhat.com' || location.host.includes('prod.foo.redhat.com');
-}
-
-export function isBeta(pathname?: string) {
-  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
-  return ['beta', 'preview'].includes(previewFragment);
-}
-
-export function getRouterBasename(pathname?: string) {
-  const previewFragment = (pathname ?? window.location.pathname).split('/')[1];
-  return isBeta(pathname) ? `/${previewFragment}` : '/';
 }
 
 export function ITLess() {
@@ -323,7 +282,6 @@ export const levelArray = (navItems: NavItem[]): string[] => {
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 export function noop() {}
 
 export const trustarcScriptSetup = () => {
@@ -341,12 +299,7 @@ export const trustarcScriptSetup = () => {
 };
 
 const CHROME_SERVICE_BASE = '/api/chrome-service/v1';
-export const chromeServiceStaticPathname = {
-  beta: {
-    stage: '/static/beta/stage',
-    prod: '/static/beta/prod',
-    itless: '/static/beta/itless',
-  },
+export const chromeServiceStaticPathname: { [key in CPN]: { stage: string; prod: string; itless: string } } = {
   stable: {
     stage: '/static/stable/stage',
     prod: '/static/stable/prod',
@@ -354,14 +307,16 @@ export const chromeServiceStaticPathname = {
   },
 };
 
+type CPN = 'stable';
+
 export function getChromeStaticPathname(type: 'modules' | 'navigation' | 'services' | 'search') {
-  const stableEnv = isBeta() ? 'beta' : 'stable';
+  const stableEnv: CPN = 'stable';
   const prodEnv = isProd() ? 'prod' : ITLess() ? 'itless' : 'stage';
   return `${CHROME_SERVICE_BASE}${chromeServiceStaticPathname[stableEnv][prodEnv]}/${type}`;
 }
 
 function getChromeDynamicPaths() {
-  return `${isBeta() ? '/beta' : ''}/apps/chrome/operator-generated/fed-modules.json`;
+  return '/apps/chrome/operator-generated/fed-modules.json';
 }
 
 const fedModulesheaders = {
@@ -378,10 +333,11 @@ const loadCSCFedModules = () =>
     headers: fedModulesheaders,
   });
 
-export const loadFedModules = async () =>
-  Promise.all([
+export const loadFedModules = async () => {
+  const fedModulesPath = '/api/chrome-service/v1/static/fed-modules-generated.json';
+  return Promise.all([
     axios
-      .get(`${getChromeStaticPathname('modules')}/fed-modules.json`, {
+      .get(fedModulesPath, {
         headers: fedModulesheaders,
       })
       .catch(loadCSCFedModules),
@@ -392,6 +348,7 @@ export const loadFedModules = async () =>
     }
     return staticConfig;
   });
+};
 
 export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
   Object.entries(modules)
@@ -409,6 +366,7 @@ export const generateRoutesList = (modules: { [key: string]: ChromeModule }) =>
               dynamic: typeof dynamic === 'boolean' ? dynamic : typeof route === 'string' ? true : route.dynamic,
               exact: typeof route === 'string' ? false : route.exact,
               props: typeof route === 'object' ? route.props : undefined,
+              permissions: typeof route === 'object' ? route.permissions : undefined,
             }))
           )
           .flat(),
@@ -461,3 +419,9 @@ export function findNavLeafPath(
 
 // converts text to an identifier in title case
 export const titleToId = (title: string) => title?.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase()).replace(/\s+/g, '');
+
+export function getSevenDaysAgo(): string {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
+  return sevenDaysAgo.toISOString().split('.')[0];
+}

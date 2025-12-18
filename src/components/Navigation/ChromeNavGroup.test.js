@@ -1,15 +1,11 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
-import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
-import createMockStore from 'redux-mock-store';
 import NavContext from './navContext';
 import ChromeNavGroup from './ChromeNavGroup';
 import componentMapper from './componentMapper';
 
 const NavContextWrapper = ({
-  store,
   providerValue = {
     onLinkClick: jest.fn(),
     componentMapper,
@@ -18,14 +14,13 @@ const NavContextWrapper = ({
   initialEntries,
 }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <Provider store={store}>
+    <div>
       <NavContext.Provider value={providerValue}>{children}</NavContext.Provider>
-    </Provider>
+    </div>
   </MemoryRouter>
 );
 
 describe('ChromeNavGroup', () => {
-  const mockStore = createMockStore();
   const groupTitle = 'Foo';
   const testProps = {
     appId: 'testModule',
@@ -33,19 +28,10 @@ describe('ChromeNavGroup', () => {
     title: groupTitle,
     navItems: [],
   };
-  const store = mockStore({
-    chrome: {
-      activeModule: 'testModule',
-      moduleRoutes: [],
-      modules: {
-        testModule: {},
-      },
-    },
-  });
 
   test('should not render nav item group', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavGroup isHidden {...testProps} />
       </NavContextWrapper>
     );
@@ -55,7 +41,7 @@ describe('ChromeNavGroup', () => {
 
   test('should render nav item group', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavGroup {...testProps} />
       </NavContextWrapper>
     );
@@ -65,7 +51,7 @@ describe('ChromeNavGroup', () => {
 
   test('should render nav item group with icon', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavGroup {...testProps} icon="wrench" />
       </NavContextWrapper>
     );
@@ -75,7 +61,7 @@ describe('ChromeNavGroup', () => {
 
   test('should render nav item group with items', () => {
     const { queryAllByText, container } = render(
-      <NavContextWrapper store={store}>
+      <NavContextWrapper>
         <ChromeNavGroup
           {...testProps}
           navItems={[

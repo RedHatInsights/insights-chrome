@@ -4,8 +4,12 @@ import messages from '../../locales/Messages';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
 import { Group } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { GroupFilter } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
-import { Button, InputGroup, InputGroupItem, Popover, PopoverPosition } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { InputGroup } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { InputGroupItem } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-question-circle-icon';
 import { FlagTagsFilter } from '../../@types/types';
 
 export type GroupFilterInputGroupProps = {
@@ -53,7 +57,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
             <div>
               {intl.formatMessage(messages.filterByTagsPopoverContent1)}{' '}
               <a
-                href="https://access.redhat.com/documentation/en-us/subscription_central/1-latest/html/getting_started_with_the_subscriptions_service/proc-installing-satellite-inventory-upload-plugin_assembly-setting-up-subscriptionwatch-ctxt"
+                href="https://docs.redhat.com/en/documentation/subscription_central/1-latest/html/getting_started_with_the_subscriptions_service/proc-installing-satellite-inventory-upload-plugin_assembly-setting-up-subscriptionwatch-ctxt"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -61,7 +65,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
               </a>
               {intl.formatMessage(messages.filterByTagsPopoverContent2)}{' '}
               <a
-                href="https://access.redhat.com/documentation/en-us/red_hat_insights/1-latest/html/client_configuration_guide_for_red_hat_insights/assembly-client-data-adding-tags#con-insights-client-custom-system-tagging_insights-cg-adding-tags"
+                href="https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/client_configuration_guide_for_red_hat_lightspeed/index#proc-lightspeed-creating-custom-group-tags-yaml-file_lightspeed-cg-adding-tags"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -72,9 +76,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
           }
           appendTo={() => document.body}
         >
-          <Button variant="control" aria-label="Tags help">
-            <OutlinedQuestionCircleIcon />
-          </Button>
+          <Button icon={<OutlinedQuestionCircleIcon />} variant="control" aria-label="Tags help" />
         </Popover>
       </InputGroupItem>
     </InputGroup>
