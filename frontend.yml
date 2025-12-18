@@ -30,6 +30,8 @@ objects:
         paths:
           - /
       akamaiCacheBustPaths:
+        # / should not be cached whatsoever
+        - /
         - /config/chrome/fed-modules.json
         - /apps/chrome/index.html
         - /apps/chrome/js/fed-mods.json
