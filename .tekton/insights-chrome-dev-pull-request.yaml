@@ -212,66 +212,6 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: parse-build-deploy-script
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      runAfter:
-      - clone-repository
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
-        - name: pathInRepo
-          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
-    - name: create-frontend-dockerfile
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      - name: component
-        value: $(tasks.parse-build-deploy-script.results.component)
-      - name: image
-        value: $(tasks.parse-build-deploy-script.results.image)
-      - name: node-build-version
-        value: $(tasks.parse-build-deploy-script.results.node-build-version)
-      - name: quay-expire-time
-        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-      - name: npm-build-script
-        value: build:dev
-      - name: yarn-build-script
-        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-      - name: route-path
-        value: $(tasks.parse-build-deploy-script.results.route-path)
-      - name: beta-route-path
-        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-      - name: preview-route-path
-        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-      - name: ci-root
-        value: $(tasks.parse-build-deploy-script.results.ci-root)
-      - name: server-name
-        value: $(tasks.parse-build-deploy-script.results.server-name)
-      - name: dist-folder
-        value: $(tasks.parse-build-deploy-script.results.dist-folder)
-      runAfter:
-      - parse-build-deploy-script
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: e0b400ca6433f1ff05722c412ab837c4bd49a45a
-        - name: pathInRepo
-          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -324,7 +264,6 @@ spec:
         value: $(params.buildah-format)
       runAfter:
       - prefetch-dependencies
-      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
