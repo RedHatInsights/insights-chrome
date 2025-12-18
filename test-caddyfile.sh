@@ -34,22 +34,22 @@ setup_test_files() {
     echo -e "${YELLOW}Setting up test files...${NC}"
     
     # Create the exact directory structure expected by the real Caddyfile
-    mkdir -p "$TEST_DIR/srv/dist/stable"
+    mkdir -p "$TEST_DIR/srv/dist/"
     
     # Create test files matching what the real Caddyfile expects
-    cat > "$TEST_DIR/srv/dist/stable/index.html" << EOF
+    cat > "$TEST_DIR/srv/dist//index.html" << EOF
 <!DOCTYPE html>
 <html>
-<head><title>Chrome App - Stable</title></head>
-<body><h1>Chrome Application - Stable Build</h1></body>
+<head><title>Chrome App</title></head>
+<body><h1>Chrome Application</h1></body>
 </html>
 EOF
     
     # Create additional test files
-    echo "stable-app.js" > "$TEST_DIR/srv/dist/stable/app.js"
+    echo "app.js" > "$TEST_DIR/srv/dist/app.js"
     
     # Create a test SVG image file
-    cat > "$TEST_DIR/srv/dist/stable/image.svg" << 'EOF'
+    cat > "$TEST_DIR/srv/dist/image.svg" << 'EOF'
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
   <text x="50" y="55" text-anchor="middle" font-family="Arial" font-size="14" fill="white">Test</text>
@@ -127,7 +127,7 @@ run_tests() {
     local failed=0
     
     # Test specific chrome app routes
-    test_route "/apps/chrome/index.html" "200" "Chrome Application - Stable Build" "Chrome app index.html" || ((failed++))
+    test_route "/apps/chrome/index.html" "200" "Chrome Application" "Chrome app index.html" || ((failed++))
     
     # Test static asset serving - SVG image
     test_route "/apps/chrome/image.svg" "200" "<svg xmlns=" "Chrome app SVG image" || ((failed++))
@@ -136,7 +136,7 @@ run_tests() {
     test_route "/apps/doesnt-exist/file.js" "404" "Not found" "Non-existent app file (404 test)" || ((failed++))
     
     # Test fallback behavior - /subscriptions should point to index.html
-    test_route "/subscriptions" "200" "Chrome Application - Stable Build" "Subscriptions fallback to index.html" || ((failed++))
+    test_route "/subscriptions" "200" "Chrome Application" "Subscriptions fallback to index.html" || ((failed++))
     
     # Test non-existent file in chrome app (should return 404)
     test_route "/apps/chrome/doesnt-exist.js" "404" "" "Non-existent file in chrome app (404 test)" || ((failed++))
