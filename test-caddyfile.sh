@@ -37,7 +37,7 @@ setup_test_files() {
     mkdir -p "$TEST_DIR/srv/dist/"
     
     # Create test files matching what the real Caddyfile expects
-    cat > "$TEST_DIR/srv/dist//index.html" << EOF
+    cat > "$TEST_DIR/srv/dist/index.html" << EOF
 <!DOCTYPE html>
 <html>
 <head><title>Chrome App</title></head>
