@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
 import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
-import { Text, TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
-
-import { ContextSelector, ContextSelectorItem } from '@patternfly/react-core/deprecated';
-
+import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
+import { Dropdown, DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuSearch, MenuSearchInput } from '@patternfly/react-core/dist/dynamic/components/Menu';
+import { MenuToggle } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { InputGroup, InputGroupItem } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
 import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
 import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client';
+import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client/types';
 
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
@@ -24,13 +26,13 @@ import {
   REQUESTS_COUNT,
   REQUESTS_DATA,
 } from '../../utils/consts';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { useAtom } from 'jotai';
 import { contextSwitcherOpenAtom } from '../../state/atoms/contextSwitcher';
 
 export type ContextSwitcherProps = {
-  user: ChromeUser;
   className?: string;
+  accountNumber?: string;
+  isInternal?: boolean;
 };
 
 // These attributes are present in the response based on the open API spec.
@@ -41,12 +43,12 @@ type CrossAccountRequestInternal = CrossAccountRequest & {
   email: string;
 };
 
-const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
+const ContextSwitcher = ({ accountNumber, className, isInternal }: ContextSwitcherProps) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useAtom(contextSwitcherOpenAtom);
   const [data, setData] = useState<CrossAccountRequestInternal[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [selectedAccountNumber, setSelectedAccountNumber] = useState(user.identity.account_number);
+  const [selectedAccountNumber, setSelectedAccountNumber] = useState(accountNumber);
   const onSelect = () => {
     setIsOpen((prev) => !prev);
   };
@@ -80,10 +82,10 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   };
 
   const resetAccountRequest = () => {
-    if (user?.identity?.account_number === selectedAccountNumber) {
+    if (accountNumber === selectedAccountNumber) {
       return;
     }
-    setSelectedAccountNumber(user?.identity?.account_number);
+    setSelectedAccountNumber(accountNumber);
     Cookies.remove(CROSS_ACCESS_ACCOUNT_NUMBER);
     Cookies.remove(CROSS_ACCESS_ORG_ID);
     localStorage.removeItem(ACTIVE_REMOTE_REQUEST);
@@ -93,7 +95,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
   useEffect(() => {
     let mounted = true;
     // only inernal users have the TAM features enabled
-    if (user?.identity?.user?.is_internal) {
+    if (isInternal) {
       const initialAccount = localStorage.getItem(ACTIVE_REMOTE_REQUEST);
       if (initialAccount) {
         try {
@@ -121,7 +123,7 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
                   }
                   return [...acc, curr];
                 }, [])
-                .filter(({ target_account }) => target_account !== user.identity.account_number)
+                .filter(({ target_account }) => target_account !== accountNumber)
             );
           }
         });
@@ -137,66 +139,76 @@ const ContextSwitcher = ({ user, className }: ContextSwitcherProps) => {
 
   const filteredData = data && data.filter(({ target_account }) => `${target_account}`.includes(searchValue));
 
+  const contextSwitcherToggle = (toggleRef: React.RefObject<any>) => (
+    <MenuToggle ref={toggleRef} isExpanded={isOpen} onClick={onSelect} aria-label="Selected account:">
+      Account: {selectedAccountNumber}
+    </MenuToggle>
+  );
+
   return (
-    <ContextSelector
-      toggleText={`Account: ${selectedAccountNumber}`}
+    <Dropdown
+      toggle={contextSwitcherToggle}
       className={classNames('chr-c-context-selector', className)}
-      onSearchInputChange={(_event, val) => setSearchValue(val)}
       isOpen={isOpen}
-      searchInputValue={searchValue}
-      onToggle={onSelect}
       onSelect={onSelect}
-      screenReaderLabel="Selected account:`"
       ouiaId="Account Switcher"
-      searchInputPlaceholder={intl.formatMessage(messages.searchAccount)}
-      isFullHeight
+      maxMenuHeight="100%"
     >
-      {user && user?.identity?.account_number?.includes(searchValue) ? (
-        <ContextSelectorItem onClick={resetAccountRequest}>
-          <TextContent className="chr-c-content-account">
-            <Text className="account-label pf-v5-u-mb-0 sentry-mask data-hj-suppress">
-              <span>{user?.identity?.account_number}</span>
-              {user?.identity?.account_number === `${selectedAccountNumber}` && (
-                <Icon size="sm" className="pf-v5-u-ml-auto">
-                  <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
+      <MenuSearch>
+        <MenuSearchInput>
+          <InputGroup>
+            <InputGroupItem isFill>
+              <SearchInput value={searchValue} onChange={(_event, val) => setSearchValue(val)} placeholder={intl.formatMessage(messages.searchAccount)} />
+            </InputGroupItem>
+          </InputGroup>
+        </MenuSearchInput>
+      </MenuSearch>
+      {accountNumber?.includes(searchValue) ? (
+        <DropdownItem onClick={resetAccountRequest}>
+          <Content className="chr-c-content-account">
+            <Content component="p" className="account-label pf-v6-u-mb-0 sentry-mask data-hj-suppress">
+              <span>{accountNumber}</span>
+              {accountNumber === `${selectedAccountNumber}` && (
+                <Icon size="sm" className="pf-v6-u-ml-auto">
+                  <CheckIcon color="var(--pf-t--global--icon--color--brand--default)" />
                 </Icon>
               )}
-            </Text>
-            <Text className="account-name" component="small">
+            </Content>
+            <Content className="account-name" component="small">
               {intl.formatMessage(messages.personalAccount)}
-            </Text>
-          </TextContent>
-        </ContextSelectorItem>
+            </Content>
+          </Content>
+        </DropdownItem>
       ) : (
         <Fragment />
       )}
-      {filteredData?.length === 0 ? <ContextSelectorItem>{intl.formatMessage(messages.noResults)}</ContextSelectorItem> : <Fragment />}
+      {filteredData?.length === 0 ? <DropdownItem>{intl.formatMessage(messages.noResults)}</DropdownItem> : <Fragment />}
       {filteredData ? (
         filteredData.map(({ target_account, request_id, end_date, target_org, email, first_name, last_name }) => (
-          <ContextSelectorItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
-            <TextContent className="chr-c-content-account">
-              <Text className="account-label">
+          <DropdownItem onClick={() => handleItemClick(target_account, request_id, end_date, target_org)} key={request_id}>
+            <Content className="chr-c-content-account">
+              <Content component="p" className="account-label">
                 <span>{target_account}</span>
                 {target_account === selectedAccountNumber && (
-                  <Icon size="sm" className="pf-v5-u-ml-auto">
-                    <CheckIcon color="var(--pf-v5-global--primary-color--100)" />
+                  <Icon size="sm" className="pf-v6-u-ml-auto">
+                    <CheckIcon color="var(--pf-t--global--icon--color--brand--default)" />
                   </Icon>
                 )}
-              </Text>
-              <Text className="account-name" component="small">
+              </Content>
+              <Content className="account-name" component="small">
                 {first_name && last_name ? `${first_name} ${last_name}` : email}
-              </Text>
-            </TextContent>
-          </ContextSelectorItem>
+              </Content>
+            </Content>
+          </DropdownItem>
         ))
       ) : (
-        <ContextSelectorItem>
+        <DropdownItem>
           <Bullseye>
             <Spinner size="md" />
           </Bullseye>
-        </ContextSelectorItem>
+        </DropdownItem>
       )}
-    </ContextSelector>
+    </Dropdown>
   );
 };
 

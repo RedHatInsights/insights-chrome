@@ -1,4 +1,4 @@
-import { isBeta, isProd } from '../utils/common';
+import { isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { DeepRequired } from 'utility-types';
 
@@ -14,23 +14,24 @@ function isInternalFlag(email: string, isInternal = false) {
   return '';
 }
 
-function getUrl(type?: string) {
-  if (['/beta', '/preview', '/'].includes(window.location.pathname)) {
+function getUrl(type?: string, isPreview = false) {
+  if (['/'].includes(window.location.pathname)) {
     return 'landing';
   }
 
   const sections = window.location.pathname.split('/').slice(1);
-  const isBetaEnv = isBeta();
   if (type) {
-    if (isBetaEnv) {
+    if (isPreview) {
       return type === 'bundle' ? sections[1] : sections[2];
     }
 
     return type === 'bundle' ? sections[0] : sections[1];
   }
 
-  isBetaEnv && sections.shift();
-  return [isBetaEnv, ...sections];
+  if (isPreview) {
+    sections.shift();
+  }
+  return [isPreview, ...sections];
 }
 
 function getAdobeVisitorId() {
@@ -42,18 +43,18 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-export function getPendoConf(data: DeepRequired<ChromeUser>) {
+export function getPendoConf(data: DeepRequired<ChromeUser>, isPreview: boolean) {
   const userID = `${data.identity.internal.account_id}${isInternalFlag(data.identity.user.email, data.identity.user.is_internal)}`;
 
   const entitlements: Record<string, boolean> = {};
-
-  data.entitlements &&
+  if (data.entitlements) {
     Object.entries(data.entitlements).forEach(([key, value]) => {
       entitlements[`entitlements_${key}`] = value.is_entitled;
       entitlements[`entitlements_${key}_trial`] = value.is_trial;
     });
+  }
 
-  const [isBeta, currentBundle, currentApp, ...rest] = getUrl();
+  const [isBeta, currentBundle, currentApp, ...rest] = getUrl(undefined, isPreview);
 
   return {
     visitor: {
