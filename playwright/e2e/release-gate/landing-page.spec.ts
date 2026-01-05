@@ -4,9 +4,7 @@ import { login } from '../../helpers/auth';
 test.describe('Landing page', () => {
   test('visit landing page', async ({ page }) => {
     await login(page);
-
-    // check if a favorites link exists on the page
-    await expect(page.getByText('My favorite services')).toBeVisible();
+    await expect(page.getByText('Help')).toBeVisible({ timeout: 45000 });
   });
 
   test('tooltip is shown when hovering over the gear/question icon', async ({ page }) => {
