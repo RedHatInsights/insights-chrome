@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable prefer-rest-params */
+
 import { get3scaleError } from './responseInterceptors';
 import crossAccountBouncer from '../auth/crossAccountBouncer';
 import { createStore } from 'jotai';
@@ -11,17 +11,37 @@ import { gatewayErrorAtom } from '../state/atoms/gatewayErrorAtom';
 let xhrResults: XMLHttpRequest[] = [];
 let fetchResults: Record<string, unknown> = {};
 
+// this extra header helps with API metrics
+const FE_ORIGIN_HEADER_NAME = 'x-rh-frontend-origin';
 const DENIED_CROSS_CHECK = 'Access denied from RBAC on cross-access check';
 const AUTH_ALLOWED_ORIGINS = [
   location.origin,
   /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com/,
   /https:\/\/api?\.demo-experience(?:\.[a-z]+)?\.demo?\.redhat?\.com/,
   /https:\/\/api?\.aws?\.ap-southeast-1(?:\.[a-z]+)?\.openshift?\.com/,
+  /https:\/\/console-service?\.[a-z]*-[a-z]*\.?(?:[a-z]*)\.aws?\.ansiblecloud?(?:\.redhat)?\.com\/api/,
 ];
-const AUTH_EXCLUDED_URLS = [/https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/];
+const AUTH_EXCLUDED_URLS = [
+  /https:\/\/api(?:\.[a-z]+)?\.openshift(?:[a-z]+)?\.com\/api\/upgrades_info/,
+  /^https?:\/\/consent\.trustarc\.com\/analytics.*$/, // Causes CORS error
+];
 
 const isExcluded = (target: string) => {
   return AUTH_EXCLUDED_URLS.some((regex) => regex.test(target));
+};
+
+const shouldInjectUIHeader = (path: URL | Request | string = '') => {
+  if (path instanceof URL) {
+    // the type URL has a different match function than the cases above
+    return location.origin === path.origin && !isExcluded(path.href);
+  } else if (path instanceof Request) {
+    const isOriginAllowed = path.url.startsWith(location.origin);
+    return isOriginAllowed && !isExcluded(path.url);
+  } else if (typeof path === 'string') {
+    return path.startsWith(location.origin) || path.startsWith('/api');
+  }
+
+  return false;
 };
 
 const verifyTarget = (originMatch: string, urlMatch: string) => {
@@ -74,7 +94,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
   const iqeEnabled = window.localStorage && window.localStorage.getItem('iqe:chrome:init') === 'true';
 
   if (iqeEnabled) {
-    console.log('[iqe] initialized'); // eslint-disable-line no-console
+    console.log('[iqe] initialized');
   }
 
   // must use function here because arrows dont "this" like functions
@@ -105,13 +125,19 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
         this.setRequestHeader('Auth', `Bearer ${authRef.current.user?.access_token}`);
       }
     }
-    // eslint-disable-line func-names
+    if (shouldInjectUIHeader((this as XMLHttpRequest & { _url: string })._url)) {
+      this.setRequestHeader(FE_ORIGIN_HEADER_NAME, 'hcc');
+    }
+
     if (iqeEnabled) {
       xhrResults.push(this);
     }
     this.onload = function () {
       if (this.status >= 400) {
-        const gatewayError = get3scaleError(this.response);
+        const gatewayError = get3scaleError(this.response, {
+          loginRedirect: authRef.current.signinRedirect,
+          loginSilent: authRef.current.signinSilent,
+        });
         if (this.status === 403 && this.responseText.includes(DENIED_CROSS_CHECK)) {
           crossAccountBouncer();
           // check for 3scale error
@@ -136,6 +162,10 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
       request.headers.append('Authorization', `Bearer ${authRef.current.user?.access_token}`);
     }
 
+    if (shouldInjectUIHeader(request) && !request.headers.has(FE_ORIGIN_HEADER_NAME)) {
+      request.headers.append(FE_ORIGIN_HEADER_NAME, 'hcc');
+    }
+
     const prom = oldFetch.apply(this, [request, ...rest]);
     if (iqeEnabled) {
       fetchResults[tid] = arguments[0];
@@ -155,7 +185,10 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
           try {
             const isJson = resCloned?.headers?.get('content-type')?.includes('application/json');
             const data = isJson ? await resCloned.json() : await resCloned.text();
-            const gatewayError = get3scaleError(data);
+            const gatewayError = get3scaleError(data, {
+              loginRedirect: authRef.current.signinRedirect,
+              loginSilent: authRef.current.signinSilent,
+            });
             if (gatewayError) {
               chromeStore.set(gatewayErrorAtom, gatewayError);
             }
@@ -177,6 +210,7 @@ export function init(chromeStore: ReturnType<typeof createStore>, authRef: React
 
 const qe = {
   init,
+  isExcluded,
   spreadAdditionalHeaders,
   hasPendingAjax: () => {
     const xhrRemoved = xhrResults.filter((result) => result.readyState === 4 || result.readyState === 0);

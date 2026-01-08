@@ -85,7 +85,7 @@
           "title": "Application Services",
           "links": [
             "application-services.trustedContentOverview",
-            "application-services.apiManagement"
+            "application-services.trustedArtifactSignerOverview"
           ]
         }
       ]
@@ -108,18 +108,6 @@
           "title": "Quay.io",
           "links": [
             "quay.quayRepositories"
-          ]
-        },
-        {
-          "isGroup": true,
-          "title": "Edge",
-          "links": [
-            {
-              "title": "Images",
-              "href": "/edge/manage-images",
-              "icon": "EdgeIcon",
-              "description": "Manage the lifecycle and enhance security of your RHEL systems at the edge."
-            }
           ]
         }
       ]
@@ -213,95 +201,6 @@
       ]
     },
     {
-      "id": "observe",
-      "icon": "ChartLineIcon",
-      "title": "Observability and Monitoring",
-      "description": "Monitor, troubleshoot, and improve application performance.",
-      "links": [
-        {
-          "isGroup": true,
-          "title": "Red Hat Enterprise Linux",
-          "links": [
-            "rhel.advisories",
-            "rhel.repositories",
-            {
-              "href": "/insights/patch/systems",
-              "title": "Patch",
-              "icon": "InsightsIcon"
-            },
-            {
-              "href": "/insights/advisor/recommendations",
-              "title": "Advisor",
-              "icon": "InsightsIcon",
-              "subtitle": "Red Hat Insights for RHEL",
-              "description": "View details about your Red Hat Enterprise Linux systems."
-            },
-            {
-              "href": "/insights/drift",
-              "title": "Drift",
-              "icon": "InsightsIcon",
-              "subtitle": "Red Hat Insights for RHEL",
-              "description": "Compare systems in your Red Hat Enterprise Linux inventory to one another or against a set baseline."
-            },
-            "rhel.policies"
-          ]
-        },
-        {
-          "isGroup": true,
-          "title": "OpenShift",
-          "links": [
-            {
-              "href": "/openshift/insights/advisor/recommendations",
-              "icon": "OpenShiftIcon",
-              "title": "Advisor",
-              "subtitle": "Red Hat Insights for OpenShift",
-              "description": "See targeted recommendations to optimize your OpenShift clusters’ availability, performance, and security."
-            },
-            {
-              "href": "/openshift/insights/vulnerability/cves",
-              "icon": "OpenShiftIcon",
-              "title": "Vulnerability",
-              "subtitle": "Red Hat Insights for OpenShift",
-              "description": "Identify and prioritize security vulnerabilities within your OpenShift clusters based on severity and frequency."
-            }
-          ]
-        },
-        {
-          "isGroup": true,
-          "title": "Ansible",
-          "links": [
-            {
-              "href": "/ansible/advisor/recommendations",
-              "title": "Advisor",
-              "subtitle": "Red Hat Insights for Ansible",
-              "icon": "AnsibleIcon",
-              "description": "See targeted recommendations to optimize your Ansible hosts’ availability, performance, and security."
-            },
-            {
-              "title": "Drift",
-              "href": "/ansible/drift",
-              "icon": "AnsibleIcon",
-              "subtitle": "Red Hat Insights for Ansible",
-              "description": "Compare systems in your Ansible inventory to one another or against a set baseline."
-            },
-            "ansible.policies"
-          ]
-        },
-        {
-          "isGroup": true,
-          "title": "Subscription Services",
-          "links": [
-            {
-              "id": "openshift",
-              "title": "Subscriptions Usage",
-              "icon": "OpenShiftIcon",
-              "href": "/subscriptions/usage/openshift"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "security",
       "icon": "CloudSecurityIcon",
       "title": "Security",
@@ -373,7 +272,6 @@
           "isGroup": true,
           "title": "Application Services",
           "links": [
-            "application-services.trustedContentOverview",
            {
              "title": "Advanced Cluster Security",
              "href": "/application-services/acs/overview",
