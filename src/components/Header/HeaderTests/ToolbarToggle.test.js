@@ -62,10 +62,10 @@ describe('ToolbarToggle', () => {
     });
 
     // wait for async actions on toggle to complete
-    await waitFor(async () => {
-      for (const item of expectedTexts) {
+    await waitFor(() => {
+      expectedTexts.forEach((item) => {
         expect(screen.queryByText(item.title)).not.toBeInTheDocument();
-      }
+      });
     });
     // expect(container.querySelectorAll('.pf-v6-c-menu__list-item')).toHaveLength(0);
   });
