@@ -1,5 +1,6 @@
 # Insights Chrome
 
+
 The "wrapper" around your application!
 
 Insights Chrome provides:
