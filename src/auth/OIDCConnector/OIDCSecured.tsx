@@ -25,6 +25,7 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import { useFlag } from '@unleash/proxy-client-react';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -80,6 +81,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
+  const silentReauthEnabled = useFlag('platform.chrome.silent-reauth');
 
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
@@ -116,10 +118,36 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
-      const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-      if (shouldReAuth) {
-        login(authRef.current, reAuthScopes);
+      if (!silentReauthEnabled) {
+        const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
+        let promise = Promise.resolve();
+        if (shouldReAuth) {
+          promise = login(authRef.current, reAuthScopes);
+        }
+        return promise;
       }
+
+      let scopes = [...requiredScopes, ...additionalScopes].flat();
+      if (authRef.current.user?.scope) {
+        scopes = scopes.concat(authRef.current.user.scope.split(' '));
+      }
+      console.log('Reauthenticating user with scopes:', scopes);
+      return auth
+        .signinSilent({
+          scope: scopes.join(' '),
+          prompt: 'none',
+          forceIframeAuth: true,
+        })
+        .then((user) => {
+          if (user === null) {
+            login(authRef.current, scopes);
+          }
+        })
+        .catch((error) => {
+          console.error('Error while reauthenticating user', error);
+          // Fallback to hard login if silent reauth fails
+          login(authRef.current, scopes);
+        });
     },
     loginSilent: async () => {
       await auth.signinSilent();
