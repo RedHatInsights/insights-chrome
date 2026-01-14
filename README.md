@@ -70,7 +70,7 @@ When visiting [localhost:8003/apps/frontend-starter-app](http://localhost:8003/a
 
 There are two ways to configure chrome to display your local app. 
 
-### 1. `LOCAL_APPS` environment variable
+#### 1. `LOCAL_APPS` environment variable
 
 ```sh
 LOCAL_APPS=frontend-starter-app:8003 
@@ -120,7 +120,7 @@ LOCAL_APPS=secure-app:8443~https
 LOCAL_APPS=app1:8003,secure-app:8443~https,app3:8005~http
 ```
 
-### 2. Custom route
+#### 2. Custom route
 
 Edit [config/webpack.config.js](config/webpack.config.js) and add the following to the `routes` field of the config object passed to the `proxy` function. 
 
