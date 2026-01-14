@@ -273,7 +273,7 @@ spec:
             limits:
               cpu: "2"
               memory: "4Gi"
-          image: registry.access.redhat.com/ubi8/nodejs-20
+          image: registry.access.redhat.com/ubi9/nodejs-20
           script: |
             #!/bin/bash
             set -ex

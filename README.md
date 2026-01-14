@@ -247,3 +247,4 @@ If you want the bot to ignore your issue or PR, please add one of the following 
 - wip
 - dependencies
 
+IF YOU CAN READ THIS YOU DON'T NEED GLASSES.
