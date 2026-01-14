@@ -71,6 +71,7 @@ const SatelliteToken: React.FC = () => {
             <CardBody>
               Every Satellite server organization must be registered following the steps below.
               <List component={ListComponent.ol} type={OrderType.number}>
+                <ListItem>Add nodes to the IP Allow list located below</ListItem>
                 <ListItem>Copy the registration token above</ListItem>
                 <ListItem>Run the following command from your Satellite server to get the organization id you want to register</ListItem>
                 <ClipboardCopy className="pf-v6-u-mt-md" isReadOnly hoverTip="Copy" clickTip="Copied">
