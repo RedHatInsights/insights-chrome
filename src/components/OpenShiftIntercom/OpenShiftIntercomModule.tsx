@@ -76,6 +76,9 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     };
 
     const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
+    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty("top", `${buttonRect.bottom}px`);
+    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty("bottom", `unset`);
+
 
     window.Intercom('update', {
       vertical_padding: vertical,
@@ -93,9 +96,55 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     window.addEventListener('resize', handleLayoutChange);
     window.addEventListener('scroll', handleLayoutChange);
 
+    // Watch for button vertical position changes using ResizeObserver on parent
+    // Parent size changes can shift the button's vertical position
+    let lastButtonBottom = buttonRef.current?.getBoundingClientRect().bottom;
+
+    const buttonObserver = new ResizeObserver(() => {
+      const currentBottom = buttonRef.current?.getBoundingClientRect().bottom;
+      if (currentBottom !== undefined && currentBottom !== lastButtonBottom) {
+        lastButtonBottom = currentBottom;
+        updatePositionRelativeToButton();
+      }
+    });
+
+    // Observe the button's parent container for size changes that affect button position
+    if (buttonRef.current?.parentElement) {
+      buttonObserver.observe(buttonRef.current.parentElement);
+    }
+
+    // Track whether the Intercom frame was previously visible
+    let wasIntercomFrameVisible = !!document.querySelector('[name="intercom-notification-stack-frame"]');
+
+    const intercomObserver = new MutationObserver(() => {
+      // Check for Intercom notification frame changes
+      const intercomFrame = document.querySelector('[name="intercom-notification-stack-frame"]');
+      const isIntercomFrameVisible = !!intercomFrame;
+
+      if (!isIntercomFrameVisible) {
+        wasIntercomFrameVisible = false;
+        return;
+      }
+      if (isIntercomFrameVisible !== wasIntercomFrameVisible) {
+        wasIntercomFrameVisible = isIntercomFrameVisible;
+        updatePositionRelativeToButton();
+      }
+    });
+
+    // Observe the Intercom container if it exists
+    const intercomContainer = document.querySelector('[name="intercom-container"]');
+    if (intercomContainer) {
+      intercomObserver.observe(intercomContainer, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
     return () => {
       window.removeEventListener('resize', handleLayoutChange);
       window.removeEventListener('scroll', handleLayoutChange);
+      buttonObserver.disconnect();
+      intercomObserver.disconnect();
     };
   }, [updatePositionRelativeToButton, buttonRef]);
 
