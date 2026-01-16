@@ -43,4 +43,4 @@ parameters:
   - name: SSO_URL
     required: true
   - name: IMAGE
-    value: quay.io/cloudservices/insights-chrome-frontend
+    value: quay.io/redhat-services-prod/hcc-platex-services-tenant/insights-chrome
