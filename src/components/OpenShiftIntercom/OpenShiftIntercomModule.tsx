@@ -76,9 +76,8 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     };
 
     const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
-    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty("top", `${buttonRect.bottom}px`);
-    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty("bottom", `unset`);
-
+    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty('top', `${buttonRect.bottom}px`);
+    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty('bottom', `unset`);
 
     window.Intercom('update', {
       vertical_padding: vertical,
