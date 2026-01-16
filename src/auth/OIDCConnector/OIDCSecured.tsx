@@ -8,16 +8,13 @@ import { generateRoutesList } from '../../utils/common';
 import getInitialScope from '../getInitialScope';
 import { init } from '../../utils/iqeEnablement';
 import entitlementsApi from '../entitlementsApi';
-import { initializeVisibilityFunctions } from '../../utils/VisibilitySingleton';
 import sentry from '../../utils/sentry';
 import AppPlaceholder from '../../components/AppPlaceholder';
-import { FooterProps } from '../../components/Footer/Footer';
 import logger from '../logger';
 import { login, logout } from './utils';
-import createGetUserPermissions from '../createGetUserPermissions';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
-import { OFFLINE_REDIRECT_STORAGE_KEY } from '../../utils/consts';
+import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
@@ -26,6 +23,8 @@ import shouldReAuthScopes from '../shouldReAuthScopes';
 import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
+import useManageSilentRenew from './useManageSilentRenew';
+import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -33,9 +32,10 @@ const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: { [entitlement: string]: Entitlement }): ChromeUser {
+function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
   return {
-    entitlements,
+    // The client is missing the trial type on the response
+    entitlements: entitlements as Record<string, Entitlement>,
     identity: {
       org_id: user.profile?.org_id as any,
       type: user.profile?.type as any,
@@ -60,10 +60,10 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 async function fetchEntitlements(user: User) {
-  let entitlements: { [entitlement: string]: Entitlement } = {};
+  let entitlements: ServicesGetReturnType = {};
   try {
     if (user.profile.org_id) {
-      entitlements = (await serviceAPI.servicesGet()) as unknown as typeof entitlements;
+      entitlements = (await serviceAPI.servicesGet({})).data;
       return entitlements;
     } else {
       console.log('Cannot call entitlements API, no account number');
@@ -75,13 +75,7 @@ async function fetchEntitlements(user: User) {
   }
 }
 
-export function OIDCSecured({
-  children,
-  microFrontendConfig,
-  cookieElement,
-  setCookieElement,
-  ssoUrl,
-}: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string } & FooterProps>) {
+export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.PropsWithChildren<{ microFrontendConfig: Record<string, any>; ssoUrl: string }>) {
   const auth = useAuth();
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
@@ -114,9 +108,11 @@ export function OIDCSecured({
         encodeURIComponent(redirectUri.toString().split('#')[0])
       );
     },
+    forceRefresh: () => Promise.resolve(),
     doOffline: () => login(authRef.current, ['offline_access'], prepareOfflineRedirect()),
     getUser: () => Promise.resolve(mapOIDCUserToChromeUser(authRef.current.user ?? {}, {})),
     token: authRef.current.user?.access_token ?? '',
+    refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
     reAuthWithScopes: async (...additionalScopes) => {
@@ -124,6 +120,9 @@ export function OIDCSecured({
       if (shouldReAuth) {
         login(authRef.current, reAuthScopes);
       }
+    },
+    loginSilent: async () => {
+      await auth.signinSilent();
     },
   });
 
@@ -134,8 +133,8 @@ export function OIDCSecured({
     setScalprumConfigAtom(microFrontendConfig);
 
     const initialModuleScope = getInitialScope(routes, window.location.pathname);
-
-    const initialModuleConfig = initialModuleScope && microFrontendConfig[initialModuleScope]?.config;
+    const initialModuleConfig =
+      initialModuleScope && (microFrontendConfig[initialModuleScope]?.config || microFrontendConfig[initialModuleScope]?.moduleConfig);
     initializeAccessRequestCookies();
 
     if (!hasAuthParams() && !auth.activeNavigator && !auth.isLoading && !auth.isAuthenticated) {
@@ -150,11 +149,6 @@ export function OIDCSecured({
     const entitlements = await fetchEntitlements(user);
     const chromeUser = mapOIDCUserToChromeUser(user, entitlements);
     const getUser = () => Promise.resolve(chromeUser);
-    initializeVisibilityFunctions({
-      getUser,
-      getToken: () => Promise.resolve(user.access_token),
-      getUserPermissions: createGetUserPermissions(getUser, () => Promise.resolve(user.access_token)),
-    });
     setState((prev) => ({
       ...prev,
       ready: true,
@@ -162,6 +156,7 @@ export function OIDCSecured({
       user: chromeUser,
       token: user.access_token,
       tokenExpires: user.expires_at!,
+      forceRefresh: authRef.current.signinSilent,
     }));
     sentry(chromeUser);
   }
@@ -192,12 +187,29 @@ export function OIDCSecured({
     if (!auth.error) {
       startChrome();
     }
-  }, [auth]);
+    function onRenewError(error: Error) {
+      console.error('Silent renew error', error);
+      state.login();
+    }
+    auth.events.addSilentRenewError(onRenewError);
+
+    return () => {
+      auth.events.removeSilentRenewError(onRenewError);
+    };
+    // to ensure we are not re-initializing the chrome on every auth change
+    // only on the important events
+  }, [auth.error, auth.isLoading, auth.isAuthenticated, state.token, state.user?.identity?.account_number]);
 
   useEffect(() => {
     authRef.current = auth;
     setCookie(auth.user?.access_token ?? '', auth.user?.expires_at ?? 0);
+    // currently uses the deprecated user_id claim on the user profile - will need to be updated if switching to sub claim in the future
+    if (auth.user?.profile.user_id && typeof auth.user.profile.user_id === 'string') {
+      localStorage.setItem(RH_USER_ID_STORAGE_KEY, auth.user.profile.user_id);
+    }
   }, [auth]);
+
+  useManageSilentRenew(auth, state.login);
 
   if (auth.error) {
     // leave the auth error handling on the global ErrorBoundary
@@ -205,7 +217,7 @@ export function OIDCSecured({
   }
 
   if (!auth.isAuthenticated || !state.ready) {
-    return <AppPlaceholder cookieElement={cookieElement} setCookieElement={setCookieElement} />;
+    return <AppPlaceholder />;
   }
 
   return <ChromeAuthContext.Provider value={state}>{children}</ChromeAuthContext.Provider>;

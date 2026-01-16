@@ -14,8 +14,8 @@ const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
-      if (base.includes('pf-4-styles')) {
-        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
+      if (base.includes('pf-5-styles')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-5-styles', item.uri))];
       }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
@@ -25,9 +25,96 @@ const PFGenerator = asGenerator((item, ...rest) => {
   return defaultTuples;
 });
 
-const publicPath = process.env.BETA === 'true' ? '/beta/apps/chrome/js/' : '/apps/chrome/js/';
+const target = 'https://console.stage.redhat.com';
+
+const EXCLUDED = ['/apps/chrome/js'];
+
+/**
+ * Only proxy everything _except_ the public JS bundle path.
+ */
+function shouldProxy(url) {
+  return !EXCLUDED.some((p) => url.startsWith(p));
+}
+
+/**
+ * History‐API fallback: serve “/” for any non‐API, non‐asset HTML request.
+ */
+async function bypassHtml(req, res) {
+  const acceptHtml = req.headers.accept?.includes('text/html');
+  const isApi = /\/api\//.test(req.url);
+  const hasExt = /\./.test(req.url);
+
+  if (acceptHtml && !isApi && !hasExt) {
+    return '/';
+  }
+  return null;
+}
+
+const publicPath = '/apps/chrome/js/';
+
+//dev server proxy settings specific to running in Konflux CI
+const konfluxDevServerSettings = {
+  // This setting indirectly controls whether the server binds to IPv4 or IPv6.
+  host: '127.0.0.1',
+  client: {
+    overlay: false,
+  },
+  proxy: [
+    {
+      secure: false,
+      changeOrigin: true,
+      autoRewrite: true,
+      context: shouldProxy,
+      target,
+      bypass: bypassHtml,
+    },
+  ],
+};
+
+// dev server proxy config when not running in Konflux CI
+const nonKonfluxDevServerConfiguration = () => {
+  return proxy({
+    env: 'stage-beta',
+    port: 1337,
+    appUrl: [/^\/*$/],
+    useProxy: true,
+    publicPath,
+    proxyVerbose: true,
+    isChrome: true,
+    frontendCRDPath: path.resolve(__dirname, '../frontend.yml'),
+    routes: {
+      ...(process.env.CHROME_SERVICE && {
+        // web sockets
+        '/wss/chrome-service/': {
+          target: `ws://localhost:${process.env.CHROME_SERVICE}`,
+          // To upgrade the connection
+          ws: true,
+        },
+        // REST API
+        '/api/chrome-service/v1/': {
+          host: `http://localhost:${process.env.CHROME_SERVICE}`,
+        },
+      }),
+      ...(process.env.CONFIG_PORT && {
+        '/beta/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+        '/config': {
+          host: `http://localhost:${process.env.CONFIG_PORT}`,
+        },
+      }),
+      ...(process.env.NAV_CONFIG && {
+        '/api/chrome-service/v1/static': {
+          host: `http://localhost:${process.env.NAV_CONFIG}`,
+        },
+      }),
+    },
+  });
+};
+
 const commonConfig = ({ dev }) => {
   /** @type { import("webpack").Configuration } */
+  const contextualConfigSettings = process.env.KONFLUX_RUN ? konfluxDevServerSettings : nonKonfluxDevServerConfiguration();
   return {
     entry: dev
       ? // HMR request react, react-dom and react-refresh/runtime to be in the same chunk
@@ -37,7 +124,7 @@ const commonConfig = ({ dev }) => {
         }
       : path.resolve(__dirname, '../src/index.ts'),
     output: {
-      path: path.resolve(__dirname, '../build/js'),
+      path: path.resolve(__dirname, '../dist/js'),
       // the HMR needs dynamic entry filename to remove name conflicts
       filename: dev ? '[name].js' : 'chrome-root.[contenthash].js',
       hashFunction: 'xxhash64',
@@ -55,7 +142,7 @@ const commonConfig = ({ dev }) => {
           },
         }
       : {}),
-    devtool: false,
+    devtool: dev ? false : 'hidden-source-map',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: {
@@ -70,6 +157,7 @@ const commonConfig = ({ dev }) => {
         unfetch: path.resolve(__dirname, '../src/moduleOverrides/unfetch'),
         '@scalprum/core': path.resolve(__dirname, '../node_modules/@scalprum/core'),
         '@scalprum/react-core': path.resolve(__dirname, '../node_modules/@scalprum/react-core'),
+        '@rhds/icons': path.resolve(__dirname, '../node_modules/@rhds/icons'),
       },
       fallback: {
         path: require.resolve('path-browserify'),
@@ -135,6 +223,9 @@ const commonConfig = ({ dev }) => {
     },
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
+      client: {
+        overlay: process.env.DISABLE_CLIENT_OVERLAY === 'true' ? false : true,
+      },
       allowedHosts: 'all',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -147,42 +238,7 @@ const commonConfig = ({ dev }) => {
       port: 1337,
       // HMR flag
       hot: true,
-      ...proxy({
-        env: 'stage-beta',
-        port: 1337,
-        appUrl: [/^\/*$/, /^\/beta\/*$/, /^\/preview\/*$/],
-        useProxy: true,
-        publicPath,
-        proxyVerbose: true,
-        isChrome: true,
-        routes: {
-          ...(process.env.CHROME_SERVICE && {
-            // web sockets
-            '/wss/chrome-service/': {
-              target: `ws://localhost:${process.env.CHROME_SERVICE}`,
-              // To upgrade the connection
-              ws: true,
-            },
-            // REST API
-            '/api/chrome-service/v1/': {
-              host: `http://localhost:${process.env.CHROME_SERVICE}`,
-            },
-          }),
-          ...(process.env.CONFIG_PORT && {
-            '/beta/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-            '/config': {
-              host: `http://localhost:${process.env.CONFIG_PORT}`,
-            },
-          }),
-          ...(process.env.NAV_CONFIG && {
-            '/api/chrome-service/v1/static': {
-              host: `http://localhost:${process.env.NAV_CONFIG}`,
-            },
-          }),
-        },
-      }),
+      ...contextualConfigSettings,
     },
   };
 };
@@ -191,11 +247,11 @@ const commonConfig = ({ dev }) => {
 /** @type { import("webpack").Configuration } */
 const pfConfig = {
   entry: {
-    'pf4-v4': path.resolve(__dirname, '../src/sass/pf-4-assets.scss'),
     'pf4-v5': path.resolve(__dirname, '../src/sass/pf-5-assets.scss'),
+    'pf-v6': path.resolve(__dirname, '../src/sass/pf-6-assets.scss'),
   },
   output: {
-    path: path.resolve(__dirname, '../build/js/pf'),
+    path: path.resolve(__dirname, '../dist/js/pf'),
     // the HMR needs dynamic entry filename to remove name conflicts
     filename: '[name].js',
     publicPath: `auto`,
@@ -248,6 +304,17 @@ module.exports = function (env) {
   const config = commonConfig({ dev, publicPath: env.publicPath });
   if (env.analyze === 'true') {
     config.plugins.push(new BundleAnalyzerPlugin());
+  }
+
+  // bridge between devServer 4 and 5
+  // will be useful for RSpack
+  if (typeof config.devServer.onBeforeSetupMiddleware !== 'undefined') {
+    delete config.devServer.onBeforeSetupMiddleware;
+  }
+
+  if (config.devServer.https) {
+    delete config.devServer.https;
+    config.devServer.server = 'https';
   }
 
   return [pfConfig, config];

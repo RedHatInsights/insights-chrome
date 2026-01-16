@@ -1,34 +1,37 @@
 import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
-import { useSelector } from 'react-redux';
 import GlobalFilter from '../components/GlobalFilter/GlobalFilter';
 import { useScalprum } from '@scalprum/react-core';
 import { Masthead } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebar } from '@patternfly/react-core/dist/dynamic/components/Page';
 import { PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { ToolbarGroup } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { useLocation } from 'react-router-dom';
+import Breadcrumbs, { Breadcrumbsprops } from '../components/Breadcrumbs/Breadcrumbs';
 import { Header } from '../components/Header/Header';
 import Cookie from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import ChromeRoutes from '../components/Routes/Routes';
 import useOuiaTags from '../utils/useOuiaTags';
 import RedirectBanner from '../components/Stratosphere/RedirectBanner';
+import { useAtom } from 'jotai';
 
 import { useIntl } from 'react-intl';
 import messages from '../locales/Messages';
 import { CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
 
-import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
-
 import '../components/Navigation/Navigation.scss';
 import './DefaultLayout.scss';
-import { ReduxState } from '../redux/store';
 import useNavigation from '../utils/useNavigation';
 import { NavigationProps } from '../components/Navigation';
 import { getUrl } from '../hooks/useBundle';
 import { useFlag } from '@unleash/proxy-client-react';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import VirtualAssistant from '../components/Routes/VirtualAssistant';
+import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
+import { ITLess } from '../utils/common';
+import DrawerPanel from '../components/NotificationsDrawer/DrawerPanelContent';
 
 type ShieldedRootProps = {
   hideNav?: boolean;
@@ -45,27 +48,47 @@ type DefaultLayoutProps = {
   setIsNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
   Sidebar?: React.FC<NavigationProps>;
   Footer?: React.ReactNode;
+  breadcrumbsProps?: Breadcrumbsprops;
 };
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccountNumber, hideNav, isNavOpen, setIsNavOpen, Sidebar, Footer }) => {
+  const drawerPanelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (drawerPanelRef.current !== null) {
+      focusDrawer();
+    }
+  }, []);
+  const focusDrawer = () => {
+    if (drawerPanelRef.current === null) {
+      return;
+    }
+    const tabbableElement = drawerPanelRef.current?.querySelector('[aria-label="Close"], a, button') as HTMLAnchorElement | HTMLButtonElement;
+    if (tabbableElement) {
+      tabbableElement.focus();
+    }
+  };
   const intl = useIntl();
   const { loaded, schema, noNav } = useNavigation();
-  const isDrawerExpanded = useSelector(({ chrome: { notifications } }: ReduxState) => notifications?.isExpanded);
-  const drawerPanelRef = useRef<HTMLDivElement>();
-  const focusDrawer = () => {
-    const tabbableElement = drawerPanelRef.current?.querySelector('a, button') as HTMLAnchorElement | HTMLButtonElement;
-    tabbableElement.focus();
+
+  const [isNotificationsDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+
+  const toggleDrawer = () => {
+    setIsNotificationsDrawerExpanded((prev) => !prev);
   };
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
+  const isHelpPanelEnabled = useFlag('platform.chrome.help-panel');
+  const isDrawerEnabled = isNotificationsEnabled || isHelpPanelEnabled;
+  const { pathname } = useLocation();
+  const noBreadcrumb = !['/', '/allservices', '/favoritedservices', '/learning-resources'].includes(pathname);
   return (
     <Page
       className={
         (classnames('chr-c-page', { 'chr-c-page__hasBanner': hasBanner, 'chr-c-page__account-banner': selectedAccountNumber }),
         'pf-c-page') /** we have to add the legacy styling to allow v4 page layout sub components to be able to inherit legacy styling */
       }
-      onPageResize={null} // required to disable PF resize observer that causes re-rendring issue
-      header={
-        <Masthead className="chr-c-masthead pf-v5-u-p-0" display={{ sm: 'stack', '2xl': 'inline' }}>
+      onPageResize={null} // required to disable PF resize observer that causes re-rendering issue
+      masthead={
+        <Masthead className="chr-c-masthead" display={{ sm: 'stack', '2xl': 'inline' }}>
           <Header
             breadcrumbsProps={{
               isNavOpen,
@@ -75,10 +98,10 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
           />
         </Masthead>
       }
-      {...(isNotificationsEnabled && {
+      {...(isDrawerEnabled && {
         onNotificationDrawerExpand: focusDrawer,
-        notificationDrawer: <DrawerPanel ref={drawerPanelRef} />,
-        isNotificationDrawerExpanded: isDrawerExpanded,
+        notificationDrawer: <DrawerPanel ref={drawerPanelRef} toggleDrawer={toggleDrawer} />,
+        isNotificationDrawerExpanded: isNotificationsDrawerExpanded,
       })}
       sidebar={
         (noNav || hideNav) && Sidebar
@@ -91,16 +114,20 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ hasBanner, selectedAccoun
               </PageSidebar>
             )
       }
+      isContentFilled
     >
+      {noBreadcrumb && (
+        <ToolbarGroup className="chr-c-breadcrumbs__group">
+          <Breadcrumbs />
+        </ToolbarGroup>
+      )}
       <div className={classnames('chr-render')}>
         <GlobalFilter key={getUrl('bundle')} />
         {selectedAccountNumber && (
-          <div className="chr-viewing-as sentry-mask data-hj-suppress">
-            {intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}
-          </div>
+          <div className="chr-viewing-as sentry-mask data-hj-suppress">{intl.formatMessage(messages.viewingAsAccount, { selectedAccountNumber })}</div>
         )}
         <RedirectBanner />
-        <VirtualAssistant />
+        {ITLess() ? null : <VirtualAssistant />}
         <ChromeRoutes routesProps={{ scopeClass: 'chr-scope__default-layout' }} />
         {Footer}
       </div>

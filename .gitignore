@@ -1,6 +1,7 @@
 build/
 node_modules/
 public/
+tmp/
 
 #emacs
 *[#]*[#]
@@ -31,6 +32,7 @@ yalc.lock
 cypress/**/*.diff.png
 cypress/videos
 cypress/screenshots
+cypress/downloads
 
 # cache
 .cache
@@ -41,3 +43,12 @@ cypress/screenshots
 #swc
 .swc
 .cypress_cache
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
