@@ -24,73 +24,121 @@ To run a script you have to install dependencies `npm install`. Then you are fre
 
 1. Building assets
 
-    ```bash
-    > npm run build
-    ```
+```sh
+npm run build
+```
 
 2. Building assets and watching files when they change
 
-    ```bash
-    > npm run build --watch
-    ```
+```sh
+npm run build --watch
+```
 
 3. Running tests
 
-    ```bash
-    > npm run test
-    ```
+```sh
+npm run test
+```
 
 ## Running chrome locally
 
 1. Install all dependencies
 
-    ```bash
-    > npm install
-    ```
+```sh
+npm install
+```
 
 2. Run dev command in watch mode
 
-    ```bash
-    > npm run dev
-    ```
-
-3. Open browser at `https://stage.foo.redhat.com:1337/`.
-
-### Running chrome with other applications locally
-
-You can spin chrome locally together with other applications. Use `LOCAL_APPS` to list the locally deployed applications.
-
-#### Example 1 (using fec static)
-
-For illustration, to deploy Advisor together with Insights Chrome, you would require to
-
-1. Ensure Advisor has the 'static: fec static' script
-2. Run Advisor with `npm run static`
-3. In Chrome, add advisor to the routes portion inside webpack.config.js `'/apps/advisor': {
-    host: 'http://0.0.0.0:8003',
-},`
-4. In Chrome then run `npm run dev`
-   - If youd like to run against a different env, this can be altered with the env variable, ex. 'prod-stable'.
-
-#### Example 2 (using devServer route)
-
-You can also specify deployed applications through devServer.routes field:
-
-1. Run Advisor with `--port=8004` (or any other available port number),
-2. Update the webpack config in the following way:
+```sh
+npm run dev
 ```
-...
-devServer: {
-    ...
-    routes: {
-        '/apps/ocp-advisor': {
-            host: 'https://localhost:8004',
-        },
-    },
+
+3. Open browser at [stage.foo.redhat.com:1337](https://stage.foo.redhat.com:1337).
+
+## Running chrome with other applications locally
+
+### From app terminal
+
+The following example will make use of the [frontend-starter-app](https://github.com/RedHatInsights/frontend-starter-app/). 
+
+The [frontend-starter-app README](https://github.com/RedHatInsights/frontend-starter-app/#readme) explains how to install, build and run the app. To inject the `frontend-starter-app` into chrome, start by serving its static assets locally using the `npm run static` command. 
+
+When visiting [localhost:8003/apps/frontend-starter-app](http://localhost:8003/apps/frontend-starter-app/) in a browser, you should see a listing of its files. The `baseURL` field in [fed-mods.json](http://localhost:8003/apps/frontend-starter-app/fed-mods.json) contains the path where the static assets can be accessed.  
+
+### From chrome terminal
+
+There are two ways to configure chrome to display your local app. 
+
+#### 1. `LOCAL_APPS` environment variable
+
+```sh
+LOCAL_APPS=frontend-starter-app:8003 
+npm run dev
+```
+
+`frontend-starter-app` is the path segment after `/apps` defined in [fed-mods.json](http://localhost:8003/apps/frontend-starter-app/fed-mods.json).
+
+Use a browser, to visit [/staging/starter](https://stage.foo.redhat.com:1337/staging/starter) in chrome to access `frontend-starter-app`.
+
+`/staging/starter` is defined in [frontend-starter-app/deploy/frontend.yaml](https://github.com/RedHatInsights/frontend-starter-app/blob/master/deploy/frontend.yaml).
+
+Behind the scenes chrome is parsing the `LOCAL_APPS` env var and creating the following route:
+
+```js
+{
+  "/apps/frontend-starter-app": {
+    host: "http://localhost:8003"
+  }
 }
-...
 ```
-3. Run insights-chrome with `npm run dev`.
+which is further manipulated and turned into a [Webpack devServer.proxy config item](https://webpack.js.org/configuration/dev-server/#devserverproxy)
+
+```js
+{
+  context: (path: string) => path.includes("/apps/frontend-starter-app"),
+  target: "http://localhost:8003",
+}
+```
+
+The `LOCAL_APPS` environment variable supports multiple apps and protocols using the following pattern `name:port[~protocol]`, where:
+
+- `name`: The application name (path segment after `/apps`)
+- `port`: The port number where your local app is running
+- `protocol` (optional): `http` (default) or `https`
+
+For example:
+
+```sh
+# Multiple apps
+LOCAL_APPS=app1:8003,app2:8004,app3:8005
+
+# Custom protocol  
+LOCAL_APPS=secure-app:8443~https
+
+# Mixed
+LOCAL_APPS=app1:8003,secure-app:8443~https,app3:8005~http
+```
+
+#### 2. Custom route
+
+Edit [config/webpack.config.js](config/webpack.config.js) and add the following to the `routes` field of the config object passed to the `proxy` function. 
+
+```js
+{
+  "/apps/frontend-starter-app": "http://localhost:8003"
+}
+```
+
+Start the dev server.
+
+```sh
+npm run dev
+```
+
+Use browser to visit [/staging/starter](https://stage.foo.redhat.com:1337/staging/starter) in chrome to access the `frontend-starter-app`.
+
+Note: The `proxy` function is defined in [frontend-components/packages/config-utils/src/proxy.ts](https://github.com/RedHatInsights/frontend-components/blob/master/packages/config-utils/src/proxy.ts).
 
 ## Local Search Feature
 

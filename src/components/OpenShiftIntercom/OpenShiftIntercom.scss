@@ -1,5 +1,6 @@
-.chr-button-intercom {
-  border-radius: var(--pf-t--global--border--radius--small);
+button.pf-v6-c-button.chr-button-intercom {
+  border-radius: 50%;
+  min-width: 2rem;
   height: 2rem;
   aspect-ratio: 1 / 1;
   padding: 0;
