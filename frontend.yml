@@ -30,6 +30,8 @@ objects:
         paths:
           - /
       akamaiCacheBustPaths:
+        # / should not be cached whatsoever
+        - /
         - /config/chrome/fed-modules.json
         - /apps/chrome/index.html
         - /apps/chrome/js/fed-mods.json
@@ -41,4 +43,4 @@ parameters:
   - name: SSO_URL
     required: true
   - name: IMAGE
-    value: quay.io/cloudservices/insights-chrome-frontend
+    value: quay.io/redhat-services-prod/hcc-platex-services-tenant/insights-chrome

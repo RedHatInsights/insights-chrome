@@ -176,9 +176,9 @@ export const GlobalFilterDropdown: React.FunctionComponent<GlobalFilterDropdownP
             hotjarEventEmitter('event', 'global_filter_bulk_action');
             setIsOpen(false);
           }}
-          onApplyTags={(selected: CommonSelectedTag[], sidSelected: CommonSelectedTag[]) => {
+          onApplyTags={(selected: CommonSelectedTag[]) => {
             setValue(() =>
-              [...(selected || []), ...(sidSelected || [])].reduce<FlagTagsFilter>((acc: FlagTagsFilter, { key, value, namespace }: CommonSelectedTag) => {
+              [...(selected || [])].reduce<FlagTagsFilter>((acc: FlagTagsFilter, { key, value, namespace }: CommonSelectedTag) => {
                 return updateSelected(acc, namespace as string, `${key}${value ? `=${value}` : ''}`, value as string, true, {
                   item: { tagKey: key },
                 });

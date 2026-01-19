@@ -26,7 +26,7 @@ spec:
   - name: image-expires-after
     value: 5d
   - name: dockerfile
-    value: ./Dockerfile
+    value: build-tools/Dockerfile
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
@@ -154,7 +154,7 @@ spec:
         - name: name
           value: init
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-init:0.2@sha256:3ca52e1d8885fc229bd9067275f44d5b21a9a609981d0324b525ddeca909bf10
+          value: quay.io/konflux-ci/tekton-catalog/task-init:0.2@sha256:b349d24cb896573695802d6913d311640b44675ec082b3ad167721946a6a0a71
         - name: kind
           value: task
         resolver: bundles
@@ -171,7 +171,7 @@ spec:
         - name: name
           value: git-clone
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.1@sha256:90d2d42d17e6276ef45505cbb5a78598e5f5186257d0ee2260b3d4835f1c2d6b
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.1@sha256:242fa43ae84f22e692c01662ceea1cee18143f66a11a424ae2228472dbfc53cc
         - name: kind
           value: task
         resolver: bundles
@@ -196,7 +196,7 @@ spec:
         - name: name
           value: prefetch-dependencies
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies:0.2@sha256:a18a33aa577ac1b8f0c9ca6cd74c4c73a30cfd48a7b959c86390bc04066d1fb1
+          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies:0.2@sha256:6655f11897203a627f37da413825de6cff0ccad4c0eab49f1c8afb7c73a31655
         - name: kind
           value: task
         resolver: bundles
@@ -212,66 +212,6 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: parse-build-deploy-script
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      runAfter:
-      - clone-repository
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
-        - name: pathInRepo
-          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
-    - name: create-frontend-dockerfile
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      - name: component
-        value: $(tasks.parse-build-deploy-script.results.component)
-      - name: image
-        value: $(tasks.parse-build-deploy-script.results.image)
-      - name: node-build-version
-        value: $(tasks.parse-build-deploy-script.results.node-build-version)
-      - name: quay-expire-time
-        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-      - name: npm-build-script
-        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-      - name: yarn-build-script
-        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-      - name: route-path
-        value: $(tasks.parse-build-deploy-script.results.route-path)
-      - name: beta-route-path
-        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-      - name: preview-route-path
-        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-      - name: ci-root
-        value: $(tasks.parse-build-deploy-script.results.ci-root)
-      - name: server-name
-        value: $(tasks.parse-build-deploy-script.results.server-name)
-      - name: dist-folder
-        value: $(tasks.parse-build-deploy-script.results.dist-folder)
-      runAfter:
-      - parse-build-deploy-script
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: e0b400ca6433f1ff05722c412ab837c4bd49a45a
-        - name: pathInRepo
-          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -287,7 +227,7 @@ spec:
         - name: name
           value: git-clone-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:bb2f8f1edec47faa08c1929f2ffc6748f3a96af9644e6c40000081c6ff3ec894
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:0a89e1a6304076525e9766f63a4cd006763d21d5aca6863281fc427537a23c6f
         - name: kind
           value: task
         resolver: bundles
@@ -333,7 +273,7 @@ spec:
             limits:
               cpu: "2"
               memory: "4Gi"
-          image: registry.access.redhat.com/ubi8/nodejs-20
+          image: registry.access.redhat.com/ubi9/nodejs-20
           script: |
             #!/bin/bash
             set -ex
@@ -417,7 +357,7 @@ spec:
             set -ex
             npm i >/dev/null 2>&1
             echo "Starting dev server in background..."
-            KONFLUX_RUN=$KONFLUX_RUN npm run dev:beta &
+            KONFLUX_RUN=$KONFLUX_RUN DISABLE_CLIENT_OVERLAY=true npm run dev:beta &
             DEV_SERVER_PID=$!
             echo "Waiting for dev server to respond..."
             timeout 600s bash -c 'until curl -k https://stage.foo.redhat.com:1337 > /dev/null 2>&1; do
@@ -425,7 +365,13 @@ spec:
               sleep 5
             done'
             echo "Dev server is ready! Running tests."
+            
+            echo "Running cypress (partial) integration tests"
             KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
+            
+            echo "Running Playwright User flow tests (full integration)"
+            npx playwright install
+            E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx playwright test
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
             kill $DEV_SERVER_PID
           securityContext:
@@ -516,13 +462,12 @@ spec:
         value: $(params.buildah-format)
       runAfter:
       - prefetch-dependencies
-      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.6@sha256:4a18de4811fc4b5743b0073de2154db29d323312b93419dbd28b209ce495f042
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.7@sha256:8b16e4e79853e3a3192f82e9f8930b79b04942bb389eaab4c44fb4d233ccefe6
         - name: kind
           value: task
         resolver: bundles
@@ -556,7 +501,7 @@ spec:
         - name: name
           value: build-image-index
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-build-image-index:0.1@sha256:d94cad7f41be61074dd21c7dff26dab9217c3435a16f62813c1cb8382dd9aae6
+          value: quay.io/konflux-ci/tekton-catalog/task-build-image-index:0.2@sha256:39561ac43e325159497c10c0284cf61dfddf39e39100ca5e3df6b73c5d96db8b
         - name: kind
           value: task
         resolver: bundles
@@ -578,7 +523,7 @@ spec:
         - name: name
           value: source-build
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-source-build:0.3@sha256:268bf4dba7455ef3871d84bc26de1800b8221a0d1809c9f5101616bccfa84d33
+          value: quay.io/konflux-ci/tekton-catalog/task-source-build:0.3@sha256:9e567501dd67e30b1dd1d16f859c767323f762335bad7a1ad4107deca2e2c9a7
         - name: kind
           value: task
         resolver: bundles
@@ -607,7 +552,7 @@ spec:
         - name: name
           value: sast-shell-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:91e9b91a328b9c227b87a25431b94e926c745a32c4f0dba711ea96d447216362
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:3fb1f8c3a344e67a22fdf4bff963ca806da84d62e9d33d34dc6beb49cfaacc33
         - name: kind
           value: task
         resolver: bundles
@@ -657,7 +602,7 @@ spec:
         - name: name
           value: deprecated-image-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-deprecated-image-check:0.5@sha256:f59175d9a0a60411738228dfe568af4684af4aa5e7e05c832927cb917801d489
+          value: quay.io/konflux-ci/tekton-catalog/task-deprecated-image-check:0.5@sha256:462baed733dfc38aca5395499e92f19b6f13a74c2e88fe5d86c3cffa2f899b57
         - name: kind
           value: task
         resolver: bundles
@@ -679,7 +624,7 @@ spec:
         - name: name
           value: clair-scan
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-clair-scan:0.3@sha256:8ec7d7b9438ace5ef3fb03a533d9440d0fd81e51c73b0dc1eb51602fb7cd044e
+          value: quay.io/konflux-ci/tekton-catalog/task-clair-scan:0.3@sha256:a5fa66ed5b8c107e7bc29cb084edcc07e394f818cc59ef2db2f9dcb0cd1fa3dc
         - name: kind
           value: task
         resolver: bundles
@@ -699,7 +644,7 @@ spec:
         - name: name
           value: ecosystem-cert-preflight-checks
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-ecosystem-cert-preflight-checks:0.2@sha256:9568c51a5158d534248908b9b561cf67d2826ed4ea164ffd95628bb42380e6ec
+          value: quay.io/konflux-ci/tekton-catalog/task-ecosystem-cert-preflight-checks:0.2@sha256:04f75593558f79a27da2336400bc63d460bf0c5669e3c13f40ee2fb650b1ad1e
         - name: kind
           value: task
         resolver: bundles
@@ -721,7 +666,7 @@ spec:
         - name: name
           value: sast-snyk-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.4@sha256:d5f8a76386c4441c9c1f57eb370553212dafe2d06f8a3468f5f08631719885fa
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.4@sha256:0079378025b6a73bb3c4336853e24a3e1bf65e7e8594062ca49a4007c534fbbd
         - name: kind
           value: task
         resolver: bundles
@@ -768,7 +713,7 @@ spec:
         - name: name
           value: apply-tags
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-apply-tags:0.2@sha256:f44be1bf0262471f2f503f5e19da5f0628dcaf968c86272a2ad6b4871e708448
+          value: quay.io/konflux-ci/tekton-catalog/task-apply-tags:0.2@sha256:e4017ec351a0891ef95989f35bd20b8c3f091fa1a3da364c4d4e975e99f3063c
         - name: kind
           value: task
         resolver: bundles
@@ -809,7 +754,7 @@ spec:
         - name: name
           value: rpms-signature-scan
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-rpms-signature-scan:0.2@sha256:1b6c20ab3dbfb0972803d3ebcb2fa72642e59400c77bd66dfd82028bdd09e120
+          value: quay.io/konflux-ci/tekton-catalog/task-rpms-signature-scan:0.2@sha256:0b10508c82ccb0f5a06a66ce7af56e9bfd40651ddefdf0f499988e897771ee28
         - name: kind
           value: task
         resolver: bundles

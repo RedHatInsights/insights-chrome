@@ -246,3 +246,182 @@ chrome.registerModule('rbac', `${window.location.origin}${isBeta() ? '/beta' : '
 ```
 
 This will register new module with name `rbac` and passes your own manifest location.
+
+## Drawer Content
+
+Chrome provides a side drawer that can display dynamic content from HCC modules. Applications can control drawer content using the drawer actions API.
+
+### Accessing Drawer Actions
+
+Drawer actions are available through the `drawerActions` property of the chrome API:
+
+```jsx
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+
+const Component = () => {
+    const { drawerActions } = useChrome();
+
+    return (
+        <button onClick={() => drawerActions.toggleDrawerContent({
+            scope: 'myApp',
+            module: './MyDrawerPanel'
+        })}>
+            Toggle My Panel
+        </button>
+    );
+};
+```
+
+### Available Drawer Actions
+
+#### `toggleDrawerContent(data)`
+
+Toggles the drawer content intelligently. If the drawer is closed or contains different content, it will open with the new content. If the drawer is already open with the same content, it will close.
+
+**Parameters:**
+- `data` (Object): ScalprumComponentProps object with the following properties:
+  - `scope` (string, required): The HCC module scope name
+  - `module` (string, required): The module path (e.g., './MyComponent')
+  - Any additional props are passed directly to the component (not wrapped in a `props` object)
+
+**Example:**
+```jsx
+const { drawerActions } = useChrome();
+
+// Open help panel
+drawerActions.toggleDrawerContent({
+    scope: 'learningResources',
+    module: './HelpPanel'
+});
+
+// Open custom panel with direct props
+drawerActions.toggleDrawerContent({
+    scope: 'myApp',
+    module: './UserDetails',
+    userId: 123,
+    onClose: () => console.log('Panel closed')
+});
+```
+
+#### `setDrawerPanelContent(data)`
+
+Directly sets the drawer content without toggling the drawer state.
+
+**Parameters:**
+- `data` (Object): Same as `toggleDrawerContent`, or `undefined` to clear content
+
+**Example:**
+```jsx
+const { drawerActions } = useChrome();
+
+// Set content with props
+drawerActions.setDrawerPanelContent({
+    scope: 'notifications',
+    module: './NotificationPanel',
+    userId: 123,
+    showCount: true
+});
+
+// Clear content
+drawerActions.setDrawerPanelContent(undefined);
+```
+
+#### `toggleDrawerPanel()`
+
+Toggles the drawer open/closed state without changing the content.
+
+**Example:**
+```jsx
+const { drawerActions } = useChrome();
+
+drawerActions.toggleDrawerPanel();
+```
+
+### Creating Drawer Content Components
+
+Drawer content must be exposed as an HCC module. Your component will receive standard props:
+
+```jsx
+// MyDrawerPanel.tsx
+import React from 'react';
+
+interface DrawerPanelProps {
+    toggleDrawer: () => void; // Function to close the drawer
+    panelRef: React.Ref<unknown>; // Ref for the panel container
+    // Your custom props passed via the props parameter
+}
+
+const MyDrawerPanel = ({ toggleDrawer, panelRef, ...customProps }: DrawerPanelProps) => {
+    return (
+        <div ref={panelRef}>
+            <h2>My Custom Panel</h2>
+            <p>Content goes here...</p>
+            <button onClick={toggleDrawer}>Close</button>
+        </div>
+    );
+};
+
+export default MyDrawerPanel;
+```
+
+### Real-World Example
+
+For a complete implementation example, see the [HelpPanel component](https://github.com/RedHatInsights/learning-resources/blob/master/src/components/HelpPanel/HelpPanelContent.tsx#L25-L139) from the learning-resources HCC module. This shows:
+
+- How to structure a federated module for drawer content
+- Proper TypeScript interfaces and prop handling
+
+### Best Practices
+
+1. **Scoping**: Use unique scope names to avoid conflicts with other applications
+2. **Toggle State**: Use `toggleDrawerContent` for most use cases as it handles state intelligently
+3. **Cleanup**: Clear drawer content when navigating away from your application if needed
+4. **Loading States**: Your component should handle loading states internally; Chrome provides a default spinner
+
+### Complete Example
+
+Here's a complete example of a component that manages drawer content:
+
+```jsx
+import React, { useState } from 'react';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { Button } from '@patternfly/react-core';
+
+const MyComponent = () => {
+    const { drawerActions } = useChrome();
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    const openUserDetails = (user) => {
+        setSelectedUser(user);
+        drawerActions.toggleDrawerContent({
+            scope: 'userManagement',
+            module: './UserDetailsPanel',
+            user,
+            onUserUpdated: (updatedUser) => {
+                setSelectedUser(updatedUser);
+                // Refresh your data...
+            }
+        });
+    };
+
+    const closeDrawer = () => {
+        drawerActions.setDrawerPanelContent(undefined);
+        setSelectedUser(null);
+    };
+
+    return (
+        <div>
+            <Button onClick={() => openUserDetails({ id: 1, name: 'John Doe' })}>
+                View User Details
+            </Button>
+            {selectedUser && (
+                <Button variant="secondary" onClick={closeDrawer}>
+                    Close Details
+                </Button>
+            )}
+        </div>
+    );
+};
+
+export default MyComponent;
+```

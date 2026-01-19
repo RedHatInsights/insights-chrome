@@ -7,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useHydrateAtoms } from 'jotai/utils';
 import * as unleashReact from '@unleash/proxy-client-react';
 import VirtualAssistant from './VirtualAssistant';
-import { virtualAssistantOpenAtom, virtualAssistantShowAssistantAtom, virtualAssistantStartInputAtom } from '../../state/atoms/virtualAssistantAtom';
+import { virtualAssistantShowAssistantAtom } from '../../state/atoms/virtualAssistantAtom';
 
 // Mock function to capture props passed to ScalprumComponent
 const mockScalprumComponent = jest.fn();
@@ -65,11 +65,7 @@ describe('VirtualAssistant showAssistant prop passing', () => {
 
   describe('component rendering', () => {
     it('should always render the component container', () => {
-      const atomValues = [
-        [virtualAssistantOpenAtom, false],
-        [virtualAssistantShowAssistantAtom, false],
-        [virtualAssistantStartInputAtom, undefined],
-      ];
+      const atomValues = [[virtualAssistantShowAssistantAtom, false]];
 
       const { container } = render(
         // @ts-ignore
@@ -84,17 +80,10 @@ describe('VirtualAssistant showAssistant prop passing', () => {
     });
   });
 
-  describe('showAssistant prop passing when isOpenConfig is true', () => {
+  describe('showAssistant prop passing', () => {
     it('should pass showAssistant=false to ScalprumComponent', () => {
-      useFlag.mockImplementation((flagName: string) => {
-        if (flagName === 'platform.virtual-assistant.is-open-config') return true;
-        return false;
-      });
-
       const atomValues = [
-        [virtualAssistantOpenAtom, false],
         [virtualAssistantShowAssistantAtom, false], // This should be passed as showAssistant prop
-        [virtualAssistantStartInputAtom, undefined],
       ];
 
       render(
@@ -115,15 +104,8 @@ describe('VirtualAssistant showAssistant prop passing', () => {
     });
 
     it('should pass showAssistant=true to ScalprumComponent', () => {
-      useFlag.mockImplementation((flagName: string) => {
-        if (flagName === 'platform.virtual-assistant.is-open-config') return true;
-        return false;
-      });
-
       const atomValues = [
-        [virtualAssistantOpenAtom, false],
         [virtualAssistantShowAssistantAtom, true], // This should be passed as showAssistant prop
-        [virtualAssistantStartInputAtom, undefined],
       ];
 
       render(
@@ -143,17 +125,8 @@ describe('VirtualAssistant showAssistant prop passing', () => {
       );
     });
 
-    it('should pass all atom values correctly as props', () => {
-      useFlag.mockImplementation((flagName: string) => {
-        if (flagName === 'platform.virtual-assistant.is-open-config') return true;
-        return false;
-      });
-
-      const atomValues = [
-        [virtualAssistantOpenAtom, true],
-        [virtualAssistantShowAssistantAtom, true],
-        [virtualAssistantStartInputAtom, 'test input message'],
-      ];
+    it('should pass className based on drawer state', () => {
+      const atomValues = [[virtualAssistantShowAssistantAtom, true]];
 
       render(
         // @ts-ignore
@@ -162,80 +135,15 @@ describe('VirtualAssistant showAssistant prop passing', () => {
         </TestWrapper>
       );
 
-      // Check that all props are passed correctly
+      // Check that className is passed (will be 'astro-va-drawer-closed' by default)
       expect(mockScalprumComponent).toHaveBeenCalledWith(
         expect.objectContaining({
           showAssistant: true,
-          isOpen: true,
-          startInput: 'test input message',
+          className: expect.stringMatching(/astro-va-drawer/),
           scope: 'virtualAssistant',
           module: './AstroVirtualAssistant',
-          setOpen: expect.any(Function),
-          setStartInput: expect.any(Function),
         })
       );
-    });
-  });
-
-  describe('routes mode when isOpenConfig is false', () => {
-    it('should render routes without showAssistant prop', () => {
-      useFlag.mockImplementation((flagName: string) => {
-        if (flagName === 'platform.virtual-assistant.is-open-config') return false;
-        return false;
-      });
-
-      const atomValues = [
-        [virtualAssistantOpenAtom, true],
-        [virtualAssistantShowAssistantAtom, true],
-        [virtualAssistantStartInputAtom, 'test'],
-      ];
-
-      render(
-        // @ts-ignore
-        <TestWrapper initialValues={atomValues}>
-          <VirtualAssistant />
-        </TestWrapper>
-      );
-
-      // In routes mode, ScalprumComponent should be called with basic props only (no showAssistant)
-      expect(mockScalprumComponent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          scope: 'virtualAssistant',
-          module: './AstroVirtualAssistant',
-          fallback: null,
-        })
-      );
-
-      // Should not include showAssistant prop in routes mode
-      expect(mockScalprumComponent).toHaveBeenCalledWith(
-        expect.not.objectContaining({
-          showAssistant: expect.anything(),
-        })
-      );
-    });
-
-    it('should always render component in routes mode', () => {
-      useFlag.mockImplementation((flagName: string) => {
-        if (flagName === 'platform.virtual-assistant.is-open-config') return false;
-        return false;
-      });
-
-      const atomValues = [
-        [virtualAssistantOpenAtom, false],
-        [virtualAssistantShowAssistantAtom, false], // Even when false, should still render
-        [virtualAssistantStartInputAtom, undefined],
-      ];
-
-      const { container } = render(
-        // @ts-ignore
-        <TestWrapper initialValues={atomValues}>
-          <VirtualAssistant />
-        </TestWrapper>
-      );
-
-      // Component should always render in routes mode
-      expect(container.firstChild).not.toBeNull();
-      expect(screen.getByTestId('scalprum-component-virtualAssistant-AstroVirtualAssistant')).toBeInTheDocument();
     });
   });
 });
