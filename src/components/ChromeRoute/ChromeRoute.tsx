@@ -14,7 +14,7 @@ import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
 import { routeAuthScopeReady } from '../../state/atoms/routeAuthScopeReady';
-import { useFlag } from '@unleash/proxy-client-react';
+import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -37,7 +37,7 @@ const ChromeRoute = memo(
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
     const authScopeReady = useAtomValue(routeAuthScopeReady);
-    const silentReauthEnabled = useFlag('platform.chrome.silent-reauth');
+    const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {

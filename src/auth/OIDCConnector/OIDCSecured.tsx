@@ -14,7 +14,7 @@ import logger from '../logger';
 import { login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
-import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
+import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY, SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
@@ -25,7 +25,6 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
-import { useFlag } from '@unleash/proxy-client-react';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -81,7 +80,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
-  const silentReauthEnabled = useFlag('platform.chrome.silent-reauth');
+  const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
 
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
@@ -120,11 +119,10 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     reAuthWithScopes: async (...additionalScopes) => {
       if (!silentReauthEnabled) {
         const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-        let promise = Promise.resolve();
         if (shouldReAuth) {
-          promise = login(authRef.current, reAuthScopes);
+          return login(authRef.current, reAuthScopes);
         }
-        return promise;
+        return;
       }
 
       let scopes = [...requiredScopes, ...additionalScopes].flat();
@@ -140,6 +138,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         })
         .then((user) => {
           if (user === null) {
+            console.log('Silent reauth failed, falling back to hard reauth');
             login(authRef.current, scopes);
           }
         })

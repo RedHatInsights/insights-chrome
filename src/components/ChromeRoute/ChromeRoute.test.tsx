@@ -3,9 +3,8 @@ import { render } from '@testing-library/react';
 import ChromeRoute from './ChromeRoute';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import { routeAuthScopeReady } from '../../state/atoms/routeAuthScopeReady';
-import { useFlag } from '@unleash/proxy-client-react';
+import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 
-jest.mock('@unleash/proxy-client-react', () => ({ useFlag: jest.fn() }));
 jest.mock('@scalprum/react-core', () => {
   return {
     ScalprumComponent: () => React.createElement('div', { 'data-testid': 'scalprum-stub' }),
@@ -14,11 +13,11 @@ jest.mock('@scalprum/react-core', () => {
 
 describe('ChromeRoute - auth scope gating', () => {
   beforeEach(() => {
-    (useFlag as jest.Mock).mockReset();
+    localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
   });
 
   it('renders loading fallback when routeAuthScopeReady is false', () => {
-    (useFlag as jest.Mock).mockReturnValue(true);
+    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
     const store = createStore();
     store.set(routeAuthScopeReady, false);
     const { container } = render(
@@ -30,8 +29,8 @@ describe('ChromeRoute - auth scope gating', () => {
     expect(spinner).toBeTruthy();
   });
 
-  it("shows LoadingFallback when 'platform.chrome.silent-reauth' flag is enabled and auth scope is not ready", () => {
-    (useFlag as jest.Mock).mockReturnValue(true);
+  it('shows LoadingFallback when silent reauth is enabled via localStorage and auth scope is not ready', () => {
+    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
     const store = createStore();
     store.set(routeAuthScopeReady, false);
     const { container } = render(
@@ -43,8 +42,8 @@ describe('ChromeRoute - auth scope gating', () => {
     expect(spinner).toBeTruthy();
   });
 
-  it("does NOT show LoadingFallback when 'platform.chrome.silent-reauth' flag is disabled and auth scope is not ready", () => {
-    (useFlag as jest.Mock).mockReturnValue(false);
+  it('does NOT show LoadingFallback when silent reauth is disabled via localStorage and auth scope is not ready', () => {
+    localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
     const store = createStore();
     store.set(routeAuthScopeReady, false);
     const { container } = render(

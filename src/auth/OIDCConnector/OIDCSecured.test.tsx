@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { OIDCSecured } from './OIDCSecured';
-import { RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
+import { RH_USER_ID_STORAGE_KEY, SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 import { AuthContextProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
 import { Provider as JotaiProvider } from 'jotai';
@@ -10,10 +10,7 @@ import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 import ChromeAuthContext from '../ChromeAuthContext';
 import { fireEvent, screen } from '@testing-library/react';
-import { useFlag } from '@unleash/proxy-client-react';
 import shouldReAuthScopes from '../shouldReAuthScopes';
-
-jest.mock('@unleash/proxy-client-react', () => ({ useFlag: jest.fn() }));
 
 // Mock setCookie to observe calls from the effect under test
 jest.mock('../setCookie', () => ({
@@ -72,8 +69,7 @@ describe('OIDCSecured', () => {
   let mockAuth: AuthContextProps;
 
   beforeEach(() => {
-    (useFlag as jest.Mock).mockReset();
-    (useFlag as jest.Mock).mockReturnValue(true);
+    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
     (shouldReAuthScopes as jest.Mock).mockReset();
     mockUser = {
       access_token: 'token-123',
@@ -202,7 +198,7 @@ describe('OIDCSecured', () => {
 
     it('calls signinSilent with merged scopes and does not fallback when user returned', async () => {
       (mockAuth.signinSilent as jest.Mock).mockResolvedValue({} as User);
-      (useFlag as jest.Mock).mockReturnValue(true);
+      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
 
       renderWithAtoms(
         <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
@@ -251,7 +247,6 @@ describe('OIDCSecured', () => {
 
     it('falls back to login when signinSilent rejects', async () => {
       mockUser.scope = 'u1';
-      (useFlag as jest.Mock).mockReturnValue(true);
       (mockAuth.signinSilent as jest.Mock).mockRejectedValue(new Error('boom'));
 
       renderWithAtoms(
@@ -273,8 +268,8 @@ describe('OIDCSecured', () => {
       expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req', 'extra', 'u1']);
     });
 
-    it('when flag disabled and reauth needed, calls login with scopes and does not call signinSilent', async () => {
-      (useFlag as jest.Mock).mockReturnValue(false);
+    it('when localStorage disables silent reauth and reauth needed, calls login with scopes and does not call signinSilent', async () => {
+      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
       (shouldReAuthScopes as jest.Mock).mockReturnValue([true, ['req1', 'req2']]);
 
       renderWithAtoms(
@@ -296,8 +291,8 @@ describe('OIDCSecured', () => {
       expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req1', 'req2']);
     });
 
-    it('when flag disabled and reauth not needed, does nothing', async () => {
-      (useFlag as jest.Mock).mockReturnValue(false);
+    it('when localStorage disables silent reauth and reauth not needed, does nothing', async () => {
+      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
       (shouldReAuthScopes as jest.Mock).mockReturnValue([false, []]);
 
       renderWithAtoms(
