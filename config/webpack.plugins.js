@@ -66,8 +66,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       filename: dev ? 'index.html' : '../index.html',
       base: '/',
       templateParameters: {
-        pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
-        pf6styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf-v6.css`,
+        pf6styles: `/apps/chrome/js/pf/pf-v6.css`,
       },
     }),
     new HtmlWebpackPlugin({
