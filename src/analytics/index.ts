@@ -92,8 +92,7 @@ export function getPendoConf(data: DeepRequired<ChromeUser>, isPreview: boolean)
       ...entitlements,
     },
     account: {
-      // TODO add in customer name as name:
-      // here if/when we get that in the JWT
+      name: data.identity.organization?.name,
       id: data.identity.account_number,
 
       account_number: data.identity.account_number, // The EBS id

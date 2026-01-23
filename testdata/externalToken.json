@@ -27,6 +27,9 @@
     "first_name": "Ian",
     "email": "rlong@blah.com",
     "is_org_admin": false,
-    "username": "rhn-support-ihands"
+    "username": "rhn-support-ihands",
+    "organization": {
+      "name": "External Organization"
+    }
   }
   

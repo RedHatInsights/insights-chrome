@@ -54,6 +54,7 @@ function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements:
         locale: user.profile?.locale as any,
         username: user.profile?.username as any,
       },
+      organization: user.profile?.organization as any,
     },
   };
 }
