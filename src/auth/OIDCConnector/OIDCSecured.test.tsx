@@ -1,9 +1,16 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { OIDCSecured } from './OIDCSecured';
-import { RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
+import { RH_USER_ID_STORAGE_KEY, SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 import { AuthContextProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
+import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
+import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
+import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
+import ChromeAuthContext from '../ChromeAuthContext';
+import { fireEvent, screen } from '@testing-library/react';
+import shouldReAuthScopes from '../shouldReAuthScopes';
 
 // Mock setCookie to observe calls from the effect under test
 jest.mock('../setCookie', () => ({
@@ -28,6 +35,7 @@ jest.mock('./utils', () => ({
 jest.mock('../../utils/common', () => ({
   generateRoutesList: jest.fn(() => []),
   ITLess: jest.fn(() => false),
+  isProd: jest.fn(() => false),
 }));
 
 jest.mock('../getInitialScope', () => ({
@@ -51,11 +59,18 @@ jest.mock('./useManageSilentRenew', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('../shouldReAuthScopes', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
 describe('OIDCSecured', () => {
   let mockUser: User;
   let mockAuth: AuthContextProps;
 
   beforeEach(() => {
+    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
+    (shouldReAuthScopes as jest.Mock).mockReset();
     mockUser = {
       access_token: 'token-123',
       expires_at: 1700000000,
@@ -126,6 +141,177 @@ describe('OIDCSecured', () => {
       // setCookie handles if the token is an empty string and will not attempt to set it in the browser
       expect(setCookie).toHaveBeenCalledWith('', 0);
       expect(localStorage.getItem(RH_USER_ID_STORAGE_KEY)).toBe(null);
+    });
+  });
+
+  describe('reAuthWithScopes', () => {
+    let useAuthMock: any;
+    let loginMock: jest.Mock;
+
+    const TestInvoker = () => {
+      const ctx = React.useContext(ChromeAuthContext);
+      return (
+        <button
+          onClick={() => {
+            void ctx.reAuthWithScopes('extra');
+          }}
+        >
+          invoke
+        </button>
+      );
+    };
+
+    function renderWithAtoms(ui: React.ReactElement, atoms?: { activeModule?: string; modules?: any }) {
+      const initialValuesAny: any[] = [];
+      if (atoms?.activeModule) {
+        initialValuesAny.push([activeModuleAtom, atoms.activeModule] as const);
+      }
+      if (atoms?.modules) {
+        initialValuesAny.push([chromeModulesAtom, atoms.modules] as const);
+      }
+      const HydrateAtoms = ({ children }: { children: React.ReactNode }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        useHydrateAtoms(initialValuesAny as any);
+        return <>{children}</>;
+      };
+      return render(
+        <JotaiProvider>
+          <HydrateAtoms>{ui}</HydrateAtoms>
+        </JotaiProvider>
+      );
+    }
+
+    beforeEach(() => {
+      const { useAuth } = jest.requireMock('react-oidc-context');
+      const { login } = jest.requireMock('./utils');
+      useAuthMock = useAuth;
+      loginMock = login as jest.Mock;
+      loginMock.mockReset();
+
+      // default shared setup; tests can override as needed
+      mockUser.scope = 'u1 u2';
+      mockAuth.user = mockUser;
+      mockAuth.isAuthenticated = true;
+      (mockAuth.signinSilent as jest.Mock).mockReset();
+      useAuthMock.mockReturnValue(mockAuth);
+    });
+
+    it('calls signinSilent with merged scopes and does not fallback when user returned', async () => {
+      (mockAuth.signinSilent as jest.Mock).mockResolvedValue({} as User);
+      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
+
+      renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        {
+          activeModule: 'foo',
+          modules: { foo: { config: { ssoScopes: ['r1', 'r2'] } } },
+        }
+      );
+
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalledWith({
+          scope: 'r1 r2 extra u1 u2',
+          prompt: 'none',
+          forceIframeAuth: true,
+        });
+      });
+      expect(loginMock).not.toHaveBeenCalled();
+    });
+
+    it('falls back to login when signinSilent resolves null', async () => {
+      (mockAuth.signinSilent as jest.Mock).mockResolvedValue(null);
+
+      renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        {
+          activeModule: 'foo',
+          modules: { foo: { config: { ssoScopes: ['r1'] } } },
+        }
+      );
+
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
+      });
+      expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['r1', 'extra', 'u1', 'u2']);
+    });
+
+    it('falls back to login when signinSilent rejects', async () => {
+      mockUser.scope = 'u1';
+      (mockAuth.signinSilent as jest.Mock).mockRejectedValue(new Error('boom'));
+
+      renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        {
+          activeModule: 'foo',
+          modules: { foo: { config: { ssoScopes: ['req'] } } },
+        }
+      );
+
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
+      });
+      expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req', 'extra', 'u1']);
+    });
+
+    it('when localStorage disables silent reauth and reauth needed, calls login with scopes and does not call signinSilent', async () => {
+      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+      (shouldReAuthScopes as jest.Mock).mockReturnValue([true, ['req1', 'req2']]);
+
+      renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        {
+          activeModule: 'foo',
+          modules: { foo: { config: { ssoScopes: ['r1'] } } },
+        }
+      );
+
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).not.toHaveBeenCalled();
+      });
+      expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req1', 'req2']);
+    });
+
+    it('when localStorage disables silent reauth and reauth not needed, does nothing', async () => {
+      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+      (shouldReAuthScopes as jest.Mock).mockReturnValue([false, []]);
+
+      renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        {
+          activeModule: 'foo',
+          modules: { foo: { config: { ssoScopes: [] } } },
+        }
+      );
+
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).not.toHaveBeenCalled();
+        expect(loginMock).not.toHaveBeenCalled();
+      });
     });
   });
 });

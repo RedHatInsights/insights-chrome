@@ -8,6 +8,7 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuth
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { UNLEASH_ERROR_KEY, getUnleashClient, setUnleashClient } from './unleashClient';
 import { getEnv } from '../../utils/common';
+import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -54,6 +55,26 @@ const config: IFlagProvider['config'] = {
   },
 };
 
+/*
+ * Keeps localStorage in sync with the silent reauth feature flag whenever flags are fetched/updated
+ * TODO: Remove when feature flag is flipped on permanently
+ */
+const syncLocalStorage = (client: UnleashClient) => {
+  const syncSilentReauth = () => {
+    try {
+      const enabled = client.isEnabled('platform.chrome.silent-reauth');
+      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, enabled ? 'true' : 'false');
+    } catch (e) {
+      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'false');
+    }
+  };
+  client.on('ready', syncSilentReauth);
+  client.on('update', syncSilentReauth);
+  client.on('error', () => {
+    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'false');
+  });
+};
+
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isPreview = useAtomValue(isPreviewAtom);
@@ -81,6 +102,7 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
           : {}),
       },
     });
+    syncLocalStorage(client);
     setUnleashClient(client);
     return client;
   }, []);

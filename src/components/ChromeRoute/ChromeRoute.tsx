@@ -13,6 +13,8 @@ import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
+import { routeAuthScopeReady } from '../../state/atoms/routeAuthScopeReady';
+import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -34,6 +36,8 @@ const ChromeRoute = memo(
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
+    const authScopeReady = useAtomValue(routeAuthScopeReady);
+    const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
@@ -79,7 +83,7 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
 
-    if (isHidden === null && Array.isArray(permissions)) {
+    if ((silentReauthEnabled && !authScopeReady) || (isHidden === null && Array.isArray(permissions))) {
       return LoadingFallback;
     }
 
