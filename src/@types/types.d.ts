@@ -1,4 +1,5 @@
-import { QuickStart, QuickStartCatalogPage } from '@patternfly/quickstarts';
+import React from 'react';
+import { QuickStart, QuickStartCatalogPage, QuickStartState } from '@patternfly/quickstarts';
 import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
@@ -116,6 +117,38 @@ export type HelpTopicsAPI = {
   enableTopics: EnableTopics;
 };
 
+/**
+ * State object for all QuickStarts, keyed by QuickStart name
+ */
+export type AllQuickStartStates = Record<string | number, QuickStartState>;
+
+/**
+ * Options for creating a scoped QuickStart controller
+ */
+export interface ScopedControllerOptions {
+  /** QuickStarts available in this scope */
+  quickStarts?: QuickStart[];
+}
+
+/**
+ * A scoped QuickStart controller for rendering QuickStarts outside Chrome's managed drawer.
+ * Use this when you need to render QuickStart content in custom UI (e.g., HelpPanel tabs).
+ */
+export interface ScopedQuickStartController {
+  /** The currently active QuickStart, or null if none */
+  activeQuickStart: QuickStart | null;
+  /** The ID of the currently active QuickStart */
+  activeQuickStartID: string;
+  /** State for all QuickStarts in this scope */
+  allQuickStartStates: AllQuickStartStates;
+  /** Set the active QuickStart by ID (pass empty string to deactivate) */
+  setActiveQuickStartID: (id: string) => void;
+  /** Update QuickStart states */
+  setAllQuickStartStates: React.Dispatch<React.SetStateAction<AllQuickStartStates>>;
+  /** Restart the currently active QuickStart */
+  restartQuickStart: () => void;
+}
+
 export type QuickstartsApi = {
   version: number;
   updateQuickStarts: (key: string, quickstarts: QuickStart[]) => void;
@@ -123,6 +156,19 @@ export type QuickstartsApi = {
   toggle: (quickstart: string) => void;
   Catalog: typeof QuickStartCatalogPage;
   activateQuickstart: (name: string) => Promise<void>;
+  /**
+   * Hook for creating a scoped QuickStart controller for rendering QuickStarts in custom UI.
+   * Unlike the default behavior, scoped controllers don't use Chrome's managed drawer.
+   * 
+   * Note: This is a React hook and must be called following the rules of hooks.
+   * 
+   * @example
+   * ```tsx
+   * const { quickStarts } = useChrome();
+   * const controller = quickStarts.useScopedQuickStart({ quickStarts: myQuickStarts });
+   * ```
+   */
+  useScopedQuickStart: (options?: ScopedControllerOptions) => ScopedQuickStartController;
 };
 
 export type AppNavigationCB = (navEvent: { navId?: string; domEvent: NavDOMEvent }) => void;
