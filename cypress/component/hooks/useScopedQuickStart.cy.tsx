@@ -43,49 +43,27 @@ const mockQuickStarts: QuickStart[] = [
 ];
 
 // Test component that uses the hook and exposes state to the DOM
-const TestComponent = ({
-  quickStarts = mockQuickStarts,
-}: {
-  quickStarts?: QuickStart[];
-}) => {
+const TestComponent = ({ quickStarts = mockQuickStarts }: { quickStarts?: QuickStart[] }) => {
   const controller = useScopedQuickStart({ quickStarts });
 
   return (
     <div>
       <div data-cy="active-id">{controller.activeQuickStartID || '(empty)'}</div>
-      <div data-cy="active-qs-name">
-        {controller.activeQuickStart?.metadata.name || '(null)'}
-      </div>
-      <div data-cy="active-qs-display-name">
-        {controller.activeQuickStart?.spec.displayName || '(null)'}
-      </div>
-      <div data-cy="all-states">
-        {JSON.stringify(controller.allQuickStartStates)}
-      </div>
+      <div data-cy="active-qs-name">{controller.activeQuickStart?.metadata.name || '(null)'}</div>
+      <div data-cy="active-qs-display-name">{controller.activeQuickStart?.spec.displayName || '(null)'}</div>
+      <div data-cy="all-states">{JSON.stringify(controller.allQuickStartStates)}</div>
 
       {/* Control buttons */}
-      <button
-        data-cy="set-qs1"
-        onClick={() => controller.setActiveQuickStartID('quickstart-1')}
-      >
+      <button data-cy="set-qs1" onClick={() => controller.setActiveQuickStartID('quickstart-1')}>
         Set QuickStart 1
       </button>
-      <button
-        data-cy="set-qs2"
-        onClick={() => controller.setActiveQuickStartID('quickstart-2')}
-      >
+      <button data-cy="set-qs2" onClick={() => controller.setActiveQuickStartID('quickstart-2')}>
         Set QuickStart 2
       </button>
-      <button
-        data-cy="set-nonexistent"
-        onClick={() => controller.setActiveQuickStartID('nonexistent')}
-      >
+      <button data-cy="set-nonexistent" onClick={() => controller.setActiveQuickStartID('nonexistent')}>
         Set Non-existent
       </button>
-      <button
-        data-cy="clear-active"
-        onClick={() => controller.setActiveQuickStartID('')}
-      >
+      <button data-cy="clear-active" onClick={() => controller.setActiveQuickStartID('')}>
         Clear Active
       </button>
       <button data-cy="restart" onClick={() => controller.restartQuickStart()}>
@@ -123,29 +101,15 @@ const DualInstanceTestComponent = () => {
 
   return (
     <div>
-      <div data-cy="instance1-active-id">
-        {controller1.activeQuickStartID || '(empty)'}
-      </div>
-      <div data-cy="instance2-active-id">
-        {controller2.activeQuickStartID || '(empty)'}
-      </div>
-      <div data-cy="instance1-states">
-        {JSON.stringify(controller1.allQuickStartStates)}
-      </div>
-      <div data-cy="instance2-states">
-        {JSON.stringify(controller2.allQuickStartStates)}
-      </div>
+      <div data-cy="instance1-active-id">{controller1.activeQuickStartID || '(empty)'}</div>
+      <div data-cy="instance2-active-id">{controller2.activeQuickStartID || '(empty)'}</div>
+      <div data-cy="instance1-states">{JSON.stringify(controller1.allQuickStartStates)}</div>
+      <div data-cy="instance2-states">{JSON.stringify(controller2.allQuickStartStates)}</div>
 
-      <button
-        data-cy="instance1-set-qs1"
-        onClick={() => controller1.setActiveQuickStartID('quickstart-1')}
-      >
+      <button data-cy="instance1-set-qs1" onClick={() => controller1.setActiveQuickStartID('quickstart-1')}>
         Instance 1: Set QS1
       </button>
-      <button
-        data-cy="instance2-set-qs2"
-        onClick={() => controller2.setActiveQuickStartID('quickstart-2')}
-      >
+      <button data-cy="instance2-set-qs2" onClick={() => controller2.setActiveQuickStartID('quickstart-2')}>
         Instance 2: Set QS2
       </button>
       <button
@@ -198,10 +162,7 @@ describe('useScopedQuickStart Hook', () => {
 
       cy.get('[data-cy="active-id"]').should('contain', 'quickstart-1');
       cy.get('[data-cy="active-qs-name"]').should('contain', 'quickstart-1');
-      cy.get('[data-cy="active-qs-display-name"]').should(
-        'contain',
-        'First QuickStart'
-      );
+      cy.get('[data-cy="active-qs-display-name"]').should('contain', 'First QuickStart');
     });
 
     it('should return null for activeQuickStart when ID does not match', () => {
@@ -231,16 +192,10 @@ describe('useScopedQuickStart Hook', () => {
       cy.mount(<TestComponent />);
 
       cy.get('[data-cy="set-qs1"]').click();
-      cy.get('[data-cy="active-qs-display-name"]').should(
-        'contain',
-        'First QuickStart'
-      );
+      cy.get('[data-cy="active-qs-display-name"]').should('contain', 'First QuickStart');
 
       cy.get('[data-cy="set-qs2"]').click();
-      cy.get('[data-cy="active-qs-display-name"]').should(
-        'contain',
-        'Second QuickStart'
-      );
+      cy.get('[data-cy="active-qs-display-name"]').should('contain', 'Second QuickStart');
     });
   });
 
@@ -250,10 +205,7 @@ describe('useScopedQuickStart Hook', () => {
 
       cy.get('[data-cy="set-progress"]').click();
 
-      cy.get('[data-cy="all-states"]').should(
-        'contain',
-        '"quickstart-1":{"taskNumber":2,"status":"Complete"}'
-      );
+      cy.get('[data-cy="all-states"]').should('contain', '"quickstart-1":{"taskNumber":2,"status":"Complete"}');
     });
 
     it('should handle multiple QuickStart states', () => {
@@ -261,9 +213,7 @@ describe('useScopedQuickStart Hook', () => {
 
       cy.get('[data-cy="set-multiple-progress"]').click();
 
-      cy.get('[data-cy="all-states"]')
-        .should('contain', '"quickstart-1"')
-        .and('contain', '"quickstart-2"');
+      cy.get('[data-cy="all-states"]').should('contain', '"quickstart-1"').and('contain', '"quickstart-2"');
     });
   });
 
@@ -279,9 +229,7 @@ describe('useScopedQuickStart Hook', () => {
       // Restart
       cy.get('[data-cy="restart"]').click();
 
-      cy.get('[data-cy="all-states"]')
-        .should('contain', '"taskNumber":0')
-        .and('contain', '"status":"In Progress"');
+      cy.get('[data-cy="all-states"]').should('contain', '"taskNumber":0').and('contain', '"status":"In Progress"');
     });
 
     it('should do nothing if no QuickStart is active', () => {
@@ -311,15 +259,9 @@ describe('useScopedQuickStart Hook', () => {
       cy.get('[data-cy="restart"]').click();
 
       // quickstart-1 should be restarted
-      cy.get('[data-cy="all-states"]').should(
-        'contain',
-        '"quickstart-1":{"taskNumber":0,"status":"In Progress"}'
-      );
+      cy.get('[data-cy="all-states"]').should('contain', '"quickstart-1":{"taskNumber":0,"status":"In Progress"}');
       // quickstart-2 should be unchanged
-      cy.get('[data-cy="all-states"]').should(
-        'contain',
-        '"quickstart-2":{"taskNumber":1,"status":"In Progress"}'
-      );
+      cy.get('[data-cy="all-states"]').should('contain', '"quickstart-2":{"taskNumber":1,"status":"In Progress"}');
     });
   });
 
@@ -330,14 +272,8 @@ describe('useScopedQuickStart Hook', () => {
       cy.get('[data-cy="instance1-set-qs1"]').click();
       cy.get('[data-cy="instance2-set-qs2"]').click();
 
-      cy.get('[data-cy="instance1-active-id"]').should(
-        'contain',
-        'quickstart-1'
-      );
-      cy.get('[data-cy="instance2-active-id"]').should(
-        'contain',
-        'quickstart-2'
-      );
+      cy.get('[data-cy="instance1-active-id"]').should('contain', 'quickstart-1');
+      cy.get('[data-cy="instance2-active-id"]').should('contain', 'quickstart-2');
     });
 
     it('should maintain isolated allQuickStartStates between instances', () => {
@@ -346,13 +282,9 @@ describe('useScopedQuickStart Hook', () => {
       cy.get('[data-cy="instance1-set-progress"]').click();
       cy.get('[data-cy="instance2-set-progress"]').click();
 
-      cy.get('[data-cy="instance1-states"]')
-        .should('contain', '"quickstart-1"')
-        .and('not.contain', '"quickstart-2"');
+      cy.get('[data-cy="instance1-states"]').should('contain', '"quickstart-1"').and('not.contain', '"quickstart-2"');
 
-      cy.get('[data-cy="instance2-states"]')
-        .should('contain', '"quickstart-2"')
-        .and('not.contain', '"quickstart-1"');
+      cy.get('[data-cy="instance2-states"]').should('contain', '"quickstart-2"').and('not.contain', '"quickstart-1"');
     });
   });
 

@@ -110,7 +110,7 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     /**
      * Hook for creating a scoped QuickStart controller.
      * Unlike the default behavior, scoped controllers don't use Chrome's managed drawer.
-     * 
+     *
      * Note: This is a React hook and must be called following the rules of hooks.
      */
     useScopedQuickStart,

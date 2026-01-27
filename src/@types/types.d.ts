@@ -159,9 +159,9 @@ export type QuickstartsApi = {
   /**
    * Hook for creating a scoped QuickStart controller for rendering QuickStarts in custom UI.
    * Unlike the default behavior, scoped controllers don't use Chrome's managed drawer.
-   * 
+   *
    * Note: This is a React hook and must be called following the rules of hooks.
-   * 
+   *
    * @example
    * ```tsx
    * const { quickStarts } = useChrome();
