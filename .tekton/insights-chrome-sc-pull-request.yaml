@@ -27,9 +27,7 @@ spec:
   - name: image-expires-after
     value: 5d
   - name: dockerfile
-    value: Dockerfile
-  - name: path-context
-    value: .
+    value: build-tools/Dockerfile
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
@@ -76,7 +74,7 @@ spec:
     - description: Source Repository URL
       name: git-url
       type: string
-    - default: ""
+    - default: ''
       description: Revision of the Source Repository
       name: revision
       type: string
@@ -91,31 +89,30 @@ spec:
       description: Path to the Dockerfile inside the context specified by parameter path-context
       name: dockerfile
       type: string
-    - default: "false"
+    - default: 'false'
       description: Force rebuild image
       name: rebuild
       type: string
-    - default: "false"
+    - default: 'false'
       description: Skip checks against built image
       name: skip-checks
       type: string
-    - default: "false"
+    - default: 'false'
       description: Execute the build with network isolation
       name: hermetic
       type: string
-    - default: ""
+    - default: ''
       description: Build dependencies to be prefetched by Cachi2
       name: prefetch-input
       type: string
-    - default: ""
-      description: Image tag expiration time, time values could be something like
-        1h, 2d, 3w for hours, days, and weeks, respectively.
+    - default: ''
+      description: Image tag expiration time, time values could be something like 1h, 2d, 3w for hours, days, and weeks, respectively.
       name: image-expires-after
     - default: 'false'
       description: Build a source image.
       name: build-source-image
       type: string
-    - default: "false"
+    - default: 'false'
       description: Add built image into an OCI image index
       name: build-image-index
       type: string
@@ -123,7 +120,7 @@ spec:
       description: Array of --build-arg values ("arg=value" strings) for buildah
       name: build-args
       type: array
-    - default: ""
+    - default: ''
       description: Path to a file with build arguments for buildah, see https://www.mankier.com/1/buildah-build#--build-arg-file
       name: build-args-file
       type: string
@@ -132,16 +129,16 @@ spec:
       type: string
       description: The format for the resulting image's mediaType. Valid values are oci or docker.
     results:
-    - description: ""
+    - description: ''
       name: IMAGE_URL
       value: $(tasks.build-image-index.results.IMAGE_URL)
-    - description: ""
+    - description: ''
       name: IMAGE_DIGEST
       value: $(tasks.build-image-index.results.IMAGE_DIGEST)
-    - description: ""
+    - description: ''
       name: CHAINS-GIT_URL
       value: $(tasks.clone-repository.results.url)
-    - description: ""
+    - description: ''
       name: CHAINS-GIT_COMMIT
       value: $(tasks.clone-repository.results.commit)
     tasks:
@@ -175,7 +172,7 @@ spec:
         - name: name
           value: git-clone
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.1@sha256:242fa43ae84f22e692c01662ceea1cee18143f66a11a424ae2228472dbfc53cc
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone:0.1@sha256:d17249eaf50aeb71a98e02125f850fe411d4d3c85d670d871e0cf23b35773a67
         - name: kind
           value: task
         resolver: bundles
@@ -200,7 +197,7 @@ spec:
         - name: name
           value: prefetch-dependencies
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies:0.2@sha256:6655f11897203a627f37da413825de6cff0ccad4c0eab49f1c8afb7c73a31655
+          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies:0.2@sha256:2eb8ac0f56702c9870723616b3d94a7895e25938fa01d4ce6ae2d5282c968a56
         - name: kind
           value: task
         resolver: bundles
@@ -216,66 +213,6 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: parse-build-deploy-script
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      runAfter:
-      - clone-repository
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
-        - name: pathInRepo
-          value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
-    - name: create-frontend-dockerfile
-      params:
-      - name: path-context
-        value: $(params.path-context)
-      - name: component
-        value: $(tasks.parse-build-deploy-script.results.component)
-      - name: image
-        value: $(tasks.parse-build-deploy-script.results.image)
-      - name: node-build-version
-        value: $(tasks.parse-build-deploy-script.results.node-build-version)
-      - name: quay-expire-time
-        value: $(tasks.parse-build-deploy-script.results.quay-expire-time)
-      - name: npm-build-script
-        value: $(tasks.parse-build-deploy-script.results.npm-build-script)
-      - name: yarn-build-script
-        value: $(tasks.parse-build-deploy-script.results.yarn-build-script)
-      - name: route-path
-        value: $(tasks.parse-build-deploy-script.results.route-path)
-      - name: beta-route-path
-        value: $(tasks.parse-build-deploy-script.results.beta-route-path)
-      - name: preview-route-path
-        value: $(tasks.parse-build-deploy-script.results.preview-route-path)
-      - name: ci-root
-        value: $(tasks.parse-build-deploy-script.results.ci-root)
-      - name: server-name
-        value: $(tasks.parse-build-deploy-script.results.server-name)
-      - name: dist-folder
-        value: $(tasks.parse-build-deploy-script.results.dist-folder)
-      runAfter:
-      - parse-build-deploy-script
-      taskRef:
-        params:
-        - name: url
-          value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
-        - name: revision
-          value: e0b400ca6433f1ff05722c412ab837c4bd49a45a
-        - name: pathInRepo
-          value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
-        resolver: git
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: clone-repository-oci-ta
       params:
       - name: url
@@ -291,7 +228,7 @@ spec:
         - name: name
           value: git-clone-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:0a89e1a6304076525e9766f63a4cd006763d21d5aca6863281fc427537a23c6f
+          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:56f65a16d3d0485c64ad85af2c1f3e9b0bb4d02d63f2fd0ebb9498d219ca723d
         - name: kind
           value: task
         resolver: bundles
@@ -337,13 +274,161 @@ spec:
             limits:
               cpu: "2"
               memory: "4Gi"
-          image: registry.access.redhat.com/ubi8/nodejs-20
+          image: registry.access.redhat.com/ubi9/nodejs-20
           script: |
             #!/bin/bash
             set -ex
 
             npm install
             npm test
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - name: run-e2e-tests
+      description: Validates frontend end-to-end tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        timeout: 15m
+        spec:
+        stepTemplate:
+          computeResources:
+            requests:
+              cpu: "4"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+          - mountPath: /dev/shm
+            name: dshm
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - computeResources:
+            requests:
+              cpu: "4"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+          image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
+          name: e2e-tests
+          env:
+          - name: CHROME_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: chrome-credentials-secret
+                key: username
+          - name: CHROME_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: chrome-credentials-secret
+                key: password
+          - name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "0"
+          - name: CI
+            value: "true"
+          - name: NO_PROXY
+            value: "stage.foo.redhat.com,prod.foo.redhat.com"
+          - name: KONFLUX_RUN
+            value: "true"
+          script: |
+            #!/usr/bin/env bash
+            set -ex
+            npm i >/dev/null 2>&1
+            echo "Starting dev server in background..."
+            KONFLUX_RUN=$KONFLUX_RUN DISABLE_CLIENT_OVERLAY=true npm run dev:beta &
+            DEV_SERVER_PID=$!
+            echo "Waiting for dev server to respond..."
+            timeout 600s bash -c 'until curl -k https://stage.foo.redhat.com:1337 > /dev/null 2>&1; do
+              echo "Waiting for dev server..."
+              sleep 5
+            done'
+            echo "Dev server is ready! Running tests."
+            
+            echo "Running cypress (partial) integration tests"
+            KONFLUX_RUN=$KONFLUX_RUN NO_COLOR=1 E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx cypress run --spec "cypress/e2e/**/*"
+            
+            echo "Running Playwright User flow tests (full integration)"
+            npx playwright install
+            E2E_USER=$CHROME_ACCOUNT E2E_PASSWORD=$CHROME_PASSWORD npx playwright test
+            echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
+            kill $DEV_SERVER_PID
+          securityContext:
+            runAsUser: 0
+          workingDir: /var/workdir
+        volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: "4Gi"   # Adjust this value as needed (e.g., "4Gi", "8Gi")
+        - emptyDir: {}
+          name: workdir
+      workspaces:
+      - name: basic-auth
+        workspace: git-auth
+    - description: Validates Caddy configuration
+      name: run-caddyfile-tests
+      params:
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
+      runAfter:
+      - clone-repository-oci-ta
+      taskSpec:
+        metadata: {}
+        params:
+        - description: The Trusted Artifact URI pointing to the artifact with the application source code.
+          name: SOURCE_ARTIFACT
+          type: string
+        spec:
+        stepTemplate:
+          computeResources: {}
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
+        steps:
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir
+          computeResources: {}
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
+          name: use-trusted-artifact
+        - name: caddy-config-tests
+          computeResources: {}
+          image: caddy:2-alpine
+          script: |
+            #!/bin/sh
+            set -ex
+            
+            # Install curl and bash for testing (caddy is already included in caddy:2-alpine)
+            apk add --no-cache curl bash
+            
+            # Make test script executable
+            chmod +x ./test-caddyfile.sh
+            
+            # Run Caddy configuration tests
+            CADDYFILE_SOURCE=./Caddyfile ./test-caddyfile.sh
           securityContext:
             runAsUser: 0
           workingDir: /var/workdir
@@ -378,13 +463,12 @@ spec:
         value: $(params.buildah-format)
       runAfter:
       - prefetch-dependencies
-      - create-frontend-dockerfile
       taskRef:
         params:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.7@sha256:8b16e4e79853e3a3192f82e9f8930b79b04942bb389eaab4c44fb4d233ccefe6
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.7@sha256:4b93d023c9f642c0a0363a451024014225fbde03bacbb5f662af1fb3559eb5a3
         - name: kind
           value: task
         resolver: bundles
@@ -418,7 +502,7 @@ spec:
         - name: name
           value: build-image-index
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-build-image-index:0.2@sha256:39561ac43e325159497c10c0284cf61dfddf39e39100ca5e3df6b73c5d96db8b
+          value: quay.io/konflux-ci/tekton-catalog/task-build-image-index:0.2@sha256:985d1efe861b02524a7679ecd855624b3d4e3a2e835b6f8a97ec7d135898ec0b
         - name: kind
           value: task
         resolver: bundles
@@ -440,7 +524,7 @@ spec:
         - name: name
           value: source-build
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-source-build:0.3@sha256:9e567501dd67e30b1dd1d16f859c767323f762335bad7a1ad4107deca2e2c9a7
+          value: quay.io/konflux-ci/tekton-catalog/task-source-build:0.3@sha256:1375b2de61d1ba1fd3bf586617d1800722477771dcebe11f6e40757d558df0d3
         - name: kind
           value: task
         resolver: bundles
@@ -469,7 +553,7 @@ spec:
         - name: name
           value: sast-shell-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:3fb1f8c3a344e67a22fdf4bff963ca806da84d62e9d33d34dc6beb49cfaacc33
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:e88f5b989e98ecd95a12122a4720c8d9ac51dad4841d865d9807ed37b2a2f7b3
         - name: kind
           value: task
         resolver: bundles
@@ -494,7 +578,7 @@ spec:
         - name: name
           value: sast-unicode-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.3@sha256:74a5b3075c7e03b76d7d490947b507080bfb89c93a5f8bb7007d68d40672febd
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.3@sha256:bc8f58d5fd484c31266f6f2ee292208066bdbd4010a171ef5a09ebc5f8a0de2d
         - name: kind
           value: task
         resolver: bundles
@@ -519,7 +603,7 @@ spec:
         - name: name
           value: deprecated-image-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-deprecated-image-check:0.5@sha256:462baed733dfc38aca5395499e92f19b6f13a74c2e88fe5d86c3cffa2f899b57
+          value: quay.io/konflux-ci/tekton-catalog/task-deprecated-image-check:0.5@sha256:1cf21de671be4c97d4973b60c09c912997cd15b65c30b93a07eff1b24f43a1f8
         - name: kind
           value: task
         resolver: bundles
@@ -541,7 +625,7 @@ spec:
         - name: name
           value: clair-scan
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-clair-scan:0.3@sha256:a5fa66ed5b8c107e7bc29cb084edcc07e394f818cc59ef2db2f9dcb0cd1fa3dc
+          value: quay.io/konflux-ci/tekton-catalog/task-clair-scan:0.3@sha256:654b989d7cdc03d082e56f216a29de04847215ee379a8d9ca315e453ad2b15c2
         - name: kind
           value: task
         resolver: bundles
@@ -561,7 +645,7 @@ spec:
         - name: name
           value: ecosystem-cert-preflight-checks
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-ecosystem-cert-preflight-checks:0.2@sha256:04f75593558f79a27da2336400bc63d460bf0c5669e3c13f40ee2fb650b1ad1e
+          value: quay.io/konflux-ci/tekton-catalog/task-ecosystem-cert-preflight-checks:0.2@sha256:b612fd73d81822113e2c12f44a72eed218540aaa8e9f3e42223bddb01a0689cb
         - name: kind
           value: task
         resolver: bundles
@@ -583,7 +667,7 @@ spec:
         - name: name
           value: sast-snyk-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.4@sha256:0079378025b6a73bb3c4336853e24a3e1bf65e7e8594062ca49a4007c534fbbd
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-snyk-check:0.4@sha256:10d6a41c51102c07c0147f2f3d57a2180d58c0cc4af2a022862247edcde5cd54
         - name: kind
           value: task
         resolver: bundles
@@ -608,7 +692,7 @@ spec:
         - name: name
           value: clamav-scan
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-clamav-scan:0.3@sha256:f3d2d179cddcc07d0228d9f52959a233037a3afa2619d0a8b2effbb467db80c3
+          value: quay.io/konflux-ci/tekton-catalog/task-clamav-scan:0.3@sha256:ed3e1e2292704e7179bf08492b3f39bdadc699a74b5c344a673c6b7ea9229f68
         - name: kind
           value: task
         resolver: bundles
@@ -630,7 +714,7 @@ spec:
         - name: name
           value: apply-tags
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-apply-tags:0.2@sha256:e4017ec351a0891ef95989f35bd20b8c3f091fa1a3da364c4d4e975e99f3063c
+          value: quay.io/konflux-ci/tekton-catalog/task-apply-tags:0.3@sha256:510b6d2a3b188adeb716e49566b57d611ab36bd69a2794b5ddfc11dbf014c2ca
         - name: kind
           value: task
         resolver: bundles
@@ -671,7 +755,7 @@ spec:
         - name: name
           value: rpms-signature-scan
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-rpms-signature-scan:0.2@sha256:0b10508c82ccb0f5a06a66ce7af56e9bfd40651ddefdf0f499988e897771ee28
+          value: quay.io/konflux-ci/tekton-catalog/task-rpms-signature-scan:0.2@sha256:00417785ba16344c10e8682bf58eeb6ef058cedd88ae2d86bb14ced220135374
         - name: kind
           value: task
         resolver: bundles
@@ -679,7 +763,7 @@ spec:
       - input: $(params.skip-checks)
         operator: in
         values:
-        - "false"
+        - 'false'
     workspaces:
     - name: workspace
     - name: git-auth
@@ -688,6 +772,13 @@ spec:
       optional: true
   taskRunTemplate:
     serviceAccountName: build-pipeline-insights-chrome-sc
+    podTemplate:
+      hostAliases:
+      # Webpack explicitly binds to this address; don't remove or change this without careful consideration
+      - ip: "127.0.0.1"
+        hostnames:
+        - "stage.foo.redhat.com"
+        - "prod.foo.redhat.com"
   workspaces:
   - name: workspace
     volumeClaimTemplate:
