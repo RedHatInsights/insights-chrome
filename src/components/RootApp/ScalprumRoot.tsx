@@ -38,6 +38,7 @@ import { segmentPageOptionsAtom } from '../../state/atoms/segmentPageOptionsAtom
 import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
+import usePf5Styles from '../../hooks/usePf5Styles';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -131,6 +132,9 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
   useDPAL();
   // initialize amplitude analytics
   useAmplitude();
+
+  // apply pf5 styles if the flag is enabled
+  usePf5Styles();
 
   useEffect(() => {
     // prepare webpack module sharing scope overrides
