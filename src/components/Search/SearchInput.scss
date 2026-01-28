@@ -5,14 +5,13 @@
 .chr-c-search-title {
   mark {
     font-weight: var(--pf-t--global--font--weight--body--bold);
+    // Use PF utility class: pf-v6-u-background-color-transparent (not available)
+    // Note: No direct PF utility class for transparent background - keep custom CSS
     background-color: transparent;
   }
 }
 
 .chr-c-search {
-  &__collapsed {
-    justify-content: flex-end;
-  }
   &__input {
     .pf-v6-c-input-group {
       background-color: transparent !important;
@@ -45,9 +44,6 @@
       &:empty {
         display: none;
       }
-    }
-    small {
-      display: inline-block;
     }
   }
   &__empty-state {
