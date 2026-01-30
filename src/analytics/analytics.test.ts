@@ -26,6 +26,9 @@ function buildUser(token: any): DeepRequired<ChromeUser> {
         locale: token.locale || 'en_US',
         username: token.username || 'test-user',
       },
+      organization: {
+        name: token.organization?.name || 'Test Organization',
+      },
     },
   };
 }
