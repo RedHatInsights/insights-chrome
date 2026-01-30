@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import AllServicesDropdown from '../../../src/components/AllServicesDropdown/AllServicesDropdown';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { Provider as JotaiProvider } from 'jotai';
 import { ScalprumProvider } from '@scalprum/react-core';
+import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
+import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 describe('<AllServicesDropdown />', () => {
   beforeEach(() => {
@@ -22,12 +24,12 @@ describe('<AllServicesDropdown />', () => {
 
   it('should close all services dropdown in link matches current pathname', () => {
     function checkMenuClosed() {
-      cy.get('.pf-v5-c-menu-toggle__text').click();
-      cy.contains('All services').should('exist');
+      cy.get('.pf-v6-c-menu-toggle__text').click();
+      cy.contains('View all').should('exist');
       cy.contains('Favorites').click();
       cy.contains('Test section').click();
       cy.contains('Test link').click();
-      cy.contains('All services').should('not.exist');
+      cy.contains('View all').should('not.exist');
     }
     cy.intercept('http://localhost:8080/api/chrome-service/v1/static/stable/stage/services/services-generated.json', [
       {
@@ -52,17 +54,6 @@ describe('<AllServicesDropdown />', () => {
         }),
       };
     });
-    const store = createStore(() => ({
-      chrome: {
-        moduleRoutes: [
-          {
-            path: '/test/link',
-            scope: 'foo',
-            module: 'bar',
-          },
-        ],
-      },
-    }));
     cy.mount(
       <ScalprumProvider
         config={{
@@ -72,13 +63,18 @@ describe('<AllServicesDropdown />', () => {
           },
         }}
       >
-        <Provider store={store}>
-          <BrowserRouter>
-            <IntlProvider locale="en">
-              <AllServicesDropdown />
-            </IntlProvider>
-          </BrowserRouter>
-        </Provider>
+        {/* @ts-ignore */}
+        <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
+          <FeatureFlagsProvider>
+            <JotaiProvider>
+              <BrowserRouter>
+                <IntlProvider locale="en">
+                  <AllServicesDropdown />
+                </IntlProvider>
+              </BrowserRouter>
+            </JotaiProvider>
+          </FeatureFlagsProvider>
+        </ChromeAuthContext.Provider>
       </ScalprumProvider>
     );
 
@@ -113,17 +109,6 @@ describe('<AllServicesDropdown />', () => {
         }),
       };
     });
-    const store = createStore(() => ({
-      chrome: {
-        moduleRoutes: [
-          {
-            path: '/test/link',
-            scope: 'foo',
-            module: 'bar',
-          },
-        ],
-      },
-    }));
     cy.viewport(320, 568);
     cy.mount(
       <ScalprumProvider
@@ -134,18 +119,23 @@ describe('<AllServicesDropdown />', () => {
           },
         }}
       >
-        <Provider store={store}>
-          <BrowserRouter>
-            <IntlProvider locale="en">
-              <AllServicesDropdown />
-            </IntlProvider>
-          </BrowserRouter>
-        </Provider>
+        <JotaiProvider>
+          {/* @ts-ignore */}
+          <ChromeAuthContext.Provider value={{ user: { identity: { user: {}, internal: {} } } }}>
+            <FeatureFlagsProvider>
+              <BrowserRouter>
+                <IntlProvider locale="en">
+                  <AllServicesDropdown />
+                </IntlProvider>
+              </BrowserRouter>
+            </FeatureFlagsProvider>
+          </ChromeAuthContext.Provider>
+        </JotaiProvider>
       </ScalprumProvider>
     );
 
     // open the Services dropdown
-    cy.get('.pf-v5-c-menu-toggle__text').click();
+    cy.get('.pf-v6-c-menu-toggle__text').click();
     // check that the services tabs are not expanded
     cy.get('[data-ouia-component-id="all-services-tabs"]').should('not.have.class', 'pf-m-expanded');
     // expand the services tabs

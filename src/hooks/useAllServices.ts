@@ -1,15 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NavItem } from '../@types/types';
-import {
-  AllServicesGroup,
-  AllServicesLink,
-  AllServicesSection,
-  isAllServicesGroup,
-  isAllServicesLink,
-} from '../components/AllServices/allServicesLinks';
+import { AllServicesGroup, AllServicesLink, AllServicesSection, isAllServicesGroup, isAllServicesLink } from '../components/AllServices/allServicesLinks';
 import { getChromeStaticPathname } from '../utils/common';
 import { evaluateVisibility } from '../utils/isNavItemVisible';
+import useFeoConfig from './useFeoConfig';
 
 export type AvailableLinks = {
   [key: string]: NavItem;
@@ -79,7 +74,7 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   const que: EnhancedSection[] = [];
   sections.forEach((section) => {
     const newLinksQue = section.links.map(async (link) => {
-      if (isAllServicesGroup(link)) {
+      if (isAllServicesGroup(link) && link.links) {
         const nestedLinksQue = await link.links.map(evaluateVisibility);
         const links = await Promise.all(nestedLinksQue);
         return { ...link, links };
@@ -109,6 +104,8 @@ const evaluateLinksVisibility = async (sections: AllServicesSection[]): Promise<
   return groupQue;
 };
 
+const GENERATED_SERVICES_PATH = '/api/chrome-service/v1/static/service-tiles-generated.json';
+
 const useAllServices = () => {
   const [{ ready, error, availableSections }, setState] = useState<{
     error: boolean;
@@ -119,54 +116,72 @@ const useAllServices = () => {
     error: false,
     availableSections: [],
   });
+  const useFeoGenerated = useFeoConfig();
   const isMounted = useRef(false);
   const [filterValue, setFilterValue] = useState('');
-  const fetchSections = useCallback(async () => {
-    const query = `${getChromeStaticPathname('services')}/services-generated.json`;
-    let request = allServicesFetchCache[query];
-    if (!request) {
-      request = axios.get<
-        (Omit<AllServicesSection, 'links'> & {
-          links: (AllServicesLink | AllServicesGroup)[];
-        })[]
-      >(query);
-      allServicesFetchCache[query] = request;
-    }
+  const fetchSections = useCallback(
+    async (abortSignal: AbortSignal) => {
+      const query = useFeoGenerated ? GENERATED_SERVICES_PATH : `${getChromeStaticPathname('services')}/services-generated.json`;
+      let request = allServicesFetchCache[query];
+      if (!request) {
+        request = axios.get<
+          (Omit<AllServicesSection, 'links'> & {
+            links: (AllServicesLink | AllServicesGroup)[];
+          })[]
+        >(query, {
+          signal: abortSignal,
+        });
+        allServicesFetchCache[query] = request;
+      }
 
-    const response = await request;
-    // clear the cache
-    delete allServicesFetchCache[query];
+      const response = await request;
+      // clear the cache
+      delete allServicesFetchCache[query];
 
-    return evaluateLinksVisibility(response.data);
-  }, []);
+      return evaluateLinksVisibility(response.data);
+    },
+    [useFeoGenerated]
+  );
 
-  const setNavigation = useCallback(async () => {
-    const sections = await fetchSections();
-    if (isMounted.current) {
-      const availableSections = sections.filter(({ links }: AllServicesSection) => {
-        if (links?.length === 0) {
-          return false;
+  const setNavigation = useCallback(
+    async (abortSignal: AbortSignal) => {
+      try {
+        const sections = await fetchSections(abortSignal);
+        if (isMounted.current) {
+          const availableSections = sections.filter(({ links }: AllServicesSection) => {
+            if (links?.length === 0) {
+              return false;
+            }
+
+            return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
+          });
+
+          setState((prev) => ({
+            ...prev,
+            availableSections,
+            ready: true,
+          }));
         }
-
-        return links.filter((item) => isAllServicesLink(item) || (isAllServicesGroup(item) && item.links.length !== 0)).flat().length !== 0;
-      });
-
-      setState((prev) => ({
-        ...prev,
-        availableSections,
-        ready: true,
-      }));
-    }
-  }, [fetchSections]);
+      } catch (error) {
+        // ignore abort errors
+        if (!axios.isCancel(error)) {
+          throw error;
+        }
+      }
+    },
+    [fetchSections, useFeoGenerated]
+  );
   useEffect(() => {
+    const abortCtrl = new AbortController();
     isMounted.current = true;
-    setNavigation();
+    setNavigation(abortCtrl.signal);
     return () => {
       isMounted.current = false;
+      abortCtrl.abort();
     };
-  }, [setNavigation]);
+  }, [setNavigation, useFeoGenerated]);
 
-  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue]);
+  const linkSections = useMemo(() => filterAllServicesSections(availableSections, filterValue), [ready, filterValue, useFeoGenerated, availableSections]);
 
   return {
     linkSections,

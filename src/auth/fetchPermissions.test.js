@@ -1,12 +1,12 @@
 import mockedRbac from '../../testdata/rbacAccess.json';
 
 jest.mock('./rbac', () => () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockedRbac = require('../../testdata/rbacAccess.json');
   return {
     getPrincipalAccess: () => {
       global.rbacApiCalled++;
-      return Promise.resolve(mockedRbac);
+      return Promise.resolve({ data: mockedRbac });
     },
   };
 });
@@ -18,14 +18,12 @@ describe('fetchPermissions', () => {
   let getUser = jest.fn().mockImplementation(() =>
     Promise.resolve({
       identity: {
-        // eslint-disable-next-line camelcase
         account_number: '0',
         type: 'User',
         org_id: '123',
       },
       entitlements: {
         insights: {
-          // eslint-disable-next-line camelcase
           is_entitled: true,
         },
       },

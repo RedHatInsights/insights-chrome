@@ -1,13 +1,11 @@
 import { initializeVisibilityFunctions } from '../utils/VisibilitySingleton';
 import { createChromeContext } from './create-chrome';
-import { Store, createStore } from 'redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import { AxiosResponse } from 'axios';
 import { OfflineTokenResponse } from '../auth/offline';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import QuickStartCatalog from '../components/QuickStart/QuickStartCatalog';
-import { ReduxState } from '../redux/store';
 
 jest.mock('@scalprum/core', () => {
   return {
@@ -85,12 +83,19 @@ describe('create chrome', () => {
     },
     ready: true,
     token: 'string',
+    refreshToken: 'string',
     tokenExpires: 0,
     user: mockUser,
+    forceRefresh() {
+      return Promise.resolve();
+    },
+    loginSilent: () => {
+      return Promise.resolve();
+    },
   };
 
   const chromeContextOptionsMock = {
-    store: createStore(() => ({})) as Store<ReduxState>,
+    addWsEventListener: jest.fn(),
     // getUser: () => Promise.resolve(mockUser),
     chromeAuth: chromeAuthMock,
     analytics: new AnalyticsBrowser(),
@@ -101,6 +106,7 @@ describe('create chrome', () => {
       enableTopics: jest.fn(),
       setActiveTopic: jest.fn(),
     },
+    isPreview: false,
     quickstartsAPI: {
       Catalog: QuickStartCatalog,
       set() {
@@ -117,12 +123,15 @@ describe('create chrome', () => {
     setPageMetadata: jest.fn(),
     useGlobalFilter: jest.fn(),
     registerModule: jest.fn(),
+    addNavListener: jest.fn(),
+    deleteNavListener: jest.fn(),
   };
   beforeAll(() => {
     const mockAuthMethods = {
       getUser: () => Promise.resolve(mockUser),
       getToken: () => Promise.resolve('mocked-token'),
       getUserPermissions: () => Promise.resolve([]),
+      isPreview: false,
     };
     initializeVisibilityFunctions(mockAuthMethods);
   });

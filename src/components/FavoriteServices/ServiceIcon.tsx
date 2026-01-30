@@ -5,13 +5,16 @@ import ACSIcon from '../AllServicesDropdown/icon-acs';
 import AnsibleIcon from '../AllServicesDropdown/icon-ansible';
 import AppServicesIcon from '../AllServicesDropdown/icon-app-services';
 import DataScienceIcon from '../AllServicesDropdown/icon-data-science';
-import EdgeIcon from '../AllServicesDropdown/icon-edge';
+import IAmIcon from '../AllServicesDropdown/icon-iam';
 import InsightsIcon from '../AllServicesDropdown/icon-insights';
 import OpenShiftIcon from '../AllServicesDropdown/icon-openshift';
+import OtherServicesIcon from '../AllServicesDropdown/icon-other-services';
 import QuayIoIcon from '../AllServicesDropdown/icon-quay-io';
 import RHIcon from '../AllServicesDropdown/icon-rh';
 import ServicesIcon from '../AllServicesDropdown/icon-services';
+import SettingsIcon from '../AllServicesDropdown/icon-settings';
 import SubscriptionsIcon from '../AllServicesDropdown/icon-subscriptions';
+import TrustedArtifactIcon from '../AllServicesDropdown/icon-trusted-artifact';
 import TrustedContentIcon from '../AllServicesDropdown/icon-trusted-content';
 import BoxesIcon from '@patternfly/react-icons/dist/dynamic/icons/boxes-icon';
 import ChartLineIcon from '@patternfly/react-icons/dist/dynamic/icons/chart-line-icon';
@@ -37,13 +40,16 @@ export enum FavorableIcons {
   AppServicesIcon = 'AppServicesIcon',
   BrainIcon = 'BrainIcon',
   DataScienceIcon = 'DataScienceIcon',
-  EdgeIcon = 'EdgeIcon',
+  IAmIcon = 'IAmIcon',
   InsightsIcon = 'InsightsIcon',
   OpenShiftIcon = 'OpenShiftIcon',
+  OtherServicesIcon = 'OtherServicesIcon',
   QuayIoIcon = 'QuayIoIcon',
   RHIcon = 'RHIcon',
   ServicesIcon = 'ServicesIcon',
+  SettingsIcon = 'SettingsIcon',
   SubscriptionsIcon = 'SubscriptionsIcon',
+  TrustedArtifactIcon = 'TrustedArtifactIcon',
   TrustedContentIcon = 'TrustedContentIcon',
   PlaceholderIcon = 'PlaceholderIcon',
   CloudUploadAltIcon = 'CloudUploadAltIcon',
@@ -69,13 +75,16 @@ const iconEnum: { [key in FavorableIcons]: React.ComponentType } = {
   AnsibleIcon,
   AppServicesIcon,
   DataScienceIcon,
-  EdgeIcon,
+  IAmIcon,
   InsightsIcon,
   OpenShiftIcon,
+  OtherServicesIcon,
   QuayIoIcon,
   RHIcon,
   ServicesIcon,
+  SettingsIcon,
   SubscriptionsIcon,
+  TrustedArtifactIcon,
   TrustedContentIcon,
   PlaceholderIcon,
   CloudUploadAltIcon,

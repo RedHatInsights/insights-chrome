@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const deps = require('../package.json').dependencies;
 
@@ -37,16 +38,21 @@ const plugins = (dev = false, beta = false, restricted = false) => {
         './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
         './DashboardFavorites': resolve(__dirname, '../src/components/FavoriteServices/DashboardFavorites.tsx'),
+        './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
+        './ModularInventory': resolve(__dirname, '../src/inventoryPoc/index.ts'),
+        './search/useSearch': resolve(__dirname, '../src/hooks/useSearch.ts'),
+        './analytics/intercom/OpenShiftItercom': resolve(__dirname, '../src/components/OpenShiftIntercom/OpenShiftIntercomModule.tsx'),
+        './analytics/intercom/useOpenShiftIntercomStore': resolve(__dirname, '../src/state/stores/openShiftIntercomStore.ts'),
       },
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
         { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
         { 'react-intl': { singleton: true, eager: true, requiredVersion: deps['react-intl'] } },
         { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
-        { 'react-redux': { requiredVersion: deps['react-redux'] } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },
         { '@patternfly/quickstarts': { singleton: true, requiredVersion: deps['@patternfly/quickstarts'] } },
         { '@redhat-cloud-services/chrome': { singleton: true, requiredVersion: deps['@redhat-cloud-services/chrome'] } },
+        { '@scalprum/core': { singleton: true, requiredVersion: deps['@scalprum/core'] } },
         { '@scalprum/react-core': { singleton: true, requiredVersion: deps['@scalprum/react-core'] } },
         { '@unleash/proxy-client-react': { singleton: true, requiredVersion: deps['@unleash/proxy-client-react'] } },
         getDynamicModules(process.cwd()),
@@ -58,16 +64,14 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       inject: 'body',
       minify: false,
       filename: dev ? 'index.html' : '../index.html',
-      // FIXME: Change to /preview on May
-      base: beta ? '/beta/' : '/',
+      base: '/',
       templateParameters: {
-        pf4styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v4.css`,
-        pf5styles: `/${beta ? 'beta/' : ''}apps/chrome/js/pf/pf4-v5.css`,
+        pf6styles: `/apps/chrome/js/pf/pf-v6.css`,
       },
     }),
     new HtmlWebpackPlugin({
       title: 'Authenticating - Hybrid Cloud Console',
-      filename: dev ? 'silent-check-sso.html' : '../silent-check-sso.html',
+      filename: 'silent-check-sso.html',
       inject: false,
       minify: false,
       template: path.resolve(__dirname, '../src/silent-check-sso.html'),
@@ -85,7 +89,33 @@ const plugins = (dev = false, beta = false, restricted = false) => {
     new webpack.DefinePlugin({
       __SENTRY_DEBUG__: false,
     }),
-    ...(dev ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(dev
+      ? [
+          new ReactRefreshWebpackPlugin({
+            overlay: false,
+          }),
+        ]
+      : []),
+    // Put the Sentry Webpack plugin after all other plugins
+    ...(process.env.ENABLE_SENTRY
+      ? [
+          sentryWebpackPlugin({
+            ...(process.env.SENTRY_AUTH_TOKEN && {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
+            org: process.env.SENTRY_ORG,
+            project: process.env.SENTRY_PROJECT,
+            moduleMetadata: ({ release }) => ({
+              ...(process.env.SENTRY_AUTH_TOKEN && {
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+              }),
+              org: process.env.SENTRY_ORG,
+              project: process.env.SENTRY_PROJECT,
+              release,
+            }),
+          }),
+        ]
+      : []),
   ];
 };
 

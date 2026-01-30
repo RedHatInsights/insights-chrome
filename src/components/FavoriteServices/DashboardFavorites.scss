@@ -1,7 +1,13 @@
-.chrome-favoriteServices {
+.chrome-favoriteServices, [class*="chrome-chrome-./DashboardFavorites"] {
   overflow-y: auto;
 }
 
 .widget-favorites {
   column-width: 300px;
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

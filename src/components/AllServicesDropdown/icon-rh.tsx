@@ -2,7 +2,7 @@ import React from 'react';
 
 const RHIcon = () => {
   return (
-    <svg width="24" height="30" viewBox="0 0 24 30">
+    <svg className="platform-icon allservices-icon" width="24" height="30" viewBox="0 0 24 30">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Group-7" fillRule="nonzero">
           <path

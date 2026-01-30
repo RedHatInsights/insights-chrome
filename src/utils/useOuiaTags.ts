@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { ReduxState } from '../redux/store';
 import { isAnsible } from '../hooks/useBundle';
+import { activeAppAtom } from '../state/atoms/activeAppAtom';
+import { useAtomValue } from 'jotai';
+import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 
 export type OuiaTags = {
   landing?: 'true' | 'false';
@@ -19,10 +20,10 @@ const useOuiaTags = () => {
     'data-ouia-safe': 'true',
   });
   const { pathname } = useLocation();
-  const { pageAction, pageObjectId, activeApp } = useSelector(
-    ({ chrome: { pageAction, pageObjectId, activeApp } }: ReduxState) => ({ pageAction, pageObjectId, activeApp }),
-    shallowEqual
-  );
+  const pageObjectId = useAtomValue(pageObjectIdAtom);
+  const pageAction = useAtomValue(appActionAtom);
+  const activeApp = useAtomValue(activeAppAtom);
+
   useEffect(() => {
     setState(() => {
       const result: OuiaTags = {

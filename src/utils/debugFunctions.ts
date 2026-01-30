@@ -1,5 +1,7 @@
 const functionBuilder = (key: string, value: boolean | number | string) => {
-  window.localStorage && window.localStorage.setItem(key, value.toString());
+  if (window.localStorage) {
+    window.localStorage.setItem(key, value.toString());
+  }
   return () => window.localStorage && window.localStorage.removeItem(key);
 };
 
@@ -9,7 +11,7 @@ const debugFunctions = {
   invTags: () => functionBuilder('rhcs-tags', true),
   shortSession: () => functionBuilder('chrome:jwt:shortSession', true),
   jwtDebug: () => functionBuilder('chrome:auth:debug', true),
-  reduxDebug: () => functionBuilder('chrome:redux:debug', true),
+  reduxDebug: () => () => {}, // No-op function for compatibility with external types
   forcePendo: () => functionBuilder('forcePendo', true),
   disableSegment: () => functionBuilder('chrome:segment:disable', true),
   disableAnalytics: () => functionBuilder('chrome:analytics:disable', true),
@@ -23,7 +25,6 @@ const debugFunctions = {
   segmentDev: () => functionBuilder('chrome:analytics:dev', true),
   intlDebug: () => functionBuilder('chrome:intl:debug', true),
   sentryDebug: () => functionBuilder('chrome:sentry:debug', true),
-  forceLocalPreview: () => functionBuilder('chrome:local-preview', true),
 };
 
 export default debugFunctions;

@@ -1,5 +1,8 @@
-import { search } from '@orama/orama';
-import { fuzzySearch } from './levenshtein-search';
+import { Orama, search } from '@orama/orama';
+import { ReleaseEnv, ResultItem, SearchDataType } from '@redhat-cloud-services/types/index.js';
+import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
+import { evaluateVisibility } from './isNavItemVisible';
+import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -12,74 +15,120 @@ const matchCache: {
   description: {},
 };
 
-type ResultItem = {
-  title: string;
-  description: string;
-  bundleTitle: string;
-  pathname: string;
-};
-
 const resultCache: {
   [term: string]: ResultItem[];
 } = {};
 
-const START_MARK_LENGTH = 6;
-const END_MARK_LENGTH = START_MARK_LENGTH + 1;
-const OFFSET_BASE = START_MARK_LENGTH + END_MARK_LENGTH;
+// merge overlapping marks into smaller sets
+// example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
+function joinMatchPositions(marks: FuzzySearchMatch[]) {
+  return marks
+    .toSorted((a, b) => a.start! - b.start!)
+    .reduce<{ start: number; end: number }[]>((acc, { start, end }) => {
+      const bounded = acc.findIndex((o) => {
+        return (o.start >= start && o.start <= end) || (start >= o.start && start <= o.end);
+      });
 
-function markText(text: string, start: number, end: number, offset: number) {
-  const markStart = OFFSET_BASE * offset + start + offset * 2 - 1;
-  const markEnd = OFFSET_BASE * offset + end + offset * 2;
-  return `${text.substring(0, markStart)}<mark>${text.substring(markStart, markEnd)}</mark>${text.substring(markEnd)}`;
+      if (bounded >= 0) {
+        acc[bounded] = { start: Math.min(start, acc[bounded].start), end: Math.max(end, acc[bounded].end) };
+      } else {
+        acc.push({ start, end });
+      }
+
+      return acc;
+    }, []);
+}
+
+function applyMarks(text: string, marks: { start: number; end: number }[]) {
+  const sortedMarks = marks.toSorted((a, b) => a.start - b.start);
+
+  let out = '';
+  let prevEnd = 0;
+
+  for (const mark of sortedMarks) {
+    if (mark.end < prevEnd) {
+      throw new Error(`Invalid mark overlap: { start: ${mark.start}, end: ${mark.end} } overlaps with mark ending at ${prevEnd}`);
+    }
+
+    out += text.substring(prevEnd, mark.start);
+    out += `<mark>${text.substring(mark.start, mark.end)}</mark>`;
+
+    prevEnd = mark.end;
+  }
+
+  out += text.substring(prevEnd, text.length);
+
+  return out;
+}
+
+const LOWERCASE_A = 'a'.charCodeAt(0) as number;
+const UPPERCASE_A = 'A'.charCodeAt(0) as number;
+const UPPERCASE_Z = 'Z'.charCodeAt(0) as number;
+
+// ASCII lowercase, which preserves length (unlink toLowerCase).
+function asciiLowercase(value: string) {
+  const out = [];
+
+  for (let i = 0; i < value.length; ++i) {
+    const codeUnit = value.charCodeAt(i) as number;
+    const adjusted = codeUnit >= UPPERCASE_A && codeUnit <= UPPERCASE_Z ? codeUnit - UPPERCASE_A + LOWERCASE_A : codeUnit;
+
+    out.push(adjusted);
+  }
+
+  return String.fromCharCode(...out);
 }
 
 function highlightText(term: string, text: string, category: HighlightCategories) {
   const key = `${term}-${text}`;
+
   // check cache
   if (matchCache[category]?.[key]) {
     return matchCache[category][key];
   }
-  let internalText = text;
-  // generate fuzzy matches
-  const res = fuzzySearch(term, internalText, 2);
-  const marks = [...res].sort((a, b) => a.start! - b.start!);
-  // merge overlapping marks into smaller sets
-  // example: start: 1, end: 5, start: 3, end: 7 => start: 1, end: 7
-  const merged = marks.reduce<{ start: number; end: number }[]>((acc, { start, end }) => {
-    if (!start || !end) return acc;
-    const bounded = acc.findIndex((o) => {
-      return (o.start >= start && o.start <= end) || (start >= o.start && start <= o.end);
-    });
-    if (bounded >= 0) {
-      acc[bounded] = { start: Math.min(start, acc[bounded].start), end: Math.max(end, acc[bounded].end) };
-    } else {
-      acc.push({ start, end });
-    }
-    return acc;
-  }, []);
-  // mark text from reduced match set
-  merged.forEach(({ start, end }, index) => {
-    internalText = markText(internalText, start!, end, index);
-  });
+
+  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(text), 2)]));
+  const markedText = applyMarks(text, mergedMarks);
 
   // cache result
-  matchCache[category][key] = internalText;
-  return internalText;
+  matchCache[category][key] = markedText;
+  return markedText;
 }
 
-export const localQuery = async (db: any, term: string) => {
+async function checkResultPermissions(id: string, env: ReleaseEnv = ReleaseEnv.STABLE) {
+  const cacheKey = `${env}-${id}`;
+  const cacheHit = SearchPermissionsCache.get(cacheKey);
+  if (cacheHit) {
+    return cacheHit;
+  }
+  const permissions = SearchPermissions.get(id);
+  const result = !!(await evaluateVisibility({ id, permissions }))?.isHidden;
+  SearchPermissionsCache.set(cacheKey, result);
+  return result;
+}
+
+export const localQuery = async (
+  db: Orama<typeof entrySchema>,
+  term: string,
+  env: ReleaseEnv = ReleaseEnv.STABLE,
+  mode: SearchDataType | string = 'services'
+) => {
   try {
-    let results: ResultItem[] | undefined = resultCache[term];
+    const cacheKey = `${env}-${term}-${mode}`;
+    let results: ResultItem[] | undefined = resultCache[cacheKey];
     if (results) {
       return results;
     }
 
+    results = [];
     const r = await search(db, {
       term,
       threshold: 0.5,
       tolerance: 1.5,
       properties: ['title', 'description', 'altTitle'],
-      limit: 10,
+      where: {
+        type: mode,
+      },
       boost: {
         title: 10,
         altTitle: 5,
@@ -87,20 +136,36 @@ export const localQuery = async (db: any, term: string) => {
       },
     });
 
-    results = r.hits.map(({ document: { title, description, bundleTitle, pathname } }) => {
-      let matchedTitle = title;
-      let matchedDescription = description;
-      matchedTitle = highlightText(term, matchedTitle, 'title');
-      matchedDescription = highlightText(term, matchedDescription, 'description');
-
-      return {
-        title: matchedTitle,
-        description: matchedDescription,
+    const searches: ResultItem[] = [];
+    for (const hit of r.hits) {
+      if (searches.length === 10) {
+        break;
+      }
+      const {
+        document: { id },
+      } = hit;
+      const res = await checkResultPermissions(String(id), ReleaseEnv.STABLE);
+      // skip hidden items
+      if (!res) {
+        searches.push({
+          ...hit.document,
+          id: String(hit.document.id),
+        });
+      }
+    }
+    const validResults = await Promise.all(searches);
+    for (let i = 0; i < Math.min(10, validResults.length); i += 1) {
+      const { title, description, bundleTitle, pathname, id } = validResults[i];
+      results.push({
+        title: highlightText(term, title, 'title'),
+        description: highlightText(term, description, 'description'),
         bundleTitle,
         pathname,
-      };
-    });
-    resultCache[term] = results;
+        id,
+      });
+    }
+
+    resultCache[cacheKey] = results;
     return results;
   } catch (error) {
     console.log(error);

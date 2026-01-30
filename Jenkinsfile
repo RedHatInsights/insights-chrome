@@ -14,7 +14,7 @@ def secrets = [
 ]
 
 pipeline {
-    agent { label 'insights' }
+    agent { label 'rhel8' }
     options {
         timestamps()
     }

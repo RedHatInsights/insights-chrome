@@ -3,7 +3,6 @@ import { VisibilityFunctions } from '@redhat-cloud-services/types';
 import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { Group, GroupFilterItem } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import type Intercom from '@types/intercom-web';
-
 import { AddHelpTopic, DisableTopics, EnableTopics } from '../components/QuickStart/useHelpTopicState';
 import { FavorableIcons } from '../components/FavoriteServices/ServiceIcon';
 
@@ -86,6 +85,12 @@ declare global {
       groupId?: string;
       pageOptions?: Record<string, unknown>;
     };
+    engagement?: {
+      boot: (unknown) => void;
+      forwardEvent: (unknown) => void;
+      shutdown: () => void;
+      setRouter: (router: (newUrl: string) => void) => void;
+    };
     s?: {
       visitor?: {
         getMarketingCloudVisitorID: () => string;
@@ -138,15 +143,20 @@ export type RouteDefinition = {
   props?: any;
 };
 
-export type ModuleRoute =
-  | {
-      isFedramp?: boolean;
-      pathname: string;
-      exact?: boolean;
-      dynamic?: boolean;
-      props?: Record<string, unknown>;
-    }
-  | string;
+export type SupportCaseConfig = {
+  product: string;
+  version: string;
+};
+
+export type ModuleRoute = {
+  isFedramp?: boolean;
+  pathname: string;
+  exact?: boolean;
+  dynamic?: boolean;
+  props?: Record<string, unknown>;
+  supportCaseData?: SupportCaseConfig;
+  permissions?: NavItemPermission[];
+};
 
 export type RemoteModule = {
   module: string;
@@ -156,14 +166,25 @@ export type RemoteModule = {
 export type ChromeModule = {
   manifestLocation: string;
   ssoUrl?: string;
+  cdnPath?: string;
   config?: {
+    supportCaseData?: SupportCaseConfig;
     ssoUrl?: string;
     fullProfile?: boolean;
     props?: Record<string, unknown>;
     ssoScopes?: string[];
   };
+  moduleConfig?: {
+    supportCaseData?: SupportCaseConfig;
+    ssoScopes?: string[];
+  };
   analytics?: {
     APIKey?: string;
+    APIKeyDev?: string;
+    amplitude?: {
+      APIKey?: string;
+      APIKeyDev?: string;
+    };
   };
   dynamic?: boolean;
   isFedramp?: boolean;
@@ -215,12 +236,7 @@ export type ChromeNavGroupProps = {
 
 export type DynamicNavProps = ChromeNavItemProps & {
   dynamicNav: string;
-  useNavigation: (config: {
-    schema?: Navigation | NavItem[];
-    dynamicNav: string;
-    currentNamespace: string;
-    currNav?: NavItem[];
-  }) => NavItem | NavItem[];
+  useNavigation: (config: { schema?: Navigation | NavItem[]; dynamicNav: string; currentNamespace: string; currNav?: NavItem[] }) => NavItem | NavItem[];
   pathname: string;
 };
 

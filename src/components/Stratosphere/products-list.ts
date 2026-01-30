@@ -2,7 +2,7 @@ import { ProductCardProps } from './ProductCard';
 
 const productsList: Omit<ProductCardProps, 'order'>[] = [
   {
-    img: '/apps/frontend-assets/logos/logo__rhel.svg',
+    img: '/apps/frontend-assets/platform-logos/rhel.svg',
     description: 'You can create your own OS image to deploy to your cloud instance.',
     link: {
       href: '/insights/dashboard',
@@ -11,7 +11,7 @@ const productsList: Omit<ProductCardProps, 'order'>[] = [
     },
   },
   {
-    img: '/apps/frontend-assets/logos/logo__openshift.svg',
+    img: '/apps/frontend-assets/platform-logos/openshift.svg',
     description: 'You can create a cluster to deploy to your cloud instance.',
     link: {
       href: '/openshift',
@@ -20,7 +20,7 @@ const productsList: Omit<ProductCardProps, 'order'>[] = [
     },
   },
   {
-    img: '/apps/frontend-assets/logos/logo__ansible-automation.svg',
+    img: '/apps/frontend-assets/platform-logos/ansible-automation-platform.svg',
     description: 'Learn how to install and configure your Ansible infrastructure.',
     link: {
       href: '/ansible/ansible-dashboard',
@@ -29,7 +29,7 @@ const productsList: Omit<ProductCardProps, 'order'>[] = [
     },
   },
   {
-    img: '/apps/frontend-assets/logos/logo__application-services.svg',
+    img: '/apps/frontend-assets/platform-logos/application-services.svg',
     description: 'Learn how to access your Application services.',
     link: {
       href: '/application-services/overview',

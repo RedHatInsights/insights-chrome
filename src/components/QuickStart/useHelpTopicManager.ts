@@ -74,17 +74,17 @@ const useHelpTopicManager = (helpTopicsAPI: HelpTopicsAPI) => {
     } else {
       if (activeHelpTopic?.name && prevActiveTopic === activeTopicName && activeHelpTopic?.name !== activeTopicName) {
         // switching topics via the drawer dropdown
-        setActiveHelpTopicByName && setActiveHelpTopicByName(activeHelpTopic.name);
+        setActiveHelpTopicByName?.(activeHelpTopic.name);
         dispatch({ type: 'setActiveTopicInternal', prevActiveTopic });
       } else if (typeof activeTopicName === 'string' && activeTopicName?.length > 0) {
         // switching from outside of the drawer
         if (helpTopics?.find(({ name }) => name === activeTopicName)) {
-          setActiveHelpTopicByName && setActiveHelpTopicByName(activeTopicName);
+          setActiveHelpTopicByName?.(activeTopicName);
           dispatch({ type: 'setActiveTopicExternal', prevActiveTopic: activeTopicName });
         }
       } else {
         // clearing active topic
-        setActiveHelpTopicByName && setActiveHelpTopicByName('');
+        setActiveHelpTopicByName?.('');
         dispatch({ type: 'resetActiveTopic' });
       }
     }

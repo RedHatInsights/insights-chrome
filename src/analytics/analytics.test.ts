@@ -33,7 +33,7 @@ function buildUser(token: any): DeepRequired<ChromeUser> {
 describe('User + Analytics', () => {
   describe('buildUser + getPendoConf internal', () => {
     test('should build a valid internal Pendo config', () => {
-      const conf = getPendoConf(buildUser(token));
+      const conf = getPendoConf(buildUser(token), false);
       expect(conf).toMatchObject({
         account: {
           id: '540155',
@@ -47,7 +47,7 @@ describe('User + Analytics', () => {
     });
 
     test('should build a valid external Pendo config', () => {
-      const conf = getPendoConf(buildUser(externalToken));
+      const conf = getPendoConf(buildUser(externalToken), false);
       expect(conf).toMatchObject({
         account: {
           id: '540155',
@@ -61,7 +61,7 @@ describe('User + Analytics', () => {
     });
 
     test('should build a valid IBM pendo config', () => {
-      const conf = getPendoConf(buildUser(ibmToken));
+      const conf = getPendoConf(buildUser(ibmToken), false);
       expect(conf).toMatchObject({
         account: {
           id: '540155',

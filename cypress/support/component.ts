@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-namespace */
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* eslint-disable prettier/prettier */
 // ***********************************************************
 // This example support/component.ts is processed and
@@ -20,7 +21,8 @@
 import './commands'
 import '../../src/sass/chrome.scss'
 import '../../src/sass/pf-5-assets.scss'
-import { mount } from 'cypress/react18'
+import '../../src/sass/pf-6-assets.scss'
+import { mount } from 'cypress/react'
 import '@cypress/code-coverage/support'
 
 // Alternatively you can use CommonJS syntax:
@@ -43,6 +45,7 @@ addMatchImageSnapshotCommand({
 declare global {
   interface Window {
     TestApp: any;
+    virtualAssistant: any;
   }
   namespace Cypress {
     interface Chainable {
@@ -54,6 +57,5 @@ declare global {
 }
 
 Cypress.Commands.add('mount', mount)
-
 // Example use:
 // cy.mount(<MyComponent />)

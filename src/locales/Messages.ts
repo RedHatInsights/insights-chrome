@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
@@ -77,6 +76,16 @@ export default defineMessages({
     description: 'Status page',
     defaultMessage: 'Status page',
   },
+  helpPanel: {
+    id: 'helpPanel',
+    description: 'Help panel',
+    defaultMessage: 'Help panel',
+  },
+  helpPanelTooltip: {
+    id: 'helpPanelTooltip',
+    description: 'Help panel tooltip describing available resources',
+    defaultMessage: 'Learning resources, API documentation, Support Case Management, Ask Red Hat assistant, and more.',
+  },
   knownOutages: {
     id: 'knownOutages',
     description: 'for known outages.',
@@ -94,8 +103,8 @@ export default defineMessages({
   },
   enterFeedback: {
     id: 'enterFeedback',
-    description: 'Enter your feedback',
-    defaultMessage: 'Enter your feedback',
+    description: 'Enter your feedback: Do not include any personal information or other sensitive information.',
+    defaultMessage: 'Enter your feedback: Do not include any personal information or other sensitive information.',
   },
   researchOpportunities: {
     id: 'researchOpportunities',
@@ -197,10 +206,10 @@ export default defineMessages({
     description: 'Show more',
     defaultMessage: 'Show more',
   },
-  clearFilters: {
-    id: 'clearFilters',
-    description: 'Clear filters',
-    defaultMessage: 'Clear filters',
+  resetFilters: {
+    id: 'resetFilters',
+    description: 'Reset filters',
+    defaultMessage: 'Reset filters',
   },
   noInventoryPermissions: {
     id: 'noInventoryPermissions',
@@ -219,8 +228,8 @@ export default defineMessages({
   },
   selectTagsOrSIDs: {
     id: 'selectTagsOrSIDs',
-    description: 'Select one or more tags/SAP IDs (SID)',
-    defaultMessage: 'Select one or more tags/SAP IDs (SID)',
+    description: 'Select one or more tags',
+    defaultMessage: 'Select one or more tags',
   },
   name: {
     id: 'name',
@@ -326,6 +335,11 @@ export default defineMessages({
     id: 'demoMode',
     description: 'Demo mode',
     defaultMessage: 'Demo mode',
+  },
+  globalLearningResourcesPage: {
+    id: 'globalLearningResourcesPage',
+    description: 'All learning resources',
+    defaultMessage: 'All learning resources',
   },
   loggedOut: {
     id: 'loggedOut',
@@ -507,8 +521,7 @@ export default defineMessages({
   },
   describeReportBug: {
     id: 'describeReportBug',
-    description:
-      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
+    description: 'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
     defaultMessage:
       'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow, ',
   },
@@ -556,8 +569,8 @@ export default defineMessages({
   },
   teamWillReviewBug: {
     id: 'teamWillReviewBug',
-    description: 'We appreciate your feedback and our team will review your report shorlty',
-    defaultMessage: 'We appreciate your feedback and our team will review your report shorlty',
+    description: 'We appreciate your feedback and our team will review your report shortly',
+    defaultMessage: 'We appreciate your feedback and our team will review your report shortly',
   },
   responseSent: {
     id: 'responseSent',
@@ -573,5 +586,10 @@ export default defineMessages({
     id: 'joinMailingList',
     description: 'Join mailing list',
     defaultMessage: 'Join mailing list',
+  },
+  askRedHat: {
+    id: 'askRedHat',
+    description: 'Ask Red Hat',
+    defaultMessage: 'Ask Red Hat',
   },
 });

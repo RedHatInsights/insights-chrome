@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { AnalyticsBrowser } from '@segment/analytics-next';
-import Cookie from 'js-cookie';
-import { ITLess, isBeta, isProd } from '../utils/common';
+import { ITLess, isProd } from '../utils/common';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -11,6 +10,8 @@ import { getUrl } from '../hooks/useBundle';
 import ChromeAuthContext from '../auth/ChromeAuthContext';
 import { useAtomValue } from 'jotai';
 import { activeModuleAtom, activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import { isPreviewAtom } from '../state/atoms/releaseAtom';
+import usePageEvent, { getPageEventOptions } from './usePageEvent';
 
 type SegmentEnvs = 'dev' | 'prod';
 type SegmentModules = 'acs' | 'openshift' | 'hacCore';
@@ -31,80 +32,27 @@ function getAdobeVisitorId() {
   return -1;
 }
 
-const getPageEventOptions = () => {
-  const path = window.location.pathname.replace(/^\/(beta\/|preview\/|beta$|preview$)/, '/');
-  const search = new URLSearchParams(window.location.search);
+const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string, moduleAPIKeyDev?: string) => {
+  // Use the appropriate key based on environment
+  const envSpecificKey = env === 'prod' ? moduleAPIKey : moduleAPIKeyDev;
 
-  // Do not send keys with undefined values to segment.
-  const trackingContext = [
-    { name: 'tactic_id_external', value: search.get('sc_cid') || Cookie.get('rh_omni_tc') },
-    { name: 'tactic_id_internal', value: search.get('intcmp') || Cookie.get('rh_omni_itc') },
-    { name: 'tactic_id_personalization', value: search.get('percmp') || Cookie.get('rh_omni_pc') },
-  ].reduce((acc, curr) => (typeof curr.value === 'string' ? { ...acc, [curr.name]: curr.value } : acc), {});
-
-  return [
+  return (
+    envSpecificKey ||
+    moduleAPIKey || // fallback to prod key if dev key not available
     {
-      path,
-      url: `${window.location.origin}${path}${window.location.search}`,
-      isBeta: isBeta(),
-      module: window._segment?.activeModule,
-      // Marketing campaing tracking
-      ...trackingContext,
-      ...window?._segment?.pageOptions,
-    },
-    {
-      context: {
-        groupId: window._segment?.groupId,
+      prod: {
+        acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
+        hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
+        openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
       },
-    },
-  ];
-};
-
-const getAPIKey = (env: SegmentEnvs = 'dev', module: SegmentModules, moduleAPIKey?: string) =>
-  moduleAPIKey ||
-  {
-    prod: {
-      acs: '9NmgZh57uEaOW9ePKqeKjjUKE8MEqaVU',
-      hacCore: 'cLLG3VVakAECyGRAUnmjRkSqGJkYlRWI',
-      openshift: 'z3Ic4EtzJtHrhXfpKgViJmf2QurSxXb9',
-    },
-    dev: {
-      acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
-      hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
-      openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
-    },
-  }[env]?.[module] ||
-  KEY_FALLBACK[env];
-
-let observer: MutationObserver | undefined;
-const registerAnalyticsObserver = () => {
-  // never override the observer
-  if (observer) {
-    return;
-  }
-  /**
-   * We ignore hash changes
-   * Hashes only have frontend effect
-   */
-  let oldHref = document.location.href.replace(/#.*$/, '');
-
-  const bodyList = document.body;
-  observer = new MutationObserver((mutations) => {
-    mutations.forEach(() => {
-      const newLocation = document.location.href.replace(/#.*$/, '');
-      if (oldHref !== newLocation) {
-        oldHref = newLocation;
-        window?.sendCustomEvent?.('pageBottom');
-        setTimeout(() => {
-          window.segment?.page(...getPageEventOptions());
-        });
-      }
-    });
-  });
-  observer.observe(bodyList, {
-    childList: true,
-    subtree: true,
-  });
+      dev: {
+        acs: 'CA5jdEouFKAxwGq7X9i1b7UySMKshj1j',
+        hacCore: '5SuWCF4fRqTzMD8HVsk2r1LEYsYVsHCC',
+        openshift: 'A8iCO9n9Ax9ObvHBgz4hMC9htKB0AdKj',
+      },
+    }[env]?.[module] ||
+    KEY_FALLBACK[env]
+  );
 };
 
 const isInternal = (email = '') => /@(redhat\.com|.*ibm\.com)$/gi.test(email);
@@ -113,7 +61,7 @@ const emailDomain = (email = '') => (/@/g.test(email) ? email.split('@')[1].toLo
 
 const getPagePathSegment = (pathname: string, n: number) => pathname.split('/')[n] || '';
 
-const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '') => {
+const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = '', isPreview: boolean) => {
   const entitlements = Object.entries(user.entitlements).reduce(
     (acc, [key, entitlement]) => ({
       ...acc,
@@ -132,7 +80,7 @@ const getIdentityTraits = (user: ChromeUser, pathname: string, activeModule = ''
     isOrgAdmin: user.identity.user?.is_org_admin,
     currentBundle: getUrl('bundle'),
     currentApp: activeModule,
-    isBeta: isBeta(),
+    isBeta: isPreview,
     ...(user.identity.user
       ? {
           name: `${user.identity.user.first_name} ${user.identity.user.last_name}`,
@@ -158,11 +106,14 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const analytics = useRef<AnalyticsBrowser>();
   const analyticsLoaded = useRef(false);
   const { user } = useContext(ChromeAuthContext);
+  const isPreview = useAtomValue(isPreviewAtom);
 
   const activeModule = useAtomValue(activeModuleAtom);
   const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
   const moduleAPIKey = activeModuleDefinition?.analytics?.APIKey;
-  const { pathname } = useLocation();
+  const moduleAPIKeyDev = activeModuleDefinition?.analytics?.APIKeyDev;
+  const { pathname, search } = useLocation();
+  usePageEvent(analytics);
 
   const fetchIntercomHash = async () => {
     try {
@@ -190,15 +141,8 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const handleModuleUpdate = async () => {
     if (!isDisabled && activeModule && user) {
-      /**
-       * Clean up custom page event data after module change
-       */
-      window._segment = {
-        groupId: user.identity.internal?.org_id,
-        activeModule,
-      };
-      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey);
-      const identityTraits = getIdentityTraits(user, pathname, activeModule);
+      const newKey = getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev);
+      const identityTraits = getIdentityTraits(user, pathname, activeModule, isPreview);
       const identityOptions = {
         context: {
           groupId: user.identity.internal?.org_id,
@@ -211,7 +155,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         cloud_ebs_id: user.identity.account_number,
       };
       if (!initialized.current && analytics.current) {
-        window.segment = analytics.current;
         const hash = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
         analytics.current.identify(user.identity.internal?.account_id, identityTraits, {
@@ -226,19 +169,15 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           },
         });
         analytics.current.group(user.identity.internal?.org_id, groupTraits);
-        analytics.current.page(...getPageEventOptions());
+        analytics.current.page(...getPageEventOptions({ pathname, search, user }));
         initialized.current = true;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore TS does not allow accessing the instance settings but its necessary for us to not create instances if we don't have to
       } else if (initialized.current && !isDisabled && analytics.current?.instance?.settings.writeKey !== newKey) {
-        if (window.segment) {
-          window.segment = undefined;
-        }
         analytics.current = AnalyticsBrowser.load(
           { writeKey: newKey },
           { initialPageview: false, disableClientPersistence: true, integrations: { All: !isITLessEnv && !disableIntegrations } }
         );
-        window.segment = analytics.current;
         resetIntegrations(analytics.current);
         const hash = await fetchIntercomHash();
         // integration config based on https://app.intercom.com/a/apps/thyhluqp/settings/identity-verification/web
@@ -259,14 +198,6 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   };
 
   useEffect(() => {
-    registerAnalyticsObserver();
-    return () => {
-      observer?.disconnect();
-      observer = undefined;
-    };
-  }, []);
-
-  useEffect(() => {
     handleModuleUpdate();
     // need the json stringify to prevent the effect from running on every user update if not necessary
   }, [activeModule, JSON.stringify(user)]);
@@ -281,7 +212,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     analytics.current.load(
       {
         cdnURL: '/connections/cdn',
-        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey),
+        writeKey: getAPIKey(DEV_ENV ? 'dev' : 'prod', activeModule as SegmentModules, moduleAPIKey, moduleAPIKeyDev),
       },
       {
         initialPageview: false,

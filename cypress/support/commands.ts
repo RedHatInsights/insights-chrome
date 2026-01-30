@@ -52,10 +52,13 @@ Cypress.Commands.add('login', () => {
 
       cy.wait(1000);
       // login into the session
-      cy.get('#username-verification').type(Cypress.env('E2E_USER'));
-      cy.get('#login-show-step2').click();
-      cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
-      cy.get('#rh-password-verification-submit-button').click();
+
+      cy.get('body').then(() => {
+        cy.get('#username-verification').type(Cypress.env('E2E_USER'));
+        cy.get('#login-show-step2').click();
+        cy.get('#password').type(Cypress.env('E2E_PASSWORD'));
+        cy.get('#rh-password-verification-submit-button').click();
+      });
     },
     { cacheAcrossSpecs: true }
   );

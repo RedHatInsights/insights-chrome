@@ -5,7 +5,6 @@ import memoize from 'lodash/memoize';
 import { FlagTagsFilter, GroupItem } from '../../@types/types';
 import { getUrl } from '../../hooks/useBundle';
 
-export const SID_KEY = 'SAP ID (SID)';
 export const AAP_KEY = 'Ansible Automation Platform';
 export const MSSQL_KEY = 'Microsoft SQL';
 
@@ -52,10 +51,7 @@ export const updateSelected: UpdateSelected = (original, namespace, key, value, 
 
 export const createTagsFilter = (tags: string[] = []) =>
   tags.reduce<
-    Record<
-      string,
-      Record<string, { isSelected?: boolean; item: { tagValue: string; tagKey: string; group?: { value: string; label: string; type: string } } }>
-    >
+    Record<string, Record<string, { isSelected?: boolean; item: { tagValue: string; tagKey: string; group?: { value: string; label: string; type: string } } }>>
   >((acc, curr) => {
     const [namespace, tag] = curr.split('/');
     const [tagKey, tagValue] = tag?.split('=') || [];
@@ -84,7 +80,6 @@ export const generateFilter = () => {
 
   let Workloads = {};
   let tags = {};
-  let SIDs = {};
 
   if (searchParams.get('workloads')) {
     const { tag } = workloads[0].tags.find(({ tag: { key } }) => key === searchParams.get('workloads')) || {};
@@ -103,18 +98,8 @@ export const generateFilter = () => {
     tags = createTagsFilter(searchParams.get('tags')?.split(','));
   }
 
-  if (typeof searchParams.get('SIDs') === 'string') {
-    SIDs = createTagsFilter(
-      searchParams
-        .get('SIDs')
-        ?.split(',')
-        .map((sid) => `${SID_KEY}/${sid}`)
-    )?.[SID_KEY];
-  }
-
   return {
     Workloads,
-    ...(SIDs && { [SID_KEY]: SIDs }),
     ...tags,
   };
 };
@@ -123,29 +108,20 @@ export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/
 
 export const flatTags = memoize(
   (filter: FlagTagsFilter = {}, encode = false, format = false) => {
-    const { Workloads, [SID_KEY]: SID, ...tags } = filter;
-    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) } || {}), ([namespace, item]) =>
+    const { Workloads, ...tags } = filter;
+    const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) }), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
+        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
-          }${
-            item?.tagValue || tagValue
-              ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}`
-              : ''
-          }`;
+          }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}` : ''}`;
         })
     );
-    return format
-      ? [
-          Workloads,
-          Object.entries<any>(SID || {})
-            .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected)
-            .reduce<any>((acc, [key]) => [...acc, key], []),
-          mappedTags,
-        ]
-      : mappedTags;
+    // Return 3 items when format=true: [workloads, SIDs, tags]
+    // SIDs is always empty array since sap_sids filter was removed from global filter
+    // This ensures tags go to the tags parameter
+    return format ? [Workloads, [], mappedTags] : mappedTags;
   },
   (filter = {}, encode, format) =>
     `${Object.entries(filter)

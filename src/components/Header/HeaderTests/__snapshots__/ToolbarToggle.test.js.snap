@@ -2,9 +2,9 @@
 
 exports[`ToolbarToggle should render correctly 1`] = `
 <div
-  class="pf-v5-c-menu"
+  class="pf-v6-c-menu"
   data-ouia-component-id="OUIA-Generated-Dropdown-1"
-  data-ouia-component-type="PF5/Dropdown"
+  data-ouia-component-type="PF6/Dropdown"
   data-ouia-safe="true"
   data-popper-escaped="true"
   data-popper-placement="bottom-end"
@@ -12,32 +12,32 @@ exports[`ToolbarToggle should render correctly 1`] = `
   style="position: absolute; left: 0px; top: 0px; z-index: 9999; opacity: 1; transition: opacity 0ms cubic-bezier(.54, 1.5, .38, 1.11); min-width: 0px; transform: translate(0px, 0px);"
 >
   <div
-    class="pf-v5-c-menu__content"
+    class="pf-v6-c-menu__content"
   >
     <ul
-      class="pf-v5-c-menu__list"
+      class="pf-v6-c-menu__list"
       role="menu"
     >
       <li
-        class="pf-v5-c-menu__list-item"
+        class="pf-v6-c-menu__list-item"
         data-ouia-component-id="title1"
-        data-ouia-component-type="PF5/DropdownItem"
+        data-ouia-component-type="PF6/DropdownItem"
         data-ouia-safe="true"
         href="url1"
         role="none"
       >
         <a
-          class="pf-v5-c-menu__item"
+          class="pf-v6-c-menu__item"
           rel="noopener noreferrer"
           role="menuitem"
           tabindex="0"
           target="_blank"
         >
           <span
-            class="pf-v5-c-menu__item-main"
+            class="pf-v6-c-menu__item-main"
           >
             <span
-              class="pf-v5-c-menu__item-text"
+              class="pf-v6-c-menu__item-text"
             >
               title1
             </span>
@@ -45,23 +45,23 @@ exports[`ToolbarToggle should render correctly 1`] = `
         </a>
       </li>
       <li
-        class="pf-v5-c-menu__list-item"
+        class="pf-v6-c-menu__list-item"
         data-ouia-component-id="title2"
-        data-ouia-component-type="PF5/DropdownItem"
+        data-ouia-component-type="PF6/DropdownItem"
         data-ouia-safe="true"
         role="none"
       >
         <button
-          class="pf-v5-c-menu__item"
+          class="pf-v6-c-menu__item"
           role="menuitem"
           tabindex="-1"
           type="button"
         >
           <span
-            class="pf-v5-c-menu__item-main"
+            class="pf-v6-c-menu__item-main"
           >
             <span
-              class="pf-v5-c-menu__item-text"
+              class="pf-v6-c-menu__item-text"
             >
               title2
             </span>

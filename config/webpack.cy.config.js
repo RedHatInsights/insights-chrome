@@ -10,8 +10,8 @@ const PFGenerator = asGenerator((item, ...rest) => {
   const defaultTuples = [...defaultJoinGenerator(item, ...rest)];
   if (item.uri.includes('./assets')) {
     return defaultTuples.map(([base]) => {
-      if (base.includes('pf-4-styles')) {
-        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-4-styles', item.uri))];
+      if (base.includes('pf-5-styles')) {
+        return [base, path.relative(base, path.resolve(__dirname, '../node_modules/pf-5-styles', item.uri))];
       }
       if (base.includes('@patternfly/patternfly')) {
         return [base, path.relative(base, path.resolve(__dirname, '../node_modules/@patternfly/patternfly', item.uri))];
@@ -32,16 +32,6 @@ const JSConfig = {
           loader: 'swc-loader',
           options: {
             jsc: {
-              experimental: {
-                plugins: [
-                  [
-                    'swc-plugin-coverage-instrument',
-                    {
-                      compact: false,
-                    },
-                  ],
-                ],
-              },
               parser: {
                 syntax: 'typescript',
                 tsx: true,
@@ -107,7 +97,6 @@ const JSConfig = {
         { react: { singleton: true, eager: true } },
         { 'react-dom': { singleton: true, eager: true } },
         { 'react-router-dom': { singleton: true } },
-        { 'react-redux': {} },
         { '@openshift/dynamic-plugin-sdk': { singleton: true } },
         { '@patternfly/react-core': {} },
         { '@patternfly/quickstarts': { singleton: true } },

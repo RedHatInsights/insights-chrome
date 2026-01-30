@@ -1,8 +1,7 @@
-@import '~@patternfly/patternfly/patternfly.scss';
-@import '~@patternfly/patternfly/patternfly-addons.scss';
-@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
-@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
+$pf-global--enable-reset: 'true';
 
-// Quick starts
-@import '~@patternfly/quickstarts/dist/quickstarts.min';
-@import '~@patternfly/patternfly/patternfly-theme-dark.scss';
+@import '~pf-5-styles/patternfly.scss';
+@import '~pf-5-styles/patternfly-addons.scss';
+@import '~pf-5-styles/utilities/Accessibility/accessibility.scss';
+@import '~pf-5-styles/utilities/Spacing/spacing.scss';
+@import '~pf-5-styles/patternfly-theme-dark.scss';

@@ -1,14 +1,11 @@
 export const isAnsible = (sections: string[]) => (sections.includes('ansible') && sections.includes('insights') ? 1 : 0);
 
-export function getUrl(type?: string) {
-  if (['/', '/beta', '/beta/', '/preview', '/preview/'].includes(window.location.pathname)) {
+export function getUrl(type?: string, pathname = window.location.pathname) {
+  if (['/'].includes(pathname)) {
     return 'landing';
   }
 
-  const sections = window.location.pathname.split('/');
-  if (['beta', 'preview'].includes(sections[1])) {
-    return type === 'bundle' ? sections[2] : sections[3 + isAnsible(sections)];
-  }
+  const sections = pathname.split('/');
 
   return type === 'bundle' ? sections[1] : sections[2 + isAnsible(sections)];
 }
@@ -20,7 +17,6 @@ export const bundleMapping: {
   openshift: 'OpenShift',
   ansible: 'Ansible Automation Platform',
   insights: 'RHEL',
-  edge: 'Edge management',
   settings: 'Settings',
   landing: 'Home',
   allservices: 'Home',

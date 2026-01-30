@@ -2,7 +2,7 @@ import React from 'react';
 
 const ACSIcon = () => {
   return (
-    <svg width="28" height="28" viewBox="0 0 38 38">
+    <svg className="platform-icon allservices-icon" width="28" height="28" viewBox="0 0 38 38">
       <defs>
         <style>{`.uuid-2cc71784-83b2-4ce0-a27c-c558cca16f2a{fill:#e00;}.uuid-073bfd7c-dff4-432f-a7b0-f3a025d959a1{fill:#fff;}`}</style>
       </defs>

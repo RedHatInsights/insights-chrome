@@ -6,14 +6,13 @@
     <title>
         Hybrid Cloud Console
     </title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: wss: data: blob: 'unsafe-inline' 'unsafe-eval' https://*.redhat.com/ https://www.redhat.com  https://*.openshift.com/ https://api.stage.openshift.com/ https://identity.api.openshift.com/ https://www.youtube.com/ https://redhat.sc.omtrdc.net/ https://assets.adobedtm.com https://www.redhat.com https://*.storage.googleapis.com/ https://*.hotjar.com:* https://*.hotjar.io wss://*.hotjar.com https://stage.quay.io https://quay.io;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: wss: data: blob: 'unsafe-inline' 'unsafe-eval' https://*.redhat.com/ https://www.redhat.com  https://*.openshift.com/ https://*.openshiftapps.com/ https://api.stage.openshift.com/ https://identity.api.openshift.com/ https://www.youtube.com/ https://redhat.sc.omtrdc.net/ https://assets.adobedtm.com https://www.redhat.com https://*.storage.googleapis.com/ https://*.hotjar.com:* https://*.hotjar.io wss://*.hotjar.com https://stage.quay.io https://quay.io;">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/png" href="https://access.redhat.com/webassets/avalon/g/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="<%= pf4styles %>">
-    <link rel="stylesheet" type="text/css" href="<%= pf5styles %>">
+    <link rel="stylesheet" type="text/css" href="<%= pf6styles %>">
     <script type="text/javascript">
         window.insights = {
             chrome: {
@@ -21,11 +20,11 @@
             }
         }
     </script>
-    <script id="dpal" src="https://www.redhat.com/ma/dpal.js" type="text/javascript"></script>
 </head>
 
 <body class="pf-m-redhat-font">
     <div id="chrome-entry"></div>
     <div id="consent_blackbar"></div>
+    <a id="teconsent" style="display: none;"></a>
 </body>
 </html>

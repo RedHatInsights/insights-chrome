@@ -19,7 +19,7 @@ jobs:
       - name: Node setup
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.1
+          node-version: 22.19.0
           cache: 'npm'
       # cache node modules for all jobs to use
       - uses: actions/cache@v3

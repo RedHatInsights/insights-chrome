@@ -58,7 +58,6 @@ plugins.push(new ModuleFederationPlugin({
     { 'react-dom': { singleton: true, requiredVersion: dependencies['react-dom'] } },
     { 'react-router-dom': { singleton: true, requiredVersion: dependencies['react-router-dom'] } },
     { '@patternfly/react-core': { singleton: true, requiredVersion: dependencies['@patternfly/react-core'] } },
-    { 'react-redux': { singleton: true, requiredVersion: dependencies['react-redux'] } },
   ],
 }))
 ```
@@ -74,14 +73,13 @@ Move everything what is in `entry.js` to it and remove `ReactDOM.render` and use
 ```
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import store from './utilities/store';
+import { Provider } from 'jotai';
 import App from './App';
 import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 const MyApp = () => (
   // this is just an example here goes everything that was in `entry.js`
-  <Provider store={store}>
+  <Provider>
     <Router basename={getBaseName(location.pathname)}>
       <App />
     </Router>

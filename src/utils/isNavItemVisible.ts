@@ -5,13 +5,25 @@ import { getVisibilityFunctions } from './VisibilitySingleton';
 const visibilityHandler = async ({ method, args }: NavItemPermission) => {
   const visibilityFunctions = getVisibilityFunctions();
   // (null, undefined, true) !== false
+  if (!visibilityFunctions[method]) {
+    return false;
+  }
   return (await visibilityFunctions[method]?.(...(args || []))) !== false;
 };
 
 export const isNavItemVisible = (permissions: NavItemPermission | NavItemPermission[]) =>
   Promise.all(flatMap(Array.isArray(permissions) ? permissions : [permissions], visibilityHandler)).then((visibility) => visibility.every(Boolean));
 
-export const evaluateVisibility = async (navItem: NavItem) => {
+export type ItemWithPermissionsConfig<T> = T & {
+  permissions?: NavItemPermission | NavItemPermission[];
+  isHidden?: boolean;
+  groupId?: string;
+  navItems?: ItemWithPermissionsConfig<NavItem>[];
+  expandable?: boolean;
+  routes?: ItemWithPermissionsConfig<NavItem>[];
+};
+
+export const evaluateVisibility = async <T>(navItem: ItemWithPermissionsConfig<T>) => {
   /**
    * Skip evaluation for hidden items
    */

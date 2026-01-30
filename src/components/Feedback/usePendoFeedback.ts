@@ -1,22 +1,20 @@
 import { useEffect } from 'react';
-import { spinUpStore } from '../../redux/redux-config';
-import { setPendoFeedbackFlag } from '../../redux/actions';
+import { useSetAtom } from 'jotai';
+import { usePendoFeedbackAtom } from '../../state/atoms/feedbackModalAtom';
 
 const usePendoFeedback = () => {
   /**
    * We have to use the "spinUpStore" instead of just calling useDispatch
    * Otherwise we will end up using the "dispatch" instance from the application not chrome!
    */
-  const {
-    store: { dispatch },
-  } = spinUpStore();
+  const setPendoFeedback = useSetAtom(usePendoFeedbackAtom);
 
   useEffect(() => {
-    dispatch(setPendoFeedbackFlag(true));
+    setPendoFeedback(true);
     return () => {
-      dispatch(setPendoFeedbackFlag(false));
+      setPendoFeedback(false);
     };
-  }, []);
+  }, [setPendoFeedback]);
 };
 
 export default usePendoFeedback;

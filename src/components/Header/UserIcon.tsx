@@ -20,7 +20,7 @@ const UserIcon = () => {
     img.onload = () => getImage(img);
   }, []);
 
-  return <Avatar src={avatar} alt="User Avatar" />;
+  return <Avatar src={avatar} alt="User Avatar" size="sm" />;
 };
 
 export default UserIcon;

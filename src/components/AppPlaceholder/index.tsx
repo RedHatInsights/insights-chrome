@@ -1,26 +1,29 @@
-import { Masthead, MastheadBrand, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
+import { Masthead, MastheadBrand, MastheadLogo, MastheadMain } from '@patternfly/react-core/dist/dynamic/components/Masthead';
 import { Page, PageSidebar, PageSidebarBody } from '@patternfly/react-core/dist/dynamic/components/Page';
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ChromeLink from '../ChromeLink';
-import Footer, { FooterProps } from '../Footer/Footer';
+import ChromeFooter from '../Footer/Footer';
 import Logo from '../Header/Logo';
 import NavLoader from '../Navigation/Loader';
 import { getUrl } from '../../hooks/useBundle';
+import LoadingFallback from '../../utils/loading-fallback';
 
 // Component that is displayed as a placeholder before auth init is finished
-const AppPlaceholder = (props: FooterProps) => {
-  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices'].includes(getUrl('bundle'));
+const AppPlaceholder = () => {
+  const hideNavLoader = [undefined, '', 'landing', 'allservices', 'favoritedservices', 'learning-resources'].includes(getUrl('bundle'));
   return (
     <MemoryRouter>
       <Page
         className="chr-c-page"
-        header={
+        masthead={
           <Masthead className="chr-c-masthead">
-            <MastheadMain className="pf-v5-u-pl-lg">
-              <MastheadBrand component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
-                <Logo />
+            <MastheadMain className="pf-v6-u-pl-lg">
+              <MastheadBrand data-codemods>
+                <MastheadLogo data-codemods component={(props) => <ChromeLink {...props} appId="landing" href="/" />}>
+                  <Logo />
+                </MastheadLogo>
               </MastheadBrand>
             </MastheadMain>
           </Masthead>
@@ -36,7 +39,8 @@ const AppPlaceholder = (props: FooterProps) => {
         }
       >
         <div className="chr-render">
-          <Footer {...props} />
+          {LoadingFallback}
+          <ChromeFooter />
         </div>
       </Page>
     </MemoryRouter>

@@ -1,9 +1,8 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { VisitedBundles, useVisitedBundles } from '@redhat-cloud-services/chrome';
 import axios from 'axios';
 import { getUrl } from './useBundle';
-import ChromeAuthContext from '../auth/ChromeAuthContext';
 
 // TMP Insights specific trigger
 const shouldSendVisit = (bundle: string, visits: VisitedBundles) => bundle === 'insights' && !visits[bundle];
@@ -15,10 +14,8 @@ const sendVisitedBundle = async (orgId: string) => {
   });
 };
 
-const useBundleVisitDetection = () => {
+const useBundleVisitDetection = (orgId?: string) => {
   const { pathname } = useLocation();
-  const auth = useContext(ChromeAuthContext);
-  const orgId = auth.user?.identity?.org_id;
   const { markVisited, visitedBundles, initialized } = useVisitedBundles();
   const bundle = useMemo(() => getUrl('bundle'), [pathname]);
   useEffect(() => {

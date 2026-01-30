@@ -4,6 +4,13 @@ import * as crossAccountBouncer from './crossAccountBouncer';
 import Cookies from 'js-cookie';
 import { ACTIVE_REMOTE_REQUEST, CROSS_ACCESS_ACCOUNT_NUMBER } from '../utils/consts';
 
+jest.mock('./crossAccountBouncer', () => {
+  return {
+    __esModule: true,
+    default: jest.fn(),
+  };
+});
+
 describe('initializeAccessRequestCookies', () => {
   const mockCrossAccountBouncer = jest.spyOn(crossAccountBouncer, 'default');
   const mockCookiesGet = jest.spyOn(Cookies, 'get');

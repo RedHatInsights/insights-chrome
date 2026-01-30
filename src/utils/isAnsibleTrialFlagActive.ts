@@ -1,5 +1,6 @@
 import logger from '../auth/logger';
 
+// This is needed to "fake" the is_trial entitlement until the backend service catches up. There might be a delay between the activation up to 10 minutes.
 export const ANSIBLE_TRIAL_FLAG = 'chrome.ansible.trial';
 const TRIAL_DURATION = 10 * 60 * 1000; // 10 minutes
 
@@ -20,6 +21,8 @@ export const isAnsibleTrialFlagActive = () => {
       log(`Enable to parse ansible trial flag expiration: ${error}`);
     }
   }
+
+  return false;
 };
 
 export const setAnsibleTrialFlag = () => {
