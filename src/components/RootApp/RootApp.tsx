@@ -7,6 +7,7 @@ import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
+import useScopedQuickStart from '../QuickStart/useScopedQuickStart';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
 import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
@@ -106,6 +107,13 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     toggle: setActiveQuickStartID,
     Catalog: LazyQuickStartCatalog,
     updateQuickStarts,
+    /**
+     * Hook for creating a scoped QuickStart controller.
+     * Unlike the default behavior, scoped controllers don't use Chrome's managed drawer.
+     *
+     * Note: This is a React hook and must be called following the rules of hooks.
+     */
+    useScopedQuickStart,
   };
 
   return (
