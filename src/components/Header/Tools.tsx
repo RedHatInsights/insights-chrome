@@ -268,6 +268,8 @@ const Tools = () => {
       });
     };
 
+    const iconAskRedHat = '/apps/frontend-assets/technology-icons/ai-chat-ask-redhat.svg';
+
     return (
       <Tooltip
         aria="none"
@@ -278,7 +280,7 @@ const Tools = () => {
       >
         <Button
           variant="control"
-          icon={<QuestionCircleIcon />}
+          icon={isPreview ? iconAskRedHat : <QuestionCircleIcon />}
           id="HelpPanelToggle"
           ouiaId="chrome-help-panel"
           aria-label="Toggle help panel"
