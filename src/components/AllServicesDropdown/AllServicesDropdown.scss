@@ -6,6 +6,10 @@
   z-index: 1100;
   // Add margin to prevent overlap with search input  
   margin-right: var(--pf-t--global--spacer--xl);
+  
+  @media(min-width: $pf-v6-global--breakpoint--2xl) {
+    margin-right: 0;
+  }
   // Limit max width to prevent overlap with search field
   max-width: 240px;
   // Ensure it doesn't shrink too much

@@ -213,3 +213,10 @@ aside {
 .chr-m-plain {
   text-decoration: none;
 }
+
+@media(min-width: $pf-v6-global--breakpoint--2xl) {
+  .pf-v6-c-page > .pf-v6-c-masthead {
+    --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: none;
+    grid-template-columns: min-content;
+  }
+}
