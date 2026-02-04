@@ -1,6 +1,6 @@
-@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
-@import '~@patternfly/patternfly/patternfly-addons.scss';
-@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+@use "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@use '~@patternfly/patternfly/patternfly-addons.scss';
+@use '~@patternfly/patternfly/sass-utilities/scss-variables' as *;
 
 .chr-c-all-services {
   .chr-c-all-services-filter .pf-v6-c-text-input-group__icon {
