@@ -1,5 +1,5 @@
-@import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
-@import '~@patternfly/patternfly/patternfly-addons.scss';
+@use "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
+@use '~@patternfly/patternfly/patternfly-addons.scss';
 
 
 .chr-c-search-title {
