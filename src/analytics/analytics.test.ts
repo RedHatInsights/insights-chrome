@@ -15,6 +15,9 @@ function buildUser(token: any): DeepRequired<ChromeUser> {
         org_id: token.org_id || '1979710',
         account_id: token.account_id || '5299389',
       },
+      organization: {
+        name: token.org_name || 'Test Org',
+      },
       org_id: token.org_id || '1979710',
       user: {
         email: token.email || '',
