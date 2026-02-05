@@ -1,14 +1,13 @@
 import React, { Suspense, lazy, memo, useContext, useEffect, useMemo } from 'react';
 import { unstable_HistoryRouter as HistoryRouter, HistoryRouterProps } from 'react-router-dom';
-import { HelpTopicContainer, QuickStart, QuickStartContainer, QuickStartContainerProps } from '@patternfly/quickstarts';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { HelpTopicContainer, QuickStart } from '@patternfly/quickstarts';
+import { useAtomValue } from 'jotai';
+import { useLoadModule, useRemoteHook } from '@scalprum/react-core';
 import chromeHistory from '../../utils/chromeHistory';
 import { FeatureFlagsProvider } from '../FeatureFlags';
 import ScalprumRoot from './ScalprumRoot';
 import { LazyQuickStartCatalog } from '../QuickStart/LazyQuickStartCatalog';
-import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
 import useHelpTopicState from '../QuickStart/useHelpTopicState';
-import validateQuickstart from '../QuickStart/quickstartValidation';
 import SegmentProvider from '../../analytics/SegmentProvider';
 import { ITLess, chunkLoadErrorRefreshKey } from '../../utils/common';
 import useUserSSOScopes from '../../hooks/useUserSSOScopes';
@@ -18,27 +17,46 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuth
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
-import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
-import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
 
+// Type for the useQuickstartsStore hook from learning-resources
+interface QuickstartsStoreHook {
+  setQuickstarts: (app: string, quickstarts: QuickStart[]) => void;
+  addQuickstart: (app: string, quickstart: QuickStart) => void;
+  activateQuickstart: (name: string) => Promise<void>;
+  setActiveQuickStartID: (id: string) => void;
+  clearQuickstarts: (activeQuickStartID?: string) => void;
+}
+
 const RootApp = memo(({ accountId }: { accountId?: string }) => {
-  const quickstartLinkStore = useQuickstartLinkStore();
   const config = useAtomValue(scalprumConfigAtom);
-  const { activateQuickstart, allQuickStartStates, setAllQuickStartStates, activeQuickStartID, setActiveQuickStartID } = useQuickstartsStates(accountId);
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const activeModule = useAtomValue(activeModuleAtom);
-  const quickstartsData = useAtomValue(quickstartsAtom);
-  const quickStarts = useMemo(() => Object.values(quickstartsData).flat(), [quickstartsData]);
-  const clearQuickstarts = useSetAtom(clearQuickstartsAtom);
-  const populateQuickstarts = useSetAtom(populateQuickstartsAppAtom);
-  const addQuickstartToApp = useSetAtom(addQuickstartToAppAtom);
+
+  // Load QuickStartProvider from learning-resources
+  const [quickStartProviderModule, quickStartProviderError] = useLoadModule(
+    {
+      scope: 'learningResources',
+      module: './QuickStartProvider',
+    },
+    undefined
+  );
+  const QuickStartProvider = quickStartProviderModule as React.FC<{ children: React.ReactNode; accountId?: string }> | undefined;
+
+  // Load useQuickstartsStore from learning-resources for the deprecated API
+  const { hookResult: useQuickstartsStore } = useRemoteHook<() => QuickstartsStoreHook>({
+    scope: 'learningResources',
+    module: './quickstarts/useQuickstartsStore',
+  });
+
+  // Get store functions for deprecated API (only if hook is loaded)
+  const store = useQuickstartsStore?.() ?? null;
 
   useEffect(() => {
-    clearQuickstarts(activeQuickStartID);
-    if (activeModule) {
+    if (store && activeModule) {
+      store.clearQuickstarts();
       let timeout: NodeJS.Timeout;
       const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
       if (localStorage.getItem(moduleStorageKey) === 'true') {
@@ -55,42 +73,7 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
         }
       };
     }
-  }, [activeModule]);
-  /**
-   * Updates the available quick starts
-   *
-   * Usage example:
-   * const { quickStarts } = useChrome();
-   * quickStarts.set('applicationServices', quickStartsArray)
-   *
-   * @param {string} key App identifier
-   * @param {array} qs Array of quick starts
-   */
-  const updateQuickStarts = (key: string, qs: QuickStart[]) => {
-    populateQuickstarts({ app: key, quickstarts: qs });
-  };
-
-  const addQuickstart = (key: string, qs: QuickStart): boolean => {
-    if (validateQuickstart(key, qs)) {
-      addQuickstartToApp({ app: key, quickstart: qs });
-      return true;
-    }
-    return false;
-  };
-
-  const quickStartProps: QuickStartContainerProps = {
-    quickStarts,
-    activeQuickStartID,
-    allQuickStartStates,
-    setActiveQuickStartID: setActiveQuickStartID as QuickStartContainerProps['setActiveQuickStartID'],
-    setAllQuickStartStates: setAllQuickStartStates as unknown as QuickStartContainerProps['setAllQuickStartStates'],
-    showCardFooters: false,
-    language: 'en',
-    alwaysShowTaskReview: true,
-    markdown: {
-      extensions: [createQuickstartLinkMarkupExtension(quickstartLinkStore)],
-    },
-  };
+  }, [activeModule, store]);
 
   const helpTopicsAPI = {
     addHelpTopics,
@@ -98,14 +81,68 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
     enableTopics,
   };
 
-  const quickstartsAPI = {
-    version: 1,
-    set: updateQuickStarts,
-    activateQuickstart,
-    add: addQuickstart,
-    toggle: setActiveQuickStartID,
-    Catalog: LazyQuickStartCatalog,
-    updateQuickStarts,
+  const quickstartsAPI = useMemo(
+    () => ({
+      version: 1,
+      /**
+       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
+       * This method will be removed in a future version.
+       */
+      set: (key: string, qs: QuickStart[]) => {
+        console.warn('chrome.quickStarts.set is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
+        store?.setQuickstarts(key, qs);
+      },
+      /**
+       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
+       * This method will be removed in a future version.
+       */
+      activateQuickstart: async (name: string) => {
+        console.warn(
+          'chrome.quickStarts.activateQuickstart is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.'
+        );
+        return store?.activateQuickstart(name);
+      },
+      /**
+       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
+       * This method will be removed in a future version.
+       */
+      add: (key: string, qs: QuickStart) => {
+        console.warn('chrome.quickStarts.add is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
+        store?.addQuickstart(key, qs);
+        return true;
+      },
+      /**
+       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
+       * This method will be removed in a future version.
+       */
+      toggle: (id: string) => {
+        console.warn('chrome.quickStarts.toggle is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
+        store?.setActiveQuickStartID(id);
+      },
+      Catalog: LazyQuickStartCatalog,
+      /**
+       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
+       * This method will be removed in a future version.
+       */
+      updateQuickStarts: (key: string, qs: QuickStart[]) => {
+        console.warn(
+          'chrome.quickStarts.updateQuickStarts is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.'
+        );
+        store?.setQuickstarts(key, qs);
+      },
+    }),
+    [store]
+  );
+
+  // Render content with or without QuickStartProvider depending on load status
+  const renderContent = (children: React.ReactNode) => {
+    if (quickStartProviderError) {
+      return children;
+    }
+    if (!QuickStartProvider) {
+      return children;
+    }
+    return <QuickStartProvider accountId={accountId}>{children}</QuickStartProvider>;
   };
 
   return (
@@ -117,11 +154,11 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
             <NotEntitledModal />
           </Suspense>
           <Suspense fallback={null}></Suspense>
-          <QuickStartContainer {...quickStartProps}>
+          {renderContent(
             <HelpTopicContainer helpTopics={helpTopics}>
               <ScalprumRoot config={config} quickstartsAPI={quickstartsAPI} helpTopicsAPI={helpTopicsAPI} />
             </HelpTopicContainer>
-          </QuickStartContainer>
+          )}
         </FeatureFlagsProvider>
       </SegmentProvider>
     </HistoryRouter>
