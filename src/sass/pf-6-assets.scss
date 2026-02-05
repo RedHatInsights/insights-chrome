@@ -1,7 +1,7 @@
-@import '~@patternfly/patternfly/patternfly.scss';
-@import '~@patternfly/patternfly/patternfly-addons.scss';
-@import '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
-@import '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
+@use '~@patternfly/patternfly/patternfly.scss';
+@use '~@patternfly/patternfly/patternfly-addons.scss';
+@use '~@patternfly/patternfly/utilities/Accessibility/accessibility.scss';
+@use '~@patternfly/patternfly/utilities/Spacing/spacing.scss';
 
 // Quick starts
-@import '~@patternfly/quickstarts/dist/quickstarts.min';
+@use '~@patternfly/quickstarts/dist/quickstarts.min';

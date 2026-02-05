@@ -1,5 +1,5 @@
-@import '~@patternfly/patternfly/patternfly-addons.scss';
-@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+@use '~@patternfly/patternfly/patternfly-addons.scss';
+@use '~@patternfly/patternfly/sass-utilities/scss-variables' as *;
 
 .chr-c-product-selection {
   max-width: 1260px;
