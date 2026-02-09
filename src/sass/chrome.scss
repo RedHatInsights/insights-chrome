@@ -1,7 +1,7 @@
-$pf-v6-global--enable-reset: 'true';
-
-@import '~@patternfly/patternfly/sass-utilities/_index';
-@import '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
+@use '~@patternfly/patternfly/sass-utilities/_index' as * with (
+  $pf-v6-global--enable-reset: 'true'
+);
+@use '~@redhat-cloud-services/frontend-components/FilterHooks/tagFilterHook.scss';
 
 // TODO: Bring these quick starts overrides into the lib instead 
 .pfext-page-layout__title {
@@ -212,4 +212,11 @@ aside {
 
 .chr-m-plain {
   text-decoration: none;
+}
+
+@media(min-width: $pf-v6-global--breakpoint--2xl) {
+  .pf-v6-c-page > .pf-v6-c-masthead {
+    --pf-v6-c-masthead--m-display-inline--GridTemplateColumns: none;
+    grid-template-columns: min-content;
+  }
 }

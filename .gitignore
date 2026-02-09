@@ -1,4 +1,5 @@
 build/
+dist/
 node_modules/
 public/
 tmp/
@@ -52,3 +53,5 @@ cypress/downloads
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+.mcp.json

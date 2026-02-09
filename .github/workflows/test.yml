@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, master-stable ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, master-stable ]
+    branches: [ master ]
 
 jobs:
   # prerequisite for all jobs, install node modules only once

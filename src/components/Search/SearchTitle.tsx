@@ -5,7 +5,7 @@ const SearchTitle = ({ title, bundleTitle, className = '' }: { title: string; bu
   const showBundleTitle = bundleTitle.replace(/\s/g, '').length > 0;
   return (
     <div className={`chr-search-title-content ${className}`}>
-      <small className="chr-c-search-title">
+      <small className="chr-c-search-title pf-v6-u-display-inline-block">
         <span className="chr-c-search-title" dangerouslySetInnerHTML={{ __html: title }} />
 
         {showBundleTitle && (

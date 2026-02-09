@@ -27,6 +27,7 @@ import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import './Tools.scss';
 
 const InternalButton = () => (
   <Button
@@ -268,6 +269,8 @@ const Tools = () => {
       });
     };
 
+    const AskRedHatIcon = () => <img src="/apps/frontend-assets/technology-icons/ai-chat-ask-redhat.svg" alt="Ask Red Hat" className="chr-c-ask-redhat-icon" />;
+
     return (
       <Tooltip
         aria="none"
@@ -278,7 +281,7 @@ const Tools = () => {
       >
         <Button
           variant="control"
-          icon={<QuestionCircleIcon />}
+          icon={isPreview ? <AskRedHatIcon /> : <QuestionCircleIcon />}
           id="HelpPanelToggle"
           ouiaId="chrome-help-panel"
           aria-label="Toggle help panel"

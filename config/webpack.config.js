@@ -57,7 +57,10 @@ const konfluxDevServerSettings = {
   // This setting indirectly controls whether the server binds to IPv4 or IPv6.
   host: '127.0.0.1',
   client: {
-    overlay: false,
+      overlay: {                                                                                                                                                                                                                                     
+        errors: false,                                                                                                                                                                                                                               
+        warnings: false,                                                                                                                                                                                                                             
+      }, 
   },
   proxy: [
     {
@@ -224,7 +227,10 @@ const commonConfig = ({ dev }) => {
     plugins: plugins(dev, process.env.BETA === 'true', process.env.NODE_ENV === 'restricted'),
     devServer: {
       client: {
-        overlay: process.env.DISABLE_CLIENT_OVERLAY === 'true' ? false : true,
+        overlay: {                                                                                                                                                                                                                                     
+          errors: false,                                                                                                                                                                                                                               
+          warnings: false,                                                                                                                                                                                                                             
+        }, 
       },
       allowedHosts: 'all',
       headers: {
