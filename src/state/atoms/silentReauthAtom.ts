@@ -1,19 +1,44 @@
 import { atomWithStorage } from 'jotai/utils';
 import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 
+const isLocalStorageAvailable = (): boolean => {
+  return typeof window !== 'undefined' && !!window.localStorage;
+};
+
 export const silentReauthEnabledAtom = atomWithStorage<boolean>(
   SILENT_REAUTH_ENABLED_KEY,
   false, // default value if localStorage is empty
   {
     getItem: (key) => {
-      const value = localStorage.getItem(key);
-      return value === 'true';
+      if (!isLocalStorageAvailable()) {
+        return false;
+      }
+      try {
+        const value = localStorage.getItem(key);
+        return value === 'true';
+      } catch {
+        return false;
+      }
     },
     setItem: (key, value) => {
-      localStorage.setItem(key, value ? 'true' : 'false');
+      if (!isLocalStorageAvailable()) {
+        return;
+      }
+      try {
+        localStorage.setItem(key, value ? 'true' : 'false');
+      } catch {
+        // Swallow errors to prevent crashes if localStorage is blocked
+      }
     },
     removeItem: (key) => {
-      localStorage.removeItem(key);
+      if (!isLocalStorageAvailable()) {
+        return;
+      }
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // Swallow errors to prevent crashes if localStorage is blocked
+      }
     },
   }
 );

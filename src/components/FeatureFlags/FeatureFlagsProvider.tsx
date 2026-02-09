@@ -3,12 +3,11 @@ import { FlagProvider, IFlagProvider, UnleashClient } from '@unleash/proxy-clien
 import { DeepRequired } from 'utility-types';
 import { captureException } from '@sentry/react';
 import * as Sentry from '@sentry/react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { UNLEASH_ERROR_KEY, getUnleashClient, setUnleashClient } from './unleashClient';
 import { getEnv } from '../../utils/common';
-import { getDefaultStore } from 'jotai';
 import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 const config: IFlagProvider['config'] = {
@@ -60,26 +59,26 @@ const config: IFlagProvider['config'] = {
  * Keeps localStorage in sync with the silent reauth feature flag whenever flags are fetched/updated
  * TODO: Remove when feature flag is flipped on permanently
  */
-const syncLocalStorage = (client: UnleashClient) => {
-  const store = getDefaultStore();
+const syncLocalStorage = (client: UnleashClient, setSilentReauth: (value: boolean) => void) => {
   const syncSilentReauth = () => {
     try {
       const enabled = client.isEnabled('platform.chrome.silent-reauth');
-      store.set(silentReauthEnabledAtom, enabled);
+      setSilentReauth(enabled);
     } catch (e) {
-      store.set(silentReauthEnabledAtom, false);
+      setSilentReauth(false);
     }
   };
   client.on('ready', syncSilentReauth);
   client.on('update', syncSilentReauth);
   client.on('error', () => {
-    store.set(silentReauthEnabledAtom, false);
+    setSilentReauth(false);
   });
 };
 
 const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isPreview = useAtomValue(isPreviewAtom);
+  const setSilentReauth = useSetAtom(silentReauthEnabledAtom);
   useMemo(() => {
     const client = new UnleashClient({
       ...config,
@@ -104,7 +103,7 @@ const FeatureFlagsProvider: React.FC<React.PropsWithChildren> = ({ children }) =
           : {}),
       },
     });
-    syncLocalStorage(client);
+    syncLocalStorage(client, setSilentReauth);
     setUnleashClient(client);
     return client;
   }, []);

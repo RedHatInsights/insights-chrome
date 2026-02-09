@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 import { getUnleashClient } from './unleashClient';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
-import { getDefaultStore } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 // Mock the Unleash react client to control the underlying client instance and events
@@ -38,16 +38,23 @@ import FeatureFlagsProvider from './FeatureFlagsProvider';
 
 describe('FeatureFlagsProvider - syncLocalStorage', () => {
   let authValue: any;
+  let store: ReturnType<typeof createStore>;
+  let client: any;
+
   const renderProvider = () =>
     render(
-      <ChromeAuthContext.Provider value={authValue}>
-        <FeatureFlagsProvider>
-          <div>child</div>
-        </FeatureFlagsProvider>
-      </ChromeAuthContext.Provider>
+      <JotaiProvider store={store}>
+        <ChromeAuthContext.Provider value={authValue}>
+          <FeatureFlagsProvider>
+            <div>child</div>
+          </FeatureFlagsProvider>
+        </ChromeAuthContext.Provider>
+      </JotaiProvider>
     );
+
   beforeEach(() => {
     localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+    store = createStore();
     authValue = {
       // minimal fields used by FeatureFlagsProvider
       user: {
@@ -63,28 +70,28 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
 
   it('writes true to localStorage on ready when flag enabled', () => {
     renderProvider();
-    const client: any = getUnleashClient();
+    client = getUnleashClient();
     client.isEnabledReturn = true;
     client.emit('ready');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('true');
-    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(true);
+    expect(store.get(silentReauthEnabledAtom)).toBe(true);
   });
 
   it('updates localStorage on update when flag disabled', () => {
     renderProvider();
-    const client: any = getUnleashClient();
+    client = getUnleashClient();
     client.isEnabledReturn = false;
     client.emit('update');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
-    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(false);
+    expect(store.get(silentReauthEnabledAtom)).toBe(false);
   });
 
   it('forces false to localStorage on error', () => {
     renderProvider();
-    const client: any = getUnleashClient();
+    client = getUnleashClient();
     client.isEnabledReturn = true;
     client.emit('error');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
-    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(false);
+    expect(store.get(silentReauthEnabledAtom)).toBe(false);
   });
 });

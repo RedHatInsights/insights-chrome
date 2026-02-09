@@ -5,7 +5,7 @@ import { Provider as JotaiProvider, useAtomValue, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { activeModuleAtom } from '../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../state/atoms/chromeModuleAtom';
-import { routeAuthScopeReady } from '../state/atoms/routeAuthScopeReady';
+import { routeAuthScopeReadyAtom } from '../state/atoms/routeAuthScopeReady';
 import shouldReAuthScopes from '../auth/shouldReAuthScopes';
 import { ChromeLogin } from '../auth/ChromeAuthContext';
 
@@ -18,13 +18,16 @@ const HookHarness = ({
   login,
   reAuthWithScopes,
   silentReauthEnabled,
+  activeModuleId,
 }: {
   login: ChromeLogin;
   reAuthWithScopes: (...scopes: string[]) => Promise<void>;
   silentReauthEnabled: boolean;
+  activeModuleId?: string;
 }) => {
   useUserSSOScopes({ login, reAuthWithScopes, silentReauthEnabled });
-  const ready = useAtomValue(routeAuthScopeReady);
+  const readyMap = useAtomValue(routeAuthScopeReadyAtom);
+  const ready = activeModuleId ? (readyMap[activeModuleId] ?? true) : true;
   return <div data-testid="ready">{String(ready)}</div>;
 };
 
@@ -59,7 +62,7 @@ describe('useUserSSOScopes', () => {
     (shouldReAuthScopes as jest.Mock).mockReset();
   });
 
-  it('when silent reauth is enabled: calls reAuthWithScopes and sets routeAuthScopeReady true', async () => {
+  it('when silent reauth is enabled: calls reAuthWithScopes and sets routeAuthScopeReady true for that module', async () => {
     let resolveFn: () => void;
     const reAuthWithScopes = jest.fn(
       () =>
@@ -69,14 +72,14 @@ describe('useUserSSOScopes', () => {
     );
     const login = jest.fn();
 
-    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={true} />, {
+    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={true} activeModuleId="foo" />, {
       activeModule: 'foo',
       modules: { foo: { config: { ssoScopes: ['a', 'b'] }, moduleConfig: { ssoScopes: ['a', 'b'] } } },
     });
 
-    // reAuth should be initiated
+    // reAuth should be initiated (with no args - scopes are in the closure)
     await waitFor(() => expect(reAuthWithScopes).toHaveBeenCalled());
-    expect(reAuthWithScopes).toHaveBeenCalledWith('a', 'b');
+    expect(reAuthWithScopes).toHaveBeenCalledWith();
 
     // resolve the re-auth promise
     resolveFn!();
@@ -85,14 +88,14 @@ describe('useUserSSOScopes', () => {
       expect(screen.getByTestId('ready').textContent).toBe('true');
     });
 
-    expect(reAuthWithScopes).toHaveBeenCalledWith('a', 'b');
+    expect(reAuthWithScopes).toHaveBeenCalledWith();
     expect(login).not.toHaveBeenCalled();
   });
 
   it('when silent reauth is enabled and no scopes required: does not call reAuthWithScopes', async () => {
     const reAuthWithScopes = jest.fn().mockResolvedValue(undefined);
     const login = jest.fn();
-    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={true} />, {
+    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={true} activeModuleId="foo" />, {
       activeModule: 'foo',
       modules: { foo: { config: { ssoScopes: [] } } },
     });
@@ -108,7 +111,7 @@ describe('useUserSSOScopes', () => {
     const login = jest.fn();
     (shouldReAuthScopes as jest.Mock).mockReturnValue([true, ['x', 'y']]);
 
-    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={false} />, {
+    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={false} activeModuleId="foo" />, {
       activeModule: 'foo',
       modules: { foo: { config: { ssoScopes: ['a'] } } },
     });
@@ -125,7 +128,7 @@ describe('useUserSSOScopes', () => {
     const login = jest.fn();
     (shouldReAuthScopes as jest.Mock).mockReturnValue([false, []]);
 
-    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={false} />, {
+    renderWithAtoms(<HookHarness login={login} reAuthWithScopes={reAuthWithScopes} silentReauthEnabled={false} activeModuleId="foo" />, {
       activeModule: 'foo',
       modules: { foo: { config: { ssoScopes: ['a'] } } },
     });

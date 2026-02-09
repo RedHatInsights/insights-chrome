@@ -83,6 +83,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
   const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
+  const silentReauthEnabledRef = useRef(silentReauthEnabled);
 
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
@@ -90,9 +91,15 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     () => activeModule?.config?.ssoScopes || activeModule?.moduleConfig?.ssoScopes || [],
     [activeModule?.config?.ssoScopes, activeModule?.moduleConfig?.ssoScopes]
   );
+
+  // Keep ref in sync with current value
+  useEffect(() => {
+    silentReauthEnabledRef.current = silentReauthEnabled;
+  }, [silentReauthEnabled]);
+
   const reAuthWithScopes = React.useCallback(
     async (...additionalScopes: string[]) => {
-      if (!silentReauthEnabled) {
+      if (!silentReauthEnabledRef.current) {
         const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
         if (shouldReAuth) {
           return login(authRef.current, reAuthScopes);
@@ -100,10 +107,12 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
         return;
       }
 
-      let scopes = [...requiredScopes, ...additionalScopes].flat();
+      // Merge and deduplicate scopes using Set
+      const scopeSet = new Set([...requiredScopes, ...additionalScopes].flat());
       if (authRef.current.user?.scope) {
-        scopes = scopes.concat(authRef.current.user.scope.split(' '));
+        authRef.current.user.scope.split(' ').forEach((s) => scopeSet.add(s));
       }
+      const scopes = Array.from(scopeSet);
       log(`Re-authenticating with scopes: ${scopes.join(' ')}`);
       return auth
         .signinSilent({
@@ -122,7 +131,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
           login(authRef.current, scopes);
         });
     },
-    [silentReauthEnabled, auth, requiredScopes]
+    [auth, requiredScopes]
   );
   const [state, setState] = useState<ChromeAuthContextValue>({
     ssoUrl,

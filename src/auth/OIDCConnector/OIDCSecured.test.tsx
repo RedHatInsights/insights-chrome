@@ -173,12 +173,22 @@ describe('OIDCSecured', () => {
       const silent = atoms?.silentEnabled ?? true;
       store.set(silentReauthEnabledAtom, silent);
 
-      return render(
-        <JotaiProvider store={store}>
-          {ui}
-        </JotaiProvider>
-      );
+      return render(<JotaiProvider store={store}>{ui}</JotaiProvider>);
     }
+
+    const renderOIDCSecuredWithTestInvoker = (atoms?: { activeModule?: string; modules?: any; silentEnabled?: boolean }) => {
+      return renderWithAtoms(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <TestInvoker />
+        </OIDCSecured>,
+        atoms
+      );
+    };
+
+    const clickInvokeButton = async () => {
+      const btn = await screen.findByText('invoke');
+      fireEvent.click(btn);
+    };
 
     beforeEach(() => {
       const { useAuth } = jest.requireMock('react-oidc-context');
@@ -198,18 +208,12 @@ describe('OIDCSecured', () => {
     it('calls signinSilent with merged scopes and does not fallback when user returned', async () => {
       (mockAuth.signinSilent as jest.Mock).mockResolvedValue({} as User);
 
-      renderWithAtoms(
-        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-          <TestInvoker />
-        </OIDCSecured>,
-        {
-          activeModule: 'foo',
-          modules: { foo: { config: { ssoScopes: ['r1', 'r2'] } } },
-        }
-      );
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['r1', 'r2'] } } },
+      });
 
-      const btn = await screen.findByText('invoke');
-      fireEvent.click(btn);
+      await clickInvokeButton();
 
       await waitFor(() => {
         expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalledWith({
@@ -221,21 +225,43 @@ describe('OIDCSecured', () => {
       expect(loginMock).not.toHaveBeenCalled();
     });
 
+    it('deduplicates scopes when merging required, additional, and user scopes', async () => {
+      (mockAuth.signinSilent as jest.Mock).mockResolvedValue({} as User);
+      // User already has 'r1' and 'extra', module requires 'r1' and 'r2', additional is 'extra' and 'r2'
+      mockUser.scope = 'r1 extra';
+
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['r1', 'r2'] } } },
+      });
+
+      await clickInvokeButton();
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
+      });
+
+      const callArgs = (mockAuth.signinSilent as jest.Mock).mock.calls[0][0];
+      const scopeString = callArgs.scope;
+      const scopes = scopeString.split(' ');
+
+      // Verify no duplicates
+      const uniqueScopes = [...new Set(scopes)];
+      expect(scopes).toEqual(uniqueScopes);
+
+      // Verify all expected scopes are present (order may vary due to Set)
+      expect(scopes.sort()).toEqual(['extra', 'r1', 'r2']);
+    });
+
     it('falls back to login when signinSilent resolves null', async () => {
       (mockAuth.signinSilent as jest.Mock).mockResolvedValue(null);
 
-      renderWithAtoms(
-        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-          <TestInvoker />
-        </OIDCSecured>,
-        {
-          activeModule: 'foo',
-          modules: { foo: { config: { ssoScopes: ['r1'] } } },
-        }
-      );
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['r1'] } } },
+      });
 
-      const btn = await screen.findByText('invoke');
-      fireEvent.click(btn);
+      await clickInvokeButton();
 
       await waitFor(() => {
         expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
@@ -247,18 +273,12 @@ describe('OIDCSecured', () => {
       mockUser.scope = 'u1';
       (mockAuth.signinSilent as jest.Mock).mockRejectedValue(new Error('boom'));
 
-      renderWithAtoms(
-        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-          <TestInvoker />
-        </OIDCSecured>,
-        {
-          activeModule: 'foo',
-          modules: { foo: { config: { ssoScopes: ['req'] } } },
-        }
-      );
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['req'] } } },
+      });
 
-      const btn = await screen.findByText('invoke');
-      fireEvent.click(btn);
+      await clickInvokeButton();
 
       await waitFor(() => {
         expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
@@ -269,21 +289,13 @@ describe('OIDCSecured', () => {
     it('when silent reauth atom disabled and reauth needed, calls login with scopes and does not call signinSilent', async () => {
       (shouldReAuthScopes as jest.Mock).mockReturnValue([true, ['req1', 'req2']]);
 
-      renderWithAtoms(
-        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-          <TestInvoker />
-        </OIDCSecured>,
-        {
-          activeModule: 'foo',
-          modules: { foo: { config: { ssoScopes: ['r1'] } } },
-          // signal to hydrate silent flag false
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...({ silentEnabled: false } as any),
-        }
-      );
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['r1'] } } },
+        silentEnabled: false,
+      });
 
-      const btn = await screen.findByText('invoke');
-      fireEvent.click(btn);
+      await clickInvokeButton();
 
       await waitFor(() => {
         expect(mockAuth.signinSilent as jest.Mock).not.toHaveBeenCalled();
@@ -294,20 +306,13 @@ describe('OIDCSecured', () => {
     it('when silent reauth atom disabled and reauth not needed, does nothing', async () => {
       (shouldReAuthScopes as jest.Mock).mockReturnValue([false, []]);
 
-      renderWithAtoms(
-        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
-          <TestInvoker />
-        </OIDCSecured>,
-        {
-          activeModule: 'foo',
-          modules: { foo: { config: { ssoScopes: [] } } },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...({ silentEnabled: false } as any),
-        }
-      );
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: [] } } },
+        silentEnabled: false,
+      });
 
-      const btn = await screen.findByText('invoke');
-      fireEvent.click(btn);
+      await clickInvokeButton();
 
       await waitFor(() => {
         expect(mockAuth.signinSilent as jest.Mock).not.toHaveBeenCalled();
