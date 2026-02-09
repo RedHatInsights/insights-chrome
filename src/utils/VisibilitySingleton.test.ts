@@ -233,6 +233,80 @@ describe('VisibilitySingleton', () => {
         const result = await visibilityFunctions.loosePermissions(['foo:bar:baz', 'beep:boop:beep']);
         expect(result).toEqual(true);
       });
+
+      test('should match wildcard permission - full wildcard', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:*:*' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:inventory:read', 'rbac:cost-management:write']);
+        expect(result).toEqual(true);
+      });
+
+      test('should match wildcard permission - middle wildcard', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:*:read' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:inventory:read', 'rbac:cost-management:read']);
+        expect(result).toEqual(true);
+      });
+
+      test('should match wildcard permission - last wildcard', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:*' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:inventory:read', 'rbac:inventory:write']);
+        expect(result).toEqual(true);
+      });
+
+      test('should not match wildcard when segments differ', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:*:read' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:inventory:write', 'cost-management:inventory:read']);
+        expect(result).toEqual(false);
+      });
+
+      test('should not match when segment count differs', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:*:*' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:inventory', 'rbac:inventory:read:extra']);
+        expect(result).toEqual(false);
+      });
+    });
+
+    describe('hasPermissions', () => {
+      beforeAll(() => {
+        getUser.mockImplementation(() => Promise.resolve());
+      });
+
+      beforeEach(() => {
+        getUser.mockClear();
+      });
+
+      afterAll(() => {
+        getUser.mockRestore();
+      });
+
+      test('should return false if user does not have all required permissions', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'foo:bar:baz' }]));
+        const result = await visibilityFunctions.hasPermissions(['foo:bar:baz', 'beep:boop:beep']);
+        expect(result).toEqual(false);
+      });
+
+      test('should return true if user has all required permissions', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'foo:bar:baz' }, { permission: 'beep:boop:beep' }]));
+        const result = await visibilityFunctions.hasPermissions(['foo:bar:baz', 'beep:boop:beep']);
+        expect(result).toEqual(true);
+      });
+
+      test('should match all permissions with full wildcard', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:*:*' }]));
+        const result = await visibilityFunctions.hasPermissions(['rbac:inventory:read', 'rbac:cost-management:write']);
+        expect(result).toEqual(true);
+      });
+
+      test('should match specific wildcard patterns', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:*' }, { permission: 'rbac:cost-management:read' }]));
+        const result = await visibilityFunctions.hasPermissions(['rbac:inventory:read', 'rbac:cost-management:read']);
+        expect(result).toEqual(true);
+      });
+
+      test('should fail when not all wildcards match', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:*' }]));
+        const result = await visibilityFunctions.hasPermissions(['rbac:inventory:read', 'rbac:cost-management:read']);
+        expect(result).toEqual(false);
+      });
     });
   });
 });
