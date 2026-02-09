@@ -312,19 +312,25 @@ const Tools = () => {
   );
 
   const ThemeToggle = () => {
-    const [darkmode, setDarkmode] = useState(false);
+    const [darkmode, setDarkmode] = useState(() => {
+      return document.documentElement.classList.contains('pf-v6-theme-dark');
+    });
     return (
       <Switch
         id="no-label-switch-on"
-        isChecked={darkmode || false}
+        isChecked={darkmode}
         aria-label="Dark mode switch"
         onChange={() => {
-          setDarkmode(!darkmode);
-          if (document.body.classList.contains('pf-theme-dark')) {
-            document.body.classList.remove('pf-theme-dark');
-          } else {
-            document.body.classList.add('pf-theme-dark');
+          const newDarkMode = !darkmode;
+          setDarkmode(newDarkMode);
+          if (newDarkMode) {
+            document.documentElement.classList.add('pf-v6-theme-dark');
           }
+          else {
+            document.documentElement.classList.remove('pf-v6-theme-dark');
+          }
+
+          localStorage.setItem('chrome:theme', newDarkMode ? 'dark' : 'light');
         }}
       />
     );
@@ -351,11 +357,9 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
-      {localStorage.getItem('chrome:darkmode') === 'true' && (
-        <ToolbarItem>
-          <ThemeToggle />
-        </ToolbarItem>
-      )}
+      <ToolbarItem>
+        <ThemeToggle />
+      </ToolbarItem>
       {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
