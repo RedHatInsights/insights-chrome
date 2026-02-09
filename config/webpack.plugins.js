@@ -35,7 +35,6 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       name: 'chrome',
       filename: dev ? 'chrome.js' : 'chrome.[contenthash].js',
       exposes: {
-        './DownloadButton': resolve(__dirname, '../src/pdf/DownloadButton.tsx'),
         './LandingNavFavorites': resolve(__dirname, '../src/components/FavoriteServices/LandingNavFavorites.tsx'),
         './DashboardFavorites': resolve(__dirname, '../src/components/FavoriteServices/DashboardFavorites.tsx'),
         './SatelliteToken': resolve(__dirname, '../src/layouts/SatelliteToken.tsx'),
