@@ -1,16 +1,16 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { OIDCSecured } from './OIDCSecured';
-import { RH_USER_ID_STORAGE_KEY, SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { AuthContextProps } from 'react-oidc-context';
 import { User } from 'oidc-client-ts';
-import { Provider as JotaiProvider } from 'jotai';
-import { useHydrateAtoms } from 'jotai/utils';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { activeModuleAtom } from '../../state/atoms/activeModuleAtom';
 import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 import ChromeAuthContext from '../ChromeAuthContext';
 import { fireEvent, screen } from '@testing-library/react';
 import shouldReAuthScopes from '../shouldReAuthScopes';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 // Mock setCookie to observe calls from the effect under test
 jest.mock('../setCookie', () => ({
@@ -69,7 +69,6 @@ describe('OIDCSecured', () => {
   let mockAuth: AuthContextProps;
 
   beforeEach(() => {
-    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
     (shouldReAuthScopes as jest.Mock).mockReset();
     mockUser = {
       access_token: 'token-123',
@@ -161,22 +160,22 @@ describe('OIDCSecured', () => {
       );
     };
 
-    function renderWithAtoms(ui: React.ReactElement, atoms?: { activeModule?: string; modules?: any }) {
-      const initialValuesAny: any[] = [];
-      if (atoms?.activeModule) {
-        initialValuesAny.push([activeModuleAtom, atoms.activeModule] as const);
-      }
+    function renderWithAtoms(ui: React.ReactElement, atoms?: { activeModule?: string; modules?: any; silentEnabled?: boolean }) {
+      const store = createStore();
+
+      // Set atoms in store before rendering to avoid timing issues
       if (atoms?.modules) {
-        initialValuesAny.push([chromeModulesAtom, atoms.modules] as const);
+        store.set(chromeModulesAtom, atoms.modules);
       }
-      const HydrateAtoms = ({ children }: { children: React.ReactNode }) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useHydrateAtoms(initialValuesAny as any);
-        return <>{children}</>;
-      };
+      if (atoms?.activeModule) {
+        store.set(activeModuleAtom, atoms.activeModule);
+      }
+      const silent = atoms?.silentEnabled ?? true;
+      store.set(silentReauthEnabledAtom, silent);
+
       return render(
-        <JotaiProvider>
-          <HydrateAtoms>{ui}</HydrateAtoms>
+        <JotaiProvider store={store}>
+          {ui}
         </JotaiProvider>
       );
     }
@@ -198,7 +197,6 @@ describe('OIDCSecured', () => {
 
     it('calls signinSilent with merged scopes and does not fallback when user returned', async () => {
       (mockAuth.signinSilent as jest.Mock).mockResolvedValue({} as User);
-      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'true');
 
       renderWithAtoms(
         <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
@@ -268,8 +266,7 @@ describe('OIDCSecured', () => {
       expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req', 'extra', 'u1']);
     });
 
-    it('when localStorage disables silent reauth and reauth needed, calls login with scopes and does not call signinSilent', async () => {
-      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+    it('when silent reauth atom disabled and reauth needed, calls login with scopes and does not call signinSilent', async () => {
       (shouldReAuthScopes as jest.Mock).mockReturnValue([true, ['req1', 'req2']]);
 
       renderWithAtoms(
@@ -279,6 +276,9 @@ describe('OIDCSecured', () => {
         {
           activeModule: 'foo',
           modules: { foo: { config: { ssoScopes: ['r1'] } } },
+          // signal to hydrate silent flag false
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...({ silentEnabled: false } as any),
         }
       );
 
@@ -291,8 +291,7 @@ describe('OIDCSecured', () => {
       expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req1', 'req2']);
     });
 
-    it('when localStorage disables silent reauth and reauth not needed, does nothing', async () => {
-      localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+    it('when silent reauth atom disabled and reauth not needed, does nothing', async () => {
       (shouldReAuthScopes as jest.Mock).mockReturnValue([false, []]);
 
       renderWithAtoms(
@@ -302,6 +301,8 @@ describe('OIDCSecured', () => {
         {
           activeModule: 'foo',
           modules: { foo: { config: { ssoScopes: [] } } },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...({ silentEnabled: false } as any),
         }
       );
 

@@ -14,7 +14,7 @@ import logger from '../logger';
 import { login, logout } from './utils';
 import initializeAccessRequestCookies from '../initializeAccessRequestCookies';
 import { getOfflineToken, prepareOfflineRedirect } from '../offline';
-import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY, SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { OFFLINE_REDIRECT_STORAGE_KEY, RH_USER_ID_STORAGE_KEY } from '../../utils/consts';
 import { useSetAtom } from 'jotai';
 import { writeInitialScalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { setCookie } from '../setCookie';
@@ -25,6 +25,7 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -80,11 +81,48 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
-  const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
+  const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
 
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
-  const requiredScopes = activeModule?.config?.ssoScopes || [];
+  const requiredScopes = React.useMemo(
+    () => activeModule?.config?.ssoScopes || activeModule?.moduleConfig?.ssoScopes || [],
+    [activeModule?.config?.ssoScopes, activeModule?.moduleConfig?.ssoScopes]
+  );
+  const reAuthWithScopes = React.useCallback(
+    async (...additionalScopes: string[]) => {
+      if (!silentReauthEnabled) {
+        const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
+        if (shouldReAuth) {
+          return login(authRef.current, reAuthScopes);
+        }
+        return;
+      }
+
+      let scopes = [...requiredScopes, ...additionalScopes].flat();
+      if (authRef.current.user?.scope) {
+        scopes = scopes.concat(authRef.current.user.scope.split(' '));
+      }
+      log(`Re-authenticating with scopes: ${scopes.join(' ')}`);
+      return auth
+        .signinSilent({
+          scope: scopes.join(' '),
+          prompt: 'none',
+          forceIframeAuth: true,
+        })
+        .then((user) => {
+          if (user === null) {
+            log('Silent reauth returned null, falling back to hard reauth');
+            login(authRef.current, scopes);
+          }
+        })
+        .catch((error) => {
+          console.error('Error while re-authenticating user', error);
+          login(authRef.current, scopes);
+        });
+    },
+    [silentReauthEnabled, auth, requiredScopes]
+  );
   const [state, setState] = useState<ChromeAuthContextValue>({
     ssoUrl,
     ready: false,
@@ -116,38 +154,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
-    reAuthWithScopes: async (...additionalScopes) => {
-      if (!silentReauthEnabled) {
-        const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-        if (shouldReAuth) {
-          return login(authRef.current, reAuthScopes);
-        }
-        return;
-      }
-
-      let scopes = [...requiredScopes, ...additionalScopes].flat();
-      if (authRef.current.user?.scope) {
-        scopes = scopes.concat(authRef.current.user.scope.split(' '));
-      }
-      console.log('Reauthenticating user with scopes:', scopes);
-      return auth
-        .signinSilent({
-          scope: scopes.join(' '),
-          prompt: 'none',
-          forceIframeAuth: true,
-        })
-        .then((user) => {
-          if (user === null) {
-            console.log('Silent reauth failed, falling back to hard reauth');
-            login(authRef.current, scopes);
-          }
-        })
-        .catch((error) => {
-          console.error('Error while reauthenticating user', error);
-          // Fallback to hard login if silent reauth fails
-          login(authRef.current, scopes);
-        });
-    },
+    reAuthWithScopes,
     loginSilent: async () => {
       await auth.signinSilent();
     },

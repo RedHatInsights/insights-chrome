@@ -3,6 +3,8 @@ import { render } from '@testing-library/react';
 import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
 import { getUnleashClient } from './unleashClient';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
+import { getDefaultStore } from 'jotai';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 // Mock the Unleash react client to control the underlying client instance and events
 jest.mock('@unleash/proxy-client-react', () => {
@@ -65,6 +67,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client.isEnabledReturn = true;
     client.emit('ready');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('true');
+    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(true);
   });
 
   it('updates localStorage on update when flag disabled', () => {
@@ -73,6 +76,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client.isEnabledReturn = false;
     client.emit('update');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
+    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(false);
   });
 
   it('forces false to localStorage on error', () => {
@@ -81,5 +85,6 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client.isEnabledReturn = true;
     client.emit('error');
     expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
+    expect(getDefaultStore().get(silentReauthEnabledAtom)).toBe(false);
   });
 });

@@ -20,7 +20,7 @@ import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
 import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
 import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
-import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -134,7 +134,7 @@ RootApp.displayName = 'MemoizedRootApp';
 const AuthRoot = () => {
   const { user, login, reAuthWithScopes } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isDebuggerEnabled = useAtomValue(isDebuggerEnabledAtom);
-  const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
+  const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
 
   // verify user logged-in scopes via unified hook
   useUserSSOScopes({ login, reAuthWithScopes, silentReauthEnabled });

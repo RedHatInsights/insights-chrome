@@ -14,7 +14,8 @@ import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
 import { routeAuthScopeReady } from '../../state/atoms/routeAuthScopeReady';
-import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
+import { activeModuleDefinitionReadAtom } from '../../state/atoms/activeModuleAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -37,7 +38,8 @@ const ChromeRoute = memo(
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
     const authScopeReady = useAtomValue(routeAuthScopeReady);
-    const silentReauthEnabled = localStorage.getItem(SILENT_REAUTH_ENABLED_KEY) === 'true';
+    const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
+    const activeModuleDefinition = useAtomValue(activeModuleDefinitionReadAtom);
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
@@ -83,7 +85,16 @@ const ChromeRoute = memo(
       return <GatewayErrorComponent error={gatewayError} />;
     }
 
-    if ((silentReauthEnabled && !authScopeReady) || (isHidden === null && Array.isArray(permissions))) {
+    // Only block if this route's module requires scopes AND silent reauth is in progress
+    const thisRouteRequiresScopes =
+      (activeModuleDefinition?.config?.ssoScopes && activeModuleDefinition.config.ssoScopes.length > 0) ||
+      (activeModuleDefinition?.moduleConfig?.ssoScopes && activeModuleDefinition.moduleConfig.ssoScopes.length > 0);
+
+    if (silentReauthEnabled && !authScopeReady && thisRouteRequiresScopes) {
+      return LoadingFallback;
+    }
+
+    if (isHidden === null && Array.isArray(permissions)) {
       return LoadingFallback;
     }
 

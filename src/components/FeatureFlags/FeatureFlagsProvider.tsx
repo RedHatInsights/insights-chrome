@@ -8,7 +8,8 @@ import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuth
 import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 import { UNLEASH_ERROR_KEY, getUnleashClient, setUnleashClient } from './unleashClient';
 import { getEnv } from '../../utils/common';
-import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { getDefaultStore } from 'jotai';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 const config: IFlagProvider['config'] = {
   url: `${document.location.origin}/api/featureflags/v0`,
@@ -60,18 +61,19 @@ const config: IFlagProvider['config'] = {
  * TODO: Remove when feature flag is flipped on permanently
  */
 const syncLocalStorage = (client: UnleashClient) => {
+  const store = getDefaultStore();
   const syncSilentReauth = () => {
     try {
       const enabled = client.isEnabled('platform.chrome.silent-reauth');
-      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, enabled ? 'true' : 'false');
+      store.set(silentReauthEnabledAtom, enabled);
     } catch (e) {
-      localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'false');
+      store.set(silentReauthEnabledAtom, false);
     }
   };
   client.on('ready', syncSilentReauth);
   client.on('update', syncSilentReauth);
   client.on('error', () => {
-    localStorage.setItem(SILENT_REAUTH_ENABLED_KEY, 'false');
+    store.set(silentReauthEnabledAtom, false);
   });
 };
 

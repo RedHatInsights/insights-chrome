@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChromeLogin } from '../auth/ChromeAuthContext';
 import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
@@ -22,19 +22,29 @@ const useUserSSOScopes = ({ login, reAuthWithScopes, silentReauthEnabled }: UseU
   // get scope module definition
   const requiredScopes = activeModule?.config?.ssoScopes || activeModule?.moduleConfig?.ssoScopes || [];
 
+  // Use refs to avoid re-running effect when function references change
+  const loginRef = useRef(login);
+  const reAuthWithScopesRef = useRef(reAuthWithScopes);
+
+  useEffect(() => {
+    loginRef.current = login;
+    reAuthWithScopesRef.current = reAuthWithScopes;
+  });
+
   useEffect(() => {
     if (requiredScopes.length <= 0) {
+      setAuthScopeReady(true);
       return;
     }
     if (silentReauthEnabled) {
       setAuthScopeReady(false);
-      reAuthWithScopes(...requiredScopes).then(() => {
+      reAuthWithScopesRef.current(...requiredScopes).then(() => {
         setAuthScopeReady(true);
       });
     } else {
       const [shouldReAuth, newScopes] = shouldReAuthScopes(requiredScopes);
       if (shouldReAuth) {
-        login(newScopes);
+        loginRef.current(newScopes);
       }
     }
   }, [silentReauthEnabled, requiredScopes, setAuthScopeReady, activeModule?.fullProfile]);
