@@ -21,6 +21,33 @@ const getValue = (response = {}, accessor: string) => {
   return get(response || {}, accessor) || get(response || {}, `data.${accessor}`);
 };
 
+/**
+ * Matches a permission string against a pattern with wildcard support.
+ * Wildcards (*) in the pattern can match any value in that segment.
+ * @param userPermission - The permission pattern (can contain wildcards)
+ * @param requiredPermission - The specific permission to check
+ * @returns true if the pattern matches the permission
+ * @example
+ * matchPermission('rbac:*:*', 'rbac:inventory:read') // true
+ * matchPermission('rbac:inventory:*', 'rbac:inventory:read') // true
+ * matchPermission('rbac:*:read', 'rbac:inventory:read') // true
+ * matchPermission('rbac:inventory:write', 'rbac:inventory:read') // false
+ */
+const matchPermission = (userPermission: string, requiredPermission: string): boolean => {
+  const userSegments = userPermission.split(':');
+  const requiredSegments = requiredPermission.split(':');
+
+  // If the number of segments doesn't match, they can't be equal
+  if (userSegments.length !== requiredSegments.length) {
+    return false;
+  }
+
+  // Check each segment - wildcard (*) matches any value
+  return userSegments.every((segment, index) => {
+    return segment === '*' || segment === requiredSegments[index];
+  });
+};
+
 const initialize = ({
   getUserPermissions,
   getUser,
@@ -40,7 +67,9 @@ const initialize = ({
    */
   const checkPermissions = async (permissions: string[] = [], require: 'every' | 'some' = 'every') => {
     const userPermissions = await getUserPermissions();
-    return userPermissions && permissions[require] && permissions[require]((item) => userPermissions.find(({ permission }) => permission === item));
+    return (
+      userPermissions && permissions[require] && permissions[require]((item) => userPermissions.find(({ permission }) => matchPermission(permission, item)))
+    );
   };
 
   const visibilityFunctions = {
