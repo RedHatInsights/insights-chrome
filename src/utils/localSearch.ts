@@ -41,13 +41,6 @@ function joinMatchPositions(marks: FuzzySearchMatch[]) {
 }
 
 function applyMarks(text: string, marks: { start: number; end: number }[]) {
-  // Sanitize input text to prevent XSS attacks
-  // Strip all HTML tags from the original text before applying highlighting
-  const sanitizedText = sanitizeHtml(text, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-
   const sortedMarks = marks.toSorted((a, b) => a.start - b.start);
 
   let out = '';
@@ -58,13 +51,13 @@ function applyMarks(text: string, marks: { start: number; end: number }[]) {
       throw new Error(`Invalid mark overlap: { start: ${mark.start}, end: ${mark.end} } overlaps with mark ending at ${prevEnd}`);
     }
 
-    out += sanitizedText.substring(prevEnd, mark.start);
-    out += `<mark>${sanitizedText.substring(mark.start, mark.end)}</mark>`;
+    out += text.substring(prevEnd, mark.start);
+    out += `<mark>${text.substring(mark.start, mark.end)}</mark>`;
 
     prevEnd = mark.end;
   }
 
-  out += sanitizedText.substring(prevEnd, sanitizedText.length);
+  out += text.substring(prevEnd, text.length);
 
   return out;
 }
@@ -95,8 +88,15 @@ function highlightText(term: string, text: string, category: HighlightCategories
     return matchCache[category][key];
   }
 
-  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(text), 2)]));
-  const markedText = applyMarks(text, mergedMarks);
+  // Sanitize input text to prevent XSS attacks before computing match positions
+  // Strip all HTML tags from the original text before fuzzy search and highlighting
+  const sanitizedText = sanitizeHtml(text, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+
+  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(sanitizedText), 2)]));
+  const markedText = applyMarks(sanitizedText, mergedMarks);
 
   // cache result
   matchCache[category][key] = markedText;
