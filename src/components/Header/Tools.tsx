@@ -11,6 +11,7 @@ import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
+import DarkModeToggle from './DarkModeToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
@@ -311,31 +312,6 @@ const Tools = () => {
     </Tooltip>
   );
 
-  const ThemeToggle = () => {
-    const [darkmode, setDarkmode] = useState(() => {
-      return document.documentElement.classList.contains('pf-v6-theme-dark');
-    });
-    return (
-      <Switch
-        id="no-label-switch-on"
-        isChecked={darkmode}
-        aria-label="Dark mode switch"
-        onChange={() => {
-          const newDarkMode = !darkmode;
-          setDarkmode(newDarkMode);
-          if (newDarkMode) {
-            document.documentElement.classList.add('pf-v6-theme-dark');
-          }
-          else {
-            document.documentElement.classList.remove('pf-v6-theme-dark');
-          }
-
-          localStorage.setItem('chrome:theme', newDarkMode ? 'dark' : 'light');
-        }}
-      />
-    );
-  };
-
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const [isNotificationDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const toggleDrawer = () => {
@@ -358,7 +334,7 @@ const Tools = () => {
     <>
       {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
       <ToolbarItem>
-        <ThemeToggle />
+        <DarkModeToggle />
       </ToolbarItem>
       {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v6-u-mr-0">
