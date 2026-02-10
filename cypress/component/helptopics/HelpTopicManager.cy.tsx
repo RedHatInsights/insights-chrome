@@ -54,6 +54,11 @@ const initialScalprumConfig = {
     appId: 'virtualAssistant',
     manifestLocation: '/foo/bar.json',
   },
+  learningResources: {
+    name: 'learningResources',
+    appId: 'learningResources',
+    manifestLocation: '/foo/bar.json',
+  },
 };
 
 const initialModuleRoutes = [
@@ -86,6 +91,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
           name: 'TestApp',
           manifestLocation: '/foo/bar.json',
         },
+        learningResources: {
+          name: 'learningResources',
+          manifestLocation: '/foo/bar.json',
+        },
       },
     })
   );
@@ -103,6 +112,21 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
     scalprum.current.exposedModules['TestApp#TestApp'] = {
       default: () => <div id="test-app">Test App</div>,
+    };
+
+    // Mock learningResources modules for QuickStartsWrapper
+    scalprum.current.exposedModules['learningResources#QuickStartProvider'] = {
+      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    };
+
+    scalprum.current.exposedModules['learningResources#quickstarts/useQuickstartsStore'] = {
+      default: () => ({
+        setQuickstarts: () => {},
+        addQuickstart: () => {},
+        activateQuickstart: () => Promise.resolve(),
+        setActiveQuickStartID: () => {},
+        clearQuickstarts: () => {},
+      }),
     };
 
     setIsReady(true);
@@ -216,6 +240,30 @@ describe('HelpTopicManager', () => {
             if (module === './TestApp') {
               return {
                 default: () => <div>Test App</div>,
+              };
+            }
+            return {};
+          };
+        },
+      };
+      win.learningResources = {
+        init: () => {},
+        get: (module) => {
+          return () => {
+            if (module === './QuickStartProvider') {
+              return {
+                default: ({ children }: { children: React.ReactNode }) => children,
+              };
+            }
+            if (module === './quickstarts/useQuickstartsStore') {
+              return {
+                default: () => ({
+                  setQuickstarts: () => {},
+                  addQuickstart: () => {},
+                  activateQuickstart: () => Promise.resolve(),
+                  setActiveQuickStartID: () => {},
+                  clearQuickstarts: () => {},
+                }),
               };
             }
             return {};
