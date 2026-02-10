@@ -115,7 +115,7 @@ type ChromeContextProviderProps = {
   children: React.ReactNode;
 };
 
-const ChromeContextProvider = ({ helpTopicsAPI, config, children }: ChromeContextProviderProps) => {
+const ChromeContextProvider = ({ helpTopicsAPI, children }: ChromeContextProviderProps) => {
   const quickstartsAPI = useQuickstartsAPI();
   const chromeAuth = useContext(ChromeAuthContext);
   const mutableChromeApi = useRef<ChromeAPI>();
@@ -234,11 +234,7 @@ const ChromeContextProvider = ({ helpTopicsAPI, config, children }: ChromeContex
     return null;
   }
 
-  return (
-    <InternalChromeContext.Provider value={mutableChromeApi.current}>
-      {children}
-    </InternalChromeContext.Provider>
-  );
+  return <InternalChromeContext.Provider value={mutableChromeApi.current}>{children}</InternalChromeContext.Provider>;
 };
 
 /**

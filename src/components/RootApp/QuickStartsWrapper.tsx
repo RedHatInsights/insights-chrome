@@ -140,11 +140,7 @@ const QuickStartsWrapper: React.FC<QuickStartsWrapperProps> = ({ children, accou
     return <QuickStartProvider accountId={accountId}>{content}</QuickStartProvider>;
   };
 
-  return (
-    <QuickstartsAPIContext.Provider value={quickstartsAPI}>
-      {renderContent(children)}
-    </QuickstartsAPIContext.Provider>
-  );
+  return <QuickstartsAPIContext.Provider value={quickstartsAPI}>{renderContent(children)}</QuickstartsAPIContext.Provider>;
 };
 
 export default QuickStartsWrapper;
