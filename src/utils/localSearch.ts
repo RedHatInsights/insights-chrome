@@ -3,6 +3,7 @@ import { ReleaseEnv, ResultItem, SearchDataType } from '@redhat-cloud-services/t
 import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
 import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
+import sanitizeHtml from 'sanitize-html';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -87,8 +88,15 @@ function highlightText(term: string, text: string, category: HighlightCategories
     return matchCache[category][key];
   }
 
-  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(text), 2)]));
-  const markedText = applyMarks(text, mergedMarks);
+  // Sanitize input text to prevent XSS attacks before computing match positions
+  // Strip all HTML tags from the original text before fuzzy search and highlighting
+  const sanitizedText = sanitizeHtml(text, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+
+  const mergedMarks = joinMatchPositions(minimumDistanceMatches([...fuzzySearch(asciiLowercase(term), asciiLowercase(sanitizedText), 2)]));
+  const markedText = applyMarks(sanitizedText, mergedMarks);
 
   // cache result
   matchCache[category][key] = markedText;
