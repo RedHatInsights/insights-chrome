@@ -263,6 +263,12 @@ describe('VisibilitySingleton', () => {
         const result = await visibilityFunctions.loosePermissions(['rbac:inventory', 'rbac:inventory:read:extra']);
         expect(result).toEqual(false);
       });
+
+      test('should match when required permission is wildcard and user has specific', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:read' }]));
+        const result = await visibilityFunctions.loosePermissions(['rbac:*:*', 'other:app:read']);
+        expect(result).toEqual(true);
+      });
     });
 
     describe('hasPermissions', () => {
@@ -306,6 +312,12 @@ describe('VisibilitySingleton', () => {
         getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:*' }]));
         const result = await visibilityFunctions.hasPermissions(['rbac:inventory:read', 'rbac:cost-management:read']);
         expect(result).toEqual(false);
+      });
+
+      test('should match when required permission is wildcard and user has specific', async () => {
+        getUserPermissions.mockImplementationOnce(() => Promise.resolve([{ permission: 'rbac:inventory:read' }, { permission: 'other:app:write' }]));
+        const result = await visibilityFunctions.hasPermissions(['rbac:*:*', 'other:*:write']);
+        expect(result).toEqual(true);
       });
     });
   });
