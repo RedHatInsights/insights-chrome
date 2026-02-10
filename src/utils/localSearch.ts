@@ -3,6 +3,7 @@ import { ReleaseEnv, ResultItem, SearchDataType } from '@redhat-cloud-services/t
 import { SearchPermissions, SearchPermissionsCache, entrySchema } from '../state/atoms/localSearchAtom';
 import { evaluateVisibility } from './isNavItemVisible';
 import { Match as FuzzySearchMatch, fuzzySearch, minimumDistanceMatches } from './levenshtein-search';
+import sanitizeHtml from 'sanitize-html';
 
 type HighlightCategories = 'title' | 'description';
 
@@ -40,6 +41,13 @@ function joinMatchPositions(marks: FuzzySearchMatch[]) {
 }
 
 function applyMarks(text: string, marks: { start: number; end: number }[]) {
+  // Sanitize input text to prevent XSS attacks
+  // Strip all HTML tags from the original text before applying highlighting
+  const sanitizedText = sanitizeHtml(text, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+
   const sortedMarks = marks.toSorted((a, b) => a.start - b.start);
 
   let out = '';
@@ -50,13 +58,13 @@ function applyMarks(text: string, marks: { start: number; end: number }[]) {
       throw new Error(`Invalid mark overlap: { start: ${mark.start}, end: ${mark.end} } overlaps with mark ending at ${prevEnd}`);
     }
 
-    out += text.substring(prevEnd, mark.start);
-    out += `<mark>${text.substring(mark.start, mark.end)}</mark>`;
+    out += sanitizedText.substring(prevEnd, mark.start);
+    out += `<mark>${sanitizedText.substring(mark.start, mark.end)}</mark>`;
 
     prevEnd = mark.end;
   }
 
-  out += text.substring(prevEnd, text.length);
+  out += sanitizedText.substring(prevEnd, sanitizedText.length);
 
   return out;
 }
