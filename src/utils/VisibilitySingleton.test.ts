@@ -2,11 +2,15 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
 
+// Shared scope object that persists across calls - modifications made during
+// initializeVisibilityFunctions will be visible when getVisibilityFunctions is called
+const mockSharedScope: Record<string, unknown> = {};
+
 jest.mock('@scalprum/core', () => {
   return {
     __esModule: true,
     initSharedScope: jest.fn(),
-    getSharedScope: jest.fn().mockReturnValue({}),
+    getSharedScope: jest.fn().mockImplementation(() => mockSharedScope),
   };
 });
 
@@ -31,6 +35,9 @@ describe('VisibilitySingleton', () => {
   let visibilityFunctions: VisibilityFunctions;
 
   beforeEach(() => {
+    // Clear the shared scope before each test to ensure clean state
+    Object.keys(mockSharedScope).forEach((key) => delete mockSharedScope[key]);
+
     initializeVisibilityFunctions({
       getUser,
       getToken,
