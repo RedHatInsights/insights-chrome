@@ -143,6 +143,55 @@ describe('OIDCSecured', () => {
     });
   });
 
+  it('gracefully handles interaction_required error from silent auth', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+
+    // Mock an interaction_required error (e.g., user needs to complete registration form)
+    const interactionRequiredError = {
+      name: 'ErrorResponse',
+      message: 'interaction_required',
+      stack: 'ErrorResponse: interaction_required',
+    };
+
+    // @ts-expect-error: Partial mock of ErrorContext for testing
+    mockAuth.error = interactionRequiredError;
+    useAuth.mockReturnValue(mockAuth);
+
+    const TestComponent = () => {
+      const ctx = React.useContext(ChromeAuthContext);
+      return <button onClick={() => ctx.login()}>Login</button>;
+    };
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <TestComponent />
+      </OIDCSecured>
+    );
+
+    // Should show loading placeholder and not throw to error boundary
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it('throws unexpected auth errors to error boundary', () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+
+    // Mock an unexpected error
+    const unexpectedError = new Error('Network error');
+
+    // @ts-expect-error: Partial mock of ErrorContext for testing
+    mockAuth.error = unexpectedError;
+    useAuth.mockReturnValue(mockAuth);
+
+    // Should throw to error boundary
+    expect(() => {
+      render(
+        <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+          <div>child</div>
+        </OIDCSecured>
+      );
+    }).toThrow('Network error');
+  });
+
   describe('reAuthWithScopes', () => {
     let useAuthMock: any;
     let loginMock: jest.Mock;
@@ -269,7 +318,29 @@ describe('OIDCSecured', () => {
       expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['r1', 'extra', 'u1', 'u2']);
     });
 
-    it('falls back to login when signinSilent rejects', async () => {
+    it('falls back to login when signinSilent rejects with expected error (interaction_required)', async () => {
+      mockUser.scope = 'u1';
+      const interactionRequiredError = {
+        name: 'ErrorResponse',
+        message: 'interaction_required',
+      };
+      (mockAuth.signinSilent as jest.Mock).mockRejectedValue(interactionRequiredError);
+
+      renderOIDCSecuredWithTestInvoker({
+        activeModule: 'foo',
+        modules: { foo: { config: { ssoScopes: ['req'] } } },
+      });
+
+      await clickInvokeButton();
+
+      await waitFor(() => {
+        expect(mockAuth.signinSilent as jest.Mock).toHaveBeenCalled();
+      });
+      // Should still fall back to login for expected errors
+      expect(loginMock).toHaveBeenCalledWith(expect.anything(), ['req', 'extra', 'u1']);
+    });
+
+    it('falls back to login when signinSilent rejects with unexpected error', async () => {
       mockUser.scope = 'u1';
       (mockAuth.signinSilent as jest.Mock).mockRejectedValue(new Error('boom'));
 

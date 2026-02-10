@@ -32,6 +32,33 @@ const serviceAPI = entitlementsApi();
 const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
 
+/**
+ * Checks if an error is an expected OIDC silent authentication error.
+ * These errors occur when prompt=none is used but the IdP cannot complete
+ * the request without user interaction (e.g., session expired, consent needed).
+ *
+ * Per OIDC spec, the proper recovery is to redirect to the authorization endpoint
+ * without prompt=none to allow user interaction.
+ *
+ * @param error - The error object to check
+ * @returns true if this is an expected silent auth error, false otherwise
+ *
+ * Refs:
+ * - OIDC Core spec: https://openid.net/specs/openid-connect-core-1_0.html#AuthError
+ * - ErrorResponse structure: https://github.com/authts/oidc-client-ts/blob/main/src/errors/ErrorResponse.ts
+ */
+function isExpectedSilentAuthError(error: any): boolean {
+  return (
+    error?.name === 'ErrorResponse' &&
+    [
+      'interaction_required', // User interaction is required (e.g., registration form)
+      'login_required', // User must log in (session expired)
+      'consent_required', // User must consent to requested scopes
+      'account_selection_required', // User must select an account
+    ].includes(error?.message)
+  );
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
   return {
@@ -127,7 +154,13 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
           }
         })
         .catch((error) => {
-          console.error('Error while re-authenticating user', error);
+          if (isExpectedSilentAuthError(error)) {
+            log(`Silent reauth failed with expected error: ${error.message}, falling back to login`);
+          } else {
+            console.error('Unexpected error while re-authenticating user', error);
+          }
+
+          // Always fall back to full login redirect
           login(authRef.current, scopes);
         });
     },
@@ -256,7 +289,13 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useManageSilentRenew(auth, state.login);
 
   if (auth.error) {
-    // leave the auth error handling on the global ErrorBoundary
+    if (isExpectedSilentAuthError(auth.error)) {
+      log(`Silent auth failed with expected error: ${auth.error.message}, falling back to full login`);
+      state.login();
+      return <AppPlaceholder />;
+    }
+
+    // Unexpected error - throw to error boundary
     throw auth.error;
   }
 
