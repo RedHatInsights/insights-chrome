@@ -24,6 +24,7 @@ import '../../src/sass/pf-5-assets.scss'
 import '../../src/sass/pf-6-assets.scss'
 import { mount } from 'cypress/react'
 import '@cypress/code-coverage/support'
+import 'cypress-localstorage-commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
