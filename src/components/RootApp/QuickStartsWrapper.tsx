@@ -47,10 +47,13 @@ const QuickStartsWrapper: React.FC<QuickStartsWrapperProps> = ({ children, accou
   const QuickStartProvider = quickStartProviderModule as React.FC<{ children: React.ReactNode; accountId?: string }> | undefined;
 
   // Load useQuickstartsStore from learning-resources for the deprecated API
-  const { hookResult: useQuickstartsStore } = useRemoteHook<() => QuickstartsStoreHook>({
+  const { hookResult: useQuickstartsStoreModule } = useRemoteHook<{ default: () => QuickstartsStoreHook }>({
     scope: 'learningResources',
     module: './quickstarts/useQuickstartsStore',
   });
+
+  // Handle default export - the module returns { default: function }
+  const useQuickstartsStore = useQuickstartsStoreModule?.default;
 
   // Get store functions for deprecated API (only if hook is loaded)
   const store = useQuickstartsStore?.() ?? null;

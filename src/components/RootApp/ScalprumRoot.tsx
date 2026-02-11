@@ -113,9 +113,10 @@ type ChromeContextProviderProps = {
   helpTopicsAPI: HelpTopicsAPI;
   config: ScalprumConfig;
   children: React.ReactNode;
+  chromeApiRef: React.MutableRefObject<ChromeAPI | undefined>;
 };
 
-const ChromeContextProvider = ({ helpTopicsAPI, children }: ChromeContextProviderProps) => {
+const ChromeContextProvider = ({ helpTopicsAPI, children, chromeApiRef }: ChromeContextProviderProps) => {
   const quickstartsAPI = useQuickstartsAPI();
   const chromeAuth = useContext(ChromeAuthContext);
   const mutableChromeApi = useRef<ChromeAPI>();
@@ -220,6 +221,8 @@ const ChromeContextProvider = ({ helpTopicsAPI, children }: ChromeContextProvide
       deleteNavListener,
       addWsEventListener,
     });
+    // Update the shared ref so ScalprumProvider's api prop has access to chrome
+    chromeApiRef.current = mutableChromeApi.current;
   }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, quickstartsAPI]);
 
   useEffect(() => {
@@ -242,6 +245,9 @@ const ChromeContextProvider = ({ helpTopicsAPI, children }: ChromeContextProvide
  * This ensures Scalprum hooks can be called inside ScalprumProvider.
  */
 const ChromeApiRoot = ({ config, helpTopicsAPI, accountId }: ChromeApiRootProps) => {
+  // Shared ref for chrome API - populated by ChromeContextProvider, read by ScalprumProvider's api prop
+  const chromeApiRef = useRef<ChromeAPI | undefined>();
+
   const scalprumConfig = useMemo(
     () => ({
       config,
@@ -254,10 +260,24 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, accountId }: ChromeApiRootProps)
     [config]
   );
 
+  // Create an api object with a getter so modules get the current chrome API when accessed
+  const scalprumApi = useMemo(
+    () => ({
+      get chrome() {
+        return chromeApiRef.current;
+      },
+    }),
+    []
+  );
+
   return (
-    <ScalprumProvider config={scalprumConfig.config} pluginSDKOptions={scalprumConfig.pluginSDKOptions}>
+    <ScalprumProvider
+      config={scalprumConfig.config}
+      api={scalprumApi}
+      pluginSDKOptions={scalprumConfig.pluginSDKOptions}
+    >
       <QuickStartsWrapper accountId={accountId}>
-        <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} config={config}>
+        <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} config={config} chromeApiRef={chromeApiRef}>
           <ScalprumRoot />
         </ChromeContextProvider>
       </QuickStartsWrapper>
