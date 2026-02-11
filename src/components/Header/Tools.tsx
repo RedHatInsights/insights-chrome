@@ -26,8 +26,10 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
+import { AdjustIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import './Tools.scss';
+import { title } from 'process';
 
 const InternalButton = () => (
   <Button
@@ -99,6 +101,35 @@ const Tools = () => {
           title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
           url: '#',
           onClick: () => togglePreviewWithCheck(),
+        },
+      ],
+    },
+    {
+      title: 'Color scheme',
+      items: [
+        {
+          title: (
+            <>
+              <AdjustIcon /> System
+            </>
+          ),
+          description: 'Follow system preference',
+        },
+        {
+          title: (
+            <>
+              <OutlinedSunIcon /> Light
+            </>
+          ),
+          description: 'Always use light mode',
+        },
+        {
+          title: (
+            <>
+              <OutlinedMoonIcon /> Dark
+            </>
+          ),
+          description: 'Always use dark mode',
         },
       ],
     },
