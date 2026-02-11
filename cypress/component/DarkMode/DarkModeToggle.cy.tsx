@@ -1,11 +1,21 @@
 import React from 'react';
-import DarkModeToggle from '../../../src/components/Header/DarkModeToggle';
-import { Card, CardBody, CardFooter, CardTitle } from '@patternfly/react-core';
+import { Button, Card, CardBody, CardFooter, CardTitle } from '@patternfly/react-core';
+import { useTheme } from '../../../src/hooks/useTheme';
 
 function DarkMode() {
+  const { setLightMode, setDarkMode, setSystemMode } = useTheme();
+
   return (
     <>
-      <DarkModeToggle />
+      <Button variant="primary" size="lg" id="system-button" onClick={setSystemMode}>
+        System
+      </Button>
+      <Button variant="primary" size="lg" id="light-button" onClick={setLightMode}>
+        Light
+      </Button>
+      <Button variant="primary" size="lg" id="dark-button" onClick={setDarkMode}>
+        Dark
+      </Button>
       <Card>
         <CardTitle component="h4">Title within an {'<h4>'} element</CardTitle>
         <CardBody>Body</CardBody>
@@ -20,19 +30,21 @@ function DarkMode() {
   );
 }
 
-describe('ThemeToggle Component', () => {
+describe('ThemeMenu Component', () => {
   beforeEach(() => {});
 
   describe('Initial State', () => {
     it('uses localStorage dark preference', () => {
-      localStorage.setItem('chrome:theme', 'dark');
-      const elem = cy.mount(<DarkMode />).get('html');
-      elem.matchImageSnapshot();
+      cy.setLocalStorage('chrome:theme', 'dark');
+      cy.mount(<DarkMode />).get('html');
+      cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+      cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
     it('uses localStorage light preference', () => {
-      localStorage.setItem('chrome:theme', 'light');
-      const elem = cy.mount(<DarkMode />).get('html');
-      elem.matchImageSnapshot();
+      cy.setLocalStorage('chrome:theme', 'light');
+      cy.mount(<DarkMode />).get('html');
+      cy.getLocalStorage('chrome:theme').should('equal', 'light');
+      cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
     });
     it('falls back to system dark preference', () => {
       cy.window().then((win) => {
@@ -44,7 +56,7 @@ describe('ThemeToggle Component', () => {
         });
       });
       cy.mount(<DarkMode />).get('html');
-      cy.getLocalStorage('chrome:theme').should('equal', 'dark');
+      cy.getLocalStorage('chrome:theme').should('equal', 'system');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
     it('falls back to system light preference', () => {
@@ -57,7 +69,7 @@ describe('ThemeToggle Component', () => {
         });
       });
       cy.mount(<DarkMode />).get('html');
-      cy.getLocalStorage('chrome:theme').should('equal', 'light');
+      cy.getLocalStorage('chrome:theme').should('equal', 'system');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
     });
   });
@@ -66,23 +78,18 @@ describe('ThemeToggle Component', () => {
     it('toggles from light to dark', () => {
       localStorage.setItem('chrome:theme', 'light');
       cy.mount(<DarkMode />).get('html');
-      cy.get('.pf-v6-c-switch__toggle').click();
-      cy.get('#no-label-switch-on').should('be.checked');
+      cy.get('#dark-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'dark');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
     it('toggles from dark to light', () => {
       localStorage.setItem('chrome:theme', 'dark');
       cy.mount(<DarkMode />).get('html');
-      cy.get('.pf-v6-c-switch__toggle').click();
-      cy.get('#no-label-switch-on').should('not.be.checked');
+      cy.get('#light-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'light');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
     });
-  });
-
-  describe('Persistence', () => {
-    it('prioritizes localStorage over system preference', () => {
+    it('toggles from dark to system light', () => {
       localStorage.setItem('chrome:theme', 'dark');
       cy.window().then((win) => {
         cy.stub(win, 'matchMedia').returns({
@@ -93,6 +100,23 @@ describe('ThemeToggle Component', () => {
         });
       });
       cy.mount(<DarkMode />).get('html');
+      cy.get('#system-button').click();
+      cy.getLocalStorage('chrome:theme').should('equal', 'system');
+      cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
+    });
+    it('toggles from system light to dark', () => {
+      localStorage.setItem('chrome:theme', 'dark');
+      cy.window().then((win) => {
+        cy.stub(win, 'matchMedia').returns({
+          matches: false,
+          media: '(prefers-color-scheme: dark)',
+          addEventListener: cy.stub(),
+          removeEventListener: cy.stub(),
+        });
+      });
+      cy.mount(<DarkMode />).get('html');
+      cy.get('#dark-button').click();
+      cy.getLocalStorage('chrome:theme').should('equal', 'dark');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
   });
