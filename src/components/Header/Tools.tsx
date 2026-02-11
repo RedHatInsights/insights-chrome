@@ -10,7 +10,6 @@ import CogIcon from '@patternfly/react-icons/dist/dynamic/icons/cog-icon';
 import RedhatIcon from '@patternfly/react-icons/dist/dynamic/icons/redhat-icon';
 import UserToggle from './UserToggle';
 import ToolbarToggle from './ToolbarToggle';
-import DarkModeToggle from './DarkModeToggle';
 import SettingsToggle, { SettingsToggleDropdownGroup } from './SettingsToggle';
 import cookie from 'js-cookie';
 import { ITLess, getSection } from '../../utils/common';
@@ -26,10 +25,10 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
-import { AdjustIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
+//import { AdjustIcon, CheckIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import { useTheme } from '../../hooks/useTheme';
 import './Tools.scss';
-import { title } from 'process';
 
 const InternalButton = () => (
   <Button
@@ -91,6 +90,7 @@ const Tools = () => {
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
+  const { setLightMode, setDarkMode, setSystemMode } = useTheme();
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -108,28 +108,25 @@ const Tools = () => {
       title: 'Color scheme',
       items: [
         {
-          title: (
-            <>
-              <AdjustIcon /> System
-            </>
-          ),
+          title: 'System',
+          // <AdjustIcon /> System {themeMode === 'system' && <CheckIcon />}
           description: 'Follow system preference',
+          onClick: setSystemMode,
+          url: '#',
         },
         {
-          title: (
-            <>
-              <OutlinedSunIcon /> Light
-            </>
-          ),
+          title: 'Light',
+          // <OutlinedSunIcon /> Light {themeMode === 'light' && <CheckIcon />}
           description: 'Always use light mode',
+          onClick: setLightMode,
+          url: '#',
         },
         {
-          title: (
-            <>
-              <OutlinedMoonIcon /> Dark
-            </>
-          ),
+          title: 'Dark',
+          // <OutlinedMoonIcon /> Dark {themeMode === 'dark' && <CheckIcon />}
           description: 'Always use dark mode',
+          onClick: setDarkMode,
+          url: '#',
         },
       ],
     },
@@ -363,9 +360,6 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
-      <ToolbarItem>
-        <DarkModeToggle />
-      </ToolbarItem>
       {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
