@@ -145,7 +145,6 @@
     "@redhat-cloud-services/entitlements-client": "4.0.7",
     "@redhat-cloud-services/frontend-components": "7.0.11",
     "@redhat-cloud-services/frontend-components-notifications": "^5.0.7",
-    "@redhat-cloud-services/frontend-components-pdf-generator": "^4.0.7",
     "@redhat-cloud-services/frontend-components-utilities": "^6.1.1",
     "@redhat-cloud-services/host-inventory-client": "4.1.7",
     "@redhat-cloud-services/javascript-clients-shared": "^2.0.5",
