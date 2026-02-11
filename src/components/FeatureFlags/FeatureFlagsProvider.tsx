@@ -62,7 +62,7 @@ const config: IFlagProvider['config'] = {
 const syncLocalStorage = (client: UnleashClient, setSilentReauth: (value: boolean) => void) => {
   const syncSilentReauth = () => {
     try {
-      const enabled = client.isEnabled('platform.chrome.silent-reauth');
+      const enabled = client.isEnabled('platform.chrome.oidc-silent');
       setSilentReauth(enabled);
     } catch (e) {
       setSilentReauth(false);

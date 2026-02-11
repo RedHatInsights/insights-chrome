@@ -74,7 +74,7 @@ export const OFFLINE_REDIRECT_STORAGE_KEY = 'chrome.offline.redirectUri';
 // Platform Content Analytics team will be unable to track user analytics without this local storage key set
 export const RH_USER_ID_STORAGE_KEY = 'rh_user_id';
 
-export const SILENT_REAUTH_ENABLED_KEY = 'chrome.silent-reauth';
+export const OIDC_SILENT_ENABLED_KEY = 'chrome.oidc-silent';
 
 export const PUBLIC_EVENTS: {
   NAVIGATION_TOGGLE: [(callback: GenericCB) => Listener];

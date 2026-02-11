@@ -1,12 +1,12 @@
 import { atomWithStorage } from 'jotai/utils';
-import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { OIDC_SILENT_ENABLED_KEY } from '../../utils/consts';
 
 const isLocalStorageAvailable = (): boolean => {
   return typeof window !== 'undefined' && !!window.localStorage;
 };
 
 export const silentReauthEnabledAtom = atomWithStorage<boolean>(
-  SILENT_REAUTH_ENABLED_KEY,
+  OIDC_SILENT_ENABLED_KEY,
   false, // default value if localStorage is empty
   {
     getItem: (key) => {

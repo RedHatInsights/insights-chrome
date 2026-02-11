@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { SILENT_REAUTH_ENABLED_KEY } from '../../utils/consts';
+import { OIDC_SILENT_ENABLED_KEY } from '../../utils/consts';
 import { getUnleashClient } from './unleashClient';
 import ChromeAuthContext from '../../auth/ChromeAuthContext';
 import { Provider as JotaiProvider, createStore } from 'jotai';
@@ -53,7 +53,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     );
 
   beforeEach(() => {
-    localStorage.removeItem(SILENT_REAUTH_ENABLED_KEY);
+    localStorage.removeItem(OIDC_SILENT_ENABLED_KEY);
     store = createStore();
     authValue = {
       // minimal fields used by FeatureFlagsProvider
@@ -73,7 +73,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client = getUnleashClient();
     client.isEnabledReturn = true;
     client.emit('ready');
-    expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('true');
+    expect(localStorage.getItem(OIDC_SILENT_ENABLED_KEY)).toBe('true');
     expect(store.get(silentReauthEnabledAtom)).toBe(true);
   });
 
@@ -82,7 +82,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client = getUnleashClient();
     client.isEnabledReturn = false;
     client.emit('update');
-    expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
+    expect(localStorage.getItem(OIDC_SILENT_ENABLED_KEY)).toBe('false');
     expect(store.get(silentReauthEnabledAtom)).toBe(false);
   });
 
@@ -91,7 +91,7 @@ describe('FeatureFlagsProvider - syncLocalStorage', () => {
     client = getUnleashClient();
     client.isEnabledReturn = true;
     client.emit('error');
-    expect(localStorage.getItem(SILENT_REAUTH_ENABLED_KEY)).toBe('false');
+    expect(localStorage.getItem(OIDC_SILENT_ENABLED_KEY)).toBe('false');
     expect(store.get(silentReauthEnabledAtom)).toBe(false);
   });
 });
