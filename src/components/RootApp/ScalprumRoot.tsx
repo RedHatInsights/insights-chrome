@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
+import { ScalprumProvider } from '@scalprum/react-core';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
 import { ChromeAPI, EnableTopicsArgs } from '@redhat-cloud-services/types';
@@ -12,7 +12,7 @@ import FavoritedServices from '../../layouts/FavoritedServices';
 import historyListener from '../../utils/historyListener';
 import SegmentContext from '../../analytics/SegmentContext';
 import LoadingFallback from '../../utils/loading-fallback';
-import { FlagTagsFilter, HelpTopicsAPI, QuickstartsApi } from '../../@types/types';
+import { FlagTagsFilter, HelpTopicsAPI } from '../../@types/types';
 import { createChromeContext } from '../../chrome/create-chrome';
 import Navigation from '../Navigation';
 import useHelpTopicManager from '../QuickStart/useHelpTopicManager';
@@ -39,6 +39,7 @@ import useDPAL from '../../analytics/useDpal';
 import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
+import QuickStartsWrapper, { useQuickstartsAPI } from './QuickStartsWrapper';
 
 const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
 
@@ -100,10 +101,22 @@ ScalprumRoot.displayName = 'MemoizedScalprumRoot';
 export type ChromeApiRootProps = {
   config: ScalprumConfig;
   helpTopicsAPI: HelpTopicsAPI;
-  quickstartsAPI: QuickstartsApi;
+  accountId?: string;
 };
 
-const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootProps) => {
+/**
+ * Inner component that creates the chrome context.
+ * This must be rendered inside ScalprumProvider and QuickStartsWrapper
+ * so it can access quickstartsAPI from context.
+ */
+type ChromeContextProviderProps = {
+  helpTopicsAPI: HelpTopicsAPI;
+  children: React.ReactNode;
+  chromeApiRef: React.MutableRefObject<ChromeAPI | undefined>;
+};
+
+const ChromeContextProvider = ({ helpTopicsAPI, children, chromeApiRef }: ChromeContextProviderProps) => {
+  const quickstartsAPI = useQuickstartsAPI();
   const chromeAuth = useContext(ChromeAuthContext);
   const mutableChromeApi = useRef<ChromeAPI>();
   const isPreview = useAtomValue(isPreviewAtom);
@@ -207,39 +220,58 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootP
       deleteNavListener,
       addWsEventListener,
     });
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+    // Update the shared ref so ScalprumProvider's api prop has access to chrome
+    chromeApiRef.current = mutableChromeApi.current;
+    // Set the deprecated chrome API to window immediately when created
+    // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
+    window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
+  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, quickstartsAPI]);
 
   if (!mutableChromeApi.current) {
     return null;
   }
 
-  const scalprumProviderProps: ScalprumProviderProps<{ chrome: ChromeAPI }> = useMemo(() => {
-    if (!mutableChromeApi.current) {
-      throw new Error('Chrome API failed to initialize.');
-    }
-    // set the deprecated chrome API to window
-    // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
-    window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
-    return {
+  return <InternalChromeContext.Provider value={mutableChromeApi.current}>{children}</InternalChromeContext.Provider>;
+};
+
+/**
+ * ChromeApiRoot - Provides ScalprumProvider context first, then creates chrome context inside.
+ * This ensures Scalprum hooks can be called inside ScalprumProvider.
+ */
+const ChromeApiRoot = ({ config, helpTopicsAPI, accountId }: ChromeApiRootProps) => {
+  // Shared ref for chrome API - populated by ChromeContextProvider, read by ScalprumProvider's api prop
+  const chromeApiRef = useRef<ChromeAPI | undefined>();
+
+  const scalprumConfig = useMemo(
+    () => ({
       config,
-      api: {
-        chrome: mutableChromeApi.current,
-      },
       pluginSDKOptions: {
         pluginLoaderOptions: {
-          // sharedScope: scope,
-          transformPluginManifest: (manifest) => transformScalprumManifest(manifest, config),
+          transformPluginManifest: (manifest: Parameters<typeof transformScalprumManifest>[0]) => transformScalprumManifest(manifest, config),
         },
       },
-    };
-  }, [isPreview, chromeAuth.token, chromeAuth.refreshToken]);
+    }),
+    [config]
+  );
+
+  // Create an api object with a getter so modules get the current chrome API when accessed
+  const scalprumApi = useMemo(
+    () => ({
+      get chrome() {
+        return chromeApiRef.current;
+      },
+    }),
+    []
+  );
 
   return (
-    <InternalChromeContext.Provider value={mutableChromeApi.current}>
-      <ScalprumProvider config={scalprumProviderProps.config} api={scalprumProviderProps.api} pluginSDKOptions={scalprumProviderProps.pluginSDKOptions}>
-        <ScalprumRoot />
-      </ScalprumProvider>
-    </InternalChromeContext.Provider>
+    <ScalprumProvider config={scalprumConfig.config} api={scalprumApi} pluginSDKOptions={scalprumConfig.pluginSDKOptions}>
+      <QuickStartsWrapper accountId={accountId}>
+        <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} chromeApiRef={chromeApiRef}>
+          <ScalprumRoot />
+        </ChromeContextProvider>
+      </QuickStartsWrapper>
+    </ScalprumProvider>
   );
 };
 
