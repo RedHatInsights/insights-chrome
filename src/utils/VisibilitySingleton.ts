@@ -23,14 +23,15 @@ const getValue = (response = {}, accessor: string) => {
 
 /**
  * Matches a permission string against a pattern with wildcard support.
- * Wildcards (*) in the pattern can match any value in that segment.
- * @param userPermission - The permission pattern (can contain wildcards)
- * @param requiredPermission - The specific permission to check
- * @returns true if the pattern matches the permission
+ * Wildcards (*) in either permission can match any value in that segment.
+ * @param userPermission - The user's permission (can contain wildcards)
+ * @param requiredPermission - The required permission (can contain wildcards)
+ * @returns true if the permissions match
  * @example
- * matchPermission('rbac:*:*', 'rbac:inventory:read') // true
+ * matchPermission('rbac:*:*', 'rbac:inventory:read') // true (user has wildcard)
+ * matchPermission('rbac:inventory:read', 'rbac:*:*') // true (required is wildcard)
  * matchPermission('rbac:inventory:*', 'rbac:inventory:read') // true
- * matchPermission('rbac:*:read', 'rbac:inventory:read') // true
+ * matchPermission('rbac:*:read', 'rbac:inventory:*') // true (both have wildcards)
  * matchPermission('rbac:inventory:write', 'rbac:inventory:read') // false
  */
 const matchPermission = (userPermission: string, requiredPermission: string): boolean => {
@@ -42,9 +43,9 @@ const matchPermission = (userPermission: string, requiredPermission: string): bo
     return false;
   }
 
-  // Check each segment - wildcard (*) matches any value
+  // Check each segment - wildcard (*) in either position matches any value
   return userSegments.every((segment, index) => {
-    return segment === '*' || segment === requiredSegments[index];
+    return segment === '*' || requiredSegments[index] === '*' || segment === requiredSegments[index];
   });
 };
 
