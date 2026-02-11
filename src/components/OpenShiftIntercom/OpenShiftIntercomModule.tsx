@@ -44,6 +44,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     importName: 'useIsOpen',
   });
   const [isVAOpen, setIsVAOpen] = hookResult || [false, () => {}];
+  const messageUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Positions Intercom widget in the default bottom-right corner with standard padding.
@@ -76,8 +77,12 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     };
 
     const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
-    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty('top', `${buttonRect.bottom}px`);
-    (document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement)?.style.setProperty('bottom', `unset`);
+    const notificationFrame = document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement;
+    
+    if (notificationFrame) {
+      notificationFrame.style.setProperty('top', `${buttonRect.bottom}px`);
+      notificationFrame.style.setProperty('bottom', `unset`);
+    }
 
     window.Intercom('update', {
       vertical_padding: vertical,
@@ -89,6 +94,13 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
   // Set up dynamic positioning that responds to layout changes
   useEffect(() => {
     updatePositionRelativeToButton();
+
+    // Start polling interval to ensure notification bubble position is updated
+    // This handles cases where the iframe loads/moves asynchronously
+    // Not ideal at all
+    messageUpdateIntervalRef.current = setInterval(() => {
+      updatePositionRelativeToButton();
+    }, 500); // Update every 500ms
 
     // Update widget position on window resize or scroll to maintain proper spacing
     const handleLayoutChange = () => updatePositionRelativeToButton();
@@ -140,6 +152,9 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     }
 
     return () => {
+      if (messageUpdateIntervalRef.current) {
+        clearInterval(messageUpdateIntervalRef.current);
+      }
       window.removeEventListener('resize', handleLayoutChange);
       window.removeEventListener('scroll', handleLayoutChange);
       buttonObserver.disconnect();
