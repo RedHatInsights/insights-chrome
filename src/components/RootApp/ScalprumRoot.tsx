@@ -271,11 +271,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, accountId }: ChromeApiRootProps)
   );
 
   return (
-    <ScalprumProvider
-      config={scalprumConfig.config}
-      api={scalprumApi}
-      pluginSDKOptions={scalprumConfig.pluginSDKOptions}
-    >
+    <ScalprumProvider config={scalprumConfig.config} api={scalprumApi} pluginSDKOptions={scalprumConfig.pluginSDKOptions}>
       <QuickStartsWrapper accountId={accountId}>
         <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} config={config} chromeApiRef={chromeApiRef}>
           <ScalprumRoot />
