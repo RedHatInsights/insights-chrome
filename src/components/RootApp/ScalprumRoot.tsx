@@ -111,7 +111,6 @@ export type ChromeApiRootProps = {
  */
 type ChromeContextProviderProps = {
   helpTopicsAPI: HelpTopicsAPI;
-  config: ScalprumConfig;
   children: React.ReactNode;
   chromeApiRef: React.MutableRefObject<ChromeAPI | undefined>;
 };
@@ -223,15 +222,10 @@ const ChromeContextProvider = ({ helpTopicsAPI, children, chromeApiRef }: Chrome
     });
     // Update the shared ref so ScalprumProvider's api prop has access to chrome
     chromeApiRef.current = mutableChromeApi.current;
+    // Set the deprecated chrome API to window immediately when created
+    // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
+    window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
   }, [isPreview, chromeAuth.token, chromeAuth.refreshToken, quickstartsAPI]);
-
-  useEffect(() => {
-    if (mutableChromeApi.current) {
-      // set the deprecated chrome API to window
-      // eslint-disable-next-line rulesdir/no-chrome-api-call-from-window
-      window.insights.chrome = chromeApiWrapper(mutableChromeApi.current);
-    }
-  }, [mutableChromeApi.current]);
 
   if (!mutableChromeApi.current) {
     return null;
@@ -273,7 +267,7 @@ const ChromeApiRoot = ({ config, helpTopicsAPI, accountId }: ChromeApiRootProps)
   return (
     <ScalprumProvider config={scalprumConfig.config} api={scalprumApi} pluginSDKOptions={scalprumConfig.pluginSDKOptions}>
       <QuickStartsWrapper accountId={accountId}>
-        <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} config={config} chromeApiRef={chromeApiRef}>
+        <ChromeContextProvider helpTopicsAPI={helpTopicsAPI} chromeApiRef={chromeApiRef}>
           <ScalprumRoot />
         </ChromeContextProvider>
       </QuickStartsWrapper>

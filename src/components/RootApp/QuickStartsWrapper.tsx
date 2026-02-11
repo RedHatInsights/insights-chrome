@@ -33,6 +33,47 @@ export interface QuickStartsWrapperProps {
   accountId?: string;
 }
 
+/**
+ * Creates a deprecated API wrapper that logs a warning before calling the underlying function.
+ */
+const deprecated = <Args extends unknown[], R>(message: string, fn: ((...args: Args) => R) | undefined) => {
+  return (...args: Args): R | undefined => {
+    console.warn(message);
+    return fn?.(...args);
+  };
+};
+
+/**
+ * Clears quickstarts and handles chunk load error cleanup when the active module changes.
+ */
+const useChunkLoadErrorReset = (store: QuickstartsStoreHook | null, activeModule: string | undefined) => {
+  useEffect(() => {
+    if (!store || !activeModule) {
+      return;
+    }
+
+    store.clearQuickstarts();
+
+    let timeout: NodeJS.Timeout | undefined;
+    const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
+
+    if (localStorage.getItem(moduleStorageKey) === 'true') {
+      // The localStorage should either be true or null. A false value
+      // can cause infinite loops. The timeout will remove the value after
+      // ten seconds
+      timeout = setTimeout(() => {
+        localStorage.removeItem(moduleStorageKey);
+      }, 10_000);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [store, activeModule]);
+};
+
 const QuickStartsWrapper: React.FC<QuickStartsWrapperProps> = ({ children, accountId }) => {
   const activeModule = useAtomValue(activeModuleAtom);
 
@@ -58,92 +99,54 @@ const QuickStartsWrapper: React.FC<QuickStartsWrapperProps> = ({ children, accou
   // Get store functions for deprecated API (only if hook is loaded)
   const store = useQuickstartsStore?.() ?? null;
 
-  useEffect(() => {
-    if (store && activeModule) {
-      store.clearQuickstarts();
-      let timeout: NodeJS.Timeout;
-      const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
-      if (localStorage.getItem(moduleStorageKey) === 'true') {
-        // The localStorage should either be true or null. A false value
-        // can cause infinite loops. The timeout will remove the value after
-        // ten seconds
-        timeout = setTimeout(() => {
-          localStorage.removeItem(moduleStorageKey);
-        }, 10_000);
-      }
-      return () => {
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-      };
-    }
-  }, [activeModule, store]);
+  // Handle chunk load error cleanup when the active module changes
+  useChunkLoadErrorReset(store, activeModule);
+
+  const DEPRECATION_MESSAGE = 'Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.';
 
   const quickstartsAPI: QuickstartsApi = useMemo(
     () => ({
       version: 1,
-      /**
-       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
-       * This method will be removed in a future version.
-       */
-      set: (key: string, qs: QuickStart[]) => {
-        console.warn('chrome.quickStarts.set is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
-        store?.setQuickstarts(key, qs);
-      },
-      /**
-       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
-       * This method will be removed in a future version.
-       */
+      /** @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead. */
+      set: deprecated(
+        `chrome.quickStarts.set is deprecated. ${DEPRECATION_MESSAGE}`,
+        store ? (key: string, qs: QuickStart[]) => store.setQuickstarts(key, qs) : undefined
+      ),
+      /** @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead. */
       activateQuickstart: async (name: string) => {
-        console.warn(
-          'chrome.quickStarts.activateQuickstart is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.'
-        );
-        return store?.activateQuickstart(name);
+        console.warn(`chrome.quickStarts.activateQuickstart is deprecated. ${DEPRECATION_MESSAGE}`);
+        return store?.activateQuickstart(name) ?? Promise.resolve();
       },
-      /**
-       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
-       * This method will be removed in a future version.
-       */
-      add: (key: string, qs: QuickStart) => {
-        console.warn('chrome.quickStarts.add is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
-        store?.addQuickstart(key, qs);
-        return true;
-      },
-      /**
-       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
-       * This method will be removed in a future version.
-       */
-      toggle: (id: string) => {
-        console.warn('chrome.quickStarts.toggle is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.');
-        store?.setActiveQuickStartID(id);
-      },
+      /** @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead. */
+      add: deprecated(
+        `chrome.quickStarts.add is deprecated. ${DEPRECATION_MESSAGE}`,
+        store
+          ? (key: string, qs: QuickStart) => {
+              store.addQuickstart(key, qs);
+              return true;
+            }
+          : undefined
+      ),
+      /** @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead. */
+      toggle: deprecated(
+        `chrome.quickStarts.toggle is deprecated. ${DEPRECATION_MESSAGE}`,
+        store ? (id: string) => store.setActiveQuickStartID(id) : undefined
+      ),
       Catalog: LazyQuickStartCatalog,
-      /**
-       * @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead.
-       * This method will be removed in a future version.
-       */
-      updateQuickStarts: (key: string, qs: QuickStart[]) => {
-        console.warn(
-          'chrome.quickStarts.updateQuickStarts is deprecated. Use useQuickstartsStore from "learning-resources/quickstarts/useQuickstartsStore" instead.'
-        );
-        store?.setQuickstarts(key, qs);
-      },
+      /** @deprecated Use useQuickstartsStore from 'learning-resources/quickstarts/useQuickstartsStore' instead. */
+      updateQuickStarts: deprecated(
+        `chrome.quickStarts.updateQuickStarts is deprecated. ${DEPRECATION_MESSAGE}`,
+        store ? (key: string, qs: QuickStart[]) => store.setQuickstarts(key, qs) : undefined
+      ),
     }),
     [store]
   );
 
-  // Render content with or without QuickStartProvider depending on load status
-  const renderContent = (content: React.ReactNode) => {
-    if (quickStartProviderError) {
-      return content;
-    }
-    if (!QuickStartProvider) {
-      return content;
-    }
-    return <QuickStartProvider accountId={accountId}>{content}</QuickStartProvider>;
-  };
-
-  return <QuickstartsAPIContext.Provider value={quickstartsAPI}>{renderContent(children)}</QuickstartsAPIContext.Provider>;
+  return (
+    <QuickstartsAPIContext.Provider value={quickstartsAPI}>
+      {quickStartProviderError || !QuickStartProvider ? children : <QuickStartProvider accountId={accountId}>{children}</QuickStartProvider>}
+    </QuickstartsAPIContext.Provider>
+  );
 };
 
 export default QuickStartsWrapper;
