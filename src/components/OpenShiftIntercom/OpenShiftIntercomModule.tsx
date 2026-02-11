@@ -44,7 +44,7 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     importName: 'useIsOpen',
   });
   const [isVAOpen, setIsVAOpen] = hookResult || [false, () => {}];
-  const messageUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const messageUpdateIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   /**
    * Positions Intercom widget in the default bottom-right corner with standard padding.
@@ -77,8 +77,8 @@ const OpenShiftIntercomModule: React.FC<OpenShiftIntercomModuleProps> = ({ class
     };
 
     const { vertical, horizontal } = calculateSafeIntercomPadding(buttonRect, windowDimensions);
-    const notificationFrame = document.querySelector('[name="intercom-notification-stack-frame"]') as HTMLElement;
-    
+    const notificationFrame = document.querySelector<HTMLElement>('[name="intercom-notification-stack-frame"]');
+
     if (notificationFrame) {
       notificationFrame.style.setProperty('top', `${buttonRect.bottom}px`);
       notificationFrame.style.setProperty('bottom', `unset`);
