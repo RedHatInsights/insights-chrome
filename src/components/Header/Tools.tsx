@@ -3,7 +3,6 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
-import { Switch } from '@patternfly/react-core/dist/dynamic/components/Switch';
 import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/question-circle-icon';
@@ -26,7 +25,9 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
+//import { AdjustIcon, CheckIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
 import InternalChromeContext from '../../utils/internalChromeContext';
+import { useTheme } from '../../hooks/useTheme';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -89,6 +90,7 @@ const Tools = () => {
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
+  const { setLightMode, setDarkMode, setSystemMode } = useTheme();
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -99,6 +101,32 @@ const Tools = () => {
           title: `${isPreview ? 'Exit' : 'Enable'} "Preview" mode`,
           url: '#',
           onClick: () => togglePreviewWithCheck(),
+        },
+      ],
+    },
+    {
+      title: 'Color scheme',
+      items: [
+        {
+          title: 'System',
+          // <AdjustIcon /> System {themeMode === 'system' && <CheckIcon />}
+          description: 'Follow system preference',
+          onClick: setSystemMode,
+          url: '#',
+        },
+        {
+          title: 'Light',
+          // <OutlinedSunIcon /> Light {themeMode === 'light' && <CheckIcon />}
+          description: 'Always use light mode',
+          onClick: setLightMode,
+          url: '#',
+        },
+        {
+          title: 'Dark',
+          // <OutlinedMoonIcon /> Dark {themeMode === 'dark' && <CheckIcon />}
+          description: 'Always use dark mode',
+          onClick: setDarkMode,
+          url: '#',
         },
       ],
     },
@@ -311,25 +339,6 @@ const Tools = () => {
     </Tooltip>
   );
 
-  const ThemeToggle = () => {
-    const [darkmode, setDarkmode] = useState(false);
-    return (
-      <Switch
-        id="no-label-switch-on"
-        isChecked={darkmode || false}
-        aria-label="Dark mode switch"
-        onChange={() => {
-          setDarkmode(!darkmode);
-          if (document.body.classList.contains('pf-theme-dark')) {
-            document.body.classList.remove('pf-theme-dark');
-          } else {
-            document.body.classList.add('pf-theme-dark');
-          }
-        }}
-      />
-    );
-  };
-
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const [isNotificationDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
   const toggleDrawer = () => {
@@ -351,11 +360,6 @@ const Tools = () => {
   return (
     <>
       {isNotificationsEnabled && <ScalprumComponent {...drawerBellProps} />}
-      {localStorage.getItem('chrome:darkmode') === 'true' && (
-        <ToolbarItem>
-          <ThemeToggle />
-        </ToolbarItem>
-      )}
       {isInternal && !ITLess() && (
         <ToolbarItem className="pf-v6-u-mr-0">
           <Tooltip aria="none" aria-live="polite" content={'Internal'} flipBehavior={['bottom']}>
