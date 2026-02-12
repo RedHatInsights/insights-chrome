@@ -160,7 +160,7 @@
     "@types/intercom-web": "^2.8.26",
     "@unleash/proxy-client-react": "^3.6.0",
     "abortcontroller-polyfill": "^1.7.8",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "axios-cache-interceptor": "^1.11.2",
     "axios-mock-adapter": "^2.1.0",
     "broadcast-channel": "7.1.0",
