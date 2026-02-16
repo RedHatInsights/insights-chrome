@@ -6,7 +6,7 @@ module.exports = {
   coverageDirectory: './coverage/',
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.tsx', '!src/**/*Styles.js'],
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/config/jest-environment-jsdom.js',
   testEnvironmentOptions: {
     url: 'https://test.com',
   },

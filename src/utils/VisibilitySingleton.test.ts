@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
 
@@ -38,6 +37,10 @@ describe('VisibilitySingleton', () => {
       isPreview: false,
     });
     visibilityFunctions = getVisibilityFunctions();
+  });
+
+  afterEach(() => {
+    jsdomReset();
   });
 
   test('isOrgAdmin', async () => {
@@ -143,22 +146,8 @@ describe('VisibilitySingleton', () => {
   });
 
   test('isProd', async () => {
-    const { location } = window;
-    // @ts-ignore
-    delete window.location;
-    // @ts-ignore
-    window.location = {
-      pathname: '/insights/foo',
-      host: 'console.redhat.com',
-    };
-
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/foo' });
     expect(visibilityFunctions.isProd()).toBe(true);
-
-    // Properly restore the original location
-    Object.defineProperty(window, 'location', {
-      value: location,
-      writable: true,
-    });
   });
 
   test('isProd - false', async () => {

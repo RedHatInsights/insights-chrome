@@ -271,19 +271,14 @@ describe('ScalprumRoot', () => {
     const fetchSpy = jest.spyOn(window, 'fetch').mockImplementationOnce(() => Promise.resolve({ ok: true, json: () => ({}) }));
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
-    Object.defineProperty(window, 'location', {
-      value: {
-        pathname: '/insights',
-        href: '/insights',
-        host: 'foo.bar.baz',
-      },
-    });
+    jsdomReconfigure({ url: 'https://foo.bar.baz/insights' });
     Object.defineProperty(window, 'insights', {
       value: {
         chrome: {
           getEnvironment: () => '',
         },
       },
+      configurable: true,
     });
 
     const { container } = await render(
@@ -299,25 +294,21 @@ describe('ScalprumRoot', () => {
 
     useLocationSpy.mockRestore();
     fetchSpy.mockRestore();
+    jsdomReset();
   });
 
   it('should not render GlobalFilter', async () => {
     const fetchSpy = jest.spyOn(window, 'fetch').mockImplementationOnce(() => Promise.resolve({ ok: true, json: () => ({}) }));
     const useLocationSpy = jest.spyOn(routerDom, 'useLocation');
     useLocationSpy.mockReturnValue({ pathname: '/insights', search: undefined, hash: undefined });
-    Object.defineProperty(window, 'location', {
-      value: {
-        pathname: '/insights',
-        href: '/insights',
-        host: 'foo.bar.baz',
-      },
-    });
+    jsdomReconfigure({ url: 'https://foo.bar.baz/insights' });
     Object.defineProperty(window, 'insights', {
       value: {
         chrome: {
           getEnvironment: () => '',
         },
       },
+      configurable: true,
     });
 
     const atomValuesWithoutModule = [
@@ -341,5 +332,6 @@ describe('ScalprumRoot', () => {
 
     useLocationSpy.mockRestore();
     fetchSpy.mockRestore();
+    jsdomReset();
   });
 });
