@@ -82,6 +82,7 @@ const Tools = () => {
   const askRedHatEnabled = useFlag('platform.chrome.ask-redhat-help');
   const enableGlobalLearningResourcesPage = useFlag('platform.learning-resources.global-learning-resources');
   const isITLessEnv = useFlag('platform.chrome.itless');
+  const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
   const { user, token } = useContext(ChromeAuthContext);
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
@@ -106,6 +107,7 @@ const Tools = () => {
     },
     {
       title: 'Color scheme',
+      isHidden: !isDarkModeEnabled,
       items: [
         {
           title: 'System',
