@@ -86,14 +86,7 @@ jobs:
         with:
           path: "**/node_modules"
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}        
-      # custom cypress cache, caches cypress and cypress webpack node module dependencies based on lock file
-      - uses: actions/cache@v3
-        id: cypress-cache
-        with:
-          path: |
-            /home/runner/.cache/Cypress
-            **/.cypress-cache 
-          key: cypress-install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - run: npm i
       - uses: cypress-io/github-action@v6
         with:
             component: true
