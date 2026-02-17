@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -16,7 +16,7 @@ export type SettingsToggleDropdownGroup = {
 
 export type SettingsToggleDropdownItem = {
   url: string;
-  title: string;
+  title: ReactNode;
   description?: React.ReactNode;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
   isHidden?: boolean;
@@ -49,8 +49,8 @@ const SettingsToggle = (props: SettingsToggleProps) => {
           !isHidden ? (
             <DropdownItem
               onClick={onClick}
-              key={title}
-              ouiaId={rest.ouiaId ?? title}
+              key={typeof title === 'string' ? title : itemIndex}
+              ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
               isDisabled={isDisabled}
               component={
                 onClick

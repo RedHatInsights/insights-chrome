@@ -25,7 +25,7 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
-//import { AdjustIcon, CheckIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
+import { AdjustIcon, CheckIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useTheme } from '../../hooks/useTheme';
 import './Tools.scss';
@@ -91,7 +91,7 @@ const Tools = () => {
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
-  const { setLightMode, setDarkMode, setSystemMode } = useTheme();
+  const { themeMode, setLightMode, setDarkMode, setSystemMode } = useTheme();
 
   /* list out the items for the settings menu */
   const settingsMenuDropdownGroups = [
@@ -110,22 +110,31 @@ const Tools = () => {
       isHidden: !isDarkModeEnabled,
       items: [
         {
-          title: 'System',
-          // <AdjustIcon /> System {themeMode === 'system' && <CheckIcon />}
+          title: (
+            <>
+              <AdjustIcon /> System {themeMode === 'system' && <CheckIcon />}
+            </>
+          ),
           description: 'Follow system preference',
           onClick: setSystemMode,
           url: '#',
         },
         {
-          title: 'Light',
-          // <OutlinedSunIcon /> Light {themeMode === 'light' && <CheckIcon />}
+          title: (
+            <>
+              <OutlinedSunIcon /> Light {themeMode === 'light' && <CheckIcon />}
+            </>
+          ),
           description: 'Always use light mode',
           onClick: setLightMode,
           url: '#',
         },
         {
-          title: 'Dark',
-          // <OutlinedMoonIcon /> Dark {themeMode === 'dark' && <CheckIcon />}
+          title: (
+            <>
+              <OutlinedMoonIcon /> Dark {themeMode === 'dark' && <CheckIcon />}
+            </>
+          ),
           description: 'Always use dark mode',
           onClick: setDarkMode,
           url: '#',
