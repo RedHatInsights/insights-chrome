@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Card, CardBody, CardFooter, CardTitle } from '@patternfly/react-core';
 import { useTheme } from '../../../src/hooks/useTheme';
+import { FeatureFlagsProvider } from '../../../src/components/FeatureFlags';
+import ChromeAuthContext from '../../../src/auth/ChromeAuthContext';
 
 function DarkMode() {
   const { setLightMode, setDarkMode, setSystemMode } = useTheme();
@@ -30,19 +32,51 @@ function DarkMode() {
   );
 }
 
+function Wrapper() {
+  return (
+    <ChromeAuthContext.Provider
+      value={
+        {
+          user: {
+            identity: {
+              user: { email: 'test@example.com' },
+              account_number: '123456',
+              internal: { account_id: '13579', org_id: '7890' },
+            },
+          },
+        } as any
+      }
+    >
+      <FeatureFlagsProvider>
+        <DarkMode />
+      </FeatureFlagsProvider>
+    </ChromeAuthContext.Provider>
+  );
+}
+
 describe('ThemeMenu Component', () => {
-  beforeEach(() => {});
+  beforeEach(() => {
+    cy.intercept('GET', '/api/featureflags/*', {
+      toggles: [
+        {
+          name: 'platform.chrome.dark-mode',
+          enabled: true,
+          variant: { name: 'disabled', enabled: true },
+        },
+      ],
+    }).as('featureFlags');
+  });
 
   describe('Initial State', () => {
     it('uses localStorage dark preference', () => {
       cy.setLocalStorage('chrome:theme', 'dark');
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.getLocalStorage('chrome:theme').should('equal', 'dark');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
     it('uses localStorage light preference', () => {
       cy.setLocalStorage('chrome:theme', 'light');
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.getLocalStorage('chrome:theme').should('equal', 'light');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
     });
@@ -55,7 +89,8 @@ describe('ThemeMenu Component', () => {
           removeEventListener: cy.stub(),
         });
       });
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />);
+      cy.wait('@featureFlags');
       cy.getLocalStorage('chrome:theme').should('equal', 'system');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
@@ -68,7 +103,8 @@ describe('ThemeMenu Component', () => {
           removeEventListener: cy.stub(),
         });
       });
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />);
+      cy.wait('@featureFlags');
       cy.getLocalStorage('chrome:theme').should('equal', 'system');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
     });
@@ -77,14 +113,14 @@ describe('ThemeMenu Component', () => {
   describe('User Interactions', () => {
     it('toggles from light to dark', () => {
       localStorage.setItem('chrome:theme', 'light');
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.get('#dark-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'dark');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
     });
     it('toggles from dark to light', () => {
       localStorage.setItem('chrome:theme', 'dark');
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.get('#light-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'light');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
@@ -99,7 +135,7 @@ describe('ThemeMenu Component', () => {
           removeEventListener: cy.stub(),
         });
       });
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.get('#system-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'system');
       cy.get('html').should('not.have.class', 'pf-v6-theme-dark');
@@ -114,7 +150,7 @@ describe('ThemeMenu Component', () => {
           removeEventListener: cy.stub(),
         });
       });
-      cy.mount(<DarkMode />).get('html');
+      cy.mount(<Wrapper />).get('html');
       cy.get('#dark-button').click();
       cy.getLocalStorage('chrome:theme').should('equal', 'dark');
       cy.get('html').should('have.class', 'pf-v6-theme-dark');
