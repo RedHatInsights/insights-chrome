@@ -1,5 +1,5 @@
 import { ScalprumComponent } from '@scalprum/react-core';
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
 import LoadingFallback from '../../utils/loading-fallback';
 import ErrorComponent from '../ErrorComponents/DefaultErrorComponent';
 import classNames from 'classnames';
@@ -13,6 +13,9 @@ import { NavItemPermission } from '../../@types/types';
 import { evaluateVisibility } from '../../utils/isNavItemVisible';
 import NotFoundRoute from '../NotFoundRoute';
 import { globalFilterHiddenAtom } from '../../state/atoms/globalFilterAtom';
+import { routeAuthScopeReadyAtom } from '../../state/atoms/routeAuthScopeReady';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
+import { chromeModulesAtom } from '../../state/atoms/chromeModuleAtom';
 
 export type ChromeRouteProps = {
   scope: string;
@@ -34,6 +37,20 @@ const ChromeRoute = memo(
     const [isHidden, setIsHidden] = useState<boolean | null>(null);
     const currentActiveModule = useAtomValue(activeModuleAtom);
     const setActiveModule = useSetAtom(activeModuleAtom);
+    const authScopeReadyMap = useAtomValue(routeAuthScopeReadyAtom);
+    const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
+    const chromeModules = useAtomValue(chromeModulesAtom);
+    // Look up this route's module definition by its scope, not the globally active module
+    const routeModuleDefinition = useMemo(() => chromeModules?.[scope], [chromeModules, scope]);
+
+    // Check if this route requires SSO scopes
+    const thisRouteRequiresScopes =
+      (routeModuleDefinition?.config?.ssoScopes && routeModuleDefinition.config.ssoScopes.length > 0) ||
+      (routeModuleDefinition?.moduleConfig?.ssoScopes && routeModuleDefinition.moduleConfig.ssoScopes.length > 0);
+
+    // Check if THIS specific route's module is ready
+    // Default to false (block) if silent reauth is enabled and scopes are required, otherwise true
+    const isThisRouteReady = authScopeReadyMap[scope] ?? !(silentReauthEnabled && thisRouteRequiresScopes);
 
     async function checkPermissions(permissions: NavItemPermission[]) {
       try {
@@ -77,6 +94,11 @@ const ChromeRoute = memo(
 
     if (gatewayError) {
       return <GatewayErrorComponent error={gatewayError} />;
+    }
+
+    // Only block if this route's module requires scopes AND silent reauth is in progress for THIS route
+    if (silentReauthEnabled && !isThisRouteReady && thisRouteRequiresScopes) {
+      return LoadingFallback;
     }
 
     if (isHidden === null && Array.isArray(permissions)) {

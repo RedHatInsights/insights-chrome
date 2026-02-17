@@ -25,11 +25,39 @@ import { loadModulesSchemaWriteAtom } from '../../state/atoms/chromeModuleAtom';
 import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
 const authChannel = new BroadcastChannel('auth');
 const log = logger('OIDCSecured.tsx');
+
+/**
+ * Checks if an error is an expected OIDC silent authentication error.
+ * These errors occur when prompt=none is used but the IdP cannot complete
+ * the request without user interaction (e.g., session expired, consent needed).
+ *
+ * Per OIDC spec, the proper recovery is to redirect to the authorization endpoint
+ * without prompt=none to allow user interaction.
+ *
+ * @param error - The error object to check
+ * @returns true if this is an expected silent auth error, false otherwise
+ *
+ * Refs:
+ * - OIDC Core spec: https://openid.net/specs/openid-connect-core-1_0.html#AuthError
+ * - ErrorResponse structure: https://github.com/authts/oidc-client-ts/blob/main/src/errors/ErrorResponse.ts
+ */
+function isExpectedSilentAuthError(error: any): boolean {
+  return (
+    error?.name === 'ErrorResponse' &&
+    [
+      'interaction_required', // User interaction is required (e.g., registration form)
+      'login_required', // User must log in (session expired)
+      'consent_required', // User must consent to requested scopes
+      'account_selection_required', // User must select an account
+    ].includes(error?.message)
+  );
+}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapOIDCUserToChromeUser(user: User | Record<string, any>, entitlements: ServicesGetReturnType): ChromeUser {
@@ -81,10 +109,63 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   const authRef = useRef(auth);
   const setScalprumConfigAtom = useSetAtom(writeInitialScalprumConfigAtom);
   const loadModulesSchema = useSetAtom(loadModulesSchemaWriteAtom);
+  const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
+  const silentReauthEnabledRef = useRef(silentReauthEnabled);
 
   // get scope module definition
   const activeModule = useAtomValue(activeModuleDefinitionReadAtom);
-  const requiredScopes = activeModule?.config?.ssoScopes || [];
+  const requiredScopes = React.useMemo(
+    () => activeModule?.config?.ssoScopes || activeModule?.moduleConfig?.ssoScopes || [],
+    [activeModule?.config?.ssoScopes, activeModule?.moduleConfig?.ssoScopes]
+  );
+
+  // Keep ref in sync with current value
+  useEffect(() => {
+    silentReauthEnabledRef.current = silentReauthEnabled;
+  }, [silentReauthEnabled]);
+
+  const reAuthWithScopes = React.useCallback(
+    async (...additionalScopes: string[]) => {
+      if (!silentReauthEnabledRef.current) {
+        const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
+        if (shouldReAuth) {
+          return login(authRef.current, reAuthScopes);
+        }
+        return;
+      }
+
+      // Merge and deduplicate scopes using Set
+      const scopeSet = new Set([...requiredScopes, ...additionalScopes].flat());
+      if (authRef.current.user?.scope) {
+        authRef.current.user.scope.split(' ').forEach((s) => scopeSet.add(s));
+      }
+      const scopes = Array.from(scopeSet);
+      log(`Re-authenticating with scopes: ${scopes.join(' ')}`);
+      return auth
+        .signinSilent({
+          scope: scopes.join(' '),
+          prompt: 'none',
+          forceIframeAuth: true,
+        })
+        .then((user) => {
+          if (user === null) {
+            log('Silent reauth returned null, falling back to hard reauth');
+            login(authRef.current, scopes);
+          }
+        })
+        .catch((error) => {
+          if (isExpectedSilentAuthError(error)) {
+            log(`Silent reauth failed with expected error: ${error.message}, falling back to login`);
+          } else {
+            console.error('Unexpected error while re-authenticating user', error);
+          }
+
+          // Always fall back to full login redirect
+          login(authRef.current, scopes);
+        });
+    },
+    [auth, requiredScopes]
+  );
   const [state, setState] = useState<ChromeAuthContextValue>({
     ssoUrl,
     ready: false,
@@ -116,12 +197,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
     refreshToken: authRef.current.user?.refresh_token ?? '',
     tokenExpires: authRef.current.user?.expires_at ?? 0,
     user: mapOIDCUserToChromeUser(authRef.current.user ?? {}, {}),
-    reAuthWithScopes: async (...additionalScopes) => {
-      const [shouldReAuth, reAuthScopes] = shouldReAuthScopes(requiredScopes, additionalScopes);
-      if (shouldReAuth) {
-        login(authRef.current, reAuthScopes);
-      }
-    },
+    reAuthWithScopes,
     loginSilent: async () => {
       await auth.signinSilent();
     },
@@ -213,7 +289,13 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useManageSilentRenew(auth, state.login);
 
   if (auth.error) {
-    // leave the auth error handling on the global ErrorBoundary
+    if (isExpectedSilentAuthError(auth.error)) {
+      log(`Silent auth failed with expected error: ${auth.error.message}, falling back to full login`);
+      state.login();
+      return <AppPlaceholder />;
+    }
+
+    // Unexpected error - throw to error boundary
     throw auth.error;
   }
 

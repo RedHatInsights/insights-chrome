@@ -15,12 +15,12 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "types": ["node", "jest"],
     "typeRoots": [
       "node_modules/@types"
     ]
   },
-  "include": ["src/**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*.ts", "**/*.tsx", "config/*.d.ts"],
   "exclude": ["node_modules", "cypress/**/*.ts", "**/*.cy.tsx"]
 }
 

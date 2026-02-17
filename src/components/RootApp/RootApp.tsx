@@ -14,6 +14,9 @@ import ReactDOM from 'react-dom';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
+import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
+import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
+import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
 const Debugger = lazy(() => import('../Debugger'));
@@ -49,11 +52,13 @@ const RootApp = memo(({ accountId }: { accountId?: string }) => {
 RootApp.displayName = 'MemoizedRootApp';
 
 const AuthRoot = () => {
-  const { user, login } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
+  const { user, login, reAuthWithScopes } = useContext(ChromeAuthContext) as DeepRequired<ChromeAuthContextValue>;
   const isDebuggerEnabled = useAtomValue(isDebuggerEnabledAtom);
+  const silentReauthEnabled = useAtomValue(silentReauthEnabledAtom);
 
-  // verify use loged in scopes
-  useUserSSOScopes(login);
+  // verify user logged-in scopes via unified hook
+  useUserSSOScopes({ login, reAuthWithScopes, silentReauthEnabled });
+
   return (
     <>
       <Suspense fallback={null}>
