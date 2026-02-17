@@ -8,10 +8,7 @@ function sanitizeUrl(url: string) {
 }
 
 // Parse through keycloak options routes
-export default function platformUlr(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) {
-  // we have to use hard coded value for console.dev.redhat.com
-  // ugly hack
-
+export default function platformUrl(env: typeof DEFAULT_SSO_ROUTES, configSsoUrl?: string) {
   if (DEFAULT_SSO_ROUTES.dev.url.includes(location.hostname)) {
     return sanitizeUrl(DEFAULT_SSO_ROUTES.dev.sso);
   }
