@@ -14,8 +14,6 @@ import ReactDOM from 'react-dom';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../../auth/ChromeAuthContext';
 import { scalprumConfigAtom } from '../../state/atoms/scalprumConfigAtom';
 import { isDebuggerEnabledAtom } from '../../state/atoms/debuggerModalatom';
-import { addQuickstartToAppAtom, clearQuickstartsAtom, populateQuickstartsAppAtom, quickstartsAtom } from '../../state/atoms/quickstartsAtom';
-import useQuickstartLinkStore, { createQuickstartLinkMarkupExtension } from '../../hooks/useQuickstarLinksStore';
 import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
 
 const NotEntitledModal = lazy(() => import('../NotEntitledModal'));
