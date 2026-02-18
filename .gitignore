@@ -55,3 +55,5 @@ cypress/downloads
 /playwright/.cache/
 
 .mcp.json
+
+config/scalprum-ast-plugin.js

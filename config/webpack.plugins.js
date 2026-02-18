@@ -10,6 +10,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const getDynamicModules = require('./get-dynamic-modules');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const ScalprumAstPlugin = require('./scalprum-ast-plugin')
 
 const deps = require('../package.json').dependencies;
 
@@ -115,6 +116,12 @@ const plugins = (dev = false, beta = false, restricted = false) => {
           }),
         ]
       : []),
+    // first run npx tsc config/scalprum-ast-plugin.ts --skipLibCheck to compile the plugin from TS to JS
+    new ScalprumAstPlugin.default({
+      debug: false,
+      // correct source will be selected based on the dev env. For build, prod should be always used to ensure prod compatibility.
+      modulesConfigLocation: 'https://console.redhat.com/api/chrome-service/v1/static/fed-modules-generated.json',
+    }),
   ];
 };
 

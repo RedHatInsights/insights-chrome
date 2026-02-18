@@ -214,6 +214,9 @@ const commonConfig = ({ dev }) => {
               loader: 'sass-loader',
               options: {
                 sourceMap: true,
+                sassOptions: {
+                  quietDeps: true, // Suppress deprecation warnings from dependencies
+                },
               },
             },
           ],
@@ -291,6 +294,7 @@ const pfConfig = {
             options: {
               sassOptions: {
                 outputStyle: 'compressed',
+                quietDeps: true, // Supp
               },
               sourceMap: true,
             },
