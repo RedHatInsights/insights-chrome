@@ -25,7 +25,10 @@ import { ScalprumComponent, ScalprumComponentProps } from '@scalprum/react-core'
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import UsersIcon from '@patternfly/react-icons/dist/dynamic/icons/users-icon';
-import { AdjustIcon, CheckIcon, OutlinedMoonIcon, OutlinedSunIcon } from '@patternfly/react-icons/dist/dynamic/icons/';
+import AdjustIcon from '@patternfly/react-icons/dist/dynamic/icons/adjust-icon';
+import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
+import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-moon-icon';
+import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import { useTheme } from '../../hooks/useTheme';
 import './Tools.scss';
