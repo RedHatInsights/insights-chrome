@@ -83,6 +83,9 @@ const JSConfig = {
     },
     cacheDirectory: path.resolve(__dirname, '../.cypress-cache'),
   },
+  optimization: {
+    splitChunks: false,
+  },
   stats: {
     errorDetails: true,
   },

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ToolbarToggle should render correctly 1`] = `
 <div
@@ -9,7 +9,7 @@ exports[`ToolbarToggle should render correctly 1`] = `
   data-popper-escaped="true"
   data-popper-placement="bottom-end"
   data-popper-reference-hidden="true"
-  style="position: absolute; left: 0px; top: 0px; z-index: 9999; opacity: 1; transition: opacity 0ms cubic-bezier(.54, 1.5, .38, 1.11); min-width: 0px; transform: translate(0px, 0px);"
+  style="position: absolute; left: 0px; top: 0px; z-index: 9999; opacity: 1; transition: opacity 0ms cubic-bezier(.54, 1.5, .38, 1.11); min-width: 0px; right: auto; bottom: auto; transform: translate(0px, 0px);"
 >
   <div
     class="pf-v6-c-menu__content"
