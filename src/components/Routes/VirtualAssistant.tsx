@@ -9,6 +9,7 @@ import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDr
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
 import './virtual-assistant.scss';
 import SilentErrorBoundary from './SilentErrorBoundary';
+import { differentFileProps } from './propsInDifferentFile';
 
 const flaggedRoutes: { [flagName: string]: string } = {
   'platform.va.openshift.insights': '/openshift/insights/*',
@@ -61,6 +62,7 @@ const VirtualAssistant = () => {
     <SilentErrorBoundary>
       <div className="virtualAssistant astro__virtual-assistant pf-v6-u-mr-xs">
         <ScalprumComponent {...virtualAssistantProps} />
+        <ScalprumComponent {...differentFileProps} />
       </div>
     </SilentErrorBoundary>
   );
