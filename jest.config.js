@@ -19,6 +19,7 @@ module.exports = {
       '@rhds/icons/.*',
       '@rhds/tokens/.*',
       '@?lit(/.*)?',
+      'title-case',
     ].join('|')}).+(js|jsx)$`,
   ],
   transform: {
@@ -50,8 +51,6 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
-    'react-markdown': '<rootDir>/src/__mocks__/empty-mock.js',
-    'remark-gfm': '<rootDir>/src/__mocks__/empty-mock.js',
     '@rhds/elements/rh-icon/rh-icon.js': '<rootDir>/src/__mocks__/empty-mock.js',
   },
 };
