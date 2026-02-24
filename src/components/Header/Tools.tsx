@@ -30,7 +30,7 @@ import CheckIcon from '@patternfly/react-icons/dist/dynamic/icons/check-icon';
 import OutlinedMoonIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-moon-icon';
 import OutlinedSunIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-sun-icon';
 import InternalChromeContext from '../../utils/internalChromeContext';
-import { useTheme } from '../../hooks/useTheme';
+import { ThemeVariants, useTheme } from '../../hooks/useTheme';
 import './Tools.scss';
 
 const InternalButton = () => (
@@ -115,7 +115,7 @@ const Tools = () => {
         {
           title: (
             <>
-              <AdjustIcon /> System {themeMode === 'system' && <CheckIcon />}
+              <AdjustIcon /> System {themeMode === ThemeVariants.system && <CheckIcon />}
             </>
           ),
           description: 'Follow system preference',
@@ -125,7 +125,7 @@ const Tools = () => {
         {
           title: (
             <>
-              <OutlinedSunIcon /> Light {themeMode === 'light' && <CheckIcon />}
+              <OutlinedSunIcon /> Light {themeMode === ThemeVariants.light && <CheckIcon />}
             </>
           ),
           description: 'Always use light mode',
@@ -135,7 +135,7 @@ const Tools = () => {
         {
           title: (
             <>
-              <OutlinedMoonIcon /> Dark {themeMode === 'dark' && <CheckIcon />}
+              <OutlinedMoonIcon /> Dark {themeMode === ThemeVariants.dark && <CheckIcon />}
             </>
           ),
           description: 'Always use dark mode',

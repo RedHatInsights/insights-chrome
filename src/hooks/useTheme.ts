@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
 
+export enum ThemeVariants {
+  light,
+  dark,
+  system,
+}
+
 export const useTheme = () => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
 
@@ -12,35 +18,35 @@ export const useTheme = () => {
     }
   };
 
-  const getInitialTheme = (): 'light' | 'dark' | 'system' => {
+  const getInitialTheme = (): ThemeVariants => {
     if (!isDarkModeEnabled) {
       applyTheme(false);
-      return 'light';
+      return ThemeVariants.light;
     }
 
     const savedTheme = localStorage.getItem('chrome:theme');
 
     if (savedTheme === 'dark') {
       applyTheme(true);
-      return 'dark';
+      return ThemeVariants.dark;
     } else if (savedTheme === 'light') {
       applyTheme(false);
-      return 'light';
+      return ThemeVariants.light;
     } else if (savedTheme === 'system') {
       // System mode - use media query
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
-      return 'system';
+      return ThemeVariants.system;
     } else {
       // Default to system mode
       localStorage.setItem('chrome:theme', 'system');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
-      return 'system';
+      return ThemeVariants.system;
     }
   };
 
-  const [themeMode, setThemeMode] = useState<'light' | 'dark' | 'system'>(getInitialTheme);
+  const [themeMode, setThemeMode] = useState<ThemeVariants>(getInitialTheme);
 
   useEffect(() => {
     const newTheme = getInitialTheme();
@@ -48,19 +54,19 @@ export const useTheme = () => {
   }, [isDarkModeEnabled]);
 
   const setLightMode = () => {
-    setThemeMode('light');
+    setThemeMode(ThemeVariants.light);
     applyTheme(false);
     localStorage.setItem('chrome:theme', 'light');
   };
 
   const setDarkMode = () => {
-    setThemeMode('dark');
+    setThemeMode(ThemeVariants.dark);
     applyTheme(true);
     localStorage.setItem('chrome:theme', 'dark');
   };
 
   const setSystemMode = () => {
-    setThemeMode('system');
+    setThemeMode(ThemeVariants.system);
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(prefersDark);
     localStorage.setItem('chrome:theme', 'system');
