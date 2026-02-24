@@ -7,7 +7,7 @@ import { Page, expect } from '@playwright/test';
 export async function login(page: Page) {
   // Block TrustArc consent requests to prevent cookie modal from appearing
   // This is the same approach used in Cypress (blockHosts in cypress.config.ts)
-  await page.route('**/*', async (route, request) => {
+  await page.route('**consent.trustarc.com/**', async (route, request) => {
     if (request.url().includes('consent.trustarc.com') && request.resourceType() !== 'document') {
       await route.abort();
     } else {
