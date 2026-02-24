@@ -4,6 +4,8 @@ import ScalprumRoot from './ScalprumRoot';
 import { act, render, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
+jest.mock('../Footer/Footer', () => () => null);
+
 jest.mock('../Search/SearchInput', () => {
   return jest.fn().mockImplementation(() => <div />);
 });
