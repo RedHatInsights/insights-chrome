@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Dropdown, DropdownGroup, DropdownItem, DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
@@ -11,11 +11,12 @@ import { isPreviewAtom } from '../../state/atoms/releaseAtom';
 export type SettingsToggleDropdownGroup = {
   title?: string;
   items: SettingsToggleDropdownItem[];
+  isHidden?: boolean;
 };
 
 export type SettingsToggleDropdownItem = {
   url: string;
-  title: string;
+  title: ReactNode;
   description?: React.ReactNode;
   onClick?: (event: MouseEvent | React.MouseEvent<any, MouseEvent> | React.KeyboardEvent<Element>) => void;
   isHidden?: boolean;
@@ -40,35 +41,37 @@ const SettingsToggle = (props: SettingsToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isPreview = useAtomValue(isPreviewAtom);
 
-  const dropdownItems = props.dropdownItems.map(({ title, items }, groupIndex) => (
-    <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
-      {items.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
-        !isHidden ? (
-          <DropdownItem
-            onClick={onClick}
-            key={title}
-            ouiaId={rest.ouiaId ?? title}
-            isDisabled={isDisabled}
-            component={
-              onClick
-                ? undefined
-                : ({ className: itemClassName, children }) => (
-                    <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
-                      {children}
-                    </ChromeLink>
-                  )
-            }
-            description={description}
-          >
-            {title}
-          </DropdownItem>
-        ) : (
-          <React.Fragment key={`fragment-${itemIndex}`} />
-        )
-      )}
-      {groupIndex < props.dropdownItems.length - 1 && <Divider key="divider" />}
-    </DropdownGroup>
-  ));
+  const dropdownItems = props.dropdownItems
+    .filter((group) => !group.isHidden)
+    .map(({ title, items }, groupIndex) => (
+      <DropdownGroup key={`${groupIndex}-${title}`} label={title}>
+        {items.map(({ url, title, description, onClick, isHidden, isDisabled, rel = 'noopener noreferrer', ...rest }, itemIndex) =>
+          !isHidden ? (
+            <DropdownItem
+              onClick={onClick}
+              key={typeof title === 'string' ? title : itemIndex}
+              ouiaId={rest.ouiaId ?? (typeof title === 'string' ? title : itemIndex)}
+              isDisabled={isDisabled}
+              component={
+                onClick
+                  ? undefined
+                  : ({ className: itemClassName, children }) => (
+                      <ChromeLink {...rest} className={itemClassName} href={url} rel={rel} isBeta={isPreview}>
+                        {children}
+                      </ChromeLink>
+                    )
+              }
+              description={description}
+            >
+              {title}
+            </DropdownItem>
+          ) : (
+            <React.Fragment key={`fragment-${itemIndex}`} />
+          )
+        )}
+        {groupIndex < props.dropdownItems.length - 1 && <Divider key="divider" />}
+      </DropdownGroup>
+    ));
 
   return (
     <Dropdown
