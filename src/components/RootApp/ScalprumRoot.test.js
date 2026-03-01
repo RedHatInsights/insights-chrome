@@ -10,6 +10,14 @@ jest.mock('../Search/SearchInput', () => {
   return jest.fn().mockImplementation(() => <div />);
 });
 
+// Mock Scalprum hooks used by QuickStartsWrapper
+jest.mock('@scalprum/react-core', () => ({
+  __esModule: true,
+  ...jest.requireActual('@scalprum/react-core'),
+  useLoadModule: jest.fn().mockReturnValue([undefined, undefined]),
+  useRemoteHook: jest.fn().mockReturnValue({ hookResult: undefined }),
+}));
+
 jest.mock('../../hooks/useAllServices', () => ({
   __esModule: true,
   default: () => ({
@@ -196,14 +204,6 @@ describe('ScalprumRoot', () => {
       addHelpTopics: jest.fn(),
       disableTopics: jest.fn(),
       enableTopics: jest.fn(),
-    },
-    quickstartsAPI: {
-      version: 1,
-      set: jest.fn(),
-      toggle: jest.fn(),
-
-      Catalog: () => <div></div>,
-      activateQuickstart: jest.fn(),
     },
   };
 
