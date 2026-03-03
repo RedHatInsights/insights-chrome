@@ -5,13 +5,13 @@ import { getDB, insertEntry } from '../state/atoms/localSearchAtom';
 
 export const searchAPI: ChromeSearchAPI = {
   async query(term: string, type: SearchDataType | string, env: ReleaseEnv = ReleaseEnv.STABLE) {
-    const db = await getDB();
+    const db = getDB();
     return localQuery(db, term, env, type);
   },
 
   async insert(data: SearchEntry): Promise<void> {
     try {
-      const db = await getDB();
+      const db = getDB();
 
       await insertEntry(db, data);
     } catch (error) {

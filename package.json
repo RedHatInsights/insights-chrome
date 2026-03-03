@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "Chroming for Insights",
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
   },
   "main": "index.js",
   "scripts": {
@@ -61,6 +61,7 @@
   "homepage": "https://github.com/RedHatInsights/insights-chrome#readme",
   "devDependencies": {
     "@cypress/code-coverage": "^4.0.0",
+    "@faker-js/faker": "^10.3.0",
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
     "@playwright/test": "^1.56.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",
@@ -130,7 +131,7 @@
     "@formatjs/cli": "^6.7.4",
     "@lit/react": "^1.0.8",
     "@openshift/dynamic-plugin-sdk": "^5.0.1",
-    "@orama/orama": "^2.1.1",
+    "@orama/orama": "^3.1.18",
     "@patternfly/patternfly": "^6.4.0",
     "@patternfly/quickstarts": "^6.4.0",
     "@patternfly/react-charts": "^8.4.0",
