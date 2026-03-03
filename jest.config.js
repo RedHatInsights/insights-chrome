@@ -21,6 +21,7 @@ module.exports = {
       '@?lit(/.*)?',
       'title-case',
       '@faker-js/faker',
+      '@orama/orama',
     ].join('|')}).+(js|jsx)$`,
   ],
   transform: {
@@ -50,6 +51,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/config/jest.scripts.js'],
   resolver,
   moduleNameMapper: {
+    '^@orama/orama$': '<rootDir>/node_modules/@orama/orama/dist/esm/index.js',
     '\\.(css|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
     '@rhds/elements/rh-icon/rh-icon.js': '<rootDir>/src/__mocks__/empty-mock.js',

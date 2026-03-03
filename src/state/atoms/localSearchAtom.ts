@@ -123,7 +123,7 @@ export const entrySchema = {
   type: 'string',
 } as const;
 
-export async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
+export function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEntry) {
   return insert(db, {
     id: entry.id,
     title: entry.title,
@@ -137,9 +137,9 @@ export async function insertEntry(db: Orama<typeof entrySchema>, entry: SearchEn
 }
 
 const db: { current: Orama<typeof entrySchema> | undefined } = { current: undefined };
-export async function getDB() {
+export function getDB() {
   if (!db.current) {
-    db.current = await create({
+    db.current = create({
       schema: entrySchema,
     });
   }
@@ -148,7 +148,7 @@ export async function getDB() {
 }
 
 export const asyncLocalOrama = atom(async (get) => {
-  const db = await getDB();
+  const db = getDB();
 
   const insertCommands = (await get(asyncSearchIndexAtom)).map(async (entry) => {
     return insertEntry(db, entry);

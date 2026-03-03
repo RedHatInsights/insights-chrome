@@ -22,25 +22,21 @@ describe('entrySchema', () => {
 });
 
 describe('getDB()', () => {
-  it('returns an Orama database instance', async () => {
-    const db = await getDB();
+  it('returns an Orama database instance', () => {
+    const db = getDB();
     expect(db).toBeDefined();
   });
 
-  it('is a singleton (same reference on second call)', async () => {
-    const db1 = await getDB();
-    const db2 = await getDB();
+  it('is a singleton (same reference on second call)', () => {
+    const db1 = getDB();
+    const db2 = getDB();
     expect(db1).toBe(db2);
   });
 });
 
 describe('insertEntry()', () => {
   it('inserts a document without error and it is retrievable', async () => {
-<<<<<<< Updated upstream
-    const db = await getDB();
-=======
     const db = create({ schema: entrySchema });
->>>>>>> Stashed changes
     const title = faker.commerce.productName();
     const entry = {
       id: faker.string.uuid(),
