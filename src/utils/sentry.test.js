@@ -1,21 +1,12 @@
 import { getAppDetails } from './sentry';
 
 describe('getAppDetails function', () => {
-  let locationSpy;
-
-  beforeEach(() => {
-    locationSpy = jest.spyOn(global, 'location', 'get').mockReturnValue({
-      host: 'console.redhat.com',
-      pathname: '',
-    });
-  });
-
   afterEach(() => {
-    locationSpy.mockRestore();
+    jsdomReset();
   });
 
   it('should return insights and dashboard for /insights/dashboard', () => {
-    locationSpy.mockReturnValueOnce({ pathname: '/insights/dashboard' });
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/dashboard' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
@@ -23,7 +14,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return insights and inventory for /insights/inventory', () => {
-    locationSpy.mockReturnValueOnce({ pathname: '/insights/inventory' });
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/inventory' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
@@ -31,7 +22,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return insights and registration for /insights/registration', () => {
-    locationSpy.mockReturnValueOnce({ pathname: '/insights/registration' });
+    jsdomReconfigure({ url: 'https://console.redhat.com/insights/registration' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('insights');
@@ -39,7 +30,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return openshift and vulnerability for /openshift/insights/vulnerability/', () => {
-    locationSpy.mockReturnValueOnce({ pathname: '/openshift/insights/vulnerability/cves' });
+    jsdomReconfigure({ url: 'https://console.redhat.com/openshift/insights/vulnerability/cves' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('openshift');
@@ -47,7 +38,7 @@ describe('getAppDetails function', () => {
   });
 
   it('should return openshift and advisor for /openshift/insights/advisor/', () => {
-    locationSpy.mockReturnValueOnce({ pathname: '/openshift/insights/advisor/recommendations' });
+    jsdomReconfigure({ url: 'https://console.redhat.com/openshift/insights/advisor/recommendations' });
 
     const result = getAppDetails();
     expect(result.app.group).toBe('openshift');

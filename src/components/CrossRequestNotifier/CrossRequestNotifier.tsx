@@ -37,7 +37,7 @@ const CrossRequestNotifier = () => {
     autoDismiss: false,
   });
 
-  const DescriptionComponent = ({ id, markRead }: { id: string | number; markRead: (id: string | number) => void }) => (
+  const DescriptionComponent = ({ id, markRead }: { id: string; markRead: (id: string) => void }) => (
     <span onClick={() => markRead(id)}>
       <ChromeLink href={id === 'mark-all' ? '/iam/user-access/access-requests' : `/iam/user-access/access-requests/${id}`} appId="rbac">
         {intl.formatMessage(messages.viewRequest)}
@@ -45,7 +45,7 @@ const CrossRequestNotifier = () => {
     </span>
   );
 
-  const removeNotification = (id: string | number) => {
+  const removeNotification = (id: string) => {
     if (id === ACCOUNT_CHANGE_ID) {
       localStorage.removeItem(ACTIVE_ACCOUNT_SWITCH_NOTIFICATION);
       /**

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const glob = require('glob');
+const { globSync } = require('glob');
 const fs = require('fs');
 
 const getDynamicModules = (root) => {
@@ -17,8 +17,8 @@ const getDynamicModules = (root) => {
   const iconsGlob = path.resolve(root, 'node_modules/@patternfly/react-icons/dist/dynamic/*/**/package.json');
 
   const files = [
-    { requiredVersion: coreVersion, files: glob.sync(componentsGlob) },
-    { requiredVersion: iconsVersion, files: glob.sync(iconsGlob) },
+    { requiredVersion: coreVersion, files: globSync(componentsGlob) },
+    { requiredVersion: iconsVersion, files: globSync(iconsGlob) },
   ];
   const modules = files
     .map(({ files, requiredVersion }) =>

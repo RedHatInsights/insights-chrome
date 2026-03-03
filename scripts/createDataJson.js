@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const program = require('commander');
+const { program } = require('commander');
 const path = require('path');
 const fs = require('fs');
-const { sync: globSync } = require('glob');
+const { globSync } = require('glob');
 const last = require('lodash/last');
 
 let LANG_DIR = path.normalize('src/locales/');
@@ -18,16 +18,17 @@ program
 const rootFolder = `${process.cwd()}/`;
 
 program.parse(process.argv);
-if (program.ignoreFiles) {
-  IGNORED = program.ignoreFiles.split(',');
+const opts = program.opts();
+if (opts.ignoreFiles) {
+  IGNORED = opts.ignoreFiles.split(',');
 }
 
-if (program.langDir) {
-  LANG_DIR = program.langDir;
+if (opts.langDir) {
+  LANG_DIR = opts.langDir;
 }
 
-if (program.langPattern) {
-  LANG_PATTERN = `${LANG_DIR}${program.langPattern}`;
+if (opts.langPattern) {
+  LANG_PATTERN = `${LANG_DIR}${opts.langPattern}`;
 } else {
   LANG_PATTERN = `${LANG_DIR}/*.json`;
 }

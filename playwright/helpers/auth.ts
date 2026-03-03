@@ -5,6 +5,16 @@ import { Page, expect } from '@playwright/test';
  * @param page - Playwright page instance
  */
 export async function login(page: Page) {
+  // Block TrustArc consent requests to prevent cookie modal from appearing
+  // This is the same approach used in Cypress (blockHosts in cypress.config.ts)
+  await page.route('**consent.trustarc.com/**', async (route, request) => {
+    if (request.url().includes('consent.trustarc.com') && request.resourceType() !== 'document') {
+      await route.abort();
+    } else {
+      await route.continue();
+    }
+  });
+
   // Navigate to the login page
   await page.goto('/');
 
@@ -31,8 +41,4 @@ export async function login(page: Page) {
 
   // Verify we're logged in by checking for user menu toggle
   await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible({ timeout: 60000 });
-
-  // accept all cookies to prevent test errors
-  // Sometimes the button is "Accept all" and other times it's "Accept all"
-  await page.getByRole('button', { name: 'Accept all', exact: false }).click();
 }

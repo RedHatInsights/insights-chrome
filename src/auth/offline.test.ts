@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { getOfflineToken, getPostDataObject, parseHashString, postbackUrlSetup, prepareOfflineRedirect } from './offline';
 import { OFFLINE_REDIRECT_STORAGE_KEY, offlineToken } from '../utils/consts';
 
@@ -20,29 +19,15 @@ jest.mock('axios', () => {
 });
 
 describe('offline', () => {
-  const pushStateMock = jest.fn();
-  beforeAll(() => {
-    // @ts-ignore
-    delete window.location;
-    // @ts-ignore
-    delete window.history;
-    // @ts-ignore
-    window.location = {};
-    // @ts-ignore
-    window.history = {};
-  });
+  let pushStateSpy: jest.SpyInstance;
   beforeEach(() => {
     localStorage.removeItem(OFFLINE_REDIRECT_STORAGE_KEY);
-    // @ts-ignore
-    window.location = {
-      href: 'http://console.redhat.com',
-      origin: 'http://console.redhat.com',
-    };
-    // @ts-ignore
-    window.history = {
-      pushState: pushStateMock,
-    };
-    pushStateMock.mockClear();
+    jsdomReconfigure({ url: 'http://console.redhat.com' });
+    pushStateSpy = jest.spyOn(window.history, 'pushState').mockImplementation(() => undefined);
+  });
+  afterEach(() => {
+    pushStateSpy.mockRestore();
+    jsdomReset();
   });
 
   it('creates valid postback data object', () => {
@@ -101,15 +86,13 @@ describe('offline', () => {
 
   it('postbackUrlSetup does nothing if URL does not contain offline token', () => {
     postbackUrlSetup();
-    expect(pushStateMock).not.toHaveBeenCalled();
+    expect(pushStateSpy).not.toHaveBeenCalled();
   });
 
   it('postbackUrlSetup should remove delete the offline query param from url', () => {
-    // prevent issues in jsdom
-    pushStateMock.mockImplementation(() => undefined);
-    window.location.href = `http://console.redhat.com?noauth=${offlineToken}`;
+    jsdomReconfigure({ url: `http://console.redhat.com?noauth=${offlineToken}` });
     postbackUrlSetup();
-    expect(pushStateMock).toHaveBeenCalledWith('offlinePostback', '', 'http://console.redhat.com/');
+    expect(pushStateSpy).toHaveBeenCalledWith('offlinePostback', '', 'http://console.redhat.com/');
   });
 
   it('getOfflineToken should retrieve offline token', async () => {
