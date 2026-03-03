@@ -20,6 +20,7 @@ module.exports = {
       '@rhds/tokens/.*',
       '@?lit(/.*)?',
       'title-case',
+      '@faker-js/faker',
     ].join('|')}).+(js|jsx)$`,
   ],
   transform: {
