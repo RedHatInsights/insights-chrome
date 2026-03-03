@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { REQUESTS_COUNT, REQUESTS_DATA } from '../../utils/consts';
 
-export type AccessRequest = { request_id: string | number; created: string; seen: boolean };
+export type AccessRequest = { request_id: string; created: string; seen: boolean };
 
 export const accessReqeustsCountAtom = atom(0);
 export const hasUnseenAccessRequestsAtom = atom(false);
@@ -22,7 +22,7 @@ export const setAccessRequestsDataAtom = atom(null, (get, set, { count, data }: 
   set(accessRequestsDataAtom, newData);
 });
 
-export const markAccessRequestsRequestAtom = atom(null, (get, set, payload: string | number) => {
+export const markAccessRequestsRequestAtom = atom(null, (get, set, payload: string) => {
   const accessRequestData = get(accessRequestsDataAtom);
 
   const newData = accessRequestData.map((item) => (item.request_id === payload ? { ...item, seen: true } : item));

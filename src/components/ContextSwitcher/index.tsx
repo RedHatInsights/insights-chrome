@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
-import type { CrossAccountRequest } from '@redhat-cloud-services/rbac-client/types';
+import type { CrossAccountRequestByUserId } from '@redhat-cloud-services/rbac-client/types';
 
 import './ContextSwitcher.scss';
 import { Fragment } from 'react';
@@ -35,9 +35,9 @@ export type ContextSwitcherProps = {
   isInternal?: boolean;
 };
 
-// These attributes are present in the response based on the open API spec.
-// TODO: Migrate to the new RBAC JS client when it is ready.
-type CrossAccountRequestInternal = CrossAccountRequest & {
+// The API returns name/email fields when query_by=user_id, but the generated
+// CrossAccountRequestByUserId type does not include them.
+type CrossAccountRequestInternal = CrossAccountRequestByUserId & {
   first_name?: string | null;
   last_name?: string | null;
   email: string;

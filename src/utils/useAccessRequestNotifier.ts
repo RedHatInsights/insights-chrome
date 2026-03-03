@@ -18,7 +18,7 @@ const useAccessRequestNotifier = (): [
     hasUnseen: boolean;
     accessRequestCount: number;
   },
-  (id: string | number) => void,
+  (id: string) => void,
 ] => {
   const { user } = useContext(ChromeAuthContext);
   const isMounted = useRef(false);
@@ -28,7 +28,7 @@ const useAccessRequestNotifier = (): [
   const setAccessRequestsData = useSetAtom(setAccessRequestsDataAtom);
   const markAccessRequestsRequest = useSetAtom(markAccessRequestsRequestAtom);
 
-  const markRead = (id: string | number) => {
+  const markRead = (id: string) => {
     if (id === 'mark-all') {
       accessRequestData.forEach(({ request_id }) => {
         markAccessRequestsRequest(request_id);
