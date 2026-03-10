@@ -111,7 +111,7 @@ export const flatTags = memoize(
     const { Workloads, ...tags } = filter;
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) }), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
+        .filter(([, entry]) => entry != null && typeof entry === 'object' && (entry as GroupItem).isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
           return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
             encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
@@ -123,12 +123,12 @@ export const flatTags = memoize(
     // This ensures tags go to the tags parameter
     return format ? [Workloads, [], mappedTags] : mappedTags;
   },
-  (filter = {}, encode, format) =>
+    (filter = {}, encode, format) =>
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
           `${namespace}.${Object.entries<any>(val || {})
-            .filter(([, { isSelected }]) => isSelected)
+            .filter(([, entry]) => entry != null && typeof entry === 'object' && (entry as GroupItem).isSelected)
             .map(([key]) => key)
             .join('')}`
       )
