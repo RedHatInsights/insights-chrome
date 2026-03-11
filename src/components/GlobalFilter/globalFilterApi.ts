@@ -107,15 +107,19 @@ export const generateFilter = () => {
 export const escaper = (value: string) => value.replace(/\//gi, '%2F').replace(/=/gi, '%3D');
 
 export const flatTags = memoize(
-  (filter: FlagTagsFilter = {}, encode = false, format = false) => {
+  (filter: FlagTagsFilter = {}, encode = false, format = false, raw?: boolean) => {
     const { Workloads, ...tags } = filter;
+    // When format=true and encode=false, default to raw so consumers (e.g. inventory API) get
+    // namespace/key=value format and can encode once. Escaped format would be double-encoded.
+    const useRaw = raw ?? (format && !encode);
+    const escape = (v: string) => (useRaw ? v : escaper(v));
     const mappedTags = flatMap(Object.entries({ ...tags, ...(!format && { Workloads }) }), ([namespace, item]) =>
       Object.entries<any>(item || {})
-        .filter(([, { isSelected }]: [unknown, GroupItem]) => isSelected === true)
+        .filter(([, entry]) => entry != null && typeof entry === 'object' && (entry as GroupItem).isSelected === true)
         .map(([tagKey, { item, value: tagValue }]: [any, GroupItem & { value: string }]) => {
-          return `${namespace ? `${encode ? encodeURIComponent(escaper(namespace)) : escaper(namespace)}/` : ''}${
-            encode ? encodeURIComponent(escaper(item?.tagKey || tagKey)) : escaper(item?.tagKey || tagKey)
-          }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(escaper(item?.tagValue || tagValue)) : escaper(item?.tagValue || tagValue)}` : ''}`;
+          return `${namespace ? `${encode ? encodeURIComponent(escape(namespace)) : escape(namespace)}/` : ''}${
+            encode ? encodeURIComponent(escape(item?.tagKey || tagKey)) : escape(item?.tagKey || tagKey)
+          }${item?.tagValue || tagValue ? `=${encode ? encodeURIComponent(escape(item?.tagValue || tagValue)) : escape(item?.tagValue || tagValue)}` : ''}`;
         })
     );
     // Return 3 items when format=true: [workloads, SIDs, tags]
@@ -123,14 +127,14 @@ export const flatTags = memoize(
     // This ensures tags go to the tags parameter
     return format ? [Workloads, [], mappedTags] : mappedTags;
   },
-  (filter = {}, encode, format) =>
+  (filter = {}, encode, format, raw) =>
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
           `${namespace}.${Object.entries<any>(val || {})
-            .filter(([, { isSelected }]) => isSelected)
+            .filter(([, entry]) => entry != null && typeof entry === 'object' && (entry as GroupItem).isSelected)
             .map(([key]) => key)
             .join('')}`
       )
-      .join(',')}${encode ? '_encode' : ''}${format ? '_format' : ''}`
+      .join(',')}${encode ? '_encode' : ''}${format ? '_format' : ''}${(raw ?? (format && !encode)) ? '_raw' : ''}`
 );

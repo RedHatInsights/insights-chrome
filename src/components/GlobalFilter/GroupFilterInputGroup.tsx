@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import { FilterMenuItemOnChange } from '@redhat-cloud-services/frontend-components/ConditionalFilter/groupFilterConstants';
@@ -11,6 +11,28 @@ import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover'
 import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/outlined-question-circle-icon';
 import { FlagTagsFilter } from '../../@types/types';
+
+/** Ensure every group item has a defined string value and tagKey/tagValue are non-enumerable
+ *  so they are not forwarded to the DOM (avoids React "does not recognize the prop" warnings). */
+function normalizeGroups(groups?: Group[]): Group[] | undefined {
+  if (!groups?.length) return groups;
+  return groups.map((group, groupIndex) => ({
+    ...group,
+    items: (group.items || []).map((item, itemIndex) => {
+      const normalized = {
+        ...item,
+        value: String(item?.value != null ? item.value : (item?.id ?? item?.tagKey ?? `${groupIndex}-${itemIndex}`)),
+      };
+      if ('tagKey' in normalized) {
+        Object.defineProperty(normalized, 'tagKey', { value: (normalized as { tagKey?: string }).tagKey, enumerable: false });
+      }
+      if ('tagValue' in normalized) {
+        Object.defineProperty(normalized, 'tagValue', { value: (normalized as { tagValue?: string }).tagValue, enumerable: false });
+      }
+      return normalized;
+    }),
+  }));
+}
 
 export type GroupFilterInputGroupProps = {
   isDisabled: boolean;
@@ -27,6 +49,7 @@ export type GroupFilterInputGroupProps = {
 
 const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps> = ({ filter, isDisabled, selectedTags, setIsOpen }) => {
   const intl = useIntl();
+  const groups = useMemo(() => normalizeGroups(filter.groups), [filter.groups]);
 
   return (
     <InputGroup>
@@ -35,7 +58,7 @@ const GroupFilterInputGroup: React.FunctionComponent<GroupFilterInputGroupProps>
           className="chr-c-menu-global-filter__select"
           selected={selectedTags}
           isDisabled={isDisabled}
-          groups={filter.groups}
+          groups={groups}
           onChange={filter.onChange}
           placeholder={intl.formatMessage(messages.filterByTags)}
           isFilterable

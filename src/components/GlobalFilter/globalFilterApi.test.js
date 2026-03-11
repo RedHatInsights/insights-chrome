@@ -46,10 +46,11 @@ describe('flatTags', () => {
     expect(data).toMatchObject(['someTag%252Fslash/someKey=%5BsomeValue%253Dvalue%5D', 'Workloads/SAP']);
   });
 
-  it('should return multiple values', () => {
+  it('should return multiple values (raw format for API when format=true, encode=false)', () => {
     const [workloads, , tags] = flatTags(globalFilter, false, true);
     expect(tags.length).toBe(1);
-    expect(tags).toMatchObject(['someTag%2Fslash/someKey=[someValue%3Dvalue]']);
+    // Raw format so inventory API receives namespace/key=value (same as table filter)
+    expect(tags).toMatchObject(['someTag/slash/someKey=[someValue=value]']);
     expect(workloads.SAP.isSelected).toBe(true);
   });
 });
