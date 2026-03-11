@@ -21,7 +21,7 @@ function normalizeGroups(groups?: Group[]): Group[] | undefined {
     items: (group.items || []).map((item, itemIndex) => {
       const normalized = {
         ...item,
-        value: String(item?.value != null ? item.value : item?.id ?? item?.tagKey ?? `${groupIndex}-${itemIndex}`),
+        value: String(item?.value != null ? item.value : (item?.id ?? item?.tagKey ?? `${groupIndex}-${itemIndex}`)),
       };
       if ('tagKey' in normalized) {
         Object.defineProperty(normalized, 'tagKey', { value: (normalized as { tagKey?: string }).tagKey, enumerable: false });

@@ -127,7 +127,7 @@ export const flatTags = memoize(
     // This ensures tags go to the tags parameter
     return format ? [Workloads, [], mappedTags] : mappedTags;
   },
-    (filter = {}, encode, format, raw) =>
+  (filter = {}, encode, format, raw) =>
     `${Object.entries(filter)
       .map(
         ([namespace, val]) =>
@@ -136,5 +136,5 @@ export const flatTags = memoize(
             .map(([key]) => key)
             .join('')}`
       )
-      .join(',')}${encode ? '_encode' : ''}${format ? '_format' : ''}${raw ?? (format && !encode) ? '_raw' : ''}`
+      .join(',')}${encode ? '_encode' : ''}${format ? '_format' : ''}${(raw ?? (format && !encode)) ? '_raw' : ''}`
 );
