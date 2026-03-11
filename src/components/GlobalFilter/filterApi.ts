@@ -5,7 +5,7 @@ import { flatTags } from './globalFilterApi';
 export const storeFilter = (tags: FlagTagsFilter, isEnabled: boolean, navigate: NavigateFunction) => {
   if (isEnabled) {
     const searchParams = new URLSearchParams();
-    const [, , mappedTags] = flatTags(tags, false, true);
+    const [, , mappedTags] = flatTags(tags, false, true, true);
 
     if (tags?.Workloads) {
       const currWorkloads = Object.entries(tags?.Workloads || {})?.find(
