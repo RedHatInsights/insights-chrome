@@ -67,7 +67,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^3.0.31",
     "@redhat-cloud-services/frontend-components-config-utilities": "^4.7.31",
-    "@redhat-cloud-services/types": "^3.3.31",
+    "@redhat-cloud-services/types": "^3.4.0",
     "@simonsmith/cypress-image-snapshot": "^10.0.3",
     "@swc/core": "^1.15.18",
     "@swc/jest": "^0.2.39",

@@ -126,6 +126,46 @@ const initialize = ({
       return toHave?.some((item) => user?.email?.includes(item));
     },
     loosePermissions: (permissions: string[]) => checkPermissions(permissions, 'some'),
+    /**
+     * Check Kessel tenant-scoped permissions. Takes an array of Kessel relation
+     * strings and returns true if the user has at least one (OR logic).
+     * The caller's frontend.yaml provides native Kessel relation names.
+     */
+    loosePermissionsKessel: async (relations: string[]) => {
+      try {
+        if (!Array.isArray(relations) || relations.length === 0) {
+          return false;
+        }
+
+        const data = await getUser();
+        const orgId = data?.identity?.org_id;
+        if (!orgId) {
+          return false;
+        }
+
+        const resource = {
+          resourceId: `redhat/${orgId}`,
+          resourceType: 'tenant',
+          reporter: { type: 'rbac' },
+        };
+        const dedupedRelations = [...new Set(relations)];
+
+        if (dedupedRelations.length === 1) {
+          const response = await axios.post('/api/kessel/v1beta2/checkself', { object: resource, relation: dedupedRelations[0] });
+          return response.data?.allowed === 'ALLOWED_TRUE';
+        }
+
+        const response = await axios.post('/api/kessel/v1beta2/checkselfbulk', {
+          items: dedupedRelations.map((relation) => ({ object: resource, relation })),
+          consistency: { minimizeLatency: true },
+        });
+        const results = response.data?.responses ?? response.data ?? [];
+        return results.some((r: { allowed: string }) => r.allowed === 'ALLOWED_TRUE');
+      } catch (error) {
+        console.error('loosePermissionsKessel failed', error);
+        return false;
+      }
+    },
     hasPermissions: checkPermissions,
     hasLocalStorage: (key: string, value: unknown) => localStorage.get(key) === value,
     hasCookie: (cookieKey: string, cookieValue: string) => cookie.get(cookieKey) === cookieValue,
