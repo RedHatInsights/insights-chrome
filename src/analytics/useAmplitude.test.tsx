@@ -2,6 +2,8 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { useAtomValue } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
+import * as amplitude from '@amplitude/analytics-browser';
+import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag: string) => {
@@ -198,8 +200,9 @@ describe('useAmplitude', () => {
   });
 
   it('initializes autocapture when flag is enabled', async () => {
-    const amplitude = require('@amplitude/analytics-browser');
-    const { autocapturePlugin } = require('@amplitude/plugin-autocapture-browser');
+    // Verify imports are defined
+    expect(amplitude).toBeDefined();
+    expect(autocapturePlugin).toBeDefined();
 
     // Enable autocapture flag
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {

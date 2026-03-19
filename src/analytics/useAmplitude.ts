@@ -42,6 +42,12 @@ function useAmplitude() {
       return;
     }
 
+    // Validate API key before initialization
+    if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
+      console.error('Amplitude key is missing or malformed:', keyToUse);
+      return;
+    }
+
     // Set flag immediately to prevent re-entrancy during async initialization
     amplitudeSdkInitialized.current = true;
 
@@ -62,10 +68,12 @@ function useAmplitude() {
             });
             console.log('Amplitude SDK with autocapture initialized');
           } catch (error) {
+            amplitudeSdkInitialized.current = false;
             console.error('Error initializing Amplitude SDK with autocapture', error);
           }
         })
         .catch((error) => {
+          amplitudeSdkInitialized.current = false;
           console.error('Error getting user for Amplitude autocapture', error);
         });
     });
