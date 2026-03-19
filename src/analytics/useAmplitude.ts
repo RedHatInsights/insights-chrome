@@ -38,7 +38,7 @@ function useAmplitude() {
   };
 
   const initializeAmplitudeAutocapture = function () {
-    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready) {
+    if (!enableAmplitudeAutocapture || enableAmplitude || amplitudeSdkInitialized.current || !ready) {
       return;
     }
 
@@ -157,7 +157,7 @@ function useAmplitude() {
 
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, ready, analytics, keyToUse]);
+  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, keyToUse]);
 }
 
 export default useAmplitude;
