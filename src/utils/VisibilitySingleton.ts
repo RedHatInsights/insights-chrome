@@ -159,8 +159,8 @@ const initialize = ({
           items: dedupedRelations.map((relation) => ({ object: resource, relation })),
           consistency: { minimizeLatency: true },
         });
-        const results = response.data?.responses ?? response.data ?? [];
-        return results.some((r: { allowed: string }) => r.allowed === 'ALLOWED_TRUE');
+        const pairs = response.data?.pairs ?? [];
+        return Array.isArray(pairs) && pairs.some((r: { item?: { allowed: string } }) => r.item?.allowed === 'ALLOWED_TRUE');
       } catch (error) {
         console.error('loosePermissionsKessel failed', error);
         return false;
