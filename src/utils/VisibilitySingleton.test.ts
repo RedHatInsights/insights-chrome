@@ -360,7 +360,7 @@ describe('VisibilitySingleton', () => {
 
     test('should call checkselfbulk for multiple relations', async () => {
       mockedAxios.post.mockResolvedValueOnce({
-        data: { responses: [{ allowed: 'ALLOWED_FALSE' }, { allowed: 'ALLOWED_TRUE' }] },
+        data: { pairs: [{ item: { allowed: 'ALLOWED_FALSE' } }, { item: { allowed: 'ALLOWED_TRUE' } }] },
       });
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_write', 'rbac_groups_read']);
       expect(result).toBe(true);
@@ -374,7 +374,7 @@ describe('VisibilitySingleton', () => {
 
     test('should return false when all bulk relations are denied', async () => {
       mockedAxios.post.mockResolvedValueOnce({
-        data: { responses: [{ allowed: 'ALLOWED_FALSE' }, { allowed: 'ALLOWED_FALSE' }] },
+        data: { pairs: [{ item: { allowed: 'ALLOWED_FALSE' } }, { item: { allowed: 'ALLOWED_FALSE' } }] },
       });
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_write', 'rbac_groups_write']);
       expect(result).toBe(false);
@@ -385,6 +385,22 @@ describe('VisibilitySingleton', () => {
       const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read', 'rbac_roles_read']);
       expect(result).toBe(true);
       expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }));
+    });
+
+    test('should return true when at least one relation is allowed (OR logic)', async () => {
+      mockedAxios.post.mockResolvedValueOnce({
+        data: {
+          pairs: [
+            { request: { object: {}, relation: 'rbac_principal_read' }, item: { allowed: 'ALLOWED_FALSE' } },
+            { request: { object: {}, relation: 'rbac_groups_read' }, item: { allowed: 'ALLOWED_FALSE' } },
+            { request: { object: {}, relation: 'rbac_roles_read' }, item: { allowed: 'ALLOWED_TRUE' } },
+            { request: { object: {}, relation: 'rbac_workspace_view' }, item: { allowed: 'ALLOWED_FALSE' } },
+          ],
+          consistencyToken: { token: 'abc123' },
+        },
+      });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_principal_read', 'rbac_groups_read', 'rbac_roles_read', 'rbac_workspace_view']);
+      expect(result).toBe(true);
     });
 
     test('should return false on network error', async () => {
