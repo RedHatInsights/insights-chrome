@@ -4,7 +4,7 @@
   "description": "Chroming for Insights",
   "engines": {
     "node": ">=20.20.1",
-    "npm": ">=10.9.6"
+    "npm": ">=10.9.7"
   },
   "main": "index.js",
   "scripts": {
@@ -65,9 +65,9 @@
     "@openshift/dynamic-plugin-sdk-webpack": "^3.0.1",
     "@playwright/test": "^1.58.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
-    "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^3.0.31",
-    "@redhat-cloud-services/frontend-components-config-utilities": "^4.7.31",
-    "@redhat-cloud-services/types": "^3.3.31",
+    "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^3.0.32",
+    "@redhat-cloud-services/frontend-components-config-utilities": "^4.8.2",
+    "@redhat-cloud-services/types": "^3.4.1",
     "@simonsmith/cypress-image-snapshot": "^10.0.3",
     "@swc/core": "^1.15.18",
     "@swc/jest": "^0.2.39",
@@ -128,7 +128,7 @@
     "yargs": "^18.0.0"
   },
   "dependencies": {
-    "@formatjs/cli": "^6.13.3",
+    "@formatjs/cli": "^6.14.0",
     "@lit/react": "^1.0.8",
     "@openshift/dynamic-plugin-sdk": "^5.0.1",
     "@orama/orama": "^3.1.18",
@@ -139,11 +139,11 @@
     "@patternfly/react-icons": "^6.4.0",
     "@patternfly/react-table": "^6.4.1",
     "@patternfly/react-tokens": "^6.4.0",
-    "@redhat-cloud-services/chrome": "^2.0.45",
+    "@redhat-cloud-services/chrome": "^2.1.1",
     "@redhat-cloud-services/entitlements-client": "^4.0.8",
-    "@redhat-cloud-services/frontend-components": "^7.0.45",
-    "@redhat-cloud-services/frontend-components-notifications": "^6.2.1",
-    "@redhat-cloud-services/frontend-components-utilities": "^7.0.40",
+    "@redhat-cloud-services/frontend-components": "^7.1.1",
+    "@redhat-cloud-services/frontend-components-notifications": "^6.3.1",
+    "@redhat-cloud-services/frontend-components-utilities": "^7.1.1",
     "@redhat-cloud-services/host-inventory-client": "^4.1.7",
     "@redhat-cloud-services/javascript-clients-shared": "^2.0.5",
     "@redhat-cloud-services/rbac-client": "^6.0.1",
@@ -152,8 +152,8 @@
     "@scalprum/core": "^0.9.0",
     "@scalprum/react-core": "^0.11.1",
     "@segment/analytics-next": "^1.82.0",
-    "@sentry/browser": "^10.43.0",
-    "@sentry/react": "^10.43.0",
+    "@sentry/browser": "^10.45.0",
+    "@sentry/react": "^10.45.0",
     "@sentry/webpack-plugin": "^4.9.1",
     "@types/intercom-web": "^2.8.26",
     "@unleash/proxy-client-react": "^5.0.1",
@@ -177,7 +177,7 @@
     "react-intl": "^7.1.14",
     "react-oidc-context": "^3.3.1",
     "react-router-dom": "^6.30.3",
-    "sanitize-html": "^2.17.1",
+    "sanitize-html": "^2.17.2",
     "title-case": "^4.3.2",
     "unleash-proxy-client": "^3.7.8",
     "urijs": "^1.19.11"

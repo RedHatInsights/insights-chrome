@@ -1,5 +1,9 @@
 import { ChromeUser, VisibilityFunctions } from '@redhat-cloud-services/types';
 import { getVisibilityFunctions, initializeVisibilityFunctions } from './VisibilitySingleton';
+import axios from 'axios';
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 jest.mock('@scalprum/core', () => {
   return {
@@ -308,6 +312,101 @@ describe('VisibilitySingleton', () => {
         const result = await visibilityFunctions.hasPermissions(['rbac:*:*', 'other:*:write']);
         expect(result).toEqual(true);
       });
+    });
+  });
+
+  describe('loosePermissionsKessel', () => {
+    beforeEach(() => {
+      getUser.mockImplementation(() => Promise.resolve(userMock));
+      mockedAxios.post.mockReset();
+    });
+
+    test('should return false if org_id is missing', async () => {
+      getUser.mockImplementationOnce(() =>
+        Promise.resolve({
+          ...userMock,
+          identity: { ...userMock.identity, org_id: undefined },
+        })
+      );
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
+    });
+
+    test('should return false for empty relations array', async () => {
+      const result = await visibilityFunctions.loosePermissionsKessel([]);
+      expect(result).toBe(false);
+      expect(mockedAxios.post).not.toHaveBeenCalled();
+    });
+
+    test('should call checkself for a single relation', async () => {
+      mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(true);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        '/api/kessel/v1beta2/checkself',
+        expect.objectContaining({
+          object: { resourceId: 'redhat/123', resourceType: 'tenant', reporter: { type: 'rbac' } },
+          relation: 'rbac_roles_read',
+        })
+      );
+    });
+
+    test('should return false for a single denied relation', async () => {
+      mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_FALSE' } });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_write']);
+      expect(result).toBe(false);
+    });
+
+    test('should call checkselfbulk for multiple relations', async () => {
+      mockedAxios.post.mockResolvedValueOnce({
+        data: { pairs: [{ item: { allowed: 'ALLOWED_FALSE' } }, { item: { allowed: 'ALLOWED_TRUE' } }] },
+      });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_write', 'rbac_groups_read']);
+      expect(result).toBe(true);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        '/api/kessel/v1beta2/checkselfbulk',
+        expect.objectContaining({
+          items: [expect.objectContaining({ relation: 'rbac_roles_write' }), expect.objectContaining({ relation: 'rbac_groups_read' })],
+        })
+      );
+    });
+
+    test('should return false when all bulk relations are denied', async () => {
+      mockedAxios.post.mockResolvedValueOnce({
+        data: { pairs: [{ item: { allowed: 'ALLOWED_FALSE' } }, { item: { allowed: 'ALLOWED_FALSE' } }] },
+      });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_write', 'rbac_groups_write']);
+      expect(result).toBe(false);
+    });
+
+    test('should deduplicate identical relations', async () => {
+      mockedAxios.post.mockResolvedValueOnce({ data: { allowed: 'ALLOWED_TRUE' } });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read', 'rbac_roles_read']);
+      expect(result).toBe(true);
+      expect(mockedAxios.post).toHaveBeenCalledWith('/api/kessel/v1beta2/checkself', expect.objectContaining({ relation: 'rbac_roles_read' }));
+    });
+
+    test('should return true when at least one relation is allowed (OR logic)', async () => {
+      mockedAxios.post.mockResolvedValueOnce({
+        data: {
+          pairs: [
+            { request: { object: {}, relation: 'rbac_principal_read' }, item: { allowed: 'ALLOWED_FALSE' } },
+            { request: { object: {}, relation: 'rbac_groups_read' }, item: { allowed: 'ALLOWED_FALSE' } },
+            { request: { object: {}, relation: 'rbac_roles_read' }, item: { allowed: 'ALLOWED_TRUE' } },
+            { request: { object: {}, relation: 'rbac_workspace_view' }, item: { allowed: 'ALLOWED_FALSE' } },
+          ],
+          consistencyToken: { token: 'abc123' },
+        },
+      });
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_principal_read', 'rbac_groups_read', 'rbac_roles_read', 'rbac_workspace_view']);
+      expect(result).toBe(true);
+    });
+
+    test('should return false on network error', async () => {
+      mockedAxios.post.mockRejectedValueOnce(new Error('Network Error'));
+      const result = await visibilityFunctions.loosePermissionsKessel(['rbac_roles_read']);
+      expect(result).toBe(false);
     });
   });
 });
