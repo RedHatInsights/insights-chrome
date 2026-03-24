@@ -5,13 +5,17 @@ import { useSegment } from './useSegment';
 import { isProd } from '../utils/common';
 import { useAtomValue } from 'jotai';
 import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom';
+import * as amplitude from '@amplitude/analytics-browser';
+import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
 const AMPLITUDE_KEY_FALLBACK_DEV = '9ae91f3d96acee01050e50ba5522e04f';
 const AMPLITUDE_KEY_FALLBACK_PROD = 'cd5a77968f445fe3e248e94d7b12dbab';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
+  const amplitudeSdkInitialized = useRef(false);
   const enableAmplitude = useFlag('platform.chrome.analytics.amplitude');
+  const enableAmplitudeAutocapture = useFlag('platform.chrome.analytics.amplitude.autocapture');
   const { analytics, ready } = useSegment();
   const navigate = useNavigate();
   const forwardHandlerRef = useRef<((event: string, properties: Record<string, unknown>) => void) | null>(null);
@@ -31,6 +35,48 @@ function useAmplitude() {
         forwardHandlerRef.current = null;
       }
     }
+  };
+
+  const initializeAmplitudeAutocapture = function () {
+    if (!enableAmplitudeAutocapture || enableAmplitude || amplitudeSdkInitialized.current || !ready) {
+      return;
+    }
+
+    // Validate API key before initialization
+    if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
+      console.error('Amplitude key is missing or malformed:', keyToUse);
+      return;
+    }
+
+    // Set flag immediately to prevent re-entrancy during async initialization
+    amplitudeSdkInitialized.current = true;
+
+    analytics?.ready(() => {
+      analytics
+        .user()
+        .then((user) => {
+          try {
+            amplitude.add(autocapturePlugin());
+            amplitude.init(keyToUse, user.id() ?? undefined, {
+              deviceId: user.anonymousId() ?? undefined,
+              defaultTracking: {
+                sessions: true,
+                pageViews: true,
+                formInteractions: true,
+                fileDownloads: true,
+              },
+            });
+            console.log('Amplitude SDK with autocapture initialized');
+          } catch (error) {
+            amplitudeSdkInitialized.current = false;
+            console.error('Error initializing Amplitude SDK with autocapture', error);
+          }
+        })
+        .catch((error) => {
+          amplitudeSdkInitialized.current = false;
+          console.error('Error getting user for Amplitude autocapture', error);
+        });
+    });
   };
 
   const initializeAmplitude = function () {
@@ -108,6 +154,10 @@ function useAmplitude() {
       detachAnalyticsHandlers();
     };
   }, [enableAmplitude, ready, navigate, analytics, keyToUse]);
+
+  useEffect(() => {
+    initializeAmplitudeAutocapture();
+  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, keyToUse]);
 }
 
 export default useAmplitude;
