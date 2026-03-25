@@ -48,15 +48,23 @@ const log = logger('OIDCSecured.tsx');
  * - ErrorResponse structure: https://github.com/authts/oidc-client-ts/blob/main/src/errors/ErrorResponse.ts
  */
 function isExpectedSilentAuthError(error: any): boolean {
-  return (
+  // Check for OIDC spec error responses
+  const isOIDCError =
     error?.name === 'ErrorResponse' &&
     [
       'interaction_required', // User interaction is required (e.g., registration form)
       'login_required', // User must log in (session expired)
       'consent_required', // User must consent to requested scopes
       'account_selection_required', // User must select an account
-    ].includes(error?.message)
-  );
+    ].includes(error?.message);
+
+  // Check for session/token errors that should trigger login redirect
+  // Note: oidc-client-ts v3.x uses 'message', v2.x uses 'error_description'
+  const errorMessage = error?.message || error?.error_description || '';
+  const isSessionError =
+    errorMessage === 'Session not active' || errorMessage === 'Token is not active' || errorMessage === 'Token not active';
+
+  return isOIDCError || isSessionError;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
