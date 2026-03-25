@@ -26,6 +26,7 @@ import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
+import { SESSION_NOT_ACTIVE, TOKEN_NOT_ACTIVE } from './OIDCUserManagerErrorBoundary';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -61,7 +62,7 @@ function isExpectedSilentAuthError(error: any): boolean {
   // Check for session/token errors that should trigger login redirect
   // Note: oidc-client-ts v3.x uses 'message', v2.x uses 'error_description'
   const errorMessage = error?.message || error?.error_description || '';
-  const isSessionError = errorMessage === 'Session not active' || errorMessage === 'Token is not active' || errorMessage === 'Token not active';
+  const isSessionError = errorMessage === SESSION_NOT_ACTIVE || TOKEN_NOT_ACTIVE.has(errorMessage);
 
   return isOIDCError || isSessionError;
 }
