@@ -8,8 +8,8 @@ import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom'
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
-const AMPLITUDE_KEY_FALLBACK_DEV = '9ae91f3d96acee01050e50ba5522e04f';
-const AMPLITUDE_KEY_FALLBACK_PROD = 'cd5a77968f445fe3e248e94d7b12dbab';
+const AMPLITUDE_KEY_FALLBACK_DEV = 'dc3aabccff4063af0de96d7825422d8f';
+const AMPLITUDE_KEY_FALLBACK_PROD = '5c16029122229733b22f1d87567b437';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
