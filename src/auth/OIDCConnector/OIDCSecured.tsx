@@ -61,8 +61,7 @@ function isExpectedSilentAuthError(error: any): boolean {
   // Check for session/token errors that should trigger login redirect
   // Note: oidc-client-ts v3.x uses 'message', v2.x uses 'error_description'
   const errorMessage = error?.message || error?.error_description || '';
-  const isSessionError =
-    errorMessage === 'Session not active' || errorMessage === 'Token is not active' || errorMessage === 'Token not active';
+  const isSessionError = errorMessage === 'Session not active' || errorMessage === 'Token is not active' || errorMessage === 'Token not active';
 
   return isOIDCError || isSessionError;
 }
