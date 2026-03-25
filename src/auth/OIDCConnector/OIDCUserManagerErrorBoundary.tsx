@@ -13,7 +13,9 @@ export const SESSION_NOT_ACTIVE = 'Session not active';
 export const TOKEN_NOT_ACTIVE = new Set(['Token not active', 'Token is not active']);
 
 function isInvalidAuthStateError(error: any): boolean {
-  return error?.error_description === SESSION_NOT_ACTIVE || (error?.error_description && TOKEN_NOT_ACTIVE.has(error?.error_description));
+  // Check both v2.x (error_description) and v3.x (message) formats for compatibility
+  const errorMessage = error?.message || error?.error_description || '';
+  return errorMessage === SESSION_NOT_ACTIVE || TOKEN_NOT_ACTIVE.has(errorMessage);
 }
 /**
  *  The session not active and token not active are not handled by the oidc-client library and will "bubble up".
