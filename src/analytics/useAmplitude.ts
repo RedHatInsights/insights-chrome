@@ -61,7 +61,7 @@ function useAmplitude() {
               deviceId: user.anonymousId() ?? undefined,
               defaultTracking: {
                 sessions: true,
-                pageViews: true,
+                pageViews: false,
                 formInteractions: true,
                 fileDownloads: true,
               },
