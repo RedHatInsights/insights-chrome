@@ -221,7 +221,7 @@ describe('useAmplitude', () => {
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
-          pageViews: true,
+          pageViews: false,
           formInteractions: true,
           fileDownloads: true,
         },
