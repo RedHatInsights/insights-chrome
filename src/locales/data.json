@@ -58,7 +58,7 @@
     "login": "Log in",
     "logout": "Log out",
     "myProfile": "My profile",
-    "myUserAccess": "My User Access",
+    "myAccess": "My Access",
     "name": "Name",
     "newRequestReview": "You have a new access request that needs your review",
     "noInventoryPermissions": "You do not have the required inventory permissions to perform this action",

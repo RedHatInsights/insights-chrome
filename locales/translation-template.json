@@ -231,9 +231,9 @@
     "defaultMessage": "My profile",
     "description": "My profile"
   },
-  "myUserAccess": {
-    "defaultMessage": "My User Access",
-    "description": "My User Access"
+  "myAccess": {
+    "defaultMessage": "My Access",
+    "description": "My Access"
   },
   "name": {
     "defaultMessage": "Name",
