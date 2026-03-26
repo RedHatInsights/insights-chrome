@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { login } from '../../helpers/auth';
 
 test.describe('Authentication', () => {
@@ -31,7 +31,7 @@ test.describe('Authentication', () => {
 
     // Verify key menu items are present
     await expect(page.getByText('Username')).toBeVisible();
-    await expect(page.getByText('My user access')).toBeVisible();
+    await expect(page.getByText('My access')).toBeVisible();
     await expect(page.getByText('User preferences')).toBeVisible();
     await expect(page.getByText('Log out')).toBeVisible();
   });
