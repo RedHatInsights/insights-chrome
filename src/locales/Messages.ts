@@ -472,7 +472,7 @@ export default defineMessages({
   permissionErrorDescription: {
     id: 'permissionErrorDescription',
     defaultMessage:
-      'Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions.',
+      'Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions.',
   },
   permissionErrorDetail: {
     id: 'permissionErrorDetail',
