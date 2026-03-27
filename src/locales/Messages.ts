@@ -375,6 +375,7 @@ export default defineMessages({
   },
   myProfile: { id: 'myProfile', description: 'My profile', defaultMessage: 'My profile' },
   myAccess: { id: 'myAccess', description: 'My Access', defaultMessage: 'My Access' },
+  myUserAccess: { id: 'myUserAccess', description: 'My User Access', defaultMessage: 'My User Access' },
   userPreferences: {
     id: 'userPreferences',
     description: 'User Preferences',

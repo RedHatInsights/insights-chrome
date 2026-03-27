@@ -48,6 +48,7 @@ const DropdownItems = ({
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
   const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
+  const v2WorkspacesEnabled = useFlag('platform.rbac.workspaces');
   const myAccessPath = enableMyAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [
@@ -106,7 +107,7 @@ const DropdownItems = ({
       <DropdownItem
         component={({ className }) => (
           <ChromeLink className={className} href={myAccessPath} appId="rbac">
-            {intl.formatMessage(messages.myAccess)}
+            {v2WorkspacesEnabled ? intl.formatMessage(messages.myAccess) : intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         )}
         key="My user access"

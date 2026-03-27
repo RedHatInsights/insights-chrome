@@ -235,6 +235,10 @@
     "defaultMessage": "My Access",
     "description": "My Access"
   },
+  "myUserAccess": {
+    "defaultMessage": "My User Access",
+    "description": "My User Access"
+  },
   "name": {
     "defaultMessage": "Name",
     "description": "Name"
