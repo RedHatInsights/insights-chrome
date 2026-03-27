@@ -31,7 +31,7 @@ test.describe('Authentication', () => {
 
     // Verify key menu items are present
     await expect(page.getByText('Username')).toBeVisible();
-    await expect(page.getByText('My access')).toBeVisible();
+    await expect(page.getByText(/My (user )?access/i)).toBeVisible();
     await expect(page.getByText('User preferences')).toBeVisible();
     await expect(page.getByText('Log out')).toBeVisible();
   });
