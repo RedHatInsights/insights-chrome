@@ -26,7 +26,6 @@ import chromeStore from '../../state/chromeStore';
 import useManageSilentRenew from './useManageSilentRenew';
 import { ServicesGetReturnType } from '@redhat-cloud-services/entitlements-client';
 import { silentReauthEnabledAtom } from '../../state/atoms/silentReauthAtom';
-import { SESSION_NOT_ACTIVE, TOKEN_NOT_ACTIVE } from './OIDCUserManagerErrorBoundary';
 
 type Entitlement = { is_entitled: boolean; is_trial: boolean };
 const serviceAPI = entitlementsApi();
@@ -49,22 +48,15 @@ const log = logger('OIDCSecured.tsx');
  * - ErrorResponse structure: https://github.com/authts/oidc-client-ts/blob/main/src/errors/ErrorResponse.ts
  */
 function isExpectedSilentAuthError(error: any): boolean {
-  // Check for OIDC spec error responses
-  const isOIDCError =
+  return (
     error?.name === 'ErrorResponse' &&
     [
       'interaction_required', // User interaction is required (e.g., registration form)
       'login_required', // User must log in (session expired)
       'consent_required', // User must consent to requested scopes
       'account_selection_required', // User must select an account
-    ].includes(error?.message);
-
-  // Check for session/token errors that should trigger login redirect
-  // Note: oidc-client-ts v3.x uses 'message', v2.x uses 'error_description'
-  const errorMessage = error?.message || error?.error_description || '';
-  const isSessionError = errorMessage === SESSION_NOT_ACTIVE || TOKEN_NOT_ACTIVE.has(errorMessage);
-
-  return isOIDCError || isSessionError;
+    ].includes(error?.message)
+  );
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
