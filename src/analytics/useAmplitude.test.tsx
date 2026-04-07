@@ -217,7 +217,7 @@ describe('useAmplitude', () => {
 
     await waitFor(() => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
-      expect(amplitude.init).toHaveBeenCalledWith(expect.any(String), 'user-1', {
+      expect(amplitude.init).toHaveBeenCalledWith(expect.stringMatching("^[0-9a-f]{32}"), 'user-1', {
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
