@@ -46,7 +46,7 @@ function useAmplitude() {
   };
 
   const initializeAmplitudeAutocapture = function () {
-    if (!enableAmplitudeAutocapture || enableAmplitude || amplitudeSdkInitialized.current || !ready) {
+    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready) {
       return;
     }
 
