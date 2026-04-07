@@ -48,7 +48,7 @@ describe('OIDCUserManagerErrorBoundary', () => {
   });
 
   [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
-    it('should try redirect to signin page if error is thrown with error_description (v2.x)', () => {
+    it('should try redirect to signin page if error is thrown', () => {
       cy.intercept('GET', '/authorityUrl', {
         statusCode: 200,
         body: {
@@ -72,34 +72,6 @@ describe('OIDCUserManagerErrorBoundary', () => {
       );
 
       cy.wait(`@${error}`).its('response.body.error').should('eq', error);
-    });
-  });
-
-  [SESSION_NOT_ACTIVE, ...TOKEN_NOT_ACTIVE.values()].forEach((error) => {
-    it('should try redirect to signin page if error is thrown with message (v3.x)', () => {
-      cy.intercept('GET', '/authorityUrl', {
-        statusCode: 200,
-        body: {
-          success: true,
-          error,
-        },
-      }).as(`${error}-v3`);
-      const fakeManager = new UserManager({
-        authority: '',
-        client_id: '',
-        redirect_uri: '',
-        metadataUrl: '/authorityUrl',
-      });
-      cy.on('uncaught:exception', () => {
-        return false;
-      });
-      cy.mount(
-        <OIDCUserManagerErrorBoundary userManager={fakeManager}>
-          <ThrowAbleComponent error={{ message: error }} />
-        </OIDCUserManagerErrorBoundary>
-      );
-
-      cy.wait(`@${error}-v3`).its('response.body.error').should('eq', error);
     });
   });
 });
