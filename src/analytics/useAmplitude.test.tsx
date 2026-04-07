@@ -217,7 +217,7 @@ describe('useAmplitude', () => {
 
     await waitFor(() => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
-      expect(amplitude.init).toHaveBeenCalledWith('DEVKEY', 'user-1', {
+      expect(amplitude.init).toHaveBeenCalledWith(expect.stringMatching('^[0-9a-f]{32}'), 'user-1', {
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
@@ -228,7 +228,7 @@ describe('useAmplitude', () => {
       });
     });
 
-    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized');
+    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
 
     // Restore mocks
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
