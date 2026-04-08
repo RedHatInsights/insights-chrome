@@ -8,8 +8,12 @@ import { activeModuleDefinitionReadAtom } from '../state/atoms/activeModuleAtom'
 import * as amplitude from '@amplitude/analytics-browser';
 import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
-const AMPLITUDE_KEY_FALLBACK_DEV = '9ae91f3d96acee01050e50ba5522e04f';
-const AMPLITUDE_KEY_FALLBACK_PROD = 'cd5a77968f445fe3e248e94d7b12dbab';
+const AMPLITUDE_KEY_FALLBACK_DEV = 'dc3aabccff4063af0de96d7825422d8f';
+const AMPLITUDE_KEY_FALLBACK_PROD = '5c16029122229733b22f1d87567b437';
+
+// Separate API keys for autocapture project
+const AMPLITUDE_AUTOCAPTURE_KEY_DEV = '61d45c06a92d1fe5cf57023568ae9053';
+const AMPLITUDE_AUTOCAPTURE_KEY_PROD = '56344678d3883c0a730f102f28f8beb4';
 
 function useAmplitude() {
   const amplitudeAdded = useRef(false);
@@ -27,6 +31,10 @@ function useAmplitude() {
   const keyFallback = isProd() ? AMPLITUDE_KEY_FALLBACK_PROD : AMPLITUDE_KEY_FALLBACK_DEV;
   const keyToUse = moduleKey || keyFallback;
 
+  // Separate key for autocapture project
+  const autocaptureKeyFallback = isProd() ? AMPLITUDE_AUTOCAPTURE_KEY_PROD : AMPLITUDE_AUTOCAPTURE_KEY_DEV;
+  const autocaptureKeyToUse = autocaptureKeyFallback;
+
   const detachAnalyticsHandlers = function () {
     if (typeof analytics?.off === 'function') {
       if (forwardHandlerRef.current) {
@@ -38,13 +46,13 @@ function useAmplitude() {
   };
 
   const initializeAmplitudeAutocapture = function () {
-    if (!enableAmplitudeAutocapture || enableAmplitude || amplitudeSdkInitialized.current || !ready) {
+    if (!enableAmplitudeAutocapture || amplitudeSdkInitialized.current || !ready) {
       return;
     }
 
     // Validate API key before initialization
-    if (typeof keyToUse !== 'string' || keyToUse.length <= 0) {
-      console.error('Amplitude key is missing or malformed:', keyToUse);
+    if (typeof autocaptureKeyToUse !== 'string' || autocaptureKeyToUse.length <= 0) {
+      console.error('Amplitude autocapture key is missing or malformed:', autocaptureKeyToUse);
       return;
     }
 
@@ -57,7 +65,7 @@ function useAmplitude() {
         .then((user) => {
           try {
             amplitude.add(autocapturePlugin());
-            amplitude.init(keyToUse, user.id() ?? undefined, {
+            amplitude.init(autocaptureKeyToUse, user.id() ?? undefined, {
               deviceId: user.anonymousId() ?? undefined,
               defaultTracking: {
                 sessions: true,
@@ -66,7 +74,7 @@ function useAmplitude() {
                 fileDownloads: true,
               },
             });
-            console.log('Amplitude SDK with autocapture initialized');
+            console.log('Amplitude SDK with autocapture initialized (separate project)');
           } catch (error) {
             amplitudeSdkInitialized.current = false;
             console.error('Error initializing Amplitude SDK with autocapture', error);
@@ -157,7 +165,7 @@ function useAmplitude() {
 
   useEffect(() => {
     initializeAmplitudeAutocapture();
-  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, keyToUse]);
+  }, [enableAmplitudeAutocapture, enableAmplitude, ready, analytics, autocaptureKeyToUse]);
 }
 
 export default useAmplitude;

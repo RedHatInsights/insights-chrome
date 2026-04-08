@@ -217,7 +217,7 @@ describe('useAmplitude', () => {
 
     await waitFor(() => {
       expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
-      expect(amplitude.init).toHaveBeenCalledWith('DEVKEY', 'user-1', {
+      expect(amplitude.init).toHaveBeenCalledWith(expect.stringMatching('^[0-9a-f]{32}'), 'user-1', {
         deviceId: 'anon-1',
         defaultTracking: {
           sessions: true,
@@ -228,7 +228,54 @@ describe('useAmplitude', () => {
       });
     });
 
-    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized');
+    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
+
+    // Restore mocks
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+    logSpy.mockRestore();
+  });
+
+  it('initializes both guides and autocapture when both flags are enabled', async () => {
+    // Enable both flags
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    window.engagement = {
+      boot: jest.fn(),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    };
+
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    // Script for guides should be injected
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    expect(script).toBeTruthy();
+    expect(script.src).toContain('/DEVKEY.engagement.js');
+
+    // Trigger script load
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+
+    // Both engagement SDK and autocapture should initialize
+    await waitFor(() => {
+      expect(window.engagement?.boot).toHaveBeenCalled();
+      expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
+      expect(amplitude.init).toHaveBeenCalled();
+    });
+
+    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
 
     // Restore mocks
     (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
