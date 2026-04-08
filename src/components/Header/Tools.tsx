@@ -91,7 +91,7 @@ const Tools = () => {
   const intl = useIntl();
   const isOrgAdmin = user?.identity?.user?.is_org_admin;
   const settingsPath = isITLessEnv ? `/settings/my-user-access` : enableIntegrations ? `/settings/integrations` : '/settings/sources';
-  const identityAndAccessManagmentPath = isOrgAdmin ? `/iam/${workspacesEnabled ? 'access-management' : 'user-access'}/overview` : '/iam/my-user-access';
+  const identityAndAccessManagmentPath = isOrgAdmin ? (workspacesEnabled ? '/iam/overview' : '/iam/user-access/overview') : '/iam/my-user-access';
   const betaSwitcherTitle = `${isPreview ? intl.formatMessage(messages.stopUsing) : intl.formatMessage(messages.use)} ${intl.formatMessage(
     messages.betaRelease
   )}`;
