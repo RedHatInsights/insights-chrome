@@ -374,6 +374,7 @@ export default defineMessages({
     defaultMessage: 'Internal user',
   },
   myProfile: { id: 'myProfile', description: 'My profile', defaultMessage: 'My profile' },
+  myAccess: { id: 'myAccess', description: 'My Access', defaultMessage: 'My Access' },
   myUserAccess: { id: 'myUserAccess', description: 'My User Access', defaultMessage: 'My User Access' },
   userPreferences: {
     id: 'userPreferences',
@@ -472,7 +473,7 @@ export default defineMessages({
   permissionErrorDescription: {
     id: 'permissionErrorDescription',
     defaultMessage:
-      'Contact your organization administrator(s) for more information or visit <MuaLink>My User Access</MuaLink> to learn more about your permissions.',
+      'Contact your organization administrator(s) for more information or visit <MuaLink>My Access</MuaLink> to learn more about your permissions.',
   },
   permissionErrorDetail: {
     id: 'permissionErrorDetail',

@@ -9,6 +9,7 @@ export enum ThemeVariants {
 
 export const useTheme = () => {
   const isDarkModeEnabled = useFlag('platform.chrome.dark-mode');
+  const isDarkModeSystemEnabled = useFlag('platform.chrome.dark-mode_system');
 
   const applyTheme = (isDark: boolean) => {
     if (isDark) {
@@ -32,18 +33,22 @@ export const useTheme = () => {
     } else if (savedTheme === 'light') {
       applyTheme(false);
       return ThemeVariants.light;
-    } else if (savedTheme === 'system') {
+    } else if (isDarkModeSystemEnabled && savedTheme === 'system') {
       // System mode - use media query
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
-    } else {
+    } else if (isDarkModeSystemEnabled) {
       // Default to system mode
       localStorage.setItem('chrome:theme', 'system');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       applyTheme(prefersDark);
       return ThemeVariants.system;
     }
+
+    // If no theme has been selected defaults to light mode
+    applyTheme(false);
+    return ThemeVariants.light;
   };
 
   const [themeMode, setThemeMode] = useState<ThemeVariants>(getInitialTheme);
@@ -51,7 +56,7 @@ export const useTheme = () => {
   useEffect(() => {
     const newTheme = getInitialTheme();
     setThemeMode(newTheme);
-  }, [isDarkModeEnabled]);
+  }, [isDarkModeEnabled, isDarkModeSystemEnabled]);
 
   const setLightMode = () => {
     setThemeMode(ThemeVariants.light);
