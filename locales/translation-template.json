@@ -231,6 +231,10 @@
     "defaultMessage": "My profile",
     "description": "My profile"
   },
+  "myAccess": {
+    "defaultMessage": "My Access",
+    "description": "My Access"
+  },
   "myUserAccess": {
     "defaultMessage": "My User Access",
     "description": "My User Access"

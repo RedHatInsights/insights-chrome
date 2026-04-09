@@ -1,0 +1,222 @@
+# CodeRabbit AI Configuration for insights-chrome
+# Documentation: https://docs.coderabbit.ai/reference/configuration
+
+language: "en-US"
+tone_instructions: "Be professional, constructive, and focus on critical issues. This is a production-critical repository where any breakage can take down the entire Red Hat Hybrid Cloud Console product."
+early_access: false
+enable_free_tier: true
+
+# Exclude dependency update bots from automated reviews
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+    labels:
+      - "!wip"
+      - "!draft"
+      - "!do-not-review"
+    # Exclude automated dependency updates from reviews
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # Path-specific review instructions
+  path_instructions:
+    - path: "src/**/*.{ts,tsx}"
+      instructions: |
+        - Verify TypeScript strict mode compliance (no 'any', proper types)
+        - Check for restricted imports (no direct react-oidc-context or oidc-client-ts outside OIDCConnector/)
+        - Ensure proper error handling
+        - Verify PatternFly 6 usage (prefer over PF5)
+        - Check for proper Jotai atom usage (not Redux patterns)
+
+    - path: "**/*.test.{ts,tsx,js}"
+      instructions: |
+        - Verify test quality and coverage
+        - Check for proper mocking and test setup
+        - Ensure tests use @testing-library/react for DOM queries
+        - Verify snapshot tests are meaningful
+        - Check for async handling in tests
+
+    - path: "cypress/component/**/*.cy.tsx"
+      instructions: |
+        - Verify component test coverage
+        - Check for proper Cypress best practices
+        - Ensure meaningful assertions
+        - Verify proper waiting patterns
+
+    - path: "playwright/e2e/**/*.spec.ts"
+      instructions: |
+        - Verify e2e test quality
+        - Check for proper selectors (prefer accessible selectors)
+        - Ensure proper waiting and retry logic
+        - Verify no hardcoded timeouts unless necessary
+
+    - path: "src/auth/**/*"
+      instructions: |
+        - CRITICAL: Authentication code must be reviewed thoroughly
+        - Verify no security vulnerabilities
+        - Check for proper error handling
+        - Ensure tokens are handled securely
+
+    - path: ".tekton/**/*.{yaml,yml}"
+      instructions: |
+        - Verify Tekton/Konflux pipeline syntax
+        - Check for proper task references
+        - Ensure image tags and parameters are correct
+        - Verify pipeline triggers are appropriate
+
+  # Pre-merge checks - enforce quality standards
+  pre_merge_checks:
+    # Custom checks (up to 5 allowed)
+    custom_checks:
+      # Check 1: Require tests for new code (except dependency updates)
+      - name: "Tests Required"
+        mode: "error"
+        instructions: |
+          CRITICAL REQUIREMENT: This repository requires 60% minimum test coverage.
+
+          Pass criteria:
+          - If this PR modifies source code files (src/**/*.{ts,tsx,js,jsx}), it MUST include corresponding test files
+          - Test files can be: **/*.test.{ts,tsx,js}, cypress/component/**/*.cy.tsx, or playwright/e2e/**/*.spec.ts
+          - Exception: If ONLY documentation files (.md, .txt) are changed, tests are not required
+          - Exception: If ONLY configuration files are changed without logic changes, tests may be optional
+          - Exception: Dependency updates (package.json, package-lock.json only) do not require tests
+
+          Fail criteria:
+          - PR modifies TypeScript/JavaScript source files in src/ directory
+          - AND no test files are added or modified
+          - AND PR is not a dependency-only update
+
+          If this check fails, post a STERN WARNING:
+          "⚠️ **CRITICAL: NO TESTS DETECTED** ⚠️
+
+          This PR modifies source code but does not include any tests. The insights-chrome repository requires a minimum of 60% test coverage.
+
+          **Required Actions:**
+          1. Add unit tests (.test.ts/.test.tsx files) for new/modified code
+          2. Add Cypress component tests (cypress/component/**/*.cy.tsx) for UI components
+          3. Add Playwright e2e tests (playwright/e2e/**/*.spec.ts) for critical user flows if applicable
+
+          **Coverage Requirements:**
+          - Minimum 60% code coverage (enforced by CI)
+          - All new TypeScript code must have corresponding tests
+          - Test files should cover edge cases and error scenarios
+
+          **This is a CRITICAL repository** - Any breakage can take down the entire Red Hat Hybrid Cloud Console product.
+
+          Please add tests before merging this PR."
+
+      # Check 2: TypeScript strict mode compliance
+      - name: "TypeScript Strict Mode"
+        mode: "warning"
+        instructions: |
+          Pass criteria:
+          - All new TypeScript files use strict types (no 'any' types unless absolutely necessary)
+          - Proper type definitions exist for function parameters and return values
+          - No implicit any violations
+
+          Fail criteria:
+          - New code uses 'any' type without justification
+          - Missing type annotations on public APIs
+          - TypeScript errors would be introduced
+
+          If violations found, warn the developer to use proper TypeScript types.
+
+      # Check 3: Authentication abstraction compliance
+      - name: "Auth Abstraction Layer"
+        mode: "error"
+        instructions: |
+          CRITICAL: This repository enforces authentication abstraction via ChromeAuthContext.
+
+          Pass criteria:
+          - Code outside src/auth/OIDCConnector/ does NOT import from 'react-oidc-context' or 'oidc-client-ts'
+          - Authentication is accessed via ChromeAuthContext or useChrome hook
+
+          Fail criteria:
+          - Direct imports of 'react-oidc-context' or 'oidc-client-ts' outside src/auth/OIDCConnector/
+
+          If this check fails:
+          "❌ **AUTHENTICATION ABSTRACTION VIOLATION**
+
+          This PR imports OIDC libraries directly instead of using ChromeAuthContext.
+
+          **Required Fix:**
+          Use `useChrome()` hook and access auth via `chrome.auth` instead.
+
+          **Rationale:**
+          ESLint enforces this rule to maintain a consistent auth abstraction layer.
+          Direct OIDC imports are only allowed in src/auth/OIDCConnector/ directory."
+
+      # Check 4: Breaking changes to Chrome API
+      - name: "Chrome API Breaking Changes"
+        mode: "error"
+        instructions: |
+          Pass criteria:
+          - Changes to src/chrome/create-chrome.ts that modify the public Chrome API are documented
+          - Breaking changes include a migration guide in PR description
+          - PR is labeled with 'breaking-change' if Chrome API is modified
+
+          Fail criteria:
+          - Public Chrome API methods are removed or renamed without documentation
+          - Function signatures change without migration notes
+          - No 'breaking-change' label when Chrome API is modified
+
+          If violations found:
+          "⚠️ **CHROME API BREAKING CHANGE DETECTED**
+
+          Changes to src/chrome/create-chrome.ts may affect ALL consuming applications.
+
+          **Required Actions:**
+          1. Add 'breaking-change' label to this PR
+          2. Document migration path in PR description
+          3. Update docs/api.md with new API details
+          4. Consider backward compatibility if possible
+
+          **Impact:**
+          50+ HCC applications depend on the Chrome API. Breaking changes cascade across the entire platform."
+
+      # Check 5: Module Federation breaking changes
+      - name: "Module Federation Compatibility"
+        mode: "warning"
+        instructions: |
+          Pass criteria:
+          - Changes to webpack.config.js or webpack.plugins.js maintain Module Federation compatibility
+          - Shared dependency versions are coordinated with consuming apps
+          - Exposed modules (./LandingNavFavorites, ./DashboardFavorites, etc.) remain stable
+
+          Fail criteria:
+          - Module Federation shared dependencies change major versions
+          - Exposed module exports are removed or renamed
+          - Webpack configuration breaks existing module loading
+
+          If issues detected, warn about Module Federation impact on consuming applications.
+
+  # Code review settings
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+
+  # Tool usage
+  tools:
+    # Security scanning tools
+    gitleaks:
+      enabled: true  # Scan for hardcoded credentials/secrets
+    trufflehog:
+      enabled: true  # Secret scanner with verification capabilities
+    semgrep:
+      enabled: true  # Security vulnerabilities and code quality
+
+    # Code analysis tools
+    github-checks:
+      enabled: true
+      timeout_ms: 300000
+    ast-grep:
+      essential_rules: true
+
+# Chat configuration (root level)
+chat:
+  auto_reply: true

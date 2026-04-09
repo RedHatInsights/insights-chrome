@@ -2,8 +2,17 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { useAtomValue } from 'jotai';
 import { useFlag } from '@unleash/proxy-client-react';
+import * as amplitude from '@amplitude/analytics-browser';
+import { autocapturePlugin } from '@amplitude/plugin-autocapture-browser';
 
-jest.mock('@unleash/proxy-client-react', () => ({ useFlag: jest.fn(() => true) }));
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn((flag: string) => {
+    // Enable engagement SDK by default, disable autocapture
+    if (flag === 'platform.chrome.analytics.amplitude') return true;
+    if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+    return true;
+  }),
+}));
 jest.mock('react-router-dom', () => ({ useNavigate: () => jest.fn() }));
 jest.mock('../utils/common', () => ({ isProd: () => false }));
 jest.mock('../state/atoms/activeModuleAtom', () => ({
@@ -11,6 +20,13 @@ jest.mock('../state/atoms/activeModuleAtom', () => ({
 }));
 jest.mock('jotai', () => ({ useAtomValue: jest.fn(() => ({ analytics: { amplitude: { APIKeyDev: 'DEVKEY' } } })) }));
 jest.mock('./useSegment', () => ({ useSegment: () => ({ analytics: analyticsMock, ready: true }) }));
+jest.mock('@amplitude/analytics-browser', () => ({
+  add: jest.fn(),
+  init: jest.fn(),
+}));
+jest.mock('@amplitude/plugin-autocapture-browser', () => ({
+  autocapturePlugin: jest.fn(() => ({ name: 'autocapture' })),
+}));
 
 const onHandlers: Record<string, Array<(...args: unknown[]) => void>> = {};
 const analyticsMock = {
@@ -75,9 +91,15 @@ describe('useAmplitude', () => {
   });
 
   it('does not inject script when feature flag is disabled', async () => {
-    (useFlag as unknown as jest.Mock).mockReturnValueOnce(false);
+    (useFlag as unknown as jest.Mock).mockImplementation(() => false);
     render(<TestComponent />);
     expect(document.getElementById('amplitude-script')).toBeFalsy();
+    // Restore default mock
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
   });
 
   it('logs error and does not boot when engagement is missing after script load', async () => {
@@ -175,5 +197,92 @@ describe('useAmplitude', () => {
     // No script should be injected
     expect(document.getElementById('amplitude-script')).toBeFalsy();
     warnSpy.mockRestore();
+  });
+
+  it('initializes autocapture when flag is enabled', async () => {
+    // Verify imports are defined
+    expect(amplitude).toBeDefined();
+    expect(autocapturePlugin).toBeDefined();
+
+    // Enable autocapture flag
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return false;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
+      expect(amplitude.init).toHaveBeenCalledWith(expect.stringMatching('^[0-9a-f]{32}'), 'user-1', {
+        deviceId: 'anon-1',
+        defaultTracking: {
+          sessions: true,
+          pageViews: true,
+          formInteractions: true,
+          fileDownloads: true,
+        },
+      });
+    });
+
+    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
+
+    // Restore mocks
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+    logSpy.mockRestore();
+  });
+
+  it('initializes both guides and autocapture when both flags are enabled', async () => {
+    // Enable both flags
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return true;
+      return false;
+    });
+
+    window.engagement = {
+      boot: jest.fn(),
+      shutdown: jest.fn(),
+      forwardEvent: jest.fn(),
+      setRouter: jest.fn(),
+    };
+
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    render(<TestComponent />);
+
+    // Script for guides should be injected
+    const script = document.getElementById('amplitude-script') as HTMLScriptElement;
+    expect(script).toBeTruthy();
+    expect(script.src).toContain('/DEVKEY.engagement.js');
+
+    // Trigger script load
+    if (script.onload) {
+      script.onload(new Event('load'));
+    }
+
+    // Both engagement SDK and autocapture should initialize
+    await waitFor(() => {
+      expect(window.engagement?.boot).toHaveBeenCalled();
+      expect(amplitude.add).toHaveBeenCalledWith({ name: 'autocapture' });
+      expect(amplitude.init).toHaveBeenCalled();
+    });
+
+    expect(logSpy).toHaveBeenCalledWith('Amplitude SDK with autocapture initialized (separate project)');
+
+    // Restore mocks
+    (useFlag as unknown as jest.Mock).mockImplementation((flag: string) => {
+      if (flag === 'platform.chrome.analytics.amplitude') return true;
+      if (flag === 'platform.chrome.analytics.amplitude.autocapture') return false;
+      return true;
+    });
+    logSpy.mockRestore();
   });
 });

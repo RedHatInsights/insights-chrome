@@ -64,7 +64,7 @@ aside {
 }
 .pf-c-page__main-section.pf-m-light {
   // --pf-c-page__main-section--BackgroundColor: var(--pf-c-page__main-section--m-light--BackgroundColor);
-  --pf-c-page__main-section--BackgroundColor: #fff;
+  --pf-c-page__main-section--BackgroundColor: var(--pf-t--global--background--color--primary--default);
 }
 
 // Landing page logout alert

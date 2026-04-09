@@ -47,8 +47,9 @@ const DropdownItems = ({
   const accountNumberTooltip = `${intl.formatMessage(messages.useAccountNumber)}`;
   const questionMarkRef = useRef(null);
   const { logout } = useContext(ChromeAuthContext);
-  const enableMyUserAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
-  const myUserAccessPath = enableMyUserAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
+  const enableMyAccessLanding = useFlag('platform.chrome.my-user-access-landing-page');
+  const v2WorkspacesEnabled = useFlag('platform.rbac.workspaces');
+  const myAccessPath = enableMyAccessLanding ? '/iam/user-access/overview' : '/iam/my-user-access';
 
   return [
     <Panel key="read-only-info" className="pf-v6-u-text-color-subtle">
@@ -105,8 +106,8 @@ const DropdownItems = ({
     <React.Fragment key="My user access wrapper">
       <DropdownItem
         component={({ className }) => (
-          <ChromeLink className={className} href={myUserAccessPath} appId="rbac">
-            {intl.formatMessage(messages.myUserAccess)}
+          <ChromeLink className={className} href={myAccessPath} appId="rbac">
+            {v2WorkspacesEnabled ? intl.formatMessage(messages.myAccess) : intl.formatMessage(messages.myUserAccess)}
           </ChromeLink>
         )}
         key="My user access"
