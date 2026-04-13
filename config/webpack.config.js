@@ -195,6 +195,11 @@ const commonConfig = ({ dev }) => {
                   syntax: 'typescript',
                   tsx: true,
                 },
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                  },
+                },
               },
             },
           },

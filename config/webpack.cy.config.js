@@ -36,6 +36,11 @@ const JSConfig = {
                 syntax: 'typescript',
                 tsx: true,
               },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                },
+              },
             },
           },
         },
@@ -99,6 +104,7 @@ const JSConfig = {
       shared: [
         { react: { singleton: true, eager: true } },
         { 'react-dom': { singleton: true, eager: true } },
+        { 'react/jsx-runtime': { singleton: true, eager: true } },
         { 'react-router-dom': { singleton: true } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true } },
         { '@patternfly/react-core': {} },
