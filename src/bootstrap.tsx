@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
@@ -8,16 +8,12 @@ import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import chromeStore from './state/chromeStore';
-import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/GenerateId/GenerateId';
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
-
-GenerateId.defaultProps.prefix = 'hc-console-';
-GenerateId.defaultProps.isRandom = true;
 
 const useInitializeAnalytics = () => {
   useEffect(() => {
