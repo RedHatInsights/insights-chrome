@@ -22,9 +22,10 @@ jobs:
       - uses: actions/cache@v3
         id: node_modules-cache
         with:
-          path: | 
+          path: |
             **/node_modules
             /home/runner/.cache/Cypress
+            .cypress-cache
           key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
       - run: npm i # use cached modules
   # unit testing job
@@ -80,17 +81,20 @@ jobs:
         with:
           node-version: 22.19.0
           cache: 'npm'      
-      # consume installed modules
+      # consume installed modules and webpack cache
       - uses: actions/cache@v3
         id: node_modules-cache
         with:
-          path: "**/node_modules"
-          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}        
+          path: |
+            **/node_modules
+            /home/runner/.cache/Cypress
+            .cypress-cache
+          key: install-cache-${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
       - run: npm i
       - uses: cypress-io/github-action@v6
         with:
             component: true
-            install-command: npx cypress install
+            install: false
             browser: chrome
   # build job
   build:
