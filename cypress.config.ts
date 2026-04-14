@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 const { addMatchImageSnapshotPlugin } = require('@simonsmith/cypress-image-snapshot/plugin');
 
 export default defineConfig({
-  numTestsKeptInMemory: 0,
+  numTestsKeptInMemory: 50,
   component: {
     specPattern: 'cypress/component/**/*.cy.{js,jsx,ts,tsx}',
     excludeSpecPattern: ['/snapshots/*', '/image_snapshots/*', '/src/*'],
