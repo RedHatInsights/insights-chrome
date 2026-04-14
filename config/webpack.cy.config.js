@@ -74,6 +74,7 @@ const JSConfig = {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
       ...searchIgnoredStyles(path.resolve(__dirname, '../')),
+      '@rhds/icons': path.resolve(__dirname, '../node_modules/@rhds/icons'),
     },
   },
   output: {
@@ -104,7 +105,7 @@ const JSConfig = {
       shared: [
         { react: { singleton: true, eager: true } },
         { 'react-dom': { singleton: true, eager: true } },
-        { 'react/jsx-runtime': { singleton: true, eager: true } },
+        { 'react/jsx-runtime': { singleton: true } },
         { 'react-router-dom': { singleton: true } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true } },
         { '@patternfly/react-core': {} },
