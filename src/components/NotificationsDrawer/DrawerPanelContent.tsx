@@ -24,7 +24,7 @@ const DrawerPanelBase = (props: DrawerPanelProps) => {
     if (!drawerContent && isExpanded) {
       setIsExpanded(false);
     }
-  }, [drawerContent, isExpanded]);
+  }, [drawerContent, isExpanded, setIsExpanded]);
 
   if (!drawerContent) {
     return null;
