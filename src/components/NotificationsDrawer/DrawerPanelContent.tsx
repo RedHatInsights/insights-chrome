@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { NotificationDrawer } from '@patternfly/react-core/dist/dynamic/components/NotificationDrawer';
 import Spinner from '@redhat-cloud-services/frontend-components/Spinner';
 import classNames from 'classnames';
 
 import { ScalprumComponent } from '@scalprum/react-core';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { drawerPanelContentAtom } from '../../state/atoms/drawerPanelContentAtom';
+import { notificationDrawerExpandedAtom } from '../../state/atoms/notificationDrawerAtom';
 
 export type DrawerPanelProps = {
   panelRef: React.Ref<unknown>;
@@ -14,6 +15,16 @@ export type DrawerPanelProps = {
 };
 const DrawerPanelBase = (props: DrawerPanelProps) => {
   const drawerContent = useAtomValue(drawerPanelContentAtom);
+  const isExpanded = useAtomValue(notificationDrawerExpandedAtom);
+  const setIsExpanded = useSetAtom(notificationDrawerExpandedAtom);
+
+  // Safety net: if drawer is expanded but no content is set (e.g. after page
+  // reload resets atoms), close the drawer to prevent a stuck empty state.
+  useEffect(() => {
+    if (!drawerContent && isExpanded) {
+      setIsExpanded(false);
+    }
+  }, [drawerContent, isExpanded]);
 
   if (!drawerContent) {
     return null;

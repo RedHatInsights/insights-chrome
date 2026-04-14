@@ -107,7 +107,7 @@ export const createChromeContext = ({
     toggleDrawerContent: (data: ScalprumComponentProps) => {
       const isOpened = chromeStore.get(notificationDrawerExpandedAtom);
       const currentContent = chromeStore.get(drawerPanelContentAtom);
-      const futureOpened = (currentContent?.scope !== data.scope && currentContent?.module !== data.module) || !isOpened;
+      const futureOpened = currentContent?.scope !== data.scope || currentContent?.module !== data.module || !isOpened;
       chromeStore.set(drawerPanelContentAtom, futureOpened ? data : undefined);
       chromeStore.set(notificationDrawerExpandedAtom, futureOpened);
     },
