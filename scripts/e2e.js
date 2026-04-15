@@ -57,7 +57,7 @@ async function runTests() {
 
   console.log('HTTP Proxy val', { px: process.env.HTTP_PROXY });
   await waitOn(options);
-  execSyncWrapper(`NO_COLOR=1 E2E_USER=${process.env.CHROME_ACCOUNT} E2E_PASSWORD=${process.env.CHROME_PASSWORD} npx cypress run --e2e`);
+  execSyncWrapper(`NO_COLOR=1 E2E_USER="${process.env.CHROME_ACCOUNT}" E2E_PASSWORD="${process.env.CHROME_PASSWORD}" npx cypress run --e2e`);
 }
 
 runTests()

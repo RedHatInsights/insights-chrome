@@ -36,6 +36,35 @@
 //   }
 // }
 
+Cypress.Commands.add('getUserFullName', () => {
+  return cy.window().then((win) => {
+    const oidcKey = Object.keys(win.localStorage).find((key) => key.startsWith('oidc.user:'));
+    if (!oidcKey) {
+      throw new Error('OIDC user key was not found in localStorage');
+    }
+
+    const rawUser = win.localStorage.getItem(oidcKey);
+    if (!rawUser) {
+      throw new Error(`OIDC user payload missing for key: ${oidcKey}`);
+    }
+
+    let parsedUser: { profile?: { first_name?: string; last_name?: string } };
+    try {
+      parsedUser = JSON.parse(rawUser);
+    } catch {
+      throw new Error(`OIDC user payload is not valid JSON for key: ${oidcKey}`);
+    }
+
+    const firstName = parsedUser.profile?.first_name;
+    const lastName = parsedUser.profile?.last_name;
+    if (!firstName || !lastName) {
+      throw new Error('OIDC profile is missing first_name and/or last_name');
+    }
+
+    return `${firstName} ${lastName}`;
+  });
+});
+
 Cypress.Commands.add('login', () => {
   cy.session(
     `login-${Cypress.env('E2E_USER')}`,

@@ -22,6 +22,12 @@ import 'cypress-localstorage-commands';
 // require('./commands')
 
 declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(): Chainable<void>;
+      getUserFullName(): Chainable<string>;
+    }
+  }
   namespace NodeJS {
     interface ProcessEnv {
       E2E_USER: string;
