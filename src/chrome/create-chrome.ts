@@ -27,6 +27,7 @@ import { appActionAtom, pageObjectIdAtom } from '../state/atoms/pageAtom';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
+import { computeDrawerToggle } from './computeDrawerToggle';
 import { TagRegisteredWith, globalFilterHiddenAtom, globalFilterScopeAtom, selectedTagsAtom } from '../state/atoms/globalFilterAtom';
 
 // Global event listeners registry for PUBLIC_EVENTS
@@ -107,8 +108,8 @@ export const createChromeContext = ({
     toggleDrawerContent: (data: ScalprumComponentProps) => {
       const isOpened = chromeStore.get(notificationDrawerExpandedAtom);
       const currentContent = chromeStore.get(drawerPanelContentAtom);
-      const futureOpened = (currentContent?.scope !== data.scope && currentContent?.module !== data.module) || !isOpened;
-      chromeStore.set(drawerPanelContentAtom, futureOpened ? data : undefined);
+      const { futureOpened, nextContent } = computeDrawerToggle(currentContent, isOpened, data);
+      chromeStore.set(drawerPanelContentAtom, nextContent);
       chromeStore.set(notificationDrawerExpandedAtom, futureOpened);
     },
   };
