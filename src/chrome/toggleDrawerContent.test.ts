@@ -2,16 +2,16 @@ import { createStore } from 'jotai';
 import { drawerPanelContentAtom } from '../state/atoms/drawerPanelContentAtom';
 import { notificationDrawerExpandedAtom } from '../state/atoms/notificationDrawerAtom';
 import { ScalprumComponentProps } from '@scalprum/react-core';
+import { computeDrawerToggle } from './computeDrawerToggle';
 
 /**
- * Extracted toggleDrawerContent logic for unit testing.
- * Mirrors the implementation in create-chrome.ts drawerActions.
+ * Test helper that applies the shared computeDrawerToggle logic to a Jotai store.
  */
 function toggleDrawerContent(store: ReturnType<typeof createStore>, data: ScalprumComponentProps) {
   const isOpened = store.get(notificationDrawerExpandedAtom);
   const currentContent = store.get(drawerPanelContentAtom);
-  const futureOpened = currentContent?.scope !== data.scope || currentContent?.module !== data.module || !isOpened;
-  store.set(drawerPanelContentAtom, futureOpened ? data : undefined);
+  const { futureOpened, nextContent } = computeDrawerToggle(currentContent, isOpened, data);
+  store.set(drawerPanelContentAtom, nextContent);
   store.set(notificationDrawerExpandedAtom, futureOpened);
 }
 
