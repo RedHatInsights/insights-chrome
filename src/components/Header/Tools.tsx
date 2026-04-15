@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useContext, useEffect, useState } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
 import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider';
 import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
@@ -359,9 +359,12 @@ const Tools = () => {
   );
 
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
-  const [isNotificationDrawerExpanded, setIsNotificationsDrawerExpanded] = useAtom(notificationDrawerExpandedAtom);
+  const isNotificationDrawerExpanded = useAtomValue(notificationDrawerExpandedAtom);
   const toggleDrawer = () => {
-    setIsNotificationsDrawerExpanded((prev) => !prev);
+    toggleDrawerContent({
+      scope: 'notifications',
+      module: './DrawerPanel',
+    });
   };
   const drawerContent = useAtomValue(drawerPanelContentAtom);
 
