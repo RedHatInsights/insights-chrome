@@ -130,7 +130,12 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     </CardHeader>
                     <Divider />
                     <CardBody className="pf-v6-u-p-0">
-                      <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
+                      <TabContent
+                        eventKey={activeTabKey}
+                        id={TAB_CONTENT_ID}
+                        ref={tabContentRef}
+                        aria-label={activeTabKey === FAVORITE_TAB_ID ? 'My Favorite services' : selectedService?.description}
+                      >
                         {activeTabKey === FAVORITE_TAB_ID ? (
                           <Fragment>
                             <FavoriteServicesGallery favoritedServices={favoritedServices} />
