@@ -7,7 +7,9 @@ describe.skip('OIDC State', () => {
     // should pass normally
     cy.visit('/');
 
-    cy.contains('Insights QA').should('exist');
+    cy.getUserFullName().then((name) => {
+      cy.contains(name).should('exist');
+    });
 
     // Introduce broken state in URL
 
@@ -31,7 +33,9 @@ describe.skip('OIDC State', () => {
       const url = new URL(win.location.href);
       expect(url.pathname).to.eq('/foo/bar');
       expect(url.search).to.eq('?baz=quaz');
-      cy.contains('Insights QA').should('exist');
+      cy.getUserFullName().then((name) => {
+        cy.contains(name).should('exist');
+      });
     });
   });
 });

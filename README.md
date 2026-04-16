@@ -37,7 +37,38 @@ npm run build --watch
 3. Running tests
 
 ```sh
+# Unit tests (Jest)
 npm run test
+
+# Component tests (Cypress)
+npm run test:ct
+```
+
+4. Running E2E tests
+
+E2E tests require a running dev server and a stage test account (create one via [Ethel](https://account-manager-stage.app.eng.rdu2.redhat.com/#create)).
+
+```sh
+# Start the dev server first
+npm run dev
+
+# Cypress (interactive)
+E2E_USER=<username> E2E_PASSWORD="<password>" npx cypress open --e2e
+
+# Cypress (headless)
+E2E_USER=<username> E2E_PASSWORD="<password>" npx cypress run --e2e
+
+# Cypress (single spec — spec.cy.ts must run first to create the login session)
+E2E_USER=<username> E2E_PASSWORD="<password>" npx cypress run --e2e --spec cypress/e2e/spec.cy.ts,cypress/e2e/ephemeral/init-flow.cy.ts
+
+# Playwright
+E2E_USER=<username> E2E_PASSWORD="<password>" npx playwright test
+```
+
+The CI wrapper starts its own dev server — don't run with a dev server already running:
+
+```sh
+CHROME_ACCOUNT=<username> CHROME_PASSWORD="<password>" npm run ci:cypress-e2e-tests
 ```
 
 ## Running chrome locally
