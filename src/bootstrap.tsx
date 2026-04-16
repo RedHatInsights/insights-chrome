@@ -8,12 +8,19 @@ import OIDCProvider from './auth/OIDCConnector/OIDCProvider';
 import messages from './locales/data.json';
 import ErrorBoundary from './components/ErrorComponents/ErrorBoundary';
 import chromeStore from './state/chromeStore';
+import { GenerateId } from '@patternfly/react-core/dist/dynamic/helpers/GenerateId/GenerateId';
 import AppPlaceholder from './components/AppPlaceholder';
 import useSessionConfig from './hooks/useSessionConfig';
 import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComponent';
 
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
+
+// GenerateId is a class component — defaultProps is valid and not deprecated.
+// isRandom prevents sequential ID collisions in parallel test runs.
+// prefix namespaces generated IDs away from PF defaults.
+GenerateId.defaultProps.prefix = 'hc-console-';
+GenerateId.defaultProps.isRandom = true;
 
 const useInitializeAnalytics = () => {
   useEffect(() => {
