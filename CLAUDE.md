@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Insights Chrome - AI Assistant Guidelines
 
 ## ⚠️ CRITICAL REPOSITORY WARNING
@@ -34,7 +36,7 @@
 - **React 18.3** with TypeScript 5.9 (strict mode)
 - **Webpack 5** with Module Federation
 - **SWC** for fast TypeScript/JavaScript transpilation
-- **Jotai 2.18** for atomic state management
+- **Jotai 2** for atomic state management
 - **PatternFly 6.4** (React components) + PF5 (legacy CSS)
 - **React Router v6** for routing
 - **Scalprum** (Module Federation wrapper)
@@ -413,7 +415,10 @@ Chrome exposes modules for other applications:
 - `./LandingNavFavorites` - Favorite services component
 - `./DashboardFavorites` - Dashboard favorites widget
 - `./SatelliteToken` - Satellite token layout
+- `./ModularInventory` - Modular inventory POC
 - `./search/useSearch` - Search hook for consuming apps
+- `./analytics/intercom/OpenShiftItercom` - Intercom module component
+- `./analytics/intercom/useOpenShiftIntercomStore` - Intercom state store
 
 **Register modules:**
 ```typescript
