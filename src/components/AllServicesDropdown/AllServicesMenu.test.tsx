@@ -1,5 +1,6 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, createStore } from 'jotai';
 import AllServicesMenu from './AllServicesMenu';
@@ -67,27 +68,21 @@ describe('AllServicesMenu', () => {
   it('should set aria-label to "My Favorite services" when Favorites tab is active', () => {
     renderMenu();
     // Favorites tab is the default active tab
-    const tabContent = document.getElementById('refTab1Section');
-    expect(tabContent).toBeTruthy();
-    expect(tabContent?.getAttribute('aria-label')).toBe('My Favorite services');
+    expect(screen.getByRole('tabpanel', { name: 'My Favorite services' })).toBeInTheDocument();
   });
 
-  it('should set aria-label to the selected service description when a service tab is active', () => {
+  it('should set aria-label to the selected service description when a service tab is active', async () => {
     renderMenu();
     // Click on the OpenShift tab to switch away from Favorites
     const openshiftTab = screen.getByTestId('tab-openshift');
-    act(() => {
-      openshiftTab.click();
-    });
+    await userEvent.click(openshiftTab);
 
-    const tabContent = document.getElementById('refTab1Section');
-    expect(tabContent?.getAttribute('aria-label')).toBe('OpenShift platform services');
+    expect(screen.getByRole('tabpanel', { name: 'OpenShift platform services' })).toBeInTheDocument();
   });
 
   it('should not use first section description as aria-label when Favorites tab is active', () => {
     renderMenu();
-    const tabContent = document.getElementById('refTab1Section');
     // The bug: aria-label showed the first section's description (AI/ML) even on Favorites tab
-    expect(tabContent?.getAttribute('aria-label')).not.toBe('AI and machine learning services');
+    expect(screen.queryByRole('tabpanel', { name: 'AI and machine learning services' })).not.toBeInTheDocument();
   });
 });
