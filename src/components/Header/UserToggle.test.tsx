@@ -106,7 +106,9 @@ describe('UserToggle', () => {
     renderWithProviders(ctx);
     await openDropdown();
     expect(screen.getByText('540155')).toBeInTheDocument();
-    expect(screen.getByText('123')).toBeInTheDocument();
+    const orgIdContainer = document.querySelector('[data-ouia-component-id="chrome-user-org-id"]');
+    expect(orgIdContainer).toBeInTheDocument();
+    expect(orgIdContainer?.textContent).toContain('123');
   });
 
   it('should render username in dropdown', async () => {
@@ -117,8 +119,7 @@ describe('UserToggle', () => {
   });
 
   it('should show Org. Administrator badge for org admins', async () => {
-    const ctx = createMockAuthContext();
-    ctx.user.identity.user.is_org_admin = true;
+    const ctx = createMockAuthContext({ user: { is_active: true, is_org_admin: true, is_internal: false, locale: 'en_US', username: 'jdoe', email: 'jdoe@example.com', first_name: 'John', last_name: 'Doe' } });
     renderWithProviders(ctx);
     await openDropdown();
     expect(screen.getByText('Org. Administrator')).toBeInTheDocument();
@@ -131,8 +132,8 @@ describe('UserToggle', () => {
 
     const allTerms = document.querySelectorAll('.pf-v6-c-description-list__term');
     const termTexts = Array.from(allTerms).map((t) => t.textContent?.trim());
-    expect(termTexts[0]).toContain('Username:');
+    expect(termTexts[0]).toBe('Username:');
     expect(termTexts[1]).toBe('Account name:');
-    expect(termTexts[2]).toContain('Account number:');
+    expect(termTexts[2]).toContain('Account number:'); // Contains QuestionCircleIcon, so toContain is appropriate
   });
 });
