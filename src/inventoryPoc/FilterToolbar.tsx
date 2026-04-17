@@ -1,4 +1,3 @@
-import React from 'react';
 import { HostApiOptions } from './api';
 import { Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';

@@ -63,10 +63,4 @@ const HeaderAlert = ({ className, title, variant = AlertVariant.info, actionLink
   );
 };
 
-HeaderAlert.defaultProps = {
-  variant: 'info',
-  dismissable: false,
-  dismissDelay: 5000,
-};
-
 export default HeaderAlert;

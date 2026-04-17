@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { MemoryRouter, MemoryRouterProps, useLocation } from 'react-router-dom';
 import ChromeAuthContext, { ChromeAuthContextValue } from '../auth/ChromeAuthContext';
 import { ChromeUser } from '@redhat-cloud-services/types';
