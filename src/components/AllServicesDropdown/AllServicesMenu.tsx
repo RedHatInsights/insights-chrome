@@ -8,7 +8,7 @@ import { Panel, PanelMain } from '@patternfly/react-core/dist/dynamic/components
 import { Sidebar, SidebarContent, SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
 import { TabContent } from '@patternfly/react-core/dist/dynamic/components/Tabs';
 import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
-import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon'; // Add this import
+import StarIcon from '@patternfly/react-icons/dist/dynamic/icons/star-icon';
 import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
 
@@ -17,7 +17,7 @@ import FavoriteServicesGallery from '../FavoriteServices/ServicesGallery';
 import AllServicesTabs from './AllServicesTabs';
 import AllServicesGallery from './AllServicesGallery';
 import { ServiceTileProps } from '../FavoriteServices/ServiceTile';
-import { AllServicesDropdownContext } from './common';
+import { AllServicesDropdownContext, FAVORITE_TAB_ID, TAB_CONTENT_ID } from './common';
 import { hidePreviewBannerAtom } from '../../state/atoms/releaseAtom';
 import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 
@@ -28,9 +28,6 @@ export type AllServicesMenuProps = {
   linkSections: AllServicesSection[];
   favoritedServices: ServiceTileProps[];
 };
-
-const TAB_CONTENT_ID = 'refTab1Section';
-const FAVORITE_TAB_ID = 'favorites';
 
 const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedServices }: AllServicesMenuProps) => {
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(FAVORITE_TAB_ID);
@@ -130,7 +127,12 @@ const AllServicesMenu = ({ setIsOpen, isOpen, menuRef, linkSections, favoritedSe
                     </CardHeader>
                     <Divider />
                     <CardBody className="pf-v6-u-p-0">
-                      <TabContent eventKey={activeTabKey} id={TAB_CONTENT_ID} ref={tabContentRef} aria-label={selectedService?.description}>
+                      <TabContent
+                        eventKey={activeTabKey}
+                        id={TAB_CONTENT_ID}
+                        ref={tabContentRef}
+                        aria-label={activeTabKey === FAVORITE_TAB_ID ? 'My Favorite services' : selectedService?.description}
+                      >
                         {activeTabKey === FAVORITE_TAB_ID ? (
                           <Fragment>
                             <FavoriteServicesGallery favoritedServices={favoritedServices} />
