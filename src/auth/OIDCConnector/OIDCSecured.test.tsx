@@ -109,6 +109,48 @@ describe('OIDCSecured', () => {
     });
   });
 
+  it('renders placeholder instead of throwing when auth.error is set', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    const signinSilent = jest.fn().mockResolvedValue(undefined);
+    mockAuth.error = new Error('Silent renew failed');
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    const { getByTestId } = render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div data-testid="child">child</div>
+      </OIDCSecured>
+    );
+
+    // Should show placeholder, not throw
+    expect(getByTestId('app-placeholder')).toBeInTheDocument();
+
+    // Should attempt silent recovery
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalled();
+    });
+  });
+
+  it('redirects to SSO when silent recovery fails', async () => {
+    const { useAuth } = jest.requireMock('react-oidc-context');
+    const { login: mockLogin } = jest.requireMock('./utils');
+    const signinSilent = jest.fn().mockRejectedValue(new Error('SSO session expired'));
+    mockAuth.error = new Error('Silent renew failed');
+    mockAuth.signinSilent = signinSilent;
+    useAuth.mockReturnValue(mockAuth);
+
+    render(
+      <OIDCSecured microFrontendConfig={{}} ssoUrl="https://sso.stage.redhat.com/auth">
+        <div>child</div>
+      </OIDCSecured>
+    );
+
+    await waitFor(() => {
+      expect(signinSilent).toHaveBeenCalled();
+      expect(mockLogin).toHaveBeenCalledWith(expect.objectContaining({ error: mockAuth.error }));
+    });
+  });
+
   it('handles if auth.user object is not yet defined', async () => {
     const { setCookie } = jest.requireMock('../setCookie');
 

@@ -91,6 +91,11 @@ export default defineMessages({
     description: 'for known outages.',
     defaultMessage: 'for known outages.',
   },
+  tryAgain: {
+    id: 'tryAgain',
+    description: 'Try again',
+    defaultMessage: 'Try again',
+  },
   returnToHomepage: {
     id: 'returnToHomepage',
     description: 'Return to home page',

@@ -212,9 +212,28 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
 
   useManageSilentRenew(auth, state.login);
 
+  // Track whether we've already attempted recovery for the current auth error
+  const recoveryAttemptedRef = useRef(false);
+
+  useEffect(() => {
+    if (auth.error && !recoveryAttemptedRef.current) {
+      recoveryAttemptedRef.current = true;
+      log('Auth error detected, attempting silent recovery:', auth.error.message);
+      auth.signinSilent().catch(() => {
+        log('Silent recovery failed, redirecting to SSO');
+        login(auth);
+      });
+    }
+
+    if (!auth.error) {
+      recoveryAttemptedRef.current = false;
+    }
+  }, [auth.error]);
+
   if (auth.error) {
-    // leave the auth error handling on the global ErrorBoundary
-    throw auth.error;
+    // Show loading placeholder while recovery is attempted instead of
+    // throwing and killing the entire app tree via the global ErrorBoundary
+    return <AppPlaceholder />;
   }
 
   if (!auth.isAuthenticated || !state.ready) {
