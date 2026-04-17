@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { registerQuickstartLinkClickListener } from '../utils/chromeHistory';
 

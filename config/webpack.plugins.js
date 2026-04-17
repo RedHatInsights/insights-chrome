@@ -46,6 +46,7 @@ const plugins = (dev = false, beta = false, restricted = false) => {
       shared: [
         { react: { singleton: true, eager: true, requiredVersion: deps.react } },
         { 'react-dom': { singleton: true, eager: true, requiredVersion: deps['react-dom'] } },
+        { 'react/jsx-runtime': { singleton: true, eager: true, requiredVersion: deps.react } },
         { 'react-intl': { singleton: true, eager: true, requiredVersion: deps['react-intl'] } },
         { 'react-router-dom': { singleton: true, requiredVersion: deps['react-router-dom'] } },
         { '@openshift/dynamic-plugin-sdk': { singleton: true, requiredVersion: deps['@openshift/dynamic-plugin-sdk'] } },

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IntlProvider, ReactIntlErrorCode } from 'react-intl';
 import { Provider as JotaiProvider } from 'jotai';
@@ -16,6 +16,9 @@ import GatewayErrorComponent from './components/ErrorComponents/GatewayErrorComp
 const language: keyof typeof messages = 'en';
 const AuthProvider = OIDCProvider;
 
+// GenerateId is a class component — defaultProps is valid and not deprecated.
+// isRandom prevents sequential ID collisions in parallel test runs.
+// prefix namespaces generated IDs away from PF defaults.
 GenerateId.defaultProps.prefix = 'hc-console-';
 GenerateId.defaultProps.isRandom = true;
 

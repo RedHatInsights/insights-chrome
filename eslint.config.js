@@ -43,6 +43,8 @@ module.exports = defineConfig(
     },
     rules: {
       ...typescriptEslint.configs.recommended.rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
       'react/prop-types': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, args: 'after-used', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'warn',
