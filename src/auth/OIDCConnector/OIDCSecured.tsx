@@ -218,7 +218,7 @@ export function OIDCSecured({ children, microFrontendConfig, ssoUrl }: React.Pro
   useEffect(() => {
     if (auth.error && !recoveryAttemptedRef.current) {
       recoveryAttemptedRef.current = true;
-      log('Auth error detected, attempting silent recovery:', auth.error.message);
+      log(`Auth error detected, attempting silent recovery: ${auth.error.message}`);
       auth.signinSilent().catch(() => {
         log('Silent recovery failed, redirecting to SSO');
         login(auth);
