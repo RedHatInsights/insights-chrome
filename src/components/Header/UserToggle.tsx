@@ -27,6 +27,7 @@ import { DescriptionListDescription } from '@patternfly/react-core/dist/dynamic/
 const DropdownItems = ({
   username = '',
   isOrgAdmin,
+  accountName,
   accountNumber,
   orgId,
   isInternal,
@@ -34,6 +35,7 @@ const DropdownItems = ({
 }: {
   username?: string;
   isOrgAdmin?: boolean;
+  accountName?: string;
   accountNumber?: string;
   orgId?: string;
   isInternal?: boolean;
@@ -61,6 +63,12 @@ const DropdownItems = ({
               <DescriptionListDescription>{username}</DescriptionListDescription>
               {isOrgAdmin && <DescriptionListDescription>{intl.formatMessage(messages.orgAdministrator)}</DescriptionListDescription>}
             </DescriptionListGroup>
+            {accountName && (
+              <DescriptionListGroup>
+                <DescriptionListTerm>{intl.formatMessage(messages.accountName)}</DescriptionListTerm>
+                <DescriptionListDescription>{accountName}</DescriptionListDescription>
+              </DescriptionListGroup>
+            )}
             {accountNumber && (
               <Tooltip triggerRef={questionMarkRef} id="accountNumber-tooltip" content={accountNumberTooltip}>
                 <DescriptionListGroup>
@@ -151,7 +159,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     user: {
-      identity: { user, account_number, internal },
+      identity: { user, account_number, internal, organization },
     },
   } = useContext(ChromeAuthContext);
   const name = user?.first_name + ' ' + user?.last_name;
@@ -203,6 +211,7 @@ const UserToggle = ({ isSmall = false, extraItems = [] }: UserToggleProps) => {
         <DropdownItems
           username={user?.username}
           isOrgAdmin={user?.is_org_admin}
+          accountName={organization?.name}
           accountNumber={account_number}
           orgId={internal?.org_id}
           isInternal={user?.is_internal}

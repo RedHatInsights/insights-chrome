@@ -353,6 +353,11 @@ export default defineMessages({
     defaultMessage:
       "Use this number when contacting Red Hat for support. If you've never had a subscription in your account, you may not see an account number here.",
   },
+  accountName: {
+    id: 'accountName',
+    description: 'Account name:',
+    defaultMessage: 'Account name:',
+  },
   accountNumber: {
     id: 'accountNumber',
     description: 'Account number:',
