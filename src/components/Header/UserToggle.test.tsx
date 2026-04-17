@@ -119,7 +119,18 @@ describe('UserToggle', () => {
   });
 
   it('should show Org. Administrator badge for org admins', async () => {
-    const ctx = createMockAuthContext({ user: { is_active: true, is_org_admin: true, is_internal: false, locale: 'en_US', username: 'jdoe', email: 'jdoe@example.com', first_name: 'John', last_name: 'Doe' } });
+    const ctx = createMockAuthContext({
+      user: {
+        is_active: true,
+        is_org_admin: true,
+        is_internal: false,
+        locale: 'en_US',
+        username: 'jdoe',
+        email: 'jdoe@example.com',
+        first_name: 'John',
+        last_name: 'Doe',
+      },
+    });
     renderWithProviders(ctx);
     await openDropdown();
     expect(screen.getByText('Org. Administrator')).toBeInTheDocument();
