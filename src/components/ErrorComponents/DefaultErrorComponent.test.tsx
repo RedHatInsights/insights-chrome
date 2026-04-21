@@ -196,18 +196,11 @@ describe('DefaultErrorComponent', () => {
 
   describe('chunk load error — segment analytics tracking', () => {
     it('tracks chunk loading error event', async () => {
-      const trackSpy = jest.fn();
-      Object.defineProperty(window, 'segment', {
-        value: { track: trackSpy },
-        writable: true,
-        configurable: true,
-      });
-
       const error = new Error('Loading chunk 123 failed.');
       renderWithProviders(<DefaultErrorComponent error={error} />, { activeModule: 'tracked-module' });
 
       await waitFor(() => {
-        expect(trackSpy).toHaveBeenCalledWith(
+        expect(window.segment?.track as jest.Mock).toHaveBeenCalledWith(
           'chunk-loading-error',
           expect.objectContaining({
             message: 'Loading chunk 123 failed.',
@@ -217,17 +210,10 @@ describe('DefaultErrorComponent', () => {
     });
 
     it('tracks string chunk error with correct message', async () => {
-      const trackSpy = jest.fn();
-      Object.defineProperty(window, 'segment', {
-        value: { track: trackSpy },
-        writable: true,
-        configurable: true,
-      });
-
       renderWithProviders(<DefaultErrorComponent error="Loading chunk vendors failed." />, { activeModule: 'str-module' });
 
       await waitFor(() => {
-        expect(trackSpy).toHaveBeenCalledWith(
+        expect(window.segment?.track as jest.Mock).toHaveBeenCalledWith(
           'chunk-loading-error',
           expect.objectContaining({
             message: 'Loading chunk vendors failed.',
@@ -237,20 +223,13 @@ describe('DefaultErrorComponent', () => {
     });
 
     it('does NOT track segment event for non-chunk errors', async () => {
-      const trackSpy = jest.fn();
-      Object.defineProperty(window, 'segment', {
-        value: { track: trackSpy },
-        writable: true,
-        configurable: true,
-      });
-
       const error = new Error('Runtime error');
       renderWithProviders(<DefaultErrorComponent error={error} />, { activeModule: 'my-app' });
 
       await waitFor(() => {
         expect(screen.getByText('Something went wrong', { exact: false })).toBeInTheDocument();
       });
-      expect(trackSpy).not.toHaveBeenCalledWith('chunk-loading-error', expect.anything());
+      expect(window.segment?.track as jest.Mock).not.toHaveBeenCalledWith('chunk-loading-error', expect.anything());
     });
   });
 
