@@ -10,6 +10,9 @@ import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
 import { chunkLoadErrorRefreshKey } from '../../utils/common';
+// Import as namespace to access isChunkLoadError and reloadPage.
+// reloadPage routes through _testHooks.reload() for Cypress stubbability.
+import * as chunkLoadErrorUtils from '../../utils/chunkLoadErrorUtils';
 import { useIntl } from 'react-intl';
 import messages from '../../locales/Messages';
 import './ErrorComponent.scss';
@@ -52,20 +55,21 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
     // When a chunk error occurs, save it with sentry and reload the page.
     // After ten seconds, the key will be removed from localStorage
     // so the page can refresh again if the chunk has not been fixed in akamai
-    if (activeModule && props.error?.cause?.name == 'ChunkLoadError') {
+    if (activeModule && chunkLoadErrorUtils.isChunkLoadError(props.error)) {
       const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
       // explicitly track chunk loading errors
+      const errorMessage = typeof props.error === 'string' ? props.error : props.error instanceof Error ? props.error.message : undefined;
       window?.segment?.track('chunk-loading-error', {
         bundle: getUrl('bundle'),
         app: getUrl(),
         pathname: window.location.pathname,
-        message: (props.error as Error).message,
+        message: errorMessage,
         sentryId,
       });
       const moduleHasReloaded = localStorage.getItem(moduleStorageKey);
       if (moduleHasReloaded !== 'true') {
         localStorage.setItem(moduleStorageKey, 'true');
-        location.reload();
+        chunkLoadErrorUtils.reloadPage();
       }
     }
   }, [props.error, activeModule]);
