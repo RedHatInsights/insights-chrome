@@ -108,6 +108,7 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(localStorage.getItem(`${chunkLoadErrorRefreshKey}-test-module`)).toBe('true');
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -117,6 +118,7 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(localStorage.getItem(`${chunkLoadErrorRefreshKey}-css-module`)).toBe('true');
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -126,6 +128,7 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(localStorage.getItem(`${chunkLoadErrorRefreshKey}-esm-module`)).toBe('true');
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -136,6 +139,7 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(localStorage.getItem(`${chunkLoadErrorRefreshKey}-named-module`)).toBe('true');
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -147,6 +151,7 @@ describe('DefaultErrorComponent', () => {
 
       await waitFor(() => {
         expect(localStorage.getItem(`${chunkLoadErrorRefreshKey}-cause-module`)).toBe('true');
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -206,6 +211,7 @@ describe('DefaultErrorComponent', () => {
             message: 'Loading chunk 123 failed.',
           })
         );
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -219,6 +225,7 @@ describe('DefaultErrorComponent', () => {
             message: 'Loading chunk vendors failed.',
           })
         );
+        expect(reloadSpy).toHaveBeenCalledTimes(1);
       });
     });
 
