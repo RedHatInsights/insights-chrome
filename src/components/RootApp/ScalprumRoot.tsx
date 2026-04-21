@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { Suspense, memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { ScalprumProvider, ScalprumProviderProps } from '@scalprum/react-core';
 import { Route, Routes } from 'react-router-dom';
 import { HelpTopic, HelpTopicContext } from '@patternfly/quickstarts';
@@ -21,6 +21,7 @@ import updateSharedScope from '../../chrome/update-shared-scope';
 import useBundleVisitDetection from '../../hooks/useBundleVisitDetection';
 import chromeApiWrapper from './chromeApiWrapper';
 import { ITLess } from '../../utils/common';
+import { lazyWithRetry } from '../../utils/chunkLoadErrorUtils';
 import InternalChromeContext from '../../utils/internalChromeContext';
 import useChromeServiceEvents from '../../hooks/useChromeServiceEvents';
 import useTrackPendoUsage from '../../hooks/useTrackPendoUsage';
@@ -40,7 +41,7 @@ import { selectedTagsAtom } from '../../state/atoms/globalFilterAtom';
 import useAmplitude from '../../analytics/useAmplitude';
 import usePf5Styles from '../../hooks/usePf5Styles';
 
-const ProductSelection = lazy(() => import('../Stratosphere/ProductSelection'));
+const ProductSelection = lazyWithRetry(() => import('../Stratosphere/ProductSelection'));
 
 const useGlobalFilter = (callback: (selectedTags?: FlagTagsFilter) => any) => {
   const selectedTags = useAtomValue(selectedTagsAtom);
