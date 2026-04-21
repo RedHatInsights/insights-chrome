@@ -105,7 +105,7 @@ export type ChromeApiRootProps = {
 
 const ChromeApiRoot = ({ config, helpTopicsAPI, quickstartsAPI }: ChromeApiRootProps) => {
   const chromeAuth = useContext(ChromeAuthContext);
-  const mutableChromeApi = useRef<ChromeAPI>();
+  const mutableChromeApi = useRef<ChromeAPI>(undefined);
   const isPreview = useAtomValue(isPreviewAtom);
   const addNavListener = useSetAtom(addNavListenerAtom);
   const deleteNavListener = useSetAtom(deleteNavListenerAtom);

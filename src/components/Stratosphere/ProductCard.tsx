@@ -1,4 +1,4 @@
-import React, { Fragment, VoidFunctionComponent } from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
 import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 import ChromeLink from '../ChromeLink/ChromeLink';
@@ -16,7 +16,7 @@ export type ProductCardProps = {
   };
 };
 
-const ProductCard: VoidFunctionComponent<ProductCardProps> = ({ img, description, link, order }) => {
+const ProductCard: FunctionComponent<ProductCardProps> = ({ img, description, link, order }) => {
   return (
     <Fragment>
       <div className={`chr-c-product-card__title title-${order}`}>

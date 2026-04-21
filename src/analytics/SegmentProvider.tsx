@@ -103,7 +103,7 @@ const SegmentProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const isITLessEnv = ITLess();
   const isDisabled = localStorage.getItem('chrome:segment:disable') === 'true' || isITLessEnv;
   const disableIntegrations = localStorage.getItem('chrome:analytics:disable') === 'true' || isITLessEnv;
-  const analytics = useRef<AnalyticsBrowser>();
+  const analytics = useRef<AnalyticsBrowser>(undefined);
   const analyticsLoaded = useRef(false);
   const { user } = useContext(ChromeAuthContext);
   const isPreview = useAtomValue(isPreviewAtom);

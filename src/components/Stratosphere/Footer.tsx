@@ -2,13 +2,13 @@ import { Divider } from '@patternfly/react-core/dist/dynamic/components/Divider'
 import { Flex, FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { Level, LevelItem } from '@patternfly/react-core/dist/dynamic/layouts/Level';
 import { Content } from '@patternfly/react-core/dist/dynamic/components/Content';
-import React, { VoidFunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 
 import './footer.scss';
 
 const currentYear = new Date().getFullYear();
 
-const FooterLink: VoidFunctionComponent<{ href: string; label: React.ReactNode }> = ({ href, label }) => (
+const FooterLink: FunctionComponent<{ href: string; label: React.ReactNode }> = ({ href, label }) => (
   <Content>
     <Content component="small">
       <a className="chr-c-footer__link" href={href}>

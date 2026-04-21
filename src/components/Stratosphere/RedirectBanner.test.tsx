@@ -14,7 +14,7 @@ const HydrateAtoms: React.FC<{ initialValues: any[]; children: React.ReactNode }
   return children;
 };
 
-const LocationSpy: React.VoidFunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
+const LocationSpy: React.FunctionComponent<{ changeSpy: jest.Mock }> = ({ changeSpy }) => {
   const { search, pathname, hash, state } = useLocation();
   useEffect(() => {
     changeSpy({

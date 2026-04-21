@@ -33,7 +33,7 @@ const LinkWrapper: React.FC<LinkWrapperProps> = memo(
     const moduleRoutes = useAtomValue(moduleRoutesAtom);
     const triggerNavListener = useSetAtom(triggerNavListenersAtom);
     const moduleEntry = useMemo(() => moduleRoutes?.find((route) => href?.includes(route.path)), [href, appId]);
-    const preloadTimeout = useRef<NodeJS.Timeout>();
+    const preloadTimeout = useRef<NodeJS.Timeout>(undefined);
     let actionId = href.split('/').slice(2).join('/');
     if (actionId.includes('/')) {
       actionId = actionId.split('/').pop() as string;
