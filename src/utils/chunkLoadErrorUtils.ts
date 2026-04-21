@@ -111,11 +111,10 @@ export function reloadPage(): void {
  * @param retries - Number of retry attempts (default: 2)
  * @param delay - Delay in ms between retries (default: 1000)
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches React.lazy's own signature
-export function lazyWithRetry<T extends React.ComponentType<any>>(
-  importFn: () => Promise<{ default: T }>,
+export function lazyWithRetry<P extends object>(
+  importFn: () => Promise<{ default: React.ComponentType<P> }>,
   retries = 2,
   delay = 1000
-): React.LazyExoticComponent<T> {
+): React.LazyExoticComponent<React.ComponentType<P>> {
   return React.lazy(() => retryImport(importFn, retries, delay));
 }

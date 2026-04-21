@@ -58,7 +58,12 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
     if (activeModule && chunkLoadErrorUtils.isChunkLoadError(props.error)) {
       const moduleStorageKey = `${chunkLoadErrorRefreshKey}-${activeModule}`;
       // explicitly track chunk loading errors
-      const errorMessage = typeof props.error === 'string' ? props.error : props.error instanceof Error ? props.error.message : undefined;
+      const errorMessage =
+        typeof props.error === 'string'
+          ? props.error
+          : typeof props.error === 'object' && props.error !== null && 'message' in props.error
+            ? String((props.error as { message: unknown }).message)
+            : undefined;
       window?.segment?.track('chunk-loading-error', {
         bundle: getUrl('bundle'),
         app: getUrl(),

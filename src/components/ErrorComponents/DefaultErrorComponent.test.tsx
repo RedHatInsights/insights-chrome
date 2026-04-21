@@ -47,8 +47,14 @@ const renderWithProviders = (ui: React.ReactElement, { activeModule }: { activeM
 };
 
 describe('DefaultErrorComponent', () => {
+  let originalReload: typeof _testHooks.reload;
+  let reloadSpy: jest.Mock;
+
   beforeEach(() => {
     localStorage.clear();
+    originalReload = _testHooks.reload;
+    reloadSpy = jest.fn();
+    _testHooks.reload = reloadSpy;
     Object.defineProperty(window, 'segment', {
       value: { track: jest.fn() },
       writable: true,
@@ -57,6 +63,8 @@ describe('DefaultErrorComponent', () => {
   });
 
   afterEach(() => {
+    _testHooks.reload = originalReload;
+    jest.clearAllMocks();
     localStorage.clear();
   });
 
@@ -264,10 +272,6 @@ describe('DefaultErrorComponent', () => {
     });
 
     it('does not call reload when localStorage flag already set', async () => {
-      const reloadSpy = jest.fn();
-      const originalReload = _testHooks.reload;
-      _testHooks.reload = reloadSpy;
-
       const moduleName = 'prevent-reload';
       const key = `${chunkLoadErrorRefreshKey}-${moduleName}`;
       localStorage.setItem(key, 'true');
@@ -280,8 +284,6 @@ describe('DefaultErrorComponent', () => {
       });
       // Reload must NOT be called — flag was already set (infinite reload prevention)
       expect(reloadSpy).not.toHaveBeenCalled();
-
-      _testHooks.reload = originalReload;
     });
   });
 });
