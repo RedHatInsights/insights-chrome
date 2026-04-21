@@ -25,7 +25,6 @@
     "circular": "madge --circular ./src --extensions js,ts,tsx",
     "start": "NODE_ENV=development webpack --config config/webpack.config.js --watch  --mode=development",
     "test": "jest --forceExit --detectOpenHandles",
-    "test:e2e": "node scripts/e2e.js",
     "test:ct": "node ./cypress/run-test.js",
     "test:update": "jest --forceExit --detectOpenHandles --updateSnapshot",
     "playwright": "playwright test",
@@ -43,7 +42,6 @@
     "ci:unit-tests": "run-s test",
     "ci:lint": "run-s lint",
     "ci:cypress-component-tests": "run-s test:ct",
-    "ci:cypress-e2e-tests": "run-s test:e2e",
     "ci:playwright-release-gate-tests": "run-s test:playwright"
   },
   "repository": {

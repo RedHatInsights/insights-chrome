@@ -1,9 +1,5 @@
 import { Page, expect } from '@playwright/test';
 
-/**
- * Performs login flow for E2E tests
- * @param page - Playwright page instance
- */
 export async function login(page: Page) {
   // Block TrustArc consent requests to prevent cookie modal from appearing
   // This is the same approach used in Cypress (blockHosts in cypress.config.ts)
@@ -41,4 +37,18 @@ export async function login(page: Page) {
 
   // Verify we're logged in by checking for user menu toggle
   await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible({ timeout: 60000 });
+}
+
+export async function getUserFullName(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const oidcKey = Object.keys(localStorage).find((key) => key.startsWith('oidc.user:'));
+    if (!oidcKey) throw new Error('OIDC user key was not found in localStorage');
+    const rawUser = localStorage.getItem(oidcKey);
+    if (!rawUser) throw new Error(`OIDC user payload missing for key: ${oidcKey}`);
+    const parsedUser = JSON.parse(rawUser);
+    const firstName = parsedUser.profile?.first_name;
+    const lastName = parsedUser.profile?.last_name;
+    if (!firstName || !lastName) throw new Error('OIDC profile is missing first_name and/or last_name');
+    return `${firstName} ${lastName}`;
+  });
 }
