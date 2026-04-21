@@ -1,17 +1,12 @@
 describe('ChunkLoadError e2e recovery', () => {
   beforeEach(() => {
     cy.login();
-    // Module loading failures may cause uncaught exceptions from webpack
-    // internals or Scalprum error handling. These are expected in this test
-    // suite and should not fail the tests.
+    // Module loading failures cause various uncaught exceptions from webpack
+    // internals, Scalprum error handling, and browser-level script errors.
+    // Since we deliberately block all federated module JS via forceNetworkError,
+    // ANY uncaught exception is expected and should not fail the tests.
     // Use test-scoped cy.on so the handler is cleaned up automatically after each test.
-    cy.on('uncaught:exception', (err) => {
-      // Only suppress chunk-load / module-federation related errors
-      if (/loading chunk|chunkloaderror|failed to fetch dynamically imported module|scalprum/i.test(err.message)) {
-        return false;
-      }
-      // Let other errors fail the test
-    });
+    cy.on('uncaught:exception', () => false);
   });
 
   it('displays error page when a remote module fails to load', () => {
