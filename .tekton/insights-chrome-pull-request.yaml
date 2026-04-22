@@ -310,7 +310,7 @@ spec:
             limits:
               cpu: "4"
               memory: "8Gi"
-          image: quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566
+          image: mcr.microsoft.com/playwright:v1.59.1-jammy
           name: e2e-tests
           env:
           - name: CHROME_ACCOUNT
@@ -346,7 +346,6 @@ spec:
             echo "Dev server is ready! Running tests."
 
             echo "Running Playwright e2e tests"
-            npx playwright install
             E2E_USER="$CHROME_ACCOUNT" E2E_PASSWORD="$CHROME_PASSWORD" npx playwright test
             echo "Tests finished. Killing dev server (PID: $DEV_SERVER_PID)..."
             kill $DEV_SERVER_PID
