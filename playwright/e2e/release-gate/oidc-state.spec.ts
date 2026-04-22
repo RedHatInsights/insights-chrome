@@ -17,10 +17,10 @@ test.describe('OIDC State', () => {
     await page.goto(pathname);
 
     expect(page.url()).toContain(BROKEN_URL_HASH);
-    await page.waitForTimeout(1000);
-    expect(page.url()).not.toContain(BROKEN_URL_HASH);
 
-    await page.waitForTimeout(1000);
+    // Wait for the URL to be cleaned (broken state removed)
+    await expect.poll(() => page.url()).not.toContain(BROKEN_URL_HASH);
+
     const url = new URL(page.url());
     expect(url.pathname).toBe('/foo/bar');
     expect(url.search).toBe('?baz=quaz');

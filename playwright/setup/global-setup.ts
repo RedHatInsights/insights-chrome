@@ -23,8 +23,8 @@ async function globalSetup(config: FullConfig) {
     // Navigate to the application
     await page.goto(baseURL || '/', { waitUntil: 'load', timeout: 60000 });
 
-    const user = process.env.E2E_USER!;
-    const password = process.env.E2E_PASSWORD!;
+    const user = process.env.E2E_USER;
+    const password = process.env.E2E_PASSWORD;
 
     if (!user || !password) {
       throw new Error('E2E_USER and E2E_PASSWORD environment variables must be set');
