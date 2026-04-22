@@ -28,6 +28,7 @@ export type DefaultErrorComponentProps = {
     loginSilent: () => Promise<void>;
     loginRedirect: () => Promise<void>;
   };
+  onReset?: () => void;
 };
 
 const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
@@ -128,7 +129,12 @@ const DefaultErrorComponent = (props: DefaultErrorComponentProps) => {
           </Flex>
         </EmptyStateBody>
         <EmptyStateActions>
-          <Button component={() => <a href="/">{intl.formatMessage(messages.returnToHomepage)}</a>} variant="primary" />
+          {props.onReset && (
+            <Button variant="primary" onClick={props.onReset}>
+              {intl.formatMessage(messages.tryAgain)}
+            </Button>
+          )}
+          <Button component={() => <a href="/">{intl.formatMessage(messages.returnToHomepage)}</a>} variant={props.onReset ? 'secondary' : 'primary'} />
         </EmptyStateActions>
       </EmptyState>
     </Bullseye>

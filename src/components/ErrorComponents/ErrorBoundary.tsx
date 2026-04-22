@@ -52,12 +52,16 @@ class ErrorBoundary extends React.Component<
     }
   }
 
+  resetError = () => {
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  };
+
   render() {
     if (this.state.hasError) {
       if (checkAccountOnHold(this.state.error)) {
         return <AccountOnHoldError error={this.state.error} />;
       }
-      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} auth={this.props.auth} />;
+      return <ErrorComponent error={this.state.error} errorInfo={this.state.errorInfo} auth={this.props.auth} onReset={this.resetError} />;
     }
 
     return this.props.children;
