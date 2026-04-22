@@ -1,14 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../../helpers/auth';
 
 test.describe('Landing page', () => {
   test('visit landing page', async ({ page }) => {
-    await login(page);
+    await page.goto('/');
     await expect(page.getByText('Help')).toBeVisible({ timeout: 45000 });
   });
 
   test('tooltip is shown when hovering over the gear/question icon', async ({ page }) => {
-    await login(page);
+    await page.goto('/');
 
     // Wait for the settings tooltip button to be present before interacting
     const settingsButton = page.locator('.tooltip-button-settings-cy');

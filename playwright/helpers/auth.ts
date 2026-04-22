@@ -1,44 +1,61 @@
-import { Page, expect } from '@playwright/test';
+/**
+ * Authentication utilities for Playwright tests.
+ *
+ * This file re-exports functions from the shared @redhat-cloud-services/playwright-test-auth
+ * package and provides insights-chrome specific utilities.
+ *
+ * NOTE: Most tests should rely on global setup (playwright/setup/global-setup.ts) for
+ * authentication. These functions are for special cases that need manual login.
+ */
+import type { Page } from '@playwright/test';
+import {
+  login as sharedLogin,
+  disableCookiePrompt
+} from '@redhat-cloud-services/playwright-test-auth';
 
+/**
+ * Performs Red Hat SSO login with analytics disabled.
+ *
+ * IMPORTANT: Most tests should NOT call this directly. Global setup handles authentication
+ * automatically via storage state. Use this only for tests that specifically test login flows.
+ */
 export async function login(page: Page) {
-  // Block TrustArc consent requests to prevent cookie modal from appearing
-  // This is the same approach used in Cypress (blockHosts in cypress.config.ts)
-  await page.route('**consent.trustarc.com/**', async (route, request) => {
-    if (request.url().includes('consent.trustarc.com') && request.resourceType() !== 'document') {
-      await route.abort();
-    } else {
-      await route.continue();
-    }
-  });
+  const user = process.env.E2E_USER;
+  const password = process.env.E2E_PASSWORD;
+
+  if (!user || !password) {
+    throw new Error('E2E_USER and E2E_PASSWORD environment variables must be set');
+  }
+
+  // Block TrustArc consent requests
+  await disableCookiePrompt(page);
 
   // Navigate to the login page
   await page.goto('/');
 
-  // Wait for login form
-  await page.waitForSelector('#username-verification', { timeout: 10000 });
+  // Perform login using shared package
+  await sharedLogin(page, user, password);
 
-  // Fill in username
-  await page.fill('#username-verification', process.env.E2E_USER!);
-  await page.click('#login-show-step2');
-
-  // Wait for password field and fill it
-  await page.waitForSelector('#password', { timeout: 10000 });
-  await page.fill('#password', process.env.E2E_PASSWORD!);
-  await page.click('#rh-password-verification-submit-button');
-
-  // Wait for successful navigation after login
-  await page.waitForURL('/', { timeout: 60000 });
-
-  // Disable analytics integrations (must be after navigation to app domain)
+  // Disable analytics integrations (insights-chrome specific)
   await page.evaluate(() => {
     localStorage.setItem('chrome:analytics:disable', 'true');
     localStorage.setItem('chrome:segment:disable', 'true');
   });
 
   // Verify we're logged in by checking for user menu toggle
-  await expect(page.getByRole('button', { name: /User Avatar/ })).toBeVisible({ timeout: 60000 });
+  await page.getByRole('button', { name: /User Avatar/ }).waitFor({
+    state: 'visible',
+    timeout: 60000
+  });
 }
 
+/**
+ * Extracts the logged-in user's full name from OIDC localStorage data.
+ *
+ * @param page - Playwright Page object
+ * @returns Promise resolving to the user's full name (first + last)
+ * @throws Error if OIDC data not found or incomplete
+ */
 export async function getUserFullName(page: Page): Promise<string> {
   return page.evaluate(() => {
     const oidcKey = Object.keys(localStorage).find((key) => key.startsWith('oidc.user:'));
@@ -48,7 +65,9 @@ export async function getUserFullName(page: Page): Promise<string> {
     const parsedUser = JSON.parse(rawUser);
     const firstName = parsedUser.profile?.first_name;
     const lastName = parsedUser.profile?.last_name;
-    if (!firstName || !lastName) throw new Error('OIDC profile is missing first_name and/or last_name');
+    if (!firstName || !lastName) {
+      throw new Error('OIDC profile is missing first_name and/or last_name');
+    }
     return `${firstName} ${lastName}`;
   });
 }

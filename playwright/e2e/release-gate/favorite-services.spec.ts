@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../../helpers/auth';
 
 test.describe('Favorite Services (E2E User Flow)', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page);
+    await page.goto('/');
   });
 
   test('should favorite on the page and unfavorite from the header dropdown', async ({ page }) => {
