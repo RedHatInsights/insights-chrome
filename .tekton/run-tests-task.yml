@@ -71,7 +71,7 @@ spec:
           image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
           name: use-trusted-artifact
         - computeResources: {}
-          image: "quay.io/redhat-user-workloads/rh-platform-experien-tenant/cypress-e2e-image/cypress-e2e-image:af9f17cb332f8e4a7f2e629bccbeeb1451490566"
+          image: "mcr.microsoft.com/playwright:v1.59.1-jammy"
           env:
             - name: EE_HOSTNAME
               value: $(params.EPHEMERAL_ENV_URL)
@@ -84,5 +84,4 @@ spec:
             set -ex
 
             npm i
-            npx playwright install
             BASE="$EE_HOSTNAME" E2E_USER="$EE_USERNAME" E2E_PASSWORD="$EE_PASSWORD" npx playwright test playwright/e2e/ephemeral/

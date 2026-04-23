@@ -6,6 +6,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './playwright/e2e',
 
+  /* Global setup for authentication */
+  globalSetup: require.resolve('./playwright/setup/global-setup'),
+
   /* Run tests in files in parallel */
   fullyParallel: true,
 
@@ -15,8 +18,11 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
 
-  /* Opt out of parallel tests on CI. */
+  /* Use single worker on CI to avoid flakiness, allow parallelism locally */
   workers: process.env.CI ? 1 : undefined,
+
+  /* Stop after 2 test failures */
+  maxFailures: 2,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
@@ -24,10 +30,13 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.BASE || 'https://stage.foo.redhat.com:1337',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.BASE || 'https://stage.foo.redhat.com:1337',
 
     /* Ignore HTTPS certificate errors in stage environment */
     ignoreHTTPSErrors: true,
+
+    /* Reuse authentication state from global setup */
+    storageState: 'playwright/.auth/user.json',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',

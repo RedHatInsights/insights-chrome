@@ -1,5 +1,4 @@
-import { test } from '@playwright/test';
-import { login } from '../../helpers/auth';
+import { test } from '../../setup/test-setup';
 
 const userPayload = {
   data: {
@@ -44,7 +43,6 @@ test.describe('last-visited-pages empty behavior', () => {
       return route.continue();
     });
 
-    await login(page);
     await page.goto('/settings/learning-resources');
 
     await page.clock.install();
@@ -62,7 +60,6 @@ test.describe('last-visited-pages empty behavior', () => {
       return route.continue();
     });
 
-    await login(page);
     await page.goto('/settings/learning-resources');
 
     await page.clock.install();

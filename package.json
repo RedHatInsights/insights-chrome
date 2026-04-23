@@ -65,6 +65,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^3.0.33",
     "@redhat-cloud-services/frontend-components-config-utilities": "^4.8.3",
+    "@redhat-cloud-services/playwright-test-auth": "^0.0.2",
     "@redhat-cloud-services/types": "^3.4.2",
     "@simonsmith/cypress-image-snapshot": "^10.0.3",
     "@swc/core": "^1.15.30",

@@ -1,7 +1,10 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../setup/test-setup';
 import { login } from '../../helpers/auth';
 
 test.describe('Authentication', () => {
+  // Override storage state to start unauthenticated for login flow tests
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('should successfully login and verify authenticated state', async ({ page }) => {
     await login(page);
 
