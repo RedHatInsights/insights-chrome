@@ -3,9 +3,9 @@
 }
 
 .pf-v6-c-tabs__item.pf-m-current {
-  background: var(--pf-v5-global--BackgroundColor--200);
+  background: var(--pf-t--global--background--color--secondary--default);
   .pf-v6-c-tabs__item-text {
-    color: var(--pf-v5-global--BackgroundColor--dark-200);
+    color: var(--pf-t--global--text--color--regular);
   }
   .pf-v6-c-tabs__link {
     background: none;

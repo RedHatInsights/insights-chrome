@@ -77,11 +77,11 @@
 @media (max-width: $pf-v6-global--breakpoint--md) {
   .chr-c-panel-services-nav {
     .chr-l-stack__item-browse-all-services {
-      background: var(--pf-t--global--background--color--200);
+      background: var(--pf-t--global--background--color--secondary--default);
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
     }
     .pf-v6-c-tabs {
-      background: var(--pf-t--global--background--color--200);
+      background: var(--pf-t--global--background--color--secondary--default);
       border-bottom: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--on-secondary);
       height: 100%;
     }
@@ -140,7 +140,7 @@
   display: block;
   text-decoration: none !important;
   &:hover {
-    background: var(--pf-t--global--background--color--200);
+    background: var(--pf-t--global--background--color--primary--hover);
   }
 
   :hover {

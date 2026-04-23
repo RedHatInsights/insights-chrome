@@ -1,9 +1,7 @@
-import { expect, test } from '@playwright/test';
-import { login } from '../../helpers/auth';
+import { expect, test } from '../../setup/test-setup';
 
 test.describe('Auth', () => {
   test('should force refresh token', async ({ page }) => {
-    await login(page);
     await page.goto('/');
 
     await expect(page.getByRole('heading', { name: 'Welcome to your Hybrid Cloud Console', level: 2 })).toBeVisible();

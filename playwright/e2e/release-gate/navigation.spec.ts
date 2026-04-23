@@ -1,9 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { login } from '../../helpers/auth';
+import { test, expect } from '../../setup/test-setup';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page);
+    await page.goto('/');
   });
 
   test('visit services', async ({ page }) => {
