@@ -39,10 +39,16 @@ export class ChromeTopbar {
   }
 
   /**
-   * Opens the user overflow actions dropdown menu
+   * Opens the user overflow actions dropdown menu (idempotent)
    */
   async openOverflowActions(): Promise<void> {
-    await this.overflowActionsButton.click();
+    // Check if menu is already open by checking aria-expanded attribute
+    const isExpanded = await this.overflowActionsButton.getAttribute('aria-expanded');
+
+    // Only click if menu is not already open
+    if (isExpanded !== 'true') {
+      await this.overflowActionsButton.click();
+    }
   }
 
   /**
@@ -57,11 +63,33 @@ export class ChromeTopbar {
     // Wait for the org ID element to be visible
     await this.orgIdElement.waitFor({ state: 'visible', timeout: 5000 });
 
-    const fullText = await this.orgIdElement.textContent();
+    // Try to find a child element that contains just the ID value
+    // This is more robust than parsing the full text
+    const valueElements = [
+      this.orgIdElement.locator('[data-testid="org-id-value"]'),
+      this.orgIdElement.locator('dd'),
+      this.orgIdElement.locator('span').last(),
+    ];
 
-    // Extract just the ID portion from "Org ID:12345678" format
+    for (const valueElement of valueElements) {
+      try {
+        const count = await valueElement.count();
+        if (count > 0) {
+          const text = await valueElement.textContent();
+          if (text && /^\d+$/.test(text.trim())) {
+            return text.trim();
+          }
+        }
+      } catch {
+        // Continue to next selector
+      }
+    }
+
+    // Fallback: extract numeric ID from full text without relying on English label
+    const fullText = await this.orgIdElement.textContent();
     if (fullText) {
-      const match = fullText.match(/Org ID:\s*(\S+)/i);
+      // Match any sequence of digits (org IDs are numeric)
+      const match = fullText.match(/(\d+)/);
       return match ? match[1] : fullText.trim();
     }
 

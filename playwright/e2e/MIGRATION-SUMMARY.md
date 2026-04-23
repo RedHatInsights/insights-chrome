@@ -48,7 +48,7 @@ From the original `test_login.py` file:
 
 ### .gitignore Updated
 Added entries to exclude sensitive files:
-```
+```text
 /playwright/.auth/
 .env
 .env.local

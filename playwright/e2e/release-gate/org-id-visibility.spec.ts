@@ -30,22 +30,12 @@ test.describe('Organization ID Display', () => {
     // Verify the org ID element is visible
     await expect(topbar.orgIdElement).toBeVisible();
 
-    // Get the full org ID text (includes "Org ID:" label)
-    const fullText = await topbar.orgIdElement.textContent();
+    // Extract the org ID value (page object handles the extraction logic)
+    const orgId = await topbar.getOrgId();
 
-    // Verify org ID text is present and not empty
-    expect(fullText).toBeTruthy();
-    expect(fullText?.trim()).not.toBe('');
-
-    // Verify it contains the "Org ID:" label and an actual ID
-    expect(fullText).toContain('Org ID:');
-
-    // Extract just the ID portion and verify it's numeric
-    const idMatch = fullText?.match(/Org ID:\s*(\d+)/i);
-    expect(idMatch).toBeTruthy();
-
-    const orgId = idMatch?.[1];
+    // Verify org ID is present, not empty, and numeric
     expect(orgId).toBeTruthy();
+    expect(orgId?.trim()).not.toBe('');
     expect(orgId).toMatch(/^\d+$/);
   });
 
