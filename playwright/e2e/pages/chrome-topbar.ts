@@ -24,10 +24,8 @@ export class ChromeTopbar {
     this.page = page;
 
     // Overflow actions (user menu) button
-    // Matches the locator in IQE: div[(./button[@id='UserMenu'])]
-    this.overflowActionsButton = page.locator('[id="UserMenu"]').or(
-      page.locator('button:has-text("User Avatar")')
-    );
+    // Uses the same selector pattern as other tests in insights-chrome
+    this.overflowActionsButton = page.getByRole('button', { name: /User Avatar/ });
 
     // Org ID display element within the overflow actions dropdown
     // Uses OUIA component ID for stability
@@ -59,7 +57,15 @@ export class ChromeTopbar {
     // Wait for the org ID element to be visible
     await this.orgIdElement.waitFor({ state: 'visible', timeout: 5000 });
 
-    return await this.orgIdElement.textContent();
+    const fullText = await this.orgIdElement.textContent();
+
+    // Extract just the ID portion from "Org ID:12345678" format
+    if (fullText) {
+      const match = fullText.match(/Org ID:\s*(\S+)/i);
+      return match ? match[1] : fullText.trim();
+    }
+
+    return fullText;
   }
 
   /**

@@ -105,27 +105,40 @@ The tests use the existing environment variables from insights-chrome:
 
 ---
 
-## Differences from Migration Guide
+## Authentication Implementation
 
-The original migration guide assumed use of `@redhat-cloud-services/playwright-test-auth`, but insights-chrome uses a **custom authentication helper** instead:
+insights-chrome uses `@redhat-cloud-services/playwright-test-auth` with a **global setup pattern**:
 
-### Migration Guide Approach
+### Global Setup (runs once before all tests)
 ```typescript
-import { disableCookiePrompt } from '@redhat-cloud-services/playwright-test-auth';
-test.beforeEach(async ({ page }) => {
-  await disableCookiePrompt(page);
+// playwright/setup/global-setup.ts
+import { login, disableCookiePrompt } from '@redhat-cloud-services/playwright-test-auth';
+
+// Logs in once and saves auth state to playwright/.auth/user.json
+await login(page, user, password);
+```
+
+### Test Setup (extends every test)
+```typescript
+// playwright/setup/test-setup.ts
+export const test = base.extend({
+  page: async ({ page }, use) => {
+    await disableCookiePrompt(page); // Blocks cookie prompts
+    await use(page);
+  },
 });
 ```
 
-### Actual Implementation (insights-chrome)
+### Tests (automatically authenticated)
 ```typescript
-import { login } from '../../helpers/auth';
+import { test, expect } from '../../setup/test-setup';
+
 test.beforeEach(async ({ page }) => {
-  await login(page);
+  await page.goto('/'); // Already logged in via global setup
 });
 ```
 
-This is better aligned with the existing insights-chrome testing infrastructure.
+This pattern ensures tests start authenticated and don't need per-test login.
 
 ---
 

@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { login } from '../../helpers/auth';
+import { test, expect } from '../../setup/test-setup';
 import { ChromeTopbar } from '../pages/chrome-topbar';
 
 /**
@@ -18,8 +17,8 @@ import { ChromeTopbar } from '../pages/chrome-topbar';
 
 test.describe('Organization ID Display', () => {
   test.beforeEach(async ({ page }) => {
-    // Login using the existing auth helper
-    await login(page);
+    // Navigate to home page (already authenticated via global setup)
+    await page.goto('/');
   });
 
   test('should display org ID in overflow actions dropdown', async ({ page }) => {
@@ -31,16 +30,22 @@ test.describe('Organization ID Display', () => {
     // Verify the org ID element is visible
     await expect(topbar.orgIdElement).toBeVisible();
 
-    // Get the org ID text
-    const orgIdText = await topbar.orgIdElement.textContent();
+    // Get the full org ID text (includes "Org ID:" label)
+    const fullText = await topbar.orgIdElement.textContent();
 
-    // Verify org ID is present and not empty
-    expect(orgIdText).toBeTruthy();
-    expect(orgIdText?.trim()).not.toBe('');
+    // Verify org ID text is present and not empty
+    expect(fullText).toBeTruthy();
+    expect(fullText?.trim()).not.toBe('');
 
-    // Verify the format looks like an org ID (numeric or alphanumeric)
-    // Org IDs are typically numeric strings
-    expect(orgIdText?.trim()).toMatch(/^[\w-]+$/);
+    // Verify it contains the "Org ID:" label and an actual ID
+    expect(fullText).toContain('Org ID:');
+
+    // Extract just the ID portion and verify format
+    const idMatch = fullText?.match(/Org ID:\s*(\S+)/i);
+    expect(idMatch).toBeTruthy();
+
+    const orgId = idMatch?.[1];
+    expect(orgId).toMatch(/^[\w-]+$/);
   });
 
   test('should display org ID matching authenticated user (if configured)', async ({ page }) => {
