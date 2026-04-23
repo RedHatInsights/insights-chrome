@@ -23,7 +23,7 @@ const wsEventListenersRegistry: WsEventListenersRegistry = {
 };
 
 const useChromeServiceEvents = (): AddChromeWsEventListener => {
-  const connection = useRef<WebSocket | undefined>();
+  const connection = useRef<WebSocket | undefined>(undefined);
   const isNotificationsEnabled = useFlag('platform.chrome.notifications-drawer');
   const { token, tokenExpires } = useContext(ChromeAuthContext);
   const retries = useRef(0);
