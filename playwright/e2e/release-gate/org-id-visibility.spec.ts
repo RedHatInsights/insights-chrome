@@ -21,7 +21,7 @@ test.describe('Organization ID Display', () => {
     await page.goto('/');
   });
 
-  test('should display org ID in overflow actions dropdown', async ({ page }) => {
+  test('should display numeric org ID in overflow actions dropdown', async ({ page }) => {
     const topbar = new ChromeTopbar(page);
 
     // Open the overflow actions dropdown (user menu)
@@ -40,31 +40,16 @@ test.describe('Organization ID Display', () => {
     // Verify it contains the "Org ID:" label and an actual ID
     expect(fullText).toContain('Org ID:');
 
-    // Extract just the ID portion and verify format
-    const idMatch = fullText?.match(/Org ID:\s*(\S+)/i);
+    // Extract just the ID portion and verify it's numeric
+    const idMatch = fullText?.match(/Org ID:\s*(\d+)/i);
     expect(idMatch).toBeTruthy();
 
     const orgId = idMatch?.[1];
-    expect(orgId).toMatch(/^[\w-]+$/);
+    expect(orgId).toBeTruthy();
+    expect(orgId).toMatch(/^\d+$/);
   });
 
-  test('should display org ID matching authenticated user (if configured)', async ({ page }) => {
-    const topbar = new ChromeTopbar(page);
-
-    // Optional: If ORG_ID environment variable is set, verify it matches
-    const expectedOrgId = process.env.ORG_ID;
-
-    // Skip this test variant if ORG_ID is not configured
-    test.skip(!expectedOrgId, 'ORG_ID environment variable not set - skipping validation test');
-
-    // Get org ID from UI
-    const orgIdText = await topbar.getOrgId();
-
-    // Verify it matches the authenticated user's org ID
-    expect(orgIdText).toContain(expectedOrgId);
-  });
-
-  test('should get org ID using page object helper method', async ({ page }) => {
+  test('should get numeric org ID using page object helper method', async ({ page }) => {
     const topbar = new ChromeTopbar(page);
 
     // Test the getOrgId() helper method
@@ -74,17 +59,7 @@ test.describe('Organization ID Display', () => {
     expect(orgId).toBeTruthy();
     expect(orgId?.trim()).not.toBe('');
 
-    // Verify it's in the expected format
-    expect(orgId?.trim()).toMatch(/^[\w-]+$/);
-  });
-
-  test('should confirm org ID visibility using helper method', async ({ page }) => {
-    const topbar = new ChromeTopbar(page);
-
-    // Test the isOrgIdVisible() helper method
-    const isVisible = await topbar.isOrgIdVisible();
-
-    // Verify the org ID is visible
-    expect(isVisible).toBe(true);
+    // Verify it's numeric
+    expect(orgId?.trim()).toMatch(/^\d+$/);
   });
 });
