@@ -119,10 +119,69 @@ export class ChromeTopbar {
   }
 
   /**
-   * Opens the settings menu
+   * Checks if the settings menu is open
+   */
+  async isSettingsOpen(): Promise<boolean> {
+    // Check aria-expanded or visibility of menu
+    const settingsGearButton = this.page.locator('#SettingsMenu');
+    const expanded = await settingsGearButton.getAttribute('aria-expanded');
+    return expanded === 'true';
+  }
+
+  /**
+   * Opens the settings menu (idempotent)
    */
   async openSettings(): Promise<void> {
-    await this.settingsButton.click();
+    if (!(await this.isSettingsOpen())) {
+      const settingsGearButton = this.page.locator('#SettingsMenu');
+      await settingsGearButton.click();
+      // Wait for menu to be visible
+      await this.settingsButton.waitFor({ state: 'visible', timeout: 5000 });
+    }
+  }
+
+  /**
+   * Closes the settings menu (idempotent)
+   */
+  async closeSettings(): Promise<void> {
+    if (await this.isSettingsOpen()) {
+      const settingsGearButton = this.page.locator('#SettingsMenu');
+      await settingsGearButton.click();
+    }
+  }
+
+  /**
+   * Gets the list of items in the settings menu
+   * @returns Array of menu item text
+   */
+  async getSettingsMenuItems(): Promise<string[]> {
+    await this.openSettings();
+
+    // Get all menu items (li elements within the settings menu)
+    const menuItems = this.settingsButton.locator('li');
+    const count = await menuItems.count();
+
+    const items: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const text = await menuItems.nth(i).textContent();
+      if (text) {
+        items.push(text.trim());
+      }
+    }
+
+    return items;
+  }
+
+  /**
+   * Selects a specific item from the settings menu
+   * @param itemName The text of the menu item to select
+   */
+  async selectSettingsItem(itemName: string): Promise<void> {
+    await this.openSettings();
+
+    // Click the menu item with matching text
+    const menuItem = this.settingsButton.locator('li', { hasText: itemName });
+    await menuItem.click();
   }
 
   /**
