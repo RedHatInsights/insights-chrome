@@ -228,7 +228,9 @@ export class ChromeTopbar {
       throw new Error(`No settings menu item found matching "${itemName}"`);
     }
 
-    await matchingItems.first().click();
+    // Click the interactive child element (a or button) within the matched item
+    const actionableElement = matchingItems.first().locator('a, button');
+    await actionableElement.click();
   }
 
   /**
