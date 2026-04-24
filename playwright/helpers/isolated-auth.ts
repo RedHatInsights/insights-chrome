@@ -12,6 +12,8 @@ export async function createAuthenticatedPage(browser: Browser, baseURL?: string
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     baseURL: baseURL,
+    // CRITICAL: Don't use shared auth state - we need a fresh login
+    storageState: undefined,
   });
 
   const page = await context.newPage();
