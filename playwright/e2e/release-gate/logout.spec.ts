@@ -79,13 +79,9 @@ test.describe('Logout Functionality', () => {
     // Open the overflow actions menu
     await topbar.openOverflowActions();
 
-    // Click the "Log out" option
-    // The menu item could be a button, link, or other clickable element
-    const logoutOption = page.getByRole('menuitem', { name: /Log out/i })
-      .or(page.getByText('Log out'))
-      .or(page.locator('[data-ouia-component-id*="logout"]'));
-
-    await logoutOption.click();
+    // Click the "Log out" option in the menu
+    // Use exact match to avoid matching both button and text inside
+    await page.getByRole('menuitem', { name: 'Log out' }).click();
 
     // Wait for logout to complete and redirect
     await page.waitForURL(/\/(login|security|$)/, { timeout: 30000 });
