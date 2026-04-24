@@ -58,9 +58,9 @@ test.describe('Logout Functionality', () => {
     await expect(userAvatar).not.toBeVisible({ timeout: 10000 });
 
     // Verify we're on a logged-out page by checking for Red Hat login form
-    // Look for the "Red Hat login" label which indicates the SSO login page
-    const redHatLoginLabel = page.getByLabel('Red Hat login');
-    await expect(redHatLoginLabel).toBeVisible({ timeout: 10000 });
+    // Look for the username input field on the SSO login page
+    const usernameInput = page.getByRole('textbox', { name: 'Red Hat login' });
+    await expect(usernameInput).toBeVisible({ timeout: 10000 });
   });
 
   test('should logout via dropdown menu', async ({ authenticatedPage: page }) => {
@@ -87,7 +87,7 @@ test.describe('Logout Functionality', () => {
     await expect(userAvatar).not.toBeVisible({ timeout: 10000 });
 
     // Verify we're on a logged-out page by checking for Red Hat login form
-    const redHatLoginLabel = page.getByLabel('Red Hat login');
-    await expect(redHatLoginLabel).toBeVisible({ timeout: 10000 });
+    const usernameInput = page.getByRole('textbox', { name: 'Red Hat login' });
+    await expect(usernameInput).toBeVisible({ timeout: 10000 });
   });
 });
