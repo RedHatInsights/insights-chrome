@@ -1,30 +1,39 @@
 # IQE to Playwright Migration Summary
 
-## Migration Complete: test_login.py → org-id-visibility.spec.ts
+## Migration Complete: test_login.py
 
-**Date:** April 22, 2026
+**Date:** April 22-24, 2026
 **Source:** `iqe-platform-ui-plugin/iqe_platform_ui/tests/test_login.py`
-**Target:** `insights-chrome/playwright/e2e/release-gate/org-id-visibility.spec.ts`
+**Targets:**
+- `insights-chrome/playwright/e2e/release-gate/org-id-visibility.spec.ts`
+- `insights-chrome/playwright/e2e/release-gate/logout.spec.ts`
 
 ---
 
 ## Files Added
 
-### 1. Test File
+### 1. Org ID Visibility Test
 **Location:** `playwright/e2e/release-gate/org-id-visibility.spec.ts`
 
-Contains 4 test cases:
-- ✅ Basic org ID visibility test
-- ✅ Org ID format validation
-- ✅ Org ID matching (optional, requires ORG_ID env var)
-- ✅ Page object helper method tests
+Contains 2 test cases:
+- ✅ Numeric org ID display in overflow dropdown
+- ✅ Page object helper method validation
 
-### 2. Page Object
+### 2. Logout Test
+**Location:** `playwright/e2e/release-gate/logout.spec.ts`
+
+Contains 2 test cases:
+- ✅ Logout via Chrome auth command (`insights.chrome.auth.logout()`)
+- ✅ Logout via dropdown menu
+
+**Special handling:** Uses isolated browser context with fresh login per test to avoid invalidating shared auth state.
+
+### 3. Page Object
 **Location:** `playwright/e2e/pages/chrome-topbar.ts`
 
 Reusable page object for Chrome topbar interactions:
-- `openOverflowActions()` - Opens user menu
-- `getOrgId()` - Retrieves org ID from UI
+- `openOverflowActions()` - Opens user menu (idempotent)
+- `getOrgId()` - Retrieves org ID from UI (tries multiple selectors)
 - `isOrgIdVisible()` - Checks org ID visibility
 - `openHelp()`, `openSettings()`, `openServices()` - Additional topbar interactions
 
@@ -35,11 +44,7 @@ Reusable page object for Chrome topbar interactions:
 From the original `test_login.py` file:
 
 ### ❌ test_login
-**Reason:** Redundant with existing auth helper
-**Action:** Left in IQE (not migrated)
-
-### ❌ test_logout
-**Reason:** Conflicts with shared authentication session
+**Reason:** Redundant with global auth setup
 **Action:** Left in IQE (not migrated)
 
 ---
@@ -140,6 +145,29 @@ test.beforeEach(async ({ page }) => {
 
 This pattern ensures tests start authenticated and don't need per-test login.
 
+### Isolated Authentication (for logout tests)
+
+For tests that invalidate the auth session (like logout), we use **isolated browser contexts**:
+
+```typescript
+// Create custom test fixture with fresh auth
+const test = base.extend<{ authenticatedPage: any }>({
+  authenticatedPage: async ({ browser }, use) => {
+    const context = await browser.newContext({ ignoreHTTPSErrors: true });
+    const page = await context.newPage();
+
+    await disableCookiePrompt(page);
+    await page.goto(baseURL);
+    await login(page, user, password);
+
+    await use(page);
+    await context.close(); // Cleanup
+  },
+});
+```
+
+This ensures logout tests don't affect other tests' shared auth state.
+
 ---
 
 ## Selector Strategy Used
@@ -226,8 +254,8 @@ For questions about this migration:
 
 ## Migration Statistics
 
-- **Tests Migrated:** 1 (test_org_id_visible)
-- **Tests Skipped:** 2 (test_login, test_logout)
-- **Test Variants Created:** 4 (expanded from 1 IQE test)
+- **Tests Migrated:** 2 (test_org_id_visible, test_logout)
+- **Tests Skipped:** 1 (test_login - redundant with global auth)
+- **Test Cases Created:** 4 total (2 org ID + 2 logout variants)
 - **Page Objects Created:** 1 (ChromeTopbar)
-- **Lines of Code:** ~150 (test + page object)
+- **Lines of Code:** ~280 (tests + page object + documentation)
